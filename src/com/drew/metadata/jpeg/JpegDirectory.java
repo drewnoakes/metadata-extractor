@@ -43,8 +43,8 @@ public class JpegDirectory extends Directory {
 
 	static {
         tagNameMap.put(new Integer(TAG_JPEG_DATA_PRECISION), "Data Precision");
-        tagNameMap.put(new Integer(TAG_JPEG_IMAGE_HEIGHT), "Image Width");
-        tagNameMap.put(new Integer(TAG_JPEG_IMAGE_WIDTH), "Image Height");
+        tagNameMap.put(new Integer(TAG_JPEG_IMAGE_WIDTH), "Image Width");
+        tagNameMap.put(new Integer(TAG_JPEG_IMAGE_HEIGHT), "Image Height");
 		tagNameMap.put(new Integer(TAG_JPEG_NUMBER_OF_COMPONENTS), "Number of Components");
 		tagNameMap.put(new Integer(TAG_JPEG_COMPONENT_DATA_1), "Component 1");
 		tagNameMap.put(new Integer(TAG_JPEG_COMPONENT_DATA_2), "Component 2");

@@ -1,3 +1,9 @@
+v2.2.1
+------------
+
+ - Fixed a bug where JpegDirectory had tag names for image width and height around
+   the wrong way.  Thanks to Sander Smith for pointing this out.
+
 v2.2
 ------------
 
