@@ -3,10 +3,12 @@
  */
 package com.drew.metadata;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public class Tag
+public class Tag implements Serializable
 {
     private final int _tagType;
     private final Directory _directory;

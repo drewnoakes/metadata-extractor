@@ -73,7 +73,7 @@ public class ExifReader implements MetadataReader
      * Bean instance to store information about the image and camera/scanner/capture
      * device.
      */
-    private Metadata metadata;
+    private Metadata _metadata;
 
     /**
      * The number of bytes used per format descriptor.
@@ -110,6 +110,7 @@ public class ExifReader implements MetadataReader
      *
      * @param file
      * @throws JpegProcessingException
+     * @throws FileNotFoundException
      */
     public ExifReader(File file) throws JpegProcessingException, FileNotFoundException
     {
@@ -121,31 +122,13 @@ public class ExifReader implements MetadataReader
      */
     public ExifReader(byte[] data)
     {
-        this._data = data;
+        _data = data;
     }
 
     /**
-     * Creates an ExifReader for the given <code>JPEGDecodeParam</code> object.
-     */
-//    public ExifReader(JPEGDecodeParam param)
-//    {
-//        if (param == null) {
-//            throw new IllegalArgumentException("param cannot be null");
-//        }
-//        /* We should only really be seeing Exif in _data[0]... the 2D array exists
-//         * because markers can theoretically appear multiple times in the file.
-//         */
-//        byte[][] data = param.getMarkerData(JPEGDecodeParam.APP1_MARKER);
-//        if (data != null) {
-//            this._data = data[0];
-//        }
-//    }
-
-    /**
      * Performs the Exif data extraction, returning a new instance of <code>Metadata</code>.
-     * @throws com.drew.metadata.exif.ExifProcessingException for bad/unexpected Exif data
      */
-    public Metadata extract() throws MetadataException
+    public Metadata extract()
     {
         return extract(new Metadata());
     }
@@ -153,51 +136,54 @@ public class ExifReader implements MetadataReader
     /**
      * Performs the Exif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
-     * @throws com.drew.metadata.exif.ExifProcessingException for bad/unexpected Exif data
      */
-    public Metadata extract(Metadata metadata) throws MetadataException
+    public Metadata extract(Metadata metadata)
     {
-        this.metadata = metadata;
+        _metadata = metadata;
         if (_data == null) {
-            return this.metadata;
-        }
-        if (_data.length < 12) {
-            return this.metadata;
-            //throw new ExifProcessingException("exif data must contain at least 12 bytes");
+            return _metadata;
         }
 
+        // once we know there's some data, create the directory and start working on it
+        Directory directory = _metadata.getDirectory(ExifDirectory.class);
+        if (_data.length <= 14) {
+            directory.addError("Exif data segment must contain at least 14 bytes");
+            return _metadata;
+        }
         if (!"Exif\0\0".equals(new String(_data, 0, 6))) {
-            return this.metadata;
-            //throw new ExifProcessingException("Exif data segment doesn't begin with 'Exif'");
+            directory.addError("Exif data segment doesn't begin with 'Exif'");
+            return _metadata;
         }
 
         // this should be either "MM" or "II"
         String byteOrderIdentifier = new String(_data, 6, 2);
-        setByteOrder(byteOrderIdentifier);
+        if (!setByteOrder(byteOrderIdentifier)) {
+            directory.addError("Unclear distinction between Motorola/Intel byte ordering");
+            return _metadata;
+        }
 
         // Check the next two values for correctness.
         if (get16Bits(8) != 0x2a) {
-            return this.metadata;
-            //throw new ExifProcessingException("Invalid Exif start.  Should have 0x2A at offset 8 in Exif header.");
+            directory.addError("Invalid Exif start - should have 0x2A at offset 8 in Exif header");
+            return _metadata;
         }
 
         int firstDirectoryOffset = get32Bits(10) + TIFF_HEADER_START_OFFSET;
 
-        // David Ekholm sent an digital camera image that has this problem...
-        // fix it here by simply returning null
-        if (firstDirectoryOffset >= _data.length) {
-            return this.metadata;
+        // David Ekholm sent an digital camera image that has this problem
+        if (firstDirectoryOffset >= _data.length - 1) {
+            directory.addError("First exif directory offset is beyond end of Exif data segment");
+            // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
+            firstDirectoryOffset = 14;
         }
 
-        // First directory normally starts 14 bytes in -- 0th IFD (we merge with Exif IFD)
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        // 0th IFD (we merge with Exif IFD)
         processDirectory(directory, firstDirectoryOffset);
 
-        // after the extraction process, if we have the correct tags, we may be
-        // able to extract thumbnail information
+        // after the extraction process, if we have the correct tags, we may be able to extract thumbnail information
         extractThumbnail(directory);
 
-        return this.metadata;
+        return _metadata;
     }
 
     private void extractThumbnail(Directory exifDirectory)
@@ -219,55 +205,70 @@ public class ExifReader implements MetadataReader
             }
             exifDirectory.setByteArray(ExifDirectory.TAG_THUMBNAIL_DATA, result);
         } catch (Throwable e) {
-            return;
+            exifDirectory.addError("Unable to extract thumbnail: " + e.getMessage());
         }
     }
 
-    private void setByteOrder(String byteOrderIdentifier) throws ExifProcessingException
+    private boolean setByteOrder(String byteOrderIdentifier)
     {
         if ("MM".equals(byteOrderIdentifier)) {
             motorollaByteOrder = true;
         } else if ("II".equals(byteOrderIdentifier)) {
             motorollaByteOrder = false;
         } else {
-            throw new ExifProcessingException("Unclear distinction between Motorola/Intel byte ordering");
+            return false;
         }
+        return true;
     }
 
     /**
      * Process one of the nested EXIF directories.
      */
-    private void processDirectory(Directory directory, int dirStartOffset) throws MetadataException
+    private void processDirectory(Directory directory, int dirStartOffset)
     {
+//        if (dirStartOffset>=_data.length) {
+//            return;
+//        }
+
         // First two bytes in the IFD are the tag count
         int dirTagCount = get16Bits(dirStartOffset);
 
-        validateDirectoryLength(dirStartOffset);
+        if (!isDirectoryLengthValid(dirStartOffset)) {
+            directory.addError("Illegally sized directory");
+            return;
+        }
 
         // Handle each tag in this directory
         for (int dirEntry = 0; dirEntry < dirTagCount; dirEntry++) {
             int dirEntryOffset = calculateDirectoryEntryOffset(dirStartOffset, dirEntry);
             int tagType = get16Bits(dirEntryOffset);
             int formatCode = get16Bits(dirEntryOffset + 2);
-            validateFormatCode(formatCode);
+            if (formatCode < 0 || formatCode > MAX_FORMAT_CODE) {
+                directory.addError("Invalid format code: " + formatCode);
+                continue;
+            }
 
             // 4 bytes indicating number of formatCode type data for this tag
             int componentCount = get32Bits(dirEntryOffset + 4);
             int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
             int tagValueOffset = calculateTagValueOffset(byteCount, dirEntryOffset);
+            if (tagValueOffset<0) {
+                directory.addError("Illegal pointer offset value in EXIF");
+                continue;
+            }
 
             // Calculate the value as an offset for cases where the tag is represents directory
             int subdirOffset = TIFF_HEADER_START_OFFSET + get32Bits(tagValueOffset);
 
             switch (tagType) {
                 case TAG_EXIF_OFFSET:
-                    processDirectory(metadata.getDirectory(ExifDirectory.class), subdirOffset);
+                    processDirectory(_metadata.getDirectory(ExifDirectory.class), subdirOffset);
                     continue;
                 case TAG_INTEROP_OFFSET:
-                    processDirectory(metadata.getDirectory(ExifInteropDirectory.class), subdirOffset);
+                    processDirectory(_metadata.getDirectory(ExifInteropDirectory.class), subdirOffset);
                     continue;
                 case TAG_GPS_INFO_OFFSET:
-                    processDirectory(metadata.getDirectory(GpsDirectory.class), subdirOffset);
+                    processDirectory(_metadata.getDirectory(GpsDirectory.class), subdirOffset);
                     continue;
                 case TAG_MAKER_NOTE:
                     processMakerNote(tagValueOffset);
@@ -292,36 +293,31 @@ public class ExifReader implements MetadataReader
         }
     }
 
-    private void processMakerNote(int subdirOffset) throws MetadataException
+    private void processMakerNote(int subdirOffset)
     {
         // Determine the camera model and makernote format
-        Directory exifDirectory;
-        try {
-            exifDirectory = metadata.getDirectory(ExifDirectory.class);
-        } catch (MetadataException e) {
-            return;
-        }
+        Directory exifDirectory = _metadata.getDirectory(ExifDirectory.class);
         if (exifDirectory == null) {
             return;
         }
         String cameraModel = exifDirectory.getString(ExifDirectory.TAG_MAKE);
         if ("OLYMP".equals(new String(_data, subdirOffset, 5))) {
             // Olympus Makernote
-            processDirectory(metadata.getDirectory(OlympusMakernoteDirectory.class), subdirOffset + 8);
+            processDirectory(_metadata.getDirectory(OlympusMakernoteDirectory.class), subdirOffset + 8);
         } else if ("NIKON".equalsIgnoreCase(cameraModel)) {
             if ("Nikon".equals(new String(_data, subdirOffset, 5))) {
                 // Nikon type 1 Makernote
-                processDirectory(metadata.getDirectory(NikonType1MakernoteDirectory.class), subdirOffset + 8);
+                processDirectory(_metadata.getDirectory(NikonType1MakernoteDirectory.class), subdirOffset + 8);
             } else {
                 // Nikon type 2 Makernote
-                processDirectory(metadata.getDirectory(NikonType2MakernoteDirectory.class), subdirOffset);
+                processDirectory(_metadata.getDirectory(NikonType2MakernoteDirectory.class), subdirOffset);
             }
         } else if ("Canon".equalsIgnoreCase(cameraModel)) {
             // Canon Makernote
-            processDirectory(metadata.getDirectory(CanonMakernoteDirectory.class), subdirOffset);
+            processDirectory(_metadata.getDirectory(CanonMakernoteDirectory.class), subdirOffset);
         } else if ("Casio".equalsIgnoreCase(cameraModel)) {
             // Casio Makernote
-            processDirectory(metadata.getDirectory(CasioMakernoteDirectory.class), subdirOffset);
+            processDirectory(_metadata.getDirectory(CasioMakernoteDirectory.class), subdirOffset);
         } else if ("FUJIFILM".equals(new String(_data, subdirOffset, 8)) || "Fujifilm".equalsIgnoreCase(cameraModel)) {
             // Fujifile Makernote
             boolean byteOrderBefore = motorollaByteOrder;
@@ -331,22 +327,23 @@ public class ExifReader implements MetadataReader
             // IFD, though the offset is relative to the start of the makernote, not the TIFF
             // header (like everywhere else)
             int ifdStart = subdirOffset + get32Bits(subdirOffset + 8);
-            processDirectory(metadata.getDirectory(FujiFilmMakernoteDirectory.class), ifdStart);
+            processDirectory(_metadata.getDirectory(FujiFilmMakernoteDirectory.class), ifdStart);
             motorollaByteOrder = byteOrderBefore;
         }
     }
 
-    private void validateDirectoryLength(int dirStartOffset) throws ExifProcessingException
+    private boolean isDirectoryLengthValid(int dirStartOffset)
     {
         int dirTagCount = get16Bits(dirStartOffset);
         int dirLength = (2 + (12 * dirTagCount) + 4);
         if (dirLength + dirStartOffset + TIFF_HEADER_START_OFFSET >= _data.length) {
-            // Note: Files that had thumbnails trimmed with jhead 1.3 or earlier might trigger this.
-            throw new ExifProcessingException("Illegally sized directory");
+            // Note: Files that had thumbnails trimmed with jhead 1.3 or earlier might trigger this
+            return false;
         }
+        return true;
     }
 
-    private void processTag(Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode) throws ExifProcessingException
+    private void processTag(Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode)
     {
         // Directory simply stores raw values
         // The display side uses a Descriptor class per directory to turn the raw values into 'pretty' descriptions
@@ -415,7 +412,6 @@ public class ExifReader implements MetadataReader
                     int i = get32Bits(tagValueOffset);
                     directory.setInt(tagType, i);
                 } else {
-                    System.out.println("32bit int[] for " + directory.getTagName(tagType));
                     int[] ints = new int[componentCount];
                     for (int i = 0; i < componentCount; i++) {
                         ints[i] = get32Bits(tagValueOffset + (i * 4));
@@ -424,7 +420,7 @@ public class ExifReader implements MetadataReader
                 }
                 break;
             default:
-                throw new ExifProcessingException("unknown format code " + formatCode);
+                directory.addError("unknown format code " + formatCode);
         }
     }
 /*
@@ -448,12 +444,12 @@ public class ExifReader implements MetadataReader
                     for (int i = 5; i < 10; i++) {
                         byte b = _data[tagValueOffset + i];
                         if (b != '\0' && b != ' ') {
-                            metadata.setString(DIRECTORY_EXIF_EXIF, TAG_USER_COMMENT, readString(tagValueOffset + i, 199));
+                            _metadata.setString(DIRECTORY_EXIF_EXIF, TAG_USER_COMMENT, readString(tagValueOffset + i, 199));
                             break;
                         }
                     }
                 } else {
-                    metadata.setString(DIRECTORY_EXIF_EXIF, TAG_USER_COMMENT, readString(tagValueOffset, 199));
+                    _metadata.setString(DIRECTORY_EXIF_EXIF, TAG_USER_COMMENT, readString(tagValueOffset, 199));
                 }
                 break;
 
@@ -462,8 +458,8 @@ public class ExifReader implements MetadataReader
                 // have appropriate aperture information yet.
             case TAG_APERTURE:
             case TAG_MAX_APERTURE:
-                if (!metadata.containsTag(DIRECTORY_EXIF_EXIF, TAG_FNUMBER)) {
-                    metadata.setFloat(DIRECTORY_EXIF_EXIF, TAG_FNUMBER, (float)Math.exp(convertTagToNumber(tagValueOffset, formatCode) * Math.log(2) * 0.5));
+                if (!_metadata.containsTag(DIRECTORY_EXIF_EXIF, TAG_FNUMBER)) {
+                    _metadata.setFloat(DIRECTORY_EXIF_EXIF, TAG_FNUMBER, (float)Math.exp(convertTagToNumber(tagValueOffset, formatCode) * Math.log(2) * 0.5));
                 }
                 break;
 
@@ -477,21 +473,21 @@ public class ExifReader implements MetadataReader
                 // Simplest way of expressing aperture, so I trust it the most. (overwrite previously computed value if there is one)
             case TAG_FNUMBER:
             case TAG_EXPOSURE_BIAS:
-                metadata.setFloat(DIRECTORY_EXIF_EXIF, tagType, (float)convertTagToNumber(tagValueOffset, formatCode));
+                _metadata.setFloat(DIRECTORY_EXIF_EXIF, tagType, (float)convertTagToNumber(tagValueOffset, formatCode));
                 break;
 
 // TODO work out what to do with this calculation
                 // More complicated way of expressing exposure time, so only use this value if we don't already have it from somewhere else.
             case TAG_SHUTTER_SPEED:
-                if (!metadata.containsTag(DIRECTORY_EXIF_EXIF, TAG_EXPOSURE_TIME)) {
-                    metadata.setFloat(DIRECTORY_EXIF_EXIF, TAG_EXPOSURE_TIME, (float)(1 / Math.exp(convertTagToNumber(tagValueOffset, formatCode) * Math.log(2))));
+                if (!_metadata.containsTag(DIRECTORY_EXIF_EXIF, TAG_EXPOSURE_TIME)) {
+                    _metadata.setFloat(DIRECTORY_EXIF_EXIF, TAG_EXPOSURE_TIME, (float)(1 / Math.exp(convertTagToNumber(tagValueOffset, formatCode) * Math.log(2))));
                 }
                 break;
         }
     }
 */
 
-    private int calculateTagValueOffset(int byteCount, int dirEntryOffset) throws ExifProcessingException
+    private int calculateTagValueOffset(int byteCount, int dirEntryOffset)
     {
         if (byteCount > 4) {
             // If its bigger than 4 bytes, the dir entry contains an offset.
@@ -499,24 +495,12 @@ public class ExifReader implements MetadataReader
             int offsetVal = get32Bits(dirEntryOffset + 8);
             if (offsetVal + byteCount > _data.length) {
                 // Bogus pointer offset and / or bytecount value
-                throw new ExifProcessingException("Illegal pointer offset value in EXIF");
+                return -1; // signal error
             }
             return TIFF_HEADER_START_OFFSET + offsetVal;
         } else {
             // 4 bytes or less and value is in the dir entry itself
             return dirEntryOffset + 8;
-        }
-    }
-
-    /**
-     * Throws an exception if the format code is out of bounds.
-     * @param formatCode the format code
-     * @throws com.drew.metadata.exif.ExifProcessingException is the format code is out of bounds
-     */
-    private void validateFormatCode(int formatCode) throws ExifProcessingException
-    {
-        if (formatCode < 0 || formatCode > MAX_FORMAT_CODE) {
-            throw new ExifProcessingException("Illegal format code in EXIF dir");
         }
     }
 

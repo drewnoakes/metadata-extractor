@@ -10,6 +10,9 @@ import com.drew.metadata.exif.ExifDirectory;
 import junit.framework.TestCase;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 
 /**
  *
@@ -25,6 +28,16 @@ public class JpegMetadataReaderTest extends TestCase
     {
         File withExif = new File("src/com/drew/metadata/exif/test/withExif.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(withExif);
+        assertTrue(metadata.containsDirectory(ExifDirectory.class));
+        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));
+    }
+
+    public void testExtractMetadataUsingInputStream() throws Exception
+    {
+        File withExif = new File("src/com/drew/metadata/exif/test/withExif.jpg");
+        InputStream in = new BufferedInputStream(new FileInputStream((withExif)));
+        Metadata metadata = JpegMetadataReader.readMetadata(in);
         assertTrue(metadata.containsDirectory(ExifDirectory.class));
         Directory directory = metadata.getDirectory(ExifDirectory.class);
         assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));

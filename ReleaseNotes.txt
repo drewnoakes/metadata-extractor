@@ -1,3 +1,13 @@
+v2.1
+------------
+
+  - Extract methods no longer throw exceptions, with error information stored
+    in Metadata instances, using hasErrors() and getErrors()
+  - Metadata and dependant classes now serializable for network transmission,
+    and persistance in files & databases
+  - Support for extracting metadata from InputStreams, such as network connections
+  - Replaced code that depended upon JDK 1.4
+
 v2.0
 ------------
 

@@ -10,6 +10,7 @@ import com.sun.image.codec.jpeg.JPEGDecodeParam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 /**
@@ -17,23 +18,33 @@ import java.util.Iterator;
  */
 public class JpegMetadataReader
 {
-    public static Metadata readMetadata(File file) throws FileNotFoundException
+    public static Metadata readMetadata(InputStream in) throws JpegProcessingException
+    {
+        JpegSegmentReader segmentReader = new JpegSegmentReader(in);
+        return extractJpegSegmentReaderMetadata(segmentReader);
+    }
+
+    public static Metadata readMetadata(File file) throws FileNotFoundException, JpegProcessingException
     {
         JpegSegmentReader segmentReader = new JpegSegmentReader(file);
+        return extractJpegSegmentReaderMetadata(segmentReader);
+    }
+
+    private static Metadata extractJpegSegmentReaderMetadata(JpegSegmentReader segmentReader)
+    {
         Metadata metadata = new Metadata();
         try {
             byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1);
             new ExifReader(exifSegment).extract(metadata);
-        } catch (Exception e) {
+        } catch (JpegProcessingException e) {
             // in the interests of catching as much data as possible, continue
-            // TODO lodge error message within exif directory
+            // TODO lodge error message within exif directory?
         }
         try {
             byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
             new IptcReader(iptcSegment).extract(metadata);
-        } catch (Exception e) {
-            // in the interests of catching as much data as possible, continue
-            // TODO lodge error message within iptc directory
+        } catch (JpegProcessingException e) {
+            // TODO lodge error message within iptc directory?
         }
         return metadata;
     }
@@ -45,22 +56,15 @@ public class JpegMetadataReader
         /* We should only really be seeing Exif in _data[0]... the 2D array exists
          * because markers can theoretically appear multiple times in the file.
          */
-        try {
-            byte[][] exifSegment = decodeParam.getMarkerData(JPEGDecodeParam.APP1_MARKER);
-            if (exifSegment != null) {
-                new ExifReader(exifSegment[0]).extract();
-            }
-        } catch (MetadataException e) {
-            // continue
+        byte[][] exifSegment = decodeParam.getMarkerData(JPEGDecodeParam.APP1_MARKER);
+        if (exifSegment != null && exifSegment[0].length>0) {
+            new ExifReader(exifSegment[0]).extract();
         }
+
         // similarly, use only the first IPTC segment
-        try {
-            byte[][] iptcSegment = decodeParam.getMarkerData(JPEGDecodeParam.APPD_MARKER);
-            if (iptcSegment != null) {
-                new IptcReader(iptcSegment[0]).extract();
-            }
-        } catch (MetadataException e) {
-            // continue
+        byte[][] iptcSegment = decodeParam.getMarkerData(JPEGDecodeParam.APPD_MARKER);
+        if (iptcSegment != null && iptcSegment[0].length>0) {
+            new IptcReader(iptcSegment[0]).extract();
         }
         return metadata;
     }
@@ -92,6 +96,12 @@ public class JpegMetadataReader
                 } catch (MetadataException e) {
                     System.err.println(e.getMessage());
                     System.err.println(tag.getDirectoryName() + " " + tag.getTagName() + " <error>");
+                }
+            }
+            if (directory.hasErrors()) {
+                Iterator errors = directory.getErrors();
+                while (errors.hasNext()) {
+                    System.out.println("ERROR: " + errors.next());
                 }
             }
         }

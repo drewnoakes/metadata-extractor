@@ -49,9 +49,8 @@ public class IptcReader implements MetadataReader
 
     /**
      * Performs the Exif data extraction, returning a new instance of <code>Metadata</code>.
-     * @throws com.drew.metadata.iptc.IptcProcessingException for bad/unexpected Exif data
      */
-    public Metadata extract() throws MetadataException
+    public Metadata extract()
     {
         return extract(new Metadata());
     }
@@ -59,21 +58,25 @@ public class IptcReader implements MetadataReader
     /**
      * Performs the Exif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
-     * @throws com.drew.metadata.iptc.IptcProcessingException for bad/unexpected Exif data
      */
-    public Metadata extract(Metadata metadata) throws MetadataException
+    public Metadata extract(Metadata metadata)
     {
         if (_data == null) {
             return metadata;
         }
 
+        Directory directory = metadata.getDirectory(IptcDirectory.class);
+
         // find start of data
         int offset = 0;
-        while (offset < _data.length - 1 && get32Bits(offset) != 0x1c02) {
-            offset++;
+        try {
+            while (offset < _data.length - 1 && get32Bits(offset) != 0x1c02) {
+                offset++;
+            }
+        } catch (MetadataException e) {
+            directory.addError("Couldn't find start of Iptc data (invalid segment)");
+            return metadata;
         }
-
-        Directory directory = metadata.getDirectory(IptcDirectory.class);
 
         // for each tag
         while (offset < _data.length) {
@@ -88,16 +91,20 @@ public class IptcReader implements MetadataReader
 
             offset++;
 
-            int directoryType = _data[offset++];
-            int tagType = _data[offset++];
-            int tagByteCount = get32Bits(offset);
-
-            if (tagByteCount < 0) {
-                System.out.println("tagByteCount < 0 0x" + Integer.toHexString(tagByteCount));
+            int directoryType;
+            int tagType;
+            int tagByteCount;
+            try {
+                directoryType = _data[offset++];
+                tagType = _data[offset++];
+                tagByteCount = get32Bits(offset);
+            } catch (MetadataException e) {
+                directory.addError("Iptc data segment ended mid-way through tag descriptor");
+                return metadata;
             }
             offset += 2;
             if ((offset + tagByteCount) > _data.length) {
-                System.err.println("data for tag extends beyond end of iptc segment");
+                directory.addError("data for tag extends beyond end of iptc segment");
                 break;
             }
 

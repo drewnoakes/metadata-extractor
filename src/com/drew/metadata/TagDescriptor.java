@@ -3,10 +3,12 @@
  */
 package com.drew.metadata;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public abstract class TagDescriptor
+public abstract class TagDescriptor implements Serializable
 {
     protected final Directory _directory;
 

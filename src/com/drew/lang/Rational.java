@@ -32,13 +32,15 @@
 
 package com.drew.lang;
 
+import java.io.Serializable;
+
 /**
  * Immutable class for holding a rational number without loss of precision.  Provides
  * a familiar representation via toString() in form <code>numerator/denominator</code>.
  * <p>
  * @author  Drew Noakes http://drewnoakes.com
  */
-public class Rational extends java.lang.Number implements java.io.Serializable
+public class Rational extends java.lang.Number implements Serializable
 {
     /**
      * Holds the numerator.
@@ -49,6 +51,7 @@ public class Rational extends java.lang.Number implements java.io.Serializable
      * Holds the denominator.
      */
     private final int denominator;
+
     private int maxSimplificationCalculations = 1000;
 
     /**

@@ -683,7 +683,7 @@ public class ExifDescriptor extends TagDescriptor
         StringBuffer version = new StringBuffer();
         for (int i = 0; i < 4; i++) {
             if (i == 2) version.append('.');
-            String digit = Character.toString((char)components[i]);
+            String digit = String.valueOf((char)components[i]);
             if (i == 0 && "0".equals(digit)) continue;
             version.append(digit);
         }

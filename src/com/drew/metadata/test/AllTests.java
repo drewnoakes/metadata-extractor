@@ -26,6 +26,7 @@ import com.drew.imaging.jpeg.test.JpegMetadataReaderTest;
 import com.drew.imaging.jpeg.test.JpegSegmentReaderTest;
 import com.drew.lang.test.CompoundExceptionTest;
 import com.drew.lang.test.RationalTest;
+import com.drew.lang.test.NullOutputStreamTest;
 import com.drew.metadata.exif.test.ExifDirectoryTest;
 import com.drew.metadata.exif.test.ExifProcessorTest;
 import com.drew.metadata.iptc.test.IptcReaderTest;
@@ -43,16 +44,16 @@ public class AllTests extends TestSuite
     public static Test suite()
     {
         TestSuite suite = new TestSuite();
-        suite.addTestSuite(RationalTest.class);
-        suite.addTestSuite(MetadataTest.class);
-        suite.addTestSuite(ExifProcessorTest.class);
-        suite.addTestSuite(ExifDirectoryTest.class);
-        suite.addTestSuite(JpegSegmentReaderTest.class);
-        suite.addTestSuite(JpegMetadataReaderTest.class);
-        suite.addTestSuite(DirectoryTest.class);
-        suite.addTestSuite(MetadataTest.class);
-        suite.addTestSuite(IptcReaderTest.class);
         suite.addTestSuite(CompoundExceptionTest.class);
+        suite.addTestSuite(DirectoryTest.class);
+        suite.addTestSuite(ExifDirectoryTest.class);
+        suite.addTestSuite(ExifProcessorTest.class);
+        suite.addTestSuite(IptcReaderTest.class);
+        suite.addTestSuite(JpegMetadataReaderTest.class);
+        suite.addTestSuite(JpegSegmentReaderTest.class);
+        suite.addTestSuite(MetadataTest.class);
+        suite.addTestSuite(NullOutputStreamTest.class);
+        suite.addTestSuite(RationalTest.class);
         return suite;
     }
 }

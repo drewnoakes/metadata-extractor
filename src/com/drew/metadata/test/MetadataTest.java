@@ -22,9 +22,15 @@ package com.drew.metadata.test;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.lang.NullOutputStream;
 import junit.framework.TestCase;
+
+import java.io.*;
+import java.util.Iterator;
 
 /**
  * JUnit test case for class Metadata.
@@ -117,5 +123,54 @@ public class MetadataTest extends TestCase
         Metadata metadata = new Metadata();
         Directory exifDir = metadata.getDirectory(ExifDirectory.class);
         assertEquals(null, exifDir.getString(ExifDirectory.TAG_APERTURE));
+    }
+
+    public void testHasErrors() throws Exception
+    {
+        Metadata metadata = JpegMetadataReader.readMetadata(new File("src/com/drew/metadata/exif/test/badExif.jpg"));
+        assertTrue("exif error", metadata.getDirectory(ExifDirectory.class).hasErrors());
+        metadata = JpegMetadataReader.readMetadata(new File("src/com/drew/metadata/exif/test/withExif.jpg"));
+        assertTrue("no errors", !metadata.getDirectory(ExifDirectory.class).hasErrors());
+    }
+
+    public void testGetErrors() throws Exception
+    {
+        Metadata metadata = JpegMetadataReader.readMetadata(new File("src/com/drew/metadata/exif/test/badExif.jpg"));
+        Iterator errors = metadata.getDirectory(ExifDirectory.class).getErrors();
+        assertTrue(errors.hasNext());
+        String error = (String) errors.next();
+        assertEquals("Exif data segment must contain at least 14 bytes", error);
+        assertTrue(!errors.hasNext());
+    }
+
+    public void testGetErrorCount() throws Exception
+    {
+        Metadata metadata = JpegMetadataReader.readMetadata(new File("src/com/drew/metadata/exif/test/badExif.jpg"));
+        assertEquals(1, metadata.getDirectory(ExifDirectory.class).getErrorCount());
+    }
+
+    public void testMetadataSerializable() throws Exception
+    {
+        Metadata metadata = JpegMetadataReader.readMetadata(new File("src/com/drew/metadata/test/withIptcExifGps.jpg"));
+        new ObjectOutputStream(new NullOutputStream()).writeObject(metadata);
+    }
+
+    public void testSerializeAndRestore() throws Exception
+    {
+        Metadata metadataWrite = JpegMetadataReader.readMetadata(new File("src/com/drew/metadata/test/withIptcExifGps.jpg"));
+        Metadata metadataRead;
+        File ser = File.createTempFile("test", "ser");
+        try {
+            // write the ser object
+            new ObjectOutputStream(new FileOutputStream(ser)).writeObject(metadataWrite);
+            // read the ser object
+            metadataRead = (Metadata)new ObjectInputStream(new FileInputStream(ser)).readObject();
+            // make sure they're equivalent
+            // TODO should compare the two objects via iteration of directories and tags
+            assertTrue(metadataRead.containsDirectory(ExifDirectory.class));
+            assertTrue(metadataRead.containsDirectory(IptcDirectory.class));
+        } finally {
+            ser.delete();
+        }
     }
 }

@@ -8,12 +8,13 @@ import com.drew.lang.Rational;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * Base class for all Metadata directory types with supporting methods for setting and
  * getting tag values.
  */
-public abstract class Directory
+public abstract class Directory implements Serializable
 {
     /**
      * Map of values hashed by type identifiers.
@@ -31,6 +32,8 @@ public abstract class Directory
      * defined tags.
      */
     protected final List _definedTagList;
+
+    private List _errorList;
 
 // ABSTRACT METHODS
 
@@ -97,6 +100,29 @@ public abstract class Directory
             throw new NullPointerException("cannot set a null descriptor");
         }
         _descriptor = descriptor;
+    }
+
+    public void addError(String message)
+    {
+        if (_errorList==null) {
+            _errorList = new ArrayList();
+        }
+        _errorList.add(message);
+    }
+
+    public boolean hasErrors()
+    {
+        return (_errorList!=null && _errorList.size() > 0);
+    }
+
+    public Iterator getErrors()
+    {
+        return _errorList.iterator();
+    }
+
+    public int getErrorCount()
+    {
+        return _errorList.size();
     }
 
 // TAG SETTERS

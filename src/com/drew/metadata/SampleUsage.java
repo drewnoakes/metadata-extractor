@@ -40,7 +40,9 @@ public class SampleUsage
             Metadata metadata = JpegMetadataReader.readMetadata(jpegFile);
             printImageTags(1, metadata);
         } catch (FileNotFoundException e) {
-            System.err.println("error 1");
+            System.err.println("error 1a");
+        } catch (JpegProcessingException e) {
+            System.err.println("error 1b");
         }
 
         // Approach 2
@@ -52,12 +54,10 @@ public class SampleUsage
             new ExifReader(jpegFile).extract(metadata);
             new IptcReader(jpegFile).extract(metadata);
             printImageTags(2, metadata);
-        } catch (MetadataException me) {
-            System.err.println("error 2");
         } catch (JpegProcessingException jpe) {
-            System.err.println("error 3");
+            System.err.println("error 2a");
         } catch (FileNotFoundException e) {
-            System.err.println("error 4");
+            System.err.println("error 2b");
         }
 
         // Approach 3
@@ -72,12 +72,10 @@ public class SampleUsage
             new ExifReader(exifSegment).extract(metadata);
             new IptcReader(iptcSegment).extract(metadata);
             printImageTags(3, metadata);
-        } catch (MetadataException me) {
-            System.err.println("error 5");
         } catch (JpegProcessingException jpe) {
-            System.err.println("error 6");
+            System.err.println("error 3a");
         } catch (FileNotFoundException e) {
-            System.err.println("error 7");
+            System.err.println("error 3b");
         }
 
         // Approach 4
@@ -92,9 +90,9 @@ public class SampleUsage
             Metadata metadata = JpegMetadataReader.readMetadata(decodeParam);
             printImageTags(4, metadata);
         } catch (FileNotFoundException e) {
-            System.err.println("error 8");
+            System.err.println("error 4a");
         } catch (IOException e) {
-            System.err.println("error 9");
+            System.err.println("error 4b");
         }
     }
 
@@ -111,6 +109,12 @@ public class SampleUsage
             while (tags.hasNext()) {
                 Tag tag = (Tag)tags.next();
                 System.out.println(tag);
+            }
+            if (directory.hasErrors()) {
+                Iterator errors = directory.getErrors();
+                while (errors.hasNext()) {
+                    System.out.println("ERROR: " + errors.next());
+                }
             }
         }
     }

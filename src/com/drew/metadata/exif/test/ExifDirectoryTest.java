@@ -5,6 +5,7 @@ package com.drew.metadata.exif.test;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
@@ -36,7 +37,10 @@ public class ExifDirectoryTest extends TestCase
         ExifDirectory exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
         assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
         byte[] thumbData = exifDirectory.getThumbnailData();
-        JpegSegmentReader segmentReader = new JpegSegmentReader(thumbData);
-        assertTrue(segmentReader.isJpeg());
+        try {
+            new JpegSegmentReader(thumbData);
+        } catch (JpegProcessingException e) {
+            fail("Unable to construct JpegSegmentReader from thumbnail data");
+        }
     }
 }

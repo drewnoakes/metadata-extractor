@@ -31,13 +31,14 @@ package com.drew.metadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.io.Serializable;
 
 /**
  * Result from an exif extraction operation, containing all tags, their
  * values and support for retrieving them.
  * @author  Drew Noakes http://drewnoakes.com
  */
-public final class Metadata
+public final class Metadata implements Serializable
 {
     /**
      *
@@ -86,12 +87,11 @@ public final class Metadata
      *
      * @param type
      * @return
-     * @throws MetadataException
      */
-    public Directory getDirectory(Class type) throws MetadataException
+    public Directory getDirectory(Class type)
     {
         if (!Directory.class.isAssignableFrom(type)) {
-            throw new MetadataException("Class type passed to getDirectory must be an implementation of com.drew.metadata.Directory");
+            throw new RuntimeException("Class type passed to getDirectory must be an implementation of com.drew.metadata.Directory");
         }
         // check if we've already issued this type of directory
         if (directoryMap.containsKey(type)) {
@@ -101,7 +101,7 @@ public final class Metadata
         try {
             directory = type.newInstance();
         } catch (Exception e) {
-            throw new MetadataException("Cannot instantiate provided Directory type", e);
+            throw new RuntimeException("Cannot instantiate provided Directory type: " + type.toString());
         }
         // store the directory in case it's requested later
         directoryMap.put(type, directory);
