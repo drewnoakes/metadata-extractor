@@ -150,4 +150,25 @@ public class Rational extends java.lang.Number implements java.io.Serializable
     {
         return this.numerator;
     }
+
+    /**
+     * Returns the reciprocal value of this obejct as a new Rational.
+     * @return the reciprocal in a new object
+     */
+    public Rational getReciprocal()
+    {
+        return new Rational(this.denominator, this.numerator);
+    }
+
+    /**
+     * Checks if this rational number is an Integer, either positive or negative.
+     */
+    public boolean isInteger()
+    {
+        if (denominator==1 || (numerator%denominator==0)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

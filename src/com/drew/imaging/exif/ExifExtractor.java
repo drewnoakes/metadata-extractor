@@ -1,16 +1,16 @@
 /*
  * EXIFExtractor.java
- * 
+ *
  * This class based upon code from Jhead, a C program for extracting and
  * manipulating the Exif data within files written by Matthias Wandel.
  *   http://www.sentex.net/~mwandel/jhead/
- * 
+ *
  * Jhead is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the 
+ * with it, and include it software that is licensed under the GNU or the
  * BSD license, or whatever other licence you choose, including proprietary
  * closed source licenses.  Similarly, I release this Java version under the
  * same license, though I do ask that you leave this header in tact.
- * 
+ *
  * If you make modifications to this code that you think would benefit the
  * wider community, please send me a copy and I'll post it on my site.  Unlike
  * Jhead, this code (as it stands) only supports reading of Exif data - no
@@ -22,14 +22,13 @@
  *   http://drewnoakes.com/
  *
  * Created on 28 April 2002, 23:54
+ * Modified 04 Aug 2002
+ * - Renamed constants to be inline with changes to ExifTagValues interface
+ * - Substituted usage of JDK 1.4 features (java.nio package)
  */
 package com.drew.imaging.exif;
 
 import java.io.*;
-import java.nio.*;
-import java.awt.image.*;
-import java.awt.geom.*;
-import java.util.HashMap;
 import java.util.Iterator;
 import com.sun.image.codec.jpeg.*;
 
@@ -37,7 +36,6 @@ import com.sun.image.codec.jpeg.*;
  * Extracts Exif data from a JPEG header segment, providing information about the
  * camera/scanner/capture device (if available).  Information is encapsulated in 
  * an <code>ImageInfo</code> object.
- * <p>
  * @author  Drew Noakes drew.noakes@drewnoakes.com
  */
 public class ExifExtractor implements ExifTagValues 
@@ -48,11 +46,11 @@ public class ExifExtractor implements ExifTagValues
     private byte[] data;
 
     /**
-     * Represents the native byte ordering used in the JPEG segment.  This
-     * value will be one of either <code>ByteOrder.LITTLE_ENDIAN</code> or 
-     * <code>ByteOrder.BIG_ENDIAN</code>.
+     * Represents the native byte ordering used in the JPEG segment.  If true,
+     * then we're using Motorolla ordering (Big endian), else we're using Intel
+     * ordering (Little endian).
      */
-    private ByteOrder byteOrder;
+    private boolean motorollaByteOrder;
 
     /**
      * Bean instance to store information about the image and camera/scanner/capture
@@ -131,14 +129,13 @@ public class ExifExtractor implements ExifTagValues
     /**
      * Performs the Exif data extraction, returning an instance of
      * <code>ImageInfo</code>.
-     * <p>
      * @throws ExifProcessingException for bad/unexpected Exif data
      */
     public ImageInfo extract() throws ExifProcessingException
     {
-        double FocalplaneXRes;
-        double FocalplaneUnits;
-        int ExifImageWidth;
+        //double FocalplaneXRes;
+        //double FocalplaneUnits;
+        //int ExifImageWidth;
         
         if (data==null) {
             throw new ExifProcessingException("Image doesn't contain any Exif data");
@@ -152,10 +149,12 @@ public class ExifExtractor implements ExifTagValues
         
         if ("MM".equals(new String(data, 6, 2))) {
             if (DEBUG) System.out.println("Motorola byte ordering (Big Endian)");
-            byteOrder = ByteOrder.BIG_ENDIAN;
+            //byteOrder = ByteOrder.BIG_ENDIAN;
+            motorollaByteOrder = true;
         } else if ("II".equals(new String(data, 6, 2))) {
             if (DEBUG) System.out.println("Intel byte ordering (Little Endian)");
-            byteOrder = ByteOrder.LITTLE_ENDIAN;
+            //byteOrder = ByteOrder.LITTLE_ENDIAN;
+            motorollaByteOrder = false;
         } else {
             throw new ExifProcessingException("Unclear distinction between Motorola/Intel byte ordering");
         }
@@ -286,11 +285,11 @@ public class ExifExtractor implements ExifTagValues
                         info.setString(TAG_DATETIME_ORIGINAL, readString(valueOffset, 19));
                         break;
 
-                    case TAG_USERCOMMENT:
+                    case TAG_USER_COMMENT:
                         // Olympus has this padded with trailing spaces.  Remove these first.
                         for (int i=byteCount; i>0; i--) {
                             if (data[valueOffset+i] == ' ') {
-                                data[valueOffset+i] = '\0';
+                                data[valueOffset+i] = (byte)'\0';
                             } else {
                                 break;
                             }
@@ -301,12 +300,12 @@ public class ExifExtractor implements ExifTagValues
                             for (int i=5; i<10; i++) {
                                 byte b = data[valueOffset+i];
                                 if (b!='\0' && b!=' ') {
-                                    info.setString(TAG_USERCOMMENT, readString(valueOffset+i, 199));
+                                    info.setString(TAG_USER_COMMENT, readString(valueOffset+i, 199));
                                     break;
                                 }
                             }
                         } else {
-                            info.setString(TAG_USERCOMMENT, readString(valueOffset, 199));
+                            info.setString(TAG_USER_COMMENT, readString(valueOffset, 199));
                         }
                         break;
 
@@ -331,7 +330,7 @@ public class ExifExtractor implements ExifTagValues
                         break;
 
                     case TAG_APERTURE:
-                    case TAG_MAXAPERTURE:
+                    case TAG_MAX_APERTURE:
                         // More relevant info always comes earlier, so only use this field if we don't 
                         // have appropriate aperture information yet.
                         if (!info.containsTag(TAG_FNUMBER)) {
@@ -340,10 +339,10 @@ public class ExifExtractor implements ExifTagValues
                         }
                         break;
 
-                    case TAG_FOCALLENGTH:
+                    case TAG_FOCAL_LENGTH:
                         // Nice digital cameras actually save the focal length as a function
                         // of how far they are zoomed in.
-                        info.setFloat(TAG_FOCALLENGTH, (float)convertNumber(valueOffset, formatCode));
+                        info.setFloat(TAG_FOCAL_LENGTH, (float)convertNumber(valueOffset, formatCode));
                         break;
 
                     case TAG_SUBJECT_DISTANCE:
@@ -352,31 +351,35 @@ public class ExifExtractor implements ExifTagValues
                         info.setFloat(TAG_SUBJECT_DISTANCE, (float)convertNumber(valueOffset, formatCode));
                         break;
 
-                    case TAG_EXPOSURETIME:
+                    case TAG_EXPOSURE_TIME:
                         // Simplest way of expressing exposure time, so I trust it most.
                         // (overwrite previously computd value if there is one)
-                        info.setFloat(TAG_EXPOSURETIME, (float)convertNumber(valueOffset, formatCode));
+                        info.setFloat(TAG_EXPOSURE_TIME, (float)convertNumber(valueOffset, formatCode));
                         break;
 
-                    case TAG_SHUTTERSPEED:
+                    case TAG_SHUTTER_SPEED:
                         // More complicated way of expressing exposure time, so only use
                         // this value if we don't already have it from somewhere else.
-                        if (!info.containsTag(TAG_EXPOSURETIME)) {
-                            info.setFloat(TAG_EXPOSURETIME, (float)(1 / Math.exp(convertNumber(valueOffset, formatCode)*Math.log(2))));
+                        if (!info.containsTag(TAG_EXPOSURE_TIME)) {
+                            info.setFloat(TAG_EXPOSURE_TIME, (float)(1 / Math.exp(convertNumber(valueOffset, formatCode)*Math.log(2))));
                         }
                         break;
 
                     case TAG_FLASH:
+/*
                         if (convertNumber(valueOffset, formatCode)==0) {
                             //info.setFlashUsed(false);
                             info.setBoolean(TAG_FLASH, false);
                         } else {
                             info.setBoolean(TAG_FLASH, true);
                         }
+*/
+                        int val = (int)convertNumber(valueOffset, formatCode);
+                        info.setInt(TAG_FLASH, val);
                         break;
 
-                    case TAG_EXIF_IMAGELENGTH:
-                    case TAG_EXIF_IMAGEWIDTH:
+                    case TAG_EXIF_IMAGE_HEIGHT:
+                    case TAG_EXIF_IMAGE_WIDTH:
                         info.setInt(tagType, (int)convertNumber(valueOffset, formatCode));
                         break;
 /*
@@ -387,7 +390,7 @@ public class ExifExtractor implements ExifTagValues
                     case TAG_FOCALPLANEUNITS:
                         switch((int)convertNumber(valueOffset, formatCode)){
                             case 1: FocalplaneUnits = 25.4; break; // inch
-                            case 2: 
+                            case 2:
                                 // According to the information I was using, 2 means meters.
                                 // But looking at the Cannon powershot's files, inches is the only
                                 // sensible value.
@@ -406,7 +409,7 @@ public class ExifExtractor implements ExifTagValues
                         info.setFloat(tagType, (float)convertNumber(valueOffset, formatCode));
                         break;
 
-                    case TAG_WHITEBALANCE:
+                    case TAG_WHITE_BALANCE:
                     case TAG_METERING_MODE:
                     case TAG_EXPOSURE_PROGRAM:
                     case TAG_COMPRESSION_LEVEL:
@@ -440,6 +443,7 @@ public class ExifExtractor implements ExifTagValues
                             processExifDir(subdirOffset, offsetBase);
                         }
                         continue;
+
                     default:
                         String formattedString = formatNumber(valueOffset, formatCode);
                         if (formattedString!=null) {
@@ -614,7 +618,13 @@ public class ExifExtractor implements ExifTagValues
      */
     private int get16Bits(int pos)
     {
-        return ByteBuffer.wrap(data, pos, 2).order(byteOrder).getShort() & 0xFFFF;
+        if (motorollaByteOrder) {
+            // Motorola big first
+            return (data[pos]<<8&0xFF00) | (data[pos+1]&0xFF);
+        } else {
+            // Intel ordering
+            return (data[pos+1]<<8&0xFF00) | (data[pos]&0xFF);
+        }
     }
 
     /**
@@ -622,11 +632,23 @@ public class ExifExtractor implements ExifTagValues
      */
     private int get32Bits(int pos)
     {
-        return ByteBuffer.wrap(data, pos, 4).order(byteOrder).getInt();
+        if (motorollaByteOrder) {
+            // Motorola big first
+            return (data[pos]<<24&0xFF000000) |
+                    (data[pos+1]<<16&0xFF0000) |
+                    (data[pos+2]<<8&0xFF00) |
+                    (data[pos+3]&0xFF);
+        } else {
+            // Intel ordering
+            return (data[pos+3]<<24&0xFF000000) |
+                    (data[pos+2]<<16&0xFF0000) |
+                    (data[pos+1]<<8&0xFF00) |
+                    (data[pos]&0xFF);
+        }
     }
 
     /**
-     * Command line method, for testing.
+     * Entry point for testing and comand line usage.
      */
     public static void main(String[] args) throws Exception
     {
@@ -645,14 +667,16 @@ public class ExifExtractor implements ExifTagValues
         }
         
         // load the data and extract exif info
-        ExifLoader loader = new ExifLoader();
-        ImageInfo info = loader.getImageInfo(file);
+        ImageInfo info = ExifLoader.getImageInfo(file);
 
         // iterate over the exif data and print to System.out
         Iterator i = info.getTagIterator();
         while (i.hasNext()) {
             int tagType = ((Integer)i.next()).intValue();
-            System.out.println(ImageInfo.getTagName(tagType)+" "+info.getString(tagType));
+            System.out.println(ImageInfo.getTagName(tagType) +
+                               ": " +
+                               info.getDescription(tagType)
+            );
         }
     }
     
@@ -665,6 +689,5 @@ public class ExifExtractor implements ExifTagValues
         System.out.println("\tjava com.drew.imaging.exif.ExifExtractor <filename>");
         System.out.println("\tjava -jar exifExtractor.jar <filename>");
         System.out.println();
-        System.out.println("\tDepending upon which distribution you have.");
     }
 }
