@@ -1,0 +1,86 @@
+v1.2.0
+------------
+
+  ExifExtractor.java
+    - Proper traversing of Exif file structure and complete refactor & tidy of
+      the codebase (a few unnoticed bugs removed)
+    - Reads makernote data for 6 families of camera (5 makes)
+    - Tags now stored in directories... use the IFD_* constants to refer to the
+      image file directory you require (Exif, Interop, GPS and Makernote*) --
+      this avoids collisions where two tags share the same code
+    - No longer decodes image to extract Exif data -- this is much faster
+    - Takes componentCount of unknown tags into account
+    - Now understands GPS tags (thanks to Colin Briton for his help with this)
+    - Returns null when no Exif data present, instead of throwing an exception
+    - Some other bug fixes, pointed out by users around the world.  Thanks!
+
+  ExifLoader
+    - Removed (unnecessary)
+
+  ImageInfo.java
+    - Stored IFD directories in separate tag-spaces
+    - iterator() now returns an Iterator over a list of TagValue objects
+    - More get*Description() methods to detail GPS tags, among others
+
+  TagValue.java
+    - New class to encapsualte information about a particular tag
+
+  Rational.java
+    - Improved toSimpleString() to factor more complex rational numbers into
+      a simpler form
+        i.e.
+          10/15 -> 2/3
+    - toSimpleString() now accepts a boolean flag, 'allowDecimals' which will
+      display the rational number in decimal form if it fits within 5 digits
+        i.e.
+          3/4 -> 0.75 when allowDecimal == true
+
+  JpegSegmentReader
+    - New class to extract APP1 segment (and others) from a Jpeg file -- this
+      avoids decoding images just to get metadata
+
+  tests\*.java
+    - First collection of basic unit tests, to compile against JUnit
+    - Doesn't yet cover all classes
+
+  Website
+    - A collection of JPEGs from various digital camera models, collected on
+      the web and contributed by many users of ExifExtractor
+    - Updated documentation
+
+
+v1.1.1
+------------
+
+  Rational.java
+    - Added toSimpleString() method, which returns a simplified and hopefully
+      more readable version of the Rational
+        i.e.
+          2/10 -> 1/5
+          10/2 -> 5
+
+  ExifExtractor.java
+    - Removed unnecessary casting operations
+    - Added a few more comments
+    - Removed redundant and commented code (I'm using a CVS system now)
+
+  ExifLoader.java
+    - Added a much-needed close() call to a created input stream, allowing
+      continued use of the File object passed to ExifLoader.getImageInfo(File)
+
+  ImageInfo.java
+    - Make use of new Rational method toSimpleString() for more elegant output -
+      Use of DecimalFormatter to tidy output in selected get***Description() methods
+
+v1.1.0
+------------
+
+  - Descriptive tag values, including units and text for enumerations
+  - Decoupling from JDK 1.4-specific libraries (tested with JDK 1.3)
+  - More complete list of tags, both as constants for direct lookup, and via the
+    static lookup method
+
+v1.0
+------------
+
+  - Initial release

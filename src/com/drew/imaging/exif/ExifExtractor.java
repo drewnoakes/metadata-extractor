@@ -25,20 +25,33 @@
  * Modified 04 Aug 2002
  * - Renamed constants to be inline with changes to ExifTagValues interface
  * - Substituted usage of JDK 1.4 features (java.nio package)
+ * Modified 29 Oct 2002 (v1.2)
+ * - Proper traversing of Exif file structure and complete refactor & tidy of
+ *   the codebase (a few unnoticed bugs removed)
+ * - Reads makernote data for 6 families of camera (5 makes)
+ * - Tags now stored in directories... use the IFD_* constants to refer to the
+ *   image file directory you require (Exif, Interop, GPS and Makernote*) --
+ *   this avoids collisions where two tags share the same code
+ * - Takes componentCount of unknown tags into account
+ * - Now understands GPS tags (thanks to Colin Briton for his help with this)
+ * - Some other bug fixes, pointed out by users around the world.  Thanks!
  */
 package com.drew.imaging.exif;
 
-import java.io.*;
+import com.sun.image.codec.jpeg.JPEGDecodeParam;
+import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
+
+import java.io.File;
 import java.util.Iterator;
-import com.sun.image.codec.jpeg.*;
 
 /**
  * Extracts Exif data from a JPEG header segment, providing information about the
- * camera/scanner/capture device (if available).  Information is encapsulated in 
+ * camera/scanner/capture device (if available).  Information is encapsulated in
  * an <code>ImageInfo</code> object.
- * @author  Drew Noakes drew.noakes@drewnoakes.com
+ * @author  Drew Noakes http://drewnoakes.com
  */
-public class ExifExtractor implements ExifTagValues 
+public class ExifExtractor implements ExifTagValues
 {
     /**
      * The JPEG segment as an array of bytes.
@@ -57,27 +70,16 @@ public class ExifExtractor implements ExifTagValues
      * device.
      */
     private ImageInfo info;
-    
-    /**
-     * Flag to dictate the printing of debug messages to <code>System.out</code>.
-     */
-    private static final boolean DEBUG = false;
-    
-    /**
-     * Flag to dictate the printing of extracted image information to
-     * <code>System.out</code>.
-     */
-    private static final boolean PRINT_TAGS = false;
-    
+
     /**
      * The number of bytes used per format descriptor.
      */
-    static int[] bytesPerFormat = {0,1,1,2,4,8,1,1,2,4,8,4,8};
+    static int[] BYTES_PER_FORMAT = {0, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8};
 
     /**
      * The number of formats known.
      */
-    private static final int NUM_FORMATS = 12;
+    private static final int MAX_FORMAT_CODE = 12;
 
     // the format enumeration
     private static final int FMT_BYTE = 1;
@@ -93,11 +95,13 @@ public class ExifExtractor implements ExifTagValues
     private static final int FMT_SINGLE = 11;
     private static final int FMT_DOUBLE = 12;
 
-    /**
-     * Marker variable, potentially used later for help finding start of thumbnail data.
-     */
-    private int lastExifRefd;
-    
+    public static final int TIFF_HEADER_START_OFFSET = 6;
+
+    public ExifExtractor(File file) throws JpegProcessingException
+    {
+        this(new JpegSegmentReader(file).readSegment(JpegSegmentReader.SEGMENT_MARKER_APP1));
+    }
+
     /**
      * Creates an ExifExtractor for the given JPEG header segment.
      */
@@ -112,7 +116,7 @@ public class ExifExtractor implements ExifTagValues
      */
     public ExifExtractor(JPEGDecodeParam param)
     {
-        if (param==null) {
+        if (param == null) {
             throw new IllegalArgumentException("param cannot be null");
         }
 
@@ -120,7 +124,7 @@ public class ExifExtractor implements ExifTagValues
          * because markers can theoretically appear multiple times in the file.
          */
         byte[][] data = param.getMarkerData(JPEGDecodeParam.APP1_MARKER);
-        if (data!=null) {
+        if (data != null) {
             this.data = data[0];
         }
         this.info = new ImageInfo();
@@ -133,353 +137,559 @@ public class ExifExtractor implements ExifTagValues
      */
     public ImageInfo extract() throws ExifProcessingException
     {
-        //double FocalplaneXRes;
-        //double FocalplaneUnits;
-        //int ExifImageWidth;
-        
-        if (data==null) {
-            throw new ExifProcessingException("Image doesn't contain any Exif data");
+        if (data == null) {
+            return null;
         }
-        
+        if (data.length<12)
+        {
+            throw new ExifProcessingException("exif data must contain at least 12 bytes");
+        }
+
         if (!"Exif\0\0".equals(new String(data, 0, 6))) {
-            throw new ExifProcessingException("Exif data segment doesn't being with 'Exif'");
+            throw new ExifProcessingException("Exif data segment doesn't begin with 'Exif'");
         }
-        
-        if (DEBUG) System.out.println("EXIF header is "+data.length+" bytes long");
-        
-        if ("MM".equals(new String(data, 6, 2))) {
-            if (DEBUG) System.out.println("Motorola byte ordering (Big Endian)");
-            //byteOrder = ByteOrder.BIG_ENDIAN;
+
+        String byteOrderIdentifier = new String(data, 6, 2);
+        setByteOrder(byteOrderIdentifier);
+
+        // Check the next two values for correctness.
+        if (get16Bits(8) != 0x2a) {
+            throw new ExifProcessingException("Invalid Exif start.  Should have 0x2A at offset 8 in Exif header.");
+        }
+
+        int firstDirectoryOffset = get32Bits(10) + TIFF_HEADER_START_OFFSET;
+
+        // First directory normally starts 14 bytes in -- presume 0th IFD is Exif type directory
+        processDirectory(IFD_EXIF, firstDirectoryOffset);
+
+        return info;
+    }
+
+    private void setByteOrder(String byteOrderIdentifier) throws ExifProcessingException
+    {
+        if ("MM".equals(byteOrderIdentifier)) {
             motorollaByteOrder = true;
-        } else if ("II".equals(new String(data, 6, 2))) {
-            if (DEBUG) System.out.println("Intel byte ordering (Little Endian)");
-            //byteOrder = ByteOrder.LITTLE_ENDIAN;
+        } else if ("II".equals(byteOrderIdentifier)) {
             motorollaByteOrder = false;
         } else {
             throw new ExifProcessingException("Unclear distinction between Motorola/Intel byte ordering");
         }
-
-        // Check the next two values for correctness.
-        if (get16Bits(8)!=0x2a) {
-            throw new ExifProcessingException("Invalid Exif start (1)");
-        }
-        if (get32Bits(10)!=0x08) {
-            throw new ExifProcessingException("Invalid Exif start (2)");
-        }
-        
-        // First directory starts 14 bytes in.  All offset are relative to 6 bytes in.
-        processExifDir(14, 6);
-        
-        return info;
     }
 
     /**
      * Process one of the nested EXIF directories.
      */
-    private void processExifDir(int dirStartOffset, int offsetBase) throws ExifProcessingException
+    private void processDirectory(int directoryType, int dirStartOffset) throws ExifProcessingException
     {
-        int dirEntryCount = get16Bits(dirStartOffset);
+        // First two bytes in the IFD are the tag count
+        int dirTagCount = get16Bits(dirStartOffset);
 
-        if (DEBUG) System.out.println(dirEntryCount+" dir entries");
-        
-        int dirLength = getDirEntryAddress(dirStartOffset, dirEntryCount);
+        validateDirectoryLength(dirStartOffset);
 
-        if (dirLength+4 > (offsetBase+data.length)) {
-            if (dirLength+2 == offsetBase+data.length || dirLength == offsetBase+data.length) {
-                // Version 1.3 of jhead would truncate a bit too much.
-                // This also caught later on as well.
-            } else {
-                // Note: Files that had thumbnails trimmed with jhead 1.3 or earlier
-                // might trigger this. 
-                throw new ExifProcessingException("Illegally sized directory");
-            }
-        }
-        if (dirLength < lastExifRefd) {
-            lastExifRefd = dirLength;
-        }
-
-        for (int dirEntry=0; dirEntry<dirEntryCount; dirEntry++) {
-            int dirEntryOffset = getDirEntryAddress(dirStartOffset, dirEntry);
+        // Handle each tag in this directory
+        for (int dirEntry = 0; dirEntry < dirTagCount; dirEntry++) {
+            int dirEntryOffset = calculateDirectoryEntryOffset(dirStartOffset, dirEntry);
             int tagType = get16Bits(dirEntryOffset);
-            int formatCode = get16Bits(dirEntryOffset+2);
-            int components = get32Bits(dirEntryOffset+4);
+            int formatCode = get16Bits(dirEntryOffset + 2);
+            validateFormatCode(formatCode);
 
-            if ((formatCode-1) >= NUM_FORMATS) {
-                // (-1) catches illegal zero case as unsigned underflows to positive large.
-                throw new ExifProcessingException("Illegal format code in EXIF dir");
+            // 4 bytes indicating number of formatCode type data for this tag
+            int componentCount = get32Bits(dirEntryOffset + 4);
+            int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
+            int tagValueOffset = calculateTagValueOffset(byteCount, dirEntryOffset);
+
+            // Calculate the value as an offset for cases where the tag is represents directory
+            int subdirOffset = TIFF_HEADER_START_OFFSET + get32Bits(tagValueOffset);
+
+            switch (tagType) {
+                case TAG_EXIF_OFFSET:
+                    processDirectory(IFD_EXIF, subdirOffset);
+                    continue;
+                case TAG_INTEROP_OFFSET:
+                    processDirectory(IFD_INTEROP, subdirOffset);
+                    continue;
+                case TAG_GPS_INFO_OFFSET:
+                    processDirectory(IFD_GPS, subdirOffset);
+                    continue;
+                case TAG_MAKER_NOTE:
+                    processMakerNote(tagValueOffset);
+                    continue;
+                default:
+                    processTag(directoryType, tagType, tagValueOffset, componentCount, formatCode);
+                    break;
             }
+        }
+        // At the end of each IFD is an optional link to the next IFD.  This link is after
+        // the 2-byte tag count, and after 12 bytes for each of these tags, hence
+        int nextDirectoryOffset = get32Bits(dirStartOffset + 2 + 12 * dirTagCount);
+        if (nextDirectoryOffset != 0) {
+            nextDirectoryOffset += TIFF_HEADER_START_OFFSET;
+            if (nextDirectoryOffset >= data.length) {
+                // Note this could have been caused by jhead 1.3 cropping too much
+                throw new ExifProcessingException("Last 4 bytes of IFD reference another IFD with an address that is out of bounds");
+            }
+            // the next directory is of same type as this one
+            processDirectory(directoryType, nextDirectoryOffset);
+        }
+    }
 
-            int byteCount = components * bytesPerFormat[formatCode];
-            int valueOffset;
-            
-            if (byteCount > 4) {
-                // If its bigger than 4 bytes, the dir entry contains an offset.
-                int offsetVal = get32Bits(dirEntryOffset+8);
-                if (offsetVal + byteCount > data.length) {
-                    // Bogus pointer offset and / or bytecount value
-                    throw new ExifProcessingException("Illegal pointer offset value in EXIF");
-                }
-                valueOffset = offsetBase + offsetVal;
+    private void processMakerNote(int subdirOffset) throws ExifProcessingException
+    {
+        String cameraModel = info.getString(IFD_EXIF, TAG_MAKE);
+        if ("OLYMP".equals(new String(data, subdirOffset, 5))) {
+            processDirectory(IFD_MAKERNOTE_OLYPMUS, subdirOffset + 8);
+        } else if ("NIKON".equalsIgnoreCase(cameraModel)) {
+            if ("Nikon".equals(new String(data, subdirOffset, 5))) {
+                processDirectory(IFD_MAKERNOTE_NIKON_TYPE1, subdirOffset + 8);
             } else {
-                // 4 bytes or less and value is in the dir entry itself
-                valueOffset = dirEntryOffset + 8;
+                processDirectory(IFD_MAKERNOTE_NIKON_TYPE2, subdirOffset);
             }
-            
-            if (lastExifRefd < valueOffset+byteCount){
-                // Keep track of last byte in the exif header that was actually referenced.
-                // That way, we know where the discardable thumbnail data begins.
-                lastExifRefd = valueOffset+byteCount;
-            }
-            
-            // Print tag details to the console, if flagged to do so
-            if (PRINT_TAGS) {
-                switch(formatCode) {
-                    case FMT_UNDEFINED:
-                        // Undefined is typically an ASCII string
-                    case FMT_STRING:
-                        // String arrays printed without function call (different from int arrays)
-                        boolean printing = true;
-                        System.out.print(Integer.toHexString(tagType)+" "+ImageInfo.getTagName(tagType)+" ");
-                        System.out.print("\"");
-                        for (int i=0; i<byteCount; i++) {
-                            char c = (char)data[valueOffset+i];
-                            if (c>=32 && c<=127) {
-                                System.out.print(c);
-                                printing = true;
-                            } else if (c=='\0') {
-                                break;
-                            } else if (printing) {
-                                // Avoiding indicating too many unprintable characters of proprietary
-                                // bits of binary information this program may know how to parse.
-                                System.out.print('?');
-                                printing = false;
-                            }
-                        }
-                        System.out.println("\" ");
-                        break;
+        } else if ("Canon".equalsIgnoreCase(cameraModel)) {
+            processDirectory(IFD_MAKERNOTE_CANON, subdirOffset);
+        } else if ("Casio".equalsIgnoreCase(cameraModel)) {
+            processDirectory(IFD_MAKERNOTE_CASIO, subdirOffset);
+        } else if ("FUJIFILM".equals(new String(data, subdirOffset, 8)) || "Fujifilm".equalsIgnoreCase(cameraModel)) {
+            boolean byteOrderBefore = motorollaByteOrder;
+            // bug in fujifilm makernote ifd means we temporarily use Intel byte ordering
+            motorollaByteOrder = false;
+            // the 4 bytes after "FUJIFILM" in the makernote point to the start of the makernote
+            // IFD, though the offset is relative to the start of the makernote, not the TIFF
+            // header (like everywhere else)
+            int ifdStart = subdirOffset + get32Bits(subdirOffset + 8);
+            processDirectory(IFD_MAKERNOTE_FUJIFILM, ifdStart);
+            motorollaByteOrder = byteOrderBefore;
+        }
+    }
 
-                    default:
-                        // Handle arrays of numbers later (will there ever be?)
-                        String formatted = formatNumber(valueOffset, formatCode);
-                        System.out.print(Integer.toHexString(tagType)+" "+ImageInfo.getTagName(tagType)+" ");
-                        System.out.println(formatted);
-                        break;
+    private void validateDirectoryLength(int dirStartOffset) throws ExifProcessingException
+    {
+        int dirTagCount = get16Bits(dirStartOffset);
+        int dirLength = (2 + (12 * dirTagCount) + 4);
+        if (dirLength + dirStartOffset + TIFF_HEADER_START_OFFSET >= data.length) {
+            // Note: Files that had thumbnails trimmed with jhead 1.3 or earlier might trigger this.
+            throw new ExifProcessingException("Illegally sized directory");
+        }
+    }
+
+    private void processTag(int directoryType, int tagType, int tagValueOffset, int componentCount, int formatCode) throws ExifProcessingException
+    {
+        // If the format is rational, give it priority and treat it uniquely...
+        if (componentCount == 1 && (formatCode == FMT_SRATIONAL || formatCode == FMT_URATIONAL)) {
+            info.setRational(directoryType, tagType, get32Bits(tagValueOffset), get32Bits(tagValueOffset + 4));
+            return;
+        }
+
+        switch (directoryType) {
+            case IFD_EXIF:
+                processExifTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_GPS:
+                processGpsTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_INTEROP:
+                processInteropTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_MAKERNOTE_OLYPMUS:
+                processOlympusMakernoteTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_MAKERNOTE_CANON:
+                processCanonMakernoteTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_MAKERNOTE_NIKON_TYPE1:
+                processNikonType1MakernoteTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_MAKERNOTE_NIKON_TYPE2:
+                processNikonType2MakernoteTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_MAKERNOTE_CASIO:
+                processCasioMakernoteTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            case IFD_MAKERNOTE_FUJIFILM:
+                processFujifilmMakernoteTag(tagType, tagValueOffset, componentCount, formatCode);
+                break;
+            default:
+                throw new ExifProcessingException("Unknown directory type: " + Integer.toHexString(directoryType));
+        }
+
+    }
+
+    private void processFujifilmMakernoteTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_MAKERNOTE_FUJIFILM, tagType, formattedString);
                 }
-            }
-            
-            // Extract useful components of tag
-            // If the format is rational, give it priority and treat it uniquely...
-            if (formatCode==FMT_SRATIONAL || formatCode==FMT_URATIONAL) {
-                info.setRational(tagType, get32Bits(valueOffset), get32Bits(valueOffset+4));
-            } else {
-                switch (tagType) {
-                    case TAG_MAKE:
-                        info.setString(TAG_MAKE, readString(valueOffset, 31));
-                        break;
+                break;
+        }
+    }
 
-                    case TAG_MODEL:
-                        info.setString(TAG_MODEL, readString(valueOffset, 39));
-                        break;
-
-                    case TAG_DATETIME_ORIGINAL:
-                        info.setString(TAG_DATETIME_ORIGINAL, readString(valueOffset, 19));
-                        break;
-
-                    case TAG_USER_COMMENT:
-                        // Olympus has this padded with trailing spaces.  Remove these first.
-                        for (int i=byteCount; i>0; i--) {
-                            if (data[valueOffset+i] == ' ') {
-                                data[valueOffset+i] = (byte)'\0';
-                            } else {
-                                break;
-                            }
-                        }
-
-                        // Copy the comment
-                        if ("ASCII".equals(new String(data, valueOffset, 5))) {
-                            for (int i=5; i<10; i++) {
-                                byte b = data[valueOffset+i];
-                                if (b!='\0' && b!=' ') {
-                                    info.setString(TAG_USER_COMMENT, readString(valueOffset+i, 199));
-                                    break;
-                                }
-                            }
-                        } else {
-                            info.setString(TAG_USER_COMMENT, readString(valueOffset, 199));
-                        }
-                        break;
-
-                    // This value is usually Rational, so is handled above... however for completeness
-                    // this is included
-                    case TAG_X_RESOLUTION:
-                    case TAG_Y_RESOLUTION:
-                        info.setDouble(tagType, convertNumber(valueOffset, formatCode));
-                        break;
-
-                    case TAG_RESOLUTION_UNIT:
-                    case TAG_ORIENTATION:
-                    case TAG_YCBCR_POSITIONING:
-                        info.setInt(tagType, (int)data[valueOffset]);
-                        break;
-
-                    case TAG_FNUMBER:
-                        // Simplest way of expressing aperture, so I trust it the most.
-                        // (overwrite previously computed value if there is one)
-                        //info.setApertureFNumber((float)convertNumber(valueOffset, formatCode));
-                        info.setFloat(TAG_FNUMBER, (float)convertNumber(valueOffset, formatCode));
-                        break;
-
-                    case TAG_APERTURE:
-                    case TAG_MAX_APERTURE:
-                        // More relevant info always comes earlier, so only use this field if we don't 
-                        // have appropriate aperture information yet.
-                        if (!info.containsTag(TAG_FNUMBER)) {
-                            //info.setApertureFNumber((float)Math.exp(convertNumber(valueOffset, formatCode)*Math.log(2)*0.5));
-                            info.setFloat(TAG_FNUMBER, (float)Math.exp(convertNumber(valueOffset, formatCode)*Math.log(2)*0.5));
-                        }
-                        break;
-
-                    case TAG_FOCAL_LENGTH:
-                        // Nice digital cameras actually save the focal length as a function
-                        // of how far they are zoomed in.
-                        info.setFloat(TAG_FOCAL_LENGTH, (float)convertNumber(valueOffset, formatCode));
-                        break;
-
-                    case TAG_SUBJECT_DISTANCE:
-                        // Inidcates the distance the autofocus camera is focused to.
-                        // Tends to be less accurate as distance increases.
-                        info.setFloat(TAG_SUBJECT_DISTANCE, (float)convertNumber(valueOffset, formatCode));
-                        break;
-
-                    case TAG_EXPOSURE_TIME:
-                        // Simplest way of expressing exposure time, so I trust it most.
-                        // (overwrite previously computd value if there is one)
-                        info.setFloat(TAG_EXPOSURE_TIME, (float)convertNumber(valueOffset, formatCode));
-                        break;
-
-                    case TAG_SHUTTER_SPEED:
-                        // More complicated way of expressing exposure time, so only use
-                        // this value if we don't already have it from somewhere else.
-                        if (!info.containsTag(TAG_EXPOSURE_TIME)) {
-                            info.setFloat(TAG_EXPOSURE_TIME, (float)(1 / Math.exp(convertNumber(valueOffset, formatCode)*Math.log(2))));
-                        }
-                        break;
-
-                    case TAG_FLASH:
-/*
-                        if (convertNumber(valueOffset, formatCode)==0) {
-                            //info.setFlashUsed(false);
-                            info.setBoolean(TAG_FLASH, false);
-                        } else {
-                            info.setBoolean(TAG_FLASH, true);
-                        }
-*/
-                        int val = (int)convertNumber(valueOffset, formatCode);
-                        info.setInt(TAG_FLASH, val);
-                        break;
-
-                    case TAG_EXIF_IMAGE_HEIGHT:
-                    case TAG_EXIF_IMAGE_WIDTH:
-                        info.setInt(tagType, (int)convertNumber(valueOffset, formatCode));
-                        break;
-/*
-                    case TAG_FOCALPLANEXRES:
-                        FocalplaneXRes = convertNumber(valueOffset, formatCode);
-                        break;
-
-                    case TAG_FOCALPLANEUNITS:
-                        switch((int)convertNumber(valueOffset, formatCode)){
-                            case 1: FocalplaneUnits = 25.4; break; // inch
-                            case 2:
-                                // According to the information I was using, 2 means meters.
-                                // But looking at the Cannon powershot's files, inches is the only
-                                // sensible value.
-                                FocalplaneUnits = 25.4;
-                                break;
-
-                            case 3: FocalplaneUnits = 10;   break;  // centimeter
-                            case 4: FocalplaneUnits = 1;    break;  // milimeter
-                            case 5: FocalplaneUnits = .001; break;  // micrometer
-                        }
-                        break;
-*/
-                    // Remaining cases contributed to jhead by: Volker C. Schoech (schoech@gmx.de)
-
-                    case TAG_EXPOSURE_BIAS:
-                        info.setFloat(tagType, (float)convertNumber(valueOffset, formatCode));
-                        break;
-
-                    case TAG_WHITE_BALANCE:
-                    case TAG_METERING_MODE:
-                    case TAG_EXPOSURE_PROGRAM:
-                    case TAG_COMPRESSION_LEVEL:
-                        info.setInt(tagType, (int)convertNumber(valueOffset, formatCode));
-                        break;
-
-                    case TAG_ISO_EQUIVALENT:
-                        int isoEquiv = (int)convertNumber(valueOffset, formatCode);
-                        if (isoEquiv < 50) {
-                            isoEquiv *= 200;
-                        }
-                        info.setInt(tagType, isoEquiv);
-                        break;
-
-    /*
-                    case TAG_THUMBNAIL_OFFSET:
-                        ThumbnailOffset = (unsigned)convertNumber(valueOffset, formatCode);
-                        DirWithThumbnailPtrs = DirStart;
-                        break;
-
-                    case TAG_THUMBNAIL_LENGTH:
-                        ThumbnailSize = (unsigned)convertNumber(valueOffset, formatCode);
-                        break;
-    */
-                    case TAG_EXIF_OFFSET:
-                    case TAG_INTEROP_OFFSET:
-                        int subdirOffset = offsetBase + get32Bits(valueOffset);
-                        if (subdirOffset < offsetBase || subdirOffset > offsetBase+data.length) {
-                            throw new ExifProcessingException("Illegal subdirectory link 1");
-                        } else {
-                            processExifDir(subdirOffset, offsetBase);
-                        }
-                        continue;
-
-                    default:
-                        String formattedString = formatNumber(valueOffset, formatCode);
-                        if (formattedString!=null) {
-                            info.setString(tagType, formattedString);
-                        }
-                        break;
+    private void processCasioMakernoteTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_MAKERNOTE_CASIO, tagType, formattedString);
                 }
-            }
-            
-            /* In addition to linking to subdirectories via exif tags, there's also a
-             * potential link to another directory at the end of each directory.
-             */
-            if (getDirEntryAddress(dirStartOffset, dirEntryCount) + 4 <= offsetBase+data.length){
-                int offset = get32Bits(dirStartOffset+2+12*dirEntryCount);
-                if (offset!=0) {
-                    int subdirOffset = offsetBase + offset;
-                    if (subdirOffset > offsetBase+data.length){
-                        if (subdirOffset < offsetBase+data.length+20){
-                            /* Jhead 1.3 or earlier would crop the whole directory!
-                             * As Jhead produces this form of format incorrectness, 
-                             * I'll just let it pass silently
-                             */
-                            if (PRINT_TAGS) System.out.println("Thumbnail removed with Jhead 1.3 or earlier\n");
-                        } else {
-                            throw new ExifProcessingException("Illegal subdirectory link 2");
-                        }
+                break;
+        }
+    }
+
+    private void processNikonType1MakernoteTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_MAKERNOTE_NIKON_TYPE1, tagType, formattedString);
+                }
+                break;
+        }
+    }
+
+    private void processNikonType2MakernoteTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_MAKERNOTE_NIKON_TYPE2, tagType, formattedString);
+                }
+                break;
+        }
+    }
+
+    private void processCanonMakernoteTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            // Both of these camera states contain loads of information, masked into the individual bits of the tags
+            // To extract these, can either define new tags and store them here, or work out the retrieval from the
+            // ImageInfo side
+            case TAG_CANON_CAMERA_STATE_1:
+            case TAG_CANON_CAMERA_STATE_2:
+                int makernoteByteCount = data[tagValueOffset];
+                info.setString(IFD_MAKERNOTE_CANON, tagType, new String(data, tagValueOffset, makernoteByteCount));
+                break;
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_MAKERNOTE_CANON, tagType, formattedString);
+                }
+                break;
+        }
+    }
+
+    private void processOlympusMakernoteTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            case TAG_OLYMPUS_SPECIAL_MODE:
+                int mode = (int)convertTagToNumber(tagValueOffset, formatCode);
+                int sequenceNumber = (int)convertTagToNumber(tagValueOffset + BYTES_PER_FORMAT[formatCode], formatCode);
+                int panoramaDirection = (int)convertTagToNumber(tagValueOffset + (BYTES_PER_FORMAT[formatCode] * 2), formatCode);
+                StringBuffer specialModeStr = new StringBuffer();
+                switch (mode) {
+                    case 0:
+                        specialModeStr.append("Normal mode");
+                    case 1:
+                        specialModeStr.append("Unknown mode");
+                    case 2:
+                        specialModeStr.append("Fast mode");
+                    case 3:
+                        specialModeStr.append("Panorama mode");
+                }
+                specialModeStr.append(", " + sequenceNumber + " in sequence");
+                switch (panoramaDirection) {
+                    case 1:
+                        specialModeStr.append(", panorama direction left to right");
+                    case 2:
+                        specialModeStr.append(", panorama direction right to left");
+                    case 3:
+                        specialModeStr.append(", panorama direction bottom to top");
+                    case 4:
+                        specialModeStr.append(", panorama direction top to bottom");
+                }
+                info.setString(IFD_MAKERNOTE_OLYPMUS, tagType, specialModeStr.toString());
+                break;
+
+            case TAG_OLYMPUS_CAMERA_ID:
+                info.setString(IFD_MAKERNOTE_OLYPMUS, tagType, readString(tagValueOffset, 32));
+                break;
+
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_MAKERNOTE_OLYPMUS, tagType, formattedString);
+                }
+                break;
+        }
+    }
+
+    private void processExifTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            case TAG_MAKE:
+                info.setString(IFD_EXIF, tagType, readString(tagValueOffset, 31));
+                break;
+
+            case TAG_MODEL:
+                info.setString(IFD_EXIF, tagType, readString(tagValueOffset, 39));
+                break;
+
+            case TAG_DATETIME_ORIGINAL:
+                info.setString(IFD_EXIF, tagType, readString(tagValueOffset, 19));
+                break;
+
+            case TAG_USER_COMMENT:
+                // Olympus has this padded with trailing spaces.  Remove these first.
+                // ArrayIndexOutOfBoundsException bug fixed by Hendrik Wördehoff - 20 Sep 2002
+                int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
+                for (int i = byteCount - 1; i >= 0; i--) {
+                    if (data[tagValueOffset + i] == ' ') {
+                        data[tagValueOffset + i] = (byte)'\0';
                     } else {
-                        if (subdirOffset <= offsetBase+data.length) {
-                            processExifDir(subdirOffset, offsetBase);
-                        }
+                        break;
                     }
                 }
-            } else {
-                // The exif header ends before the last next directory pointer.
-            }        
-        
+                // Copy the comment
+                if ("ASCII".equals(new String(data, tagValueOffset, 5))) {
+                    for (int i = 5; i < 10; i++) {
+                        byte b = data[tagValueOffset + i];
+                        if (b != '\0' && b != ' ') {
+                            info.setString(IFD_EXIF, TAG_USER_COMMENT, readString(tagValueOffset + i, 199));
+                            break;
+                        }
+                    }
+                } else {
+                    info.setString(IFD_EXIF, TAG_USER_COMMENT, readString(tagValueOffset, 199));
+                }
+                break;
+
+                // This value is usually Rational, so is handled above... however for completeness
+                // this is included
+            case TAG_X_RESOLUTION:
+            case TAG_Y_RESOLUTION:
+                info.setDouble(IFD_EXIF, tagType, convertTagToNumber(tagValueOffset, formatCode));
+                break;
+
+                // More relevant info always comes earlier, so only use this field if we don't
+                // have appropriate aperture information yet.
+            case TAG_APERTURE:
+            case TAG_MAX_APERTURE:
+                if (!info.containsTag(IFD_EXIF, TAG_FNUMBER)) {
+                    info.setFloat(IFD_EXIF, TAG_FNUMBER, (float)Math.exp(convertTagToNumber(tagValueOffset, formatCode) * Math.log(2) * 0.5));
+                }
+                break;
+
+                // Simplest way of expressing exposure time, so I trust it most (overwrite previously computd value if there is one)
+            case TAG_EXPOSURE_TIME:
+                // Indicates the distance the autofocus camera is focused to.  Tends to be less accurate as distance increases.
+            case TAG_SUBJECT_DISTANCE:
+                // Nice digital cameras actually save the focal length as a function of how far they are zoomed in.
+            case TAG_FOCAL_LENGTH:
+                // Simplest way of expressing aperture, so I trust it the most. (overwrite previously computed value if there is one)
+            case TAG_FNUMBER:
+            case TAG_EXPOSURE_BIAS:
+                info.setFloat(IFD_EXIF, tagType, (float)convertTagToNumber(tagValueOffset, formatCode));
+                break;
+
+                // More complicated way of expressing exposure time, so only use this value if we don't already have it from somewhere else.
+            case TAG_SHUTTER_SPEED:
+                if (!info.containsTag(IFD_EXIF, TAG_EXPOSURE_TIME)) {
+                    info.setFloat(IFD_EXIF, TAG_EXPOSURE_TIME, (float)(1 / Math.exp(convertTagToNumber(tagValueOffset, formatCode) * Math.log(2))));
+                }
+                break;
+
+            case TAG_RESOLUTION_UNIT:
+            case TAG_ORIENTATION:
+            case TAG_PLANAR_CONFIGURATION:
+            case TAG_SAMPLES_PER_PIXEL:
+            case TAG_FLASH:
+            case TAG_EXIF_IMAGE_HEIGHT:
+            case TAG_EXIF_IMAGE_WIDTH:
+            case TAG_WHITE_BALANCE:
+            case TAG_METERING_MODE:
+            case TAG_EXPOSURE_PROGRAM:
+            case TAG_COMPRESSION_LEVEL:
+            case TAG_YCBCR_POSITIONING:
+                info.setInt(IFD_EXIF, tagType, (int)convertTagToNumber(tagValueOffset, formatCode));
+                break;
+
+            case TAG_FLASHPIX_VERSION:
+            case TAG_EXIF_VERSION:
+                info.setString(IFD_EXIF, tagType, convertBytesToVersionString(tagValueOffset));
+                break;
+
+            case TAG_YCBCR_SUBSAMPLING:
+                int position1 = (int)convertTagToNumber(tagValueOffset, formatCode);
+                int position2 = (int)convertTagToNumber(tagValueOffset + BYTES_PER_FORMAT[formatCode], formatCode);
+                String positioning;
+                if (position1 == 2 && position2 == 1) {
+                    positioning = "YCbCr4:2:2";
+                } else if (position1 == 2 && position2 == 2) {
+                    positioning = "YCbCr4:2:0";
+                } else {
+                    positioning = "(Unknown)";
+                }
+                info.setString(IFD_EXIF, tagType, positioning);
+                break;
+
+            case TAG_ISO_EQUIVALENT:
+                int isoEquiv = (int)convertTagToNumber(tagValueOffset, formatCode);
+                if (isoEquiv < 50) {
+                    isoEquiv *= 200;
+                }
+                info.setInt(IFD_EXIF, tagType, isoEquiv);
+                break;
+
+            case TAG_REFERENCE_BLACK_WHITE:
+                int blackR = (int)convertTagToNumber(tagValueOffset, formatCode);
+                int whiteR = (int)convertTagToNumber((tagValueOffset + 8), formatCode);
+                int blackG = (int)convertTagToNumber((tagValueOffset + 16), formatCode);
+                int whiteG = (int)convertTagToNumber((tagValueOffset + 24), formatCode);
+                int blackB = (int)convertTagToNumber((tagValueOffset + 32), formatCode);
+                int whiteB = (int)convertTagToNumber((tagValueOffset + 40), formatCode);
+                String pos = "[" + blackR + "," + blackG + "," + blackB + "] " +
+                        "[" + whiteR + "," + whiteG + "," + whiteB + "]";
+                info.setString(IFD_EXIF, tagType, pos);
+                break;
+
+            case TAG_BITS_PER_SAMPLE:
+                info.setString(IFD_EXIF, tagType, convertTagToString(tagValueOffset, formatCode, componentCount));
+                break;
+
+            case TAG_COMPONENTS_CONFIGURATION:
+                String[] components = {"", "Y", "Cb", "Cr", "R", "G", "B"};
+                StringBuffer componentConfig = new StringBuffer();
+                for (int i = 0; i < 4; i++) {
+                    int j = data[tagValueOffset + i];
+                    if (j > 0 && j < components.length) {
+                        componentConfig.append(components[j]);
+                    }
+                }
+                info.setString(IFD_EXIF, tagType, componentConfig.toString());
+                break;
+
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_EXIF, tagType, formattedString);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Takes a series of 4 bytes from the specified offset, and converts these to a
+     * well-known version number, where possible.  For example, (hex) 30 32 31 30 == 2.10).
+     * @param tagValueOffset the offset at which the first version byte exists
+     * @return the version as a string of form 2.10
+     */
+    private String convertBytesToVersionString(int tagValueOffset)
+    {
+        StringBuffer version = new StringBuffer();
+        for (int i = 0; i < 4; i++) {
+            if (i == 2) version.append('.');
+            String digit = new String(data, tagValueOffset + i, 1);
+            if (i == 0 && "0".equals(digit)) continue;
+            version.append(digit);
+        }
+        return version.toString();
+    }
+
+    private void processGpsTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            case TAG_GPS_VERSION_ID:
+                info.setString(IFD_GPS, tagType, convertTagToString(tagValueOffset, formatCode, componentCount));
+//                // need to move to read the 4 seperate bytes to make format 2.x.x.x
+//                String IDformattedString = String.valueOf(get32Bits(tagValueOffset));
+//                if (IDformattedString != null) {
+//                    info.setString(IFD_GPS, tagType, IDformattedString);
+//                }
+                break;
+
+                // ASCII
+            case TAG_GPS_SPEED_REF:
+            case TAG_GPS_MEASURE_MODE:
+            case TAG_GPS_LONGITUDE_REF:
+            case TAG_GPS_TRACK_REF:
+            case TAG_GPS_LATITUDE_REF:
+            case TAG_GPS_STATUS:
+            case TAG_GPS_IMG_DIRECTION_REF:
+            case TAG_GPS_DEST_LATITUDE_REF:
+            case TAG_GPS_DEST_LONGITUDE_REF:
+            case TAG_GPS_DEST_BEARING_REF:
+            case TAG_GPS_DEST_DISTANCE_REF:
+                info.setString(IFD_GPS, tagType, readString(tagValueOffset, componentCount));
+                break;
+
+                // three rational numbers -- displayed in H"MM"SS.ss
+            case TAG_GPS_LONGITUDE:
+            case TAG_GPS_LATITUDE:
+                int deg = (int)convertTagToNumber(tagValueOffset, formatCode);
+                float min = (float)convertTagToNumber((tagValueOffset + 8), formatCode);
+                float sec = (float)convertTagToNumber((tagValueOffset + 16), formatCode);
+                String pos = String.valueOf(deg) + "\"" + String.valueOf(min) + "'" + String.valueOf(sec);
+                info.setString(IFD_GPS, tagType, pos);
+                break;
+
+                // time in hour, min, sec
+            case TAG_GPS_TIME_STAMP:
+                String gpsTime = String.valueOf(get32Bits(tagValueOffset)) + ":" + String.valueOf(get32Bits(tagValueOffset + 8)) + ":" + String.valueOf(get32Bits(tagValueOffset + 16)) + " UTC";
+                info.setString(IFD_GPS, tagType, gpsTime);
+                break;
+
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_GPS, tagType, formattedString);
+                }
+                break;
+        }
+    }
+
+    private void processInteropTag(int tagType, int tagValueOffset, int componentCount, int formatCode)
+    {
+        switch (tagType) {
+            case TAG_INTEROP_VERSION:
+                info.setString(IFD_INTEROP, tagType, convertBytesToVersionString(tagValueOffset));
+                break;
+            default:
+                String formattedString = convertTagToString(tagValueOffset, formatCode, componentCount);
+                if (formattedString != null) {
+                    info.setString(IFD_INTEROP, tagType, formattedString);
+                }
+                break;
+        }
+    }
+
+    private int calculateTagValueOffset(int byteCount, int dirEntryOffset) throws ExifProcessingException
+    {
+        if (byteCount > 4) {
+            // If its bigger than 4 bytes, the dir entry contains an offset.
+            int offsetVal = get32Bits(dirEntryOffset + 8);
+            if (offsetVal + byteCount > data.length) {
+                // Bogus pointer offset and / or bytecount value
+                throw new ExifProcessingException("Illegal pointer offset value in EXIF");
+            }
+            return TIFF_HEADER_START_OFFSET + offsetVal;
+        } else {
+            // 4 bytes or less and value is in the dir entry itself
+            return dirEntryOffset + 8;
+        }
+    }
+
+    /**
+     * Throws an exception if the format code is out of bounds.
+     * @param formatCode the format code
+     * @throws ExifProcessingException is the format code is out of bounds
+     */
+    private void validateFormatCode(int formatCode) throws ExifProcessingException
+    {
+        if (formatCode < 0 || formatCode > MAX_FORMAT_CODE) {
+            throw new ExifProcessingException("Illegal format code in EXIF dir");
         }
     }
 
@@ -490,66 +700,63 @@ public class ExifExtractor implements ExifTagValues
     private String readString(int offset, int maxLength)
     {
         int length = 0;
-        while (data[offset+length]!='\0' && length<maxLength) {
+        while (data[offset + length] != '\0' && length < maxLength) {
             length++;
         }
         return new String(data, offset, length);
     }
-    
+
     /**
-     * Fashions the value at the given offset into String format, assuming the
+     * Fashions the value at the given tagValueOffset into String format, assuming the
      * provided format code.
      * <p>
-     * Format codes are <code>FMT_BYTE</code>, <code>FMT_URATIONAL</code>, <code>FMT_DOUBLE</code>,
-     * etc...
+     * Format codes are <code>FMT_BYTE</code>, <code>FMT_URATIONAL</code>,
+     * <code>FMT_DOUBLE</code>, etc...
      */
-    private String formatNumber(int offset, int formatCode)
+    private String convertTagToString(int tagValueOffset, int formatCode, int componentCount)
     {
+        // strings are an exception among format codes
+        if (formatCode == FMT_STRING) {
+            return readString(tagValueOffset, componentCount);
+        }
+
+        // concat componentCount instances of data formatted accordingly
         StringBuffer sbuff = new StringBuffer();
-        switch (formatCode) {
-            case FMT_SBYTE:
-            case FMT_BYTE:
-//              sbuff.append("%02x ",*(uchar *)ValuePtr);             
-                sbuff.append(data[offset]);             
-                break;
-            case FMT_USHORT:    
-//              sbuff.append("%d\n",Get16u(ValuePtr));                
-                sbuff.append(get16Bits(offset));                
-                break;
-            case FMT_ULONG:     
-            case FMT_SLONG:     
-//              sbuff.append("%d\n",Get32s(ValuePtr));                
-                sbuff.append(get32Bits(offset));                
-                break;
-            case FMT_SSHORT:    
-//              sbuff.append("%hd\n",(signed short)Get16u(ValuePtr)); 
-                sbuff.append((short)get16Bits(offset)); 
-                break;
-            case FMT_URATIONAL:
-            case FMT_SRATIONAL: 
-//             sbuff.append("%d/%d\n",Get32s(ValuePtr), Get32s(4+(char *)ValuePtr)); 
-               sbuff.append(get32Bits(offset)+"/"+get32Bits(offset+4)); 
-               break;
-            case FMT_SINGLE:    
-//              sbuff.append("%f\n",(double)*(float *)ValuePtr);   
-                sbuff.append((double)data[offset] );
-                break;
-            case FMT_DOUBLE:    
-//              printf("%f\n",*(double *)ValuePtr);          
-                sbuff.append((double)data[offset]);          
-                break;
-            case FMT_STRING:    
-                sbuff.append(readString(offset, 255));
-                break;
-            default: 
-//              sbuff.append("Unknown format "+formatCode);
-//              break;
-                // this format code is screwey... simply return null and we'll deal with presentation elsewhere
-                return null;
+        for (int i = 0; i < componentCount; i++) {
+            if (i > 0) sbuff.append(' ');
+            int offsetShift = BYTES_PER_FORMAT[formatCode] * i;
+//          sbuff.append(convertTagToNumber(tagValueOffset + offsetShift, formatCode));
+            switch (formatCode) {
+                case FMT_SBYTE:
+                case FMT_BYTE:
+                case FMT_UNDEFINED:
+                    sbuff.append(data[tagValueOffset + offsetShift]);
+                    break;
+                case FMT_SSHORT:
+                case FMT_USHORT:
+                    sbuff.append(get16Bits(tagValueOffset + offsetShift));
+                    break;
+                case FMT_ULONG:
+                case FMT_SLONG:
+                    sbuff.append(get32Bits(tagValueOffset + offsetShift));
+                    break;
+                case FMT_URATIONAL:
+                case FMT_SRATIONAL:
+                    sbuff.append(get32Bits(tagValueOffset + offsetShift) + "/" + get32Bits(tagValueOffset + 4 + offsetShift));
+                    break;
+                case FMT_SINGLE:
+                case FMT_DOUBLE:
+                    sbuff.append((double)data[tagValueOffset + offsetShift]);
+                    break;
+                default:
+                    // this format code is screwey... simply return null and deal with
+                    // presentation elsewhere
+                    return null;
+            }
         }
         return sbuff.toString();
     }
-    
+
     /**
      * Evaluates the value at the given offset, assuming the provided format code.  Values are
      * returned as <code>double</code> primitives, which should be cast to the desired type.
@@ -557,93 +764,86 @@ public class ExifExtractor implements ExifTagValues
      * Format codes are <code>FMT_BYTE</code>, <code>FMT_URATIONAL</code>, <code>FMT_DOUBLE</code>,
      * etc...
      */
-    private double convertNumber(int offset, int formatCode)
+    private double convertTagToNumber(int offset, int formatCode)
     {
         double value = 0;
-
         switch (formatCode) {
-            case FMT_SBYTE:     
-                value = data[offset];  
+            case FMT_SBYTE:
+            case FMT_BYTE:
+            case FMT_SINGLE:
+            case FMT_DOUBLE:
+                value = data[offset];
                 break;
-            case FMT_BYTE:      
-                value = (char)data[offset];        
-                break;
-
             case FMT_USHORT:
-                value = get16Bits(offset);          
+            case FMT_SSHORT:
+                value = get16Bits(offset);
                 break;
-            case FMT_ULONG:     
-                value = get32Bits(offset);          
+            case FMT_SLONG:
+            case FMT_ULONG:
+                value = get32Bits(offset);
                 break;
-
             case FMT_URATIONAL:
-            case FMT_SRATIONAL: 
+            case FMT_SRATIONAL:
                 int numerator = get32Bits(offset);
-                int denominator = get32Bits(offset+4);
-                if (denominator==0) {
+                int denominator = get32Bits(offset + 4);
+                if (denominator == 0) {
                     value = 0;
                 } else {
-                    value = (double)numerator/(double)denominator;
+                    value = (double)numerator / (double)denominator;
                 }
-                break;
-
-            case FMT_SSHORT:    
-                value = get16Bits(offset);          
-                break;
-            case FMT_SLONG:     
-                value = get32Bits(offset);          
-                break;
-
-            // Not sure if this is correct (never seen float used in Exif format)
-            case FMT_SINGLE:    
-                value = (double)data[offset];      
-                break;
-            case FMT_DOUBLE:    
-                value = (double)data[offset];    
                 break;
         }
         return value;
     }
-    
+
     /**
-     * Simple formula to get a given directory's entry address.
+     * Determine the offset at which a given InteropArray entry begins within the specified IFD.
+     * @param ifdStartOffset the offset at which the IFD starts
+     * @param entryNumber the zero-based entry number
      */
-    private int getDirEntryAddress(int start, int entry)
+    private int calculateDirectoryEntryOffset(int ifdStartOffset, int entryNumber)
     {
-        return (start+2+12*(entry));
+        return (ifdStartOffset + 2 + (12 * entryNumber));
     }
-    
+
     /**
-     * Get a 16 bit value from file's native byte order.  Between 0x0000 and 0xFFFF
+     * Get a 16 bit value from file's native byte order.  Between 0x0000 and 0xFFFF.
      */
-    private int get16Bits(int pos)
+    private int get16Bits(int offset)
     {
+        if (offset < 0 || offset >= data.length) {
+            throw new ArrayIndexOutOfBoundsException("attempt to read data outside of exif segment (index " + offset + " where max index is " + (data.length - 1) + ")");
+        }
         if (motorollaByteOrder) {
             // Motorola big first
-            return (data[pos]<<8&0xFF00) | (data[pos+1]&0xFF);
+            return (data[offset] << 8 & 0xFF00) | (data[offset + 1] & 0xFF);
         } else {
             // Intel ordering
-            return (data[pos+1]<<8&0xFF00) | (data[pos]&0xFF);
+            return (data[offset + 1] << 8 & 0xFF00) | (data[offset] & 0xFF);
         }
     }
 
     /**
      * Get a 32 bit value from file's native byte order.
      */
-    private int get32Bits(int pos)
+    private int get32Bits(int offset)
     {
+        if (offset < 0 || offset >= data.length) {
+            throw new ArrayIndexOutOfBoundsException("attempt to read data outside of exif segment (index " + offset + " where max index is " + (data.length - 1) + ")");
+        }
+        // TODO report this bug in IntelliJ -- 0xFF000000 too large ???
         if (motorollaByteOrder) {
             // Motorola big first
-            return (data[pos]<<24&0xFF000000) |
-                    (data[pos+1]<<16&0xFF0000) |
-                    (data[pos+2]<<8&0xFF00) |
-                    (data[pos+3]&0xFF);
+            return (data[offset] << 24 & 0xFF000000) |
+                    (data[offset + 1] << 16 & 0xFF0000) |
+                    (data[offset + 2] << 8 & 0xFF00) |
+                    (data[offset + 3] & 0xFF);
         } else {
             // Intel ordering
-            return (data[pos+3]<<24&0xFF000000) |
-                    (data[pos+2]<<16&0xFF0000) |
-                    (data[pos+1]<<8&0xFF00) |
-                    (data[pos]&0xFF);
+            return (data[offset + 3] << 24 & 0xFF000000) |
+                    (data[offset + 2] << 16 & 0xFF0000) |
+                    (data[offset + 1] << 8 & 0xFF00) |
+                    (data[offset] & 0xFF);
         }
     }
 
@@ -653,7 +853,7 @@ public class ExifExtractor implements ExifTagValues
     public static void main(String[] args) throws Exception
     {
         // expecting one argument exactly
-        if (args.length!=1) {
+        if (args.length != 1) {
             printUsage();
             System.exit(1);
         }
@@ -665,21 +865,16 @@ public class ExifExtractor implements ExifTagValues
             printUsage();
             System.exit(1);
         }
-        
         // load the data and extract exif info
-        ImageInfo info = ExifLoader.getImageInfo(file);
-
+        ImageInfo info = new ExifExtractor(file).extract();
         // iterate over the exif data and print to System.out
         Iterator i = info.getTagIterator();
         while (i.hasNext()) {
-            int tagType = ((Integer)i.next()).intValue();
-            System.out.println(ImageInfo.getTagName(tagType) +
-                               ": " +
-                               info.getDescription(tagType)
-            );
+            TagValue tag = (TagValue)i.next();
+            System.out.println(tag.getDirectoryName() + " " + tag.getTagTypeHex() + " " + tag.getTagName() + " " + tag.getDescription());
         }
     }
-    
+
     /**
      * Prints an explanatory message describing usage to the console.
      */

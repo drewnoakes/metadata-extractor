@@ -27,11 +27,20 @@ package com.drew.imaging.exif;
 /**
  * Interface of constant values defining 32-bit tag values for each type of
  * data described in the Exif header.
- * <p>
- * @author Drew Noakes drew.noakes@drewnoakes.com
+ * @author  Drew Noakes http://drewnoakes.com
  */
 public interface ExifTagValues
 {
+    public static final int IFD_EXIF = 0x8769;
+    public static final int IFD_GPS = 0x8825;
+    public static final int IFD_INTEROP = 0xA005;
+    public static final int IFD_MAKERNOTE_OLYPMUS = 0xFFF0;
+    public static final int IFD_MAKERNOTE_CANON = 0xFFF1;
+    public static final int IFD_MAKERNOTE_NIKON_TYPE1 = 0xFFF2;
+    public static final int IFD_MAKERNOTE_NIKON_TYPE2 = 0xFFF3;
+    public static final int IFD_MAKERNOTE_CASIO = 0xFFF4;
+    public static final int IFD_MAKERNOTE_FUJIFILM = 0xFFF5;
+
     public static final int TAG_INTEROP_INDEX = 0x0001;
     public static final int TAG_INTEROP_VERSION = 0x0002;
     public static final int TAG_RELATED_IMAGE_FILE_FORMAT = 0x1000;
@@ -261,34 +270,36 @@ public interface ExifTagValues
     public static final int TAG_OLYMPUS_CAMERA_ID = 0x0209;
     public static final int TAG_OLYMPUS_DATA_DUMP = 0x0F00;
 
-    public static final int TAG_NIKON_ESERIES_UNKNOWN_1 = 0x0002;
-    public static final int TAG_NIKON_ESERIES_QUALITY = 0x0003;
-    public static final int TAG_NIKON_ESERIES_COLOR_MODE = 0x0004;
-    public static final int TAG_NIKON_ESERIES_IMAGE_ADJUSTMENT = 0x0005;
-    public static final int TAG_NIKON_ESERIES_CCD_SENSITIVITY = 0x0006;
-    public static final int TAG_NIKON_ESERIES_WHITE_BALANCE = 0x0007;
-    public static final int TAG_NIKON_ESERIES_FOCUS = 0x0008;
-    public static final int TAG_NIKON_ESERIES_UNKNOWN_2 = 0x0009;
-    public static final int TAG_NIKON_ESERIES_DIGITAL_ZOOM = 0x000A;
-    public static final int TAG_NIKON_ESERIES_FISHEYE_CONVERTER = 0x000B;
-    public static final int TAG_NIKON_ESERIES_UNKNOWN_3 = 0x0F00;
+    // TYPE1 is for E-Series cameras prior to (not including) E990
+    public static final int TAG_NIKON_TYPE1_UNKNOWN_1 = 0x0002;
+    public static final int TAG_NIKON_TYPE1_QUALITY = 0x0003;
+    public static final int TAG_NIKON_TYPE1_COLOR_MODE = 0x0004;
+    public static final int TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT = 0x0005;
+    public static final int TAG_NIKON_TYPE1_CCD_SENSITIVITY = 0x0006;
+    public static final int TAG_NIKON_TYPE1_WHITE_BALANCE = 0x0007;
+    public static final int TAG_NIKON_TYPE1_FOCUS = 0x0008;
+    public static final int TAG_NIKON_TYPE1_UNKNOWN_2 = 0x0009;
+    public static final int TAG_NIKON_TYPE1_DIGITAL_ZOOM = 0x000A;
+    public static final int TAG_NIKON_TYPE1_FISHEYE_CONVERTER = 0x000B;
+    public static final int TAG_NIKON_TYPE1_UNKNOWN_3 = 0x0F00;
 
-    public static final int TAG_NIKON_D1_UNKNOWN_1 = 0x0001;
-    public static final int TAG_NIKON_D1_ISO_SETTING = 0x0002;
-    public static final int TAG_NIKON_D1_COLOR_MODE = 0x0003;
-    public static final int TAG_NIKON_D1_QUALITY = 0x0004;
-    public static final int TAG_NIKON_D1_WHITE_BALANCE = 0x0005;
-    public static final int TAG_NIKON_D1_IMAGE_SHARPENING = 0x0006;
-    public static final int TAG_NIKON_D1_FOCUS_MODE = 0x0007;
-    public static final int TAG_NIKON_D1_FLASH_SETTING = 0x0008;
-    public static final int TAG_NIKON_D1_UNKNOWN_2 = 0x000A;
-    public static final int TAG_NIKON_D1_ISO_SELECTION = 0x000F;
-    public static final int TAG_NIKON_D1_IMAGE_ADJUSTMENT = 0x0080;
-    public static final int TAG_NIKON_D1_ADAPTER = 0x0082;
-    public static final int TAG_NIKON_D1_MANUAL_FOCUS_DISTANCE = 0x0085;
-    public static final int TAG_NIKON_D1_DIGITAL_ZOOM = 0x0086;
-    public static final int TAG_NIKON_D1_AF_FOCUS_POSITION = 0x0088;
-    public static final int TAG_NIKON_D1_DATA_DUMP = 0x0010;
+    // TYPE2 is for E990, D1 and later
+    public static final int TAG_NIKON_TYPE2_UNKNOWN_1 = 0x0001;
+    public static final int TAG_NIKON_TYPE2_ISO_SETTING = 0x0002;
+    public static final int TAG_NIKON_TYPE2_COLOR_MODE = 0x0003;
+    public static final int TAG_NIKON_TYPE2_QUALITY = 0x0004;
+    public static final int TAG_NIKON_TYPE2_WHITE_BALANCE = 0x0005;
+    public static final int TAG_NIKON_TYPE2_IMAGE_SHARPENING = 0x0006;
+    public static final int TAG_NIKON_TYPE2_FOCUS_MODE = 0x0007;
+    public static final int TAG_NIKON_TYPE2_FLASH_SETTING = 0x0008;
+    public static final int TAG_NIKON_TYPE2_UNKNOWN_2 = 0x000A;
+    public static final int TAG_NIKON_TYPE2_ISO_SELECTION = 0x000F;
+    public static final int TAG_NIKON_TYPE2_IMAGE_ADJUSTMENT = 0x0080;
+    public static final int TAG_NIKON_TYPE2_ADAPTER = 0x0082;
+    public static final int TAG_NIKON_TYPE2_MANUAL_FOCUS_DISTANCE = 0x0085;
+    public static final int TAG_NIKON_TYPE2_DIGITAL_ZOOM = 0x0086;
+    public static final int TAG_NIKON_TYPE2_AF_FOCUS_POSITION = 0x0088;
+    public static final int TAG_NIKON_TYPE2_DATA_DUMP = 0x0010;
 
     public static final int TAG_CASIO_RECORDING_MODE = 0x0001;
     public static final int TAG_CASIO_QUALITY = 0x0002;
@@ -331,10 +342,72 @@ public interface ExifTagValues
     public static final int TAG_FUJIFILM_AE_WARNING = 0x1302;
 
     // CANON cameras have some funny bespoke fields that need further processing...
+    public static final int TAG_CANON_CAMERA_STATE_1 = 0x0001;
+    public static final int TAG_CANON_CAMERA_STATE_2 = 0x0004;
     public static final int TAG_CANON_IMAGE_TYPE = 0x0006;
     public static final int TAG_CANON_FIRMWARE_VERSION = 0x0007;
     public static final int TAG_CANON_IMAGE_NUMBER = 0x0008;
     public static final int TAG_CANON_OWNER_NAME = 0x0009;
     public static final int TAG_CANON_UNKNOWN_1 = 0x000D;
     public static final int TAG_CANON_CUSTOM_FUNCTIONS = 0x000F;
+
+    // GPS Tags added by Colin Britton
+
+    //GPS_VERSION_ID = 0x0;	GPS tag version GPSVersionID 0 0 BYTE 4
+    //GPS_LATITUDE_REF = 0x1;	North or South Latitude GPSLatitudeRef 1 1 ASCII 2
+    //GPS_LATITUDE = 0x2;	Latitude GPSLatitude 2 2 RATIONAL 3
+    //GPS_LONGITUDE_REF = 0x3;	East or West Longitude GPSLongitudeRef 3 3 ASCII 2
+    //GPS_LONGITUDE = 0x4;	Longitude GPSLongitude 4 4 RATIONAL 3
+    //GPS_ALTITUDE_REF = 0x5;	Altitude reference GPSAltitudeRef 5 5 BYTE 1
+    //GPS_ALTITUDE = 0x6;	Altitude GPSAltitude 6 6 RATIONAL 1
+    //GPS_TIME_STAMP = 0x7;	GPS time (atomic clock) GPSTimeStamp 7 7 RATIONAL 3
+    //GPS_SATELLITES = 0x8;	GPS satellites used for measurement GPSSatellites 8 8 ASCII Any
+    //GPS_STATUS = 0x9;	GPS receiver status GPSStatus 9 9 ASCII 2
+    //GPS_MEASURE_MODE = 0x10;	GPS measurement mode GPSMeasureMode 10 A ASCII 2
+    //GPS_DOP = 0x11;	Measurement precision GPSDOP 11 B RATIONAL 1
+    //GPS_SPEED_REF = 0x12;	Speed unit GPSSpeedRef 12 C ASCII 2
+    //GPS_SPEED = 0x13;	Speed of GPS receiver GPSSpeed 13 D RATIONAL 1
+    //GPS_TRACK_REF = 0x14;	Reference for direction of movement GPSTrackRef 14 E ASCII 2
+    //GPS_TRACK = 0x15;	Direction of movement GPSTrack 15 F RATIONAL 1
+    //GPS_IMG_DIRECTION_REF = 0x16;	Reference for direction of image GPSImgDirectionRef 16 10 ASCII 2
+    //GPS_IMG_DIRECTION = 0x17;	Direction of image GPSImgDirection 17 11 RATIONAL 1
+    //GPS_MAP_DATUM = 0x18;	Geodetic survey data used GPSMapDatum 18 12 ASCII Any
+    //GPS_DEST_LATITUDE_REF = 0x19;	Reference for latitude of destination GPSDestLatitudeRef 19 13 ASCII 2
+    //GPS_DEST_LATITUDE = 0x20;	Latitude of destination GPSDestLatitude 20 14 RATIONAL 3
+    //GPS_DEST_LONGITUDE_REF = 0x21;	Reference for longitude of destination GPSDestLongitudeRef 21 15 ASCII 2
+    //GPS_DEST_LONGITUDE = 0x22;	Longitude of destination GPSDestLongitude 22 16 RATIONAL 3
+    //GPS_DEST_BEARING_REF = 0x23;	Reference for bearing of destination GPSDestBearingRef 23 17 ASCII 2
+    //GPS_DEST_BEARING = 0x24;	Bearing of destination GPSDestBearing 24 18 RATIONAL 1
+    //GPS_DEST_DISTANCE_REF = 0x25;	Reference for distance to destination GPSDestDistanceRef 25 19 ASCII 2
+    //GPS_DEST_DISTANCE = 0x26;	Distance to destination GPSDestDistance 26 1A RATIONAL 1
+
+    public static final int TAG_GPS_INFO_OFFSET = 0x8825;
+
+    public static final int TAG_GPS_VERSION_ID = 0x0000;
+    public static final int TAG_GPS_LATITUDE_REF = 0x0001;
+    public static final int TAG_GPS_LATITUDE = 0x0002;
+    public static final int TAG_GPS_LONGITUDE_REF = 0x0003;
+    public static final int TAG_GPS_LONGITUDE = 0x0004;
+    public static final int TAG_GPS_ALTITUDE_REF = 0x0005;
+    public static final int TAG_GPS_ALTITUDE = 0x0006;
+    public static final int TAG_GPS_TIME_STAMP = 0x0007;
+    public static final int TAG_GPS_SATELLITES = 0x0008;
+    public static final int TAG_GPS_STATUS = 0x0009;
+    public static final int TAG_GPS_MEASURE_MODE = 0x000A;
+    public static final int TAG_GPS_DOP = 0x000B;
+    public static final int TAG_GPS_SPEED_REF = 0x000C;
+    public static final int TAG_GPS_SPEED = 0x000D;
+    public static final int TAG_GPS_TRACK_REF = 0x000E;
+    public static final int TAG_GPS_TRACK = 0x000F;
+    public static final int TAG_GPS_IMG_DIRECTION_REF = 0x0010;
+    public static final int TAG_GPS_IMG_DIRECTION = 0x0011;
+    public static final int TAG_GPS_MAP_DATUM = 0x0012;
+    public static final int TAG_GPS_DEST_LATITUDE_REF = 0x0013;
+    public static final int TAG_GPS_DEST_LATITUDE = 0x0014;
+    public static final int TAG_GPS_DEST_LONGITUDE_REF = 0x0015;
+    public static final int TAG_GPS_DEST_LONGITUDE = 0x0016;
+    public static final int TAG_GPS_DEST_BEARING_REF = 0x0017;
+    public static final int TAG_GPS_DEST_BEARING = 0x0018;
+    public static final int TAG_GPS_DEST_DISTANCE_REF = 0x0019;
+    public static final int TAG_GPS_DEST_DISTANCE = 0x001A;
 }
