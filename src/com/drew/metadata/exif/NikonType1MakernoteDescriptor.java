@@ -9,7 +9,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * There are 2 formats of Nikon's MakerNote. MakerNote of E700/E800/E900/E900S/E910/E950
+ * There are 3 formats of Nikon's MakerNote. MakerNote of E700/E800/E900/E900S/E910/E950
  * starts from ASCII string "Nikon". Data format is the same as IFD, but it starts from
  * offset 0x08. This is the same as Olympus except start string. Example of actual data
  * structure is shown below.

@@ -20,7 +20,7 @@ public class DefaultTagDescriptor extends TagDescriptor
         return "Unknown tag 0x" + hex;
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    public String getDescription(int tagType)
     {
         return _directory.getString(tagType);
     }

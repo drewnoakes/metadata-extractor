@@ -5,10 +5,13 @@ package com.drew.metadata;
 
 import com.drew.lang.Rational;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
-import java.util.*;
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Base class for all Metadata directory types with supporting methods for setting and
@@ -96,7 +99,7 @@ public abstract class Directory implements Serializable
      */
     public void setDescriptor(TagDescriptor descriptor)
     {
-        if (descriptor == null) {
+        if (descriptor==null) {
             throw new NullPointerException("cannot set a null descriptor");
         }
         _descriptor = descriptor;
@@ -112,7 +115,7 @@ public abstract class Directory implements Serializable
 
     public boolean hasErrors()
     {
-        return (_errorList!=null && _errorList.size() > 0);
+        return (_errorList!=null && _errorList.size()>0);
     }
 
     public Iterator getErrors()
@@ -134,7 +137,7 @@ public abstract class Directory implements Serializable
      */
     public void setInt(int tagType, int value)
     {
-        addObject(tagType, new Integer(value));
+        setObject(tagType, new Integer(value));
     }
 
     /**
@@ -144,7 +147,7 @@ public abstract class Directory implements Serializable
      */
     public void setDouble(int tagType, double value)
     {
-        addObject(tagType, new Double(value));
+        setObject(tagType, new Double(value));
     }
 
     /**
@@ -154,7 +157,7 @@ public abstract class Directory implements Serializable
      */
     public void setFloat(int tagType, float value)
     {
-        addObject(tagType, new Float(value));
+        setObject(tagType, new Float(value));
     }
 
     /**
@@ -164,7 +167,7 @@ public abstract class Directory implements Serializable
      */
     public void setString(int tagType, String value)
     {
-        addObject(tagType, value);
+        setObject(tagType, value);
     }
 
     /**
@@ -174,7 +177,7 @@ public abstract class Directory implements Serializable
      */
     public void setBoolean(int tagType, boolean value)
     {
-        addObject(tagType, new Boolean(value));
+        setObject(tagType, new Boolean(value));
     }
 
     /**
@@ -184,7 +187,7 @@ public abstract class Directory implements Serializable
      */
     public void setLong(int tagType, long value)
     {
-        addObject(tagType, new Long(value));
+        setObject(tagType, new Long(value));
     }
 
     /**
@@ -194,7 +197,7 @@ public abstract class Directory implements Serializable
      */
     public void setDate(int tagType, java.util.Date value)
     {
-        addObject(tagType, value);
+        setObject(tagType, value);
     }
 
     /**
@@ -204,7 +207,7 @@ public abstract class Directory implements Serializable
      */
     public void setRational(int tagType, Rational rational)
     {
-        addObject(tagType, rational);
+        setObject(tagType, rational);
     }
 
     /**
@@ -214,7 +217,7 @@ public abstract class Directory implements Serializable
      */
     public void setRationalArray(int tagType, Rational[] rationals)
     {
-        addObjectArray(tagType, rationals);
+        setObjectArray(tagType, rationals);
     }
 
     /**
@@ -224,7 +227,7 @@ public abstract class Directory implements Serializable
      */
     public void setIntArray(int tagType, int[] ints)
     {
-        addObjectArray(tagType, ints);
+        setObjectArray(tagType, ints);
     }
 
     /**
@@ -234,7 +237,7 @@ public abstract class Directory implements Serializable
      */
     public void setByteArray(int tagType, byte[] bytes)
     {
-        addObjectArray(tagType, bytes);
+        setObjectArray(tagType, bytes);
     }
 
     /**
@@ -244,7 +247,7 @@ public abstract class Directory implements Serializable
      */
     public void setStringArray(int tagType, String[] strings)
     {
-        addObjectArray(tagType, strings);
+        setObjectArray(tagType, strings);
     }
 
     /**
@@ -254,11 +257,12 @@ public abstract class Directory implements Serializable
      * @param value the value for the specified tag
      * @throws NullPointerException if value is <code>null</code>
      */
-    private void addObject(int tagType, Object value)
+    public void setObject(int tagType, Object value)
     {
-        if (value == null) {
+        if (value==null) {
             throw new NullPointerException("cannot set a null object");
         }
+
         Integer key = new Integer(tagType);
         if (!_tagMap.containsKey(key)) {
             _definedTagList.add(new Tag(tagType, this));
@@ -272,10 +276,10 @@ public abstract class Directory implements Serializable
      * @param tagType the tag's value as an int
      * @param array the array of values for the specified tag
      */
-    private void addObjectArray(int tagType, Object array)
+    public void setObjectArray(int tagType, Object array)
     {
         // for now, we don't do anything special -- this method might be a candidate for removal once the dust settles
-        addObject(tagType, array);
+        setObject(tagType, array);
     }
 
 // TAG GETTERS
@@ -286,7 +290,7 @@ public abstract class Directory implements Serializable
     public int getInt(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof String) {
             try {
@@ -295,7 +299,7 @@ public abstract class Directory implements Serializable
                 // convert the char array to an int
                 String s = (String)o;
                 int val = 0;
-                for (int i = s.length() - 1; i >= 0; i--) {
+                for (int i = s.length() - 1; i>=0; i--) {
                     val += s.charAt(i) << (i * 8);
                 }
                 return val;
@@ -317,7 +321,7 @@ public abstract class Directory implements Serializable
     public String[] getStringArray(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof String[]) {
             return (String[])o;
@@ -327,21 +331,21 @@ public abstract class Directory implements Serializable
         } else if (o instanceof int[]) {
             int[] ints = (int[])o;
             String[] strings = new String[ints.length];
-            for (int i = 0; i < strings.length; i++) {
+            for (int i = 0; i<strings.length; i++) {
                 strings[i] = Integer.toString(ints[i]);
             }
             return strings;
         } else if (o instanceof byte[]) {
             byte[] bytes = (byte[])o;
             String[] strings = new String[bytes.length];
-            for (int i = 0; i < strings.length; i++) {
+            for (int i = 0; i<strings.length; i++) {
                 strings[i] = Byte.toString(bytes[i]);
             }
             return strings;
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             String[] strings = new String[rationals.length];
-            for (int i = 0; i < strings.length; i++) {
+            for (int i = 0; i<strings.length; i++) {
                 strings[i] = rationals[i].toSimpleString(false);
             }
             return strings;
@@ -360,12 +364,12 @@ public abstract class Directory implements Serializable
     public int[] getIntArray(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             int[] ints = new int[rationals.length];
-            for (int i = 0; i < ints.length; i++) {
+            for (int i = 0; i<ints.length; i++) {
                 ints[i] = rationals[i].intValue();
             }
             return ints;
@@ -374,7 +378,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof byte[]) {
             byte[] bytes = (byte[])o;
             int[] ints = new int[bytes.length];
-            for (int i = 0; i < bytes.length; i++) {
+            for (int i = 0; i<bytes.length; i++) {
                 byte b = bytes[i];
                 ints[i] = b;
             }
@@ -382,7 +386,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof String) {
             String str = (String)o;
             int[] ints = new int[str.length()];
-            for (int i = 0; i < str.length(); i++) {
+            for (int i = 0; i<str.length(); i++) {
                 ints[i] = str.charAt(i);
             }
             return ints;
@@ -401,12 +405,12 @@ public abstract class Directory implements Serializable
     public byte[] getByteArray(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             byte[] bytes = new byte[rationals.length];
-            for (int i = 0; i < bytes.length; i++) {
+            for (int i = 0; i<bytes.length; i++) {
                 bytes[i] = rationals[i].byteValue();
             }
             return bytes;
@@ -415,14 +419,14 @@ public abstract class Directory implements Serializable
         } else if (o instanceof int[]) {
             int[] ints = (int[])o;
             byte[] bytes = new byte[ints.length];
-            for (int i = 0; i < ints.length; i++) {
+            for (int i = 0; i<ints.length; i++) {
                 bytes[i] = (byte)ints[i];
             }
             return bytes;
         } else if (o instanceof String) {
             String str = (String)o;
             byte[] bytes = new byte[str.length()];
-            for (int i = 0; i < str.length(); i++) {
+            for (int i = 0; i<str.length(); i++) {
                 bytes[i] = (byte)str.charAt(i);
             }
             return bytes;
@@ -436,7 +440,7 @@ public abstract class Directory implements Serializable
     public double getDouble(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof String) {
             try {
@@ -456,7 +460,7 @@ public abstract class Directory implements Serializable
     public float getFloat(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof String) {
             try {
@@ -476,7 +480,7 @@ public abstract class Directory implements Serializable
     public long getLong(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof String) {
             try {
@@ -496,7 +500,7 @@ public abstract class Directory implements Serializable
     public boolean getBoolean(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof Boolean) {
             return ((Boolean)o).booleanValue();
@@ -507,7 +511,7 @@ public abstract class Directory implements Serializable
                 throw new MetadataException("unable to parse string " + o + " as a boolean", nfe);
             }
         } else if (o instanceof Number) {
-            return (((Number)o).doubleValue() != 0);
+            return (((Number)o).doubleValue()!=0);
         }
         throw new MetadataException("Requested tag cannot be cast to boolean");
     }
@@ -518,18 +522,21 @@ public abstract class Directory implements Serializable
     public java.util.Date getDate(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof java.util.Date) {
             return (java.util.Date)o;
         } else if (o instanceof String) {
+            // add new dateformat strings to make this method even smarter
+            // so far, this seems to cover all known date strings
+            // (for example, AM and PM strings are not supported...)
             String datePatterns[] = {
-                "yyyy:MM:dd hh:mm:ss",
-                "yyyy:MM:dd hh:mm",
-                "yyyy-MM-dd hh:mm:ss",
-                "yyyy-MM-dd hh:mm"}; // Try these patterns. Add new to make this method even smarter
+                "yyyy:MM:dd HH:mm:ss",
+                "yyyy:MM:dd HH:mm",
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd HH:mm"};
             String dateString = (String)o;
-            for (int i = 0; i < datePatterns.length; i++) {
+            for (int i = 0; i<datePatterns.length; i++) {
                 try {
                     DateFormat parser = new java.text.SimpleDateFormat(datePatterns[i]);
                     return parser.parse(dateString);
@@ -547,7 +554,7 @@ public abstract class Directory implements Serializable
     public Rational getRational(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof Rational) {
             return (Rational)o;
@@ -558,7 +565,7 @@ public abstract class Directory implements Serializable
     public Rational[] getRationalArray(int tagType) throws MetadataException
     {
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof Rational[]) {
             return (Rational[])o;
@@ -567,26 +574,26 @@ public abstract class Directory implements Serializable
     }
 
     /**
-     * Returns the specified tag's value as a String.  In many cases, more
-     * presentable values will be obtained from getDescription(int).
+     * Returns the specified tag's value as a String.  This value is the 'raw' value.  A more presentable decoding
+     * of this value may be obtained from the corresponding Descriptor.
      * @return the String reprensentation of the tag's value, or
      *         <code>null</code> if the tag hasn't been defined.
      */
     public String getString(int tagType)
     {
-        // TODO handle types other than Rational[], Object[] and int[] here...
         Object o = getObject(tagType);
-        if (o == null) {
+        if (o==null) {
             return null;
         } else if (o instanceof Rational) {
             return ((Rational)o).toSimpleString(true);
         } else if (o.getClass().isArray()) {
+            // handle arrays of objects and primitives
             int arrayLength = Array.getLength(o);
             // determine if this is an array of objects i.e. [Lcom.drew.blah
             boolean isObjectArray = o.getClass().toString().startsWith("class [L");
             StringBuffer sbuffer = new StringBuffer();
-            for (int i = 0; i < arrayLength; i++) {
-                if (i != 0) {
+            for (int i = 0; i<arrayLength; i++) {
+                if (i!=0) {
                     sbuffer.append(' ');
                 }
                 if (isObjectArray) {
@@ -624,7 +631,7 @@ public abstract class Directory implements Serializable
         HashMap nameMap = getTagNameMap();
         if (!nameMap.containsKey(key)) {
             String hex = Integer.toHexString(tagType);
-            while (hex.length() < 4) {
+            while (hex.length()<4) {
                 hex = "0" + hex;
             }
             return "Unknown tag (0x" + hex + ")";
@@ -642,9 +649,10 @@ public abstract class Directory implements Serializable
      */
     public String getDescription(int tagType) throws MetadataException
     {
-        if (_descriptor == null) {
+        if (_descriptor==null) {
             throw new MetadataException("a descriptor must be set using setDescriptor(...) before descriptions can be provided");
         }
+
         return _descriptor.getDescription(tagType);
     }
 }

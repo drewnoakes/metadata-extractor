@@ -134,6 +134,11 @@ public class CanonMakernoteDirectory extends Directory
         return tagNameMap;
     }
 
+    /**
+     * We need special handling for selected tags.
+     * @param tagType
+     * @param ints
+     */
     public void setIntArray(int tagType, int[] ints)
     {
         if (tagType == TAG_CANON_CAMERA_STATE_1) {

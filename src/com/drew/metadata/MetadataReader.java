@@ -8,7 +8,7 @@ package com.drew.metadata;
  */
 public interface MetadataReader
 {
-    public Metadata extract() throws MetadataException;
+    public Metadata extract();
 
-    public Metadata extract(Metadata metadata) throws MetadataException;
+    public Metadata extract(Metadata metadata);
 }

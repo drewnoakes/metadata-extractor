@@ -13,8 +13,6 @@ import com.drew.metadata.TagDescriptor;
  */
 public class NikonType2MakernoteDescriptor extends TagDescriptor
 {
-    // TODO test this with an image from the Nikon D1 or similar
-
     public NikonType2MakernoteDescriptor(Directory directory)
     {
         super(directory);

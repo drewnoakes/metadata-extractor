@@ -22,7 +22,7 @@ public class DirectoryTest extends TestCase
     public void testSetAndGetInt() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(DirectoryImpl.class);
+        Directory directory = metadata.getDirectory(MockDirectory.class);
         int value = 321;
         int tagType = 123;
         directory.setInt(tagType, value);
@@ -33,7 +33,7 @@ public class DirectoryTest extends TestCase
     public void testSetAndGetIntArray() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(DirectoryImpl.class);
+        Directory directory = metadata.getDirectory(MockDirectory.class);
         int[] inputValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         int tagType = 123;
         directory.setIntArray(tagType, inputValues);
@@ -59,7 +59,7 @@ public class DirectoryTest extends TestCase
     public void testSetStringAndGetDate() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(DirectoryImpl.class);
+        Directory directory = metadata.getDirectory(MockDirectory.class);
         String date1 = "2002:01:30 24:59:59";
         String date2 = "2002:01:30 24:59";
         String date3 = "2002-01-30 24:59:59";
@@ -78,7 +78,7 @@ public class DirectoryTest extends TestCase
     public void testSetIntArrayGetByteArray() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(DirectoryImpl.class);
+        Directory directory = metadata.getDirectory(MockDirectory.class);
         int[] ints = {1, 2, 3, 4, 5};
         directory.setIntArray(1, ints);
         assertEquals(ints.length, directory.getByteArray(1).length);
@@ -88,7 +88,7 @@ public class DirectoryTest extends TestCase
     public void testSetStringGetInt() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(DirectoryImpl.class);
+        Directory directory = metadata.getDirectory(MockDirectory.class);
         byte[] bytes = {0x01, 0x01};
         directory.setString(1, new String(bytes));
         assertEquals(0x0101, directory.getInt(1));

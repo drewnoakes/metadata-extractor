@@ -4,7 +4,6 @@
 package com.drew.metadata.iptc;
 
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -17,7 +16,7 @@ public class IptcDescriptor extends TagDescriptor
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    public String getDescription(int tagType)
     {
         return _directory.getString(tagType);
     }

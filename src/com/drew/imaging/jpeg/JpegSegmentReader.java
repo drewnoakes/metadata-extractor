@@ -37,12 +37,12 @@ public class JpegSegmentReader
     /**
      * Jpeg file.
      */
-    private File _file;
+    private final File _file;
 
     /**
      * Jpeg data as byte array.
      */
-    private byte[] _data;
+    private final byte[] _data;
 
     /**
      * Jpeg data as an InputStream.
@@ -55,12 +55,12 @@ public class JpegSegmentReader
      * Private, because this segment crashes my algorithm, and searching for
      * it doesn't work (yet).
      */
-    private static byte SEGMENT_SOS = (byte)0xDA;
+    private static final byte SEGMENT_SOS = (byte)0xDA;
 
     /**
      * Private, because one wouldn't search for it.
      */
-    private static byte MARKER_EOI = (byte)0xD9;
+    private static final byte MARKER_EOI = (byte)0xD9;
 
     /** APP0 Jpeg segment identifier -- Jfif data. */
     public static final byte SEGMENT_APP0 = (byte)0xE0;
@@ -103,15 +103,18 @@ public class JpegSegmentReader
     public static final byte SEGMENT_DHT = (byte)0xC4;
     /** Start-of-Frame Zero segment identifier. */
     public static final byte SEGMENT_SOF0 = (byte)0xC0;
+    /** Comment segment identifier */
+    public static final byte SEGMENT_COM = (byte)0xFE;
 
     /**
      * Creates a JpegSegmentReader for a specific file.
      * @param file the Jpeg file to read segments from
      */
-    public JpegSegmentReader(File file) throws FileNotFoundException, JpegProcessingException
+    public JpegSegmentReader(File file) throws JpegProcessingException
     {
         _file = file;
         _data = null;
+
         readSegments();
     }
 
@@ -122,6 +125,7 @@ public class JpegSegmentReader
     public JpegSegmentReader(byte[] fileContents) throws JpegProcessingException {
         _file = null;
         _data = fileContents;
+
         readSegments();
     }
 
@@ -129,6 +133,7 @@ public class JpegSegmentReader
         _stream = in;
         _file = null;
         _data = null;
+        
         readSegments();
     }
 
@@ -154,7 +159,7 @@ public class JpegSegmentReader
      * @throws JpegProcessingException for any problems processing the Jpeg data,
      *         including inner IOExceptions
      */
-    public byte[] readSegment(byte segmentMarker, int occurrence) throws JpegProcessingException
+    public byte[] readSegment(byte segmentMarker, int occurrence)
     {
         Byte key = new Byte(segmentMarker);
         if (_segmentDataMap.containsKey(key)) {
@@ -168,9 +173,9 @@ public class JpegSegmentReader
         }
     }
 
-    public int getSegmentCount(byte segmentMarker)
+    public final int getSegmentCount(byte segmentMarker)
     {
-        List segmentList = (List)_segmentDataMap.get(new Byte(segmentMarker));
+        final List segmentList = (List)_segmentDataMap.get(new Byte(segmentMarker));
         if (segmentList==null) {
             return 0;
         }

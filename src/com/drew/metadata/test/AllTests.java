@@ -25,13 +25,14 @@ package com.drew.metadata.test;
 import com.drew.imaging.jpeg.test.JpegMetadataReaderTest;
 import com.drew.imaging.jpeg.test.JpegSegmentReaderTest;
 import com.drew.lang.test.CompoundExceptionTest;
-import com.drew.lang.test.RationalTest;
 import com.drew.lang.test.NullOutputStreamTest;
-import com.drew.metadata.exif.test.ExifDirectoryTest;
-import com.drew.metadata.exif.test.ExifProcessorTest;
+import com.drew.lang.test.RationalTest;
+import com.drew.metadata.exif.test.*;
 import com.drew.metadata.iptc.test.IptcReaderTest;
-import com.drew.metadata.test.DirectoryTest;
-import com.drew.metadata.test.MetadataTest;
+import com.drew.metadata.jpeg.test.JpegComponentTest;
+import com.drew.metadata.jpeg.test.JpegDescriptorTest;
+import com.drew.metadata.jpeg.test.JpegDirectoryTest;
+import com.drew.metadata.jpeg.test.JpegReaderTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -44,16 +45,28 @@ public class AllTests extends TestSuite
     public static Test suite()
     {
         TestSuite suite = new TestSuite();
-        suite.addTestSuite(CompoundExceptionTest.class);
+
         suite.addTestSuite(DirectoryTest.class);
         suite.addTestSuite(ExifDirectoryTest.class);
-        suite.addTestSuite(ExifProcessorTest.class);
+        suite.addTestSuite(ExifReaderTest.class);
+        suite.addTestSuite(ExifDescriptorTest.class);
         suite.addTestSuite(IptcReaderTest.class);
-        suite.addTestSuite(JpegMetadataReaderTest.class);
-        suite.addTestSuite(JpegSegmentReaderTest.class);
         suite.addTestSuite(MetadataTest.class);
+        suite.addTestSuite(JpegReaderTest.class);
+        suite.addTestSuite(JpegDirectoryTest.class);
+        suite.addTestSuite(JpegComponentTest.class);
+        suite.addTestSuite(JpegDescriptorTest.class);
+        suite.addTestSuite(NikonType1MakernoteTest.class);
+        suite.addTestSuite(NikonType2MakernoteTest.class);
+        suite.addTestSuite(NikonType3MakernoteTest.class);
+
+        suite.addTestSuite(CompoundExceptionTest.class);
         suite.addTestSuite(NullOutputStreamTest.class);
         suite.addTestSuite(RationalTest.class);
+
+        suite.addTestSuite(JpegMetadataReaderTest.class);
+        suite.addTestSuite(JpegSegmentReaderTest.class);
+
         return suite;
     }
 }

@@ -28,10 +28,10 @@
  */
 package com.drew.metadata;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.io.Serializable;
 
 /**
  * Result from an exif extraction operation, containing all tags, their
@@ -43,7 +43,7 @@ public final class Metadata implements Serializable
     /**
      *
      */
-    private HashMap directoryMap;
+    private final HashMap directoryMap;
 
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes

@@ -5,7 +5,10 @@ package com.drew.metadata.iptc;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
-import com.drew.metadata.*;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.MetadataReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;

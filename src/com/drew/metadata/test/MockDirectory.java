@@ -7,11 +7,11 @@ import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
-public class DirectoryImpl extends Directory
+public class MockDirectory extends Directory
 {
-    private HashMap _tagNameMap;
+    private final HashMap _tagNameMap;
 
-    public DirectoryImpl()
+    public MockDirectory()
     {
         this._tagNameMap = new HashMap();
     }

@@ -20,13 +20,13 @@
  */
 package com.drew.metadata.test;
 
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.iptc.IptcDirectory;
-import com.drew.metadata.exif.ExifDirectory;
-import com.drew.metadata.exif.GpsDirectory;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.NullOutputStream;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
 import junit.framework.TestCase;
 
 import java.io.*;

@@ -13,7 +13,10 @@ import com.sun.image.codec.jpeg.JPEGDecodeParam;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Iterator;
 
 /**
@@ -39,10 +42,8 @@ public class SampleUsage
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(jpegFile);
             printImageTags(1, metadata);
-        } catch (FileNotFoundException e) {
-            System.err.println("error 1a");
         } catch (JpegProcessingException e) {
-            System.err.println("error 1b");
+            System.err.println("error 1a");
         }
 
         // Approach 2
@@ -74,10 +75,8 @@ public class SampleUsage
             printImageTags(3, metadata);
         } catch (JpegProcessingException jpe) {
             System.err.println("error 3a");
-        } catch (FileNotFoundException e) {
-            System.err.println("error 3b");
         }
-
+        
         // Approach 4
         // This approach is the slowest, because it decodes the Jpeg image.  Of
         // course you now have a decoded image to play with.  In some instances

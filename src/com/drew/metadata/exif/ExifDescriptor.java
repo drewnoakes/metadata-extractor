@@ -307,10 +307,10 @@ public class ExifDescriptor extends TagDescriptor
 
     private String getPhotometricInterpretationDescription() throws MetadataException
     {
-        if (!_directory.containsTag(ExifDirectory.TAG_COMPRESSION)) return null;
+        if (!_directory.containsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION)) return null;
         // Shows the color space of the image data components. '1' means monochrome,
         // '2' means RGB, '6' means YCbCr.
-        switch (_directory.getInt(ExifDirectory.TAG_COMPRESSION)) {
+        switch (_directory.getInt(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION)) {
             case 1:
                 return "Monochrome";
             case 2:
@@ -538,16 +538,18 @@ public class ExifDescriptor extends TagDescriptor
     private String getYResolutionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_Y_RESOLUTION)) return null;
-        Rational inverseResolution = _directory.getRational(ExifDirectory.TAG_Y_RESOLUTION);
-        return inverseResolution.getReciprocal().toSimpleString(_allowDecimalRepresentationOfRationals) + " " +
+        Rational resolution = _directory.getRational(ExifDirectory.TAG_Y_RESOLUTION);
+        return resolution.toSimpleString(_allowDecimalRepresentationOfRationals) + 
+                " dots per " +
                 getResolutionDescription().toLowerCase();
     }
 
     private String getXResolutionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_X_RESOLUTION)) return null;
-        Rational inverseResolution = _directory.getRational(ExifDirectory.TAG_X_RESOLUTION);
-        return inverseResolution.getReciprocal().toSimpleString(_allowDecimalRepresentationOfRationals) + " " +
+        Rational resolution = _directory.getRational(ExifDirectory.TAG_X_RESOLUTION);
+        return resolution.toSimpleString(_allowDecimalRepresentationOfRationals) +
+                " dots per " +
                 getResolutionDescription().toLowerCase();
     }
 
@@ -562,7 +564,10 @@ public class ExifDescriptor extends TagDescriptor
         if (!_directory.containsTag(ExifDirectory.TAG_SHUTTER_SPEED)) return null;
         // Incorrect math bug fixed by Hendrik Wördehoff - 20 Sep 2002
         int apexValue = _directory.getInt(ExifDirectory.TAG_SHUTTER_SPEED);
-        int apexPower = (int)(Math.pow(2.0, apexValue) + 0.5);
+//        int apexPower = (int)(Math.pow(2.0, apexValue) + 0.5);
+        // addition of 0.5 removed upon suggestion of Varuni Witana, who detected incorrect values for Canon cameras,
+        // which calculate both shutterspeed and exposuretime
+        int apexPower = (int)Math.pow(2.0, apexValue);
         return "1/" + apexPower + " sec";
     }
 
@@ -623,7 +628,7 @@ public class ExifDescriptor extends TagDescriptor
             case 1:
                 return "(No unit)";
             case 2:
-                return "Inches";
+                return "Inch";
             case 3:
                 return "cm";
             default:

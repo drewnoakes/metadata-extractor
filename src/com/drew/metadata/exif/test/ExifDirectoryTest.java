@@ -4,8 +4,8 @@
 package com.drew.metadata.exif.test;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
@@ -38,9 +38,37 @@ public class ExifDirectoryTest extends TestCase
         assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
         byte[] thumbData = exifDirectory.getThumbnailData();
         try {
+            // attempt to read the thumbnail -- it should be a legal Jpeg file
             new JpegSegmentReader(thumbData);
         } catch (JpegProcessingException e) {
             fail("Unable to construct JpegSegmentReader from thumbnail data");
         }
+    }
+
+    public void testWriteThumbnail() throws Exception
+    {
+        File file = new File("src/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg");
+        Metadata metadata = JpegMetadataReader.readMetadata(file);
+        ExifDirectory exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
+
+        File thumbnailFile = File.createTempFile("thumbnail", ".jpg");
+        try {
+            exifDirectory.writeThumbnail(thumbnailFile.getAbsolutePath());
+            assertTrue(new File(thumbnailFile.getAbsolutePath()).exists());
+        } finally {
+            thumbnailFile.delete();
+        }
+    }
+
+    public void testContainsThumbnail()
+    {
+        ExifDirectory exifDirectory = new ExifDirectory();
+
+        assertTrue(!exifDirectory.containsThumbnail());
+
+        exifDirectory.setObject(ExifDirectory.TAG_THUMBNAIL_DATA, "foo");
+
+        assertTrue(exifDirectory.containsThumbnail());
     }
 }

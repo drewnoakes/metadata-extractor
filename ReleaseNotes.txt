@@ -1,3 +1,20 @@
+v2.2
+------------
+
+ - Added support for extraction of Jpeg image information (from the SOF0 segment)
+   Thanks to Darrell Silver for commencing the code for this extension
+ - Added support for reading Jpeg comments
+ - Additional Nikon camera makernote support for D1/D100 family models
+   Thanks to Daniel Waeber for providing sample images and to Fabrizio Giudici for
+   publishing his work in decoding this makernote data
+ - Added convenient writing of thumbnails to files from ExifDirectory
+ - Fixed a bug in date format strings, whereby times in the AM / PM were indistinguishable
+   Thanks to Bill Boland for being the first person to point this out (this was a popular one!)
+ - Fixed bug for multi-component tag values of certain types
+   Thanks to Derek Wegner for identifying the bug and providing a solution
+ - More unit tests (consequently, the source-code download is much larger)
+ - First version with an Ant build script
+
 v2.1
 ------------
 
@@ -30,7 +47,7 @@ v2.0
   the scope to general metadata extraction.  Future development will introduce
   new media and metadata support with little or no impact to existing classes.
 
-v1.2.0
+v1.2
 ------------
 
   ExifExtractor.java

@@ -10,7 +10,7 @@ import java.io.PrintWriter;
  */
 public class CompoundException extends Exception
 {
-    private Throwable _innnerException;
+    private final Throwable _innnerException;
 
     public CompoundException(String msg)
     {

@@ -6,6 +6,8 @@ package com.drew.metadata.exif;
 import com.drew.metadata.Directory;
 import com.drew.metadata.MetadataException;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -146,6 +148,8 @@ public class ExifDirectory extends Directory
      * '255' other.
      */
     public static final int TAG_METERING_MODE = 0x9207;
+
+    public static final int TAG_LIGHT_SOURCE = 0x9208;
     /**
      * White balance (aka light source). '0' means unknown, '1' daylight,
      * '2' fluorescent, '3' tungsten, '10' flash, '17' standard light A,
@@ -215,7 +219,7 @@ public class ExifDirectory extends Directory
         tagNameMap.put(new Integer(0x0156), "Transfer Range");
         tagNameMap.put(new Integer(0x0200), "JPEG Proc");
         tagNameMap.put(new Integer(0x8769), "Exif Offset");
-        tagNameMap.put(new Integer(0x9102), "Compressed Bits Per Pixel");
+        tagNameMap.put(new Integer(TAG_COMPRESSION_LEVEL), "Compressed Bits Per Pixel");
         tagNameMap.put(new Integer(0x927C), "Maker Note");
         tagNameMap.put(new Integer(0xA005), "Interoperability Offset");
 
@@ -285,7 +289,7 @@ public class ExifDirectory extends Directory
         tagNameMap.put(new Integer(TAG_MAX_APERTURE), "Max Aperture Value");
         tagNameMap.put(new Integer(TAG_SUBJECT_DISTANCE), "Subject Distance");
         tagNameMap.put(new Integer(TAG_METERING_MODE), "Metering Mode");
-        tagNameMap.put(new Integer(0x9208), "Light Source");
+        tagNameMap.put(new Integer(TAG_WHITE_BALANCE), "Light Source");
         tagNameMap.put(new Integer(TAG_FLASH), "Flash");
         tagNameMap.put(new Integer(TAG_FOCAL_LENGTH), "Focal Length");
         tagNameMap.put(new Integer(TAG_FLASH_ENERGY), "Flash Energy");
@@ -344,7 +348,33 @@ public class ExifDirectory extends Directory
 
     public byte[] getThumbnailData() throws MetadataException
     {
-        if (!containsTag(ExifDirectory.TAG_THUMBNAIL_DATA)) return null;
+        if (!containsThumbnail())
+            return null;
+        
         return this.getByteArray(ExifDirectory.TAG_THUMBNAIL_DATA);
+    }
+
+    public void writeThumbnail(String filename) throws MetadataException, IOException
+    {
+        byte[] data = getThumbnailData();
+
+        if (data==null)
+        {
+            throw new MetadataException("No thumbnail data exists.");
+        }
+
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(filename);
+            stream.write(data);
+        } finally {
+            if (stream!=null)
+                stream.close();
+        }
+    }
+
+    public boolean containsThumbnail()
+    {
+        return containsTag(ExifDirectory.TAG_THUMBNAIL_DATA);
     }
 }

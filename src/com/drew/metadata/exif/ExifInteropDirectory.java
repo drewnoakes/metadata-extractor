@@ -18,7 +18,7 @@ public class ExifInteropDirectory extends Directory
     public static final int TAG_RELATED_IMAGE_WIDTH = 0x1001;
     public static final int TAG_RELATED_IMAGE_LENGTH = 0x1002;
 
-    protected static HashMap tagNameMap;
+    protected static final HashMap tagNameMap;
 
     static
     {

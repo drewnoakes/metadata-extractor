@@ -48,6 +48,7 @@ public class CompoundExceptionTest extends TestCase
             throw new CompoundException("message", null);
         } catch (CompoundException e) {
             try {
+                // TODO pass in local stringwriter / streamwriter objects so junit output isn't cluttered
                 e.printStackTrace();
                 e.printStackTrace(System.err);
                 e.printStackTrace(new PrintWriter(System.err));

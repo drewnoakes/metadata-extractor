@@ -22,7 +22,7 @@ public class IptcReaderTest extends TestCase
         super(s);
     }
 
-    public void testExifReader() throws Exception
+    public void testDescription_City() throws Exception
     {
         File iptcFile = new File("src/com/drew/metadata/iptc/test/withIptc.jpg");
         MetadataReader reader = new IptcReader(iptcFile);
@@ -31,4 +31,26 @@ public class IptcReaderTest extends TestCase
         Directory directory = metadata.getDirectory(IptcDirectory.class);
         assertEquals("City", directory.getDescription(IptcDirectory.TAG_CITY));
     }
+
+    public void testDescription_Caption() throws Exception
+    {
+        File iptcFile = new File("src/com/drew/metadata/iptc/test/withIptc.jpg");
+        MetadataReader reader = new IptcReader(iptcFile);
+        Metadata metadata = reader.extract();
+        assertTrue(metadata.containsDirectory(IptcDirectory.class));
+        Directory directory = metadata.getDirectory(IptcDirectory.class);
+        assertEquals("Caption", directory.getDescription(IptcDirectory.TAG_CAPTION));
+    }
+
+    public void testDescription_Category() throws Exception
+    {
+        File iptcFile = new File("src/com/drew/metadata/iptc/test/withIptc.jpg");
+        MetadataReader reader = new IptcReader(iptcFile);
+        Metadata metadata = reader.extract();
+        assertTrue(metadata.containsDirectory(IptcDirectory.class));
+        Directory directory = metadata.getDirectory(IptcDirectory.class);
+        assertEquals("Supl. Category2 Supl. Category1 Cat", directory.getDescription(IptcDirectory.TAG_CATEGORY));
+    }
+
+    // TODO Wrap more tests around the Iptc reader
 }
