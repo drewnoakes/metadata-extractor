@@ -18,18 +18,15 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.CompoundException;
+
 /**
  * An exception class thrown upon unexpected and fatal conditions while processing
  * a Jpeg file.
  * @author  Drew Noakes http://drewnoakes.com
  */
-public class JpegProcessingException extends Exception
+public class JpegProcessingException extends CompoundException
 {
-    public JpegProcessingException()
-    {
-        super();
-    }
-
     public JpegProcessingException(String message)
     {
         super(message);

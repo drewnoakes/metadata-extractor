@@ -17,41 +17,34 @@
  * Created on 29 April 2002, 00:33
  */
 
-package com.drew.imaging.exif;
+package com.drew.metadata.iptc;
+
+import com.drew.metadata.MetadataException;
 
 /**
- * The exception type raised during reading of Exif data in the instance of
+ * The exception type raised during reading of Iptc data in the instance of
  * unexpected data conditions.
  * @author  Drew Noakes http://drewnoakes.com
  */
-public class ExifProcessingException extends java.lang.Exception
+public class IptcProcessingException extends MetadataException
 {
-    /**
-     * Creates a new instance of <code>ExifProcessingException</code> without
-     * detail message.
-     */
-    public ExifProcessingException()
-    {
-        //
-    }
-
     /**
      * Constructs an instance of <code>ExifProcessingException</code> with the
      * specified detail message.
      * @param message the detail message
      */
-    public ExifProcessingException(String message)
+    public IptcProcessingException(String message)
     {
         super(message);
     }
 
     /**
-     * Constructs an instance of <code>ExifProcessingException</code> with the
+     * Constructs an instance of <code>IptcProcessingException</code> with the
      * specified detail message and inner exception.
      * @param message the detail message
      * @param cause an inner exception
      */
-    public ExifProcessingException(String message, Throwable cause)
+    public IptcProcessingException(String message, Throwable cause)
     {
         super(message, cause);
     }

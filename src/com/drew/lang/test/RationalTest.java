@@ -18,9 +18,9 @@
  *
  * Created by dnoakes on 26-Oct-2002 16:24:43 using IntelliJ IDEA.
  */
-package com.drew.imaging.exif.test;
+package com.drew.lang.test;
 
-import com.drew.imaging.exif.Rational;
+import com.drew.lang.Rational;
 import junit.framework.TestCase;
 
 /**
@@ -60,6 +60,7 @@ public class RationalTest extends TestCase
         assertEquals("2/3", twoThirds.toSimpleString(true));
 
         Rational two = new Rational(10, 5);
+        assertTrue(two.isInteger());
         assertEquals("2", two.toSimpleString(true));
         assertEquals("2", two.toSimpleString(false));
 
@@ -71,6 +72,12 @@ public class RationalTest extends TestCase
         assertEquals("3/8", threeEigths.toSimpleString(true));
 
         Rational zero = new Rational(0, 8);
+        assertTrue(zero.isInteger());
+        assertEquals("0", zero.toSimpleString(true));
+        assertEquals("0", zero.toSimpleString(false));
+
+        zero = new Rational(0, 0);
+        assertTrue(zero.isInteger());
         assertEquals("0", zero.toSimpleString(true));
         assertEquals("0", zero.toSimpleString(false));
 

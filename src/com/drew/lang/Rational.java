@@ -30,7 +30,7 @@
  *       3/4 -> 0.75 when allowDecimal == true
  */
 
-package com.drew.imaging.exif;
+package com.drew.lang;
 
 /**
  * Immutable class for holding a rational number without loss of precision.  Provides
@@ -49,6 +49,7 @@ public class Rational extends java.lang.Number implements java.io.Serializable
      * Holds the denominator.
      */
     private final int denominator;
+    private int maxSimplificationCalculations = 1000;
 
     /**
      * Creates a new instance of Rational.  Rational objects are immutable, so
@@ -168,7 +169,10 @@ public class Rational extends java.lang.Number implements java.io.Serializable
      */
     public boolean isInteger()
     {
-        if (denominator == 1 || (denominator != 0 && (numerator % denominator == 0))) {
+        if (denominator == 1 ||
+                (denominator != 0 && (numerator % denominator == 0)) ||
+                (denominator == 0 && numerator == 0)
+        ) {
             return true;
         } else {
             return false;
@@ -189,7 +193,7 @@ public class Rational extends java.lang.Number implements java.io.Serializable
      */
     public String toSimpleString(boolean allowDecimal)
     {
-        if (denominator == 0) {
+        if (denominator == 0 && numerator != 0) {
             return toString();
         } else if (isInteger()) {
             return Integer.toString(intValue());
@@ -207,6 +211,17 @@ public class Rational extends java.lang.Number implements java.io.Serializable
             }
             return simplifiedInstance.toString();
         }
+    }
+
+    /**
+     * Decides whether a brute-force simplification calculation should be avoided
+     * by comparing the maximum number of possible calculations with some threshold.
+     * @return true if the simplification should be performed, otherwise false
+     */
+    private boolean tooComplexForSimplification()
+    {
+        double maxPossibleCalculations = (((double)(Math.min(denominator, numerator) - 1) / 5d) + 2);
+        return maxPossibleCalculations > maxSimplificationCalculations;
     }
 
     /**
@@ -251,9 +266,14 @@ public class Rational extends java.lang.Number implements java.io.Serializable
      * = ------------------------------------ + 2
      *                  5
      * </pre></code>
+     * @return a simplified instance, or if the Rational could not be simpliffied,
+     *         returns itself (unchanged)
      */
     public Rational getSimplifiedInstance()
     {
+        if (tooComplexForSimplification()) {
+            return this;
+        }
         for (int factor = 2; factor <= Math.min(denominator, numerator); factor++) {
             if ((factor % 2 == 0 && factor > 2) || (factor % 5 == 0 && factor > 5)) {
                 continue;

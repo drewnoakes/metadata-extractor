@@ -20,14 +20,22 @@
  * - First collection of basic unit tests, to compile against JUnit
  * - Doesn't yet cover all classes
  */
-package com.drew.imaging.exif.test;
+package com.drew.metadata.test;
 
+import com.drew.imaging.jpeg.test.JpegMetadataReaderTest;
 import com.drew.imaging.jpeg.test.JpegSegmentReaderTest;
+import com.drew.lang.test.CompoundExceptionTest;
+import com.drew.lang.test.RationalTest;
+import com.drew.metadata.exif.test.ExifDirectoryTest;
+import com.drew.metadata.exif.test.ExifProcessorTest;
+import com.drew.metadata.iptc.test.IptcReaderTest;
+import com.drew.metadata.test.DirectoryTest;
+import com.drew.metadata.test.MetadataTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * ExifExtractor test suite.
+ * ExifReader test suite.
  * @author  Drew Noakes http://drewnoakes.com
  */
 public class AllTests extends TestSuite
@@ -36,9 +44,15 @@ public class AllTests extends TestSuite
     {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(RationalTest.class);
-        suite.addTestSuite(ImageInfoTest.class);
-        suite.addTestSuite(ExifExtractorTest.class);
+        suite.addTestSuite(MetadataTest.class);
+        suite.addTestSuite(ExifProcessorTest.class);
+        suite.addTestSuite(ExifDirectoryTest.class);
         suite.addTestSuite(JpegSegmentReaderTest.class);
+        suite.addTestSuite(JpegMetadataReaderTest.class);
+        suite.addTestSuite(DirectoryTest.class);
+        suite.addTestSuite(MetadataTest.class);
+        suite.addTestSuite(IptcReaderTest.class);
+        suite.addTestSuite(CompoundExceptionTest.class);
         return suite;
     }
 }

@@ -1,3 +1,25 @@
+v2.0
+------------
+
+  Enormous changes to the class and package structure in this release prohibit a
+  class-by-class breakdown of changes.  The focus is no longer on Exif metadata
+  alone, but now on general metadata extraction from multiple media types.
+
+  Changes support:
+    - easier future extensibility
+    - Iptc metadata extraction
+    - multiple directories of tags
+    - descriptor class for interpreting values in a given directory
+    - multiple media and metadata types
+    - enhanced handling of exif makernote values
+    - many more unit tests
+    - numerous enhancements
+    - minor bug fixes
+
+  Simpler extensibility changes the focus from exif extraction alone and opens
+  the scope to general metadata extraction.  Future development will introduce
+  new media and metadata support with little or no impact to existing classes.
+
 v1.2.0
 ------------
 
