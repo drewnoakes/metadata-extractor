@@ -87,6 +87,7 @@ public class ExifReader implements MetadataReader
     private static final int MAX_FORMAT_CODE = 12;
 
     // the format enumeration
+    // TODO use the new DataFormat enumeration instead of these values
     private static final int FMT_BYTE = 1;
     private static final int FMT_STRING = 2;
     private static final int FMT_USHORT = 3;
@@ -229,7 +230,6 @@ public class ExifReader implements MetadataReader
      *   2 bytes: tag type
      *   2 bytes: format code
      *   4 bytes: component count
-     *
      */
     private void processDirectory(Directory directory, int dirStartOffset)
     {
@@ -246,6 +246,8 @@ public class ExifReader implements MetadataReader
             return;
         }
 
+        System.out.println("dirTagCount = " + dirTagCount);
+        
         // Handle each tag in this directory
         for (int dirEntry = 0; dirEntry<dirTagCount; dirEntry++) {
             int dirEntryOffset = calculateDirectoryEntryOffset(dirStartOffset, dirEntry);

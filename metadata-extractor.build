@@ -10,7 +10,7 @@
     <property name="lib" value="lib"/>
     <property name="verbose" value="true"/>
     <property name="debug" value="off"/>
-    <property name="version" value="2.2.1"/>
+    <property name="version" value="2.2.2"/>
     <property name="classpath" value="lib/junit.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">

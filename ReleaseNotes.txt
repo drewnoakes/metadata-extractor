@@ -1,3 +1,9 @@
+v2.2.2
+------------
+
+ - Fixed a bug where version strings were assumed to be comprised of exactly four parts,
+   and cases were found where a different number existed.
+
 v2.2.1
 ------------
 

@@ -686,7 +686,7 @@ public class ExifDescriptor extends TagDescriptor
     public static String convertBytesToVersionString(int[] components)
     {
         StringBuffer version = new StringBuffer();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4 && i < components.length; i++) {
             if (i == 2) version.append('.');
             String digit = String.valueOf((char)components[i]);
             if (i == 0 && "0".equals(digit)) continue;
