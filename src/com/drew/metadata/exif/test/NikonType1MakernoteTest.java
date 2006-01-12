@@ -1,4 +1,17 @@
 /*
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ *
  * Created by dnoakes on 25-Nov-2002 20:47:31 using IntelliJ IDEA.
  */
 package com.drew.metadata.exif.test;
@@ -133,20 +146,20 @@ public class NikonType1MakernoteTest extends TestCase
         assertEquals(5.5, _exifDirectory.getDouble(ExifDirectory.TAG_FNUMBER), 0.001);
         assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_PROGRAM));
         assertEquals(80, _exifDirectory.getInt(ExifDirectory.TAG_ISO_EQUIVALENT));
-        assertEquals("0210", _exifDirectory.getString(ExifDirectory.TAG_EXIF_VERSION));
+        assertEquals("48 50 49 48", _exifDirectory.getString(ExifDirectory.TAG_EXIF_VERSION));
         assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_DIGITIZED));
         assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_ORIGINAL));
-        assertEquals(0x030201, _exifDirectory.getInt(ExifDirectory.TAG_COMPONENTS_CONFIGURATION));
+        assertEquals("1 2 3 0", _exifDirectory.getString(ExifDirectory.TAG_COMPONENTS_CONFIGURATION));
         assertEquals(4, _exifDirectory.getInt(ExifDirectory.TAG_COMPRESSION_LEVEL));
         assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_BIAS));
-        // TODO why is this 2.6, when it's described as 2.5 above?
+        // this 2.6 *apex*, which is F2.5
         assertEquals(2.6, _exifDirectory.getDouble(ExifDirectory.TAG_MAX_APERTURE), 0.001);
         assertEquals(5, _exifDirectory.getInt(ExifDirectory.TAG_METERING_MODE));
         assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_WHITE_BALANCE));
         assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_FLASH));
         assertEquals(12.8, _exifDirectory.getDouble(ExifDirectory.TAG_FOCAL_LENGTH), 0.001);
-        assertEquals("", _exifDirectory.getString(ExifDirectory.TAG_USER_COMMENT));
-        assertEquals("0100", _exifDirectory.getString(ExifDirectory.TAG_FLASHPIX_VERSION));
+        assertEquals("0 0 0 0 0 0 0 0 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32", _exifDirectory.getString(ExifDirectory.TAG_USER_COMMENT));
+        assertEquals("48 49 48 48", _exifDirectory.getString(ExifDirectory.TAG_FLASHPIX_VERSION));
         assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_COLOR_SPACE));
         assertEquals(1600, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH));
         assertEquals(1200, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));

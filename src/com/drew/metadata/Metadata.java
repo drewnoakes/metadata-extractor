@@ -84,9 +84,11 @@ public final class Metadata implements Serializable
     }
 
     /**
-     *
-     * @param type
-     * @return
+     * Returns a <code>Directory</code> of specified type.  If this <code>Metadata</code> object already contains
+     * such a directory, it is returned.  Otherwise a new instance of this directory will be created and stored within
+     * this Metadata object.
+     * @param type the type of the Directory implementation required.
+     * @return a directory of the specified type.
      */
     public Directory getDirectory(Class type)
     {

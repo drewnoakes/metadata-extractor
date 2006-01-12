@@ -23,6 +23,7 @@
 package com.drew.metadata.test;
 
 import com.drew.imaging.jpeg.test.JpegMetadataReaderTest;
+import com.drew.imaging.jpeg.test.JpegSegmentDataTest;
 import com.drew.imaging.jpeg.test.JpegSegmentReaderTest;
 import com.drew.lang.test.CompoundExceptionTest;
 import com.drew.lang.test.NullOutputStreamTest;
@@ -37,7 +38,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * ExifReader test suite.
+ * The complete test suite for the metadata-extractor library.
  * @author  Drew Noakes http://drewnoakes.com
  */
 public class AllTests extends TestSuite
@@ -53,12 +54,14 @@ public class AllTests extends TestSuite
         suite.addTestSuite(IptcReaderTest.class);
         suite.addTestSuite(MetadataTest.class);
         suite.addTestSuite(JpegReaderTest.class);
+        suite.addTestSuite(JpegSegmentDataTest.class);
         suite.addTestSuite(JpegDirectoryTest.class);
         suite.addTestSuite(JpegComponentTest.class);
         suite.addTestSuite(JpegDescriptorTest.class);
         suite.addTestSuite(NikonType1MakernoteTest.class);
-        suite.addTestSuite(NikonType2MakernoteTest.class);
-        suite.addTestSuite(NikonType3MakernoteTest.class);
+        suite.addTestSuite(NikonType2MakernoteTest1.class);
+        suite.addTestSuite(NikonType2MakernoteTest2.class);
+        suite.addTestSuite(CanonMakernoteDescriptorTest.class);
 
         suite.addTestSuite(CompoundExceptionTest.class);
         suite.addTestSuite(NullOutputStreamTest.class);

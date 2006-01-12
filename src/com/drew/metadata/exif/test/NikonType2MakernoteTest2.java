@@ -1,4 +1,17 @@
 /*
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ *
  * Created by dnoakes on 25-Nov-2002 20:47:31 using IntelliJ IDEA.
  */
 package com.drew.metadata.exif.test;
@@ -15,19 +28,19 @@ import java.io.File;
 /**
  *
  */
-public class NikonType2MakernoteTest extends TestCase
+public class NikonType2MakernoteTest2 extends TestCase
 {
     private NikonType2MakernoteDirectory _nikonDirectory;
     private ExifDirectory _exifDirectory;
 
-    public NikonType2MakernoteTest(String s)
+    public NikonType2MakernoteTest2(String s)
     {
         super(s);
     }
 
     protected void setUp() throws Exception
     {
-        File nikonJpeg = new File("src/com/drew/metadata/exif/test/nikonMakernoteType2.jpg");
+        File nikonJpeg = new File("src/com/drew/metadata/exif/test/nikonMakernoteType2b.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(nikonJpeg);
         _nikonDirectory = (NikonType2MakernoteDirectory)metadata.getDirectory(NikonType2MakernoteDirectory.class);
         _exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
@@ -58,15 +71,15 @@ public class NikonType2MakernoteTest extends TestCase
     */
     public void testNikonMakernote_MatchesKnownValues() throws Exception
     {
-        assertEquals("", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_1));
-        assertEquals("0 0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_SETTING));
+        assertEquals("0 1 0 0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION));
+        assertEquals("0 0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_1));
         assertEquals("COLOR", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_COLOR_MODE));
-        assertEquals("NORMAL ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_QUALITY));
-        assertEquals("AUTO        ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_WHITE_BALANCE));
-        assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_IMAGE_SHARPENING));
-        assertEquals("AF-C  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FOCUS_MODE));
-        assertEquals("NORMAL      ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_SETTING));
-        assertEquals(new Rational(4416,500), _nikonDirectory.getRational(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_2));
+        assertEquals("NORMAL ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_QUALITY_AND_FILE_FORMAT));
+        assertEquals("AUTO        ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE));
+        assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_SHARPENING));
+        assertEquals("AF-C  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_TYPE));
+        assertEquals("NORMAL      ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_SYNC_MODE));
+//        assertEquals(new Rational(4416,500), _nikonDirectory.getRational(NikonType3MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_2));
         assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_SELECTION));
         assertEquals(1300, _nikonDirectory.getInt(0x0011));
         assertEquals("AUTO         ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_IMAGE_ADJUSTMENT));
@@ -76,7 +89,8 @@ public class NikonType2MakernoteTest extends TestCase
         assertEquals("                ", _nikonDirectory.getString(0x008f));
         assertEquals(0, _nikonDirectory.getInt(0x0094));
         assertEquals("FPNR", _nikonDirectory.getString(0x0095));
-        assertEquals("PrintIM", _nikonDirectory.getString(0x0e00));
+        assertEquals("80 114 105 110 116 73 77 0 48 49 48 48 0 0 13 0 1 0 22 0 22 0 2 0 1 0 0 0 3 0 94 0 0 0 7 0 0 0 0 0 8 0 0 0 0 0 9 0 0 0 0 0 10 0 0 0 0 0 11 0 -90 0 0 0 12 0 0 0 0 0 13 0 0 0 0 0 14 0 -66 0 0 0 0 1 5 0 0 0 1 1 1 0 0 0 9 17 0 0 16 39 0 0 11 15 0 0 16 39 0 0 -105 5 0 0 16 39 0 0 -80 8 0 0 16 39 0 0 1 28 0 0 16 39 0 0 94 2 0 0 16 39 0 0 -117 0 0 0 16 39 0 0 -53 3 0 0 16 39 0 0 -27 27 0 0 16 39 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", _nikonDirectory.getString(0x0e00));
+//        assertEquals("PrintIM", _nikonDirectory.getString(0x0e00));
         assertEquals(1394, _nikonDirectory.getInt(0x0e10));
     }
 
@@ -131,18 +145,18 @@ public class NikonType2MakernoteTest extends TestCase
         assertEquals(2.6, _exifDirectory.getDouble(ExifDirectory.TAG_FNUMBER), 0.001);
         assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_PROGRAM));
         assertEquals(100, _exifDirectory.getInt(ExifDirectory.TAG_ISO_EQUIVALENT));
-        assertEquals("0210", _exifDirectory.getString(ExifDirectory.TAG_EXIF_VERSION));
+        assertEquals("48 50 49 48", _exifDirectory.getString(ExifDirectory.TAG_EXIF_VERSION));
         assertEquals("2002:08:29 17:31:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_DIGITIZED));
         assertEquals("2002:08:29 17:31:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_ORIGINAL));
-        assertEquals(0x030201, _exifDirectory.getInt(ExifDirectory.TAG_COMPONENTS_CONFIGURATION));
+        assertEquals("1 2 3 0", _exifDirectory.getString(ExifDirectory.TAG_COMPONENTS_CONFIGURATION));
         assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_BIAS));
         assertEquals("0", _exifDirectory.getString(ExifDirectory.TAG_MAX_APERTURE));
         assertEquals(5, _exifDirectory.getInt(ExifDirectory.TAG_METERING_MODE));
         assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_WHITE_BALANCE));
         assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_FLASH));
         assertEquals(8.2, _exifDirectory.getDouble(ExifDirectory.TAG_FOCAL_LENGTH), 0.001);
-        assertEquals("", _exifDirectory.getString(ExifDirectory.TAG_USER_COMMENT));
-        assertEquals("0100", _exifDirectory.getString(ExifDirectory.TAG_FLASHPIX_VERSION));
+        assertEquals("0 0 0 0 0 0 0 0 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32", _exifDirectory.getString(ExifDirectory.TAG_USER_COMMENT));
+        assertEquals("48 49 48 48", _exifDirectory.getString(ExifDirectory.TAG_FLASHPIX_VERSION));
         assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_COLOR_SPACE));
         assertEquals(2048, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH));
         assertEquals(1536, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));

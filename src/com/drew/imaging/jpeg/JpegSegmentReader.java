@@ -21,9 +21,6 @@
 package com.drew.imaging.jpeg;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Performs read functions of Jpeg files, returning specific file segments.
@@ -34,22 +31,16 @@ import java.util.ArrayList;
  */
 public class JpegSegmentReader
 {
-    /**
-     * Jpeg file.
-     */
+    // Jpeg data can be sourced from either a file, byte[] or InputStream
+
+    /** Jpeg file */
     private final File _file;
-
-    /**
-     * Jpeg data as byte array.
-     */
+    /** Jpeg data as byte array */
     private final byte[] _data;
+    /** Jpeg data as an InputStream */
+    private final InputStream _stream;
 
-    /**
-     * Jpeg data as an InputStream.
-     */
-    private InputStream _stream;
-
-    private HashMap _segmentDataMap;
+    private JpegSegmentData _segmentData;
 
     /**
      * Private, because this segment crashes my algorithm, and searching for
@@ -82,7 +73,7 @@ public class JpegSegmentReader
     public static final byte SEGMENT_APP8 = (byte)0xE8;
     /** APP9 Jpeg segment identifier. */
     public static final byte SEGMENT_APP9 = (byte)0xE9;
-    /** APPA Jpeg segment identifier. */
+    /** APPA Jpeg segment identifier -- can hold Unicode comments. */
     public static final byte SEGMENT_APPA = (byte)0xEA;
     /** APPB Jpeg segment identifier. */
     public static final byte SEGMENT_APPB = (byte)0xEB;
@@ -94,7 +85,6 @@ public class JpegSegmentReader
     public static final byte SEGMENT_APPE = (byte)0xEE;
     /** APPF Jpeg segment identifier. */
     public static final byte SEGMENT_APPF = (byte)0xEF;
-
     /** Start Of Image segment identifier. */
     public static final byte SEGMENT_SOI = (byte)0xD8;
     /** Define Quantization Table segment identifier. */
@@ -103,7 +93,7 @@ public class JpegSegmentReader
     public static final byte SEGMENT_DHT = (byte)0xC4;
     /** Start-of-Frame Zero segment identifier. */
     public static final byte SEGMENT_SOF0 = (byte)0xC0;
-    /** Comment segment identifier */
+    /** Jpeg comment segment identifier. */
     public static final byte SEGMENT_COM = (byte)0xFE;
 
     /**
@@ -114,6 +104,7 @@ public class JpegSegmentReader
     {
         _file = file;
         _data = null;
+        _stream = null;
 
         readSegments();
     }
@@ -122,19 +113,31 @@ public class JpegSegmentReader
      * Creates a JpegSegmentReader for a byte array.
      * @param fileContents the byte array containing Jpeg data
      */
-    public JpegSegmentReader(byte[] fileContents) throws JpegProcessingException {
+    public JpegSegmentReader(byte[] fileContents) throws JpegProcessingException
+    {
         _file = null;
         _data = fileContents;
+        _stream = null;
 
         readSegments();
     }
 
-    public JpegSegmentReader(InputStream in) throws JpegProcessingException {
+    public JpegSegmentReader(InputStream in) throws JpegProcessingException
+    {
         _stream = in;
         _file = null;
         _data = null;
         
         readSegments();
+    }
+
+    public JpegSegmentReader(JpegSegmentData segmentData)
+    {
+        _file = null;
+        _data = null;
+        _stream = null;
+
+        _segmentData = segmentData;
     }
 
     /**
@@ -156,35 +159,26 @@ public class JpegSegmentReader
      * @param segmentMarker the byte identifier for the desired segment
      * @param occurrence the occurrence of the specified segment within the jpeg file
      * @return the byte array if found, else null
-     * @throws JpegProcessingException for any problems processing the Jpeg data,
-     *         including inner IOExceptions
      */
     public byte[] readSegment(byte segmentMarker, int occurrence)
     {
-        Byte key = new Byte(segmentMarker);
-        if (_segmentDataMap.containsKey(key)) {
-            List segmentList = (List)_segmentDataMap.get(key);
-            if (segmentList.size()<=occurrence) {
-                return null;
-            }
-            return (byte[]) segmentList.get(occurrence);
-        } else {
-            return null;
-        }
+        return _segmentData.getSegment(segmentMarker, occurrence);
     }
 
     public final int getSegmentCount(byte segmentMarker)
     {
-        final List segmentList = (List)_segmentDataMap.get(new Byte(segmentMarker));
-        if (segmentList==null) {
-            return 0;
-        }
-        return segmentList.size();
+        return _segmentData.getSegmentCount(segmentMarker);
+    }
+
+    public final JpegSegmentData getSegmentData()
+    {
+        return _segmentData;
     }
 
     private void readSegments() throws JpegProcessingException
     {
-        _segmentDataMap = new HashMap();
+        _segmentData = new JpegSegmentData();
+
         BufferedInputStream inStream = getJpegInputStream();
         try {
             int offset = 0;
@@ -210,9 +204,10 @@ public class JpegSegmentReader
                 int segmentLength = ((segmentLengthBytes[0] << 8) & 0xFF00) | (segmentLengthBytes[1] & 0xFF);
                 // segment length includes size bytes, so subtract two
                 segmentLength -= 2;
-                if (segmentLength > inStream.available()) {
+                if (segmentLength > inStream.available())
                     throw new JpegProcessingException("segment size would extend beyond file stream length");
-                }
+                else if (segmentLength < 0)
+                    throw new JpegProcessingException("segment size would be less than zero");
                 byte[] segmentBytes = new byte[segmentLength];
                 inStream.read(segmentBytes, 0, segmentLength);
                 offset += segmentLength;
@@ -225,15 +220,7 @@ public class JpegSegmentReader
                     // the 'End-Of-Image' segment -- this should never be found in this fashion
                     return;
                 } else {
-                    List segmentList;
-                    Byte key = new Byte(thisSegmentMarker);
-                    if (_segmentDataMap.containsKey(key)) {
-                        segmentList = (List)_segmentDataMap.get(key);
-                    } else{
-                        segmentList = new ArrayList();
-                        _segmentDataMap.put(key, segmentList);
-                    }
-                    segmentList.add(segmentBytes);
+                    _segmentData.addSegment(thisSegmentMarker, segmentBytes);
                 }
                 // didn't find the one we're looking for, loop through to the next segment
             } while (true);
@@ -291,6 +278,6 @@ public class JpegSegmentReader
     {
         byte[] header = new byte[2];
         fileStream.read(header, 0, 2);
-        return ((header[0] & 0xFF) == 0xFF && (header[1] & 0xFF) == 0xD8);
+        return (header[0] & 0xFF) == 0xFF && (header[1] & 0xFF) == 0xD8;
     }
 }

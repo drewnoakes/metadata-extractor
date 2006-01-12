@@ -1,12 +1,25 @@
 /*
- * Created by dnoakes on 12-Nov-2002 22:18:13 using IntelliJ IDEA.
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
  */
 package com.drew.metadata;
 
 import java.io.Serializable;
 
 /**
- *
+ * Abstract base class for all tag descriptor classes.  Implementations are responsible for
+ * providing the human-readable string represenation of tag values stored in a directory.
+ * The directory is provided to the tag descriptor via its constructor.
  */
 public abstract class TagDescriptor implements Serializable
 {

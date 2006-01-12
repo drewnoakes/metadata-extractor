@@ -1,3 +1,33 @@
+v2.3.0
+------------
+  - New tags from Exif 2.2 specification (A401-A420).
+  - Fixed stack overflow exception in ExifReader for cyclic directory references.
+    Thanks to John Sidney-Woollett for reporting this bug (reported for Fuji FinePix A101 and Canon 20D).
+  - Fixed rounding error in the shutter speed description which was giving the wrong value most of the
+    time (for example, 1/32 instead of 1/50).
+    Thanks for Gli Blr and Mark Edwards for pointing out this error.
+  - Fix thread safety bug in ExifReader.
+  - Fixed OutOfMemoryError seen in certain Canon 20D images.  
+    Thanks to Henry Yeung for providing an image to reproduce this error.
+  - Support for Windows XP Exif tags (Author, title, comments, etc).
+  - Added more documentation, and removed commented/unused code.
+  - Enhanced descriptor support for Exif tags.
+  - Extract comments in non-ASCII encodings.
+  - Improved camera model MakerNote support:
+    - New models:
+      - Epson (thanks to David Carlson for pointing me in the right direction with this)
+      - Kyocera / Contax (very limited)
+      - Minolta (it utilises the Olympus format)
+      - Panasonic
+      - Pentax / Asahi
+    - Improved support for models:
+      - Olympus
+      - Canon (tested with newer Canon models, including the 20D)
+      - Casio (for more modern models)
+  - Source distribution filesize reduced by using .metadata files, rather than entire sample JPEG files.
+    These .metadata files contain all non-image JPEG segments, making them suitable for unit tests whilst
+    being much smaller on disk.
+
 v2.2.2
 ------------
 
@@ -21,11 +51,11 @@ v2.2
    publishing his work in decoding this makernote data
  - Added convenient writing of thumbnails to files from ExifDirectory
  - Fixed a bug in date format strings, whereby times in the AM / PM were indistinguishable
-   Thanks to Bill Boland for being the first person to point this out (this was a popular one!)
- - Fixed bug for multi-component tag values of certain types
-   Thanks to Derek Wegner for identifying the bug and providing a solution
- - More unit tests (consequently, the source-code download is much larger)
- - First version with an Ant build script
+   Thanks to Bill Boland for being the first person to point this out (this was a popular one!).
+ - Fixed bug for multi-component tag values of certain types.
+   Thanks to Derek Wegner for identifying the bug and providing a solution.
+ - More unit tests (consequently, the source-code download is much larger).
+ - First version with an Ant build script.
 
 v2.1
 ------------

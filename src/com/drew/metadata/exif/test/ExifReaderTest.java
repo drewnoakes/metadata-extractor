@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif.test;
 
+import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -77,14 +78,6 @@ public class ExifReaderTest extends TestCase
         assertTrue(metadata.getDirectory(ExifDirectory.class).getTagCount() > 0);
     }
 
-    public void testUserComment() throws Exception
-    {
-        String fileName = "src/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
-        Metadata metadata = new ExifReader(new File(fileName)).extract();
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
-        assertEquals("Here we add a EXIF comment", directory.getString(ExifDirectory.TAG_USER_COMMENT));
-    }
-
     public void testThumbnailOffset() throws Exception
     {
         String fileName = "src/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
@@ -137,4 +130,54 @@ public class ExifReaderTest extends TestCase
         // 6 means JPEG compression
         assertEquals(6, directory.getInt(ExifDirectory.TAG_COMPRESSION));
     }
+
+    public void testStackOverflowOnRevisitationOfSameDirectory() throws Exception
+    {
+        // an error has been discovered in Exif data segments where a directory is referenced
+        // repeatedly.  thanks to Alistair Dickie for providing the sample image used in this
+        // unit test.
+        File metadataFile = new File("src/com/drew/metadata/exif/test/recursiveDirectories.metadata");
+        Metadata metadata = new ExifReader(JpegSegmentData.FromFile(metadataFile)).extract();
+        metadata.getDirectory(ExifDirectory.class);
+//        String fileName = "src/com/drew/metadata/exif/test/recursiveDirectories.jpg";
+//        Metadata metadata = new ExifReader(new File(fileName)).extract();
+//        metadata.getDirectory(ExifDirectory.class);
+    }
+
+
+/*
+    public void testUncompressedYCbCrThumbnail() throws Exception
+    {
+        String fileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail.jpg";
+        String thumnailFileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail.bmp";
+        Metadata metadata = new ExifReader(new File(fileName)).extract();
+        ExifDirectory directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory.writeThumbnail(thumnailFileName);
+
+        fileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail2.jpg";
+        thumnailFileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail2.bmp";
+        metadata = new ExifReader(new File(fileName)).extract();
+        directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory.writeThumbnail(thumnailFileName);
+        fileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail3.jpg";
+        thumnailFileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail3.bmp";
+        metadata = new ExifReader(new File(fileName)).extract();
+        directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory.writeThumbnail(thumnailFileName);
+        fileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail4.jpg";
+        thumnailFileName = "src/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail4.bmp";
+        metadata = new ExifReader(new File(fileName)).extract();
+        directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory.writeThumbnail(thumnailFileName);
+    }
+
+    public void testUncompressedRGBThumbnail() throws Exception
+    {
+        String fileName = "src/com/drew/metadata/exif/test/withUncompressedRGBThumbnail.jpg";
+        String thumnailFileName = "src/com/drew/metadata/exif/test/withUncompressedRGBThumbnail.bmp";
+        Metadata metadata = new ExifReader(new File(fileName)).extract();
+        ExifDirectory directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory.writeThumbnail(thumnailFileName);
+    }
+*/
 }

@@ -1,3 +1,19 @@
+/*
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ *
+ * Created by dnoakes on 09-Oct-2003 15:22:23 using IntelliJ IDEA.
+ */
 package com.drew.metadata.jpeg.test;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -11,11 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dnoakes
- * Date: 09-Oct-2003
- * Time: 15:22:23
- * To change this template use Options | File Templates.
+ *
  */
 public class JpegReaderTest extends TestCase
 {
@@ -28,7 +40,7 @@ public class JpegReaderTest extends TestCase
 
     public void setUp() throws JpegProcessingException, FileNotFoundException
     {
-        // use a known testing image and extract the width
+        // use a known testing image
         File jpegFile = new File("src/com/drew/metadata/jpeg/test/simple.jpg");
         JpegReader reader = new JpegReader(jpegFile);
         Metadata metadata = reader.extract();
@@ -87,4 +99,52 @@ public class JpegReaderTest extends TestCase
         assertEquals(1, component.getVerticalSamplingFactor());
         assertEquals("Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert", _directory.getDescription(JpegDirectory.TAG_JPEG_COMPONENT_DATA_3));
     }
+
+/*
+    // this test is part of an incomplete investigation into extracting audio from JPG files
+    public void testJpegWithAudio() throws Exception
+    {
+        // use a known testing image
+        File jpegFile = new File("src/com/drew/metadata/jpeg/test/audioPresent.jpg");
+
+        JpegSegmentReader jpegSegmentReader = new JpegSegmentReader(jpegFile);
+        byte[] segment1Bytes = jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP2);
+        System.out.println(segment1Bytes.length);
+
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1));
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP2).length);
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP3));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP4));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP5));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP6));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP7));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP8));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP9));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPA));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPB));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPC));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPE));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPF));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_COM));
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_DHT).length);
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_DQT).length);
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0).length);
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_SOI));
+
+        // write the segment's data out to a wav file...
+        File audioFile = new File("src/com/drew/metadata/jpeg/test/audio.wav");
+        FileOutputStream os = null;
+        try
+        {
+            os = new FileOutputStream(audioFile);
+            os.write(segment1Bytes);
+        }
+        finally
+        {
+            if (os!=null)
+                os.close();
+        }
+    }
+*/
 }

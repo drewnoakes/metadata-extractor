@@ -1,4 +1,17 @@
 /*
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ *
  * Created by dnoakes on 25-Nov-2002 20:30:39 using IntelliJ IDEA.
  */
 package com.drew.metadata;
@@ -298,17 +311,33 @@ public abstract class Directory implements Serializable
             } catch (NumberFormatException nfe) {
                 // convert the char array to an int
                 String s = (String)o;
-                int val = 0;
-                for (int i = s.length() - 1; i>=0; i--) {
-                    val += s.charAt(i) << (i * 8);
+                byte[] bytes = s.getBytes();
+                long val = 0;
+                for (int i = 0; i < bytes.length; i++) {
+                    val = val << 8;
+                    val += bytes[i];
                 }
-                return val;
+                return (int)val;
             }
         } else if (o instanceof Number) {
             return ((Number)o).intValue();
+        } else if (o instanceof Rational[]) {
+            Rational[] rationals = (Rational[])o;
+            if (rationals.length==1)
+                return rationals[0].intValue();
+        } else if (o instanceof byte[]) {
+            byte[] bytes = (byte[])o;
+            if (bytes.length==1)
+                return bytes[0];
+        } else if (o instanceof int[]) {
+            int[] ints = (int[])o;
+            if (ints.length==1)
+                return ints[0];
         }
-        throw new MetadataException("Requested tag cannot be cast to int");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to int.  It is of type '" + o.getClass() + "'.");
     }
+
+    // TODO get Array methods need to return cloned data, to maintain this directory's integrity
 
     /**
      * Gets the specified tag's value as a String array, if possible.  Only supported
@@ -350,7 +379,7 @@ public abstract class Directory implements Serializable
             }
             return strings;
         }
-        throw new MetadataException("Requested tag cannot be cast to String array (" + o.getClass().toString() + ")");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to an String array.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -391,7 +420,7 @@ public abstract class Directory implements Serializable
             }
             return ints;
         }
-        throw new MetadataException("Requested tag cannot be cast to int array (" + o.getClass().toString() + ")");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to an int array.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -431,7 +460,7 @@ public abstract class Directory implements Serializable
             }
             return bytes;
         }
-        throw new MetadataException("Requested tag cannot be cast to byte array (" + o.getClass().toString() + ")");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a byte array.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -451,7 +480,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof Number) {
             return ((Number)o).doubleValue();
         }
-        throw new MetadataException("Requested tag cannot be cast to double");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a double.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -471,7 +500,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof Number) {
             return ((Number)o).floatValue();
         }
-        throw new MetadataException("Requested tag cannot be cast to float");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a float.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -491,7 +520,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof Number) {
             return ((Number)o).longValue();
         }
-        throw new MetadataException("Requested tag cannot be cast to long");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a long.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -513,7 +542,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof Number) {
             return (((Number)o).doubleValue()!=0);
         }
-        throw new MetadataException("Requested tag cannot be cast to boolean");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a boolean.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -545,7 +574,7 @@ public abstract class Directory implements Serializable
                 }
             }
         }
-        throw new MetadataException("Requested tag cannot be cast to java.util.Date");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a java.util.Date.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -559,7 +588,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof Rational) {
             return (Rational)o;
         }
-        throw new MetadataException("Requested tag cannot be cast to Rational");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a Rational.  It is of type '" + o.getClass() + "'.");
     }
 
     public Rational[] getRationalArray(int tagType) throws MetadataException
@@ -570,7 +599,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof Rational[]) {
             return (Rational[])o;
         }
-        throw new MetadataException("Requested tag cannot be cast to Rational array (" + o.getClass().toString() + ")");
+        throw new MetadataException("Tag '" + tagType + "' cannot be cast to a Rational array.  It is of type '" + o.getClass() + "'.");
     }
 
     /**
@@ -582,30 +611,32 @@ public abstract class Directory implements Serializable
     public String getString(int tagType)
     {
         Object o = getObject(tagType);
-        if (o==null) {
+        if (o==null)
             return null;
-        } else if (o instanceof Rational) {
+
+        if (o instanceof Rational)
             return ((Rational)o).toSimpleString(true);
-        } else if (o.getClass().isArray()) {
+
+        if (o.getClass().isArray())
+        {
             // handle arrays of objects and primitives
             int arrayLength = Array.getLength(o);
             // determine if this is an array of objects i.e. [Lcom.drew.blah
             boolean isObjectArray = o.getClass().toString().startsWith("class [L");
             StringBuffer sbuffer = new StringBuffer();
-            for (int i = 0; i<arrayLength; i++) {
-                if (i!=0) {
+            for (int i = 0; i<arrayLength; i++)
+            {
+                if (i!=0)
                     sbuffer.append(' ');
-                }
-                if (isObjectArray) {
+                if (isObjectArray)
                     sbuffer.append(Array.get(o, i).toString());
-                } else {
+                else
                     sbuffer.append(Array.getInt(o, i));
-                }
             }
             return sbuffer.toString();
-        } else {
-            return o.toString();
         }
+
+        return o.toString();
     }
 
     /**

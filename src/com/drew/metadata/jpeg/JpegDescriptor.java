@@ -1,3 +1,17 @@
+/*
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ */
 package com.drew.metadata.jpeg;
 
 import com.drew.metadata.Directory;
@@ -5,10 +19,8 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Darrell Silver www.darrellsilver.com
- * Date: Aug 2, 2003
- * @author Darrell Silver http://www.darrellsilver.com
+ * Provides human-readable string versions of the tags stored in a JpegDirectory.
+ * Thanks to Darrell Silver (www.darrellsilver.com) for the initial version of this class.
  */
 public class JpegDescriptor extends TagDescriptor
 {
@@ -58,10 +70,9 @@ public class JpegDescriptor extends TagDescriptor
     public String getComponentDataDescription(int componentNumber) throws MetadataException
     {
         JpegComponent component = ((JpegDirectory)_directory).getComponent(componentNumber);
+
         if (component==null)
-        {
             throw new MetadataException("No Jpeg component exists with number " + componentNumber);
-        }
 
         StringBuffer sb = new StringBuffer();
         sb.append(component.getComponentName());

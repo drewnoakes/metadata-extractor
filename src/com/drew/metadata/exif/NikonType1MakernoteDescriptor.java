@@ -1,5 +1,16 @@
 /*
- * Created by dnoakes on 27-Nov-2002 10:12:05 using IntelliJ IDEA.
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
  */
 package com.drew.metadata.exif;
 
@@ -9,8 +20,11 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * There are 3 formats of Nikon's MakerNote. MakerNote of E700/E800/E900/E900S/E910/E950
- * starts from ASCII string "Nikon". Data format is the same as IFD, but it starts from
+ * Provides human-readable string versions of the tags stored in a NikonType1MakernoteDirectory.
+ * Type-1 is for E-Series cameras prior to (not including) E990.  For example: E700, E800, E900,
+ * E900S, E910, E950.
+ *
+ * MakerNote starts from ASCII string "Nikon". Data format is the same as IFD, but it starts from
  * offset 0x08. This is the same as Olympus except start string. Example of actual data
  * structure is shown below.
  * <pre><code>
@@ -49,7 +63,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getConverterDescription() throws MetadataException
+    public String getConverterDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER)) return null;
         int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER);
@@ -63,7 +77,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getDigitalZoomDescription() throws MetadataException
+    public String getDigitalZoomDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM)) return null;
         Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM);
@@ -73,7 +87,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         return value.toSimpleString(true) + "x digital zoom";
     }
 
-    private String getFocusDescription() throws MetadataException
+    public String getFocusDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS)) return null;
         Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS);
@@ -83,7 +97,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         return value.toSimpleString(true);
     }
 
-    private String getWhiteBalanceDescription() throws MetadataException
+    public String getWhiteBalanceDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE)) return null;
         int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE);
@@ -107,7 +121,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getCcdSensitivityDescription() throws MetadataException
+    public String getCcdSensitivityDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY)) return null;
         int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY);
@@ -125,7 +139,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getImageAdjustmentDescription() throws MetadataException
+    public String getImageAdjustmentDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT)) return null;
         int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT);
@@ -145,7 +159,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getColorModeDescription() throws MetadataException
+    public String getColorModeDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE)) return null;
         int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE);
@@ -159,7 +173,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getQualityDescription() throws MetadataException
+    public String getQualityDescription() throws MetadataException
     {
         if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY)) return null;
         int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY);

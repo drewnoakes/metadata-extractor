@@ -1,5 +1,16 @@
 /*
- * Created by dnoakes on 27-Nov-2002 10:12:05 using IntelliJ IDEA.
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
  */
 package com.drew.metadata.exif;
 
@@ -8,7 +19,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- *
+ * Provides human-readable string versions of the tags stored in an OlympusMakernoteDirectory.
  */
 public class OlympusMakernoteDescriptor extends TagDescriptor
 {
@@ -33,7 +44,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getDigiZoomRatioDescription() throws MetadataException
+    public String getDigiZoomRatioDescription() throws MetadataException
     {
         if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO)) return null;
         int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
@@ -47,7 +58,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getMacroModeDescription() throws MetadataException
+    public String getMacroModeDescription() throws MetadataException
     {
         if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE)) return null;
         int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
@@ -61,7 +72,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getJpegQualityDescription() throws MetadataException
+    public String getJpegQualityDescription() throws MetadataException
     {
         if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY)) return null;
         int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY);
@@ -77,7 +88,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    private String getSpecialModeDescription() throws MetadataException
+    public String getSpecialModeDescription() throws MetadataException
     {
         if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE)) return null;
         int[] values = _directory.getIntArray(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE);

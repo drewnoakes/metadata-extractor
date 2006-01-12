@@ -1,4 +1,17 @@
 /*
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ *
  * Created by dnoakes on 12-Nov-2002 22:27:52 using IntelliJ IDEA.
  */
 package com.drew.metadata.exif;
@@ -53,19 +66,19 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    private String getGpsLatitudeDescription() throws MetadataException
+    public String getGpsLatitudeDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_LATITUDE)) return null;
         return getHoursMinutesSecondsDescription(GpsDirectory.TAG_GPS_LATITUDE);
     }
 
-    private String getGpsLongitudeDescription() throws MetadataException
+    public String getGpsLongitudeDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE)) return null;
         return getHoursMinutesSecondsDescription(GpsDirectory.TAG_GPS_LONGITUDE);
     }
 
-    private String getHoursMinutesSecondsDescription(int tagType) throws MetadataException
+    public String getHoursMinutesSecondsDescription(int tagType) throws MetadataException
     {
         Rational[] components = _directory.getRationalArray(tagType);
         // TODO create an HoursMinutesSecods class ??
@@ -77,7 +90,7 @@ public class GpsDescriptor extends TagDescriptor
         return String.valueOf(deg) + "\"" + String.valueOf((int)min) + "'" + String.valueOf(sec);
     }
 
-    private String getGpsTimeStampDescription() throws MetadataException
+    public String getGpsTimeStampDescription() throws MetadataException
     {
         // time in hour, min, sec
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_TIME_STAMP)) return null;
@@ -92,7 +105,7 @@ public class GpsDescriptor extends TagDescriptor
         return sbuffer.toString();
     }
 
-    private String getGpsDestinationReferenceDescription()
+    public String getGpsDestinationReferenceDescription()
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF)) return null;
         String destRef = _directory.getString(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF).trim();
@@ -107,14 +120,14 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    private String getGpsDirectionDescription(int tagType)
+    public String getGpsDirectionDescription(int tagType)
     {
         if (!_directory.containsTag(tagType)) return null;
         String gpsDirection = _directory.getString(tagType).trim();
         return gpsDirection + " degrees";
     }
 
-    private String getGpsDirectionReferenceDescription(int tagType)
+    public String getGpsDirectionReferenceDescription(int tagType)
     {
         if (!_directory.containsTag(tagType)) return null;
         String gpsDistRef = _directory.getString(tagType).trim();
@@ -127,7 +140,7 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    private String getGpsSpeedRefDescription()
+    public String getGpsSpeedRefDescription()
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_SPEED_REF)) return null;
         String gpsSpeedRef = _directory.getString(GpsDirectory.TAG_GPS_SPEED_REF).trim();
@@ -142,7 +155,7 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    private String getGpsMeasureModeDescription()
+    public String getGpsMeasureModeDescription()
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_MEASURE_MODE)) return null;
         String gpsSpeedMeasureMode = _directory.getString(GpsDirectory.TAG_GPS_MEASURE_MODE).trim();
@@ -155,7 +168,7 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    private String getGpsStatusDescription()
+    public String getGpsStatusDescription()
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_STATUS)) return null;
         String gpsStatus = _directory.getString(GpsDirectory.TAG_GPS_STATUS).trim();
@@ -168,7 +181,7 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    private String getGpsAltitudeRefDescription() throws MetadataException
+    public String getGpsAltitudeRefDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_ALTITUDE_REF)) return null;
         int alititudeRef = _directory.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
@@ -179,7 +192,7 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    private String getGpsAltitudeDescription() throws MetadataException
+    public String getGpsAltitudeDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_ALTITUDE)) return null;
         String alititude = _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE).toSimpleString(true);

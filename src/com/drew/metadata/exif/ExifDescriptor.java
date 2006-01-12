@@ -1,17 +1,35 @@
 /*
+ * ExifDescriptor.java
+ *
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ *
  * Created by dnoakes on 12-Nov-2002 22:27:15 using IntelliJ IDEA.
  */
 package com.drew.metadata.exif;
 
+import com.drew.imaging.PhotographicConversions;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 
 /**
- *
+ * Contains all logic for the presentation of raw Exif data, as stored in ExifDirectory.  Use
+ * this class to provide human-readable descriptions of tag values.
  */
 public class ExifDescriptor extends TagDescriptor
 {
@@ -21,10 +39,18 @@ public class ExifDescriptor extends TagDescriptor
      */
     private boolean _allowDecimalRepresentationOfRationals = true;
 
+    private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
+
     public ExifDescriptor(Directory directory)
     {
         super(directory);
     }
+
+    // Note for the potential addition of brightness presentation in eV:
+    // Brightness of taken subject. To calculate Exposure(Ev) from BrigtnessValue(Bv),
+    // you must add SensitivityValue(Sv).
+    // Ev=BV+Sv   Sv=log2(ISOSpeedRating/3.125)
+    // ISO100:Sv=5, ISO200:Sv=6, ISO400:Sv=7, ISO125:Sv=5.32.
 
     /**
      * Returns a descriptive value of the the specified tag for this image.
@@ -40,6 +66,14 @@ public class ExifDescriptor extends TagDescriptor
         switch (tagType) {
             case ExifDirectory.TAG_ORIENTATION:
                 return getOrientationDescription();
+            case ExifDirectory.TAG_NEW_SUBFILE_TYPE:
+                return getNewSubfileTypeDescription();
+            case ExifDirectory.TAG_SUBFILE_TYPE:
+                return getSubfileTypeDescription();
+            case ExifDirectory.TAG_THRESHOLDING:
+                return getThresholdingDescription();
+            case ExifDirectory.TAG_FILL_ORDER:
+                return getFillOrderDescription();
             case ExifDirectory.TAG_RESOLUTION_UNIT:
                 return getResolutionDescription();
             case ExifDirectory.TAG_YCBCR_POSITIONING:
@@ -128,19 +162,309 @@ public class ExifDescriptor extends TagDescriptor
                 return getIsoEquivalentDescription();
             case ExifDirectory.TAG_THUMBNAIL_DATA:
                 return getThumbnailDescription();
+            case ExifDirectory.TAG_USER_COMMENT:
+                return getUserCommentDescription();
+            case ExifDirectory.TAG_CUSTOM_RENDERED:
+                return getCustomRenderedDescription();
+            case ExifDirectory.TAG_EXPOSURE_MODE:
+                return getExposureModeDescription();
+            case ExifDirectory.TAG_WHITE_BALANCE_MODE:
+                return getWhiteBalanceModeDescription();
+            case ExifDirectory.TAG_DIGITAL_ZOOM_RATIO:
+                return getDigitalZoomRatioDescription();
+            case ExifDirectory.TAG_35MM_FILM_EQUIV_FOCAL_LENGTH:
+                return get35mmFilmEquivFocalLengthDescription();
+            case ExifDirectory.TAG_SCENE_CAPTURE_TYPE:
+                return getSceneCaptureTypeDescription();
+            case ExifDirectory.TAG_GAIN_CONTROL:
+                return getGainControlDescription();
+            case ExifDirectory.TAG_CONTRAST:
+                return getContrastDescription();
+            case ExifDirectory.TAG_SATURATION:
+                return getSaturationDescription();
+            case ExifDirectory.TAG_SHARPNESS:
+                return getSharpnessDescription();
+            case ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE:
+                return getSubjectDistanceRangeDescription();
+
+            case ExifDirectory.TAG_WIN_AUTHOR:
+               return getWindowsAuthorDescription();
+            case ExifDirectory.TAG_WIN_COMMENT:
+               return getWindowsCommentDescription();
+            case ExifDirectory.TAG_WIN_KEYWORDS:
+               return getWindowsKeywordsDescription();
+            case ExifDirectory.TAG_WIN_SUBJECT:
+               return getWindowsSubjectDescription();
+            case ExifDirectory.TAG_WIN_TITLE:
+               return getWindowsTitleDescription();
             default:
                 return _directory.getString(tagType);
         }
     }
 
-    private String getThumbnailDescription() throws MetadataException
+    public String getNewSubfileTypeDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_NEW_SUBFILE_TYPE)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_NEW_SUBFILE_TYPE)) {
+            case 1: return "Full-resolution image";
+            case 2: return "Reduced-resolution image";
+            case 3: return "Single page of multi-page reduced-resolution image";
+            case 4: return "Transparency mask";
+            case 5: return "Transparency mask of reduced-resolution image";
+            case 6: return "Transparency mask of multi-page image";
+            case 7: return "Transparency mask of reduced-resolution multi-page image";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_NEW_SUBFILE_TYPE) + ")";
+        }
+    }
+
+    public String getSubfileTypeDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_SUBFILE_TYPE)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_SUBFILE_TYPE)) {
+            case 1: return "Full-resolution image";
+            case 2: return "Reduced-resolution image";
+            case 3: return "Single page of multi-page image";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_SUBFILE_TYPE) + ")";
+        }
+    }
+
+    public String getThresholdingDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_THRESHOLDING)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_THRESHOLDING)) {
+            case 1: return "No dithering or halftoning";
+            case 2: return "Ordered dither or halftone";
+            case 3: return "Randomized dither";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_THRESHOLDING) + ")";
+        }
+    }
+
+    public String getFillOrderDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_FILL_ORDER)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_FILL_ORDER)) {
+            case 1: return "Normal";
+            case 2: return "Reversed";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_FILL_ORDER) + ")";
+        }
+    }
+
+    public String getSubjectDistanceRangeDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE)) {
+            case 0:
+                return "Unknown";
+            case 1:
+                return "Macro";
+            case 2:
+                return "Close view";
+            case 3:
+                return "Distant view";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE) + ")";
+        }
+    }
+
+    public String getSharpnessDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_SHARPNESS)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_SHARPNESS)) {
+            case 0:
+                return "None";
+            case 1:
+                return "Low";
+            case 2:
+                return "Hard";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_SHARPNESS) + ")";
+        }
+    }
+
+    public String getSaturationDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_SATURATION)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_SATURATION)) {
+            case 0:
+                return "None";
+            case 1:
+                return "Low saturation";
+            case 2:
+                return "High saturation";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_SATURATION) + ")";
+        }
+    }
+
+    public String getContrastDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_CONTRAST)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_CONTRAST)) {
+            case 0:
+                return "None";
+            case 1:
+                return "Soft";
+            case 2:
+                return "Hard";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_CONTRAST) + ")";
+        }
+    }
+
+    public String getGainControlDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_GAIN_CONTROL)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_GAIN_CONTROL)) {
+            case 0:
+                return "None";
+            case 1:
+                return "Low gain up";
+            case 2:
+                return "Low gain down";
+            case 3:
+                return "High gain up";
+            case 4:
+                return "High gain down";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_GAIN_CONTROL) + ")";
+        }
+    }
+
+    public String getSceneCaptureTypeDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_SCENE_CAPTURE_TYPE)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_SCENE_CAPTURE_TYPE)) {
+            case 0:
+                return "Standard";
+            case 1:
+                return "Landscape";
+            case 2:
+                return "Portrait";
+            case 3:
+                return "Night scene";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_SCENE_CAPTURE_TYPE) + ")";
+        }
+    }
+
+    public String get35mmFilmEquivFocalLengthDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO)) return null;
+        int equivalentFocalLength = _directory.getInt(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO);
+
+        if (equivalentFocalLength==0)
+            return "Unknown";
+        else
+            return SimpleDecimalFormatter.format(equivalentFocalLength) + "mm";
+    }
+
+    public String getDigitalZoomRatioDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO)) return null;
+        Rational rational = _directory.getRational(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO);
+        if (rational.getNumerator()==0)
+            return "Digital zoom not used.";
+
+        return SimpleDecimalFormatter.format(rational.doubleValue());
+    }
+
+    public String getWhiteBalanceModeDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_WHITE_BALANCE_MODE)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_WHITE_BALANCE_MODE)) {
+            case 0:
+                return "Auto white balance";
+            case 1:
+                return "Manual white balance";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_WHITE_BALANCE_MODE) + ")";
+        }
+    }
+
+    public String getExposureModeDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_EXPOSURE_MODE)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_EXPOSURE_MODE)) {
+            case 0:
+                return "Auto exposure";
+            case 1:
+                return "Manual exposure";
+            case 2:
+                return "Auto bracket";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_EXPOSURE_MODE) + ")";
+        }
+    }
+
+    public String getCustomRenderedDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_CUSTOM_RENDERED)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_CUSTOM_RENDERED)) {
+            case 0:
+                return "Normal process";
+            case 1:
+                return "Custom process";
+            default:
+                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_CUSTOM_RENDERED) + ")";
+        }
+    }
+
+    public String getUserCommentDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(ExifDirectory.TAG_USER_COMMENT)) return null;
+
+        byte[] commentBytes = _directory.getByteArray(ExifDirectory.TAG_USER_COMMENT);
+
+        if (commentBytes.length==0)
+            return "";
+
+        final String[] encodingNames = new String[] { "ASCII", "UNICODE", "JIS" };
+
+        if (commentBytes.length>=10)
+        {
+            String encodingRegion = new String(commentBytes, 0, 10);
+
+            // try each encoding name
+            for (int i = 0; i<encodingNames.length; i++) {
+                String encodingName = encodingNames[i];
+                if (encodingRegion.startsWith(encodingName))
+                {
+                    // remove the null characters (and any spaces) commonly present after the encoding name
+                    for (int j = encodingName.length(); j<10; j++) {
+                        byte b = commentBytes[j];
+                        if (b!='\0' && b!=' ') {
+                           if (encodingName.equals("UNICODE")) {
+                              try {
+                                 return new String(commentBytes, j, commentBytes.length - j, "UTF-16LE").trim();
+                              }
+                              catch (UnsupportedEncodingException ex) {
+                                 return null;
+                              }
+                           }
+                           return new String(commentBytes, j, commentBytes.length - j).trim();
+                        }
+                    }
+                    return new String(commentBytes, 10, commentBytes.length - 10).trim();
+                }
+            }
+        }
+
+        // special handling fell through, return a plain string representation
+        return new String(commentBytes).trim();
+    }
+
+    public String getThumbnailDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA)) return null;
         int[] thumbnailBytes = _directory.getIntArray(ExifDirectory.TAG_THUMBNAIL_DATA);
         return "[" + thumbnailBytes.length + " bytes of thumbnail data]";
     }
 
-    private String getIsoEquivalentDescription() throws MetadataException
+    public String getIsoEquivalentDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_ISO_EQUIVALENT)) return null;
         int isoEquiv = _directory.getInt(ExifDirectory.TAG_ISO_EQUIVALENT);
@@ -150,7 +474,7 @@ public class ExifDescriptor extends TagDescriptor
         return Integer.toString(isoEquiv);
     }
 
-    private String getReferenceBlackWhiteDescription() throws MetadataException
+    public String getReferenceBlackWhiteDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_REFERENCE_BLACK_WHITE)) return null;
         int[] ints = _directory.getIntArray(ExifDirectory.TAG_REFERENCE_BLACK_WHITE);
@@ -165,21 +489,21 @@ public class ExifDescriptor extends TagDescriptor
         return pos;
     }
 
-    private String getExifVersionDescription() throws MetadataException
+    public String getExifVersionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_EXIF_VERSION)) return null;
         int[] ints = _directory.getIntArray(ExifDirectory.TAG_EXIF_VERSION);
         return ExifDescriptor.convertBytesToVersionString(ints);
     }
 
-    private String getFlashPixVersionDescription() throws MetadataException
+    public String getFlashPixVersionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_FLASHPIX_VERSION)) return null;
         int[] ints = _directory.getIntArray(ExifDirectory.TAG_FLASHPIX_VERSION);
         return ExifDescriptor.convertBytesToVersionString(ints);
     }
 
-    private String getSceneTypeDescription() throws MetadataException
+    public String getSceneTypeDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_SCENE_TYPE)) return null;
         int sceneType = _directory.getInt(ExifDirectory.TAG_SCENE_TYPE);
@@ -190,7 +514,7 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getFileSourceDescription() throws MetadataException
+    public String getFileSourceDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_FILE_SOURCE)) return null;
         int fileSource = _directory.getInt(ExifDirectory.TAG_FILE_SOURCE);
@@ -201,62 +525,50 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getExposureBiasDescription() throws MetadataException
+    public String getExposureBiasDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_EXPOSURE_BIAS)) return null;
         Rational exposureBias = _directory.getRational(ExifDirectory.TAG_EXPOSURE_BIAS);
-        return exposureBias.toSimpleString(true);
+        return exposureBias.toSimpleString(true) + " EV";
     }
 
-    private String getMaxApertureValueDescription() throws MetadataException
+    public String getMaxApertureValueDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_MAX_APERTURE)) return null;
-        double apertureApex = _directory.getDouble(ExifDirectory.TAG_MAX_APERTURE);
-        double rootTwo = Math.sqrt(2);
-        double fStop = Math.pow(rootTwo, apertureApex);
-        java.text.DecimalFormat formatter = new DecimalFormat("0.#");
-        return "F" + formatter.format(fStop);
+        double aperture = _directory.getDouble(ExifDirectory.TAG_MAX_APERTURE);
+        double fStop = PhotographicConversions.apertureToFStop(aperture);
+        return "F" + SimpleDecimalFormatter.format(fStop);
     }
 
-    private String getApertureValueDescription() throws MetadataException
+    public String getApertureValueDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_APERTURE)) return null;
-        double apertureApex = _directory.getDouble(ExifDirectory.TAG_APERTURE);
-        double rootTwo = Math.sqrt(2);
-        double fStop = Math.pow(rootTwo, apertureApex);
-        java.text.DecimalFormat formatter = new DecimalFormat("0.#");
-        return "F" + formatter.format(fStop);
+        double aperture = _directory.getDouble(ExifDirectory.TAG_APERTURE);
+        double fStop = PhotographicConversions.apertureToFStop(aperture);
+        return "F" + SimpleDecimalFormatter.format(fStop);
     }
 
-    private String getExposureProgramDescription() throws MetadataException
+    public String getExposureProgramDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_EXPOSURE_PROGRAM)) return null;
         // '1' means manual control, '2' program normal, '3' aperture priority,
         // '4' shutter priority, '5' program creative (slow program),
         // '6' program action(high-speed program), '7' portrait mode, '8' landscape mode.
         switch (_directory.getInt(ExifDirectory.TAG_EXPOSURE_PROGRAM)) {
-            case 1:
-                return "Manual control";
-            case 2:
-                return "Program normal";
-            case 3:
-                return "Aperture priority";
-            case 4:
-                return "Shutter priority";
-            case 5:
-                return "Program creative (slow program)";
-            case 6:
-                return "Program action (high-speed program)";
-            case 7:
-                return "Portrait mode";
-            case 8:
-                return "Landscape mode";
+            case 1: return "Manual control";
+            case 2: return "Program normal";
+            case 3: return "Aperture priority";
+            case 4: return "Shutter priority";
+            case 5: return "Program creative (slow program)";
+            case 6: return "Program action (high-speed program)";
+            case 7: return "Portrait mode";
+            case 8: return "Landscape mode";
             default:
                 return "Unknown program (" + _directory.getInt(ExifDirectory.TAG_EXPOSURE_PROGRAM) + ")";
         }
     }
 
-    private String getYCbCrSubsamplingDescription() throws MetadataException
+    public String getYCbCrSubsamplingDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_YCBCR_SUBSAMPLING)) return null;
         int[] positions = _directory.getIntArray(ExifDirectory.TAG_YCBCR_SUBSAMPLING);
@@ -269,7 +581,7 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getPlanarConfigurationDescription() throws MetadataException
+    public String getPlanarConfigurationDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_PLANAR_CONFIGURATION)) return null;
         // When image format is no compression YCbCr, this value shows byte aligns of YCbCr
@@ -278,83 +590,110 @@ public class ExifDescriptor extends TagDescriptor
         // plane format.
 
         switch (_directory.getInt(ExifDirectory.TAG_PLANAR_CONFIGURATION)) {
-            case 1:
-                return "Chunky (contiguous for each subsampling pixel)";
-            case 2:
-                return "Separate (Y-plane/Cb-plane/Cr-plane format)";
+            case 1: return "Chunky (contiguous for each subsampling pixel)";
+            case 2: return "Separate (Y-plane/Cb-plane/Cr-plane format)";
             default:
                 return "Unknown configuration";
         }
     }
 
-    private String getSamplesPerPixelDescription()
+    public String getSamplesPerPixelDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_SAMPLES_PER_PIXEL)) return null;
         return _directory.getString(ExifDirectory.TAG_SAMPLES_PER_PIXEL) + " samples/pixel";
     }
 
-    private String getRowsPerStripDescription()
+    public String getRowsPerStripDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_ROWS_PER_STRIP)) return null;
         return _directory.getString(ExifDirectory.TAG_ROWS_PER_STRIP) + " rows/strip";
     }
 
-    private String getStripByteCountsDescription()
+    public String getStripByteCountsDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_STRIP_BYTE_COUNTS)) return null;
         return _directory.getString(ExifDirectory.TAG_STRIP_BYTE_COUNTS) + " bytes";
     }
 
-    private String getPhotometricInterpretationDescription() throws MetadataException
+    public String getPhotometricInterpretationDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION)) return null;
-        // Shows the color space of the image data components. '1' means monochrome,
-        // '2' means RGB, '6' means YCbCr.
+        // Shows the color space of the image data components
         switch (_directory.getInt(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION)) {
-            case 1:
-                return "Monochrome";
-            case 2:
-                return "RGB";
-            case 6:
-                return "YCbCr";
+            case 0: return "WhiteIsZero";
+            case 1: return "BlackIsZero";
+            case 2: return "RGB";
+            case 3: return "RGB Palette";
+            case 4: return "Transparency Mask";
+            case 5: return "CMYK";
+            case 6: return "YCbCr";
+            case 8: return "CIELab";
+            case 9: return "ICCLab";
+            case 10: return "ITULab";
+            case 32803: return "Color Filter Array";
+            case 32844: return "Pixar LogL";
+            case 32845: return "Pixar LogLuv";
+            case 32892: return "Linear Raw";
             default:
                 return "Unknown colour space";
         }
     }
 
-    private String getCompressionDescription() throws MetadataException
+    public String getCompressionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_COMPRESSION)) return null;
-        // '1' means no compression, '6' means JPEG compression.
         switch (_directory.getInt(ExifDirectory.TAG_COMPRESSION)) {
-            case 1:
-                return "No compression";
-            case 6:
-                return "JPEG compression";
+            case 1: return "Uncompressed";
+            case 2: return "CCITT 1D";
+            case 3: return "T4/Group 3 Fax";
+            case 4: return "T6/Group 4 Fax";
+            case 5: return "LZW";
+            case 6: return "JPEG (old-style)";
+            case 7: return "JPEG";
+            case 8: return "Adobe Deflate";
+            case 9: return "JBIG B&W";
+            case 10: return "JBIG Color";
+            case 32766: return "Next";
+            case 32771: return "CCIRLEW";
+            case 32773: return "PackBits";
+            case 32809: return "Thunderscan";
+            case 32895: return "IT8CTPAD";
+            case 32896: return "IT8LW";
+            case 32897: return "IT8MP";
+            case 32898: return "IT8BL";
+            case 32908: return "PixarFilm";
+            case 32909: return "PixarLog";
+            case 32946: return "Deflate";
+            case 32947: return "DCS";
+            case 32661: return "JBIG";
+            case 32676: return "SGILog";
+            case 32677: return "SGILog24";
+            case 32712: return "JPEG 2000";
+            case 32713: return "Nikon NEF Compressed";
             default:
                 return "Unknown compression";
         }
     }
 
-    private String getBitsPerSampleDescription()
+    public String getBitsPerSampleDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_BITS_PER_SAMPLE)) return null;
         return _directory.getString(ExifDirectory.TAG_BITS_PER_SAMPLE) + " bits/component/pixel";
     }
 
-    private String getThumbnailImageWidthDescription()
+    public String getThumbnailImageWidthDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH)) return null;
         return _directory.getString(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH) + " pixels";
     }
 
-    private String getThumbnailImageHeightDescription()
+    public String getThumbnailImageHeightDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT)) return null;
         return _directory.getString(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT) + " pixels";
     }
 
-    private String getFocalPlaneXResolutionDescription() throws MetadataException
+    public String getFocalPlaneXResolutionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_FOCAL_PLANE_X_RES)) return null;
         Rational rational = _directory.getRational(ExifDirectory.TAG_FOCAL_PLANE_X_RES);
@@ -362,7 +701,7 @@ public class ExifDescriptor extends TagDescriptor
                 getFocalPlaneResolutionUnitDescription().toLowerCase();
     }
 
-    private String getFocalPlaneYResolutionDescription() throws MetadataException
+    public String getFocalPlaneYResolutionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_COMPRESSION)) return null;
         Rational rational = _directory.getRational(ExifDirectory.TAG_FOCAL_PLANE_Y_RES);
@@ -370,7 +709,7 @@ public class ExifDescriptor extends TagDescriptor
                 getFocalPlaneResolutionUnitDescription().toLowerCase();
     }
 
-    private String getFocalPlaneResolutionUnitDescription() throws MetadataException
+    public String getFocalPlaneResolutionUnitDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_FOCAL_PLANE_UNIT)) return null;
         // Unit of FocalPlaneXResoluton/FocalPlaneYResolution. '1' means no-unit,
@@ -387,19 +726,19 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getExifImageWidthDescription() throws MetadataException
+    public String getExifImageWidthDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_EXIF_IMAGE_WIDTH)) return null;
         return _directory.getInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH) + " pixels";
     }
 
-    private String getExifImageHeightDescription() throws MetadataException
+    public String getExifImageHeightDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT)) return null;
         return _directory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT) + " pixels";
     }
 
-    private String getColorSpaceDescription() throws MetadataException
+    public String getColorSpaceDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_COLOR_SPACE)) return null;
         int colorSpace = _directory.getInt(ExifDirectory.TAG_COLOR_SPACE);
@@ -412,7 +751,7 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getFocalLengthDescription() throws MetadataException
+    public String getFocalLengthDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_FOCAL_LENGTH)) return null;
         java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
@@ -420,26 +759,49 @@ public class ExifDescriptor extends TagDescriptor
         return formatter.format(focalLength.doubleValue()) + " mm";
     }
 
-    private String getFlashDescription() throws MetadataException
+    public String getFlashDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_FLASH)) return null;
-        // '0' means flash did not fire, '1' flash fired, '5' flash fired but strobe return
-        // light not detected, '7' flash fired and strobe return light detected.
-        switch (_directory.getInt(ExifDirectory.TAG_FLASH)) {
-            case 0:
-                return "No flash fired";
-            case 1:
-                return "Flash fired";
-            case 5:
-                return "Flash fired but strobe return light not detected";
-            case 7:
-                return "flash fired and strobe return light detected";
-            default:
-                return "Unknown (" + _directory.getInt(ExifDirectory.TAG_FLASH) + ")";
+
+        /*
+         * This is a bitmask.
+         * 0 = flash fired
+         * 1 = return detected
+         * 2 = return able to be detected
+         * 3 = unknown
+         * 4 = auto used
+         * 5 = unknown
+         * 6 = red eye reduction used
+         */
+
+        int val = _directory.getInt(ExifDirectory.TAG_FLASH);
+
+        StringBuffer sb = new StringBuffer();
+
+        if ((val & 0x1)!=0)
+            sb.append("Flash fired");
+        else
+            sb.append("Flash did not fire");
+
+        // check if we're able to detect a return, before we mention it
+        if ((val & 0x4)!=0)
+        {
+            if ((val & 0x2)!=0)
+                sb.append(", return detected");
+            else
+                sb.append(", return not detected");
         }
+
+        if ((val & 0x10)!=0)
+            sb.append(", auto");
+
+        if ((val & 0x40)!=0)
+            sb.append(", red-eye reduction");
+
+        return sb.toString();
     }
 
-    private String getWhiteBalanceDescription() throws MetadataException
+    public String getWhiteBalanceDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_WHITE_BALANCE)) return null;
         // '0' means unknown, '1' daylight, '2' fluorescent, '3' tungsten, '10' flash,
@@ -475,7 +837,7 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getMeteringModeDescription() throws MetadataException
+    public String getMeteringModeDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_METERING_MODE)) return null;
         // '0' means unknown, '1' average, '2' center weighted average, '3' spot
@@ -503,7 +865,7 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getSubjectDistanceDescription() throws MetadataException
+    public String getSubjectDistanceDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_SUBJECT_DISTANCE)) return null;
         Rational distance = _directory.getRational(ExifDirectory.TAG_SUBJECT_DISTANCE);
@@ -511,7 +873,7 @@ public class ExifDescriptor extends TagDescriptor
         return formatter.format(distance.doubleValue()) + " metres";
     }
 
-    private String getCompressionLevelDescription() throws MetadataException
+    public String getCompressionLevelDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_COMPRESSION_LEVEL)) return null;
         Rational compressionRatio = _directory.getRational(ExifDirectory.TAG_COMPRESSION_LEVEL);
@@ -523,28 +885,28 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getThumbnailLengthDescription()
+    public String getThumbnailLengthDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_THUMBNAIL_LENGTH)) return null;
         return _directory.getString(ExifDirectory.TAG_THUMBNAIL_LENGTH) + " bytes";
     }
 
-    private String getThumbnailOffsetDescription()
+    public String getThumbnailOffsetDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_THUMBNAIL_OFFSET)) return null;
         return _directory.getString(ExifDirectory.TAG_THUMBNAIL_OFFSET) + " bytes";
     }
 
-    private String getYResolutionDescription() throws MetadataException
+    public String getYResolutionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_Y_RESOLUTION)) return null;
         Rational resolution = _directory.getRational(ExifDirectory.TAG_Y_RESOLUTION);
-        return resolution.toSimpleString(_allowDecimalRepresentationOfRationals) + 
+        return resolution.toSimpleString(_allowDecimalRepresentationOfRationals) +
                 " dots per " +
                 getResolutionDescription().toLowerCase();
     }
 
-    private String getXResolutionDescription() throws MetadataException
+    public String getXResolutionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_X_RESOLUTION)) return null;
         Rational resolution = _directory.getRational(ExifDirectory.TAG_X_RESOLUTION);
@@ -553,90 +915,110 @@ public class ExifDescriptor extends TagDescriptor
                 getResolutionDescription().toLowerCase();
     }
 
-    private String getExposureTimeDescription()
+    public String getExposureTimeDescription()
     {
         if (!_directory.containsTag(ExifDirectory.TAG_EXPOSURE_TIME)) return null;
         return _directory.getString(ExifDirectory.TAG_EXPOSURE_TIME) + " sec";
     }
 
-    private String getShutterSpeedDescription() throws MetadataException
+    public String getShutterSpeedDescription() throws MetadataException
     {
+        // I believe this method to now be stable, but am leaving some alternative snippets of
+        // code in here, to assist anyone who's looking into this (given that I don't have a public CVS).
+
         if (!_directory.containsTag(ExifDirectory.TAG_SHUTTER_SPEED)) return null;
-        // Incorrect math bug fixed by Hendrik Wördehoff - 20 Sep 2002
-        int apexValue = _directory.getInt(ExifDirectory.TAG_SHUTTER_SPEED);
-//        int apexPower = (int)(Math.pow(2.0, apexValue) + 0.5);
-        // addition of 0.5 removed upon suggestion of Varuni Witana, who detected incorrect values for Canon cameras,
-        // which calculate both shutterspeed and exposuretime
-        int apexPower = (int)Math.pow(2.0, apexValue);
-        return "1/" + apexPower + " sec";
+//        float apexValue = _directory.getFloat(ExifDirectory.TAG_SHUTTER_SPEED);
+//        int apexPower = (int)Math.pow(2.0, apexValue);
+//        return "1/" + apexPower + " sec";
+        // TODO test this method
+        // thanks to Mark Edwards for spotting and patching a bug in the calculation of this
+        // description (spotted bug using a Canon EOS 300D)
+        // thanks also to Gli Blr for spotting this bug
+        float apexValue = _directory.getFloat(ExifDirectory.TAG_SHUTTER_SPEED);
+        if (apexValue<=1) {
+            float apexPower = (float)(1/(Math.exp(apexValue*Math.log(2))));
+            long apexPower10 = Math.round((double)apexPower * 10.0);
+            float fApexPower = (float) apexPower10 / 10.0f;
+            return fApexPower + " sec";
+        } else {
+            int apexPower = (int)((Math.exp(apexValue*Math.log(2))));
+            return "1/" + apexPower + " sec";
+        }
+
+/*
+        // This alternative implementation offered by Bill Richards
+        // TODO determine which is the correct / more-correct implementation
+        double apexValue = _directory.getDouble(ExifDirectory.TAG_SHUTTER_SPEED);
+        double apexPower = Math.pow(2.0, apexValue);
+
+        StringBuffer sb = new StringBuffer();
+        if (apexPower > 1)
+            apexPower = Math.floor(apexPower);
+
+        if (apexPower < 1) {
+            sb.append((int)Math.round(1/apexPower));
+        } else {
+            sb.append("1/");
+            sb.append((int)apexPower);
+        }
+        sb.append(" sec");
+        return sb.toString();
+*/
+
     }
 
-    private String getFNumberDescription() throws MetadataException
+    public String getFNumberDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_FNUMBER)) return null;
         Rational fNumber = _directory.getRational(ExifDirectory.TAG_FNUMBER);
-        java.text.DecimalFormat formatter = new DecimalFormat("0.#");
-        return "F" + formatter.format(fNumber.doubleValue());
+        return "F" + SimpleDecimalFormatter.format(fNumber.doubleValue());
     }
 
-    private String getYCbCrPositioningDescription() throws MetadataException
+    public String getYCbCrPositioningDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_YCBCR_POSITIONING)) return null;
         int yCbCrPosition = _directory.getInt(ExifDirectory.TAG_YCBCR_POSITIONING);
         switch (yCbCrPosition) {
-            case 1:
-                return "Center of pixel array";
-            case 2:
-                return "Datum point";
+            case 1: return "Center of pixel array";
+            case 2: return "Datum point";
             default:
                 return String.valueOf(yCbCrPosition);
         }
     }
 
-    private String getOrientationDescription() throws MetadataException
+    public String getOrientationDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_ORIENTATION)) return null;
         int orientation = _directory.getInt(ExifDirectory.TAG_ORIENTATION);
         switch (orientation) {
-            case 1:
-                return "top, left side";
-            case 2:
-                return "top, right side";
-            case 3:
-                return "bottom, right side";
-            case 4:
-                return "bottom, left side";
-            case 5:
-                return "left side, top";
-            case 6:
-                return "right side, top";
-            case 7:
-                return "right side, bottom";
-            case 8:
-                return "left side, bottom";
+            case 1: return "Top, left side (Horizontal / normal)";
+            case 2: return "Top, right side (Mirror horizontal)";
+            case 3: return "Bottom, right side (Rotate 180)";
+            case 4: return "Bottom, left side (Mirror vertical)";
+            case 5: return "Left side, top (Mirror horizontal and rotate 270 CW)";
+            case 6: return "Right side, top (Rotate 90 CW)";
+            case 7: return "Right side, bottom (Mirror horizontal and rotate 90 CW)";
+            case 8: return "Left side, bottom (Rotate 270 CW)";
             default:
                 return String.valueOf(orientation);
         }
     }
 
-    private String getResolutionDescription() throws MetadataException
+    public String getResolutionDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_RESOLUTION_UNIT)) return "";
         // '1' means no-unit, '2' means inch, '3' means centimeter. Default value is '2'(inch)
         int resolutionUnit = _directory.getInt(ExifDirectory.TAG_RESOLUTION_UNIT);
         switch (resolutionUnit) {
-            case 1:
-                return "(No unit)";
-            case 2:
-                return "Inch";
-            case 3:
-                return "cm";
+            case 1: return "(No unit)";
+            case 2: return "Inch";
+            case 3: return "cm";
             default:
                 return "";
         }
     }
 
-    private String getSensingMethodDescription() throws MetadataException
+    public String getSensingMethodDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_SENSING_METHOD)) return null;
         // '1' Not defined, '2' One-chip color area sensor, '3' Two-chip color area sensor
@@ -663,7 +1045,7 @@ public class ExifDescriptor extends TagDescriptor
         }
     }
 
-    private String getComponentConfigurationDescription() throws MetadataException
+    public String getComponentConfigurationDescription() throws MetadataException
     {
         int[] components = _directory.getIntArray(ExifDirectory.TAG_COMPONENTS_CONFIGURATION);
         String[] componentStrings = {"", "Y", "Cb", "Cr", "R", "G", "B"};
@@ -693,5 +1075,47 @@ public class ExifDescriptor extends TagDescriptor
             version.append(digit);
         }
         return version.toString();
+    }
+
+    /**
+     * The Windows specific tags uses plain Unicode
+     */
+    private String getUnicodeDescription(int tag) throws MetadataException
+    {
+         if (!_directory.containsTag(tag)) return null;
+         byte[] commentBytes = _directory.getByteArray(tag);
+         try {
+             // decode the unicode string
+             // trim it, as i'm seeing a junk character on the end
+            return new String(commentBytes, "UTF-16LE").trim();
+         }
+         catch (UnsupportedEncodingException ex) {
+            return null;
+         }
+    }
+
+    public String getWindowsAuthorDescription() throws MetadataException
+    {
+       return getUnicodeDescription(ExifDirectory.TAG_WIN_AUTHOR);
+    }
+
+    public String getWindowsCommentDescription() throws MetadataException
+    {
+       return getUnicodeDescription(ExifDirectory.TAG_WIN_COMMENT);
+    }
+
+    public String getWindowsKeywordsDescription() throws MetadataException
+    {
+       return getUnicodeDescription(ExifDirectory.TAG_WIN_KEYWORDS);
+    }
+
+    public String getWindowsTitleDescription() throws MetadataException
+    {
+       return getUnicodeDescription(ExifDirectory.TAG_WIN_TITLE);
+    }
+
+    public String getWindowsSubjectDescription() throws MetadataException
+    {
+       return getUnicodeDescription(ExifDirectory.TAG_WIN_SUBJECT);
     }
 }

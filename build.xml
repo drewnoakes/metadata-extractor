@@ -4,14 +4,14 @@
 
     <description>metadata-extractor for java build file</description>
 
-    <property name="dist" location="dist"/>
-    <property name="build" value="build"/>
+    <property name="dist" location="Releases"/>
+    <property name="build" value="Build"/>
     <property name="src" value="src"/>
-    <property name="lib" value="lib"/>
+    <property name="lib" value="Libraries"/>
     <property name="verbose" value="true"/>
     <property name="debug" value="off"/>
-    <property name="version" value="2.2.2"/>
-    <property name="classpath" value="lib/junit.jar"/>
+    <property name="version" value="2.3.0"/>
+    <property name="classpath" value="${lib}/junit.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
         <delete verbose="${verbose}" dir="${build}"/>
@@ -28,17 +28,18 @@
     </target>
 
     <target name="dist-binaries" depends="clean, compile, test" description="generate binary distribution">
-        <jar destfile="${dist}/metadata-extractor-${version}.jar" update="false" basedir="${build}">
+        <jar destfile="${dist}/metadata-extractor-${version}.jar" update="false">
             <manifest>
                 <attribute name="Main-Class" value="com.drew.imaging.jpeg.JpegMetadataReader"/>
             </manifest>
+            <fileset dir="${build}" excludes="**/test/*.class" />
         </jar>
     </target>
 
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
         <jar destfile="${dist}/metadata-extractor-${version}-src.jar" update="false">
             <fileset dir="."
-                includes="${src}/**/*.java, ${src}/**/*.jpg, ${lib}/junit.jar, metadata-extractor.build, ReleaseNotes.txt"/>
+                includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.metadata, ${lib}/junit.jar, build.xml, ReleaseNotes.txt"/>
         </jar>
     </target>
 

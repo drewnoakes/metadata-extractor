@@ -1,3 +1,19 @@
+/*
+ * This is public domain software - that is, you can do whatever you want
+ * with it, and include it software that is licensed under the GNU or the
+ * BSD license, or whatever other licence you choose, including proprietary
+ * closed source licenses.  I do ask that you leave this header in tact.
+ *
+ * If you make modifications to this code that you think would benefit the
+ * wider community, please send me a copy and I'll post it on my site.
+ *
+ * If you make use of this code, I'd appreciate hearing about it.
+ *   drew@drewnoakes.com
+ * Latest version of this software kept at
+ *   http://drewnoakes.com/
+ *
+ * Created on Aug 2, 2003.
+ */
 package com.drew.metadata.jpeg;
 
 import com.drew.metadata.Directory;
@@ -7,8 +23,7 @@ import java.util.HashMap;
 
 /**
  * Directory of tags and values for the SOF0 Jpeg segment.  This segment holds basic metadata about the image.
- * Date: Aug 2, 2003
- * @author Darrell Silver http://www.darrellsilver.com & Drew Noakes
+ * @author Darrell Silver http://www.darrellsilver.com and Drew Noakes
  */
 public class JpegDirectory extends Directory {
 

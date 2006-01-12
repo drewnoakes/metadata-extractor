@@ -16,7 +16,6 @@
  *
  * Created on 29 April 2002, 00:33
  */
-
 package com.drew.metadata.exif;
 
 import com.drew.metadata.MetadataException;

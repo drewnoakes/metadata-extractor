@@ -20,15 +20,15 @@
  */
 package com.drew.imaging.jpeg.test;
 
-import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 import junit.framework.TestCase;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * Contains JUnit tests for the JpegSegmentReader class.
@@ -97,6 +97,9 @@ public class JpegSegmentReaderTest extends TestCase
         } catch (JpegProcessingException e) {
             fail("Error constructing JpegSegmentReader using InputStream");
         }
+        // this will never happen, as fail() is guaranteed to throw an AssertionException
+        if (reader==null)
+            return;
         byte[] exifData = reader.readSegment(JpegSegmentReader.SEGMENT_APP1);
         assertEquals("Exif", new String(exifData, 0, 4));
     }
