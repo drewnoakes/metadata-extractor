@@ -353,8 +353,8 @@ public class ExifDescriptor extends TagDescriptor
 
     public String get35mmFilmEquivFocalLengthDescription() throws MetadataException
     {
-        if (!_directory.containsTag(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO)) return null;
-        int equivalentFocalLength = _directory.getInt(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO);
+        if (!_directory.containsTag(ExifDirectory.TAG_35MM_FILM_EQUIV_FOCAL_LENGTH)) return null;
+        int equivalentFocalLength = _directory.getInt(ExifDirectory.TAG_35MM_FILM_EQUIV_FOCAL_LENGTH);
 
         if (equivalentFocalLength==0)
             return "Unknown";
@@ -703,7 +703,7 @@ public class ExifDescriptor extends TagDescriptor
 
     public String getFocalPlaneYResolutionDescription() throws MetadataException
     {
-        if (!_directory.containsTag(ExifDirectory.TAG_COMPRESSION)) return null;
+        if (!_directory.containsTag(ExifDirectory.TAG_FOCAL_PLANE_Y_RES)) return null;
         Rational rational = _directory.getRational(ExifDirectory.TAG_FOCAL_PLANE_Y_RES);
         return rational.getReciprocal().toSimpleString(_allowDecimalRepresentationOfRationals) + " " +
                 getFocalPlaneResolutionUnitDescription().toLowerCase();

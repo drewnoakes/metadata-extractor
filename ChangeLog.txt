@@ -1,5 +1,9 @@
-v2.3.0
-------------
+v2.3.1 - 25 Feb 2006
+-------------------------------
+  - Fixed copy-and-paste errors in ExifDescriptor.java.  Thanks to Ferret Renaud.
+
+v2.3.0 - 12 Jan 2006
+-------------------------------
   - New tags from Exif 2.2 specification (A401-A420).
   - Fixed stack overflow exception in ExifReader for cyclic directory references.
     Thanks to John Sidney-Woollett for reporting this bug (reported for Fuji FinePix A101 and Canon 20D).
@@ -28,20 +32,20 @@ v2.3.0
     These .metadata files contain all non-image JPEG segments, making them suitable for unit tests whilst
     being much smaller on disk.
 
-v2.2.2
-------------
+v2.2.2 - 22 Nov 2003
+-------------------------------
 
  - Fixed a bug where version strings were assumed to be comprised of exactly four parts,
-   and cases were found where a different number existed.
+   and cases were found where a different number existed
 
-v2.2.1
-------------
+v2.2.1 - 24 Oct 2003
+-------------------------------
 
  - Fixed a bug where JpegDirectory had tag names for image width and height around
-   the wrong way.  Thanks to Sander Smith for pointing this out.
+   the wrong way.  Thanks to Sander Smith for pointing this out
 
-v2.2
-------------
+v2.2 - 18 Oct 2003
+-------------------------------
 
  - Added support for extraction of Jpeg image information (from the SOF0 segment)
    Thanks to Darrell Silver for commencing the code for this extension
@@ -51,14 +55,14 @@ v2.2
    publishing his work in decoding this makernote data
  - Added convenient writing of thumbnails to files from ExifDirectory
  - Fixed a bug in date format strings, whereby times in the AM / PM were indistinguishable
-   Thanks to Bill Boland for being the first person to point this out (this was a popular one!).
- - Fixed bug for multi-component tag values of certain types.
-   Thanks to Derek Wegner for identifying the bug and providing a solution.
- - More unit tests (consequently, the source-code download is much larger).
- - First version with an Ant build script.
+   Thanks to Bill Boland for being the first person to point this out (this was a popular one!)
+ - Fixed bug for multi-component tag values of certain types
+   Thanks to Derek Wegner for identifying the bug and providing a solution
+ - More unit tests (consequently, the source-code download is much larger)
+ - First version with an Ant build script
 
-v2.1
-------------
+v2.1 - 12 Jan 2003
+-------------------------------
 
   - Extract methods no longer throw exceptions, with error information stored
     in Metadata instances, using hasErrors() and getErrors()
@@ -67,8 +71,8 @@ v2.1
   - Support for extracting metadata from InputStreams, such as network connections
   - Replaced code that depended upon JDK 1.4
 
-v2.0
-------------
+v2.0 - 10 Dec 2002
+-------------------------------
 
   Enormous changes to the class and package structure in this release prohibit a
   class-by-class breakdown of changes.  The focus is no longer on Exif metadata
@@ -89,8 +93,8 @@ v2.0
   the scope to general metadata extraction.  Future development will introduce
   new media and metadata support with little or no impact to existing classes.
 
-v1.2
-------------
+v1.2 - 6 Nov 2002
+-------------------------------
 
   ExifExtractor.java
     - Proper traversing of Exif file structure and complete refactor & tidy of
@@ -99,6 +103,7 @@ v1.2
     - Tags now stored in directories... use the IFD_* constants to refer to the
       image file directory you require (Exif, Interop, GPS and Makernote*) --
       this avoids collisions where two tags share the same code
+    - Correct extraction of multi-component values
     - No longer decodes image to extract Exif data -- this is much faster
     - Takes componentCount of unknown tags into account
     - Now understands GPS tags (thanks to Colin Briton for his help with this)
@@ -141,7 +146,7 @@ v1.2
 
 
 v1.1.1
-------------
+-------------------------------
 
   Rational.java
     - Added toSimpleString() method, which returns a simplified and hopefully
@@ -163,8 +168,8 @@ v1.1.1
     - Make use of new Rational method toSimpleString() for more elegant output -
       Use of DecimalFormatter to tidy output in selected get***Description() methods
 
-v1.1.0
-------------
+v1.1.0 - 28 Aug 2002
+-------------------------------
 
   - Descriptive tag values, including units and text for enumerations
   - Decoupling from JDK 1.4-specific libraries (tested with JDK 1.3)
@@ -172,6 +177,6 @@ v1.1.0
     static lookup method
 
 v1.0
-------------
+-------------------------------
 
   - Initial release
