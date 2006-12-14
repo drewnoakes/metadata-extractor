@@ -1,3 +1,15 @@
+v2.4.0 beta 1 - 14 Dec 2006
+-------------------------------
+  - Added support for TIFF files and several camera RAW formats.
+    Tested on NEF (Nikon), CRW & CR2 (Canon), ARW (Sony)
+    Thanks to Darren Salomons and Peter Wayner for their help with this.
+  - New class ImageMetadataReader can be used for all supported file types.
+  - Improved Javadoc coverage.
+  - Added announcement mailing list:
+    http://tech.groups.yahoo.com/group/metadata-extractor-announce/
+  - Updated website.
+  - A few methods marked deprecated in preparation for future releases.
+
 v2.3.1 - 25 Feb 2006
 -------------------------------
   - Fixed copy-and-paste errors in ExifDescriptor.java.  Thanks to Ferret Renaud.

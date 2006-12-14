@@ -5,13 +5,13 @@
     <description>metadata-extractor for java build file</description>
 
     <property name="dist" location="Releases"/>
-    <property name="build" value="Build"/>
-    <property name="src" value="src"/>
-    <property name="javadoc" value="javadoc"/>
+    <property name="build" value="Output"/>
+    <property name="src" value="Source"/>
+    <property name="javadoc" value="Javadoc"/>
     <property name="lib" value="Libraries"/>
     <property name="verbose" value="true"/>
     <property name="debug" value="off"/>
-    <property name="version" value="2.3.1"/>
+    <property name="version" value="2.4.0-beta-1"/>
     <property name="classpath" value="${lib}/junit.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
@@ -31,7 +31,7 @@
     <target name="dist-binaries" depends="clean, compile, test" description="generate binary distribution">
         <jar destfile="${dist}/metadata-extractor-${version}.jar" update="false">
             <manifest>
-                <attribute name="Main-Class" value="com.drew.imaging.jpeg.JpegMetadataReader"/>
+                <attribute name="Main-Class" value="com.drew.imaging.ImageMetadataReader"/>
             </manifest>
             <fileset dir="${build}" excludes="**/test/*.class" />
         </jar>
@@ -40,7 +40,7 @@
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
         <jar destfile="${dist}/metadata-extractor-${version}-src.jar" update="false">
             <fileset dir="."
-                includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.metadata, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
+                includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.metadata, ${src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
         </jar>
     </target>
 
@@ -56,6 +56,7 @@
     </target>
 
     <target name="javadoc" description="generate javadoc documentation">
+        <copy file="Website/metadata-extractor-logo-30px.gif" todir="${javadoc}"  />
         <javadoc
             destdir="${javadoc}"
             defaultexcludes="yes"
@@ -65,8 +66,14 @@
             access="protected"
             windowtitle="metadata-extractor javadoc"
             failonerror="true">
-
-            <bottom><![CDATA[<i>Copyright &#169; 2006 Drew Noakes. All Rights Reserved.</i>]]></bottom>
+            <!-- be sure to only use single quotes in the CDATA sections below -->
+            <header><![CDATA[<link rel='shortcut icon' href='http://www.drewnoakes.com/code/exif/MetadataExtractor.ico' /><a href='http://www.drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='http://www.drewnoakes.com/code/exif/javadoc/metadata-extractor-logo-30px.gif' border="0" alt='Metadata Extractor Logo'></a>]]></header>
+            <bottom><![CDATA[<i>Copyright &#169; 2006 Drew Noakes. All Rights Reserved.</i>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+_uacct = "UA-936661-1";
+urchinTracker();
+</script>]]></bottom>
 
             <packageset dir="${src}" defaultexcludes="yes">
                 <include name="com/**"/>
@@ -74,6 +81,7 @@
             </packageset>
 
         </javadoc>
+        <copy file="Website/javadoc-stylesheet.css" tofile="${javadoc}/stylesheet.css" overwrite="yes" /> 
     </target>
 
     <target name="all" depends="dist-source, dist-binaries, javadoc" description="prepare source and binary distributions, and javadoc"/>
