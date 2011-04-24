@@ -438,6 +438,11 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     {
         if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_ISO)) return null;
         int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_ISO);
+
+        // Canon PowerShot S3 is special
+        int canonMask = 0x4000;
+        if ((value & canonMask) > 0) return "" + (value & ~canonMask);
+
         switch (value) {
             case 0:
                 return "Not specified (see ISOSpeedRatings tag)";

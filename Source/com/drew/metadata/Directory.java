@@ -628,7 +628,7 @@ public abstract class Directory implements Serializable
     /**
      * Returns the specified tag's value as a String.  This value is the 'raw' value.  A more presentable decoding
      * of this value may be obtained from the corresponding Descriptor.
-     * @return the String reprensentation of the tag's value, or
+     * @return the String representation of the tag's value, or
      *         <code>null</code> if the tag hasn't been defined.
      */
     public String getString(int tagType)
@@ -646,19 +646,23 @@ public abstract class Directory implements Serializable
             int arrayLength = Array.getLength(o);
             // determine if this is an array of objects i.e. [Lcom.drew.blah
             boolean isObjectArray = o.getClass().toString().startsWith("class [L");
-            StringBuffer sbuffer = new StringBuffer();
+            StringBuffer string = new StringBuffer();
             for (int i = 0; i<arrayLength; i++)
             {
                 if (i!=0)
-                    sbuffer.append(' ');
+                    string.append(' ');
                 if (isObjectArray)
-                    sbuffer.append(Array.get(o, i).toString());
+                    string.append(Array.get(o, i).toString());
                 else
-                    sbuffer.append(Array.getInt(o, i));
+                    string.append(Array.getInt(o, i));
             }
-            return sbuffer.toString();
+            return string.toString();
         }
 
+        // Note that several cameras leave trailing spaces (Olympus, Nikon) but this library is intended to show
+        // the actual data within the file.  It is not inconceivable that whitespace may be significant here, so we
+        // do not trim.  Also, if support is added for writing data back to files, this may cause issues.
+        // We leave trimming to the presentation layer.
         return o.toString();
     }
 
@@ -681,16 +685,15 @@ public abstract class Directory implements Serializable
      */
     public String getTagName(int tagType)
     {
-        Integer key = new Integer(tagType);
         HashMap nameMap = getTagNameMap();
-        if (!nameMap.containsKey(key)) {
+        if (!nameMap.containsKey(tagType)) {
             String hex = Integer.toHexString(tagType);
             while (hex.length()<4) {
                 hex = "0" + hex;
             }
             return "Unknown tag (0x" + hex + ")";
         }
-        return (String)nameMap.get(key);
+        return (String)nameMap.get(tagType);
     }
 
     /**
@@ -703,9 +706,8 @@ public abstract class Directory implements Serializable
      */
     public String getDescription(int tagType) throws MetadataException
     {
-        if (_descriptor==null) {
+        if (_descriptor==null)
             throw new MetadataException("a descriptor must be set using setDescriptor(...) before descriptions can be provided");
-        }
 
         return _descriptor.getDescription(tagType);
     }

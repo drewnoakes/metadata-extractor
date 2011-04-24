@@ -37,6 +37,8 @@ public class IptcDirectory extends Directory
     public static final int TAG_OBJECT_NAME = 0x0205;
     public static final int TAG_DATE_CREATED = 0x0237;
     public static final int TAG_CITY = 0x025a;
+    public static final int TAG_CONTENT_LOCATION_NAME = 0x021b;
+    public static final int TAG_SUB_LOCATION = 0x025c;
     public static final int TAG_PROVINCE_OR_STATE = 0x025f;
     public static final int TAG_COUNTRY_OR_PRIMARY_LOCATION = 0x0265;
     public static final int TAG_ORIGINAL_TRANSMISSION_REFERENCE = 0x0267;
@@ -49,35 +51,62 @@ public class IptcDirectory extends Directory
     public static final int TAG_RELEASE_TIME = 0x0200 | 35;
     public static final int TAG_TIME_CREATED = 0x0200 | 60;
     public static final int TAG_ORIGINATING_PROGRAM = 0x0200 | 65;
+    //*** added by @Tom
+    public static final int TAG_SERVICE_ID = 0x011e;
+    public static final int TAG_DATE_SENT = 0x0146;
+    public static final int TAG_TIME_SENT = 0x0150;
+    public static final int TAG_EDIT_STATUS = 0x0207;
+    public static final int TAG_FIXTURE_ID = 0x0216;
+    public static final int TAG_REFERENCE_SERVICE = 0x022d;
+    public static final int TAG_REFERENCE_DATE = 0x022f;
+    public static final int TAG_REFERENCE_NUMBER = 0x0232;
+    public static final int TAG_PROGRAM_VERSION = 0x0246;
+    public static final int TAG_OBJECT_CYCLE = 0x024b;
+    public static final int TAG_COUNTRY_CODE = 0x0264;
 
     protected static final HashMap tagNameMap = new HashMap();
 
     static
     {
-        tagNameMap.put(new Integer(TAG_RECORD_VERSION), "Directory Version");
-        tagNameMap.put(new Integer(TAG_CAPTION), "Caption/Abstract");
-        tagNameMap.put(new Integer(TAG_WRITER), "Writer/Editor");
-        tagNameMap.put(new Integer(TAG_HEADLINE), "Headline");
-        tagNameMap.put(new Integer(TAG_SPECIAL_INSTRUCTIONS), "Special Instructions");
-        tagNameMap.put(new Integer(TAG_BY_LINE), "By-line");
-        tagNameMap.put(new Integer(TAG_BY_LINE_TITLE), "By-line Title");
-        tagNameMap.put(new Integer(TAG_CREDIT), "Credit");
-        tagNameMap.put(new Integer(TAG_SOURCE), "Source");
-        tagNameMap.put(new Integer(TAG_OBJECT_NAME), "Object Name");
-        tagNameMap.put(new Integer(TAG_DATE_CREATED), "Date Created");
-        tagNameMap.put(new Integer(TAG_CITY), "City");
-        tagNameMap.put(new Integer(TAG_PROVINCE_OR_STATE), "Province/State");
-        tagNameMap.put(new Integer(TAG_COUNTRY_OR_PRIMARY_LOCATION), "Country/Primary Location");
-        tagNameMap.put(new Integer(TAG_ORIGINAL_TRANSMISSION_REFERENCE), "Original Transmission Reference");
-        tagNameMap.put(new Integer(TAG_CATEGORY), "Category");
-        tagNameMap.put(new Integer(TAG_SUPPLEMENTAL_CATEGORIES), "Supplemental Category(s)");
-        tagNameMap.put(new Integer(TAG_URGENCY), "Urgency");
-        tagNameMap.put(new Integer(TAG_KEYWORDS), "Keywords");
-        tagNameMap.put(new Integer(TAG_COPYRIGHT_NOTICE), "Copyright Notice");
-        tagNameMap.put(new Integer(TAG_RELEASE_DATE), "Release Date");
-        tagNameMap.put(new Integer(TAG_RELEASE_TIME), "Release Time");
-        tagNameMap.put(new Integer(TAG_TIME_CREATED), "Time Created");
-        tagNameMap.put(new Integer(TAG_ORIGINATING_PROGRAM), "Originating Program");
+        tagNameMap.put(TAG_RECORD_VERSION, "Directory Version");
+        tagNameMap.put(TAG_CAPTION, "Caption/Abstract");
+        tagNameMap.put(TAG_WRITER, "Writer/Editor");
+        tagNameMap.put(TAG_HEADLINE, "Headline");
+        tagNameMap.put(TAG_SPECIAL_INSTRUCTIONS, "Special Instructions");
+        tagNameMap.put(TAG_BY_LINE, "By-line");
+        tagNameMap.put(TAG_BY_LINE_TITLE, "By-line Title");
+        tagNameMap.put(TAG_CREDIT, "Credit");
+        tagNameMap.put(TAG_SOURCE, "Source");
+        tagNameMap.put(TAG_OBJECT_NAME, "Object Name");
+        tagNameMap.put(TAG_DATE_CREATED, "Date Created");
+        tagNameMap.put(TAG_CITY, "City");
+        tagNameMap.put(TAG_PROVINCE_OR_STATE, "Province/State");
+        tagNameMap.put(TAG_COUNTRY_OR_PRIMARY_LOCATION, "Country/Primary Location");
+        tagNameMap.put(TAG_CONTENT_LOCATION_NAME, "Content Location Name");
+        tagNameMap.put(TAG_SUB_LOCATION, "Sub-location");
+        tagNameMap.put(TAG_ORIGINAL_TRANSMISSION_REFERENCE, "Original Transmission Reference");
+        tagNameMap.put(TAG_CATEGORY, "Category");
+        tagNameMap.put(TAG_SUPPLEMENTAL_CATEGORIES, "Supplemental Category(s)");
+        tagNameMap.put(TAG_URGENCY, "Urgency");
+        tagNameMap.put(TAG_KEYWORDS, "Keywords");
+        tagNameMap.put(TAG_COPYRIGHT_NOTICE, "Copyright Notice");
+        tagNameMap.put(TAG_RELEASE_DATE, "Release Date");
+        tagNameMap.put(TAG_RELEASE_TIME, "Release Time");
+        tagNameMap.put(TAG_TIME_CREATED, "Time Created");
+        tagNameMap.put(TAG_ORIGINATING_PROGRAM, "Originating Program");
+        //*** added by @Tom
+        tagNameMap.put(TAG_SERVICE_ID, "Service ID");
+        tagNameMap.put(TAG_DATE_SENT, "Date Sent");
+        tagNameMap.put(TAG_TIME_SENT, "Time Sent");
+        tagNameMap.put(TAG_EDIT_STATUS, "Edit Status");
+        tagNameMap.put(TAG_FIXTURE_ID, "Fixture ID");
+        tagNameMap.put(TAG_REFERENCE_SERVICE, "Reference Service");
+        tagNameMap.put(TAG_REFERENCE_DATE, "Reference Date");
+        tagNameMap.put(TAG_REFERENCE_NUMBER, "Reference Number");
+        tagNameMap.put(TAG_PROGRAM_VERSION, "Program Version");
+        tagNameMap.put(TAG_OBJECT_CYCLE, "Object Cycle");
+        tagNameMap.put(TAG_COUNTRY_CODE, "Country Code");
+        
     }
 
     public IptcDirectory()

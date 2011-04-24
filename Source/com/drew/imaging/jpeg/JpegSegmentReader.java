@@ -163,7 +163,7 @@ public class JpegSegmentReader
     }
 
     /**
-     * Reads the first instance of a given Jpeg segment, returning the contents as
+     * Reads the Nth instance of a given Jpeg segment, returning the contents as
      * a byte array.
      * @param segmentMarker the byte identifier for the desired segment
      * @param occurrence the occurrence of the specified segment within the jpeg file

@@ -64,7 +64,9 @@ public class JpegCommentReader implements MetadataReader
 
     /**
      * Performs the Jpeg data extraction, returning a new instance of <code>Metadata</code>.
+     * @deprecated
      */
+    @Deprecated
     public Metadata extract()
     {
         return extract(new Metadata());

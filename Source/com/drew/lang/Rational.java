@@ -28,6 +28,10 @@
  *   display the rational number in decimal form if it fits within 5 digits
  *     i.e.
  *       3/4 -> 0.75 when allowDecimal == true
+ * Modified 18-Jan-2008 by Torsten Skadell
+ * - added public Rational(Integer numerator,Integer denominator)
+ *
+ * Updated to support long integers by David Ekholm, 2008
  */
 
 package com.drew.lang;
@@ -45,12 +49,12 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Holds the numerator.
      */
-    private final int numerator;
+    private final long numerator;
 
     /**
      * Holds the denominator.
      */
-    private final int denominator;
+    private final long denominator;
 
     private int maxSimplificationCalculations = 1000;
 
@@ -59,10 +63,16 @@ public class Rational extends java.lang.Number implements Serializable
      * once you've set your numerator and denominator values here, you're stuck
      * with them!
      */
-    public Rational(int numerator, int denominator)
+    public Rational(long numerator, long denominator)
     {
         this.numerator = numerator;
         this.denominator = denominator;
+    }
+
+    public Rational(Integer numerator,Integer denominator)
+    {
+    	this.numerator 		= numerator.intValue();
+    	this.denominator	= denominator.intValue();
     }
 
     /**
@@ -145,7 +155,7 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the denominator.
      */
-    public final int getDenominator()
+    public final long getDenominator()
     {
         return this.denominator;
     }
@@ -153,7 +163,7 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the numerator.
      */
-    public final int getNumerator()
+    public final long getNumerator()
     {
         return this.numerator;
     }
@@ -192,7 +202,7 @@ public class Rational extends java.lang.Number implements Serializable
     }
 
     /**
-     * Returns the simplest represenation of this Rational's value possible.
+     * Returns the simplest representation of this Rational's value possible.
      */
     public String toSimpleString(boolean allowDecimal)
     {
@@ -202,7 +212,7 @@ public class Rational extends java.lang.Number implements Serializable
             return Integer.toString(intValue());
         } else if (numerator != 1 && denominator % numerator == 0) {
             // common factor between denominator and numerator
-            int newDenominator = denominator / numerator;
+            long newDenominator = denominator / numerator;
             return new Rational(1, newDenominator).toSimpleString(allowDecimal);
         } else {
             Rational simplifiedInstance = getSimplifiedInstance();
@@ -251,7 +261,7 @@ public class Rational extends java.lang.Number implements Serializable
      * <p>
      * To reduce a rational, need to see if both numerator and denominator are divisible
      * by a common factor.  Using the prime number series in ascending order guarantees
-     * the minimun number of checks required.</p>
+     * the minimum number of checks required.</p>
      * <p>
      * However, generating the prime number series seems to be a hefty task.  Perhaps
      * it's simpler to check if both d & n are divisible by all numbers from 2 ->
@@ -269,7 +279,7 @@ public class Rational extends java.lang.Number implements Serializable
      * = ------------------------------------ + 2
      *                  5
      * </pre></code>
-     * @return a simplified instance, or if the Rational could not be simpliffied,
+     * @return a simplified instance, or if the Rational could not be simplified,
      *         returns itself (unchanged)
      */
     public Rational getSimplifiedInstance()

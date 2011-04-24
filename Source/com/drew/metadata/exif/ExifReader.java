@@ -56,10 +56,12 @@ import java.util.HashMap;
 /**
  * Decodes Exif binary data, populating a <code>Metadata</code> object with tag values in <code>ExifDirectory</code>,
  * <code>GpsDirectory</code> and one of the many camera makernote directories.
- * @author  Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class ExifReader implements MetadataReader
 {
+    // TODO we assume Exif is always in the first instance of APP1 data which may not always be the case
+
     /**
      * The number of bytes used per format descriptor.
      */
@@ -156,7 +158,9 @@ public class ExifReader implements MetadataReader
 
     /**
      * Performs the Exif data extraction, returning a new instance of <code>Metadata</code>.
+     * @deprecated
      */
+    @Deprecated
     public Metadata extract()
     {
         return extract(new Metadata());
@@ -186,7 +190,6 @@ public class ExifReader implements MetadataReader
         }
 
         return extractIFD(_metadata, TIFF_HEADER_START_OFFSET);
-        
     }
 
     private ExifDirectory getExifDirectory() 

@@ -25,6 +25,7 @@ import com.drew.metadata.MetadataReader;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 /**
@@ -82,7 +83,9 @@ public class IptcReader implements MetadataReader
 
     /**
      * Performs the Exif data extraction, returning a new instance of <code>Metadata</code>.
+     * @deprecated
      */
+    @Deprecated
     public Metadata extract()
     {
         return extract(new Metadata());
@@ -162,7 +165,7 @@ public class IptcReader implements MetadataReader
     }
 
     /**
-     * This method serves as marsheller of objects for dataset. It converts from IPTC
+     * This method serves as marshaller of objects for dataset. It converts from IPTC
      * octets to relevant java object.
      */
     private void processTag(Directory directory, int directoryType, int tagType, int offset, int tagByteCount)
@@ -207,7 +210,13 @@ public class IptcReader implements MetadataReader
         if (tagByteCount < 1) {
             str = "";
         } else {
-            str = new String(_data, offset, tagByteCount);
+            try {
+//              str = new String(_data, offset, tagByteCount);
+                str = new String(_data, offset, tagByteCount, System.getProperty("file.encoding"));
+            } catch (UnsupportedEncodingException ex) {
+                directory.addError("Unable to decode a string for the IPTC tag " + Integer.toHexString(tagType));
+                str = "";
+            }
         }
 
         if (directory.containsTag(tagIdentifier)) {
@@ -223,9 +232,7 @@ public class IptcReader implements MetadataReader
                 newStrings = new String[1];
             } else {
                 newStrings = new String[oldStrings.length + 1];
-                for (int i = 0; i < oldStrings.length; i++) {
-                    newStrings[i] = oldStrings[i];
-                }
+                System.arraycopy(oldStrings, 0, newStrings, 0, oldStrings.length);
             }
             newStrings[newStrings.length - 1] = str;
             directory.setStringArray(tagIdentifier, newStrings);

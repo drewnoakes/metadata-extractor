@@ -69,40 +69,134 @@ public class GpsDescriptor extends TagDescriptor
     public String getGpsLatitudeDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_LATITUDE)) return null;
-        return getHoursMinutesSecondsDescription(GpsDirectory.TAG_GPS_LATITUDE);
+        return getDegreesMinutesSecondsDescription(GpsDirectory.TAG_GPS_LATITUDE);
     }
 
     public String getGpsLongitudeDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE)) return null;
-        return getHoursMinutesSecondsDescription(GpsDirectory.TAG_GPS_LONGITUDE);
+        return getDegreesMinutesSecondsDescription(GpsDirectory.TAG_GPS_LONGITUDE);
     }
 
+    /**
+     * @param tagType
+     * @return
+     * @throws MetadataException
+     * @deprecated Use getDegreesMinutesSecondsDescription instead
+     */
+    @Deprecated
+    public String getHoursMinutesSecondsDescription(int tagType) throws MetadataException {
+        return getDegreesMinutesSecondsDescription(tagType);
+    }
+
+    /**
+     * New version. Should really be called getDegreesMinutesSecondsDescription
+     * @author David Ekholm
+     */
+    public String getDegreesMinutesSecondsDescription(int tagType) throws MetadataException {
+        Rational[] r = _directory.getRationalArray(tagType);
+        Rational degs = r[0];
+        Rational mins = r[1];
+        Rational secs = r[2];
+        //System.out.println("The three rationals: " + degs + " " + mins + " " + secs);
+        // Find out least common denominator of the three
+        long lcd = degs.getDenominator();
+        if (lcd == 0) { // Yes, some cameras put 0/0 here
+            return "";
+        }
+        if (mins.getNumerator() != 0) {
+            lcd = calcLCD(lcd, mins.getDenominator());
+        }
+        if (secs.getNumerator() != 0) {
+            lcd = calcLCD(lcd, secs.getDenominator());
+        }
+
+        long asSecsNum = 3600L * degs.getNumerator() * (lcd / degs.getDenominator());
+        if (mins.getNumerator() != 0) {
+            asSecsNum += 60L * mins.getNumerator() * (lcd / mins.getDenominator());
+        }
+        if (secs.getNumerator() != 0) {
+            asSecsNum += secs.getNumerator() * (lcd / secs.getDenominator());
+        }
+        //System.out.println("asSecsNum: " + asSecsNum);
+        //System.out.println("lcd: " + lcd);
+
+        degs = new Rational(asSecsNum / lcd / 3600L, 1);
+        mins = new Rational((asSecsNum - 3600L * degs.getNumerator() * lcd) / 60L / lcd, 1);
+        secs = new Rational(asSecsNum - 3600L * degs.getNumerator() * lcd - 60L * mins.getNumerator() * lcd, lcd);
+        return "" + degs.intValue() + "°" + mins.intValue() + "'" + secs.floatValue() + "\"";
+    }
+
+    /**
+     * Greatest Common Divisor using Euclides
+     */
+    private long calcGCD(long nr1, long nr2) {
+        long temp;
+        while (nr2 != 0) {
+            temp = nr2;
+            nr2 = nr1 % temp;
+            nr1 = temp;
+        }
+        return nr1;
+    }
+
+    /**
+     * Least common denominator
+     */
+    private long calcLCD(long nr1, long nr2) {
+        return (nr1 * nr2) / calcGCD(nr1, nr2);
+    }
+
+    /*
     public String getHoursMinutesSecondsDescription(int tagType) throws MetadataException
     {
-        Rational[] components = _directory.getRationalArray(tagType);
-        // TODO create an HoursMinutesSecods class ??
-        int deg = components[0].intValue();
-        float min = components[1].floatValue();
-        float sec = components[2].floatValue();
-        // carry fractions of minutes into seconds -- thanks Colin Briton
-        sec += (min % 1) * 60;
-        return String.valueOf(deg) + "\"" + String.valueOf((int)min) + "'" + String.valueOf(sec);
+    Rational[] r = _directory.getRationalArray(tagType);
+    Rational degs = r[0];
+    Rational mins = r[1];
+    Rational secs = r[2];
+    System.out.println("The tree rationals: " + degs + " " + mins + " " + secs);
+    if (mins.getNumerator() == 0 && secs.getNumerator() == 0) { // Number expressed as degrees only
+    long asSecsNum = degs.getNumerator() * 3600L;
+    long asSecsDen = degs.getDenominator();
+
+    degs = new Rational((int)(asSecsNum/asSecsDen/3600), 1);
+    mins = new Rational((int)((asSecsNum - 3600*degs.getNumerator()*asSecsDen)/60/asSecsDen), 1);
+    secs = new Rational((int)(asSecsNum - 3600*degs.getNumerator()*asSecsDen - 60 * mins.getNumerator() * asSecsDen), (int)asSecsDen);
     }
+    return "" + degs.intValue() + "°" + mins.intValue() + "'" + secs.floatValue() + "\"";
+    }
+     */
+    /*
+    public String getHoursMinutesSecondsDescription(int tagType) throws MetadataException
+    {
+    Rational[] components = _directory.getRationalArray(tagType);
+    System.out.println("deg:" + components[0]);
+    System.out.println("min:" + components[1]);
+    System.out.println("sec:" + components[2]);
+
+    // TODO create an HoursMinutesSeconds class ??
+    int deg = components[0].intValue();
+    float min = components[1].floatValue();
+    float sec = components[2].floatValue();
+    // carry fractions of minutes into seconds -- thanks Colin Briton
+    sec += (min % 1) * 60;
+    return String.valueOf(deg) + "\"" + String.valueOf((int)min) + "'" + String.valueOf(sec);
+    }
+     */
 
     public String getGpsTimeStampDescription() throws MetadataException
     {
         // time in hour, min, sec
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_TIME_STAMP)) return null;
         int[] timeComponents = _directory.getIntArray(GpsDirectory.TAG_GPS_TIME_STAMP);
-        StringBuffer sbuffer = new StringBuffer();
-        sbuffer.append(timeComponents[0]);
-        sbuffer.append(":");
-        sbuffer.append(timeComponents[1]);
-        sbuffer.append(":");
-        sbuffer.append(timeComponents[2]);
-        sbuffer.append(" UTC");
-        return sbuffer.toString();
+        StringBuffer description = new StringBuffer();
+        description.append(timeComponents[0]);
+        description.append(":");
+        description.append(timeComponents[1]);
+        description.append(":");
+        description.append(timeComponents[2]);
+        description.append(" UTC");
+        return description.toString();
     }
 
     public String getGpsDestinationReferenceDescription()
@@ -173,7 +267,7 @@ public class GpsDescriptor extends TagDescriptor
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_STATUS)) return null;
         String gpsStatus = _directory.getString(GpsDirectory.TAG_GPS_STATUS).trim();
         if ("A".equalsIgnoreCase(gpsStatus)) {
-            return "Measurement in progess";
+            return "Measurement in progress";
         } else if ("V".equalsIgnoreCase(gpsStatus)) {
             return "Measurement Interoperability";
         } else {
@@ -184,18 +278,17 @@ public class GpsDescriptor extends TagDescriptor
     public String getGpsAltitudeRefDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_ALTITUDE_REF)) return null;
-        int alititudeRef = _directory.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
-        if (alititudeRef == 0) {
-            return "Sea level";
-        } else {
-            return "Unknown (" + alititudeRef + ")";
-        }
+        int altitudeRef = _directory.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
+        return altitudeRef == 0
+                ? "Sea level"
+                : "Unknown (" + altitudeRef + ")";
     }
 
     public String getGpsAltitudeDescription() throws MetadataException
     {
         if (!_directory.containsTag(GpsDirectory.TAG_GPS_ALTITUDE)) return null;
-        String alititude = _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE).toSimpleString(true);
-        return alititude + " metres";
+//      String altitude = _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE).toSimpleString(true);
+        String altitude = "" + _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE).intValue();
+        return altitude + " metres";
     }
 }
