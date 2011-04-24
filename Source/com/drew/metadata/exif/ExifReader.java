@@ -544,7 +544,7 @@ public class ExifReader implements MetadataReader
                 if (componentCount==1) {
                     Rational rational = new Rational(get32Bits(tagValueOffset), get32Bits(tagValueOffset + 4));
                     directory.setRational(tagType, rational);
-                } else {
+                } else if (componentCount > 1) {
                     Rational[] rationals = new Rational[componentCount];
                     for (int i = 0; i<componentCount; i++)
                         rationals[i] = new Rational(get32Bits(tagValueOffset + (8 * i)), get32Bits(tagValueOffset + 4 + (8 * i)));
