@@ -24,13 +24,14 @@ import java.io.*;
 
 /**
  * Performs read functions of Jpeg files, returning specific file segments.
- * TODO add a findAvailableSegments() method
- * TODO add more segment identifiers
- * TODO add a getSegmentDescription() method, returning for example 'App1 application data segment, commonly containing Exif data'
  * @author  Drew Noakes http://drewnoakes.com
  */
 public class JpegSegmentReader
 {
+    // TODO add a findAvailableSegments() method
+    // TODO add more segment identifiers
+    // TODO add a getSegmentDescription() method, returning for example 'App1 application data segment, commonly containing Exif data'
+
     // Jpeg data can be sourced from either a file, byte[] or InputStream
 
     /** Jpeg file */

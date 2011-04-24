@@ -117,13 +117,11 @@ public class ExifReader implements MetadataReader
     private ExifDirectory _exifDirectory = null;
 
     /**
-     * Creates an ExifReader for a JpegSegmentData object.
-     * @param segmentData
-     * @deprecated Not all files will be Jpegs!  This overload doesn't offer much convenience to the caller.
+     * Creates an ExifReader for a JpegSegmentData object.  This will process the @JpegSegmentReader.SEGMENT_APP1 segment.
+     * @param segmentData the collection of Jpeg segment data from which this reader will take data.
      */
     public ExifReader(JpegSegmentData segmentData)
     {
-        // TODO consider removing this constructor and requiring callers to pass a byte[] or other means to read the exif segment in isolation... not all files will be Jpegs!
         this(segmentData.getSegment(JpegSegmentReader.SEGMENT_APP1));
     }
 
@@ -131,27 +129,25 @@ public class ExifReader implements MetadataReader
      * Creates an ExifReader for a Jpeg jpegFile.
      * @param jpegFile
      * @throws JpegProcessingException
-     * @deprecated Not all files will be Jpegs!  Use a constructor that provides the exif segment in isolation.
      */
     public ExifReader(File jpegFile) throws JpegProcessingException
     {
-        // TODO consider removing this constructor and requiring callers to pass a byte[] or other means to read the exif segment in isolation... not all files will be Jpegs!
         this(new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_APP1));
     }
 
     /**
      * Creates an ExifReader for a Jpeg stream.
      * @param jpegInputStream JPEG stream. Stream will be closed.
-     * @deprecated Not all files will be Jpegs!  Use a constructor that provides the exif segment in isolation.
+     * @throws JpegProcessingException
      */
     public ExifReader(InputStream jpegInputStream) throws JpegProcessingException
     {
-        // TODO consider removing this constructor and requiring callers to pass a byte[] or other means to read the exif segment in isolation... not all files will be Jpegs!
         this(new JpegSegmentReader(jpegInputStream).readSegment(JpegSegmentReader.SEGMENT_APP1));
     }
 
     /**
      * Creates an ExifReader for the given Exif data segment.
+     * @param data The byte[] from which Exif data should be read.
      */
     public ExifReader(byte[] data)
     {
@@ -233,7 +229,7 @@ public class ExifReader implements MetadataReader
 
         int firstDirectoryOffset = get32Bits(4+tiffHeaderOffset) + tiffHeaderOffset;
 
-        // David Ekholm sent an digital camera image that has this problem
+        // David Ekholm sent a digital camera image that has this problem
         if (firstDirectoryOffset>=_data.length - 1) {
             directory.addError("First exif directory offset is beyond end of Exif data segment");
             // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
@@ -264,9 +260,7 @@ public class ExifReader implements MetadataReader
             int offset = exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET);
             int length = exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH);
             byte[] result = new byte[length];
-            for (int i = 0; i<result.length; i++) {
-                result[i] = _data[tiffHeaderOffset + offset + i];
-            }
+            System.arraycopy(_data, tiffHeaderOffset + offset, result, 0, result.length);
             exifDirectory.setByteArray(ExifDirectory.TAG_THUMBNAIL_DATA, result);
         } catch (Throwable e) {
             exifDirectory.addError("Unable to extract thumbnail: " + e.getMessage());
@@ -306,10 +300,10 @@ public class ExifReader implements MetadataReader
             return;
 
         // remember that we've visited this directory so that we don't visit it again later
-        processedDirectoryOffsets.put(new Integer(dirStartOffset), "processed");
+        processedDirectoryOffsets.put(dirStartOffset, "processed");
 
         if (dirStartOffset>=_data.length || dirStartOffset<0) {
-            directory.addError("Ignored directory marked to start outside data segement");
+            directory.addError("Ignored directory marked to start outside data segment");
             return;
         }
 
@@ -417,7 +411,7 @@ public class ExifReader implements MetadataReader
         if ("OLYMP".equals(firstFiveChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars))
         {
             // Olympus Makernote
-            // Epson and Agfa use Olypus maker note standard, see:
+            // Epson and Agfa use Olympus maker note standard, see:
             //     http://www.ozhiker.com/electronics/pjmt/jpeg_info/
             processDirectory(_metadata.getDirectory(OlympusMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset);
         }
@@ -551,8 +545,7 @@ public class ExifReader implements MetadataReader
                 // this includes exif user comments
                 final byte[] tagBytes = new byte[componentCount];
                 final int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
-                for (int i=0; i<byteCount; i++)
-                    tagBytes[i] = _data[tagValueOffset + i];
+                System.arraycopy(_data, tagValueOffset, tagBytes, 0, byteCount);
                 directory.setByteArray(tagType, tagBytes);
                 break;
             case FMT_STRING:

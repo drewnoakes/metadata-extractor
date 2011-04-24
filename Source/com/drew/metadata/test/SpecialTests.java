@@ -26,9 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
-/**
- * 
- */
+/*
 public class SpecialTests extends TestCase
 {
     public void testExtractMetadataToASeparateFile() throws Exception
@@ -119,3 +117,5 @@ public class SpecialTests extends TestCase
         }
     }
 }
+
+*/
