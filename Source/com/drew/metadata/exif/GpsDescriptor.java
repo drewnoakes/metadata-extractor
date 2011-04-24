@@ -85,7 +85,8 @@ public class GpsDescriptor extends TagDescriptor
      * @deprecated Use getDegreesMinutesSecondsDescription instead
      */
     @Deprecated
-    public String getHoursMinutesSecondsDescription(int tagType) throws MetadataException {
+    public String getHoursMinutesSecondsDescription(int tagType) throws MetadataException
+    {
         return getDegreesMinutesSecondsDescription(tagType);
     }
 
@@ -93,44 +94,50 @@ public class GpsDescriptor extends TagDescriptor
      * New version. Should really be called getDegreesMinutesSecondsDescription
      * @author David Ekholm
      */
-    public String getDegreesMinutesSecondsDescription(int tagType) throws MetadataException {
+    public String getDegreesMinutesSecondsDescription(int tagType) throws MetadataException
+    {
         Rational[] r = _directory.getRationalArray(tagType);
         Rational degs = r[0];
         Rational mins = r[1];
         Rational secs = r[2];
         //System.out.println("The three rationals: " + degs + " " + mins + " " + secs);
-        // Find out least common denominator of the three
-        long lcd = degs.getDenominator();
-        if (lcd == 0) { // Yes, some cameras put 0/0 here
-            return "";
-        }
-        if (mins.getNumerator() != 0) {
-            lcd = calcLCD(lcd, mins.getDenominator());
-        }
-        if (secs.getNumerator() != 0) {
-            lcd = calcLCD(lcd, secs.getDenominator());
-        }
 
-        long asSecsNum = 3600L * degs.getNumerator() * (lcd / degs.getDenominator());
-        if (mins.getNumerator() != 0) {
-            asSecsNum += 60L * mins.getNumerator() * (lcd / mins.getDenominator());
-        }
-        if (secs.getNumerator() != 0) {
-            asSecsNum += secs.getNumerator() * (lcd / secs.getDenominator());
-        }
-        //System.out.println("asSecsNum: " + asSecsNum);
-        //System.out.println("lcd: " + lcd);
+        // Protect against modern Nikon software writing GPS coordinates using extremely large nominators and denominators
+        if (degs.intValue() != degs.floatValue() || mins.intValue() != mins.floatValue()) {
+            // Find out least common denominator of the three
+            long lcd = degs.getDenominator();
+            if (lcd == 0) { // Yes, some cameras put 0/0 here
+                return "";
+            }
+            if (mins.getNumerator() != 0) {
+                lcd = calcLCD(lcd, mins.getDenominator());
+            }
+            if (secs.getNumerator() != 0) {
+                lcd = calcLCD(lcd, secs.getDenominator());
+            }
 
-        degs = new Rational(asSecsNum / lcd / 3600L, 1);
-        mins = new Rational((asSecsNum - 3600L * degs.getNumerator() * lcd) / 60L / lcd, 1);
-        secs = new Rational(asSecsNum - 3600L * degs.getNumerator() * lcd - 60L * mins.getNumerator() * lcd, lcd);
+            long asSecsNum = 3600L * degs.getNumerator() * (lcd / degs.getDenominator());
+            if (mins.getNumerator() != 0) {
+                asSecsNum += 60L * mins.getNumerator() * (lcd / mins.getDenominator());
+            }
+            if (secs.getNumerator() != 0) {
+                asSecsNum += secs.getNumerator() * (lcd / secs.getDenominator());
+            }
+            //System.out.println("asSecsNum: " + asSecsNum);
+            //System.out.println("lcd: " + lcd);
+
+            degs = new Rational(asSecsNum / lcd / 3600L, 1);
+            mins = new Rational((asSecsNum - 3600L * degs.getNumerator() * lcd) / 60L / lcd, 1);
+            secs = new Rational(asSecsNum - 3600L * degs.getNumerator() * lcd - 60L * mins.getNumerator() * lcd, lcd);
+        }
         return "" + degs.intValue() + "°" + mins.intValue() + "'" + secs.floatValue() + "\"";
     }
 
     /**
      * Greatest Common Divisor using Euclides
      */
-    private long calcGCD(long nr1, long nr2) {
+    private long calcGCD(long nr1, long nr2)
+    {
         long temp;
         while (nr2 != 0) {
             temp = nr2;
