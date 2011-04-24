@@ -31,10 +31,11 @@ public class JpegCommentDirectory extends Directory
      */
 	public static final int TAG_JPEG_COMMENT = 0;
 
-	protected static final HashMap tagNameMap = new HashMap();
+	protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-	static {
-        tagNameMap.put(new Integer(TAG_JPEG_COMMENT), "Jpeg Comment");
+	static
+    {
+        _tagNameMap.put(TAG_JPEG_COMMENT, "Jpeg Comment");
 	}
 
     public JpegCommentDirectory() {
@@ -45,7 +46,7 @@ public class JpegCommentDirectory extends Directory
 		return "JpegComment";
 	}
 
-	protected HashMap getTagNameMap() {
-		return tagNameMap;
+	protected HashMap<Integer, String> getTagNameMap() {
+		return _tagNameMap;
 	}
 }

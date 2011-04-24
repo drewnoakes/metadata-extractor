@@ -31,8 +31,7 @@ public class PhotographicConversions
      */
     public static double apertureToFStop(double aperture)
     {
-        double fStop = Math.pow(ROOT_TWO, aperture);
-        return fStop;
+        return Math.pow(ROOT_TWO, aperture);
 
         // Puzzle?!
         // jhead uses a different calculation as far as i can tell...  this confuses me...

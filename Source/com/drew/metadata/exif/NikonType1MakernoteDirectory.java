@@ -46,21 +46,21 @@ public class NikonType1MakernoteDirectory extends Directory
     public static final int TAG_NIKON_TYPE1_CONVERTER = 0x000B;
     public static final int TAG_NIKON_TYPE1_UNKNOWN_3 = 0x0F00;
 
-    protected static final HashMap _tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_CCD_SENSITIVITY), "CCD Sensitivity");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_COLOR_MODE), "Color Mode");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_DIGITAL_ZOOM), "Digital Zoom");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_CONVERTER), "Fisheye Converter");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_FOCUS), "Focus");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT), "Image Adjustment");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_QUALITY), "Quality");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_UNKNOWN_1), "Makernote Unknown 1");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_UNKNOWN_2), "Makernote Unknown 2");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_UNKNOWN_3), "Makernote Unknown 3");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE1_WHITE_BALANCE), "White Balance");
+        _tagNameMap.put(TAG_NIKON_TYPE1_CCD_SENSITIVITY, "CCD Sensitivity");
+        _tagNameMap.put(TAG_NIKON_TYPE1_COLOR_MODE, "Color Mode");
+        _tagNameMap.put(TAG_NIKON_TYPE1_DIGITAL_ZOOM, "Digital Zoom");
+        _tagNameMap.put(TAG_NIKON_TYPE1_CONVERTER, "Fisheye Converter");
+        _tagNameMap.put(TAG_NIKON_TYPE1_FOCUS, "Focus");
+        _tagNameMap.put(TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT, "Image Adjustment");
+        _tagNameMap.put(TAG_NIKON_TYPE1_QUALITY, "Quality");
+        _tagNameMap.put(TAG_NIKON_TYPE1_UNKNOWN_1, "Makernote Unknown 1");
+        _tagNameMap.put(TAG_NIKON_TYPE1_UNKNOWN_2, "Makernote Unknown 2");
+        _tagNameMap.put(TAG_NIKON_TYPE1_UNKNOWN_3, "Makernote Unknown 3");
+        _tagNameMap.put(TAG_NIKON_TYPE1_WHITE_BALANCE, "White Balance");
     }
 
     public NikonType1MakernoteDirectory()
@@ -73,7 +73,7 @@ public class NikonType1MakernoteDirectory extends Directory
         return "Nikon Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
     }

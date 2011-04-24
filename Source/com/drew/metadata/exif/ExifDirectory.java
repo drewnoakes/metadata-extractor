@@ -555,154 +555,154 @@ public class ExifDirectory extends Directory
     public static final int TAG_LENS = 0xfdea;
 
 
-    protected static final HashMap tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(TAG_FILL_ORDER, "Fill Order");
-        tagNameMap.put(TAG_DOCUMENT_NAME, "Document Name");
-        tagNameMap.put(0x1000, "Related Image File Format");
-        tagNameMap.put(0x1001, "Related Image Width");
-        tagNameMap.put(0x1002, "Related Image Length");
-        tagNameMap.put(0x0156, "Transfer Range");
-        tagNameMap.put(0x0200, "JPEG Proc");
-        tagNameMap.put(0x8769, "Exif Offset");
-        tagNameMap.put(TAG_COMPRESSION_LEVEL, "Compressed Bits Per Pixel");
-        tagNameMap.put(0x927C, "Maker Note");
-        tagNameMap.put(0xA005, "Interoperability Offset");
+        _tagNameMap.put(TAG_FILL_ORDER, "Fill Order");
+        _tagNameMap.put(TAG_DOCUMENT_NAME, "Document Name");
+        _tagNameMap.put(0x1000, "Related Image File Format");
+        _tagNameMap.put(0x1001, "Related Image Width");
+        _tagNameMap.put(0x1002, "Related Image Length");
+        _tagNameMap.put(0x0156, "Transfer Range");
+        _tagNameMap.put(0x0200, "JPEG Proc");
+        _tagNameMap.put(0x8769, "Exif Offset");
+        _tagNameMap.put(TAG_COMPRESSION_LEVEL, "Compressed Bits Per Pixel");
+        _tagNameMap.put(0x927C, "Maker Note");
+        _tagNameMap.put(0xA005, "Interoperability Offset");
 
-        tagNameMap.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
-        tagNameMap.put(TAG_SUBFILE_TYPE, "Subfile Type");
-        tagNameMap.put(TAG_THUMBNAIL_IMAGE_WIDTH, "Thumbnail Image Width");
-        tagNameMap.put(TAG_THUMBNAIL_IMAGE_HEIGHT, "Thumbnail Image Height");
-        tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
-        tagNameMap.put(TAG_COMPRESSION, "Compression");
-        tagNameMap.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
-        tagNameMap.put(TAG_THRESHOLDING, "Thresholding");
-        tagNameMap.put(TAG_IMAGE_DESCRIPTION, "Image Description");
-        tagNameMap.put(TAG_MAKE, "Make");
-        tagNameMap.put(TAG_MODEL, "Model");
-        tagNameMap.put(TAG_STRIP_OFFSETS, "Strip Offsets");
-        tagNameMap.put(TAG_ORIENTATION, "Orientation");
-        tagNameMap.put(TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
-        tagNameMap.put(TAG_ROWS_PER_STRIP, "Rows Per Strip");
-        tagNameMap.put(TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
-        tagNameMap.put(TAG_X_RESOLUTION, "X Resolution");
-        tagNameMap.put(TAG_Y_RESOLUTION, "Y Resolution");
-        tagNameMap.put(TAG_PAGE_NAME, "Page Name");
-        tagNameMap.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
-        tagNameMap.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
-        tagNameMap.put(TAG_TRANSFER_FUNCTION, "Transfer Function");
-        tagNameMap.put(TAG_SOFTWARE, "Software");
-        tagNameMap.put(TAG_DATETIME, "Date/Time");
-        tagNameMap.put(TAG_ARTIST, "Artist");
-        tagNameMap.put(TAG_PREDICTOR, "Predictor");
-        tagNameMap.put(TAG_WHITE_POINT, "White Point");
-        tagNameMap.put(TAG_PRIMARY_CHROMATICITIES, "Primary Chromaticities");
-        tagNameMap.put(TAG_TILE_WIDTH, "Tile Width");
-        tagNameMap.put(TAG_TILE_LENGTH, "Tile Length");
-        tagNameMap.put(TAG_TILE_OFFSETS, "Tile Offsets");
-        tagNameMap.put(TAG_TILE_BYTE_COUNTS, "Tile Byte Counts");
-        tagNameMap.put(TAG_SUB_IFDS, "Sub IFDs");
-        tagNameMap.put(TAG_JPEG_TABLES, "JPEG Tables");
-        tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
-        tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
-        tagNameMap.put(TAG_THUMBNAIL_DATA, "Thumbnail Data");
-        tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
-        tagNameMap.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
-        tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
-        tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
-        tagNameMap.put(TAG_CFA_REPEAT_PATTERN_DIM, "CFA Repeat Pattern Dim");
-        tagNameMap.put(TAG_CFA_PATTERN_2, "CFA Pattern");
-        tagNameMap.put(TAG_BATTERY_LEVEL, "Battery Level");
-        tagNameMap.put(TAG_COPYRIGHT, "Copyright");
-        tagNameMap.put(TAG_EXPOSURE_TIME, "Exposure Time");
-        tagNameMap.put(TAG_FNUMBER, "F-Number");
-        tagNameMap.put(TAG_IPTC_NAA, "IPTC/NAA");
-        tagNameMap.put(TAG_INTER_COLOR_PROFILE, "Inter Color Profile");
-        tagNameMap.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
-        tagNameMap.put(TAG_SPECTRAL_SENSITIVITY, "Spectral Sensitivity");
-        tagNameMap.put(TAG_GPS_INFO, "GPS Info");
-        tagNameMap.put(TAG_ISO_EQUIVALENT, "ISO Speed Ratings");
-        tagNameMap.put(TAG_OECF, "OECF");
-        tagNameMap.put(TAG_INTERLACE, "Interlace");
-        tagNameMap.put(TAG_TIME_ZONE_OFFSET, "Time Zone Offset");
-        tagNameMap.put(TAG_SELF_TIMER_MODE, "Self Timer Mode");
-        tagNameMap.put(TAG_EXIF_VERSION, "Exif Version");
-        tagNameMap.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
-        tagNameMap.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
-        tagNameMap.put(TAG_COMPONENTS_CONFIGURATION, "Components Configuration");
-        tagNameMap.put(TAG_SHUTTER_SPEED, "Shutter Speed Value");
-        tagNameMap.put(TAG_APERTURE, "Aperture Value");
-        tagNameMap.put(TAG_BRIGHTNESS_VALUE, "Brightness Value");
-        tagNameMap.put(TAG_EXPOSURE_BIAS, "Exposure Bias Value");
-        tagNameMap.put(TAG_MAX_APERTURE, "Max Aperture Value");
-        tagNameMap.put(TAG_SUBJECT_DISTANCE, "Subject Distance");
-        tagNameMap.put(TAG_METERING_MODE, "Metering Mode");
-        tagNameMap.put(TAG_WHITE_BALANCE, "Light Source");
-        tagNameMap.put(TAG_FLASH, "Flash");
-        tagNameMap.put(TAG_FOCAL_LENGTH, "Focal Length");
-        tagNameMap.put(TAG_FLASH_ENERGY, "Flash Energy");
-        tagNameMap.put(TAG_SPATIAL_FREQ_RESPONSE, "Spatial Frequency Response");
-        tagNameMap.put(TAG_NOISE, "Noise");
-        tagNameMap.put(TAG_IMAGE_NUMBER, "Image Number");
-        tagNameMap.put(TAG_SECURITY_CLASSIFICATION, "Security Classification");
-        tagNameMap.put(TAG_IMAGE_HISTORY, "Image History");
-        tagNameMap.put(TAG_SUBJECT_LOCATION, "Subject Location");
-        tagNameMap.put(TAG_EXPOSURE_INDEX, "Exposure Index");
-        tagNameMap.put(TAG_TIFF_EP_STANDARD_ID, "TIFF/EP Standard ID");
-        tagNameMap.put(TAG_USER_COMMENT, "User Comment");
-        tagNameMap.put(TAG_SUBSECOND_TIME, "Sub-Sec Time");
-        tagNameMap.put(TAG_SUBSECOND_TIME_ORIGINAL, "Sub-Sec Time Original");
-        tagNameMap.put(TAG_SUBSECOND_TIME_DIGITIZED, "Sub-Sec Time Digitized");
-        tagNameMap.put(TAG_FLASHPIX_VERSION, "FlashPix Version");
-        tagNameMap.put(TAG_COLOR_SPACE, "Color Space");
-        tagNameMap.put(TAG_EXIF_IMAGE_WIDTH, "Exif Image Width");
-        tagNameMap.put(TAG_EXIF_IMAGE_HEIGHT, "Exif Image Height");
-        tagNameMap.put(TAG_RELATED_SOUND_FILE, "Related Sound File");
+        _tagNameMap.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
+        _tagNameMap.put(TAG_SUBFILE_TYPE, "Subfile Type");
+        _tagNameMap.put(TAG_THUMBNAIL_IMAGE_WIDTH, "Thumbnail Image Width");
+        _tagNameMap.put(TAG_THUMBNAIL_IMAGE_HEIGHT, "Thumbnail Image Height");
+        _tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
+        _tagNameMap.put(TAG_COMPRESSION, "Compression");
+        _tagNameMap.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
+        _tagNameMap.put(TAG_THRESHOLDING, "Thresholding");
+        _tagNameMap.put(TAG_IMAGE_DESCRIPTION, "Image Description");
+        _tagNameMap.put(TAG_MAKE, "Make");
+        _tagNameMap.put(TAG_MODEL, "Model");
+        _tagNameMap.put(TAG_STRIP_OFFSETS, "Strip Offsets");
+        _tagNameMap.put(TAG_ORIENTATION, "Orientation");
+        _tagNameMap.put(TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
+        _tagNameMap.put(TAG_ROWS_PER_STRIP, "Rows Per Strip");
+        _tagNameMap.put(TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
+        _tagNameMap.put(TAG_X_RESOLUTION, "X Resolution");
+        _tagNameMap.put(TAG_Y_RESOLUTION, "Y Resolution");
+        _tagNameMap.put(TAG_PAGE_NAME, "Page Name");
+        _tagNameMap.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
+        _tagNameMap.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
+        _tagNameMap.put(TAG_TRANSFER_FUNCTION, "Transfer Function");
+        _tagNameMap.put(TAG_SOFTWARE, "Software");
+        _tagNameMap.put(TAG_DATETIME, "Date/Time");
+        _tagNameMap.put(TAG_ARTIST, "Artist");
+        _tagNameMap.put(TAG_PREDICTOR, "Predictor");
+        _tagNameMap.put(TAG_WHITE_POINT, "White Point");
+        _tagNameMap.put(TAG_PRIMARY_CHROMATICITIES, "Primary Chromaticities");
+        _tagNameMap.put(TAG_TILE_WIDTH, "Tile Width");
+        _tagNameMap.put(TAG_TILE_LENGTH, "Tile Length");
+        _tagNameMap.put(TAG_TILE_OFFSETS, "Tile Offsets");
+        _tagNameMap.put(TAG_TILE_BYTE_COUNTS, "Tile Byte Counts");
+        _tagNameMap.put(TAG_SUB_IFDS, "Sub IFDs");
+        _tagNameMap.put(TAG_JPEG_TABLES, "JPEG Tables");
+        _tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
+        _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
+        _tagNameMap.put(TAG_THUMBNAIL_DATA, "Thumbnail Data");
+        _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
+        _tagNameMap.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
+        _tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
+        _tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
+        _tagNameMap.put(TAG_CFA_REPEAT_PATTERN_DIM, "CFA Repeat Pattern Dim");
+        _tagNameMap.put(TAG_CFA_PATTERN_2, "CFA Pattern");
+        _tagNameMap.put(TAG_BATTERY_LEVEL, "Battery Level");
+        _tagNameMap.put(TAG_COPYRIGHT, "Copyright");
+        _tagNameMap.put(TAG_EXPOSURE_TIME, "Exposure Time");
+        _tagNameMap.put(TAG_FNUMBER, "F-Number");
+        _tagNameMap.put(TAG_IPTC_NAA, "IPTC/NAA");
+        _tagNameMap.put(TAG_INTER_COLOR_PROFILE, "Inter Color Profile");
+        _tagNameMap.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
+        _tagNameMap.put(TAG_SPECTRAL_SENSITIVITY, "Spectral Sensitivity");
+        _tagNameMap.put(TAG_GPS_INFO, "GPS Info");
+        _tagNameMap.put(TAG_ISO_EQUIVALENT, "ISO Speed Ratings");
+        _tagNameMap.put(TAG_OECF, "OECF");
+        _tagNameMap.put(TAG_INTERLACE, "Interlace");
+        _tagNameMap.put(TAG_TIME_ZONE_OFFSET, "Time Zone Offset");
+        _tagNameMap.put(TAG_SELF_TIMER_MODE, "Self Timer Mode");
+        _tagNameMap.put(TAG_EXIF_VERSION, "Exif Version");
+        _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
+        _tagNameMap.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
+        _tagNameMap.put(TAG_COMPONENTS_CONFIGURATION, "Components Configuration");
+        _tagNameMap.put(TAG_SHUTTER_SPEED, "Shutter Speed Value");
+        _tagNameMap.put(TAG_APERTURE, "Aperture Value");
+        _tagNameMap.put(TAG_BRIGHTNESS_VALUE, "Brightness Value");
+        _tagNameMap.put(TAG_EXPOSURE_BIAS, "Exposure Bias Value");
+        _tagNameMap.put(TAG_MAX_APERTURE, "Max Aperture Value");
+        _tagNameMap.put(TAG_SUBJECT_DISTANCE, "Subject Distance");
+        _tagNameMap.put(TAG_METERING_MODE, "Metering Mode");
+        _tagNameMap.put(TAG_WHITE_BALANCE, "Light Source");
+        _tagNameMap.put(TAG_FLASH, "Flash");
+        _tagNameMap.put(TAG_FOCAL_LENGTH, "Focal Length");
+        _tagNameMap.put(TAG_FLASH_ENERGY, "Flash Energy");
+        _tagNameMap.put(TAG_SPATIAL_FREQ_RESPONSE, "Spatial Frequency Response");
+        _tagNameMap.put(TAG_NOISE, "Noise");
+        _tagNameMap.put(TAG_IMAGE_NUMBER, "Image Number");
+        _tagNameMap.put(TAG_SECURITY_CLASSIFICATION, "Security Classification");
+        _tagNameMap.put(TAG_IMAGE_HISTORY, "Image History");
+        _tagNameMap.put(TAG_SUBJECT_LOCATION, "Subject Location");
+        _tagNameMap.put(TAG_EXPOSURE_INDEX, "Exposure Index");
+        _tagNameMap.put(TAG_TIFF_EP_STANDARD_ID, "TIFF/EP Standard ID");
+        _tagNameMap.put(TAG_USER_COMMENT, "User Comment");
+        _tagNameMap.put(TAG_SUBSECOND_TIME, "Sub-Sec Time");
+        _tagNameMap.put(TAG_SUBSECOND_TIME_ORIGINAL, "Sub-Sec Time Original");
+        _tagNameMap.put(TAG_SUBSECOND_TIME_DIGITIZED, "Sub-Sec Time Digitized");
+        _tagNameMap.put(TAG_FLASHPIX_VERSION, "FlashPix Version");
+        _tagNameMap.put(TAG_COLOR_SPACE, "Color Space");
+        _tagNameMap.put(TAG_EXIF_IMAGE_WIDTH, "Exif Image Width");
+        _tagNameMap.put(TAG_EXIF_IMAGE_HEIGHT, "Exif Image Height");
+        _tagNameMap.put(TAG_RELATED_SOUND_FILE, "Related Sound File");
         // 0x920B in TIFF/EP
-        tagNameMap.put(TAG_FLASH_ENERGY_2, "Flash Energy");
+        _tagNameMap.put(TAG_FLASH_ENERGY_2, "Flash Energy");
         // 0x920C in TIFF/EP
-        tagNameMap.put(TAG_SPATIAL_FREQ_RESPONSE_2, "Spatial Frequency Response");
+        _tagNameMap.put(TAG_SPATIAL_FREQ_RESPONSE_2, "Spatial Frequency Response");
         // 0x920E in TIFF/EP
-        tagNameMap.put(TAG_FOCAL_PLANE_X_RES, "Focal Plane X Resolution");
+        _tagNameMap.put(TAG_FOCAL_PLANE_X_RES, "Focal Plane X Resolution");
         // 0x920F in TIFF/EP
-        tagNameMap.put(TAG_FOCAL_PLANE_Y_RES, "Focal Plane Y Resolution");
+        _tagNameMap.put(TAG_FOCAL_PLANE_Y_RES, "Focal Plane Y Resolution");
         // 0x9210 in TIFF/EP
-        tagNameMap.put(TAG_FOCAL_PLANE_UNIT, "Focal Plane Resolution Unit");
+        _tagNameMap.put(TAG_FOCAL_PLANE_UNIT, "Focal Plane Resolution Unit");
         // 0x9214 in TIFF/EP
-        tagNameMap.put(TAG_SUBJECT_LOCATION_2, "Subject Location");
+        _tagNameMap.put(TAG_SUBJECT_LOCATION_2, "Subject Location");
         // 0x9215 in TIFF/EP
-        tagNameMap.put(TAG_EXPOSURE_INDEX_2, "Exposure Index");
+        _tagNameMap.put(TAG_EXPOSURE_INDEX_2, "Exposure Index");
         // 0x9217 in TIFF/EP
-        tagNameMap.put(TAG_SENSING_METHOD, "Sensing Method");
-        tagNameMap.put(TAG_FILE_SOURCE, "File Source");
-        tagNameMap.put(TAG_SCENE_TYPE, "Scene Type");
-        tagNameMap.put(TAG_CFA_PATTERN, "CFA Pattern");
+        _tagNameMap.put(TAG_SENSING_METHOD, "Sensing Method");
+        _tagNameMap.put(TAG_FILE_SOURCE, "File Source");
+        _tagNameMap.put(TAG_SCENE_TYPE, "Scene Type");
+        _tagNameMap.put(TAG_CFA_PATTERN, "CFA Pattern");
 
-        tagNameMap.put(TAG_CUSTOM_RENDERED, "Custom Rendered");
-        tagNameMap.put(TAG_EXPOSURE_MODE, "Exposure Mode");
-        tagNameMap.put(TAG_WHITE_BALANCE_MODE, "White Balance");
-        tagNameMap.put(TAG_DIGITAL_ZOOM_RATIO, "Digital Zoom Ratio");
-        tagNameMap.put(TAG_35MM_FILM_EQUIV_FOCAL_LENGTH, "Focal Length 35");
-        tagNameMap.put(TAG_SCENE_CAPTURE_TYPE, "Scene Capture Type");
-        tagNameMap.put(TAG_GAIN_CONTROL, "Gain Control");
-        tagNameMap.put(TAG_CONTRAST, "Contrast");
-        tagNameMap.put(TAG_SATURATION, "Saturation");
-        tagNameMap.put(TAG_SHARPNESS, "Sharpness");
-        tagNameMap.put(TAG_DEVICE_SETTING_DESCRIPTION, "Device Setting Description");
-        tagNameMap.put(TAG_SUBJECT_DISTANCE_RANGE, "Subject Distance Range");
+        _tagNameMap.put(TAG_CUSTOM_RENDERED, "Custom Rendered");
+        _tagNameMap.put(TAG_EXPOSURE_MODE, "Exposure Mode");
+        _tagNameMap.put(TAG_WHITE_BALANCE_MODE, "White Balance");
+        _tagNameMap.put(TAG_DIGITAL_ZOOM_RATIO, "Digital Zoom Ratio");
+        _tagNameMap.put(TAG_35MM_FILM_EQUIV_FOCAL_LENGTH, "Focal Length 35");
+        _tagNameMap.put(TAG_SCENE_CAPTURE_TYPE, "Scene Capture Type");
+        _tagNameMap.put(TAG_GAIN_CONTROL, "Gain Control");
+        _tagNameMap.put(TAG_CONTRAST, "Contrast");
+        _tagNameMap.put(TAG_SATURATION, "Saturation");
+        _tagNameMap.put(TAG_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_DEVICE_SETTING_DESCRIPTION, "Device Setting Description");
+        _tagNameMap.put(TAG_SUBJECT_DISTANCE_RANGE, "Subject Distance Range");
 
-        tagNameMap.put(TAG_WIN_AUTHOR, "Windows XP Author");
-        tagNameMap.put(TAG_WIN_COMMENT, "Windows XP Comment");
-        tagNameMap.put(TAG_WIN_KEYWORDS, "Windows XP Keywords");
-        tagNameMap.put(TAG_WIN_SUBJECT, "Windows XP Subject");
-        tagNameMap.put(TAG_WIN_TITLE, "Windows XP Title");
+        _tagNameMap.put(TAG_WIN_AUTHOR, "Windows XP Author");
+        _tagNameMap.put(TAG_WIN_COMMENT, "Windows XP Comment");
+        _tagNameMap.put(TAG_WIN_KEYWORDS, "Windows XP Keywords");
+        _tagNameMap.put(TAG_WIN_SUBJECT, "Windows XP Subject");
+        _tagNameMap.put(TAG_WIN_TITLE, "Windows XP Title");
 
-        tagNameMap.put(TAG_MIN_SAMPLE_VALUE, "Minimum sample value");
-        tagNameMap.put(TAG_MAX_SAMPLE_VALUE, "Maximum sample value");
+        _tagNameMap.put(TAG_MIN_SAMPLE_VALUE, "Minimum sample value");
+        _tagNameMap.put(TAG_MAX_SAMPLE_VALUE, "Maximum sample value");
 
-        tagNameMap.put(TAG_LENS, "Lens");
+        _tagNameMap.put(TAG_LENS, "Lens");
     }
 
     public ExifDirectory()
@@ -715,9 +715,9 @@ public class ExifDirectory extends Directory
         return "Exif";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 
     public byte[] getThumbnailData() throws MetadataException

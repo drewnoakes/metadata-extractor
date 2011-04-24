@@ -47,28 +47,27 @@ public class AllTests extends TestSuite
     {
         TestSuite suite = new TestSuite();
 
+        suite.addTestSuite(CompoundExceptionTest.class);
         suite.addTestSuite(DirectoryTest.class);
+        suite.addTestSuite(ExifDescriptorTest.class);
         suite.addTestSuite(ExifDirectoryTest.class);
         suite.addTestSuite(ExifReaderTest.class);
-        suite.addTestSuite(ExifDescriptorTest.class);
         suite.addTestSuite(IptcReaderTest.class);
-        suite.addTestSuite(MetadataTest.class);
-        suite.addTestSuite(JpegReaderTest.class);
-        suite.addTestSuite(JpegSegmentDataTest.class);
-        suite.addTestSuite(JpegDirectoryTest.class);
         suite.addTestSuite(JpegComponentTest.class);
         suite.addTestSuite(JpegDescriptorTest.class);
+        suite.addTestSuite(JpegDirectoryTest.class);
+        suite.addTestSuite(JpegMetadataReaderTest.class);
+        suite.addTestSuite(JpegReaderTest.class);
+        suite.addTestSuite(JpegSegmentDataTest.class);
+        suite.addTestSuite(JpegSegmentReaderTest.class);
+        suite.addTestSuite(MetadataTest.class);
+        suite.addTestSuite(NullOutputStreamTest.class);
+        suite.addTestSuite(RationalTest.class);
+
         suite.addTestSuite(NikonType1MakernoteTest.class);
         suite.addTestSuite(NikonType2MakernoteTest1.class);
         suite.addTestSuite(NikonType2MakernoteTest2.class);
         suite.addTestSuite(CanonMakernoteDescriptorTest.class);
-
-        suite.addTestSuite(CompoundExceptionTest.class);
-        suite.addTestSuite(NullOutputStreamTest.class);
-        suite.addTestSuite(RationalTest.class);
-
-        suite.addTestSuite(JpegMetadataReaderTest.class);
-        suite.addTestSuite(JpegSegmentReaderTest.class);
 
         return suite;
     }

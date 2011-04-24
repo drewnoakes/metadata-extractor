@@ -64,48 +64,48 @@ public class IptcDirectory extends Directory
     public static final int TAG_OBJECT_CYCLE = 0x024b;
     public static final int TAG_COUNTRY_CODE = 0x0264;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(TAG_RECORD_VERSION, "Directory Version");
-        tagNameMap.put(TAG_CAPTION, "Caption/Abstract");
-        tagNameMap.put(TAG_WRITER, "Writer/Editor");
-        tagNameMap.put(TAG_HEADLINE, "Headline");
-        tagNameMap.put(TAG_SPECIAL_INSTRUCTIONS, "Special Instructions");
-        tagNameMap.put(TAG_BY_LINE, "By-line");
-        tagNameMap.put(TAG_BY_LINE_TITLE, "By-line Title");
-        tagNameMap.put(TAG_CREDIT, "Credit");
-        tagNameMap.put(TAG_SOURCE, "Source");
-        tagNameMap.put(TAG_OBJECT_NAME, "Object Name");
-        tagNameMap.put(TAG_DATE_CREATED, "Date Created");
-        tagNameMap.put(TAG_CITY, "City");
-        tagNameMap.put(TAG_PROVINCE_OR_STATE, "Province/State");
-        tagNameMap.put(TAG_COUNTRY_OR_PRIMARY_LOCATION, "Country/Primary Location");
-        tagNameMap.put(TAG_CONTENT_LOCATION_NAME, "Content Location Name");
-        tagNameMap.put(TAG_SUB_LOCATION, "Sub-location");
-        tagNameMap.put(TAG_ORIGINAL_TRANSMISSION_REFERENCE, "Original Transmission Reference");
-        tagNameMap.put(TAG_CATEGORY, "Category");
-        tagNameMap.put(TAG_SUPPLEMENTAL_CATEGORIES, "Supplemental Category(s)");
-        tagNameMap.put(TAG_URGENCY, "Urgency");
-        tagNameMap.put(TAG_KEYWORDS, "Keywords");
-        tagNameMap.put(TAG_COPYRIGHT_NOTICE, "Copyright Notice");
-        tagNameMap.put(TAG_RELEASE_DATE, "Release Date");
-        tagNameMap.put(TAG_RELEASE_TIME, "Release Time");
-        tagNameMap.put(TAG_TIME_CREATED, "Time Created");
-        tagNameMap.put(TAG_ORIGINATING_PROGRAM, "Originating Program");
+        _tagNameMap.put(TAG_RECORD_VERSION, "Directory Version");
+        _tagNameMap.put(TAG_CAPTION, "Caption/Abstract");
+        _tagNameMap.put(TAG_WRITER, "Writer/Editor");
+        _tagNameMap.put(TAG_HEADLINE, "Headline");
+        _tagNameMap.put(TAG_SPECIAL_INSTRUCTIONS, "Special Instructions");
+        _tagNameMap.put(TAG_BY_LINE, "By-line");
+        _tagNameMap.put(TAG_BY_LINE_TITLE, "By-line Title");
+        _tagNameMap.put(TAG_CREDIT, "Credit");
+        _tagNameMap.put(TAG_SOURCE, "Source");
+        _tagNameMap.put(TAG_OBJECT_NAME, "Object Name");
+        _tagNameMap.put(TAG_DATE_CREATED, "Date Created");
+        _tagNameMap.put(TAG_CITY, "City");
+        _tagNameMap.put(TAG_PROVINCE_OR_STATE, "Province/State");
+        _tagNameMap.put(TAG_COUNTRY_OR_PRIMARY_LOCATION, "Country/Primary Location");
+        _tagNameMap.put(TAG_CONTENT_LOCATION_NAME, "Content Location Name");
+        _tagNameMap.put(TAG_SUB_LOCATION, "Sub-location");
+        _tagNameMap.put(TAG_ORIGINAL_TRANSMISSION_REFERENCE, "Original Transmission Reference");
+        _tagNameMap.put(TAG_CATEGORY, "Category");
+        _tagNameMap.put(TAG_SUPPLEMENTAL_CATEGORIES, "Supplemental Category(s)");
+        _tagNameMap.put(TAG_URGENCY, "Urgency");
+        _tagNameMap.put(TAG_KEYWORDS, "Keywords");
+        _tagNameMap.put(TAG_COPYRIGHT_NOTICE, "Copyright Notice");
+        _tagNameMap.put(TAG_RELEASE_DATE, "Release Date");
+        _tagNameMap.put(TAG_RELEASE_TIME, "Release Time");
+        _tagNameMap.put(TAG_TIME_CREATED, "Time Created");
+        _tagNameMap.put(TAG_ORIGINATING_PROGRAM, "Originating Program");
         //*** added by @Tom
-        tagNameMap.put(TAG_SERVICE_ID, "Service ID");
-        tagNameMap.put(TAG_DATE_SENT, "Date Sent");
-        tagNameMap.put(TAG_TIME_SENT, "Time Sent");
-        tagNameMap.put(TAG_EDIT_STATUS, "Edit Status");
-        tagNameMap.put(TAG_FIXTURE_ID, "Fixture ID");
-        tagNameMap.put(TAG_REFERENCE_SERVICE, "Reference Service");
-        tagNameMap.put(TAG_REFERENCE_DATE, "Reference Date");
-        tagNameMap.put(TAG_REFERENCE_NUMBER, "Reference Number");
-        tagNameMap.put(TAG_PROGRAM_VERSION, "Program Version");
-        tagNameMap.put(TAG_OBJECT_CYCLE, "Object Cycle");
-        tagNameMap.put(TAG_COUNTRY_CODE, "Country Code");
+        _tagNameMap.put(TAG_SERVICE_ID, "Service ID");
+        _tagNameMap.put(TAG_DATE_SENT, "Date Sent");
+        _tagNameMap.put(TAG_TIME_SENT, "Time Sent");
+        _tagNameMap.put(TAG_EDIT_STATUS, "Edit Status");
+        _tagNameMap.put(TAG_FIXTURE_ID, "Fixture ID");
+        _tagNameMap.put(TAG_REFERENCE_SERVICE, "Reference Service");
+        _tagNameMap.put(TAG_REFERENCE_DATE, "Reference Date");
+        _tagNameMap.put(TAG_REFERENCE_NUMBER, "Reference Number");
+        _tagNameMap.put(TAG_PROGRAM_VERSION, "Program Version");
+        _tagNameMap.put(TAG_OBJECT_CYCLE, "Object Cycle");
+        _tagNameMap.put(TAG_COUNTRY_CODE, "Country Code");
         
     }
 
@@ -119,8 +119,8 @@ public class IptcDirectory extends Directory
         return "Iptc";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

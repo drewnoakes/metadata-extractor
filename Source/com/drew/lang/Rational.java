@@ -49,14 +49,12 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Holds the numerator.
      */
-    private final long numerator;
+    private final long _numerator;
 
     /**
      * Holds the denominator.
      */
-    private final long denominator;
-
-    private int maxSimplificationCalculations = 1000;
+    private final long _denominator;
 
     /**
      * Creates a new instance of Rational.  Rational objects are immutable, so
@@ -65,14 +63,14 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public Rational(long numerator, long denominator)
     {
-        this.numerator = numerator;
-        this.denominator = denominator;
+        _numerator = numerator;
+        _denominator = denominator;
     }
 
-    public Rational(Integer numerator,Integer denominator)
+    public Rational(Integer numerator, Integer denominator)
     {
-    	this.numerator 		= numerator.intValue();
-    	this.denominator	= denominator.intValue();
+    	_numerator = numerator;
+    	_denominator = denominator;
     }
 
     /**
@@ -84,7 +82,7 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public double doubleValue()
     {
-        return (double)numerator / (double)denominator;
+        return (double) _numerator / (double) _denominator;
     }
 
     /**
@@ -96,7 +94,7 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public float floatValue()
     {
-        return (float)numerator / (float)denominator;
+        return (float) _numerator / (float) _denominator;
     }
 
     /**
@@ -157,7 +155,7 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public final long getDenominator()
     {
-        return this.denominator;
+        return this._denominator;
     }
 
     /**
@@ -165,7 +163,7 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public final long getNumerator()
     {
-        return this.numerator;
+        return this._numerator;
     }
 
     /**
@@ -174,7 +172,7 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public Rational getReciprocal()
     {
-        return new Rational(this.denominator, this.numerator);
+        return new Rational(this._denominator, this._numerator);
     }
 
     /**
@@ -182,14 +180,9 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public boolean isInteger()
     {
-        if (denominator == 1 ||
-                (denominator != 0 && (numerator % denominator == 0)) ||
-                (denominator == 0 && numerator == 0)
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return _denominator == 1 ||
+              (_denominator != 0 && (_numerator % _denominator == 0)) ||
+              (_denominator == 0 && _numerator == 0);
     }
 
     /**
@@ -198,7 +191,7 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public String toString()
     {
-        return numerator + "/" + denominator;
+        return _numerator + "/" + _denominator;
     }
 
     /**
@@ -206,13 +199,13 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public String toSimpleString(boolean allowDecimal)
     {
-        if (denominator == 0 && numerator != 0) {
+        if (_denominator == 0 && _numerator != 0) {
             return toString();
         } else if (isInteger()) {
             return Integer.toString(intValue());
-        } else if (numerator != 1 && denominator % numerator == 0) {
+        } else if (_numerator != 1 && _denominator % _numerator == 0) {
             // common factor between denominator and numerator
-            long newDenominator = denominator / numerator;
+            long newDenominator = _denominator / _numerator;
             return new Rational(1, newDenominator).toSimpleString(allowDecimal);
         } else {
             Rational simplifiedInstance = getSimplifiedInstance();
@@ -233,7 +226,8 @@ public class Rational extends java.lang.Number implements Serializable
      */
     private boolean tooComplexForSimplification()
     {
-        double maxPossibleCalculations = (((double)(Math.min(denominator, numerator) - 1) / 5d) + 2);
+        double maxPossibleCalculations = (((double)(Math.min(_denominator, _numerator) - 1) / 5d) + 2);
+        final int maxSimplificationCalculations = 1000;
         return maxPossibleCalculations > maxSimplificationCalculations;
     }
 
@@ -287,13 +281,13 @@ public class Rational extends java.lang.Number implements Serializable
         if (tooComplexForSimplification()) {
             return this;
         }
-        for (int factor = 2; factor <= Math.min(denominator, numerator); factor++) {
+        for (int factor = 2; factor <= Math.min(_denominator, _numerator); factor++) {
             if ((factor % 2 == 0 && factor > 2) || (factor % 5 == 0 && factor > 5)) {
                 continue;
             }
-            if (denominator % factor == 0 && numerator % factor == 0) {
+            if (_denominator % factor == 0 && _numerator % factor == 0) {
                 // found a common factor
-                return new Rational(numerator / factor, denominator / factor);
+                return new Rational(_numerator / factor, _denominator / factor);
             }
         }
         return this;

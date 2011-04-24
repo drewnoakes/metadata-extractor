@@ -104,7 +104,7 @@ public class JpegSegmentReaderTest extends TestCase
         assertEquals("Exif", new String(exifData, 0, 4));
     }
 
-    public void testReadSecondSegmentInstanace() throws Exception
+    public void testReadSecondSegmentInstance() throws Exception
     {
         File jpeg = new File("Source/com/drew/imaging/jpeg/test/withExifAndIptc.jpg");
         JpegSegmentReader reader = new JpegSegmentReader(jpeg);
@@ -114,7 +114,7 @@ public class JpegSegmentReaderTest extends TestCase
         assertEquals("http", new String(exifData1, 0, 4));
     }
 
-    public void testReadNonExistantSegmentInstance() throws Exception
+    public void testReadNonExistentSegmentInstance() throws Exception
     {
         File jpeg = new File("Source/com/drew/imaging/jpeg/test/withExifAndIptc.jpg");
         JpegSegmentReader reader = new JpegSegmentReader(jpeg);

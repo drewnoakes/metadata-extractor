@@ -31,16 +31,16 @@ public class ExifInteropDirectory extends Directory
     public static final int TAG_RELATED_IMAGE_WIDTH = 0x1001;
     public static final int TAG_RELATED_IMAGE_LENGTH = 0x1002;
 
-    protected static final HashMap tagNameMap;
+    protected static final HashMap<Integer, String> _tagNameMap;
 
     static
     {
-        tagNameMap = new HashMap();
-        tagNameMap.put(new Integer(TAG_INTEROP_INDEX), "Interoperability Index");
-        tagNameMap.put(new Integer(TAG_INTEROP_VERSION), "Interoperability Version");
-        tagNameMap.put(new Integer(TAG_RELATED_IMAGE_FILE_FORMAT), "Related Image File Format");
-        tagNameMap.put(new Integer(TAG_RELATED_IMAGE_WIDTH), "Related Image Width");
-        tagNameMap.put(new Integer(TAG_RELATED_IMAGE_LENGTH), "Related Image Length");
+        _tagNameMap = new HashMap<Integer, String>();
+        _tagNameMap.put(TAG_INTEROP_INDEX, "Interoperability Index");
+        _tagNameMap.put(TAG_INTEROP_VERSION, "Interoperability Version");
+        _tagNameMap.put(TAG_RELATED_IMAGE_FILE_FORMAT, "Related Image File Format");
+        _tagNameMap.put(TAG_RELATED_IMAGE_WIDTH, "Related Image Width");
+        _tagNameMap.put(TAG_RELATED_IMAGE_LENGTH, "Related Image Length");
     }
 
     public ExifInteropDirectory()
@@ -53,8 +53,8 @@ public class ExifInteropDirectory extends Directory
         return "Interoperability";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

@@ -91,6 +91,6 @@ public class RationalTest extends TestCase
         Rational rational = new Rational(1, 3);
         Rational reciprocal = rational.getReciprocal();
         assertEquals("new rational should be reciprocal", new Rational(3, 1), reciprocal);
-        assertEquals("origianl reciprocal should remain unchanged", new Rational(1, 3), rational);
+        assertEquals("original reciprocal should remain unchanged", new Rational(1, 3), rational);
     }
 }

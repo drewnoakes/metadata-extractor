@@ -291,56 +291,57 @@ public class OlympusMakernoteDirectory extends Directory
      */
     public static final int TAG_OLYMPUS_COMPRESSION_RATIO = 0x1034;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(new Integer(TAG_OLYMPUS_SPECIAL_MODE), "Special Mode");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_JPEG_QUALITY), "Jpeg Quality");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_MACRO_MODE), "Macro");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_UNKNOWN_1), "Makernote Unknown 1");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_DIGI_ZOOM_RATIO), "DigiZoom Ratio");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_UNKNOWN_2), "Makernote Unknown 2");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_UNKNOWN_3), "Makernote Unknown 3");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_FIRMWARE_VERSION), "Firmware Version");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_PICT_INFO), "Pict Info");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_CAMERA_ID), "Camera Id");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_DATA_DUMP), "Data Dump");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_MAKERNOTE_VERSION), "Makernote Version");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_CAMERA_SETTINGS_1), "Camera Settings");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_CAMERA_SETTINGS_2), "Camera Settings");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_COMPRESSED_IMAGE_SIZE), "Compressed Image Size");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_MINOLTA_THUMBNAIL_OFFSET_1), "Thumbnail Offset");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_MINOLTA_THUMBNAIL_OFFSET_2), "Thumbnail Offset");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_MINOLTA_THUMBNAIL_LENGTH), "Thumbnail Length");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_COLOUR_MODE), "Colour Mode");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_IMAGE_QUALITY_1), "Image Quality");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_IMAGE_QUALITY_2), "Image Quality");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_IMAGE_HEIGHT), "Image Height");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_ORIGINAL_MANUFACTURER_MODEL), "Original Manufacturer Model");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_PRINT_IMAGE_MATCHING_INFO), "Print Image Matching (PIM) Info");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_FLASH_MODE), "Flash Mode");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_BRACKET), "Bracket");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_FOCUS_MODE), "Focus Mode");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_FOCUS_DISTANCE), "Focus Distance");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_ZOOM), "Zoom");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_MACRO_FOCUS), "Macro Focus");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_SHARPNESS), "Sharpness");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_COLOUR_MATRIX), "Colour Matrix");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_BLACK_LEVEL), "Black Level");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_WHITE_BALANCE), "White Balance");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_RED_BIAS), "Red Bias");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_BLUE_BIAS), "Blue Bias");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_SERIAL_NUMBER), "Serial Number");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_FLASH_BIAS), "Flash Bias");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_CONTRAST), "Contrast");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_SHARPNESS_FACTOR), "Sharpness Factor");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_COLOUR_CONTROL), "Colour Control");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_VALID_BITS), "Valid Bits");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_CORING_FILTER), "Coring Filter");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_FINAL_WIDTH), "Final Width");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_FINAL_HEIGHT), "Final Height");
-        tagNameMap.put(new Integer(TAG_OLYMPUS_COMPRESSION_RATIO), "Compression Ratio");
+        _tagNameMap.put(TAG_OLYMPUS_SPECIAL_MODE, "Special Mode");
+        _tagNameMap.put(TAG_OLYMPUS_JPEG_QUALITY, "Jpeg Quality");
+        _tagNameMap.put(TAG_OLYMPUS_MACRO_MODE, "Macro");
+        _tagNameMap.put(TAG_OLYMPUS_UNKNOWN_1, "Makernote Unknown 1");
+        _tagNameMap.put(TAG_OLYMPUS_DIGI_ZOOM_RATIO, "DigiZoom Ratio");
+        _tagNameMap.put(TAG_OLYMPUS_UNKNOWN_2, "Makernote Unknown 2");
+        _tagNameMap.put(TAG_OLYMPUS_UNKNOWN_3, "Makernote Unknown 3");
+        _tagNameMap.put(TAG_OLYMPUS_FIRMWARE_VERSION, "Firmware Version");
+        _tagNameMap.put(TAG_OLYMPUS_PICT_INFO, "Pict Info");
+        _tagNameMap.put(TAG_OLYMPUS_CAMERA_ID, "Camera Id");
+        _tagNameMap.put(TAG_OLYMPUS_DATA_DUMP, "Data Dump");
+        _tagNameMap.put(TAG_OLYMPUS_MAKERNOTE_VERSION, "Makernote Version");
+        _tagNameMap.put(TAG_OLYMPUS_CAMERA_SETTINGS_1, "Camera Settings");
+        _tagNameMap.put(TAG_OLYMPUS_CAMERA_SETTINGS_2, "Camera Settings");
+        _tagNameMap.put(TAG_OLYMPUS_COMPRESSED_IMAGE_SIZE, "Compressed Image Size");
+        _tagNameMap.put(TAG_OLYMPUS_MINOLTA_THUMBNAIL_OFFSET_1, "Thumbnail Offset");
+        _tagNameMap.put(TAG_OLYMPUS_MINOLTA_THUMBNAIL_OFFSET_2, "Thumbnail Offset");
+        _tagNameMap.put(TAG_OLYMPUS_MINOLTA_THUMBNAIL_LENGTH, "Thumbnail Length");
+        _tagNameMap.put(TAG_OLYMPUS_COLOUR_MODE, "Colour Mode");
+        _tagNameMap.put(TAG_OLYMPUS_IMAGE_QUALITY_1, "Image Quality");
+        _tagNameMap.put(TAG_OLYMPUS_IMAGE_QUALITY_2, "Image Quality");
+        _tagNameMap.put(TAG_OLYMPUS_IMAGE_HEIGHT, "Image Height");
+        _tagNameMap.put(TAG_OLYMPUS_IMAGE_WIDTH, "Image Width");
+        _tagNameMap.put(TAG_OLYMPUS_ORIGINAL_MANUFACTURER_MODEL, "Original Manufacturer Model");
+        _tagNameMap.put(TAG_OLYMPUS_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
+        _tagNameMap.put(TAG_OLYMPUS_FLASH_MODE, "Flash Mode");
+        _tagNameMap.put(TAG_OLYMPUS_BRACKET, "Bracket");
+        _tagNameMap.put(TAG_OLYMPUS_FOCUS_MODE, "Focus Mode");
+        _tagNameMap.put(TAG_OLYMPUS_FOCUS_DISTANCE, "Focus Distance");
+        _tagNameMap.put(TAG_OLYMPUS_ZOOM, "Zoom");
+        _tagNameMap.put(TAG_OLYMPUS_MACRO_FOCUS, "Macro Focus");
+        _tagNameMap.put(TAG_OLYMPUS_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_OLYMPUS_COLOUR_MATRIX, "Colour Matrix");
+        _tagNameMap.put(TAG_OLYMPUS_BLACK_LEVEL, "Black Level");
+        _tagNameMap.put(TAG_OLYMPUS_WHITE_BALANCE, "White Balance");
+        _tagNameMap.put(TAG_OLYMPUS_RED_BIAS, "Red Bias");
+        _tagNameMap.put(TAG_OLYMPUS_BLUE_BIAS, "Blue Bias");
+        _tagNameMap.put(TAG_OLYMPUS_SERIAL_NUMBER, "Serial Number");
+        _tagNameMap.put(TAG_OLYMPUS_FLASH_BIAS, "Flash Bias");
+        _tagNameMap.put(TAG_OLYMPUS_CONTRAST, "Contrast");
+        _tagNameMap.put(TAG_OLYMPUS_SHARPNESS_FACTOR, "Sharpness Factor");
+        _tagNameMap.put(TAG_OLYMPUS_COLOUR_CONTROL, "Colour Control");
+        _tagNameMap.put(TAG_OLYMPUS_VALID_BITS, "Valid Bits");
+        _tagNameMap.put(TAG_OLYMPUS_CORING_FILTER, "Coring Filter");
+        _tagNameMap.put(TAG_OLYMPUS_FINAL_WIDTH, "Final Width");
+        _tagNameMap.put(TAG_OLYMPUS_FINAL_HEIGHT, "Final Height");
+        _tagNameMap.put(TAG_OLYMPUS_COMPRESSION_RATIO, "Compression Ratio");
     }
 
     public OlympusMakernoteDirectory()
@@ -353,8 +354,8 @@ public class OlympusMakernoteDirectory extends Directory
         return "Olympus Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

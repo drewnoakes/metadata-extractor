@@ -154,10 +154,8 @@ public class JpegSegmentReader
      * a byte array.
      * @param segmentMarker the byte identifier for the desired segment
      * @return the byte array if found, else null
-     * @throws JpegProcessingException for any problems processing the Jpeg data,
-     *         including inner IOExceptions
      */
-    public byte[] readSegment(byte segmentMarker) throws JpegProcessingException
+    public byte[] readSegment(byte segmentMarker)
     {
         return readSegment(segmentMarker, 0);
     }

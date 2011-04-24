@@ -54,29 +54,33 @@ public class JpegDirectory extends Directory {
 	/** the fourth of a possible 4 color components.  Number of components specified in TAG_JPEG_NUMBER_OF_COMPONENTS.*/
 	public static final int TAG_JPEG_COMPONENT_DATA_4 = 9;
 
-	protected static final HashMap tagNameMap = new HashMap();
+	protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-	static {
-        tagNameMap.put(new Integer(TAG_JPEG_DATA_PRECISION), "Data Precision");
-        tagNameMap.put(new Integer(TAG_JPEG_IMAGE_WIDTH), "Image Width");
-        tagNameMap.put(new Integer(TAG_JPEG_IMAGE_HEIGHT), "Image Height");
-		tagNameMap.put(new Integer(TAG_JPEG_NUMBER_OF_COMPONENTS), "Number of Components");
-		tagNameMap.put(new Integer(TAG_JPEG_COMPONENT_DATA_1), "Component 1");
-		tagNameMap.put(new Integer(TAG_JPEG_COMPONENT_DATA_2), "Component 2");
-		tagNameMap.put(new Integer(TAG_JPEG_COMPONENT_DATA_3), "Component 3");
-		tagNameMap.put(new Integer(TAG_JPEG_COMPONENT_DATA_4), "Component 4");
+	static
+    {
+        _tagNameMap.put(TAG_JPEG_DATA_PRECISION, "Data Precision");
+        _tagNameMap.put(TAG_JPEG_IMAGE_WIDTH, "Image Width");
+        _tagNameMap.put(TAG_JPEG_IMAGE_HEIGHT, "Image Height");
+		_tagNameMap.put(TAG_JPEG_NUMBER_OF_COMPONENTS, "Number of Components");
+		_tagNameMap.put(TAG_JPEG_COMPONENT_DATA_1, "Component 1");
+		_tagNameMap.put(TAG_JPEG_COMPONENT_DATA_2, "Component 2");
+		_tagNameMap.put(TAG_JPEG_COMPONENT_DATA_3, "Component 3");
+		_tagNameMap.put(TAG_JPEG_COMPONENT_DATA_4, "Component 4");
 	}
 
-    public JpegDirectory() {
+    public JpegDirectory()
+    {
 		this.setDescriptor(new JpegDescriptor(this));
 	}
 
-	public String getName() {
+	public String getName()
+    {
 		return "Jpeg";
 	}
 
-	protected HashMap getTagNameMap() {
-		return tagNameMap;
+	protected HashMap<Integer, String> getTagNameMap()
+    {
+		return _tagNameMap;
 	}
 
     /**
@@ -88,10 +92,7 @@ public class JpegDirectory extends Directory {
     public JpegComponent getComponent(int componentNumber)
     {
         int tagType = JpegDirectory.TAG_JPEG_COMPONENT_DATA_1 + componentNumber;
-
-        JpegComponent component = (JpegComponent)getObject(tagType);
-
-        return component;
+        return (JpegComponent)getObject(tagType);
     }
 
     public int getImageWidth() throws MetadataException

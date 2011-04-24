@@ -32,15 +32,7 @@ public class JpegSegmentData implements Serializable
     static final long serialVersionUID = 7110175216435025451L;
     
     /** A map of byte[], keyed by the segment marker */
-    private final HashMap _segmentDataMap;
-
-    /**
-     * Creates a new JpegSegmentData collection object.
-     */
-    public JpegSegmentData()
-    {
-        _segmentDataMap = new HashMap(10);
-    }
+    private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
 
     /**
      * Adds segment bytes to the collection.
@@ -49,7 +41,7 @@ public class JpegSegmentData implements Serializable
      */
     public void addSegment(byte segmentMarker, byte[] segmentBytes)
     {
-        final List segmentList = getOrCreateSegmentList(segmentMarker);
+        final List<byte[]> segmentList = getOrCreateSegmentList(segmentMarker);
         segmentList.add(segmentBytes);
     }
 
@@ -72,12 +64,12 @@ public class JpegSegmentData implements Serializable
      */
     public byte[] getSegment(byte segmentMarker, int occurrence)
     {
-        final List segmentList = getSegmentList(segmentMarker);
+        final List<byte[]> segmentList = getSegmentList(segmentMarker);
 
         if (segmentList==null || segmentList.size()<=occurrence)
             return null;
         else
-            return (byte[]) segmentList.get(occurrence);
+            return segmentList.get(occurrence);
     }
 
     /**
@@ -87,7 +79,7 @@ public class JpegSegmentData implements Serializable
      */
     public int getSegmentCount(byte segmentMarker)
     {
-        final List segmentList = getSegmentList(segmentMarker);
+        final List<byte[]> segmentList = getSegmentList(segmentMarker);
         if (segmentList==null)
             return 0;
         else
@@ -102,7 +94,7 @@ public class JpegSegmentData implements Serializable
      */
     public void removeSegmentOccurrence(byte segmentMarker, int occurrence)
     {
-        final List segmentList = (List)_segmentDataMap.get(new Byte(segmentMarker));
+        final List<byte[]> segmentList = _segmentDataMap.get(new Byte(segmentMarker));
         segmentList.remove(occurrence);
     }
 
@@ -168,20 +160,19 @@ public class JpegSegmentData implements Serializable
         }
     }
 
-    private List getSegmentList(byte segmentMarker)
+    private List<byte[]> getSegmentList(byte segmentMarker)
     {
-        return (List)_segmentDataMap.get(new Byte(segmentMarker));
+        return _segmentDataMap.get(new Byte(segmentMarker));
     }
 
-    private List getOrCreateSegmentList(byte segmentMarker)
+    private List<byte[]> getOrCreateSegmentList(byte segmentMarker)
     {
-        List segmentList;
-        Byte key = new Byte(segmentMarker);
-        if (_segmentDataMap.containsKey(key)) {
-            segmentList = (List)_segmentDataMap.get(key);
+        List<byte[]> segmentList;
+        if (_segmentDataMap.containsKey(segmentMarker)) {
+            segmentList = _segmentDataMap.get(segmentMarker);
         } else {
-            segmentList = new ArrayList();
-            _segmentDataMap.put(key, segmentList);
+            segmentList = new ArrayList<byte[]>();
+            _segmentDataMap.put(segmentMarker, segmentList);
         }
         return segmentList;
     }

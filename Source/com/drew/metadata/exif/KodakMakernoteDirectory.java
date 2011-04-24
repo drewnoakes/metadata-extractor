@@ -23,14 +23,14 @@ import java.util.HashMap;
  */
 public class KodakMakernoteDirectory extends Directory
 {
-	protected static final HashMap _tagNameMap = new HashMap();
+	protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 	
 	public String getName()
     {
 		return "Kodak Makernote";
 	}
 
-	protected HashMap getTagNameMap()
+	protected HashMap<Integer, String> getTagNameMap()
     {
 		return _tagNameMap;
 	}

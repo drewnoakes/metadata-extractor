@@ -121,24 +121,24 @@ public class PentaxMakernoteDirectory extends Directory
      */
     public static final int TAG_PENTAX_DAYLIGHT_SAVINGS = 0x1001;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(new Integer(TAG_PENTAX_CAPTURE_MODE), "Capture Mode");
-        tagNameMap.put(new Integer(TAG_PENTAX_QUALITY_LEVEL), "Quality Level");
-        tagNameMap.put(new Integer(TAG_PENTAX_FOCUS_MODE), "Focus Mode");
-        tagNameMap.put(new Integer(TAG_PENTAX_FLASH_MODE), "Flash Mode");
-        tagNameMap.put(new Integer(TAG_PENTAX_WHITE_BALANCE), "White Balance");
-        tagNameMap.put(new Integer(TAG_PENTAX_DIGITAL_ZOOM), "Digital Zoom");
-        tagNameMap.put(new Integer(TAG_PENTAX_SHARPNESS), "Sharpness");
-        tagNameMap.put(new Integer(TAG_PENTAX_CONTRAST), "Contrast");
-        tagNameMap.put(new Integer(TAG_PENTAX_SATURATION), "Saturation");
-        tagNameMap.put(new Integer(TAG_PENTAX_ISO_SPEED), "ISO Speed");
-        tagNameMap.put(new Integer(TAG_PENTAX_COLOUR), "Colour");
-        tagNameMap.put(new Integer(TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO), "Print Image Matching (PIM) Info");
-        tagNameMap.put(new Integer(TAG_PENTAX_TIME_ZONE), "Time Zone");
-        tagNameMap.put(new Integer(TAG_PENTAX_DAYLIGHT_SAVINGS), "Daylight Savings");
+        _tagNameMap.put(TAG_PENTAX_CAPTURE_MODE, "Capture Mode");
+        _tagNameMap.put(TAG_PENTAX_QUALITY_LEVEL, "Quality Level");
+        _tagNameMap.put(TAG_PENTAX_FOCUS_MODE, "Focus Mode");
+        _tagNameMap.put(TAG_PENTAX_FLASH_MODE, "Flash Mode");
+        _tagNameMap.put(TAG_PENTAX_WHITE_BALANCE, "White Balance");
+        _tagNameMap.put(TAG_PENTAX_DIGITAL_ZOOM, "Digital Zoom");
+        _tagNameMap.put(TAG_PENTAX_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_PENTAX_CONTRAST, "Contrast");
+        _tagNameMap.put(TAG_PENTAX_SATURATION, "Saturation");
+        _tagNameMap.put(TAG_PENTAX_ISO_SPEED, "ISO Speed");
+        _tagNameMap.put(TAG_PENTAX_COLOUR, "Colour");
+        _tagNameMap.put(TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
+        _tagNameMap.put(TAG_PENTAX_TIME_ZONE, "Time Zone");
+        _tagNameMap.put(TAG_PENTAX_DAYLIGHT_SAVINGS, "Daylight Savings");
     }
 
     public PentaxMakernoteDirectory()
@@ -151,8 +151,8 @@ public class PentaxMakernoteDirectory extends Directory
         return "Pentax Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

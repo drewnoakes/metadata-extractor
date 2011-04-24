@@ -28,12 +28,12 @@ public class KyoceraMakernoteDirectory extends Directory
     public static final int TAG_KYOCERA_PROPRIETARY_THUMBNAIL = 0x0001;
     public static final int TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(new Integer(TAG_KYOCERA_PROPRIETARY_THUMBNAIL), "Proprietary Thumbnail Format Data");
-        tagNameMap.put(new Integer(TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO), "Print Image Matching (PIM) Info");
+        _tagNameMap.put(TAG_KYOCERA_PROPRIETARY_THUMBNAIL, "Proprietary Thumbnail Format Data");
+        _tagNameMap.put(TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
     }
 
     public KyoceraMakernoteDirectory()
@@ -46,8 +46,8 @@ public class KyoceraMakernoteDirectory extends Directory
         return "Kyocera/Contax Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

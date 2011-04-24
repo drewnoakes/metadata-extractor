@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides human-readable string represenations of tag values stored in a <code>ExifDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a <code>ExifDirectory</code>.
  */
 public class ExifDescriptor extends TagDescriptor
 {

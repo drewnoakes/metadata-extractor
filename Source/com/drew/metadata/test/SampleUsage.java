@@ -26,6 +26,7 @@ import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Tag;
+import com.drew.metadata.jpeg.JpegCommentReader;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGDecodeParam;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
@@ -93,12 +94,34 @@ public class SampleUsage
         // Approach 4
         // This approach is the slowest, because it decodes the Jpeg image.  Of course you now have a decoded image to
         // play with.  In some instances this will be most appropriate.
+        // The compiler will produce warnings about using com.sun.image.codec.jpeg, but this example is shown in case it's useful.
         try {
             JPEGImageDecoder jpegDecoder = JPEGCodec.createJPEGDecoder(new FileInputStream(file));
             BufferedImage image = jpegDecoder.decodeAsBufferedImage();
             // now you can use the image
             JPEGDecodeParam decodeParam = jpegDecoder.getJPEGDecodeParam();
-            Metadata metadata = JpegMetadataReader.readMetadata(decodeParam);
+            final Metadata metadata = new Metadata();
+
+            // We should only really be seeing Exif in exifSegment[0]... the 2D array exists because markers can theoretically appear multiple times in the file.
+            byte[][] exifSegment = decodeParam.getMarkerData(JPEGDecodeParam.APP1_MARKER);
+            if (exifSegment != null && exifSegment[0].length>0) {
+                new ExifReader(exifSegment[0]).extract(metadata);
+            }
+
+            // similarly, use only the first IPTC segment
+            byte[][] iptcSegment = decodeParam.getMarkerData(JPEGDecodeParam.APPD_MARKER);
+            if (iptcSegment != null && iptcSegment[0].length>0) {
+                new IptcReader(iptcSegment[0]).extract(metadata);
+            }
+
+            // NOTE: Unable to utilise JpegReader for the SOF0 frame here, as the decodeParam doesn't contain the byte[]
+
+            // similarly, use only the first Jpeg Comment segment
+            byte[][] jpegCommentSegment = decodeParam.getMarkerData(JPEGDecodeParam.COMMENT_MARKER);
+            if (jpegCommentSegment != null && jpegCommentSegment[0].length>0) {
+                new JpegCommentReader(jpegCommentSegment[0]).extract(metadata);
+            }
+
             printImageTags(4, metadata);
         } catch (FileNotFoundException e) {
             System.err.println("error 4a: " + e);

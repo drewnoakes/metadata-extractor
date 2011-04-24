@@ -49,30 +49,30 @@ public class CasioType1MakernoteDirectory extends Directory
     public static final int TAG_CASIO_UNKNOWN_8 = 0x0013;
     public static final int TAG_CASIO_CCD_SENSITIVITY = 0x0014;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(new Integer(TAG_CASIO_CCD_SENSITIVITY), "CCD Sensitivity");
-        tagNameMap.put(new Integer(TAG_CASIO_CONTRAST), "Contrast");
-        tagNameMap.put(new Integer(TAG_CASIO_DIGITAL_ZOOM), "Digital Zoom");
-        tagNameMap.put(new Integer(TAG_CASIO_FLASH_INTENSITY), "Flash Intensity");
-        tagNameMap.put(new Integer(TAG_CASIO_FLASH_MODE), "Flash Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_FOCUSING_MODE), "Focussing Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_OBJECT_DISTANCE), "Object Distance");
-        tagNameMap.put(new Integer(TAG_CASIO_QUALITY), "Quality");
-        tagNameMap.put(new Integer(TAG_CASIO_RECORDING_MODE), "Recording Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_SATURATION), "Saturation");
-        tagNameMap.put(new Integer(TAG_CASIO_SHARPNESS), "Sharpness");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_1), "Makernote Unknown 1");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_2), "Makernote Unknown 2");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_3), "Makernote Unknown 3");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_4), "Makernote Unknown 4");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_5), "Makernote Unknown 5");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_6), "Makernote Unknown 6");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_7), "Makernote Unknown 7");
-        tagNameMap.put(new Integer(TAG_CASIO_UNKNOWN_8), "Makernote Unknown 8");
-        tagNameMap.put(new Integer(TAG_CASIO_WHITE_BALANCE), "White Balance");
+        _tagNameMap.put(TAG_CASIO_CCD_SENSITIVITY, "CCD Sensitivity");
+        _tagNameMap.put(TAG_CASIO_CONTRAST, "Contrast");
+        _tagNameMap.put(TAG_CASIO_DIGITAL_ZOOM, "Digital Zoom");
+        _tagNameMap.put(TAG_CASIO_FLASH_INTENSITY, "Flash Intensity");
+        _tagNameMap.put(TAG_CASIO_FLASH_MODE, "Flash Mode");
+        _tagNameMap.put(TAG_CASIO_FOCUSING_MODE, "Focussing Mode");
+        _tagNameMap.put(TAG_CASIO_OBJECT_DISTANCE, "Object Distance");
+        _tagNameMap.put(TAG_CASIO_QUALITY, "Quality");
+        _tagNameMap.put(TAG_CASIO_RECORDING_MODE, "Recording Mode");
+        _tagNameMap.put(TAG_CASIO_SATURATION, "Saturation");
+        _tagNameMap.put(TAG_CASIO_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_1, "Makernote Unknown 1");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_2, "Makernote Unknown 2");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_3, "Makernote Unknown 3");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_4, "Makernote Unknown 4");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_5, "Makernote Unknown 5");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_6, "Makernote Unknown 6");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_7, "Makernote Unknown 7");
+        _tagNameMap.put(TAG_CASIO_UNKNOWN_8, "Makernote Unknown 8");
+        _tagNameMap.put(TAG_CASIO_WHITE_BALANCE, "White Balance");
     }
 
     public CasioType1MakernoteDirectory()
@@ -85,8 +85,8 @@ public class CasioType1MakernoteDirectory extends Directory
         return "Casio Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

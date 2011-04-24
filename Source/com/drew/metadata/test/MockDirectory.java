@@ -25,11 +25,11 @@ import java.util.HashMap;
  */
 public class MockDirectory extends Directory
 {
-    private final HashMap _tagNameMap;
+    private final HashMap<Integer, String> _tagNameMap;
 
     public MockDirectory()
     {
-        this._tagNameMap = new HashMap();
+        this._tagNameMap = new HashMap<Integer, String>();
     }
 
     public String getName()
@@ -37,7 +37,7 @@ public class MockDirectory extends Directory
         return "";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
     }

@@ -40,15 +40,15 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_PANASONIC_RECORD_MODE = 0x001F;
     public static final int TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(new Integer(TAG_PANASONIC_QUALITY_MODE), "Quality Mode");
-        tagNameMap.put(new Integer(TAG_PANASONIC_VERSION), "Version");
-        tagNameMap.put(new Integer(TAG_PANASONIC_MACRO_MODE), "Macro Mode");
-        tagNameMap.put(new Integer(TAG_PANASONIC_RECORD_MODE), "Record Mode");
-        tagNameMap.put(new Integer(TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO), "Print Image Matching (PIM) Info");
+        _tagNameMap.put(TAG_PANASONIC_QUALITY_MODE, "Quality Mode");
+        _tagNameMap.put(TAG_PANASONIC_VERSION, "Version");
+        _tagNameMap.put(TAG_PANASONIC_MACRO_MODE, "Macro Mode");
+        _tagNameMap.put(TAG_PANASONIC_RECORD_MODE, "Record Mode");
+        _tagNameMap.put(TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
     }
 
     public PanasonicMakernoteDirectory()
@@ -61,8 +61,8 @@ public class PanasonicMakernoteDirectory extends Directory
         return "Panasonic Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

@@ -444,66 +444,66 @@ public class NikonType2MakernoteDirectory extends Directory
      */
     public static final int TAG_NIKON_TYPE2_UNKNOWN_16 = 0x0E10;
 
-    protected static final HashMap _tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_FIRMWARE_VERSION), "Firmware Version");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_ISO_1), "ISO");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_QUALITY_AND_FILE_FORMAT), "Quality & File Format");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE), "White Balance");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAMERA_SHARPENING), "Sharpening");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_AF_TYPE), "AF Type");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE_FINE), "White Balance Fine");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE_RB_COEFF), "White Balance RB Coefficients");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_ISO_2), "ISO");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_ISO_SELECTION), "ISO Selection");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_DATA_DUMP), "Data Dump");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_IMAGE_ADJUSTMENT), "Image Adjustment");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAMERA_TONE_COMPENSATION), "Tone Compensation");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_ADAPTER), "Adapter");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_LENS), "Lens");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_MANUAL_FOCUS_DISTANCE), "Manual Focus Distance");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_DIGITAL_ZOOM), "Digital Zoom");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAMERA_COLOR_MODE), "Colour Mode");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT), "Camera Hue Adjustment");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_NOISE_REDUCTION), "Noise Reduction");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_CAPTURE_EDITOR_DATA), "Capture Editor Data");
+        _tagNameMap.put(TAG_NIKON_TYPE2_FIRMWARE_VERSION, "Firmware Version");
+        _tagNameMap.put(TAG_NIKON_TYPE2_ISO_1, "ISO");
+        _tagNameMap.put(TAG_NIKON_TYPE2_QUALITY_AND_FILE_FORMAT, "Quality & File Format");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE, "White Balance");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAMERA_SHARPENING, "Sharpening");
+        _tagNameMap.put(TAG_NIKON_TYPE2_AF_TYPE, "AF Type");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE_FINE, "White Balance Fine");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE_RB_COEFF, "White Balance RB Coefficients");
+        _tagNameMap.put(TAG_NIKON_TYPE2_ISO_2, "ISO");
+        _tagNameMap.put(TAG_NIKON_TYPE2_ISO_SELECTION, "ISO Selection");
+        _tagNameMap.put(TAG_NIKON_TYPE2_DATA_DUMP, "Data Dump");
+        _tagNameMap.put(TAG_NIKON_TYPE2_IMAGE_ADJUSTMENT, "Image Adjustment");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAMERA_TONE_COMPENSATION, "Tone Compensation");
+        _tagNameMap.put(TAG_NIKON_TYPE2_ADAPTER, "Adapter");
+        _tagNameMap.put(TAG_NIKON_TYPE2_LENS, "Lens");
+        _tagNameMap.put(TAG_NIKON_TYPE2_MANUAL_FOCUS_DISTANCE, "Manual Focus Distance");
+        _tagNameMap.put(TAG_NIKON_TYPE2_DIGITAL_ZOOM, "Digital Zoom");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAMERA_COLOR_MODE, "Colour Mode");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT, "Camera Hue Adjustment");
+        _tagNameMap.put(TAG_NIKON_TYPE2_NOISE_REDUCTION, "Noise Reduction");
+        _tagNameMap.put(TAG_NIKON_TYPE2_CAPTURE_EDITOR_DATA, "Capture Editor Data");
 
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_1), "Unknown 01");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_2), "Unknown 02");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_3), "Unknown 03");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_4), "Unknown 04");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_5), "Unknown 05");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_AF_FOCUS_POSITION), "AF Focus Position");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_7), "Unknown 07");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_8), "Unknown 08");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_9), "Unknown 09");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_LIGHT_SOURCE), "Light source");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_11), "Unknown 11");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_12), "Unknown 12");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_13), "Unknown 13");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_14), "Unknown 14");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_15), "Unknown 15");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_16), "Unknown 16");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_FLASH_SYNC_MODE), "Flash Sync Mode");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_AUTO_FLASH_MODE), "Auto Flash Mode");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION), "Auto Flash Compensation");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_EXPOSURE_SEQUENCE_NUMBER), "Exposure Sequence Number");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_COLOR_MODE), "Color Mode");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_1, "Unknown 01");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_2, "Unknown 02");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_3, "Unknown 03");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_4, "Unknown 04");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_5, "Unknown 05");
+        _tagNameMap.put(TAG_NIKON_TYPE2_AF_FOCUS_POSITION, "AF Focus Position");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_7, "Unknown 07");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_8, "Unknown 08");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_9, "Unknown 09");
+        _tagNameMap.put(TAG_NIKON_TYPE2_LIGHT_SOURCE, "Light source");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_11, "Unknown 11");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_12, "Unknown 12");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_13, "Unknown 13");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_14, "Unknown 14");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_15, "Unknown 15");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_16, "Unknown 16");
+        _tagNameMap.put(TAG_NIKON_TYPE2_FLASH_SYNC_MODE, "Flash Sync Mode");
+        _tagNameMap.put(TAG_NIKON_TYPE2_AUTO_FLASH_MODE, "Auto Flash Mode");
+        _tagNameMap.put(TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION, "Auto Flash Compensation");
+        _tagNameMap.put(TAG_NIKON_TYPE2_EXPOSURE_SEQUENCE_NUMBER, "Exposure Sequence Number");
+        _tagNameMap.put(TAG_NIKON_TYPE2_COLOR_MODE, "Color Mode");
 
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_20), "Unknown 20");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_21), "Unknown 21");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_22), "Unknown 22");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_23), "Unknown 23");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_24), "Unknown 24");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_25), "Unknown 25");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_26), "Unknown 26");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_27), "Unknown 27");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_29), "Unknown 29");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_30), "Unknown 30");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_32), "Unknown 32");
-        _tagNameMap.put(new Integer(TAG_NIKON_TYPE2_UNKNOWN_33), "Unknown 33");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_20, "Unknown 20");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_21, "Unknown 21");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_22, "Unknown 22");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_23, "Unknown 23");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_24, "Unknown 24");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_25, "Unknown 25");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_26, "Unknown 26");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_27, "Unknown 27");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_29, "Unknown 29");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_30, "Unknown 30");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_32, "Unknown 32");
+        _tagNameMap.put(TAG_NIKON_TYPE2_UNKNOWN_33, "Unknown 33");
     }
 
     public NikonType2MakernoteDirectory()
@@ -536,7 +536,7 @@ public class NikonType2MakernoteDirectory extends Directory
         return "Nikon Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
     }

@@ -12,7 +12,7 @@
     <property name="verbose" value="true"/>
     <property name="debug" value="off"/>
     <property name="version" value="2.4.0-beta-1"/>
-    <property name="classpath" value="${lib}/junit.jar"/>
+    <property name="classpath" value="${lib}/junit-4.8.2.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
         <delete verbose="${verbose}" dir="${build}"/>
@@ -49,7 +49,7 @@
             <classpath>
                 <pathelement location="${build}"/>
                 <pathelement path="${java.class.path}"/>
-                <pathelement path="${lib}/junit.jar"/>
+                <pathelement path="${lib}/junit-4.8.2.jar"/>
             </classpath>
             <formatter type="plain"/>
             <test name="com.drew.metadata.test.AllTests" />

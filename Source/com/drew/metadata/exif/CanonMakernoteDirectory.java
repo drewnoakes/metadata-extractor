@@ -331,70 +331,70 @@ public class CanonMakernoteDirectory extends Directory
 
     // 9  A  B  C  D  E  F  10 11 12 13
     // 9  10 11 12 13 14 15 16 17 18 19
-    protected static final HashMap _tagNameMap = new HashMap();
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(new Integer(TAG_CANON_FIRMWARE_VERSION), "Firmware Version");
-        _tagNameMap.put(new Integer(TAG_CANON_IMAGE_NUMBER), "Image Number");
-        _tagNameMap.put(new Integer(TAG_CANON_IMAGE_TYPE), "Image Type");
-        _tagNameMap.put(new Integer(TAG_CANON_OWNER_NAME), "Owner Name");
-        _tagNameMap.put(new Integer(TAG_CANON_UNKNOWN_1), "Makernote Unknown 1");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTIONS), "Custom Functions");
-        _tagNameMap.put(new Integer(TAG_CANON_SERIAL_NUMBER), "Camera Serial Number");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_AF_POINT_SELECTED), "AF Point Selected");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_CONTINUOUS_DRIVE_MODE), "Continuous Drive Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_CONTRAST), "Contrast");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_EASY_SHOOTING_MODE), "Easy Shooting Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_EXPOSURE_MODE), "Exposure Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_FLASH_DETAILS), "Flash Details");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_FLASH_MODE), "Flash Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_FOCAL_UNITS_PER_MM), "Focal Units per mm");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_FOCUS_MODE_1), "Focus Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_FOCUS_MODE_2), "Focus Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_IMAGE_SIZE), "Image Size");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_ISO), "Iso");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_LONG_FOCAL_LENGTH), "Long Focal Length");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_MACRO_MODE), "Macro Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_METERING_MODE), "Metering Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_SATURATION), "Saturation");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_SELF_TIMER_DELAY), "Self Timer Delay");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_SHARPNESS), "Sharpness");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_SHORT_FOCAL_LENGTH), "Short Focal Length");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_QUALITY), "Quality");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_2), "Unknown Camera State 2");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_3), "Unknown Camera State 3");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_4), "Unknown Camera State 4");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_DIGITAL_ZOOM), "Digital Zoom");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_FOCUS_TYPE), "Focus Type");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_7), "Unknown Camera State 7");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_8), "Unknown Camera State 8");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_9), "Unknown Camera State 9");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_10), "Unknown Camera State 10");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_FLASH_ACTIVITY), "Flash Activity");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_12), "Unknown Camera State 12");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE1_UNKNOWN_13), "Unknown Camera State 13");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE2_WHITE_BALANCE), "White Balance");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE2_SEQUENCE_NUMBER), "Sequence Number");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE2_AF_POINT_USED), "AF Point Used");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE2_FLASH_BIAS), "Flash Bias");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE2_AUTO_EXPOSURE_BRACKETING), "Auto Exposure Bracketing");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE2_AEB_BRACKET_VALUE), "AEB Bracket Value");
-        _tagNameMap.put(new Integer(TAG_CANON_STATE2_SUBJECT_DISTANCE), "Subject Distance");
+        _tagNameMap.put(TAG_CANON_FIRMWARE_VERSION, "Firmware Version");
+        _tagNameMap.put(TAG_CANON_IMAGE_NUMBER, "Image Number");
+        _tagNameMap.put(TAG_CANON_IMAGE_TYPE, "Image Type");
+        _tagNameMap.put(TAG_CANON_OWNER_NAME, "Owner Name");
+        _tagNameMap.put(TAG_CANON_UNKNOWN_1, "Makernote Unknown 1");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTIONS, "Custom Functions");
+        _tagNameMap.put(TAG_CANON_SERIAL_NUMBER, "Camera Serial Number");
+        _tagNameMap.put(TAG_CANON_STATE1_AF_POINT_SELECTED, "AF Point Selected");
+        _tagNameMap.put(TAG_CANON_STATE1_CONTINUOUS_DRIVE_MODE, "Continuous Drive Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_CONTRAST, "Contrast");
+        _tagNameMap.put(TAG_CANON_STATE1_EASY_SHOOTING_MODE, "Easy Shooting Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_EXPOSURE_MODE, "Exposure Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_FLASH_DETAILS, "Flash Details");
+        _tagNameMap.put(TAG_CANON_STATE1_FLASH_MODE, "Flash Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_FOCAL_UNITS_PER_MM, "Focal Units per mm");
+        _tagNameMap.put(TAG_CANON_STATE1_FOCUS_MODE_1, "Focus Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_FOCUS_MODE_2, "Focus Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_IMAGE_SIZE, "Image Size");
+        _tagNameMap.put(TAG_CANON_STATE1_ISO, "Iso");
+        _tagNameMap.put(TAG_CANON_STATE1_LONG_FOCAL_LENGTH, "Long Focal Length");
+        _tagNameMap.put(TAG_CANON_STATE1_MACRO_MODE, "Macro Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_METERING_MODE, "Metering Mode");
+        _tagNameMap.put(TAG_CANON_STATE1_SATURATION, "Saturation");
+        _tagNameMap.put(TAG_CANON_STATE1_SELF_TIMER_DELAY, "Self Timer Delay");
+        _tagNameMap.put(TAG_CANON_STATE1_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_CANON_STATE1_SHORT_FOCAL_LENGTH, "Short Focal Length");
+        _tagNameMap.put(TAG_CANON_STATE1_QUALITY, "Quality");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_2, "Unknown Camera State 2");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_3, "Unknown Camera State 3");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_4, "Unknown Camera State 4");
+        _tagNameMap.put(TAG_CANON_STATE1_DIGITAL_ZOOM, "Digital Zoom");
+        _tagNameMap.put(TAG_CANON_STATE1_FOCUS_TYPE, "Focus Type");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_7, "Unknown Camera State 7");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_8, "Unknown Camera State 8");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_9, "Unknown Camera State 9");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_10, "Unknown Camera State 10");
+        _tagNameMap.put(TAG_CANON_STATE1_FLASH_ACTIVITY, "Flash Activity");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_12, "Unknown Camera State 12");
+        _tagNameMap.put(TAG_CANON_STATE1_UNKNOWN_13, "Unknown Camera State 13");
+        _tagNameMap.put(TAG_CANON_STATE2_WHITE_BALANCE, "White Balance");
+        _tagNameMap.put(TAG_CANON_STATE2_SEQUENCE_NUMBER, "Sequence Number");
+        _tagNameMap.put(TAG_CANON_STATE2_AF_POINT_USED, "AF Point Used");
+        _tagNameMap.put(TAG_CANON_STATE2_FLASH_BIAS, "Flash Bias");
+        _tagNameMap.put(TAG_CANON_STATE2_AUTO_EXPOSURE_BRACKETING, "Auto Exposure Bracketing");
+        _tagNameMap.put(TAG_CANON_STATE2_AEB_BRACKET_VALUE, "AEB Bracket Value");
+        _tagNameMap.put(TAG_CANON_STATE2_SUBJECT_DISTANCE, "Subject Distance");
 
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION), "Long Exposure Noise Reduction");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS), "Shutter/Auto Exposure-lock Buttons");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP), "Mirror Lockup");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL), "Tv/Av And Exposure Level");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT), "AF-Assist Light");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE), "Shutter Speed in Av Mode");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_BRACKETTING), "Auto-Exposure Bracketting Sequence/Auto Cancellation");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC), "Shutter Curtain Sync");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_AF_STOP), "Lens Auto-Focus Stop Button Function Switch");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION), "Auto Reduction of Fill Flash");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_MENU_BUTTON_RETURN), "Menu Button Return Position");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_SET_BUTTON_FUNCTION), "SET Button Function When Shooting");
-        _tagNameMap.put(new Integer(TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING), "Sensor Cleaning");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION, "Long Exposure Noise Reduction");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS, "Shutter/Auto Exposure-lock Buttons");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP, "Mirror Lockup");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL, "Tv/Av And Exposure Level");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT, "AF-Assist Light");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE, "Shutter Speed in Av Mode");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_BRACKETTING, "Auto-Exposure Bracketting Sequence/Auto Cancellation");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC, "Shutter Curtain Sync");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_AF_STOP, "Lens Auto-Focus Stop Button Function Switch");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION, "Auto Reduction of Fill Flash");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_MENU_BUTTON_RETURN, "Menu Button Return Position");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SET_BUTTON_FUNCTION, "SET Button Function When Shooting");
+        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING, "Sensor Cleaning");
     }
 
     public CanonMakernoteDirectory()
@@ -407,7 +407,7 @@ public class CanonMakernoteDirectory extends Directory
         return "Canon Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
     }

@@ -21,6 +21,8 @@ import com.drew.lang.Rational;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,10 +37,10 @@ public abstract class Directory implements Serializable
     /**
      * Map of values hashed by type identifiers.
      */
-    protected final HashMap _tagMap;
+    protected final HashMap<Integer, Object> _tagMap;
 
     /**
-     * The descriptor used to interperet tag values.
+     * The descriptor used to interpret tag values.
      */
     protected TagDescriptor _descriptor;
 
@@ -47,9 +49,9 @@ public abstract class Directory implements Serializable
      * This is used for creation of an iterator, and for counting the number of
      * defined tags.
      */
-    protected final List _definedTagList;
+    protected final List<Tag> _definedTagList;
 
-    private List _errorList;
+    private List<String> _errorList;
 
 // ABSTRACT METHODS
 
@@ -63,7 +65,7 @@ public abstract class Directory implements Serializable
      * Provides the map of tag names, hashed by tag type identifier.
      * @return the map of tag names
      */
-    protected abstract HashMap getTagNameMap();
+    protected abstract HashMap<Integer, String> getTagNameMap();
 
 // CONSTRUCTORS
 
@@ -72,8 +74,8 @@ public abstract class Directory implements Serializable
      */
     public Directory()
     {
-        _tagMap = new HashMap();
-        _definedTagList = new ArrayList();
+        _tagMap = new HashMap<Integer, Object>();
+        _definedTagList = new ArrayList<Tag>();
     }
 
 // VARIOUS METHODS
@@ -92,7 +94,7 @@ public abstract class Directory implements Serializable
      * Returns an Iterator of Tag instances that have been set in this Directory.
      * @return an Iterator of Tag instances
      */
-    public Iterator getTagIterator()
+    public Iterator<Tag> getTagIterator()
     {
         return _definedTagList.iterator();
     }
@@ -107,8 +109,8 @@ public abstract class Directory implements Serializable
     }
 
     /**
-     * Sets the descriptor used to interperet tag values.
-     * @param descriptor the descriptor used to interperet tag values
+     * Sets the descriptor used to interpret tag values.
+     * @param descriptor the descriptor used to interpret tag values
      */
     public void setDescriptor(TagDescriptor descriptor)
     {
@@ -125,7 +127,7 @@ public abstract class Directory implements Serializable
     public void addError(String message)
     {
         if (_errorList==null) {
-            _errorList = new ArrayList();
+            _errorList = new ArrayList<String>();
         }
         _errorList.add(message);
     }
@@ -143,7 +145,7 @@ public abstract class Directory implements Serializable
      * Used to iterate over any error messages contained in this directory.
      * @return an iterator over the error message strings.
      */
-    public Iterator getErrors()
+    public Iterator<String> getErrors()
     {
         return _errorList.iterator();
     }
@@ -165,7 +167,7 @@ public abstract class Directory implements Serializable
      */
     public void setInt(int tagType, int value)
     {
-        setObject(tagType, new Integer(value));
+        setObject(tagType, value);
     }
 
     /**
@@ -175,7 +177,7 @@ public abstract class Directory implements Serializable
      */
     public void setDouble(int tagType, double value)
     {
-        setObject(tagType, new Double(value));
+        setObject(tagType, value);
     }
 
     /**
@@ -185,7 +187,7 @@ public abstract class Directory implements Serializable
      */
     public void setFloat(int tagType, float value)
     {
-        setObject(tagType, new Float(value));
+        setObject(tagType, value);
     }
 
     /**
@@ -205,7 +207,7 @@ public abstract class Directory implements Serializable
      */
     public void setBoolean(int tagType, boolean value)
     {
-        setObject(tagType, new Boolean(value));
+        setObject(tagType, value);
     }
 
     /**
@@ -215,7 +217,7 @@ public abstract class Directory implements Serializable
      */
     public void setLong(int tagType, long value)
     {
-        setObject(tagType, new Long(value));
+        setObject(tagType, value);
     }
 
     /**
@@ -289,10 +291,9 @@ public abstract class Directory implements Serializable
         if (value==null)
             throw new NullPointerException("cannot set a null object");
 
-        Integer key = new Integer(tagType);
-        if (!_tagMap.containsKey(key))
+        if (!_tagMap.containsKey(tagType))
             _definedTagList.add(new Tag(tagType, this));
-        _tagMap.put(key, value);
+        _tagMap.put(tagType, value);
     }
 
     /**
@@ -336,9 +337,9 @@ public abstract class Directory implements Serializable
                 String s = (String)o;
                 byte[] bytes = s.getBytes();
                 long val = 0;
-                for (int i = 0; i < bytes.length; i++) {
+                for (byte aByte : bytes) {
                     val = val << 8;
-                    val += bytes[i];
+                    val += aByte;
                 }
                 return (int)val;
             }
@@ -378,8 +379,7 @@ public abstract class Directory implements Serializable
         } else if (o instanceof String[]) {
             return (String[])o;
         } else if (o instanceof String) {
-            String[] strings = {(String)o};
-            return strings;
+            return new String[]{(String) o};
         } else if (o instanceof int[]) {
             int[] ints = (int[])o;
             String[] strings = new String[ints.length];
@@ -555,7 +555,7 @@ public abstract class Directory implements Serializable
         if (o==null) {
             throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
         } else if (o instanceof Boolean) {
-            return ((Boolean)o).booleanValue();
+            return (Boolean) o;
         } else if (o instanceof String) {
             try {
                 return Boolean.getBoolean((String)o);
@@ -588,11 +588,11 @@ public abstract class Directory implements Serializable
                 "yyyy-MM-dd HH:mm:ss",
                 "yyyy-MM-dd HH:mm"};
             String dateString = (String)o;
-            for (int i = 0; i<datePatterns.length; i++) {
+            for (String datePattern : datePatterns) {
                 try {
-                    DateFormat parser = new java.text.SimpleDateFormat(datePatterns[i]);
+                    DateFormat parser = new SimpleDateFormat(datePattern);
                     return parser.parse(dateString);
-                } catch (java.text.ParseException ex) {
+                } catch (ParseException ex) {
                     // simply try the next pattern
                 }
             }
@@ -685,7 +685,7 @@ public abstract class Directory implements Serializable
      */
     public String getTagName(int tagType)
     {
-        HashMap nameMap = getTagNameMap();
+        HashMap<Integer, String> nameMap = getTagNameMap();
         if (!nameMap.containsKey(tagType)) {
             String hex = Integer.toHexString(tagType);
             while (hex.length()<4) {
@@ -693,7 +693,7 @@ public abstract class Directory implements Serializable
             }
             return "Unknown tag (0x" + hex + ")";
         }
-        return (String)nameMap.get(tagType);
+        return nameMap.get(tagType);
     }
 
     /**

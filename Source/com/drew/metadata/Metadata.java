@@ -45,23 +45,22 @@ public final class Metadata implements Serializable
     /**
      *
      */
-    private final HashMap directoryMap;
+    private final HashMap<Class, Directory> directoryMap;
 
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes
      * creation of an Iterator and counting tags simple.
      */
-    private final ArrayList directoryList;
+    private final ArrayList<Directory> directoryList;
 
     /**
      * Creates a new instance of Metadata.  Package private.
      */
     public Metadata()
     {
-        directoryMap = new HashMap();
-        directoryList = new ArrayList();
+        directoryMap = new HashMap<Class, Directory>();
+        directoryList = new ArrayList<Directory>();
     }
-
 
 // OTHER METHODS
 
@@ -71,7 +70,7 @@ public final class Metadata implements Serializable
      * position is maintained, even though the final value is used.
      * @return an Iterator of tag types set for this image
      */
-    public Iterator getDirectoryIterator()
+    public Iterator<Directory> getDirectoryIterator()
     {
         return directoryList.iterator();
     }
@@ -99,18 +98,18 @@ public final class Metadata implements Serializable
         }
         // check if we've already issued this type of directory
         if (directoryMap.containsKey(type)) {
-            return (Directory)directoryMap.get(type);
+            return directoryMap.get(type);
         }
-        Object directory;
+        Directory directory;
         try {
-            directory = type.newInstance();
+            directory = (Directory)type.newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Cannot instantiate provided Directory type: " + type.toString());
         }
         // store the directory in case it's requested later
         directoryMap.put(type, directory);
         directoryList.add(directory);
-        return (Directory)directory;
+        return directory;
     }
 
     /**

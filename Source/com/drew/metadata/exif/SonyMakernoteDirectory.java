@@ -26,7 +26,7 @@ import java.util.HashMap;
  */
 public class SonyMakernoteDirectory extends Directory
 {
-	protected static final HashMap _tagNameMap = new HashMap();
+	protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     public SonyMakernoteDirectory()
     {
@@ -38,7 +38,7 @@ public class SonyMakernoteDirectory extends Directory
 		return "Sony Makernote";
 	}
 
-	protected HashMap getTagNameMap()
+	protected HashMap<Integer, String> getTagNameMap()
     {
 		return _tagNameMap;
 	}
