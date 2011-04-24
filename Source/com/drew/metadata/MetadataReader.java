@@ -21,22 +21,13 @@ package com.drew.metadata;
  * Note that the data source is not specified on this interface.  Instead it is suggested that implementations
  * take their data within a constructor.  Constructors might be overloaded to allow for different sources, such as
  * files, streams and byte arrays.  As such, instances of implementations of this interface would be single-use and
- * not threadsafe.
+ * not thread-safe.
  */
 public interface MetadataReader
 {
-    // TODO is this overload needed?  it is only used by unit tests...
-    /**
-     * Create a new Metadata instance and return it, populated with whatever directories this MetadataReader
-     * implementation is responsible for.
-     * @return The populated Metadata object.
-     * @deprecated Use the overload that takes a Metadata object instead
-     */
-    public Metadata extract();
-
     /**
      * Extract metadata from the source and merge it into an existing Metadata object.
-     * @return The updated Metadata object.
+     * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public Metadata extract(Metadata metadata);
+    public void extract(Metadata metadata);
 }

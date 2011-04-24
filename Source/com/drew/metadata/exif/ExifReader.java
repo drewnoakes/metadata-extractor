@@ -144,7 +144,7 @@ public class ExifReader implements MetadataReader
 
     /**
      * Creates an ExifReader for the given Exif data segment.
-     * @param data The byte[] from which Exif data should be read.
+     * @param data The byte[] from which Exif data should be read.  This value may be null.
      */
     public ExifReader(byte[] data)
     {
@@ -152,42 +152,29 @@ public class ExifReader implements MetadataReader
     }
 
     /**
-     * Performs the Exif data extraction, returning a new instance of <code>Metadata</code>.
-     * @deprecated
-     */
-    @Deprecated
-    public Metadata extract()
-    {
-        return extract(new Metadata());
-    }
-
-    /**
      * Performs the Exif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
+     * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public Metadata extract(Metadata metadata)
+    public void extract(Metadata metadata)
     {
-        // TODO **** do not return Metadata here -- there is no point.
-
         if (_data==null)
-            return metadata;
+            return;
 
         ExifDirectory directory = getExifDirectory(metadata);
         // check for the header length
         if (_data.length<=14) {
             directory.addError("Exif data segment must contain at least 14 bytes");
-            return metadata;
+            return;
         }
 
         // check for the header preamble
         if (!"Exif\0\0".equals(new String(_data, 0, 6))) {
             directory.addError("Exif data segment doesn't begin with 'Exif'");
-            return metadata;
+            return;
         }
 
         extractIFD(metadata, TIFF_HEADER_START_OFFSET);
-
-        return metadata;
     }
 
     private ExifDirectory getExifDirectory(Metadata metadata)
@@ -201,6 +188,7 @@ public class ExifReader implements MetadataReader
     /**
      * Performs the Exif data extraction on a Tiff/Raw, adding found values to the specified
      * instance of <code>Metadata</code>.
+     * @param metadata The Metadata object into which extracted values should be merged.
      */
     public void extractTiff(Metadata metadata)
     {

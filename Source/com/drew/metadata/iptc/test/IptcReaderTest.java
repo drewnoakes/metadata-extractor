@@ -39,7 +39,8 @@ public class IptcReaderTest extends TestCase
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
         MetadataReader reader = new IptcReader(iptcFile);
-        Metadata metadata = reader.extract();
+        Metadata metadata = new Metadata();
+        reader.extract(metadata);
         assertTrue(metadata.containsDirectory(IptcDirectory.class));
         Directory directory = metadata.getDirectory(IptcDirectory.class);
         assertEquals("City", directory.getDescription(IptcDirectory.TAG_CITY));
@@ -49,7 +50,8 @@ public class IptcReaderTest extends TestCase
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
         MetadataReader reader = new IptcReader(iptcFile);
-        Metadata metadata = reader.extract();
+        Metadata metadata = new Metadata();
+        reader.extract(metadata);
         assertTrue(metadata.containsDirectory(IptcDirectory.class));
         Directory directory = metadata.getDirectory(IptcDirectory.class);
         assertEquals("Caption", directory.getDescription(IptcDirectory.TAG_CAPTION));
@@ -59,7 +61,8 @@ public class IptcReaderTest extends TestCase
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
         MetadataReader reader = new IptcReader(iptcFile);
-        Metadata metadata = reader.extract();
+        Metadata metadata = new Metadata();
+        reader.extract(metadata);
         assertTrue(metadata.containsDirectory(IptcDirectory.class));
         Directory directory = metadata.getDirectory(IptcDirectory.class);
         assertEquals("Supl. Category2 Supl. Category1 Cat", directory.getDescription(IptcDirectory.TAG_CATEGORY));

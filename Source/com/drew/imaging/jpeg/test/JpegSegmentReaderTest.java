@@ -22,6 +22,7 @@ package com.drew.imaging.jpeg.test;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 import junit.framework.TestCase;
@@ -150,8 +151,9 @@ public class JpegSegmentReaderTest extends TestCase
         byte[] iptcData = reader.readSegment(JpegSegmentReader.SEGMENT_APPD);
         byte[] exifData = reader.readSegment(JpegSegmentReader.SEGMENT_APP1);
         assertTrue("exif data too short", exifData.length > 4);
-        new ExifReader(exifData).extract();
-        new IptcReader(iptcData).extract();
+        Metadata metadata = new Metadata();
+        new ExifReader(exifData).extract(metadata);
+        new IptcReader(iptcData).extract(metadata);
         assertEquals("Exif", new String(exifData, 0, 4));
     }
 }

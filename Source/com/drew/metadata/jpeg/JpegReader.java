@@ -63,23 +63,13 @@ public class JpegReader implements MetadataReader
     }
 
     /**
-     * Performs the Jpeg data extraction, returning a new instance of <code>Metadata</code>.
-     * @deprecated
-     */
-    @Deprecated
-    public Metadata extract()
-    {
-        return extract(new Metadata());
-    }
-
-    /**
      * Performs the Jpeg data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public Metadata extract(Metadata metadata)
+    public void extract(Metadata metadata)
     {
         if (_data==null)
-            return metadata;
+            return;
 
         JpegDirectory directory = (JpegDirectory)metadata.getDirectory(JpegDirectory.class);
 
@@ -117,8 +107,6 @@ public class JpegReader implements MetadataReader
         } catch (MetadataException me) {
             directory.addError("MetadataException: " + me);
         }
-
-        return metadata;
     }
 
     /**

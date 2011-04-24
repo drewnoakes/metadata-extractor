@@ -42,7 +42,8 @@ public class NikonType2MakernoteTest1 extends TestCase
     protected void setUp() throws Exception
     {
         File metadataFile = new File("Source/com/drew/metadata/exif/test/nikonMakernoteType2a.metadata");
-        Metadata metadata = new ExifReader(JpegSegmentData.FromFile(metadataFile)).extract();
+        Metadata metadata = new Metadata();
+        new ExifReader(JpegSegmentData.FromFile(metadataFile)).extract(metadata);
 
         _nikonDirectory = (NikonType2MakernoteDirectory)metadata.getDirectory(NikonType2MakernoteDirectory.class);
         _descriptor = new NikonType2MakernoteDescriptor(_nikonDirectory);

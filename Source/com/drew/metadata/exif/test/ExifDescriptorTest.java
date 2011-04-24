@@ -72,11 +72,11 @@ public class ExifDescriptorTest extends TestCase
 
     public void testUserCommentDescription_AsciiHeaderExtendedAsciiEncoding() throws Exception
     {
-        byte[] commentBytes = "ASCII\0\0This is a comment with extended characters æøå ÆØÅ".getBytes();
+        byte[] commentBytes = "ASCII\0\0This is a comment with extended characters ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½".getBytes();
         ExifDirectory directory = new ExifDirectory();
         directory.setByteArray(ExifDirectory.TAG_USER_COMMENT, commentBytes);
         ExifDescriptor descriptor = new ExifDescriptor(directory);
-        assertEquals("This is a comment with extended characters æøå ÆØÅ", descriptor.getDescription(ExifDirectory.TAG_USER_COMMENT));
+        assertEquals("This is a comment with extended characters ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½", descriptor.getDescription(ExifDirectory.TAG_USER_COMMENT));
     }
 
     public void testUserCommentDescription_AsciiHeaderAsciiEncoding() throws Exception
@@ -138,7 +138,8 @@ public class ExifDescriptorTest extends TestCase
     public void testWindowsXpFields() throws Exception
     {
         String fileName = "Source/com/drew/metadata/exif/test/windowsXpFields.jpg";
-        Metadata metadata = new ExifReader(new File(fileName)).extract();
+        Metadata metadata = new Metadata();
+        new ExifReader(new File(fileName)).extract(metadata);
         Directory directory = metadata.getDirectory(ExifDirectory.class);
         ExifDescriptor descriptor = new ExifDescriptor(directory);
         assertEquals("Testing artist", descriptor.getDescription(ExifDirectory.TAG_WIN_AUTHOR));

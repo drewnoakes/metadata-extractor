@@ -63,28 +63,16 @@ public class JpegCommentReader implements MetadataReader
     }
 
     /**
-     * Performs the Jpeg data extraction, returning a new instance of <code>Metadata</code>.
-     * @deprecated
-     */
-    @Deprecated
-    public Metadata extract()
-    {
-        return extract(new Metadata());
-    }
-
-    /**
      * Performs the Jpeg data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public Metadata extract(Metadata metadata)
+    public void extract(Metadata metadata)
     {
         if (_data==null)
-            return metadata;
+            return;
 
         JpegCommentDirectory directory = (JpegCommentDirectory)metadata.getDirectory(JpegCommentDirectory.class);
 
         directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, new String(_data));
-
-        return metadata;
     }
 }

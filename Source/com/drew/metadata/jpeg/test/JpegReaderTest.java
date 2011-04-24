@@ -43,7 +43,8 @@ public class JpegReaderTest extends TestCase
         // use a known testing image
         File jpegFile = new File("Source/com/drew/metadata/jpeg/test/simple.jpg");
         JpegReader reader = new JpegReader(jpegFile);
-        Metadata metadata = reader.extract();
+        Metadata metadata = new Metadata();
+        reader.extract(metadata);
         assertTrue(metadata.containsDirectory(JpegDirectory.class));
         _directory = (JpegDirectory)metadata.getDirectory(JpegDirectory.class);
     }

@@ -82,24 +82,13 @@ public class IptcReader implements MetadataReader
     }
 
     /**
-     * Performs the Exif data extraction, returning a new instance of <code>Metadata</code>.
-     * @deprecated
-     */
-    @Deprecated
-    public Metadata extract()
-    {
-        return extract(new Metadata());
-    }
-
-    /**
      * Performs the Exif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public Metadata extract(Metadata metadata)
+    public void extract(Metadata metadata)
     {
-        if (_data == null) {
-            return metadata;
-        }
+        if (_data == null)
+            return;
 
         Directory directory = metadata.getDirectory(IptcDirectory.class);
 
@@ -111,7 +100,7 @@ public class IptcReader implements MetadataReader
             }
         } catch (MetadataException e) {
             directory.addError("Couldn't find start of Iptc data (invalid segment)");
-            return metadata;
+            return;
         }
 
         // for each tag
@@ -136,7 +125,7 @@ public class IptcReader implements MetadataReader
                 tagByteCount = get32Bits(offset);
             } catch (MetadataException e) {
                 directory.addError("Iptc data segment ended mid-way through tag descriptor");
-                return metadata;
+                return;
             }
             offset += 2;
             if ((offset + tagByteCount) > _data.length) {
@@ -147,8 +136,6 @@ public class IptcReader implements MetadataReader
             processTag(directory, directoryType, tagType, offset, tagByteCount);
             offset += tagByteCount;
         }
-
-        return metadata;
     }
 
     /**
