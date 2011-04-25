@@ -155,10 +155,13 @@ public class XmpReaderTest
     public void testGetXmpProperties() throws Exception
     {
         Map<String,String> propertyMap = _directory.getXmpProperties();
-        for (String key : propertyMap.keySet())
-        {
-            Object value = propertyMap.get(key);
-            System.out.println(key + " -> " + value + " (" + value.getClass().getName() + ")");
-        }
+
+        Assert.assertEquals(179, propertyMap.size());
+
+        Assert.assertTrue(propertyMap.containsKey("photoshop:Country"));
+        Assert.assertEquals("Deutschland", propertyMap.get("photoshop:Country"));
+
+        Assert.assertTrue(propertyMap.containsKey("tiff:ImageLength"));
+        Assert.assertEquals("900", propertyMap.get("tiff:ImageLength"));
     }
 }

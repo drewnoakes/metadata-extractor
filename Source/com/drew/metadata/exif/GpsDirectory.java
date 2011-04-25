@@ -80,6 +80,12 @@ public class GpsDirectory extends Directory
     /** Distance to destination GPSDestDistance 26 1A RATIONAL 1 */
     public static final int TAG_GPS_DEST_DISTANCE = 0x001A;
 
+    /** Values of "GPS", "CELLID", "WLAN" or "MANUAL" by the EXIF spec. */
+    public static final int TAG_GPS_PROCESSING_METHOD = 0x001B;
+    public static final int TAG_GPS_AREA_INFORMATION = 0x001D;
+    public static final int TAG_GPS_DATE_STAMP = 0x001D;
+    public static final int TAG_GPS_DIFFERENTIAL = 0x001E;
+
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -111,6 +117,10 @@ public class GpsDirectory extends Directory
         _tagNameMap.put(TAG_GPS_DEST_BEARING, "GPS Dest Bearing");
         _tagNameMap.put(TAG_GPS_DEST_DISTANCE_REF, "GPS Dest Distance Ref");
         _tagNameMap.put(TAG_GPS_DEST_DISTANCE, "GPS Dest Distance");
+        _tagNameMap.put(TAG_GPS_PROCESSING_METHOD, "GPS Processing Method");
+        _tagNameMap.put(TAG_GPS_AREA_INFORMATION, "GPS Area Information");
+        _tagNameMap.put(TAG_GPS_DATE_STAMP, "GPS Date Stamp");
+        _tagNameMap.put(TAG_GPS_DIFFERENTIAL, "GPS Differential");
     }
 
     public GpsDirectory()
