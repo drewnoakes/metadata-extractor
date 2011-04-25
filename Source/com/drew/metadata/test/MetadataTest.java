@@ -136,7 +136,7 @@ public class MetadataTest extends TestCase
     public void testGetErrors() throws Exception
     {
         Metadata metadata = JpegMetadataReader.readMetadata(new File("Source/com/drew/metadata/exif/test/badExif.jpg"));
-        Iterator errors = metadata.getDirectory(ExifDirectory.class).getErrors();
+        Iterator errors = metadata.getDirectory(ExifDirectory.class).getErrors().iterator();
         assertTrue(errors.hasNext());
         String error = (String) errors.next();
         assertEquals("Exif data segment must contain at least 14 bytes", error);

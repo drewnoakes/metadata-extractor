@@ -395,29 +395,25 @@ public class ExifDescriptor extends TagDescriptor
             return "";
 
         final Map<String, String> encodingMap = new HashMap<String, String>();
-        encodingMap.put("ASCII", System.getProperty("file.encoding"));
-        encodingMap.put("UNICODE", "UTF-16LE");
-        encodingMap.put("JIS", "Shift-JIS"); // We assume this mapping for now
+        encodingMap.put("ASCII",    System.getProperty("file.encoding")); // Someone suggested "ISO-8859-1".
+        encodingMap.put("UNICODE",  "UTF-16LE");
+        encodingMap.put("JIS",      "Shift-JIS"); // We assume this mapping for now.  Someone suggested "JIS".
 
         try {
             if (commentBytes.length >= 10) {
-                String encodingRegion = new String(commentBytes, 0, 10);
+                String firstTenBytesString = new String(commentBytes, 0, 10);
 
                 // try each encoding name
                 for (String encodingName : encodingMap.keySet()) {
-                    if (encodingRegion.startsWith(encodingName)) {
-                        // remove the null characters (and any spaces) commonly present after the encoding name
+                    String charset = encodingMap.get(encodingName);
+                    if (firstTenBytesString.startsWith(encodingName)) {
+                        // skip any null or blank characters commonly present after the encoding name, up to a limit of 10 from the start
                         for (int j = encodingName.length(); j < 10; j++) {
                             byte b = commentBytes[j];
-                            if (b != '\0' && b != ' ') {
-                                String destinationEncoding = encodingMap.get(encodingName);
-                                if (destinationEncoding == null) {
-                                    destinationEncoding = System.getProperty("file.encoding");
-                                }
-                                return new String(commentBytes, j, commentBytes.length - j, destinationEncoding).trim();
-                            }
+                            if (b != '\0' && b != ' ')
+                                return new String(commentBytes, j, commentBytes.length - j, charset).trim();
                         }
-                        return new String(commentBytes, 10, commentBytes.length - 10, System.getProperty("file.encoding")).trim();
+                        return new String(commentBytes, 10, commentBytes.length - 10, charset).trim();
                     }
                 }
             }
@@ -772,7 +768,7 @@ public class ExifDescriptor extends TagDescriptor
         switch (_directory.getInt(ExifDirectory.TAG_WHITE_BALANCE)) {
             case 0: return "Unknown";
             case 1: return "Daylight";
-            case 2: return "Flourescent";
+            case 2: return "Florescent";
             case 3: return "Tungsten";
             case 10: return "Flash";
             case 17: return "Standard light";

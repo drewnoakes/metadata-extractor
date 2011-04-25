@@ -45,21 +45,21 @@ public final class Metadata implements Serializable
     /**
      *
      */
-    private final HashMap<Class, Directory> directoryMap;
+    private final HashMap<Class, Directory> _directoryByClass;
 
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes
      * creation of an Iterator and counting tags simple.
      */
-    private final ArrayList<Directory> directoryList;
+    private final ArrayList<Directory> _directoryList;
 
     /**
      * Creates a new instance of Metadata.  Package private.
      */
     public Metadata()
     {
-        directoryMap = new HashMap<Class, Directory>();
-        directoryList = new ArrayList<Directory>();
+        _directoryByClass = new HashMap<Class, Directory>();
+        _directoryList = new ArrayList<Directory>();
     }
 
 // OTHER METHODS
@@ -69,10 +69,21 @@ public final class Metadata implements Serializable
      * in which they were set.  Should the same tag have been set more than once, it's first
      * position is maintained, even though the final value is used.
      * @return an Iterator of tag types set for this image
+     * @deprecated Use getDirectories() instead
      */
+    @Deprecated
     public Iterator<Directory> getDirectoryIterator()
     {
-        return directoryList.iterator();
+        return _directoryList.iterator();
+    }
+
+    /**
+     * Returns an objects for iterating over Directory objects in the order in which they were added.
+     * @return an iterable collection of directories
+     */
+    public Iterable<Directory> getDirectories()
+    {
+        return _directoryList;
     }
 
     /**
@@ -81,7 +92,7 @@ public final class Metadata implements Serializable
      */
     public int getDirectoryCount()
     {
-        return directoryList.size();
+        return _directoryList.size();
     }
 
     /**
@@ -97,8 +108,8 @@ public final class Metadata implements Serializable
             throw new RuntimeException("Class type passed to getDirectory must be an implementation of com.drew.metadata.Directory");
         }
         // check if we've already issued this type of directory
-        if (directoryMap.containsKey(type)) {
-            return directoryMap.get(type);
+        if (_directoryByClass.containsKey(type)) {
+            return _directoryByClass.get(type);
         }
         Directory directory;
         try {
@@ -107,8 +118,8 @@ public final class Metadata implements Serializable
             throw new RuntimeException("Cannot instantiate provided Directory type: " + type.toString());
         }
         // store the directory in case it's requested later
-        directoryMap.put(type, directory);
-        directoryList.add(directory);
+        _directoryByClass.put(type, directory);
+        _directoryList.add(directory);
         return directory;
     }
 
@@ -120,6 +131,6 @@ public final class Metadata implements Serializable
      */
     public boolean containsDirectory(Class type)
     {
-        return directoryMap.containsKey(type);
+        return _directoryByClass.containsKey(type);
     }
 }

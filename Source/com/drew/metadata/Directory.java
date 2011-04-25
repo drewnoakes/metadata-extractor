@@ -93,10 +93,21 @@ public abstract class Directory implements Serializable
     /**
      * Returns an Iterator of Tag instances that have been set in this Directory.
      * @return an Iterator of Tag instances
+     * @deprecated Use getTags instead
      */
+    @Deprecated
     public Iterator<Tag> getTagIterator()
     {
         return _definedTagList.iterator();
+    }
+
+    /**
+     * Returns an Iterator of Tag instances that have been set in this Directory.
+     * @return an Iterator of Tag instances
+     */
+    public Iterable<Tag> getTags()
+    {
+        return _definedTagList;
     }
 
     /**
@@ -143,11 +154,11 @@ public abstract class Directory implements Serializable
 
     /**
      * Used to iterate over any error messages contained in this directory.
-     * @return an iterator over the error message strings.
+     * @return an iterable collection of error message strings.
      */
-    public Iterator<String> getErrors()
+    public Iterable<String> getErrors()
     {
-        return _errorList.iterator();
+        return _errorList;
     }
 
     /**

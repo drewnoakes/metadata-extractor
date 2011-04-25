@@ -21,11 +21,11 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Tag;
 import com.drew.metadata.jpeg.JpegCommentReader;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGDecodeParam;
@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Shows example usages of the metadata-extractor library.
@@ -136,20 +135,11 @@ public class SampleUsage
         System.out.println("*** APPROACH " + approachCount + " ***");
         System.out.println();
         // iterate over the exif data and print to System.out
-        Iterator directories = metadata.getDirectoryIterator();
-        while (directories.hasNext()) {
-            Directory directory = (Directory)directories.next();
-            Iterator tags = directory.getTagIterator();
-            while (tags.hasNext()) {
-                Tag tag = (Tag)tags.next();
+        for (Directory directory : metadata.getDirectories()) {
+            for (Tag tag : directory.getTags())
                 System.out.println(tag);
-            }
-            if (directory.hasErrors()) {
-                Iterator errors = directory.getErrors();
-                while (errors.hasNext()) {
-                    System.out.println("ERROR: " + errors.next());
-                }
-            }
+            for (String error : directory.getErrors())
+                System.err.println("ERROR: " + error);
         }
     }
 
