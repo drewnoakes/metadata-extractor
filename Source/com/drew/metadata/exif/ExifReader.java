@@ -245,6 +245,12 @@ public class ExifReader implements MetadataReader
         try {
             int offset = exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET);
             int length = exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH);
+
+            if (length < 1 || (tiffHeaderOffset + offset + length) > _data.length) {
+                exifDirectory.addError("Bad thumbnail length detected.");
+                return;
+            }
+
             byte[] result = new byte[length];
             System.arraycopy(_data, tiffHeaderOffset + offset, result, 0, result.length);
             exifDirectory.setByteArray(ExifDirectory.TAG_THUMBNAIL_DATA, result);
