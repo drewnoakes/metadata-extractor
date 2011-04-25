@@ -41,7 +41,7 @@ public class JpegSegmentReader
     /** Jpeg data as an InputStream */
     private final InputStream _stream;
 
-    private JpegSegmentData _segmentData;
+    private final JpegSegmentData _segmentData;
 
     /**
      * Private, because this segment crashes my algorithm, and searching for
@@ -54,7 +54,7 @@ public class JpegSegmentReader
      */
     private static final byte MARKER_EOI = (byte)0xD9;
 
-    /** APP0 Jpeg segment identifier -- Jfif data. */
+    /** APP0 Jpeg segment identifier -- JFIF data (also JFXX apparently). */
     public static final byte SEGMENT_APP0 = (byte)0xE0;
     /** APP1 Jpeg segment identifier -- where Exif data is kept.  XMP data is also kept in here, though usually in a second instance. */
     public static final byte SEGMENT_APP1 = (byte)0xE1;
@@ -107,7 +107,7 @@ public class JpegSegmentReader
         _data = null;
         _stream = null;
 
-        readSegments();
+        _segmentData = readSegments();
     }
 
     /**
@@ -120,7 +120,7 @@ public class JpegSegmentReader
         _data = fileContents;
         _stream = null;
 
-        readSegments();
+        _segmentData = readSegments();
     }
 
     /**
@@ -133,7 +133,7 @@ public class JpegSegmentReader
         _file = null;
         _data = null;
         
-        readSegments();
+        _segmentData = readSegments();
     }
 
     /**
@@ -191,9 +191,9 @@ public class JpegSegmentReader
         return _segmentData;
     }
 
-    private void readSegments() throws JpegProcessingException
+    private final JpegSegmentData readSegments() throws JpegProcessingException
     {
-        _segmentData = new JpegSegmentData();
+        JpegSegmentData segmentData = new JpegSegmentData();
 
         BufferedInputStream inStream = getJpegInputStream();
         try {
@@ -204,6 +204,10 @@ public class JpegSegmentReader
             }
             offset += 2;
             do {
+                // need four bytes from stream for segment header before continuing
+                if (!waitForBytesOnStream(inStream, 4))
+                    throw new JpegProcessingException("stream ended before segment header could be read");
+
                 // next byte is 0xFF
                 byte segmentIdentifier = (byte)(inStream.read() & 0xFF);
                 if ((segmentIdentifier & 0xFF) != 0xFF) {
@@ -215,33 +219,33 @@ public class JpegSegmentReader
                 offset++;
                 // next 2-bytes are <segment-size>: [high-byte] [low-byte]
                 byte[] segmentLengthBytes = new byte[2];
+                // TODO what if 'read' doesn't return 2.  bug?
                 inStream.read(segmentLengthBytes, 0, 2);
                 offset += 2;
                 int segmentLength = ((segmentLengthBytes[0] << 8) & 0xFF00) | (segmentLengthBytes[1] & 0xFF);
                 // segment length includes size bytes, so subtract two
                 segmentLength -= 2;
-                if (segmentLength > inStream.available())
+                if (!waitForBytesOnStream(inStream, segmentLength))
                     throw new JpegProcessingException("segment size would extend beyond file stream length");
-                else if (segmentLength < 0)
+                if (segmentLength < 0)
                     throw new JpegProcessingException("segment size would be less than zero");
                 byte[] segmentBytes = new byte[segmentLength];
+                // TODO what if 'read' doesn't return segmentLength.  bug?
                 inStream.read(segmentBytes, 0, segmentLength);
                 offset += segmentLength;
                 if ((thisSegmentMarker & 0xFF) == (SEGMENT_SOS & 0xFF)) {
                     // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
                     // have to search for the two bytes: 0xFF 0xD9 (EOI).
                     // It comes last so simply return at this point
-                    return;
+                    return segmentData;
                 } else if ((thisSegmentMarker & 0xFF) == (MARKER_EOI & 0xFF)) {
                     // the 'End-Of-Image' segment -- this should never be found in this fashion
-                    return;
+                    return segmentData;
                 } else {
-                    _segmentData.addSegment(thisSegmentMarker, segmentBytes);
+                    segmentData.addSegment(thisSegmentMarker, segmentBytes);
                 }
-                // didn't find the one we're looking for, loop through to the next segment
             } while (true);
         } catch (IOException ioe) {
-            //throw new JpegProcessingException("IOException processing Jpeg file", ioe);
             throw new JpegProcessingException("IOException processing Jpeg file: " + ioe.getMessage(), ioe);
         } finally {
             try {
@@ -249,10 +253,27 @@ public class JpegSegmentReader
                     inStream.close();
                 }
             } catch (IOException ioe) {
-                //throw new JpegProcessingException("IOException processing Jpeg file", ioe);
                 throw new JpegProcessingException("IOException processing Jpeg file: " + ioe.getMessage(), ioe);
             }
         }
+    }
+
+    private boolean waitForBytesOnStream(BufferedInputStream stream, int bytesNeeded) throws IOException, JpegProcessingException
+    {
+        // NOTE this waiting is essential for network streams, but filesystem streams potentially lose out
+
+        int count = 40; // * 100ms = approx 4 seconds
+        while (count > 0) {
+            if (bytesNeeded <= stream.available())
+               return true;
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // continue
+            }
+            count--;
+        }
+        return false;
     }
 
     /**
