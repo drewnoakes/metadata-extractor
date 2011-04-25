@@ -123,7 +123,7 @@ public class ExifDescriptor extends TagDescriptor
                 return getThumbnailImageHeightDescription();
             case ExifDirectory.TAG_BITS_PER_SAMPLE:
                 return getBitsPerSampleDescription();
-            case ExifDirectory.TAG_COMPRESSION:
+            case ExifDirectory.TAG_THUMBNAIL_COMPRESSION:
                 return getCompressionDescription();
             case ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION:
                 return getPhotometricInterpretationDescription();
@@ -606,8 +606,8 @@ public class ExifDescriptor extends TagDescriptor
 
     public String getCompressionDescription() throws MetadataException
     {
-        if (!_directory.containsTag(ExifDirectory.TAG_COMPRESSION)) return null;
-        switch (_directory.getInt(ExifDirectory.TAG_COMPRESSION)) {
+        if (!_directory.containsTag(ExifDirectory.TAG_THUMBNAIL_COMPRESSION)) return null;
+        switch (_directory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION)) {
             case 1: return "Uncompressed";
             case 2: return "CCITT 1D";
             case 3: return "T4/Group 3 Fax";

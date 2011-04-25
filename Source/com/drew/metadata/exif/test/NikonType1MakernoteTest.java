@@ -165,7 +165,7 @@ public class NikonType1MakernoteTest extends TestCase
         assertEquals(1200, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));
         assertEquals(3, _exifDirectory.getInt(ExifDirectory.TAG_FILE_SOURCE));
         assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_SCENE_TYPE));
-        assertEquals(6, _exifDirectory.getInt(ExifDirectory.TAG_COMPRESSION));
+        assertEquals(6, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION));
         assertEquals(2036, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET));
         assertEquals(4662, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH));
     }

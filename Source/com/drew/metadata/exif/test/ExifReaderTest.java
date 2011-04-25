@@ -138,7 +138,7 @@ public class ExifReaderTest extends TestCase
         new ExifReader(new File(fileName)).extract(metadata);
         Directory directory = metadata.getDirectory(ExifDirectory.class);
         // 6 means JPEG compression
-        assertEquals(6, directory.getInt(ExifDirectory.TAG_COMPRESSION));
+        assertEquals(6, directory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION));
     }
 
     public void testStackOverflowOnRevisitationOfSameDirectory() throws Exception

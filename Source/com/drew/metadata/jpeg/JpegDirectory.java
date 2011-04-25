@@ -26,7 +26,7 @@ import java.util.HashMap;
  * @author Darrell Silver http://www.darrellsilver.com and Drew Noakes
  */
 public class JpegDirectory extends Directory {
-
+    public static final int TAG_JPEG_COMPRESSION_TYPE = -3;
 	/** This is in bits/sample, usually 8 (12 and 16 not supported by most software). */
 	public static final int TAG_JPEG_DATA_PRECISION = 0;
 	/** The image's height.  Necessary for decoding the image, so it should always be there. */
@@ -58,6 +58,7 @@ public class JpegDirectory extends Directory {
 
 	static
     {
+        _tagNameMap.put(TAG_JPEG_COMPRESSION_TYPE, "Compression Type");
         _tagNameMap.put(TAG_JPEG_DATA_PRECISION, "Data Precision");
         _tagNameMap.put(TAG_JPEG_IMAGE_WIDTH, "Image Width");
         _tagNameMap.put(TAG_JPEG_IMAGE_HEIGHT, "Image Height");

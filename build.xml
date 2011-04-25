@@ -21,12 +21,24 @@
     </target>
 
     <target name="compile" description="compile the source">
+        <!-- TODO somehow exclude file "${src}/com/drew/metadata/test/SampleUsage.java" to get rid of warnings -->
         <javac classpath="${classpath}"
                srcdir="${src}"
-               excludesfile="${src}/com/drew/metadata/test/SampleUsage.java"
                destdir="${build}"
                debug="${debug}"
                verbose="${verbose}"/>
+    </target>
+
+    <target name="test" depends="clean, compile" description="run all junit tests">
+        <junit printsummary="yes" logfailedtests="true" fork="yes" haltonfailure="yes">
+            <classpath>
+                <pathelement location="${build}"/>
+                <pathelement path="${java.class.path}"/>
+                <pathelement path="${lib}/junit-4.8.2.jar"/>
+            </classpath>
+            <formatter type="plain"/>
+            <test name="com.drew.metadata.test.AllTests" />
+        </junit>
     </target>
 
     <target name="dist-binaries" depends="clean, compile, test" description="generate binary distribution">
@@ -43,18 +55,6 @@
             <fileset dir="."
                 includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.metadata, ${src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
         </jar>
-    </target>
-
-    <target name="test" depends="clean, compile" description="run all junit tests">
-        <junit printsummary="yes" fork="yes" haltonfailure="yes">
-            <classpath>
-                <pathelement location="${build}"/>
-                <pathelement path="${java.class.path}"/>
-                <pathelement path="${lib}/junit-4.8.2.jar"/>
-            </classpath>
-            <formatter type="plain"/>
-            <test name="com.drew.metadata.test.AllTests" />
-        </junit>
     </target>
 
     <target name="javadoc" description="generate javadoc documentation">

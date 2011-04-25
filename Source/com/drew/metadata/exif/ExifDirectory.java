@@ -76,9 +76,7 @@ public class ExifDirectory extends Directory
      * 34712 = JPEG 2000
      * 34713 = Nikon NEF Compressed
      */
-    public static final int TAG_COMPRESSION = 0x0103;
-    public static final int COMPRESSION_NONE = 1;
-    public static final int COMPRESSION_JPEG = 6;
+    public static final int TAG_THUMBNAIL_COMPRESSION = 0x0103;
 
     /**
      * Shows the color space of the image data components.
@@ -98,15 +96,13 @@ public class ExifDirectory extends Directory
      * 34892 = Linear Raw
      */
     public static final int TAG_PHOTOMETRIC_INTERPRETATION = 0x0106;
+
     /**
      * 1 = No dithering or halftoning
      * 2 = Ordered dither or halftone
      * 3 = Randomized dither
      */
     public static final int TAG_THRESHOLDING = 0x0107;
-    public static final int PHOTOMETRIC_INTERPRETATION_MONOCHROME = 1;
-    public static final int PHOTOMETRIC_INTERPRETATION_RGB = 2;
-    public static final int PHOTOMETRIC_INTERPRETATION_YCBCR = 6;
 
     /** The position in the file of raster data. */
     public static final int TAG_STRIP_OFFSETS = 0x0111;
@@ -576,7 +572,7 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(TAG_THUMBNAIL_IMAGE_WIDTH, "Thumbnail Image Width");
         _tagNameMap.put(TAG_THUMBNAIL_IMAGE_HEIGHT, "Thumbnail Image Height");
         _tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
-        _tagNameMap.put(TAG_COMPRESSION, "Compression");
+        _tagNameMap.put(TAG_THUMBNAIL_COMPRESSION, "Thumbnail Compression");
         _tagNameMap.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
         _tagNameMap.put(TAG_THRESHOLDING, "Thresholding");
         _tagNameMap.put(TAG_IMAGE_DESCRIPTION, "Image Description");

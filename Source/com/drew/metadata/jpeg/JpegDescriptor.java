@@ -33,6 +33,8 @@ public class JpegDescriptor extends TagDescriptor
     {
         switch (tagType)
         {
+            case JpegDirectory.TAG_JPEG_COMPRESSION_TYPE:
+                return getImageCompressionTypeDescription();
             case JpegDirectory.TAG_JPEG_COMPONENT_DATA_1:
                 return getComponentDataDescription(0);
             case JpegDirectory.TAG_JPEG_COMPONENT_DATA_2:
@@ -52,6 +54,30 @@ public class JpegDescriptor extends TagDescriptor
         return _directory.getString(tagType);
     }
 
+    public String getImageCompressionTypeDescription() throws MetadataException
+    {
+        if (!_directory.containsTag(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE))
+            return null;
+        int value = _directory.getInt(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE);
+        switch (value) {
+            case 0: return "Baseline";
+            case 1: return "Extended sequential, Huffman";
+            case 2: return "Progressive, Huffman";
+            case 3: return "Lossless, Huffman";
+            case 5: return "Differential sequential, Huffman";
+            case 6: return "Differential progressive, Huffman";
+            case 7: return "Differential lossless, Huffman";
+            case 8: return "Reserved for JPEG extensions";
+            case 9: return "Extended sequential, arithmetic";
+            case 10: return "Progressive, arithmetic";
+            case 11: return "Lossless, arithmetic";
+            case 13: return "Differential sequential, arithmetic";
+            case 14: return "Differential progressive, arithmetic";
+            case 15: return "Differential lossless, arithmetic";
+            default:
+                return "Unknown type: "+ value;
+        }
+    }
     public String getImageWidthDescription()
     {
         return _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH) + " pixels";

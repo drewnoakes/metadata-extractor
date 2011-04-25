@@ -235,7 +235,7 @@ public class ExifReader implements MetadataReader
 
     private void storeThumbnailBytes(ExifDirectory exifDirectory, int tiffHeaderOffset)
     {
-        if (!exifDirectory.containsTag(ExifDirectory.TAG_COMPRESSION))
+        if (!exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_COMPRESSION))
         	return;
 
         if (!exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_LENGTH) ||
@@ -530,7 +530,32 @@ public class ExifReader implements MetadataReader
                 directory.setByteArray(tagType, tagBytes);
                 break;
             case FMT_STRING:
-                directory.setString(tagType, readString(tagValueOffset, componentCount));
+                String string = readString(tagValueOffset, componentCount);
+                directory.setString(tagType, string);
+/*
+                // special handling for certain known tags, proposed by "Y.B." but left out for now,
+                // as it gives the false impression that the image was captured in the same timezone
+                // in which the string is parsed
+                if (tagType==ExifDirectory.TAG_DATETIME ||
+                    tagType==ExifDirectory.TAG_DATETIME_ORIGINAL ||
+                    tagType==ExifDirectory.TAG_DATETIME_DIGITIZED) {
+                    String[] datePatterns = {
+                        "yyyy:MM:dd HH:mm:ss",
+                        "yyyy:MM:dd HH:mm",
+                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm"};
+                    for (String datePattern : datePatterns) {
+                        try {
+                            DateFormat parser = new SimpleDateFormat(datePattern);
+                            Date date = parser.parse(string);
+                            directory.setDate(tagType, date);
+                            break;
+                        } catch (ParseException ex) {
+                            // simply try the next pattern
+                        }
+                    }
+                }
+*/
                 break;
             case FMT_SRATIONAL:
             case FMT_URATIONAL:
