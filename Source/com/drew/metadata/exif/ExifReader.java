@@ -287,8 +287,6 @@ public class ExifReader implements MetadataReader
      */
     private void processDirectory(Directory directory, HashSet<Integer> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset, final Metadata metadata)
     {
-        // TODO processedDirectoryOffsets should be a HashSet<Integer>
-
         // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
         if (processedDirectoryOffsets.contains(new Integer(dirStartOffset)))
             return;
@@ -301,17 +299,17 @@ public class ExifReader implements MetadataReader
             return;
         }
 
-        if (!isDirectoryLengthValid(dirStartOffset, tiffHeaderOffset)) {
+        // First two bytes in the IFD are the number of tags in this directory
+        int dirTagCount = get16Bits(dirStartOffset);
+
+        int dirLength = (2 + (12 * dirTagCount) + 4);
+        if (dirLength + dirStartOffset > _data.length) {
             directory.addError("Illegally sized directory");
             return;
         }
 
-        // First two bytes in the IFD are the number of tags in this directory
-        int dirTagCount = get16Bits(dirStartOffset);
-
         // Handle each tag in this directory
-        for (int tagNumber = 0; tagNumber<dirTagCount; tagNumber++)
-        {
+        for (int tagNumber = 0; tagNumber<dirTagCount; tagNumber++) {
             final int tagOffset = calculateTagOffset(dirStartOffset, tagNumber);
 
             // 2 bytes for the tag type
@@ -516,17 +514,6 @@ public class ExifReader implements MetadataReader
             // this is difficult as the starting offset is not known.  we could look for it...
             exifDirectory.addError("Unsupported makernote data ignored.");
         }
-    }
-
-    private boolean isDirectoryLengthValid(int dirStartOffset, int tiffHeaderOffset)
-    {
-        int dirTagCount = get16Bits(dirStartOffset);
-        int dirLength = (2 + (12 * dirTagCount) + 4);
-        if (dirLength + dirStartOffset + tiffHeaderOffset>=_data.length) {
-            // Note: Files that had thumbnails trimmed with jhead 1.3 or earlier might trigger this
-            return false;
-        }
-        return true;
     }
 
     private void processTag(Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode)
