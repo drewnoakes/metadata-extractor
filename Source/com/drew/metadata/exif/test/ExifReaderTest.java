@@ -148,7 +148,7 @@ public class ExifReaderTest extends TestCase
         // unit test.
         File metadataFile = new File("Source/com/drew/metadata/exif/test/recursiveDirectories.metadata");
         Metadata metadata = new Metadata();
-        new ExifReader(JpegSegmentData.FromFile(metadataFile)).extract(metadata);
+        new ExifReader(JpegSegmentData.fromFile(metadataFile)).extract(metadata);
         metadata.getDirectory(ExifDirectory.class);
 //        String fileName = "Source/com/drew/metadata/exif/test/recursiveDirectories.jpg";
 //        Metadata metadata = new ExifReader(new File(fileName)).extract();

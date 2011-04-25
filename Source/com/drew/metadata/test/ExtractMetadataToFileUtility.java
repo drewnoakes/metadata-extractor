@@ -16,40 +16,36 @@
  */
 package com.drew.metadata.test;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
-import junit.framework.TestCase;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 
-/*
-public class SpecialTests extends TestCase
+public class ExtractMetadataToFileUtility
 {
-    public void testExtractMetadataToASeparateFile() throws Exception
+    public static void main(String[] args) throws IOException, JpegProcessingException
     {
-        String filename = "Source/com/drew/metadata/exif/test/nikonMakernoteType2";
-        JpegSegmentData segmentData = new JpegSegmentReader(new File(filename + ".jpg")).getSegmentData();
+        if (args.length != 1) {
+            System.err.println("Expects a single argument of the file path to process.");
+            System.exit(1);
+        }
+
+        String filePath = args[0];
+        String outputFilePath = filePath + ".metadata";
+
+        JpegSegmentData segmentData = new JpegSegmentReader(new File(filePath)).getSegmentData();
         segmentData.removeSegment(JpegSegmentReader.SEGMENT_DHT);
         segmentData.removeSegment(JpegSegmentReader.SEGMENT_DQT);
         segmentData.removeSegment(JpegSegmentReader.SEGMENT_SOF0);
         segmentData.removeSegment(JpegSegmentReader.SEGMENT_SOI);
-        ObjectOutputStream outputStream = null;
-        try
-        {
-            outputStream = new ObjectOutputStream(new FileOutputStream(new File(filename + ".metadata")));
-            outputStream.writeObject(segmentData);
-        }
-        finally
-        {
-            if (outputStream!=null)
-                outputStream.close();
-        }
+
+        System.out.println("Writing output to: " + outputFilePath);
+        JpegSegmentData.toFile(new File(outputFilePath), segmentData);
     }
 
+/*
     public void testScanFoldersForImagesThatCauseFailures() throws Exception
     {
 //        String directory = "G:/Recovered Images/AquariumC"; // 1446 files 883 MB (done)
@@ -116,6 +112,5 @@ public class SpecialTests extends TestCase
             }
         }
     }
-}
-
 */
+}

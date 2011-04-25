@@ -56,10 +56,11 @@ public class GpsDescriptor extends TagDescriptor
                 return getGpsDestinationReferenceDescription();
             case GpsDirectory.TAG_GPS_TIME_STAMP:
                 return getGpsTimeStampDescription();
-                // three rational numbers -- displayed in HH"MM"SS.ss
             case GpsDirectory.TAG_GPS_LONGITUDE:
+                // three rational numbers -- displayed in HH"MM"SS.ss
                 return getGpsLongitudeDescription();
             case GpsDirectory.TAG_GPS_LATITUDE:
+                // three rational numbers -- displayed in HH"MM"SS.ss
                 return getGpsLatitudeDescription();
             default:
                 return _directory.getString(tagType);

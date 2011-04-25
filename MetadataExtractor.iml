@@ -10,13 +10,14 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/Libraries/junit.jar!/" />
+          <root url="jar://$MODULE_DIR$/Libraries/junit-4.8.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="library" name="Unnamed" level="project" />
+    <orderEntry type="module" module-name="XMPCore" />
   </component>
 </module>
 

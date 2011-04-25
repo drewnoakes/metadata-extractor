@@ -13,6 +13,8 @@
  *   http://drewnoakes.com/
  *
  * Created by dnoakes on 12-Nov-2002 18:51:36 using IntelliJ IDEA.
+ * Modified 15-Jan-2008 by Torsten Skadell
+ * - extractMetadataFromJpegSegmentReader reads SEGMENT_APP1 two times, first for Exif, second for Xmp
  */
 package com.drew.imaging.jpeg;
 
@@ -21,6 +23,7 @@ import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
 import com.drew.metadata.jpeg.JpegReader;
+import com.drew.metadata.xmp.XmpReader;
 
 import java.io.File;
 import java.io.InputStream;
@@ -51,8 +54,11 @@ public class JpegMetadataReader
     public static Metadata extractMetadataFromJpegSegmentReader(JpegSegmentReader segmentReader)
     {
         final Metadata metadata = new Metadata();
-        byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1);
+        byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1, 0);
         new ExifReader(exifSegment).extract(metadata);
+
+        byte[] xmpSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1, 1);
+        new XmpReader(xmpSegment).extract(metadata);
 
         byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
         new IptcReader(iptcSegment).extract(metadata);

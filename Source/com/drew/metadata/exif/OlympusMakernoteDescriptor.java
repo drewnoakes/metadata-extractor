@@ -19,7 +19,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string represenations of tag values stored in a <code>OlympusMakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a <code>OlympusMakernoteDirectory</code>.
  */
 public class OlympusMakernoteDescriptor extends TagDescriptor
 {
@@ -92,6 +92,10 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
     {
         if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE)) return null;
         int[] values = _directory.getIntArray(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE);
+
+        if (values.length < 1)
+            return "";
+
         StringBuffer desc = new StringBuffer();
         switch (values[0]) {
             case 0:
@@ -110,13 +114,16 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
                 desc.append("Unknown picture taking mode");
                 break;
         }
+
+        if (values.length < 2)
+            return desc.toString();
         desc.append(" - ");
         switch (values[1]) {
             case 0:
                 desc.append("Unknown sequence number");
                 break;
             case 1:
-                desc.append("1st in a sequnce");
+                desc.append("1st in a sequence");
                 break;
             case 2:
                 desc.append("2nd in a sequence");
@@ -129,6 +136,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
                 desc.append("th in a sequence");
                 break;
         }
+        if (values.length < 3)
+            return desc.toString();
+        desc.append(" - ");
         switch (values[2]) {
             case 1:
                 desc.append("Left to right panorama direction");

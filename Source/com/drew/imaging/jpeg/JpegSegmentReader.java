@@ -56,7 +56,7 @@ public class JpegSegmentReader
 
     /** APP0 Jpeg segment identifier -- Jfif data. */
     public static final byte SEGMENT_APP0 = (byte)0xE0;
-    /** APP1 Jpeg segment identifier -- where Exif data is kept. */
+    /** APP1 Jpeg segment identifier -- where Exif data is kept.  XMP data is also kept in here, though usually in a second instance. */
     public static final byte SEGMENT_APP1 = (byte)0xE1;
     /** APP2 Jpeg segment identifier. */
     public static final byte SEGMENT_APP2 = (byte)0xE2;

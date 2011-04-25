@@ -143,12 +143,12 @@ public class JpegSegmentDataTest extends TestCase
         assertTrue(segmentData.containsSegment(segmentMarker));
 
         File tempFile = File.createTempFile("JpegSegmentDataTest", "tmp");
-        JpegSegmentData.ToFile(tempFile, segmentData);
+        JpegSegmentData.toFile(tempFile, segmentData);
         assertTrue(tempFile.exists());
         assertTrue(tempFile.length() > 0);
-        segmentData = JpegSegmentData.FromFile(tempFile);
+        segmentData = JpegSegmentData.fromFile(tempFile);
 
-        tempFile.delete();
+        assertTrue(tempFile.delete());
         assertTrue(!tempFile.exists());
 
         assertNotNull(segmentData);

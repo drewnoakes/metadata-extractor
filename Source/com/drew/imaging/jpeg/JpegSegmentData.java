@@ -123,16 +123,20 @@ public class JpegSegmentData implements Serializable
      * @param segmentData the data to write
      * @throws IOException if problems occur while writing
      */
-    public static void ToFile(File file, JpegSegmentData segmentData) throws IOException
+    public static void toFile(File file, JpegSegmentData segmentData) throws IOException
     {
         ObjectOutputStream outputStream = null;
+        FileOutputStream fileOutputStream = null;
         try
         {
-            outputStream = new ObjectOutputStream(new FileOutputStream(file));
+            fileOutputStream = new FileOutputStream(file);
+            outputStream = new ObjectOutputStream(fileOutputStream);
             outputStream.writeObject(segmentData);
         }
         finally
         {
+            if (fileOutputStream!=null)
+                fileOutputStream.close();
             if (outputStream!=null)
                 outputStream.close();
         }
@@ -145,7 +149,7 @@ public class JpegSegmentData implements Serializable
      * @throws IOException if problems occur while reading
      * @throws ClassNotFoundException if problems occur while deserialising
      */
-    public static JpegSegmentData FromFile(File file) throws IOException, ClassNotFoundException
+    public static JpegSegmentData fromFile(File file) throws IOException, ClassNotFoundException
     {
         ObjectInputStream inputStream = null;
         try
