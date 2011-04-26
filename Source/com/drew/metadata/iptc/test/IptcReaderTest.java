@@ -25,51 +25,50 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.iptc.IptcReader;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class IptcReaderTest extends TestCase
+public class IptcReaderTest
 {
-    public IptcReaderTest(String s)
-    {
-        super(s);
-    }
-
+    @Test
     public void testDescription_City() throws Exception
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
         MetadataReader reader = new IptcReader(iptcFile);
         Metadata metadata = new Metadata();
         reader.extract(metadata);
-        assertTrue(metadata.containsDirectory(IptcDirectory.class));
+        Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
         Directory directory = metadata.getDirectory(IptcDirectory.class);
-        assertEquals("City", directory.getDescription(IptcDirectory.TAG_CITY));
+        Assert.assertEquals("City", directory.getDescription(IptcDirectory.TAG_CITY));
     }
 
+    @Test
     public void testDescription_Caption() throws Exception
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
         MetadataReader reader = new IptcReader(iptcFile);
         Metadata metadata = new Metadata();
         reader.extract(metadata);
-        assertTrue(metadata.containsDirectory(IptcDirectory.class));
+        Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
         Directory directory = metadata.getDirectory(IptcDirectory.class);
-        assertEquals("Caption", directory.getDescription(IptcDirectory.TAG_CAPTION));
+        Assert.assertEquals("Caption", directory.getDescription(IptcDirectory.TAG_CAPTION));
     }
 
+    @Test
     public void testDescription_Category() throws Exception
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
         MetadataReader reader = new IptcReader(iptcFile);
         Metadata metadata = new Metadata();
         reader.extract(metadata);
-        assertTrue(metadata.containsDirectory(IptcDirectory.class));
+        Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
         Directory directory = metadata.getDirectory(IptcDirectory.class);
-        assertEquals("Supl. Category2 Supl. Category1 Cat", directory.getDescription(IptcDirectory.TAG_CATEGORY));
+        Assert.assertEquals("Supl. Category2 Supl. Category1 Cat", directory.getDescription(IptcDirectory.TAG_CATEGORY));
     }
 
     // TODO Wrap more tests around the Iptc reader

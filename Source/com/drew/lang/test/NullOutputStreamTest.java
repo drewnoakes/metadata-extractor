@@ -22,19 +22,16 @@ package com.drew.lang.test;
 
 import com.drew.lang.NullOutputStream;
 import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.io.OutputStream;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class NullOutputStreamTest extends TestCase
+public class NullOutputStreamTest
 {
-    public NullOutputStreamTest(String s)
-    {
-        super(s);
-    }
-
+    @Test
     public void testCreateNullOutputStream() throws Exception
     {
         OutputStream out = new NullOutputStream();

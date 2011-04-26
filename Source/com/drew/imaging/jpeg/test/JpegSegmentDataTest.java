@@ -22,20 +22,17 @@ package com.drew.imaging.jpeg.test;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.lang.test.TestHelper;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegSegmentDataTest extends TestCase
+public class JpegSegmentDataTest
 {
-    public JpegSegmentDataTest(String name)
-    {
-        super(name);
-    }
-
+    @Test
     public void testAddAndGetSegment() throws Exception
     {
         JpegSegmentData segmentData = new JpegSegmentData();
@@ -44,10 +41,11 @@ public class JpegSegmentDataTest extends TestCase
         byte[] segmentBytes = new byte[] { 1,2,3 };
 
         segmentData.addSegment(segmentMarker, segmentBytes);
-        assertEquals(1, segmentData.getSegmentCount(segmentMarker));
+        Assert.assertEquals(1, segmentData.getSegmentCount(segmentMarker));
         TestHelper.assertEqualArrays(segmentBytes, segmentData.getSegment(segmentMarker));
     }
 
+    @Test
     public void testContainsSegment() throws Exception
     {
         JpegSegmentData segmentData = new JpegSegmentData();
@@ -55,13 +53,14 @@ public class JpegSegmentDataTest extends TestCase
         byte segmentMarker = (byte)12;
         byte[] segmentBytes = new byte[] { 1,2,3 };
 
-        assertTrue(!segmentData.containsSegment(segmentMarker));
+        Assert.assertTrue(!segmentData.containsSegment(segmentMarker));
 
         segmentData.addSegment(segmentMarker, segmentBytes);
 
-        assertTrue(segmentData.containsSegment(segmentMarker));
+        Assert.assertTrue(segmentData.containsSegment(segmentMarker));
     }
 
+    @Test
     public void testAddingMultipleSegments() throws Exception
     {
         JpegSegmentData segmentData = new JpegSegmentData();
@@ -73,12 +72,13 @@ public class JpegSegmentDataTest extends TestCase
 
         segmentData.addSegment(segmentMarker1, segmentBytes1);
         segmentData.addSegment(segmentMarker2, segmentBytes2);
-        assertEquals(1, segmentData.getSegmentCount(segmentMarker1));
-        assertEquals(1, segmentData.getSegmentCount(segmentMarker2));
+        Assert.assertEquals(1, segmentData.getSegmentCount(segmentMarker1));
+        Assert.assertEquals(1, segmentData.getSegmentCount(segmentMarker2));
         TestHelper.assertEqualArrays(segmentBytes1, segmentData.getSegment(segmentMarker1));
         TestHelper.assertEqualArrays(segmentBytes2, segmentData.getSegment(segmentMarker2));
     }
 
+    @Test
     public void testSegmentWithMultipleOccurrences() throws Exception
     {
         JpegSegmentData segmentData = new JpegSegmentData();
@@ -89,12 +89,13 @@ public class JpegSegmentDataTest extends TestCase
 
         segmentData.addSegment(segmentMarker, segmentBytes1);
         segmentData.addSegment(segmentMarker, segmentBytes2);
-        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
+        Assert.assertEquals(2, segmentData.getSegmentCount(segmentMarker));
         TestHelper.assertEqualArrays(segmentBytes1, segmentData.getSegment(segmentMarker));
         TestHelper.assertEqualArrays(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
         TestHelper.assertEqualArrays(segmentBytes2, segmentData.getSegment(segmentMarker, 1));
     }
 
+    @Test
     public void testRemoveSegmentOccurrence() throws Exception
     {
         JpegSegmentData segmentData = new JpegSegmentData();
@@ -106,7 +107,7 @@ public class JpegSegmentDataTest extends TestCase
         segmentData.addSegment(segmentMarker, segmentBytes1);
         segmentData.addSegment(segmentMarker, segmentBytes2);
 
-        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
+        Assert.assertEquals(2, segmentData.getSegmentCount(segmentMarker));
 
         TestHelper.assertEqualArrays(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
 
@@ -115,6 +116,7 @@ public class JpegSegmentDataTest extends TestCase
         TestHelper.assertEqualArrays(segmentBytes2, segmentData.getSegment(segmentMarker, 0));
     }
 
+    @Test
     public void testRemoveSegment() throws Exception
     {
         JpegSegmentData segmentData = new JpegSegmentData();
@@ -126,17 +128,18 @@ public class JpegSegmentDataTest extends TestCase
         segmentData.addSegment(segmentMarker, segmentBytes1);
         segmentData.addSegment(segmentMarker, segmentBytes2);
 
-        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
-        assertTrue(segmentData.containsSegment(segmentMarker));
+        Assert.assertEquals(2, segmentData.getSegmentCount(segmentMarker));
+        Assert.assertTrue(segmentData.containsSegment(segmentMarker));
 
         TestHelper.assertEqualArrays(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
 
         segmentData.removeSegment(segmentMarker);
 
-        assertTrue(!segmentData.containsSegment(segmentMarker));
-        assertEquals(0, segmentData.getSegmentCount(segmentMarker));
+        Assert.assertTrue(!segmentData.containsSegment(segmentMarker));
+        Assert.assertEquals(0, segmentData.getSegmentCount(segmentMarker));
     }
 
+    @Test
     public void testToAndFromFile() throws Exception
     {
         JpegSegmentData segmentData = new JpegSegmentData();
@@ -144,19 +147,19 @@ public class JpegSegmentDataTest extends TestCase
         byte[] segmentBytes = new byte[] { 1,2,3 };
 
         segmentData.addSegment(segmentMarker, segmentBytes);
-        assertTrue(segmentData.containsSegment(segmentMarker));
+        Assert.assertTrue(segmentData.containsSegment(segmentMarker));
 
         File tempFile = File.createTempFile("JpegSegmentDataTest", "tmp");
         JpegSegmentData.toFile(tempFile, segmentData);
-        assertTrue(tempFile.exists());
-        assertTrue(tempFile.length() > 0);
+        Assert.assertTrue(tempFile.exists());
+        Assert.assertTrue(tempFile.length() > 0);
         segmentData = JpegSegmentData.fromFile(tempFile);
 
-        assertTrue(tempFile.delete());
-        assertTrue(!tempFile.exists());
+        Assert.assertTrue(tempFile.delete());
+        Assert.assertTrue(!tempFile.exists());
 
-        assertNotNull(segmentData);
-        assertTrue(segmentData.containsSegment(segmentMarker));
+        Assert.assertNotNull(segmentData);
+        Assert.assertTrue(segmentData.containsSegment(segmentMarker));
         TestHelper.assertEqualArrays(segmentBytes, segmentData.getSegment(segmentMarker));
     }
 }

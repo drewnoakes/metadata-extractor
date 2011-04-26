@@ -24,63 +24,66 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.jpeg.JpegComponent;
 import com.drew.metadata.jpeg.JpegDescriptor;
 import com.drew.metadata.jpeg.JpegDirectory;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegDescriptorTest extends TestCase
+public class JpegDescriptorTest
 {
     private JpegDirectory _directory;
     private JpegDescriptor _descriptor;
 
-    public JpegDescriptorTest(String s)
-    {
-        super(s);
-    }
-
+    @Before
     public void setUp() throws Exception
     {
         _directory = new JpegDirectory();
         _descriptor = new JpegDescriptor(_directory);
     }
 
+    @Test
     public void testGetComponentDataDescription_InvalidComponentNumber() throws Exception
     {
         try {
             _descriptor.getComponentDataDescription(1);
-            fail("Excepted exception");
+            Assert.fail("Excepted exception");
         } catch (MetadataException e) {
             // expect exception
         }
     }
 
+    @Test
     public void testGetImageWidthDescription() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, 123);
-        assertEquals("123 pixels", _descriptor.getImageWidthDescription());
-        assertEquals("123 pixels", _directory.getDescription(JpegDirectory.TAG_JPEG_IMAGE_WIDTH));
+        Assert.assertEquals("123 pixels", _descriptor.getImageWidthDescription());
+        Assert.assertEquals("123 pixels", _directory.getDescription(JpegDirectory.TAG_JPEG_IMAGE_WIDTH));
     }
 
+    @Test
     public void testGetImageHeightDescription() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, 123);
-        assertEquals("123 pixels", _descriptor.getImageHeightDescription());
-        assertEquals("123 pixels", _directory.getDescription(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT));
+        Assert.assertEquals("123 pixels", _descriptor.getImageHeightDescription());
+        Assert.assertEquals("123 pixels", _directory.getDescription(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT));
     }
 
+    @Test
     public void testGetDataPrecisionDescription() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_DATA_PRECISION, 8);
-        assertEquals("8 bits", _descriptor.getDataPrecisionDescription());
-        assertEquals("8 bits", _directory.getDescription(JpegDirectory.TAG_JPEG_DATA_PRECISION));
+        Assert.assertEquals("8 bits", _descriptor.getDataPrecisionDescription());
+        Assert.assertEquals("8 bits", _directory.getDescription(JpegDirectory.TAG_JPEG_DATA_PRECISION));
     }
 
+    @Test
     public void testGetComponentDescription() throws MetadataException
     {
         JpegComponent component1 = new JpegComponent(1, 0x22, 0);
         _directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1, component1);
-        assertEquals("Y component: Quantization table 0, Sampling factors 2 horiz/2 vert", _directory.getDescription(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1));
-        assertEquals("Y component: Quantization table 0, Sampling factors 2 horiz/2 vert", _descriptor.getComponentDataDescription(0));
+        Assert.assertEquals("Y component: Quantization table 0, Sampling factors 2 horiz/2 vert", _directory.getDescription(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1));
+        Assert.assertEquals("Y component: Quantization table 0, Sampling factors 2 horiz/2 vert", _descriptor.getComponentDataDescription(0));
     }
 }

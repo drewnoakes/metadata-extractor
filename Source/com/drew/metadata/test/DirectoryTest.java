@@ -22,20 +22,17 @@ package com.drew.metadata.test;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.GregorianCalendar;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class DirectoryTest extends TestCase
+public class DirectoryTest
 {
-    public DirectoryTest(String s)
-    {
-        super(s);
-    }
-
+    @Test
     public void testSetAndGetInt() throws Exception
     {
         Metadata metadata = new Metadata();
@@ -43,10 +40,11 @@ public class DirectoryTest extends TestCase
         int value = 321;
         int tagType = 123;
         directory.setInt(tagType, value);
-        assertEquals(value, directory.getInt(tagType));
-        assertEquals(Integer.toString(value), directory.getString(tagType));
+        Assert.assertEquals(value, directory.getInt(tagType));
+        Assert.assertEquals(Integer.toString(value), directory.getString(tagType));
     }
 
+    @Test
     public void testSetAndGetIntArray() throws Exception
     {
         Metadata metadata = new Metadata();
@@ -55,13 +53,13 @@ public class DirectoryTest extends TestCase
         int tagType = 123;
         directory.setIntArray(tagType, inputValues);
         int[] outputValues = directory.getIntArray(tagType);
-        assertEquals(inputValues.length, outputValues.length);
+        Assert.assertEquals(inputValues.length, outputValues.length);
         for (int i = 0; i < inputValues.length; i++) {
             int inputValue = inputValues[i];
             int outputValue = outputValues[i];
-            assertEquals(inputValue, outputValue);
+            Assert.assertEquals(inputValue, outputValue);
         }
-        assertEquals(inputValues, directory.getIntArray(tagType));
+        Assert.assertEquals(inputValues, directory.getIntArray(tagType));
         StringBuffer outputString = new StringBuffer();
         for (int i = 0; i < inputValues.length; i++) {
             int inputValue = inputValues[i];
@@ -70,9 +68,10 @@ public class DirectoryTest extends TestCase
             }
             outputString.append(inputValue);
         }
-        assertEquals(outputString.toString(), directory.getString(tagType));
+        Assert.assertEquals(outputString.toString(), directory.getString(tagType));
     }
 
+    @Test
     public void testSetStringAndGetDate() throws Exception
     {
         Metadata metadata = new Metadata();
@@ -85,29 +84,31 @@ public class DirectoryTest extends TestCase
         directory.setString(2, date2);
         directory.setString(3, date3);
         directory.setString(4, date4);
-        assertEquals(date1, directory.getString(1));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), directory.getDate(1));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), directory.getDate(2));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), directory.getDate(3));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), directory.getDate(4));
+        Assert.assertEquals(date1, directory.getString(1));
+        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), directory.getDate(1));
+        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), directory.getDate(2));
+        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), directory.getDate(3));
+        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), directory.getDate(4));
     }
 
+    @Test
     public void testSetIntArrayGetByteArray() throws Exception
     {
         Metadata metadata = new Metadata();
         Directory directory = metadata.getDirectory(MockDirectory.class);
         int[] ints = {1, 2, 3, 4, 5};
         directory.setIntArray(1, ints);
-        assertEquals(ints.length, directory.getByteArray(1).length);
-        assertEquals(1, directory.getByteArray(1)[0]);
+        Assert.assertEquals(ints.length, directory.getByteArray(1).length);
+        Assert.assertEquals(1, directory.getByteArray(1)[0]);
     }
 
+    @Test
     public void testSetStringGetInt() throws Exception
     {
         Metadata metadata = new Metadata();
         Directory directory = metadata.getDirectory(MockDirectory.class);
         byte[] bytes = { 0x01, 0x02, 0x03 };
         directory.setString(1, new String(bytes));
-        assertEquals(0x010203, directory.getInt(1));
+        Assert.assertEquals(0x010203, directory.getInt(1));
     }
 }

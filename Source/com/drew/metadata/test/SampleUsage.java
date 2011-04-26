@@ -30,16 +30,12 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
-import com.drew.metadata.jpeg.JpegCommentReader;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGDecodeParam;
-import com.sun.image.codec.jpeg.JPEGImageDecoder;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGDecodeParam;
+//import com.sun.image.codec.jpeg.JPEGImageDecoder;
 
 /**
  * Shows example usages of the metadata-extractor library.
@@ -96,6 +92,7 @@ public class SampleUsage
             System.err.println("error 3a: " + e);
         }
         
+/*
         // Approach 4
         // This approach is the slowest, because it decodes the Jpeg image.  Of course you now have a decoded image to
         // play with.  In some instances this will be most appropriate.
@@ -133,6 +130,7 @@ public class SampleUsage
         } catch (IOException e) {
             System.err.println("error 4b: " + e);
         }
+*/
     }
 
     private void printImageTags(int approachCount, Metadata metadata)

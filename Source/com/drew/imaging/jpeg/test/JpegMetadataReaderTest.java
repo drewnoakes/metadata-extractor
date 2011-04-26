@@ -24,7 +24,8 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -34,29 +35,26 @@ import java.io.InputStream;
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegMetadataReaderTest extends TestCase
+public class JpegMetadataReaderTest
 {
-    public JpegMetadataReaderTest(String s)
-    {
-        super(s);
-    }
-
+    @Test
     public void testExtractMetadata() throws Exception
     {
         File withExif = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(withExif);
-        assertTrue(metadata.containsDirectory(ExifDirectory.class));
+        Assert.assertTrue(metadata.containsDirectory(ExifDirectory.class));
         Directory directory = metadata.getDirectory(ExifDirectory.class);
-        assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));
+        Assert.assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));
     }
 
+    @Test
     public void testExtractMetadataUsingInputStream() throws Exception
     {
         File withExif = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         InputStream in = new BufferedInputStream(new FileInputStream((withExif)));
         Metadata metadata = JpegMetadataReader.readMetadata(in);
-        assertTrue(metadata.containsDirectory(ExifDirectory.class));
+        Assert.assertTrue(metadata.containsDirectory(ExifDirectory.class));
         Directory directory = metadata.getDirectory(ExifDirectory.class);
-        assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));
+        Assert.assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));
     }
 }

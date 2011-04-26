@@ -8,6 +8,7 @@
     <property name="build" value="Output"/>
     <property name="src" value="Source"/>
     <property name="javadoc" value="Javadoc"/>
+    <property name="test.reports" value="TestReports"/>
     <property name="lib" value="Libraries"/>
     <property name="verbose" value="true"/>
     <property name="debug" value="off"/>
@@ -29,15 +30,24 @@
                verbose="${verbose}"/>
     </target>
 
-    <target name="test" depends="clean, compile" description="run all junit tests">
+    <target name="test" description="run all junit tests">
+        <delete verbose="${verbose}" dir="${test.reports}"/>
+        <mkdir dir="${test.reports}"/>
         <junit printsummary="yes" logfailedtests="true" fork="yes" haltonfailure="yes">
             <classpath>
                 <pathelement location="${build}"/>
                 <pathelement path="${java.class.path}"/>
                 <pathelement path="${lib}/junit-4.8.2.jar"/>
+                <pathelement path="${lib}/xmpcore.jar"/>
             </classpath>
             <formatter type="plain"/>
-            <test name="com.drew.metadata.test.AllTests" />
+            <!--<test name="com.drew.metadata.test.AllTests" />-->
+            <!--todir="${test.report.dir}"-->
+            <batchtest todir="${test.reports}">
+				<fileset dir="${src}">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
         </junit>
     </target>
 

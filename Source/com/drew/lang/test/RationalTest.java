@@ -21,75 +21,75 @@
 package com.drew.lang.test;
 
 import com.drew.lang.Rational;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author  Drew Noakes http://drewnoakes.com
  */
-public class RationalTest extends TestCase
+public class RationalTest
 {
-    public RationalTest(String s)
-    {
-        super(s);
-    }
-
+    @Test
     public void testCreateRational() throws Exception
     {
         Rational rational = new Rational(1, 3);
-        assertEquals(1, rational.getNumerator());
-        assertEquals(3, rational.getDenominator());
-        assertEquals(1d / 3d, rational.doubleValue());
+        Assert.assertEquals(1, rational.getNumerator());
+        Assert.assertEquals(3, rational.getDenominator());
+        Assert.assertEquals(1d / 3d, rational.doubleValue(), 0.0001);
     }
 
+    @Test
     public void testToString() throws Exception
     {
         Rational rational = new Rational(1, 3);
-        assertEquals("1/3", rational.toString());
+        Assert.assertEquals("1/3", rational.toString());
     }
 
+    @Test
     public void testToSimpleString() throws Exception
     {
         Rational third1 = new Rational(1, 3);
         Rational third2 = new Rational(2, 6);
-        assertEquals("1/3", third1.toSimpleString(true));
-        assertEquals("1/3", third2.toSimpleString(true));
-        assertEquals(third1, third2);
+        Assert.assertEquals("1/3", third1.toSimpleString(true));
+        Assert.assertEquals("1/3", third2.toSimpleString(true));
+        Assert.assertEquals(third1, third2);
 
         Rational twoThirds = new Rational(10, 15);
-        assertEquals("2/3", twoThirds.toSimpleString(true));
+        Assert.assertEquals("2/3", twoThirds.toSimpleString(true));
 
         Rational two = new Rational(10, 5);
-        assertTrue(two.isInteger());
-        assertEquals("2", two.toSimpleString(true));
-        assertEquals("2", two.toSimpleString(false));
+        Assert.assertTrue(two.isInteger());
+        Assert.assertEquals("2", two.toSimpleString(true));
+        Assert.assertEquals("2", two.toSimpleString(false));
 
         Rational twoFifths = new Rational(4, 10);
-        assertEquals("0.4", twoFifths.toSimpleString(true));
-        assertEquals("2/5", twoFifths.toSimpleString(false));
+        Assert.assertEquals("0.4", twoFifths.toSimpleString(true));
+        Assert.assertEquals("2/5", twoFifths.toSimpleString(false));
 
         Rational threeEigths = new Rational(3, 8);
-        assertEquals("3/8", threeEigths.toSimpleString(true));
+        Assert.assertEquals("3/8", threeEigths.toSimpleString(true));
 
         Rational zero = new Rational(0, 8);
-        assertTrue(zero.isInteger());
-        assertEquals("0", zero.toSimpleString(true));
-        assertEquals("0", zero.toSimpleString(false));
+        Assert.assertTrue(zero.isInteger());
+        Assert.assertEquals("0", zero.toSimpleString(true));
+        Assert.assertEquals("0", zero.toSimpleString(false));
 
         zero = new Rational(0, 0);
-        assertTrue(zero.isInteger());
-        assertEquals("0", zero.toSimpleString(true));
-        assertEquals("0", zero.toSimpleString(false));
+        Assert.assertTrue(zero.isInteger());
+        Assert.assertEquals("0", zero.toSimpleString(true));
+        Assert.assertEquals("0", zero.toSimpleString(false));
 
         // not sure this is a nice presentation of rationals.  won't implement it for now.
 //        Rational twoAndAHalf = new Rational(10,4);
 //        assertEquals("2 1/2", twoAndAHalf.toSimpleString());
     }
 
+    @Test
     public void testGetReciprocal() throws Exception
     {
         Rational rational = new Rational(1, 3);
         Rational reciprocal = rational.getReciprocal();
-        assertEquals("new rational should be reciprocal", new Rational(3, 1), reciprocal);
-        assertEquals("original reciprocal should remain unchanged", new Rational(1, 3), rational);
+        Assert.assertEquals("new rational should be reciprocal", new Rational(3, 1), reciprocal);
+        Assert.assertEquals("original reciprocal should remain unchanged", new Rational(1, 3), rational);
     }
 }

@@ -22,58 +22,62 @@ package com.drew.metadata.jpeg.test;
 
 import com.drew.metadata.jpeg.JpegComponent;
 import com.drew.metadata.jpeg.JpegDirectory;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegDirectoryTest extends TestCase
+public class JpegDirectoryTest
 {
     private JpegDirectory _directory;
 
-    public JpegDirectoryTest(String s)
-    {
-        super(s);
-    }
-
+    @Before
     public void setUp()
     {
         _directory = new JpegDirectory();
     }
 
+    @Test
     public void testSetAndGetValue() throws Exception
     {
         _directory.setInt(123, 8);
-        assertEquals(8, _directory.getInt(123));
+        Assert.assertEquals(8, _directory.getInt(123));
     }
 
+    @Test
     public void testGetComponent_NotAdded()
     {
-        assertNull(_directory.getComponent(1));
+        Assert.assertNull(_directory.getComponent(1));
     }
 
     // NOTE tests for individual tag values exist in JpegReaderTest.java
 
+    @Test
     public void testGetImageWidth() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, 123);
-        assertEquals(123, _directory.getImageWidth());
+        Assert.assertEquals(123, _directory.getImageWidth());
     }
 
+    @Test
     public void testGetImageHeight() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, 123);
-        assertEquals(123, _directory.getImageHeight());
+        Assert.assertEquals(123, _directory.getImageHeight());
     }
 
 
+    @Test
     public void testGetNumberOfComponents() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS, 3);
-        assertEquals(3, _directory.getNumberOfComponents());
-        assertEquals("3", _directory.getDescription(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS));
+        Assert.assertEquals(3, _directory.getNumberOfComponents());
+        Assert.assertEquals("3", _directory.getDescription(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS));
     }
 
+    @Test
     public void testGetComponent() throws Exception
     {
         JpegComponent component1 = new JpegComponent(1, 2, 3);
@@ -87,9 +91,9 @@ public class JpegDirectoryTest extends TestCase
         _directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_4, component4);
 
         // component numbers are zero-indexed for this method
-        assertSame(component1, _directory.getComponent(0));
-        assertSame(component2, _directory.getComponent(1));
-        assertSame(component3, _directory.getComponent(2));
-        assertSame(component4, _directory.getComponent(3));
+        Assert.assertSame(component1, _directory.getComponent(0));
+        Assert.assertSame(component2, _directory.getComponent(1));
+        Assert.assertSame(component3, _directory.getComponent(2));
+        Assert.assertSame(component4, _directory.getComponent(3));
     }
 }

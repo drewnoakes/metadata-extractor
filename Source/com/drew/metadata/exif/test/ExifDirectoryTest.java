@@ -27,65 +27,66 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
 import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class ExifDirectoryTest extends TestCase
+public class ExifDirectoryTest
 {
-    public ExifDirectoryTest(String s)
-    {
-        super(s);
-    }
-
+    @Test
     public void testGetDirectoryName() throws Exception
     {
         Metadata metadata = new Metadata();
         Directory directory = metadata.getDirectory(ExifDirectory.class);
-        assertEquals("Exif", directory.getName());
+        Assert.assertEquals("Exif", directory.getName());
     }
 
+    @Test
     public void testGetThumbnailData() throws Exception
     {
         File file = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
         ExifDirectory exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
-        assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
+        Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
         byte[] thumbData = exifDirectory.getThumbnailData();
         try {
             // attempt to read the thumbnail -- it should be a legal Jpeg file
             new JpegSegmentReader(thumbData);
         } catch (JpegProcessingException e) {
-            fail("Unable to construct JpegSegmentReader from thumbnail data");
+            Assert.fail("Unable to construct JpegSegmentReader from thumbnail data");
         }
     }
 
+    @Test
     public void testWriteThumbnail() throws Exception
     {
         File file = new File("Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
         ExifDirectory exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
-        assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
+        Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
 
         File thumbnailFile = File.createTempFile("thumbnail", ".jpg");
         try {
             exifDirectory.writeThumbnail(thumbnailFile.getAbsolutePath());
-            assertTrue(new File(thumbnailFile.getAbsolutePath()).exists());
+            Assert.assertTrue(new File(thumbnailFile.getAbsolutePath()).exists());
         } finally {
             thumbnailFile.delete();
         }
     }
 
+    @Test
     public void testContainsThumbnail()
     {
         ExifDirectory exifDirectory = new ExifDirectory();
 
-        assertTrue(!exifDirectory.containsThumbnail());
+        Assert.assertTrue(!exifDirectory.containsThumbnail());
 
         exifDirectory.setObject(ExifDirectory.TAG_THUMBNAIL_DATA, "foo");
 
-        assertTrue(exifDirectory.containsThumbnail());
+        Assert.assertTrue(exifDirectory.containsThumbnail());
     }
 }

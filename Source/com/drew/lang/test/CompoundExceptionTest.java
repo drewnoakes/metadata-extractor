@@ -22,7 +22,8 @@ package com.drew.lang.test;
 
 import com.drew.lang.CompoundException;
 import com.drew.lang.NullOutputStream;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -31,22 +32,19 @@ import java.io.PrintWriter;
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class CompoundExceptionTest extends TestCase
+public class CompoundExceptionTest
 {
-    public CompoundExceptionTest(String s)
-    {
-        super(s);
-    }
-
+    @Test
     public void testGetMessage_NonNested() throws Exception
     {
         try {
             throw new CompoundException("message");
         } catch (CompoundException e) {
-            assertEquals("message", e.getMessage());
+            Assert.assertEquals("message", e.getMessage());
         }
     }
 
+    @Test
     public void testGetMessage_Nested() throws Exception
     {
         try {
@@ -56,11 +54,12 @@ public class CompoundExceptionTest extends TestCase
                 throw new CompoundException("compound", e);
             }
         } catch (CompoundException e) {
-            assertEquals("compound", e.getMessage());
-            assertEquals("io", e.getInnerException().getMessage());
+            Assert.assertEquals("compound", e.getMessage());
+            Assert.assertEquals("io", e.getInnerException().getMessage());
         }
     }
 
+    @Test
     public void testNoInnerException() throws Exception
     {
         try {
@@ -71,7 +70,7 @@ public class CompoundExceptionTest extends TestCase
                 e.printStackTrace(nullStream);
                 e.printStackTrace(new PrintWriter(nullStream));
             } catch (Exception e1) {
-                fail("Exception during printStackTrace for CompoundException with no inner exception");
+                Assert.fail("Exception during printStackTrace for CompoundException with no inner exception");
             }
         }
     }

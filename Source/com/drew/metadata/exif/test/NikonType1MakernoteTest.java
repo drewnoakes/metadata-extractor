@@ -25,22 +25,19 @@ import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.NikonType1MakernoteDirectory;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
-public class NikonType1MakernoteTest extends TestCase
+public class NikonType1MakernoteTest
 {
     private NikonType1MakernoteDirectory _nikonDirectory;
     private ExifDirectory _exifDirectory;
-
-    public NikonType1MakernoteTest(String s)
-    {
-        super(s);
-    }
 
     /*
         [Interoperability] Interoperability Index = Recommended Exif Interoperability Rules (ExifR98)
@@ -54,7 +51,8 @@ public class NikonType1MakernoteTest extends TestCase
         [Jpeg] Component 3 = Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert
     */
 
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         File nikonJpeg = new File("Source/com/drew/metadata/exif/test/nikonMakernoteType1.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(nikonJpeg);
@@ -75,24 +73,25 @@ public class NikonType1MakernoteTest extends TestCase
         [Nikon Makernote] Fisheye Converter = None
         [Nikon Makernote] Makernote Unknown 3 = 0 0 16777216 0 -1609193200 0 34833 6931 16178 4372 4372 -972290529 -921882880 15112 0 0 1151495 252903424 17 0 0 844038208 55184128 218129428 1476410198 370540566 -250604010 16711749 204629079 1729
     */
+    @Test
     public void testNikonMakernote_MatchesKnownValues() throws Exception
     {
-        assertTrue(_nikonDirectory.getTagCount() > 0);
-        assertEquals(8, _nikonDirectory.getDouble(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_UNKNOWN_1), 0.0001);
-        assertEquals(12, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY));
-        assertEquals(1, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE));
-        assertEquals(3, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT));
-        assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY));
-        assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE));
-        assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS));
-        assertEquals("", _nikonDirectory.getString(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_UNKNOWN_2));
-        assertEquals(0, _nikonDirectory.getDouble(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM), 0.0001);
-        assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER));
+        Assert.assertTrue(_nikonDirectory.getTagCount() > 0);
+        Assert.assertEquals(8, _nikonDirectory.getDouble(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_UNKNOWN_1), 0.0001);
+        Assert.assertEquals(12, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY));
+        Assert.assertEquals(1, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE));
+        Assert.assertEquals(3, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT));
+        Assert.assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY));
+        Assert.assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE));
+        Assert.assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS));
+        Assert.assertEquals("", _nikonDirectory.getString(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_UNKNOWN_2));
+        Assert.assertEquals(0, _nikonDirectory.getDouble(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM), 0.0001);
+        Assert.assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER));
         int[] unknown3 = _nikonDirectory.getIntArray(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_UNKNOWN_3);
         int[] expected = new int[] { 0, 0, 16777216, 0, -1609193200, 0, 34833, 6931, 16178, 4372, 4372, -972290529, -921882880, 15112, 0, 0, 1151495, 252903424, 17, 0, 0, 844038208, 55184128, 218129428, 1476410198, 370540566, -250604010, 16711749, 204629079, 1729 };
-        assertEquals(expected.length, unknown3.length);
+        Assert.assertEquals(expected.length, unknown3.length);
         for (int i = 0; i<expected.length; i++) {
-            assertEquals(expected[i], unknown3[i]);
+            Assert.assertEquals(expected[i], unknown3[i]);
         }
     }
 
@@ -134,43 +133,44 @@ public class NikonType1MakernoteTest extends TestCase
         [Exif] Thumbnail Length = 4662 bytes
         [Exif] Thumbnail Data = [4662 bytes of thumbnail data]
     */
+    @Test
     public void testExifDirectory_MatchesKnownValues() throws Exception
     {
-        assertEquals("          ", _exifDirectory.getString(ExifDirectory.TAG_IMAGE_DESCRIPTION));
-        assertEquals("NIKON", _exifDirectory.getString(ExifDirectory.TAG_MAKE));
-        assertEquals("E950", _exifDirectory.getString(ExifDirectory.TAG_MODEL));
-        assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_ORIENTATION));
-        assertEquals(300, _exifDirectory.getDouble(ExifDirectory.TAG_X_RESOLUTION), 0.001);
-        assertEquals(300, _exifDirectory.getDouble(ExifDirectory.TAG_Y_RESOLUTION), 0.001);
-        assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_RESOLUTION_UNIT));
-        assertEquals("v981-79", _exifDirectory.getString(ExifDirectory.TAG_SOFTWARE));
-        assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME));
-        assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_YCBCR_POSITIONING));
-        assertEquals(new Rational(1, 77), _exifDirectory.getRational(ExifDirectory.TAG_EXPOSURE_TIME));
-        assertEquals(5.5, _exifDirectory.getDouble(ExifDirectory.TAG_FNUMBER), 0.001);
-        assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_PROGRAM));
-        assertEquals(80, _exifDirectory.getInt(ExifDirectory.TAG_ISO_EQUIVALENT));
-        assertEquals("48 50 49 48", _exifDirectory.getString(ExifDirectory.TAG_EXIF_VERSION));
-        assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_DIGITIZED));
-        assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_ORIGINAL));
-        assertEquals("1 2 3 0", _exifDirectory.getString(ExifDirectory.TAG_COMPONENTS_CONFIGURATION));
-        assertEquals(4, _exifDirectory.getInt(ExifDirectory.TAG_COMPRESSION_LEVEL));
-        assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_BIAS));
+        Assert.assertEquals("          ", _exifDirectory.getString(ExifDirectory.TAG_IMAGE_DESCRIPTION));
+        Assert.assertEquals("NIKON", _exifDirectory.getString(ExifDirectory.TAG_MAKE));
+        Assert.assertEquals("E950", _exifDirectory.getString(ExifDirectory.TAG_MODEL));
+        Assert.assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_ORIENTATION));
+        Assert.assertEquals(300, _exifDirectory.getDouble(ExifDirectory.TAG_X_RESOLUTION), 0.001);
+        Assert.assertEquals(300, _exifDirectory.getDouble(ExifDirectory.TAG_Y_RESOLUTION), 0.001);
+        Assert.assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_RESOLUTION_UNIT));
+        Assert.assertEquals("v981-79", _exifDirectory.getString(ExifDirectory.TAG_SOFTWARE));
+        Assert.assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME));
+        Assert.assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_YCBCR_POSITIONING));
+        Assert.assertEquals(new Rational(1, 77), _exifDirectory.getRational(ExifDirectory.TAG_EXPOSURE_TIME));
+        Assert.assertEquals(5.5, _exifDirectory.getDouble(ExifDirectory.TAG_FNUMBER), 0.001);
+        Assert.assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_PROGRAM));
+        Assert.assertEquals(80, _exifDirectory.getInt(ExifDirectory.TAG_ISO_EQUIVALENT));
+        Assert.assertEquals("48 50 49 48", _exifDirectory.getString(ExifDirectory.TAG_EXIF_VERSION));
+        Assert.assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_DIGITIZED));
+        Assert.assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_ORIGINAL));
+        Assert.assertEquals("1 2 3 0", _exifDirectory.getString(ExifDirectory.TAG_COMPONENTS_CONFIGURATION));
+        Assert.assertEquals(4, _exifDirectory.getInt(ExifDirectory.TAG_COMPRESSION_LEVEL));
+        Assert.assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_BIAS));
         // this 2.6 *apex*, which is F2.5
-        assertEquals(2.6, _exifDirectory.getDouble(ExifDirectory.TAG_MAX_APERTURE), 0.001);
-        assertEquals(5, _exifDirectory.getInt(ExifDirectory.TAG_METERING_MODE));
-        assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_WHITE_BALANCE));
-        assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_FLASH));
-        assertEquals(12.8, _exifDirectory.getDouble(ExifDirectory.TAG_FOCAL_LENGTH), 0.001);
-        assertEquals("0 0 0 0 0 0 0 0 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32", _exifDirectory.getString(ExifDirectory.TAG_USER_COMMENT));
-        assertEquals("48 49 48 48", _exifDirectory.getString(ExifDirectory.TAG_FLASHPIX_VERSION));
-        assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_COLOR_SPACE));
-        assertEquals(1600, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH));
-        assertEquals(1200, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));
-        assertEquals(3, _exifDirectory.getInt(ExifDirectory.TAG_FILE_SOURCE));
-        assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_SCENE_TYPE));
-        assertEquals(6, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION));
-        assertEquals(2036, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET));
-        assertEquals(4662, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH));
+        Assert.assertEquals(2.6, _exifDirectory.getDouble(ExifDirectory.TAG_MAX_APERTURE), 0.001);
+        Assert.assertEquals(5, _exifDirectory.getInt(ExifDirectory.TAG_METERING_MODE));
+        Assert.assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_WHITE_BALANCE));
+        Assert.assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_FLASH));
+        Assert.assertEquals(12.8, _exifDirectory.getDouble(ExifDirectory.TAG_FOCAL_LENGTH), 0.001);
+        Assert.assertEquals("0 0 0 0 0 0 0 0 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32 32", _exifDirectory.getString(ExifDirectory.TAG_USER_COMMENT));
+        Assert.assertEquals("48 49 48 48", _exifDirectory.getString(ExifDirectory.TAG_FLASHPIX_VERSION));
+        Assert.assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_COLOR_SPACE));
+        Assert.assertEquals(1600, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH));
+        Assert.assertEquals(1200, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));
+        Assert.assertEquals(3, _exifDirectory.getInt(ExifDirectory.TAG_FILE_SOURCE));
+        Assert.assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_SCENE_TYPE));
+        Assert.assertEquals(6, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION));
+        Assert.assertEquals(2036, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET));
+        Assert.assertEquals(4662, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH));
     }
 }
