@@ -1,37 +1,22 @@
 /*
- * Rational.java
+ * Copyright 2002-2011 Drew Noakes
  *
- * This class is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  Similarly, I release this Java version under the
- * same license, though I do ask that you leave this header in tact.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew.noakes@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  *
- * Created on 6 May 2002, 18:06
- * Updated 26 Aug 2002 by Drew
- * - Added toSimpleString() method, which returns a simplified and hopefully more
- *   readable version of the Rational.  i.e. 2/10 -> 1/5, and 10/2 -> 5
- * Modified 29 Oct 2002 (v1.2)
- * - Improved toSimpleString() to factor more complex rational numbers into
- *   a simpler form
- *     i.e.
- *       10/15 -> 2/3
- * - toSimpleString() now accepts a boolean flag, 'allowDecimals' which will
- *   display the rational number in decimal form if it fits within 5 digits
- *     i.e.
- *       3/4 -> 0.75 when allowDecimal == true
- * Modified 18-Jan-2008 by Torsten Skadell
- * - added public Rational(Integer numerator,Integer denominator)
+ * More information about this project is available at:
  *
- * Updated to support long integers by David Ekholm, 2008
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 
 package com.drew.lang;
@@ -41,19 +26,15 @@ import java.io.Serializable;
 /**
  * Immutable class for holding a rational number without loss of precision.  Provides
  * a familiar representation via toString() in form <code>numerator/denominator</code>.
- * <p>
- * @author  Drew Noakes http://drewnoakes.com
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class Rational extends java.lang.Number implements Serializable
 {
-    /**
-     * Holds the numerator.
-     */
+    /** Holds the numerator. */
     private final long _numerator;
 
-    /**
-     * Holds the denominator.
-     */
+    /** Holds the denominator. */
     private final long _denominator;
 
     /**
@@ -69,16 +50,16 @@ public class Rational extends java.lang.Number implements Serializable
 
     public Rational(Integer numerator, Integer denominator)
     {
-    	_numerator = numerator;
-    	_denominator = denominator;
+        _numerator = numerator;
+        _denominator = denominator;
     }
 
     /**
      * Returns the value of the specified number as a <code>double</code>.
      * This may involve rounding.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>double</code>.
+     * @return the numeric value represented by this object after conversion
+     *         to type <code>double</code>.
      */
     public double doubleValue()
     {
@@ -89,8 +70,8 @@ public class Rational extends java.lang.Number implements Serializable
      * Returns the value of the specified number as a <code>float</code>.
      * This may involve rounding.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>float</code>.
+     * @return the numeric value represented by this object after conversion
+     *         to type <code>float</code>.
      */
     public float floatValue()
     {
@@ -102,12 +83,12 @@ public class Rational extends java.lang.Number implements Serializable
      * This may involve rounding or truncation.  This implementation simply
      * casts the result of <code>doubleValue()</code> to <code>byte</code>.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>byte</code>.
+     * @return the numeric value represented by this object after conversion
+     *         to type <code>byte</code>.
      */
     public final byte byteValue()
     {
-        return (byte)doubleValue();
+        return (byte) doubleValue();
     }
 
     /**
@@ -115,12 +96,12 @@ public class Rational extends java.lang.Number implements Serializable
      * This may involve rounding or truncation.  This implementation simply
      * casts the result of <code>doubleValue()</code> to <code>int</code>.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>int</code>.
+     * @return the numeric value represented by this object after conversion
+     *         to type <code>int</code>.
      */
     public final int intValue()
     {
-        return (int)doubleValue();
+        return (int) doubleValue();
     }
 
     /**
@@ -128,12 +109,12 @@ public class Rational extends java.lang.Number implements Serializable
      * This may involve rounding or truncation.  This implementation simply
      * casts the result of <code>doubleValue()</code> to <code>long</code>.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>long</code>.
+     * @return the numeric value represented by this object after conversion
+     *         to type <code>long</code>.
      */
     public final long longValue()
     {
-        return (long)doubleValue();
+        return (long) doubleValue();
     }
 
     /**
@@ -141,26 +122,22 @@ public class Rational extends java.lang.Number implements Serializable
      * This may involve rounding or truncation.  This implementation simply
      * casts the result of <code>doubleValue()</code> to <code>short</code>.
      *
-     * @return  the numeric value represented by this object after conversion
-     *          to type <code>short</code>.
+     * @return the numeric value represented by this object after conversion
+     *         to type <code>short</code>.
      */
     public final short shortValue()
     {
-        return (short)doubleValue();
+        return (short) doubleValue();
     }
 
 
-    /**
-     * Returns the denominator.
-     */
+    /** Returns the denominator. */
     public final long getDenominator()
     {
         return this._denominator;
     }
 
-    /**
-     * Returns the numerator.
-     */
+    /** Returns the numerator. */
     public final long getNumerator()
     {
         return this._numerator;
@@ -168,6 +145,7 @@ public class Rational extends java.lang.Number implements Serializable
 
     /**
      * Returns the reciprocal value of this obejct as a new Rational.
+     *
      * @return the reciprocal in a new object
      */
     public Rational getReciprocal()
@@ -175,28 +153,25 @@ public class Rational extends java.lang.Number implements Serializable
         return new Rational(this._denominator, this._numerator);
     }
 
-    /**
-     * Checks if this rational number is an Integer, either positive or negative.
-     */
+    /** Checks if this rational number is an Integer, either positive or negative. */
     public boolean isInteger()
     {
         return _denominator == 1 ||
-              (_denominator != 0 && (_numerator % _denominator == 0)) ||
-              (_denominator == 0 && _numerator == 0);
+                (_denominator != 0 && (_numerator % _denominator == 0)) ||
+                (_denominator == 0 && _numerator == 0);
     }
 
     /**
      * Returns a string representation of the object of form <code>numerator/denominator</code>.
-     * @return  a string representation of the object.
+     *
+     * @return a string representation of the object.
      */
     public String toString()
     {
         return _numerator + "/" + _denominator;
     }
 
-    /**
-     * Returns the simplest representation of this Rational's value possible.
-     */
+    /** Returns the simplest representation of this Rational's value possible. */
     public String toSimpleString(boolean allowDecimal)
     {
         if (_denominator == 0 && _numerator != 0) {
@@ -222,11 +197,12 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Decides whether a brute-force simplification calculation should be avoided
      * by comparing the maximum number of possible calculations with some threshold.
+     *
      * @return true if the simplification should be performed, otherwise false
      */
     private boolean tooComplexForSimplification()
     {
-        double maxPossibleCalculations = (((double)(Math.min(_denominator, _numerator) - 1) / 5d) + 2);
+        double maxPossibleCalculations = (((double) (Math.min(_denominator, _numerator) - 1) / 5d) + 2);
         final int maxSimplificationCalculations = 1000;
         return maxPossibleCalculations > maxSimplificationCalculations;
     }
@@ -234,6 +210,7 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Compares two <code>Rational</code> instances, returning true if they are mathematically
      * equivalent.
+     *
      * @param obj the Rational to compare this instance to.
      * @return true if instances are mathematically equivalent, otherwise false.  Will also
      *         return false if <code>obj</code> is not an instance of <code>Rational</code>.
@@ -243,7 +220,7 @@ public class Rational extends java.lang.Number implements Serializable
         if (!(obj instanceof Rational)) {
             return false;
         }
-        Rational that = (Rational)obj;
+        Rational that = (Rational) obj;
         return this.doubleValue() == that.doubleValue();
     }
 
@@ -268,11 +245,12 @@ public class Rational extends java.lang.Number implements Serializable
      *    4   Math.min(denominator, numerator) - 1
      *   -- * ------------------------------------ + 2
      *   10                    2
-     *
+     * <p/>
      *   Math.min(denominator, numerator) - 1
      * = ------------------------------------ + 2
      *                  5
      * </pre></code>
+     *
      * @return a simplified instance, or if the Rational could not be simplified,
      *         returns itself (unchanged)
      */

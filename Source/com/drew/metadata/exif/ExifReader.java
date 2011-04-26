@@ -1,43 +1,22 @@
 /*
- * Early versions of this class were inspired by Jhead, a C program for extracting and
- * manipulating the Exif data within files written by Matthias Wandel.
- *   http://www.sentex.net/~mwandel/jhead/
+ * Copyright 2002-2011 Drew Noakes
  *
- * Jhead is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  Similarly, I release this Java version under the
- * same license, though I do ask that you leave this header in tact.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.  Unlike
- * Jhead, this code (as it stands) only supports reading of Exif data - no
- * manipulation.
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew.noakes@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  *
- * Created on 28 April 2002, 23:54
- * Modified 04 Aug 2002
- * - Renamed constants to be inline with changes to ExifTagValues interface
- * - Substituted usage of JDK 1.4 features (java.nio package)
- * Modified 29 Oct 2002 (v1.2)
- * - Proper traversing of Exif file structure and complete refactor & tidy of
- *   the codebase (a few unnoticed bugs removed)
- * - Reads makernote data for 6 families of camera (5 makes)
- * - Tags now stored in directories... use the IFD_* constants to refer to the
- *   image file directory you require (Exif, Interop, GPS and Makernote*) --
- *   this avoids collisions where two tags share the same code
- * - Takes componentCount of unknown tags into account
- * - Now understands GPS tags (thanks to Colin Briton for his help with this)
- * - Some other bug fixes, pointed out by users around the world.  Thanks!
- * Modified 27 Nov 2002 (v2.0)
- * - Renamed to ExifReader
- * - Moved to new package com.drew.metadata.exif
- * Modified since, however changes have not been logged.  See release notes for
- * library-wide modifications.
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
@@ -56,6 +35,7 @@ import java.util.HashSet;
 /**
  * Decodes Exif binary data, populating a <code>Metadata</code> object with tag values in <code>ExifDirectory</code>,
  * <code>GpsDirectory</code> and one of the many camera makernote directories.
+ *
  * @author Drew Noakes http://drewnoakes.com
  */
 public class ExifReader implements MetadataReader

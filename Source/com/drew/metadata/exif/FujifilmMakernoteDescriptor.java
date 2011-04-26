@@ -1,18 +1,22 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2011 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   metadata_extractor [at] drewnoakes [dot] com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 27-Nov-2002 10:12:05 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
@@ -22,22 +26,26 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string represenations of tag values stored in a <code>FujifilmMakernoteDirectory</code>.
- *
+ * Provides human-readable string representations of tag values stored in a <code>FujifilmMakernoteDirectory</code>.
+ * <p/>
  * Fujifilm's digicam added the MakerNote tag from the Year2000's model (e.g.Finepix1400,
  * Finepix4700). It uses IFD format and start from ASCII character 'FUJIFILM', and next 4
  * bytes(value 0x000c) points the offset to first IFD entry. Example of actual data
  * structure is shown below.
- *
+ * <p/>
+ * <pre><code>
  * :0000: 46 55 4A 49 46 49 4C 4D-0C 00 00 00 0F 00 00 00 :0000: FUJIFILM........
  * :0010: 07 00 04 00 00 00 30 31-33 30 00 10 02 00 08 00 :0010: ......0130......
- *
+ * </code></pre>
+ * <p/>
  * There are two big differences to the other manufacturers.
  * - Fujifilm's Exif data uses Motorola align, but MakerNote ignores it and uses Intel
  *   align.
  * - The other manufacturer's MakerNote counts the "offset to data" from the first byte
  *   of TIFF header (same as the other IFD), but Fujifilm counts it from the first byte
  *   of MakerNote itself.
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class FujifilmMakernoteDescriptor extends TagDescriptor
 {

@@ -1,16 +1,22 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2011 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   metadata_extractor [at] drewnoakes [dot] com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
@@ -20,7 +26,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string represenations of tag values stored in a <code>NikonType1MakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a <code>NikonType1MakernoteDirectory</code>.
  *
  * Type-1 is for E-Series cameras prior to (not including) E990.  For example: E700, E800, E900,
  * E900S, E910, E950.
@@ -32,6 +38,8 @@ import com.drew.metadata.TagDescriptor;
  * :0000: 4E 69 6B 6F 6E 00 01 00-05 00 02 00 02 00 06 00 Nikon...........
  * :0010: 00 00 EC 02 00 00 03 00-03 00 01 00 00 00 06 00 ................
  * </code></pre>
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class NikonType1MakernoteDescriptor extends TagDescriptor
 {
@@ -110,9 +118,9 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
             case 2:
                 return "Daylight";
             case 3:
-                return "Incandescense";
+                return "Incandescence";
             case 4:
-                return "Flourescence";
+                return "Florescence";
             case 5:
                 return "Cloudy";
             case 6:

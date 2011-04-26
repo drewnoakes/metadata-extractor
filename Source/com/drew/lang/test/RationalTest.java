@@ -1,22 +1,22 @@
 /*
- * RationalTest.java
+ * Copyright 2002-2011 Drew Noakes
  *
- * Test class written by Drew Noakes.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   metadata_extractor [at] drewnoakes [dot] com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ * More information about this project is available at:
  *
- * Created by dnoakes on 26-Oct-2002 16:24:43 using IntelliJ IDEA.
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.lang.test;
 
@@ -24,7 +24,6 @@ import com.drew.lang.Rational;
 import junit.framework.TestCase;
 
 /**
- *
  * @author  Drew Noakes http://drewnoakes.com
  */
 public class RationalTest extends TestCase
@@ -39,7 +38,7 @@ public class RationalTest extends TestCase
         Rational rational = new Rational(1, 3);
         assertEquals(1, rational.getNumerator());
         assertEquals(3, rational.getDenominator());
-        assertEquals(new Double(1d / 3d), new Double(rational.doubleValue()));
+        assertEquals(1d / 3d, rational.doubleValue());
     }
 
     public void testToString() throws Exception

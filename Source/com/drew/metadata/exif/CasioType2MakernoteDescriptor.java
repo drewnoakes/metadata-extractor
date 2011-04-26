@@ -1,18 +1,22 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2011 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   metadata_extractor [at] drewnoakes [dot] com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 27-Nov-2002 10:12:05 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
@@ -21,7 +25,9 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string represenations of tag values stored in a <code>CasioType2MakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a <code>CasioType2MakernoteDirectory</code>.
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class CasioType2MakernoteDescriptor extends TagDescriptor
 {

@@ -1,35 +1,35 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2011 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   metadata_extractor [at] drewnoakes [dot] com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by Darren Salomons & Drew Noakes.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.imaging.tiff;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 
+import java.io.*;
+
 /**
  * Obtains all available metadata from TIFF formatted files.  Note that TIFF files include many digital camera RAW
  * formats, including Canon (CRW, CR2) and Nikon (NEF).
+ *
+ * @author Darren Salomons
  */
 public class TiffMetadataReader
 {
@@ -41,16 +41,17 @@ public class TiffMetadataReader
 		try {
 			x = new DataInputStream(new FileInputStream(file));
 		} catch (FileNotFoundException e) {
-			throw new TiffProcessingException("JPEG file does not exist", e);
+			throw new TiffProcessingException("TIFF file does not exist", e);
 		}
 		byte[] buffer = new byte[(int)file.length()];
 		try {
 			x.readFully(buffer);
 		} catch (IOException e) {
-			throw new TiffProcessingException("Error copying file contents to byte buffer", e);
+			throw new TiffProcessingException("Error copying TIFF file contents to byte buffer", e);
 		}
 		
 		new ExifReader(buffer).extractTiff(metadata);
+
 		return metadata;
 	}
 
@@ -63,7 +64,7 @@ public class TiffMetadataReader
 				out.write(b);
 			}
 		} catch (IOException e) {
-			throw new TiffProcessingException("Error processing tiff stream", e);
+			throw new TiffProcessingException("Error processing TIFF stream", e);
 		}
         Metadata metadata = new Metadata();
 		new ExifReader(out.toByteArray()).extractTiff(metadata);

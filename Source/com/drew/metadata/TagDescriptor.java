@@ -1,16 +1,22 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2011 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   metadata_extractor [at] drewnoakes [dot] com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata;
 
@@ -18,11 +24,15 @@ import java.io.Serializable;
 
 /**
  * Abstract base class for all tag descriptor classes.  Implementations are responsible for
- * providing the human-readable string represenation of tag values stored in a directory.
+ * providing the human-readable string representation of tag values stored in a directory.
  * The directory is provided to the tag descriptor via its constructor.
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public abstract class TagDescriptor implements Serializable
 {
+    // TODO getDescription should return null instead of throwing MetadataException
+    
     protected final Directory _directory;
 
     public TagDescriptor(Directory directory)
@@ -35,9 +45,7 @@ public abstract class TagDescriptor implements Serializable
      * Where possible, known values will be substituted here in place of the raw
      * tokens actually kept in the Exif segment.  If no substitution is
      * available, the value provided by getString(int) will be returned.
-     * <p>
-     * This and getString(int) are the only 'get' methods that won't throw an
-     * exception.
+     * 
      * @param tagType the tag to find a description for
      * @return a description of the image's value for the specified tag, or
      *         <code>null</code> if the tag hasn't been defined.

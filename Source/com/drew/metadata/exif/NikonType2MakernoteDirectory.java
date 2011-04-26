@@ -1,18 +1,22 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2011 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   metadata_extractor [at] drewnoakes [dot] com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 3-Oct-2002 10:10:47 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
@@ -25,19 +29,21 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Nikon (type 2) cameras.  Type-2 applies to the E990 and D-series cameras such as the E990, D1,
  * D70 and D100.
- *
+ * <p/>
  * Thanks to Fabrizio Giudici for publishing his reverse-engineering of the D100 makernote data.
  * http://www.timelesswanderings.net/equipment/D100/NEF.html
- *
+ * <p/>
  * Note that the camera implements image protection (locking images) via the file's 'readonly' attribute.  Similarly
  * image hiding uses the 'hidden' attribute (observed on the D70).  Consequently, these values are not available here.
- *
+ * <p/>
  * Additional sample images have been observed, and their tag values recorded in javadoc comments for each tag's field.
  * New tags have subsequently been added since Fabrizio's observations.
- *
+ * <p/>
  * In earlier models (such as the E990 and D1), this directory begins at the first byte of the makernote IFD.  In
  * later models, the IFD was given the standard prefix to indicate the camera models (most other manufacturers also
  * provide this prefix to aid in software decoding).
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class NikonType2MakernoteDirectory extends Directory
 {
@@ -396,7 +402,7 @@ public class NikonType2MakernoteDirectory extends Directory
     public static final int TAG_NIKON_TYPE2_UNKNOWN_27 = 0x00A3;
 
     /**
-     * This appears to be a sequence number to indentify the exposure.  This value seems to increment
+     * This appears to be a sequence number to identify the exposure.  This value seems to increment
      * for consecutive exposures (observed on D70).
      *
      * Values observed

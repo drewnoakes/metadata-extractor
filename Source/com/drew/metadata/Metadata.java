@@ -1,30 +1,45 @@
 /*
- * Metadata.java
+ * Copyright 2002-2011 Drew Noakes
  *
- * This class is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  Similarly, I release this Java version under the
- * same license, though I do ask that you leave this header in tact.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew.noakes@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  *
- * Created on 28 April 2002, 17:40
- * Modified 04 Aug 2002
- * - Adjusted javadoc
- * - Added
- * Modified 29 Oct 2002 (v1.2)
- * - Stored IFD directories in separate tag-spaces
- * - iterator() now returns an Iterator over a list of TagValue objects
- * - More get*Description() methods to detail GPS tags, among others
- * - Put spaces between words of tag name for presentation reasons (they had no
- *   significance in compound form)
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
+ */
+
+/*
+ * Copyright 2002-2011 Drew Noakes
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
+ *
+ * Created by Drew Noakes on 28-Apr-2002 17:40:00.
  */
 package com.drew.metadata;
 
@@ -36,15 +51,14 @@ import java.util.Iterator;
 /**
  * A top-level object to hold various types of metadata (such as Exif or IPTC) relating to one entity (such as a file
  * or stream).
- *
+ * <p/>
  * Metadata objects may contain zero or more directories.  Each directory may contain zero or more tags with
  * corresponding values.
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public final class Metadata implements Serializable
 {
-    /**
-     *
-     */
     private final HashMap<Class, Directory> _directoryByClass;
 
     /**
@@ -53,9 +67,7 @@ public final class Metadata implements Serializable
      */
     private final ArrayList<Directory> _directoryList;
 
-    /**
-     * Creates a new instance of Metadata.
-     */
+    /** Creates a new instance of Metadata. */
     public Metadata()
     {
         _directoryByClass = new HashMap<Class, Directory>();
@@ -68,6 +80,7 @@ public final class Metadata implements Serializable
      * Creates an Iterator over the tag types set against this image, preserving the order
      * in which they were set.  Should the same tag have been set more than once, it's first
      * position is maintained, even though the final value is used.
+     *
      * @return an Iterator of tag types set for this image
      * @deprecated Use getDirectories() instead
      */
@@ -79,6 +92,7 @@ public final class Metadata implements Serializable
 
     /**
      * Returns an objects for iterating over Directory objects in the order in which they were added.
+     *
      * @return an iterable collection of directories
      */
     public Iterable<Directory> getDirectories()
@@ -88,6 +102,7 @@ public final class Metadata implements Serializable
 
     /**
      * Returns a count of unique directories in this metadata collection.
+     *
      * @return the number of unique directory types set for this metadata collection
      */
     public int getDirectoryCount()
@@ -99,11 +114,14 @@ public final class Metadata implements Serializable
      * Returns a <code>Directory</code> of specified type.  If this <code>Metadata</code> object already contains
      * such a directory, it is returned.  Otherwise a new instance of this directory will be created and stored within
      * this Metadata object.
+     *
      * @param type the type of the Directory implementation required.
      * @return a directory of the specified type.
      */
     public Directory getDirectory(Class<? extends Directory> type)
     {
+        // TODO make one method getDirectory and another getOrCreateDirectory as this method is confusingly named
+
         // check if we've already issued this type of directory
         if (_directoryByClass.containsKey(type))
             return _directoryByClass.get(type);
@@ -124,6 +142,7 @@ public final class Metadata implements Serializable
     /**
      * Indicates whether a given directory type has been created in this metadata
      * repository.  Directories are created by calling getDirectory(Class).
+     *
      * @param type the Directory type
      * @return true if the metadata directory has been created
      */
