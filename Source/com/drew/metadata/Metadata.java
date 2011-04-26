@@ -54,7 +54,7 @@ public final class Metadata implements Serializable
     private final ArrayList<Directory> _directoryList;
 
     /**
-     * Creates a new instance of Metadata.  Package private.
+     * Creates a new instance of Metadata.
      */
     public Metadata()
     {
@@ -102,24 +102,22 @@ public final class Metadata implements Serializable
      * @param type the type of the Directory implementation required.
      * @return a directory of the specified type.
      */
-    public Directory getDirectory(Class type)
+    public Directory getDirectory(Class<? extends Directory> type)
     {
-        if (!Directory.class.isAssignableFrom(type)) {
-            throw new RuntimeException("Class type passed to getDirectory must be an implementation of com.drew.metadata.Directory");
-        }
         // check if we've already issued this type of directory
-        if (_directoryByClass.containsKey(type)) {
+        if (_directoryByClass.containsKey(type))
             return _directoryByClass.get(type);
-        }
+
         Directory directory;
         try {
-            directory = (Directory)type.newInstance();
+            directory = type.newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Cannot instantiate provided Directory type: " + type.toString());
         }
-        // store the directory in case it's requested later
+        // store the directory
         _directoryByClass.put(type, directory);
         _directoryList.add(directory);
+
         return directory;
     }
 
@@ -129,7 +127,7 @@ public final class Metadata implements Serializable
      * @param type the Directory type
      * @return true if the metadata directory has been created
      */
-    public boolean containsDirectory(Class type)
+    public boolean containsDirectory(Class<? extends Directory> type)
     {
         return _directoryByClass.containsKey(type);
     }
