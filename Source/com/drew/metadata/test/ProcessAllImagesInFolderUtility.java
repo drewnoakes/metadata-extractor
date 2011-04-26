@@ -58,22 +58,18 @@ public class ProcessAllImagesInFolderUtility
                     } catch (Throwable t) {
                         // general, uncaught exception during processing of metadata
                         errorCount++;
-                        System.err.println(file + "[BadMetadata]");
-                        System.err.println(t);
-                        System.err.println(t.getMessage());
+                        System.err.println(t.getClass().getName() + ": " + file + " [BadMetadata]");
                         t.printStackTrace(System.err);
                     }
                 } catch (JpegProcessingException e) {
-                    errorCount++;
-                    System.err.println(file + "[BadSegments]");
                     // this is an error in the Jpeg segment structure.  we're looking for bad handling of
                     // metadata segments.  in this case, we didn't even get a segment.
+                    errorCount++;
+                    System.err.println(e.getClass().getName() + ": " + file + "\n\t" + e.getMessage());
                 } catch (Throwable t) {
                     // general, uncaught exception during processing of jpeg segments
                     errorCount++;
-                    System.err.println(file + "[FAILURE]");
-                    System.err.println(t);
-                    System.err.println(t.getMessage());
+                    System.err.println(t.getClass().getName() + ": " + file + " [FAILURE]");
                     t.printStackTrace(System.err);
                 }
             }

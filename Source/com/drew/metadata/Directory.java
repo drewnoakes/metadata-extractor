@@ -51,7 +51,7 @@ public abstract class Directory implements Serializable
      */
     protected final List<Tag> _definedTagList;
 
-    private List<String> _errorList;
+    private final List<String> _errorList = new ArrayList<String>(4);
 
 // ABSTRACT METHODS
 
@@ -137,9 +137,6 @@ public abstract class Directory implements Serializable
      */
     public void addError(String message)
     {
-        if (_errorList==null) {
-            _errorList = new ArrayList<String>();
-        }
         _errorList.add(message);
     }
 
@@ -149,7 +146,7 @@ public abstract class Directory implements Serializable
      */
     public boolean hasErrors()
     {
-        return (_errorList!=null && _errorList.size()>0);
+        return _errorList.size()>0;
     }
 
     /**

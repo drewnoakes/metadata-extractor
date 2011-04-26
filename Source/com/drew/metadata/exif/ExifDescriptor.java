@@ -434,6 +434,7 @@ public class ExifDescriptor extends TagDescriptor
     public String getIsoEquivalentDescription() throws MetadataException
     {
         if (!_directory.containsTag(ExifDirectory.TAG_ISO_EQUIVALENT)) return null;
+        // Have seen an exception here from files produced by ACDSEE that stored an int[] here with two values
         int isoEquiv = _directory.getInt(ExifDirectory.TAG_ISO_EQUIVALENT);
         if (isoEquiv < 50)
             isoEquiv *= 200;

@@ -25,7 +25,6 @@ import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
-import com.drew.metadata.exif.ExifDirectory;
 
 import java.text.DecimalFormat;
 
@@ -105,7 +104,7 @@ public class XmpDescriptor extends TagDescriptor
             case 8:
                 return "Landscape mode";
             default:
-                return "Unknown program (" + _directory.getInt(ExifDirectory.TAG_EXPOSURE_PROGRAM) + ")";
+                return "Unknown program (" + _directory.getInt(XmpDirectory.TAG_EXPOSURE_PROG) + ")";
         }
     }
 

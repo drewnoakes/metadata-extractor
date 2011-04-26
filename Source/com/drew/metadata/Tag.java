@@ -21,6 +21,8 @@ import java.io.Serializable;
 /**
  * Models a particular tag within a directory and provides methods for obtaining its value.  Note that a Tag isntance is
  * specific to a particular metadata extraction and cannot be reused.
+ *
+ * @author Drew Noakes, 26-Nov-2002 18:29:12
  */
 public class Tag implements Serializable
 {
@@ -35,6 +37,7 @@ public class Tag implements Serializable
 
     /**
      * Gets the tag type as an int
+     *
      * @return the tag type as an int
      */
     public int getTagType()
@@ -45,6 +48,7 @@ public class Tag implements Serializable
     /**
      * Gets the tag type in hex notation as a String with padded leading
      * zeroes if necessary (i.e. <code>0x100E</code>).
+     *
      * @return the tag type as a string in hexadecimal notation
      */
     public String getTagTypeHex()
@@ -57,6 +61,7 @@ public class Tag implements Serializable
     /**
      * Get a description of the tag's value, considering enumerated values
      * and units.
+     *
      * @return a description of the tag's value
      */
     public String getDescription() throws MetadataException
@@ -67,6 +72,7 @@ public class Tag implements Serializable
     /**
      * Get the name of the tag, such as <code>Aperture</code>, or
      * <code>InteropVersion</code>.
+     *
      * @return the tag's name
      */
     public String getTagName()
@@ -77,6 +83,7 @@ public class Tag implements Serializable
     /**
      * Get the name of the directory in which the tag exists, such as
      * <code>Exif</code>, <code>GPS</code> or <code>Interoperability</code>.
+     *
      * @return name of the directory in which this tag exists
      */
     public String getDirectoryName()
@@ -87,6 +94,7 @@ public class Tag implements Serializable
     /**
      * A basic representation of the tag's type and value in format:
      * <code>FNumber - F2.8</code>.
+     *
      * @return the tag's type and value
      */
     public String toString()
