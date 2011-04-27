@@ -22,6 +22,8 @@ package com.drew.imaging;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -56,10 +58,11 @@ public class ImageMetadataReader
      * @return a populated Metadata error containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException for general processing errors.
      */
-    public static Metadata readMetadata(BufferedInputStream inputStream) throws ImageProcessingException
+    @NotNull
+    public static Metadata readMetadata(@NotNull BufferedInputStream inputStream, boolean waitForBytes) throws ImageProcessingException, IOException
     {
         int magicNumber = readMagicNumber(inputStream);
-        return readMetadata(inputStream, null, magicNumber);
+        return readMetadata(inputStream, null, magicNumber, waitForBytes);
     }
 
     /**
@@ -70,14 +73,10 @@ public class ImageMetadataReader
      * @return a populated Metadata error containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException for general processing errors.
      */
-    public static Metadata readMetadata(File file) throws ImageProcessingException
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file) throws ImageProcessingException, IOException
     {
-        BufferedInputStream inputStream;
-        try {
-            inputStream = new BufferedInputStream(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            throw new ImageProcessingException("File not found: " + file.getPath(), e);
-        }
+        BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
 
         int magicNumber = readMagicNumber(inputStream);
         try {
@@ -86,27 +85,30 @@ public class ImageMetadataReader
             throw new ImageProcessingException("Error closing file: " + file.getPath(), e);
         }
 
-        return readMetadata(null, file, magicNumber);
+        return readMetadata(null, file, magicNumber, false);
     }
 
-    private static Metadata readMetadata(BufferedInputStream inputStream, File file, int magicNumber) throws ImageProcessingException
+    @NotNull
+    private static Metadata readMetadata(@Nullable BufferedInputStream inputStream, @Nullable File file, int magicNumber, boolean waitForBytes) throws ImageProcessingException, IOException
     {
         if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
             if (inputStream != null)
-                return JpegMetadataReader.readMetadata(inputStream);
+                return JpegMetadataReader.readMetadata(inputStream, waitForBytes);
             else
                 return JpegMetadataReader.readMetadata(file);
-        } else if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLLA_TIFF_MAGIC_NUMBER) {
+        }
+
+        if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLLA_TIFF_MAGIC_NUMBER) {
             if (inputStream != null)
-                return TiffMetadataReader.readMetadata(inputStream);
+                return TiffMetadataReader.readMetadata(inputStream, waitForBytes);
             else
                 return TiffMetadataReader.readMetadata(file);
-        } else {
-            throw new ImageProcessingException("File is not the correct format");
         }
+
+        throw new ImageProcessingException("File is not the correct format");
     }
 
-    private static int readMagicNumber(BufferedInputStream inputStream) throws ImageProcessingException
+    private static int readMagicNumber(@NotNull BufferedInputStream inputStream) throws ImageProcessingException
     {
         int magicNumber;
         try {
@@ -132,7 +134,7 @@ public class ImageMetadataReader
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws MetadataException, IOException
+    public static void main(@NotNull String[] args) throws MetadataException, IOException
     {
         if (args.length < 1) {
             System.out.println("Usage: java -jar metadata-extractor-a.b.c.jar <filename> [<filename>] [/thumb]");

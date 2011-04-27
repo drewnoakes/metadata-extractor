@@ -32,6 +32,7 @@ import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 
 import java.io.File;
+import java.io.IOException;
 
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGDecodeParam;
@@ -64,6 +65,8 @@ public class SampleUsage
             printImageTags(1, metadata);
         } catch (ImageProcessingException e) {
             System.err.println("error 1a: " + e);
+        } catch (IOException e) {
+            System.err.println("error 1b: " + e);
         }
 
         // Approach 2

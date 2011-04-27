@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -34,12 +35,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class PanasonicMakernoteDescriptor extends TagDescriptor
 {
-    public PanasonicMakernoteDescriptor(Directory directory)
+    public PanasonicMakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType)
         {
@@ -54,17 +56,21 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getPrintImageMatchingInfoDescription() throws MetadataException
+    @Nullable
+    public String getPrintImageMatchingInfoDescription()
     {
-        if (!_directory.containsTag(PanasonicMakernoteDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO)) return null;
-        byte[] bytes = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO);
-        return "(" + bytes.length + " bytes)";
+        byte[] values = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO);
+        if (values==null)
+            return null;
+        return "(" + values.length + " bytes)";
     }
 
-    public String getMacroModeDescription() throws MetadataException
+    @Nullable
+    public String getMacroModeDescription()
     {
-        if (!_directory.containsTag(PanasonicMakernoteDirectory.TAG_PANASONIC_MACRO_MODE)) return null;
-        int value = _directory.getInt(PanasonicMakernoteDirectory.TAG_PANASONIC_MACRO_MODE);
+        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_PANASONIC_MACRO_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "On";
@@ -75,10 +81,12 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getRecordModeDescription() throws MetadataException
+    @Nullable
+    public String getRecordModeDescription()
     {
-        if (!_directory.containsTag(PanasonicMakernoteDirectory.TAG_PANASONIC_RECORD_MODE)) return null;
-        int value = _directory.getInt(PanasonicMakernoteDirectory.TAG_PANASONIC_RECORD_MODE);
+        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_PANASONIC_RECORD_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "Normal";

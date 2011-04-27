@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -31,12 +32,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class OlympusMakernoteDescriptor extends TagDescriptor
 {
-    public OlympusMakernoteDescriptor(Directory directory)
+    public OlympusMakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE:
@@ -52,10 +54,12 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getDigiZoomRatioDescription() throws MetadataException
+    @Nullable
+    public String getDigiZoomRatioDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO)) return null;
-        int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Normal";
@@ -66,10 +70,12 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getMacroModeDescription() throws MetadataException
+    @Nullable
+    public String getMacroModeDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE)) return null;
-        int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Normal (no macro)";
@@ -80,10 +86,12 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getJpegQualityDescription() throws MetadataException
+    @Nullable
+    public String getJpegQualityDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY)) return null;
-        int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "SQ";
@@ -96,15 +104,15 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSpecialModeDescription() throws MetadataException
+    @Nullable
+    public String getSpecialModeDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE)) return null;
         int[] values = _directory.getIntArray(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE);
-
+        if (values==null)
+            return null;
         if (values.length < 1)
             return "";
-
-        StringBuffer desc = new StringBuffer();
+        StringBuilder desc = new StringBuilder();
         switch (values[0]) {
             case 0:
                 desc.append("Normal picture taking mode");

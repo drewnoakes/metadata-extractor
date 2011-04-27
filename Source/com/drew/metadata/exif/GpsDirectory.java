@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -92,6 +93,7 @@ public class GpsDirectory extends Directory
     public static final int TAG_GPS_DATE_STAMP = 0x001D;
     public static final int TAG_GPS_DIFFERENTIAL = 0x001E;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -134,11 +136,13 @@ public class GpsDirectory extends Directory
         this.setDescriptor(new GpsDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "GPS";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

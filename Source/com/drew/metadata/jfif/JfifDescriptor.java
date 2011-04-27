@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.jfif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -33,12 +34,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class JfifDescriptor extends TagDescriptor
 {
-    public JfifDescriptor(Directory directory)
+    public JfifDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case JfifDirectory.TAG_JFIF_RESX:
@@ -54,39 +56,44 @@ public class JfifDescriptor extends TagDescriptor
         return _directory.getString(tagType);
     }
 
-    public String getImageVersionDescription() throws MetadataException
+    @Nullable
+    public String getImageVersionDescription()
     {
-        if (!_directory.containsTag(JfifDirectory.TAG_JFIF_VERSION))
+        Integer value = _directory.getInteger(JfifDirectory.TAG_JFIF_VERSION);
+        if (value==null)
             return null;
-        int v = _directory.getInt(JfifDirectory.TAG_JFIF_VERSION);
-        return String.format("%d.%d", (v & 0xFF00) >> 8, v & 0xFF);
+        return String.format("%d.%d", (value & 0xFF00) >> 8, value & 0xFF);
     }
 
-    public String getImageResYDescription() throws MetadataException
+    @Nullable
+    public String getImageResYDescription()
     {
-        if (!_directory.containsTag(JfifDirectory.TAG_JFIF_RESY))
+        Integer value = _directory.getInteger(JfifDirectory.TAG_JFIF_RESY);
+        if (value==null)
             return null;
-        int resY = _directory.getInt(JfifDirectory.TAG_JFIF_RESY);
         return String.format("%d dot%s",
-                resY,
-                resY==1 ? "" : "s");
+                value,
+                value==1 ? "" : "s");
     }
 
-    public String getImageResXDescription() throws MetadataException
+    @Nullable
+    public String getImageResXDescription()
     {
-        if (!_directory.containsTag(JfifDirectory.TAG_JFIF_RESX))
+        Integer value = _directory.getInteger(JfifDirectory.TAG_JFIF_RESX);
+        if (value==null)
             return null;
-        int resX = _directory.getInt(JfifDirectory.TAG_JFIF_RESX);
         return String.format("%d dot%s",
-                resX,
-                resX==1 ? "" : "s");
+                value,
+                value==1 ? "" : "s");
     }
 
-    public String getImageResUnitsDescription() throws MetadataException
+    @Nullable
+    public String getImageResUnitsDescription()
     {
-        if (!_directory.containsTag(JfifDirectory.TAG_JFIF_UNITS))
+        Integer value = _directory.getInteger(JfifDirectory.TAG_JFIF_UNITS);
+        if (value==null)
             return null;
-        switch (_directory.getInt(JfifDirectory.TAG_JFIF_UNITS)) {
+        switch (value) {
             case 0: return "none";
             case 1: return "inch";
             case 2: return "centimetre";

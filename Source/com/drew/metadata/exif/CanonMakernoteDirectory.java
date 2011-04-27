@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -203,7 +204,7 @@ public class CanonMakernoteDirectory extends Directory
      * 1 = Sunny
      * 2 = Cloudy
      * 3 = Tungsten
-     * 4 = Flourescent
+     * 4 = Florescent
      * 5 = Flash
      * 6 = Custom
      */
@@ -337,6 +338,7 @@ public class CanonMakernoteDirectory extends Directory
 
     // 9  A  B  C  D  E  F  10 11 12 13
     // 9  10 11 12 13 14 15 16 17 18 19
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -408,22 +410,24 @@ public class CanonMakernoteDirectory extends Directory
         this.setDescriptor(new CanonMakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Canon Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
     }
 
     /**
-     * We need special handling for selected tags.
+     * We need special handling for certain tags.
      * @param tagType
      * @param ints
      */
-    public void setIntArray(int tagType, int[] ints)
+    public void setIntArray(int tagType, @NotNull int[] ints)
     {
         if (tagType == TAG_CANON_CAMERA_STATE_1) {
             // this single tag has multiple values within

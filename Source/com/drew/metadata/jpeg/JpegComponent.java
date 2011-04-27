@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.jpeg;
 
-import com.drew.metadata.MetadataException;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.Serializable;
 
@@ -51,9 +51,9 @@ public class JpegComponent implements Serializable
     /**
      * Returns the component name (one of: Y, Cb, Cr, I, or Q)
      * @return the component name
-     * @throws MetadataException if the component id is not known
      */
-    public String getComponentName() throws MetadataException
+    @Nullable
+    public String getComponentName()
     {
         switch (_componentId)
         {
@@ -68,8 +68,7 @@ public class JpegComponent implements Serializable
             case 5:
                 return "Q";
         }
-
-        throw new MetadataException("Unsupported component id: " + _componentId);
+        return null;
     }
 
     public int getQuantizationTableNumber()

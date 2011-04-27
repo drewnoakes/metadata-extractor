@@ -20,15 +20,13 @@
  */
 package com.drew.metadata.iptc;
 
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
 
-import java.io.File;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
@@ -52,45 +50,18 @@ public class IptcReader implements MetadataReader
     public static final int DATA_RECORD = 8;
     public static final int POST_DATA_RECORD = 9;
 */
-    /**
-     * The Iptc data segment.
-     */
+    /** The Iptc data segment. */
+    @Nullable
     private final byte[] _data;
 
-    /**
-     * Creates a new IptcReader for the specified Jpeg jpegFile.
-     * @deprecated Not all files will be Jpegs!  Use a constructor that provides the IPTC segment in isolation.
-     */
-    public IptcReader(File jpegFile) throws JpegProcessingException
-    {
-        // TODO consider removing this constructor and requiring callers to pass a byte[] or other means to read the IPTC segment in isolation... not all files will be Jpegs!
-        this(new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_APPD));
-    }
-
-    /**
-     * Creates an IptcReader for a JPEG stream.
-     * @param jpegInputStream JPEG stream. Stream will be closed.
-     * @deprecated Not all files will be Jpegs!  Use a constructor that provides the IPTC segment in isolation.
-     */
-    public IptcReader(InputStream jpegInputStream) throws JpegProcessingException
-    {
-        // TODO consider removing this constructor and requiring callers to pass a byte[] or other means to read the IPTC segment in isolation... not all files will be Jpegs!
-        this(new JpegSegmentReader(jpegInputStream).readSegment(JpegSegmentReader.SEGMENT_APPD));
-    }
-
-    /**
-     * Creates an IptcReader for the given IPTC data segment.
-     */
-    public IptcReader(byte[] data)
+    /** Creates an IptcReader for the given IPTC data segment. */
+    public IptcReader(@Nullable byte[] data)
     {
         _data = data;
     }
 
-    /**
-     * Performs the Exif data extraction, adding found values to the specified
-     * instance of <code>Metadata</code>.
-     */
-    public void extract(Metadata metadata)
+    /** Performs the Exif data extraction, adding found values to the specified instance of <code>Metadata</code>. */
+    public void extract(@NotNull Metadata metadata)
     {
         if (_data == null)
             return;
@@ -145,11 +116,13 @@ public class IptcReader implements MetadataReader
 
     /**
      * Returns an int calculated from two bytes of data at the specified offset (MSB, LSB).
+     *
      * @param offset position within the data buffer to read first byte
      * @return the 32 bit int value, between 0x0000 and 0xFFFF
      */
     private int get32Bits(int offset) throws MetadataException
     {
+        assert (_data != null);
         if (offset >= _data.length) {
             throw new MetadataException("Attempt to read bytes from outside Iptc data buffer");
         }
@@ -160,7 +133,7 @@ public class IptcReader implements MetadataReader
      * This method serves as marshaller of objects for dataset. It converts from IPTC
      * octets to relevant java object.
      */
-    private void processTag(Directory directory, int directoryType, int tagType, int offset, int tagByteCount)
+    private void processTag(@NotNull Directory directory, int directoryType, int tagType, int offset, int tagByteCount)
     {
         int tagIdentifier = tagType | (directoryType << 8);
 
@@ -213,13 +186,8 @@ public class IptcReader implements MetadataReader
 
         if (directory.containsTag(tagIdentifier)) {
             // this fancy string[] business avoids using an ArrayList for performance reasons
-            String[] oldStrings;
+            String[] oldStrings = directory.getStringArray(tagIdentifier);
             String[] newStrings;
-            try {
-                oldStrings = directory.getStringArray(tagIdentifier);
-            } catch (MetadataException e) {
-                oldStrings = null;
-            }
             if (oldStrings == null) {
                 newStrings = new String[1];
             } else {

@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -35,24 +36,29 @@ public class JpegCommentDirectory extends Directory
      * This value does not apply to a particular standard. Rather, this value has been fabricated to maintain
      * consistency with other directory types.
      */
-	public static final int TAG_JPEG_COMMENT = 0;
+    public static final int TAG_JPEG_COMMENT = 0;
 
-	protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-	static
-    {
+    static {
         _tagNameMap.put(TAG_JPEG_COMMENT, "Jpeg Comment");
-	}
+    }
 
-    public JpegCommentDirectory() {
-		this.setDescriptor(new JpegCommentDescriptor(this));
-	}
+    public JpegCommentDirectory()
+    {
+        this.setDescriptor(new JpegCommentDescriptor(this));
+    }
 
-	public String getName() {
-		return "JpegComment";
-	}
+    @NotNull
+    public String getName()
+    {
+        return "JpegComment";
+    }
 
-	protected HashMap<Integer, String> getTagNameMap() {
-		return _tagNameMap;
-	}
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
+    {
+        return _tagNameMap;
+    }
 }

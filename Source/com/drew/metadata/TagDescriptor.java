@@ -20,6 +20,9 @@
  */
 package com.drew.metadata;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -31,11 +34,10 @@ import java.io.Serializable;
  */
 public abstract class TagDescriptor implements Serializable
 {
-    // TODO getDescription should return null instead of throwing MetadataException
-    
+    @NotNull
     protected final Directory _directory;
 
-    public TagDescriptor(Directory directory)
+    public TagDescriptor(@NotNull Directory directory)
     {
         _directory = directory;
     }
@@ -43,12 +45,13 @@ public abstract class TagDescriptor implements Serializable
     /**
      * Returns a descriptive value of the the specified tag for this image.
      * Where possible, known values will be substituted here in place of the raw
-     * tokens actually kept in the Exif segment.  If no substitution is
-     * available, the value provided by getString(int) will be returned.
+     * tokens actually kept in the metadata segment.  If no substitution is
+     * available, the value provided by <code>getString(tagType)</code> will be returned.
      * 
      * @param tagType the tag to find a description for
      * @return a description of the image's value for the specified tag, or
      *         <code>null</code> if the tag hasn't been defined.
      */
-    public abstract String getDescription(int tagType) throws MetadataException;
+    @Nullable
+    public abstract String getDescription(int tagType);
 }

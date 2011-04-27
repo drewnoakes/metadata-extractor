@@ -21,8 +21,9 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -32,12 +33,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class GpsDescriptor extends TagDescriptor
 {
-    public GpsDescriptor(Directory directory)
+    public GpsDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case GpsDirectory.TAG_GPS_ALTITUDE:
@@ -75,24 +77,26 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    public String getGpsLatitudeDescription() throws MetadataException
+    @Nullable
+    public String getGpsLatitudeDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_LATITUDE)) return null;
         return getDegreesMinutesSecondsDescription(GpsDirectory.TAG_GPS_LATITUDE);
     }
 
-    public String getGpsLongitudeDescription() throws MetadataException
+    @Nullable
+    public String getGpsLongitudeDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE)) return null;
         return getDegreesMinutesSecondsDescription(GpsDirectory.TAG_GPS_LONGITUDE);
     }
 
-    public String getGpsTimeStampDescription() throws MetadataException
+    @Nullable
+    public String getGpsTimeStampDescription()
     {
         // time in hour, min, sec
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_TIME_STAMP)) return null;
         int[] timeComponents = _directory.getIntArray(GpsDirectory.TAG_GPS_TIME_STAMP);
-        StringBuffer description = new StringBuffer();
+        if (timeComponents==null)
+            return null;
+        StringBuilder description = new StringBuilder();
         description.append(timeComponents[0]);
         description.append(":");
         description.append(timeComponents[1]);
@@ -102,31 +106,40 @@ public class GpsDescriptor extends TagDescriptor
         return description.toString();
     }
 
+    @Nullable
     public String getGpsDestinationReferenceDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF)) return null;
-        String destRef = _directory.getString(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF).trim();
-        if ("K".equalsIgnoreCase(destRef)) {
+        final String value = _directory.getString(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF);
+        if (value==null)
+            return null;
+        String distanceRef = value.trim();
+        if ("K".equalsIgnoreCase(distanceRef)) {
             return "kilometers";
-        } else if ("M".equalsIgnoreCase(destRef)) {
+        } else if ("M".equalsIgnoreCase(distanceRef)) {
             return "miles";
-        } else if ("N".equalsIgnoreCase(destRef)) {
+        } else if ("N".equalsIgnoreCase(distanceRef)) {
             return "knots";
         } else {
-            return "Unknown (" + destRef + ")";
+            return "Unknown (" + distanceRef + ")";
         }
     }
 
+    @Nullable
     public String getGpsDirectionDescription(int tagType)
     {
-        if (!_directory.containsTag(tagType)) return null;
-        return _directory.getString(tagType).trim() + " degrees";
+        final String value = _directory.getString(tagType);
+        if (value==null)
+            return null;
+        return value.trim() + " degrees";
     }
 
+    @Nullable
     public String getGpsDirectionReferenceDescription(int tagType)
     {
-        if (!_directory.containsTag(tagType)) return null;
-        String gpsDistRef = _directory.getString(tagType).trim();
+        final String value = _directory.getString(tagType);
+        if (value==null)
+            return null;
+        String gpsDistRef = value.trim();
         if ("T".equalsIgnoreCase(gpsDistRef)) {
             return "True direction";
         } else if ("M".equalsIgnoreCase(gpsDistRef)) {
@@ -136,10 +149,13 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getGpsSpeedRefDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_SPEED_REF)) return null;
-        String gpsSpeedRef = _directory.getString(GpsDirectory.TAG_GPS_SPEED_REF).trim();
+        final String value = _directory.getString(GpsDirectory.TAG_GPS_SPEED_REF);
+        if (value==null)
+            return null;
+        String gpsSpeedRef = value.trim();
         if ("K".equalsIgnoreCase(gpsSpeedRef)) {
             return "kph";
         } else if ("M".equalsIgnoreCase(gpsSpeedRef)) {
@@ -151,10 +167,13 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getGpsMeasureModeDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_MEASURE_MODE)) return null;
-        String gpsSpeedMeasureMode = _directory.getString(GpsDirectory.TAG_GPS_MEASURE_MODE).trim();
+        final String value = _directory.getString(GpsDirectory.TAG_GPS_MEASURE_MODE);
+        if (value==null)
+            return null;
+        String gpsSpeedMeasureMode = value.trim();
         if ("2".equalsIgnoreCase(gpsSpeedMeasureMode)) {
             return "2-dimensional measurement";
         } else if ("3".equalsIgnoreCase(gpsSpeedMeasureMode)) {
@@ -164,10 +183,13 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getGpsStatusDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_STATUS)) return null;
-        String gpsStatus = _directory.getString(GpsDirectory.TAG_GPS_STATUS).trim();
+        final String value = _directory.getString(GpsDirectory.TAG_GPS_STATUS);
+        if (value==null)
+            return null;
+        String gpsStatus = value.trim();
         if ("A".equalsIgnoreCase(gpsStatus)) {
             return "Active (Measurement in progress)";
         } else if ("V".equalsIgnoreCase(gpsStatus)) {
@@ -177,45 +199,57 @@ public class GpsDescriptor extends TagDescriptor
         }
     }
 
-    public String getGpsAltitudeRefDescription() throws MetadataException
+    @Nullable
+    public String getGpsAltitudeRefDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_ALTITUDE_REF)) return null;
-        int altitudeRef = _directory.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
-        if (altitudeRef == 0)
+        Integer value = _directory.getInteger(GpsDirectory.TAG_GPS_ALTITUDE_REF);
+        if (value==null)
+            return null;
+        if (value == 0)
             return "Sea level";
-        if (altitudeRef == 1)
+        if (value == 1)
             return "Below sea level";
-        return "Unknown (" + altitudeRef + ")";
+        return "Unknown (" + value + ")";
     }
 
-    public String getGpsAltitudeDescription() throws MetadataException
+    @Nullable
+    public String getGpsAltitudeDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_ALTITUDE)) return null;
-//      String altitude = _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE).toSimpleString(true);
-        return "" + _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE).intValue() + " metres";
+        final Rational value = _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE);
+        if (value==null)
+            return null;
+        return value.intValue() + " metres";
     }
 
-    public String getGpsDifferentialDescription() throws MetadataException
+    @Nullable
+    public String getGpsDifferentialDescription()
     {
-        if (!_directory.containsTag(GpsDirectory.TAG_GPS_DIFFERENTIAL)) return null;
-        int differential = _directory.getInt(GpsDirectory.TAG_GPS_DIFFERENTIAL);
-        if (differential == 0)
+        final Integer value = _directory.getInteger(GpsDirectory.TAG_GPS_DIFFERENTIAL);
+        if (value==null)
+            return null;
+        if (value == 0)
             return "No Correction";
-        if (differential == 1)
+        if (value == 1)
             return "Differential Corrected";
-        return "Unknown (" + differential + ")";
+        return "Unknown (" + value + ")";
     }
 
     /**
      * New version. Should really be called getDegreesMinutesSecondsDescription
+     *
      * @author David Ekholm
      */
-    public String getDegreesMinutesSecondsDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDegreesMinutesSecondsDescription(int tagType)
     {
-        Rational[] r = _directory.getRationalArray(tagType);
-        Rational degs = r[0];
-        Rational mins = r[1];
-        Rational secs = r[2];
+        Rational[] values = _directory.getRationalArray(tagType);
+
+        if (values==null)
+            return null;
+        
+        Rational degs = values[0];
+        Rational mins = values[1];
+        Rational secs = values[2];
         //System.out.println("The three rationals: " + degs + " " + mins + " " + secs);
 
         // Protect against modern Nikon software writing GPS coordinates using extremely large nominators and denominators
@@ -249,9 +283,7 @@ public class GpsDescriptor extends TagDescriptor
         return "" + degs.intValue() + "°" + mins.intValue() + "'" + secs.floatValue() + "\"";
     }
 
-    /**
-     * Greatest Common Divisor using Euclides
-     */
+    /** Greatest Common Divisor using Euclides */
     private long calcGCD(long nr1, long nr2)
     {
         long temp;
@@ -263,10 +295,9 @@ public class GpsDescriptor extends TagDescriptor
         return nr1;
     }
 
-    /**
-     * Least common denominator
-     */
-    private long calcLCD(long nr1, long nr2) {
+    /** Least common denominator */
+    private long calcLCD(long nr1, long nr2)
+    {
         return (nr1 * nr2) / calcGCD(nr1, nr2);
     }
 }

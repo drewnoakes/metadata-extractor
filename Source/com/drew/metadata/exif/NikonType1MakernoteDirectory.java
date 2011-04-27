@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -52,6 +53,7 @@ public class NikonType1MakernoteDirectory extends Directory
     public static final int TAG_NIKON_TYPE1_CONVERTER = 0x000B;
     public static final int TAG_NIKON_TYPE1_UNKNOWN_3 = 0x0F00;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -74,11 +76,13 @@ public class NikonType1MakernoteDirectory extends Directory
         this.setDescriptor(new NikonType1MakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Nikon Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

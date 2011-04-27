@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -38,12 +39,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class KyoceraMakernoteDescriptor extends TagDescriptor
 {
-    public KyoceraMakernoteDescriptor(Directory directory)
+    public KyoceraMakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case KyoceraMakernoteDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO:
@@ -55,17 +57,21 @@ public class KyoceraMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getPrintImageMatchingInfoDescription() throws MetadataException
+    @Nullable
+    public String getPrintImageMatchingInfoDescription()
     {
-        if (!_directory.containsTag(KyoceraMakernoteDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO)) return null;
         byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO);
+        if (bytes==null)
+            return null;
         return "(" + bytes.length + " bytes)";
     }
 
-    public String getProprietaryThumbnailDataDescription() throws MetadataException
+    @Nullable
+    public String getProprietaryThumbnailDataDescription()
     {
-        if (!_directory.containsTag(KyoceraMakernoteDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL)) return null;
         byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL);
+        if (bytes==null)
+            return null;
         return "(" + bytes.length + " bytes)";
     }
 }

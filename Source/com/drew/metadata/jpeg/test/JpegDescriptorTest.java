@@ -46,12 +46,7 @@ public class JpegDescriptorTest
     @Test
     public void testGetComponentDataDescription_InvalidComponentNumber() throws Exception
     {
-        try {
-            _descriptor.getComponentDataDescription(1);
-            Assert.fail("Excepted exception");
-        } catch (MetadataException e) {
-            // expect exception
-        }
+        Assert.assertNull(_descriptor.getComponentDataDescription(1));
     }
 
     @Test

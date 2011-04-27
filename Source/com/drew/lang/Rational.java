@@ -21,6 +21,9 @@
 
 package com.drew.lang;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -43,12 +46,6 @@ public class Rational extends java.lang.Number implements Serializable
      * with them!
      */
     public Rational(long numerator, long denominator)
-    {
-        _numerator = numerator;
-        _denominator = denominator;
-    }
-
-    public Rational(Integer numerator, Integer denominator)
     {
         _numerator = numerator;
         _denominator = denominator;
@@ -144,10 +141,11 @@ public class Rational extends java.lang.Number implements Serializable
     }
 
     /**
-     * Returns the reciprocal value of this obejct as a new Rational.
+     * Returns the reciprocal value of this object as a new Rational.
      *
      * @return the reciprocal in a new object
      */
+    @NotNull
     public Rational getReciprocal()
     {
         return new Rational(this._denominator, this._numerator);
@@ -166,12 +164,14 @@ public class Rational extends java.lang.Number implements Serializable
      *
      * @return a string representation of the object.
      */
+    @NotNull
     public String toString()
     {
         return _numerator + "/" + _denominator;
     }
 
     /** Returns the simplest representation of this Rational's value possible. */
+    @NotNull
     public String toSimpleString(boolean allowDecimal)
     {
         if (_denominator == 0 && _numerator != 0) {
@@ -215,11 +215,10 @@ public class Rational extends java.lang.Number implements Serializable
      * @return true if instances are mathematically equivalent, otherwise false.  Will also
      *         return false if <code>obj</code> is not an instance of <code>Rational</code>.
      */
-    public boolean equals(Object obj)
+    public boolean equals(@Nullable Object obj)
     {
-        if (!(obj instanceof Rational)) {
+        if (obj==null || !(obj instanceof Rational))
             return false;
-        }
         Rational that = (Rational) obj;
         return this.doubleValue() == that.doubleValue();
     }
@@ -254,6 +253,7 @@ public class Rational extends java.lang.Number implements Serializable
      * @return a simplified instance, or if the Rational could not be simplified,
      *         returns itself (unchanged)
      */
+    @NotNull
     public Rational getSimplifiedInstance()
     {
         if (tooComplexForSimplification()) {

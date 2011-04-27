@@ -20,6 +20,9 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +32,7 @@ import java.util.List;
  * Holds a collection of Jpeg data segments.  This need not necessarily be all segments
  * within the Jpeg.  For example, it may be convenient to store only the non-image
  * segments when analysing (or serializing) metadata.
- *
+ * <p/>
  * Segments are keyed via their segment marker (a byte).  Where multiple segments use the
  * same segment marker, they will all be stored and available.
  *
@@ -40,6 +43,7 @@ public class JpegSegmentData implements Serializable
     static final long serialVersionUID = 7110175216435025451L;
     
     /** A map of byte[], keyed by the segment marker */
+    @NotNull
     private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
 
     /**
@@ -47,7 +51,7 @@ public class JpegSegmentData implements Serializable
      * @param segmentMarker
      * @param segmentBytes
      */
-    public void addSegment(byte segmentMarker, byte[] segmentBytes)
+    public void addSegment(byte segmentMarker, @NotNull byte[] segmentBytes)
     {
         final List<byte[]> segmentList = getOrCreateSegmentList(segmentMarker);
         segmentList.add(segmentBytes);
@@ -58,6 +62,7 @@ public class JpegSegmentData implements Serializable
      * @param segmentMarker the byte identifier for the desired segment
      * @return a byte[] containing segment data or null if no data exists for that segment
      */
+    @Nullable
     public byte[] getSegment(byte segmentMarker)
     {
         return getSegment(segmentMarker, 0);
@@ -70,6 +75,7 @@ public class JpegSegmentData implements Serializable
      * @param occurrence the zero-based index of the occurrence
      * @return the segment data as a byte[], or null if no segment exists for the marker & occurrence
      */
+    @Nullable
     public byte[] getSegment(byte segmentMarker, int occurrence)
     {
         final List<byte[]> segmentList = getSegmentList(segmentMarker);
@@ -88,10 +94,7 @@ public class JpegSegmentData implements Serializable
     public int getSegmentCount(byte segmentMarker)
     {
         final List<byte[]> segmentList = getSegmentList(segmentMarker);
-        if (segmentList==null)
-            return 0;
-        else
-            return segmentList.size();
+        return segmentList == null ? 0 : segmentList.size();
     }
 
     /**
@@ -131,7 +134,7 @@ public class JpegSegmentData implements Serializable
      * @param segmentData the data to write
      * @throws IOException if problems occur while writing
      */
-    public static void toFile(File file, JpegSegmentData segmentData) throws IOException
+    public static void toFile(@NotNull File file, @NotNull JpegSegmentData segmentData) throws IOException
     {
         ObjectOutputStream outputStream = null;
         FileOutputStream fileOutputStream = null;
@@ -157,7 +160,8 @@ public class JpegSegmentData implements Serializable
      * @throws IOException if problems occur while reading
      * @throws ClassNotFoundException if problems occur while deserialising
      */
-    public static JpegSegmentData fromFile(File file) throws IOException, ClassNotFoundException
+    @NotNull
+    public static JpegSegmentData fromFile(@NotNull File file) throws IOException, ClassNotFoundException
     {
         ObjectInputStream inputStream = null;
         try
@@ -172,11 +176,13 @@ public class JpegSegmentData implements Serializable
         }
     }
 
+    @Nullable
     private List<byte[]> getSegmentList(byte segmentMarker)
     {
         return _segmentDataMap.get(new Byte(segmentMarker));
     }
 
+    @NotNull
     private List<byte[]> getOrCreateSegmentList(byte segmentMarker)
     {
         List<byte[]> segmentList;

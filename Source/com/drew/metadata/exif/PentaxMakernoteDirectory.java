@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -127,6 +128,7 @@ public class PentaxMakernoteDirectory extends Directory
      */
     public static final int TAG_PENTAX_DAYLIGHT_SAVINGS = 0x1001;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -152,11 +154,13 @@ public class PentaxMakernoteDirectory extends Directory
         this.setDescriptor(new PentaxMakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Pentax Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

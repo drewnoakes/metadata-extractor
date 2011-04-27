@@ -18,27 +18,30 @@
  *    http://drewnoakes.com/code/exif/
  *    http://code.google.com/p/metadata-extractor/
  */
+
 package com.drew.imaging.tiff;
 
 import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.annotations.Nullable;
 
 /**
  * An exception class thrown upon unexpected and fatal conditions while processing a TIFF file.
+ * 
  * @author  Darren Salomons
  */
 public class TiffProcessingException extends ImageProcessingException
 {
-    public TiffProcessingException(String message)
+    public TiffProcessingException(@Nullable String message)
     {
         super(message);
     }
 
-    public TiffProcessingException(String message, Throwable cause)
+    public TiffProcessingException(@Nullable String message, @Nullable Throwable cause)
     {
         super(message, cause);
     }
 
-    public TiffProcessingException(Throwable cause)
+    public TiffProcessingException(@Nullable Throwable cause)
     {
         super(cause);
     }

@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.jfif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.MetadataException;
 
@@ -38,6 +39,7 @@ public class JfifDirectory extends Directory
     public static final int TAG_JFIF_RESX = 8;
     public static final int TAG_JFIF_RESY = 10;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -53,11 +55,13 @@ public class JfifDirectory extends Directory
         this.setDescriptor(new JfifDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Jfif";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

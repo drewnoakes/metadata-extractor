@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -32,12 +33,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class SonyMakernoteDescriptor extends TagDescriptor
 {
-    public SonyMakernoteDescriptor(Directory directory)
+    public SonyMakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         return _directory.getString(tagType);
     }

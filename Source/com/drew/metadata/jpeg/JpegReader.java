@@ -20,14 +20,11 @@
  */
 package com.drew.metadata.jpeg;
 
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
-
-import java.io.File;
-import java.io.InputStream;
 
 /**
  * Decodes Jpeg SOF0 data, populating a <code>Metadata</code> object with tag values in a <code>JpegDirectory</code>.
@@ -36,33 +33,16 @@ import java.io.InputStream;
  */
 public class JpegReader implements MetadataReader
 {
-    /**
-     * The SOF0 data segment.
-     */
+    /** The SOF0 data segment. */
+    @Nullable
     private final byte[] _data;
 
     /**
-     * Creates a new JpegReader for the specified Jpeg jpegFile.
-     */
-    public JpegReader(File jpegFile) throws JpegProcessingException
-    {
-        this(new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_SOF0));
-    }
-
-    /**
-     * Creates a JpegReader for a JPEG stream.
-     * @param is JPEG stream. Stream will be closed.
-     */
-    public JpegReader(InputStream is) throws JpegProcessingException
-    {
-        this(new JpegSegmentReader(is).readSegment(JpegSegmentReader.SEGMENT_APPD));
-    }
-
-    /**
      * Creates a JpegReader for a byte[] containing JPEG data.
+     *
      * @param data the contents of an entire JPEG file as a byte[]
      */
-    public JpegReader(byte[] data)
+    public JpegReader(@Nullable byte[] data)
     {
         _data = data;
     }
@@ -71,9 +51,9 @@ public class JpegReader implements MetadataReader
      * Performs the Jpeg data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public void extract(Metadata metadata)
+    public void extract(@NotNull Metadata metadata)
     {
-        if (_data==null)
+        if (_data == null)
             return;
 
         JpegDirectory directory = (JpegDirectory)metadata.getDirectory(JpegDirectory.class);
@@ -100,8 +80,7 @@ public class JpegReader implements MetadataReader
             // 2 - Sampling factors: bit 0-3 vertical, 4-7 horizontal
             // 3 - Quantization table number
             int offset = 6;
-            for (int i=0; i<numberOfComponents; i++)
-            {
+            for (int i = 0; i < numberOfComponents; i++) {
                 int componentId = get16Bits(offset++);
                 int samplingFactorByte = get16Bits(offset++);
                 int quantizationTableNumber = get16Bits(offset++);
@@ -116,29 +95,29 @@ public class JpegReader implements MetadataReader
 
     /**
      * Returns an int calculated from two bytes of data at the specified offset (MSB, LSB).
+     *
      * @param offset position within the data buffer to read first byte
      * @return the 32 bit int value, between 0x0000 and 0xFFFF
      */
     private int get32Bits(int offset) throws MetadataException
     {
-        if (offset+1>=_data.length) {
+        assert(_data!=null);
+        if (offset + 1 >= _data.length)
             throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
-        }
-
         return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
     }
 
     /**
      * Returns an int calculated from one byte of data at the specified offset.
+     *
      * @param offset position within the data buffer to read byte
      * @return the 16 bit int value, between 0x00 and 0xFF
      */
     private int get16Bits(int offset) throws MetadataException
     {
-        if (offset>=_data.length) {
+        assert(_data!=null);
+        if (offset >= _data.length)
             throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
-        }
-
         return (_data[offset] & 255);
     }
 }

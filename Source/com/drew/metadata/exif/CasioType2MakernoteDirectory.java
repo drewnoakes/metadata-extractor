@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -174,11 +175,12 @@ public class CasioType2MakernoteDirectory extends Directory
      */
     public static final int TAG_CASIO_TYPE2_FILTER = 0x3017;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        // TODO add names
+        // TODO add missing names
         _tagNameMap.put(TAG_CASIO_TYPE2_THUMBNAIL_DIMENSIONS, "Thumbnail Dimensions");
         _tagNameMap.put(TAG_CASIO_TYPE2_THUMBNAIL_SIZE, "Thumbnail Size");
         _tagNameMap.put(TAG_CASIO_TYPE2_THUMBNAIL_OFFSET, "Thumbnail Offset");
@@ -214,11 +216,13 @@ public class CasioType2MakernoteDirectory extends Directory
         this.setDescriptor(new CasioType2MakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Casio Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

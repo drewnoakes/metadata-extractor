@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.MetadataException;
 
 /**
@@ -29,22 +30,23 @@ import com.drew.metadata.MetadataException;
  */
 public class DataFormat
 {
-    public static final DataFormat BYTE = new DataFormat("BYTE", 1);
-    public static final DataFormat STRING = new DataFormat("STRING", 2);
-    public static final DataFormat USHORT = new DataFormat("USHORT", 3);
-    public static final DataFormat ULONG = new DataFormat("ULONG", 4);
-    public static final DataFormat URATIONAL = new DataFormat("URATIONAL", 5);
-    public static final DataFormat SBYTE = new DataFormat("SBYTE", 6);
-    public static final DataFormat UNDEFINED = new DataFormat("UNDEFINED", 7);
-    public static final DataFormat SSHORT = new DataFormat("SSHORT", 8);
-    public static final DataFormat SLONG = new DataFormat("SLONG", 9);
-    public static final DataFormat SRATIONAL = new DataFormat("SRATIONAL", 10);
-    public static final DataFormat SINGLE = new DataFormat("SINGLE", 11);
-    public static final DataFormat DOUBLE = new DataFormat("DOUBLE", 12);
+    @NotNull public static final DataFormat BYTE = new DataFormat("BYTE", 1);
+    @NotNull public static final DataFormat STRING = new DataFormat("STRING", 2);
+    @NotNull public static final DataFormat USHORT = new DataFormat("USHORT", 3);
+    @NotNull public static final DataFormat ULONG = new DataFormat("ULONG", 4);
+    @NotNull public static final DataFormat URATIONAL = new DataFormat("URATIONAL", 5);
+    @NotNull public static final DataFormat SBYTE = new DataFormat("SBYTE", 6);
+    @NotNull public static final DataFormat UNDEFINED = new DataFormat("UNDEFINED", 7);
+    @NotNull public static final DataFormat SSHORT = new DataFormat("SSHORT", 8);
+    @NotNull public static final DataFormat SLONG = new DataFormat("SLONG", 9);
+    @NotNull public static final DataFormat SRATIONAL = new DataFormat("SRATIONAL", 10);
+    @NotNull public static final DataFormat SINGLE = new DataFormat("SINGLE", 11);
+    @NotNull public static final DataFormat DOUBLE = new DataFormat("DOUBLE", 12);
 
-    private final String myName;
-    private final int value;
+    @NotNull private final String _name;
+    private final int _value;
 
+    @NotNull
     public static DataFormat fromValue(int value) throws MetadataException
     {
         switch (value)
@@ -66,19 +68,20 @@ public class DataFormat
         throw new MetadataException("value '"+value+"' does not represent a known data format.");
     }
 
-    private DataFormat(String name, int value)
+    private DataFormat(@NotNull String name, int value)
     {
-        myName = name;
-        this.value = value;
+        _name = name;
+        _value = value;
     }
 
     public int getValue()
     {
-        return value;
+        return _value;
     }
 
+    @NotNull
     public String toString()
     {
-        return myName;
+        return _name;
     }
 }

@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -32,12 +33,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class JpegDescriptor extends TagDescriptor
 {
-    public JpegDescriptor(Directory directory)
+    public JpegDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType)
         {
@@ -62,11 +64,12 @@ public class JpegDescriptor extends TagDescriptor
         return _directory.getString(tagType);
     }
 
-    public String getImageCompressionTypeDescription() throws MetadataException
+    @Nullable
+    public String getImageCompressionTypeDescription()
     {
-        if (!_directory.containsTag(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE))
+        Integer value = _directory.getInteger(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE);
+        if (value==null)
             return null;
-        int value = _directory.getInt(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE);
         switch (value) {
             case 0: return "Baseline";
             case 1: return "Extended sequential, Huffman";
@@ -86,36 +89,49 @@ public class JpegDescriptor extends TagDescriptor
                 return "Unknown type: "+ value;
         }
     }
+    @Nullable
     public String getImageWidthDescription()
     {
-        return _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH) + " pixels";
+        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
+        if (value==null)
+            return null;
+        return value + " pixels";
     }
 
+    @Nullable
     public String getImageHeightDescription()
     {
-        return _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT) + " pixels";
+        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
+        if (value==null)
+            return null;
+        return value + " pixels";
     }
 
+    @Nullable
     public String getDataPrecisionDescription()
     {
-        return _directory.getString(JpegDirectory.TAG_JPEG_DATA_PRECISION) + " bits";
+        final String value = _directory.getString(JpegDirectory.TAG_JPEG_DATA_PRECISION);
+        if (value==null)
+            return null;
+        return value + " bits";
     }
 
-    public String getComponentDataDescription(int componentNumber) throws MetadataException
+    @Nullable
+    public String getComponentDataDescription(int componentNumber)
     {
-        JpegComponent component = ((JpegDirectory)_directory).getComponent(componentNumber);
+        JpegComponent value = ((JpegDirectory)_directory).getComponent(componentNumber);
 
-        if (component==null)
-            throw new MetadataException("No Jpeg component exists with number " + componentNumber);
+        if (value==null)
+            return null;
 
-        StringBuffer sb = new StringBuffer();
-        sb.append(component.getComponentName());
+        StringBuilder sb = new StringBuilder();
+        sb.append(value.getComponentName());
         sb.append(" component: Quantization table ");
-        sb.append(component.getQuantizationTableNumber());
+        sb.append(value.getQuantizationTableNumber());
         sb.append(", Sampling factors ");
-        sb.append(component.getHorizontalSamplingFactor());
+        sb.append(value.getHorizontalSamplingFactor());
         sb.append(" horiz/");
-        sb.append(component.getVerticalSamplingFactor());
+        sb.append(value.getVerticalSamplingFactor());
         sb.append(" vert");
         return sb.toString();
     }

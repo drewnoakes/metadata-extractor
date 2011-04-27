@@ -20,6 +20,8 @@
  */
 package com.drew.metadata;
 
+import com.drew.lang.annotations.NotNull;
+
 /**
  * Interface through which all classes responsible for decoding a particular type of metadata may be called.
  * Note that the data source is not specified on this interface.  Instead it is suggested that implementations
@@ -35,5 +37,5 @@ public interface MetadataReader
      * Extract metadata from the source and merge it into an existing Metadata object.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extract(Metadata metadata);
+    public void extract(@NotNull Metadata metadata);
 }

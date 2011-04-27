@@ -21,8 +21,9 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
@@ -36,17 +37,19 @@ import java.text.DecimalFormat;
  */
 public class NikonType2MakernoteDescriptor extends TagDescriptor
 {
-    public NikonType2MakernoteDescriptor(Directory directory)
+    public NikonType2MakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
+    @NotNull
     private NikonType2MakernoteDirectory getMakernoteDirectory()
     {
         return (NikonType2MakernoteDirectory)_directory;
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType)
         {
@@ -71,10 +74,12 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getAutoFocusPositionDescription() throws MetadataException
+    @Nullable
+    public String getAutoFocusPositionDescription()
     {
-        if (!_directory.containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION)) return null;
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION);
+        if (values==null)
+            return null;
         if (values.length != 4 || values[0] != 0 || values[2] != 0 || values[3] != 0) {
             return "Unknown (" + _directory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION) + ")";
         }
@@ -94,27 +99,30 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getDigitalZoomDescription() throws MetadataException
+    @Nullable
+    public String getDigitalZoomDescription()
     {
-        if (!_directory.containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_DIGITAL_ZOOM)) return null;
-        Rational rational = _directory.getRational(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_DIGITAL_ZOOM);
-        if (rational.intValue() == 1) {
-            return "No digital zoom";
-        }
-        return rational.toSimpleString(true) + "x digital zoom";
+        Rational value = _directory.getRational(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_DIGITAL_ZOOM);
+        if (value==null)
+            return null;
+        return value.intValue() == 1
+                ? "No digital zoom"
+                : value.toSimpleString(true) + "x digital zoom";
     }
 
-    public String getIsoSettingDescription() throws MetadataException
+    @Nullable
+    public String getIsoSettingDescription()
     {
-        if (!_directory.containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_1)) return null;
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_1);
-        if (values[0] != 0 || values[1] == 0) {
+        if (values==null)
+            return null;
+        if (values[0] != 0 || values[1] == 0)
             return "Unknown (" + _directory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_1) + ")";
-        }
         return "ISO " + values[1];
     }
 
-    public String getAutoFlashCompensationDescription() throws MetadataException
+    @NotNull
+    public String getAutoFlashCompensationDescription()
     {
         Rational ev = getMakernoteDirectory().getAutoFlashCompensation();
 
@@ -125,54 +133,55 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor
         return decimalFormat.format(ev.floatValue()) + " EV";
     }
 
-    public String getLensDescription() throws MetadataException
+    @Nullable
+    public String getLensDescription()
     {
-        if (!_directory.containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS))
+        Rational[] values = _directory.getRationalArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS);
+
+        if (values==null)
             return null;
 
-        Rational[] lensValues = _directory.getRationalArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS);
-
-        if (lensValues.length!=4)
+        if (values.length!=4)
             return _directory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS);
 
-        StringBuffer description = new StringBuffer();
-        description.append(lensValues[0].intValue());
+        StringBuilder description = new StringBuilder();
+        description.append(values[0].intValue());
         description.append('-');
-        description.append(lensValues[1].intValue());
+        description.append(values[1].intValue());
         description.append("mm f/");
-        description.append(lensValues[2].floatValue());
+        description.append(values[2].floatValue());
         description.append('-');
-        description.append(lensValues[3].floatValue());
+        description.append(values[3].floatValue());
 
         return description.toString();
     }
 
+    @Nullable
     public String getHueAdjustmentDescription()
     {
-        if (!_directory.containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT))
+        final String value = _directory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT);
+        if (value==null)
             return null;
-
-        return _directory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT) + " degrees";
+        return value + " degrees";
     }
 
+    @Nullable
     public String getColorModeDescription()
     {
-        if (!_directory.containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE))
+        String value = _directory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE);
+        if (value==null)
             return null;
-
-        String raw = _directory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE);
-        if (raw.startsWith("MODE1"))
+        if (value.startsWith("MODE1"))
             return "Mode I (sRGB)";
-
-        return raw;
+        return value;
     }
 
-    public String getAutoFirmwareVersionDescription() throws MetadataException
+    @Nullable
+    public String getAutoFirmwareVersionDescription()
     {
-        if (!_directory.containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION))
+        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION);
+        if (values==null)
             return null;
-
-        int[] ints = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION);
-        return ExifDescriptor.convertBytesToVersionString(ints);
+        return ExifDescriptor.convertBytesToVersionString(values);
     }
 }

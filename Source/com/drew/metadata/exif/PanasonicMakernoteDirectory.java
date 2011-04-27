@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_PANASONIC_RECORD_MODE = 0x001F;
     public static final int TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -62,11 +64,13 @@ public class PanasonicMakernoteDirectory extends Directory
         this.setDescriptor(new PanasonicMakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Panasonic Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

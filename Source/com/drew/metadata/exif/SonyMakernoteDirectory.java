@@ -20,13 +20,14 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
 /**
  * Describes tags specific to Sony cameras.
- *
+ * <p/>
  * At present, this class doesn't define any tags.  If you are able to decode some of the Sony
  * tags, please feel free to provide a patched version of this class ;)
  *
@@ -34,20 +35,23 @@ import java.util.HashMap;
  */
 public class SonyMakernoteDirectory extends Directory
 {
-	protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     public SonyMakernoteDirectory()
     {
         this.setDescriptor(new SonyMakernoteDescriptor(this));
     }
 
-	public String getName()
+    @NotNull
+    public String getName()
     {
-		return "Sony Makernote";
-	}
+        return "Sony Makernote";
+    }
 
-	protected HashMap<Integer, String> getTagNameMap()
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
     {
-		return _tagNameMap;
-	}
+        return _tagNameMap;
+    }
 }

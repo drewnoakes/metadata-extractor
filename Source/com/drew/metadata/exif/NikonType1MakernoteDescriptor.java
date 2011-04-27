@@ -21,16 +21,17 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
  * Provides human-readable string representations of tag values stored in a <code>NikonType1MakernoteDirectory</code>.
- *
+ * <p/>
  * Type-1 is for E-Series cameras prior to (not including) E990.  For example: E700, E800, E900,
  * E900S, E910, E950.
- *
+ * <p/>
  * MakerNote starts from ASCII string "Nikon". Data format is the same as IFD, but it starts from
  * offset 0x08. This is the same as Olympus except start string. Example of actual data
  * structure is shown below.
@@ -43,12 +44,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class NikonType1MakernoteDescriptor extends TagDescriptor
 {
-    public NikonType1MakernoteDescriptor(Directory directory)
+    public NikonType1MakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY:
@@ -72,10 +74,12 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getConverterDescription() throws MetadataException
+    @Nullable
+    public String getConverterDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER)) return null;
-        int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER);
+        if (value == null)
+            return null;
         switch (value) {
             case 0:
                 return "None";
@@ -86,30 +90,36 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getDigitalZoomDescription() throws MetadataException
+    @Nullable
+    public String getDigitalZoomDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM)) return null;
         Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM);
+        if (value == null)
+            return null;
         if (value.getNumerator() == 0) {
             return "No digital zoom";
         }
         return value.toSimpleString(true) + "x digital zoom";
     }
 
-    public String getFocusDescription() throws MetadataException
+    @Nullable
+    public String getFocusDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS)) return null;
         Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS);
+        if (value == null)
+            return null;
         if (value.getNumerator() == 1 && value.getDenominator() == 0) {
             return "Infinite";
         }
         return value.toSimpleString(true);
     }
 
-    public String getWhiteBalanceDescription() throws MetadataException
+    @Nullable
+    public String getWhiteBalanceDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE)) return null;
-        int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE);
+        if (value == null)
+            return null;
         switch (value) {
             case 0:
                 return "Auto";
@@ -130,10 +140,12 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getCcdSensitivityDescription() throws MetadataException
+    @Nullable
+    public String getCcdSensitivityDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY)) return null;
-        int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY);
+        if (value == null)
+            return null;
         switch (value) {
             case 0:
                 return "ISO80";
@@ -148,10 +160,12 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getImageAdjustmentDescription() throws MetadataException
+    @Nullable
+    public String getImageAdjustmentDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT)) return null;
-        int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT);
+        if (value == null)
+            return null;
         switch (value) {
             case 0:
                 return "Normal";
@@ -168,10 +182,12 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getColorModeDescription() throws MetadataException
+    @Nullable
+    public String getColorModeDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE)) return null;
-        int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE);
+        if (value == null)
+            return null;
         switch (value) {
             case 1:
                 return "Color";
@@ -182,10 +198,12 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getQualityDescription() throws MetadataException
+    @Nullable
+    public String getQualityDescription()
     {
-        if (!_directory.containsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY)) return null;
-        int value = _directory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY);
+        if (value == null)
+            return null;
         switch (value) {
             case 1:
                 return "VGA Basic";

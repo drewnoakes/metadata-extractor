@@ -43,6 +43,8 @@
  */
 package com.drew.metadata;
 
+import com.drew.lang.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,20 +61,15 @@ import java.util.Iterator;
  */
 public final class Metadata implements Serializable
 {
-    private final HashMap<Class, Directory> _directoryByClass;
+    @NotNull
+    private final HashMap<Class, Directory> _directoryByClass = new HashMap<Class, Directory>();
 
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes
      * creation of an Iterator and counting tags simple.
      */
-    private final ArrayList<Directory> _directoryList;
-
-    /** Creates a new instance of Metadata. */
-    public Metadata()
-    {
-        _directoryByClass = new HashMap<Class, Directory>();
-        _directoryList = new ArrayList<Directory>();
-    }
+    @NotNull
+    private final ArrayList<Directory> _directoryList = new ArrayList<Directory>();
 
 // OTHER METHODS
 
@@ -85,6 +82,7 @@ public final class Metadata implements Serializable
      * @deprecated Use getDirectories() instead
      */
     @Deprecated
+    @NotNull
     public Iterator<Directory> getDirectoryIterator()
     {
         return _directoryList.iterator();
@@ -95,6 +93,7 @@ public final class Metadata implements Serializable
      *
      * @return an iterable collection of directories
      */
+    @NotNull
     public Iterable<Directory> getDirectories()
     {
         return _directoryList;
@@ -118,7 +117,8 @@ public final class Metadata implements Serializable
      * @param type the type of the Directory implementation required.
      * @return a directory of the specified type.
      */
-    public Directory getDirectory(Class<? extends Directory> type)
+    @NotNull
+    public Directory getDirectory(@NotNull Class<? extends Directory> type)
     {
         // TODO make one method getDirectory and another getOrCreateDirectory as this method is confusingly named
 

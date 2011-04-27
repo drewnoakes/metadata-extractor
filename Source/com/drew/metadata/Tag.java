@@ -20,6 +20,9 @@
  */
 package com.drew.metadata;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -31,9 +34,10 @@ import java.io.Serializable;
 public class Tag implements Serializable
 {
     private final int _tagType;
+    @NotNull
     private final Directory _directory;
 
-    public Tag(int tagType, Directory directory)
+    public Tag(int tagType, @NotNull Directory directory)
     {
         _tagType = tagType;
         _directory = directory;
@@ -55,6 +59,7 @@ public class Tag implements Serializable
      *
      * @return the tag type as a string in hexadecimal notation
      */
+    @NotNull
     public String getTagTypeHex()
     {
         String hex = Integer.toHexString(_tagType);
@@ -68,6 +73,7 @@ public class Tag implements Serializable
      *
      * @return a description of the tag's value
      */
+    @Nullable
     public String getDescription() throws MetadataException
     {
         return _directory.getDescription(_tagType);
@@ -79,6 +85,7 @@ public class Tag implements Serializable
      *
      * @return the tag's name
      */
+    @NotNull
     public String getTagName()
     {
         return _directory.getTagName(_tagType);
@@ -90,6 +97,7 @@ public class Tag implements Serializable
      *
      * @return name of the directory in which this tag exists
      */
+    @NotNull
     public String getDirectoryName()
     {
         return _directory.getName();
@@ -101,6 +109,7 @@ public class Tag implements Serializable
      *
      * @return the tag's type and value
      */
+    @NotNull
     public String toString()
     {
         String description;

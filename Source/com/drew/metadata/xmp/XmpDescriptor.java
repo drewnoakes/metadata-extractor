@@ -22,8 +22,9 @@ package com.drew.metadata.xmp;
 
 import com.drew.imaging.PhotographicConversions;
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
@@ -38,15 +39,16 @@ public class XmpDescriptor extends TagDescriptor
 {
     // TODO some of these methods look similar to those found in ExifDescriptor... extract common functionality from both
 
+    @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
 
-    public XmpDescriptor(Directory directory)
+    public XmpDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
     /** Do some simple formatting, dependant upon tagType */
-    public String getDescription(int tagType) throws MetadataException
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case XmpDirectory.TAG_MAKE:
@@ -75,20 +77,26 @@ public class XmpDescriptor extends TagDescriptor
     }
 
     /** Do a simple formatting like ExifDescriptor.java */
+    @Nullable
     public String getExposureTimeDescription()
     {
-        if (!_directory.containsTag(XmpDirectory.TAG_EXPOSURE_TIME)) return null;
-        return _directory.getString(XmpDirectory.TAG_EXPOSURE_TIME) + " sec";
+        final String value = _directory.getString(XmpDirectory.TAG_EXPOSURE_TIME);
+        if (value==null)
+            return null;
+        return value + " sec";
     }
 
     /** This code is from ExifDescriptor.java */
-    public String getExposureProgramDescription() throws MetadataException
+    @Nullable
+    public String getExposureProgramDescription()
     {
-        if (!_directory.containsTag(XmpDirectory.TAG_EXPOSURE_PROG)) return null;
         // '1' means manual control, '2' program normal, '3' aperture priority,
         // '4' shutter priority, '5' program creative (slow program),
         // '6' program action(high-speed program), '7' portrait mode, '8' landscape mode.
-        switch (_directory.getInt(XmpDirectory.TAG_EXPOSURE_PROG)) {
+        final Integer value = _directory.getInteger(XmpDirectory.TAG_EXPOSURE_PROG);
+        if (value==null)
+            return null;
+        switch (value) {
             case 1:
                 return "Manual control";
             case 2:
@@ -106,54 +114,62 @@ public class XmpDescriptor extends TagDescriptor
             case 8:
                 return "Landscape mode";
             default:
-                return "Unknown program (" + _directory.getInt(XmpDirectory.TAG_EXPOSURE_PROG) + ")";
+                return "Unknown program (" + value + ")";
         }
     }
 
 
     /** This code is from ExifDescriptor.java */
-    public String getShutterSpeedDescription() throws MetadataException
+    @Nullable
+    public String getShutterSpeedDescription()
     {
-        if (!_directory.containsTag(XmpDirectory.TAG_SHUTTER_SPEED)) return null;
-        float apexValue = _directory.getFloat(XmpDirectory.TAG_SHUTTER_SPEED);
+        final Float value = _directory.getFloatObject(XmpDirectory.TAG_SHUTTER_SPEED);
+        if (value==null)
+            return null;
 
         // thanks to Mark Edwards for spotting and patching a bug in the calculation of this
         // description (spotted bug using a Canon EOS 300D)
         // thanks also to Gli Blr for spotting this bug
-        if (apexValue <= 1) {
-            float apexPower = (float) (1 / (Math.exp(apexValue * Math.log(2))));
+        if (value <= 1) {
+            float apexPower = (float) (1 / (Math.exp(value * Math.log(2))));
             long apexPower10 = Math.round((double) apexPower * 10.0);
             float fApexPower = (float) apexPower10 / 10.0f;
             return fApexPower + " sec";
         } else {
-            int apexPower = (int) ((Math.exp(apexValue * Math.log(2))));
+            int apexPower = (int) ((Math.exp(value * Math.log(2))));
             return "1/" + apexPower + " sec";
         }
     }
 
     /** Do a simple formatting like ExifDescriptor.java */
-    public String getFNumberDescription() throws MetadataException
+    @Nullable
+    public String getFNumberDescription()
     {
-        if (!_directory.containsTag(XmpDirectory.TAG_F_NUMBER)) return null;
-        Rational fNumber = _directory.getRational(XmpDirectory.TAG_F_NUMBER);
-        return "F" + SimpleDecimalFormatter.format(fNumber.doubleValue());
+        final Rational value = _directory.getRational(XmpDirectory.TAG_F_NUMBER);
+        if (value==null)
+            return null;
+        return "F" + SimpleDecimalFormatter.format(value.doubleValue());
     }
 
     /** This code is from ExifDescriptor.java */
-    public String getFocalLengthDescription() throws MetadataException
+    @Nullable
+    public String getFocalLengthDescription()
     {
-        if (!_directory.containsTag(XmpDirectory.TAG_FOCAL_LENGTH)) return null;
+        final Rational value = _directory.getRational(XmpDirectory.TAG_FOCAL_LENGTH);
+        if (value==null)
+            return null;
         java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
-        Rational focalLength = _directory.getRational(XmpDirectory.TAG_FOCAL_LENGTH);
-        return formatter.format(focalLength.doubleValue()) + " mm";
+        return formatter.format(value.doubleValue()) + " mm";
     }
 
     /** This code is from ExifDescriptor.java */
-    public String getApertureValueDescription() throws MetadataException
+    @Nullable
+    public String getApertureValueDescription()
     {
-        if (!_directory.containsTag(XmpDirectory.TAG_APERTURE_VALUE)) return null;
-        double aperture = _directory.getDouble(XmpDirectory.TAG_APERTURE_VALUE);
-        double fStop = PhotographicConversions.apertureToFStop(aperture);
+        final Double value = _directory.getDoubleObject(XmpDirectory.TAG_APERTURE_VALUE);
+        if (value==null)
+            return null;
+        double fStop = PhotographicConversions.apertureToFStop(value);
         return "F" + SimpleDecimalFormatter.format(fStop);
     }
 }

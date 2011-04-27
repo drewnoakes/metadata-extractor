@@ -25,15 +25,12 @@ import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.properties.XMPPropertyInfo;
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.Calendar;
 
 /**
@@ -55,35 +52,11 @@ public class XmpReader implements MetadataReader
     private static final String SCHEMA_EXIF_ADDITIONAL_PROPERTIES = "http://ns.adobe.com/exif/1.0/aux/";
     private static final String SCHEMA_EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
 
+    @Nullable
     private final byte[] _data;
 
-    /** Creates an XmpReader for a JpegSegmentData object. */
-    @Deprecated
-    public XmpReader(JpegSegmentData segmentData)
-    {
-        this(segmentData.getSegment(JpegSegmentReader.SEGMENT_APP1, 1));
-    }
-
-    /** Creates an XmpReader for a Jpeg file. */
-    @Deprecated
-    public XmpReader(File file) throws JpegProcessingException
-    {
-        this(new JpegSegmentReader(file).readSegment(JpegSegmentReader.SEGMENT_APP1, 1));
-    }
-
-    /**
-     * Creates an XmpReader for a Jpeg stream.
-     *
-     * @param is JPEG stream. Stream will be closed.
-     */
-    @Deprecated
-    public XmpReader(InputStream is) throws JpegProcessingException
-    {
-        this(new JpegSegmentReader(is).readSegment(JpegSegmentReader.SEGMENT_APP1, 1));
-    }
-
     /** Creates an XmpReader for the given JPEG header segment. */
-    public XmpReader(byte[] data)
+    public XmpReader(@Nullable byte[] data)
     {
         _data = data;
     }
@@ -92,7 +65,7 @@ public class XmpReader implements MetadataReader
      * Performs the XMP data extraction, adding found values to the specified instance of <code>Metadata</code>.
      * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit)
      */
-    public void extract(Metadata metadata)
+    public void extract(@NotNull Metadata metadata)
     {
         if (_data == null)
             return;
@@ -153,7 +126,7 @@ public class XmpReader implements MetadataReader
     }
 
     /** Reads an property value with given namespace URI and property name. Add property value to directory if exists */
-    private void processXmpTag(XMPMeta meta, XmpDirectory directory, String schemaNS, String propName, int tagType, int formatCode) throws XMPException
+    private void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType, int formatCode) throws XMPException
     {
         String property = meta.getPropertyString(schemaNS, propName);
 
@@ -185,7 +158,7 @@ public class XmpReader implements MetadataReader
         }
     }
 
-    void processXmpDateTag(XMPMeta meta, XmpDirectory directory, String schemaNS, String propName, int tagType) throws XMPException
+    void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
     {
         Calendar cal = meta.getPropertyCalendar(schemaNS, propName);
 

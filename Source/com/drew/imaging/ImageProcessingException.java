@@ -21,25 +21,26 @@
 package com.drew.imaging;
 
 import com.drew.lang.CompoundException;
+import com.drew.lang.annotations.Nullable;
 
 /**
- * An exception class thrown upon unexpected and fatal for generic image exception
+ * An exception class thrown upon an unexpected condition that was fatal for the processing of an image.
  * 
  * @author Drew Noakes http://drewnoakes.com
  */
 public class ImageProcessingException extends CompoundException
 {
-    public ImageProcessingException(String message)
+    public ImageProcessingException(@Nullable String message)
     {
         super(message);
     }
 
-    public ImageProcessingException(String message, Throwable cause)
+    public ImageProcessingException(@Nullable String message, @Nullable Throwable cause)
     {
         super(message, cause);
     }
 
-    public ImageProcessingException(Throwable cause)
+    public ImageProcessingException(@Nullable Throwable cause)
     {
         super(cause);
     }

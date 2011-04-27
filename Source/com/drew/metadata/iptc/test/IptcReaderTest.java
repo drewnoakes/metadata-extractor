@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.iptc.test;
 
+import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -39,7 +40,7 @@ public class IptcReaderTest
     public void testDescription_City() throws Exception
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
-        MetadataReader reader = new IptcReader(iptcFile);
+        MetadataReader reader = new IptcReader(new JpegSegmentReader(iptcFile).readSegment(JpegSegmentReader.SEGMENT_APPD));
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
@@ -51,7 +52,7 @@ public class IptcReaderTest
     public void testDescription_Caption() throws Exception
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
-        MetadataReader reader = new IptcReader(iptcFile);
+        MetadataReader reader = new IptcReader(new JpegSegmentReader(iptcFile).readSegment(JpegSegmentReader.SEGMENT_APPD));
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
@@ -63,7 +64,7 @@ public class IptcReaderTest
     public void testDescription_Category() throws Exception
     {
         File iptcFile = new File("Source/com/drew/metadata/iptc/test/withIptc.jpg");
-        MetadataReader reader = new IptcReader(iptcFile);
+        MetadataReader reader = new IptcReader(new JpegSegmentReader(iptcFile).readSegment(JpegSegmentReader.SEGMENT_APPD));
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));

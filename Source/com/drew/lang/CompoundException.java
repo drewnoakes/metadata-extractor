@@ -20,6 +20,9 @@
  */
 package com.drew.lang;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -32,32 +35,35 @@ import java.io.PrintWriter;
  */
 public class CompoundException extends Exception
 {
+    @Nullable
     private final Throwable _innerException;
 
-    public CompoundException(String msg)
+    public CompoundException(@Nullable String msg)
     {
         this(msg, null);
     }
 
-    public CompoundException(Throwable exception)
+    public CompoundException(@Nullable Throwable exception)
     {
         this(null, exception);
     }
 
-    public CompoundException(String msg, Throwable innerException)
+    public CompoundException(@Nullable String msg, @Nullable Throwable innerException)
     {
         super(msg);
         _innerException = innerException;
     }
 
+    @Nullable
     public Throwable getInnerException()
     {
         return _innerException;
     }
 
+    @NotNull
     public String toString()
     {
-        StringBuffer string = new StringBuffer();
+        StringBuilder string = new StringBuilder();
         string.append(super.toString());
         if (_innerException != null) {
             string.append("\n");
@@ -68,7 +74,7 @@ public class CompoundException extends Exception
         return string.toString();
     }
 
-    public void printStackTrace(PrintStream s)
+    public void printStackTrace(@NotNull PrintStream s)
     {
         super.printStackTrace(s);
         if (_innerException != null) {
@@ -77,7 +83,7 @@ public class CompoundException extends Exception
         }
     }
 
-    public void printStackTrace(PrintWriter s)
+    public void printStackTrace(@NotNull PrintWriter s)
     {
         super.printStackTrace(s);
         if (_innerException != null) {

@@ -20,8 +20,8 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -36,7 +36,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_ACTIVITY:
@@ -122,20 +123,25 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getLongExposureNoiseReductionDescription() throws MetadataException
+    @Nullable
+    public String getLongExposureNoiseReductionDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "Off";
             case 1:     return "On";
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getShutterAutoExposureLockButtonDescription() throws MetadataException
+
+    @Nullable
+    public String getShutterAutoExposureLockButtonDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "AF/AE lock";
             case 1:     return "AE lock/AF";
@@ -144,50 +150,65 @@ public class CanonMakernoteDescriptor extends TagDescriptor
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getMirrorLockupDescription() throws MetadataException
+
+    @Nullable
+    public String getMirrorLockupDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "Disabled";
             case 1:     return "Enabled";
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getTvAndAvExposureLevelDescription() throws MetadataException
+
+    @Nullable
+    public String getTvAndAvExposureLevelDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "1/2 stop";
             case 1:     return "1/3 stop";
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getAutoFocusAssistLightDescription() throws MetadataException
+
+    @Nullable
+    public String getAutoFocusAssistLightDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "On (Auto)";
             case 1:     return "Off";
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getShutterSpeedInAvModeDescription() throws MetadataException
+
+    @Nullable
+    public String getShutterSpeedInAvModeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "Automatic";
             case 1:     return "1/200 (fixed)";
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getAutoExposureBrackettingSequenceAndAutoCancellationDescription() throws MetadataException
+
+    @Nullable
+    public String getAutoExposureBrackettingSequenceAndAutoCancellationDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETTING)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETTING);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETTING);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "0,-,+ / Enabled";
             case 1:     return "0,-,+ / Disabled";
@@ -196,20 +217,26 @@ public class CanonMakernoteDescriptor extends TagDescriptor
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getShutterCurtainSyncDescription() throws MetadataException
+
+    @Nullable
+    public String getShutterCurtainSyncDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "1st Curtain Sync";
             case 1:     return "2nd Curtain Sync";
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getLensAutoFocusStopButtonDescription() throws MetadataException
+
+    @Nullable
+    public String getLensAutoFocusStopButtonDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_STOP)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_STOP);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_STOP);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "AF stop";
             case 1:     return "Operate AF";
@@ -217,20 +244,26 @@ public class CanonMakernoteDescriptor extends TagDescriptor
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getFillFlashReductionDescription() throws MetadataException
+
+    @Nullable
+    public String getFillFlashReductionDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "Enabled";
             case 1:     return "Disabled";
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getMenuButtonReturnPositionDescription() throws MetadataException
+
+    @Nullable
+    public String getMenuButtonReturnPositionDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MENU_BUTTON_RETURN)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MENU_BUTTON_RETURN);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MENU_BUTTON_RETURN);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "Top";
             case 1:     return "Previous (volatile)";
@@ -238,10 +271,13 @@ public class CanonMakernoteDescriptor extends TagDescriptor
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getSetButtonFunctionWhenShootingDescription() throws MetadataException
+
+    @Nullable
+    public String getSetButtonFunctionWhenShootingDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SET_BUTTON_FUNCTION)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SET_BUTTON_FUNCTION);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SET_BUTTON_FUNCTION);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "Not Assigned";
             case 1:     return "Change Quality";
@@ -250,10 +286,13 @@ public class CanonMakernoteDescriptor extends TagDescriptor
             default:    return "Unknown (" + value + ")";
         }
     }
-    public String getSensorCleaningDescription() throws MetadataException
+
+    @Nullable
+    public String getSensorCleaningDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:     return "Disabled";
             case 1:     return "Enabled";
@@ -261,11 +300,13 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFlashBiasDescription() throws MetadataException
+    @Nullable
+    public String getFlashBiasDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS)) return null;
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS);
 
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS);
+        if (value==null)
+            return null;
 
         boolean isNegative = false;
         if (value > 0xF000)
@@ -283,10 +324,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         return ((isNegative) ? "-" : "") + Float.toString(value / 32f) + " EV";
     }
 
-    public String getAfPointUsedDescription() throws MetadataException
+    @Nullable
+    public String getAfPointUsedDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE2_AF_POINT_USED)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE2_AF_POINT_USED);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE2_AF_POINT_USED);
+        if (value==null)
+            return null;
         if ((value & 0x7) == 0) {
             return "Right";
         } else if ((value & 0x7) == 1) {
@@ -298,10 +341,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getWhiteBalanceDescription() throws MetadataException
+    @Nullable
+    public String getWhiteBalanceDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE2_WHITE_BALANCE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE2_WHITE_BALANCE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE2_WHITE_BALANCE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Auto";
@@ -312,7 +357,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
             case 3:
                 return "Tungsten";
             case 4:
-                return "Flourescent";
+                return "Florescent";
             case 5:
                 return "Flash";
             case 6:
@@ -322,10 +367,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFocusMode2Description() throws MetadataException
+    @Nullable
+    public String getFocusMode2Description()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_2)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_2);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_2);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Single";
@@ -336,10 +383,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFlashDetailsDescription() throws MetadataException
+    @Nullable
+    public String getFlashDetailsDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_DETAILS)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_DETAILS);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_DETAILS);
+        if (value==null)
+            return null;
         if (((value << 14) & 1) > 0) {
             return "External E-TTL";
         }
@@ -355,10 +404,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         return "Unknown (" + value + ")";
     }
 
-    public String getFocalUnitsPerMillimetreDescription() throws MetadataException
+    @Nullable
+    public String getFocalUnitsPerMillimetreDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCAL_UNITS_PER_MM)) return "";
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCAL_UNITS_PER_MM);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCAL_UNITS_PER_MM);
+        if (value==null)
+            return null;
         if (value != 0) {
             return Integer.toString(value);
         } else {
@@ -366,26 +417,32 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getShortFocalLengthDescription() throws MetadataException
+    @Nullable
+    public String getShortFocalLengthDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_SHORT_FOCAL_LENGTH)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_SHORT_FOCAL_LENGTH);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SHORT_FOCAL_LENGTH);
+        if (value==null)
+            return null;
         String units = getFocalUnitsPerMillimetreDescription();
         return Integer.toString(value) + " " + units;
     }
 
-    public String getLongFocalLengthDescription() throws MetadataException
+    @Nullable
+    public String getLongFocalLengthDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_LONG_FOCAL_LENGTH)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_LONG_FOCAL_LENGTH);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_LONG_FOCAL_LENGTH);
+        if (value==null)
+            return null;
         String units = getFocalUnitsPerMillimetreDescription();
         return Integer.toString(value) + " " + units;
     }
 
-    public String getExposureModeDescription() throws MetadataException
+    @Nullable
+    public String getExposureModeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_EXPOSURE_MODE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_EXPOSURE_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_EXPOSURE_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Easy shooting";
@@ -404,10 +461,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getAfPointSelectedDescription() throws MetadataException
+    @Nullable
+    public String getAfPointSelectedDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_AF_POINT_SELECTED)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_AF_POINT_SELECTED);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_AF_POINT_SELECTED);
+        if (value==null)
+            return null;
         switch (value) {
             case 0x3000:
                 return "None (MF)";
@@ -424,10 +483,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getMeteringModeDescription() throws MetadataException
+    @Nullable
+    public String getMeteringModeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_METERING_MODE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_METERING_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_METERING_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 3:
                 return "Evaluative";
@@ -440,14 +501,17 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getIsoDescription() throws MetadataException
+    @Nullable
+    public String getIsoDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_ISO)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_ISO);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_ISO);
+        if (value==null)
+            return null;
 
         // Canon PowerShot S3 is special
         int canonMask = 0x4000;
-        if ((value & canonMask) > 0) return "" + (value & ~canonMask);
+        if ((value & canonMask) > 0)
+            return "" + (value & ~canonMask);
 
         switch (value) {
             case 0:
@@ -467,10 +531,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSharpnessDescription() throws MetadataException
+    @Nullable
+    public String getSharpnessDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_SHARPNESS)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_SHARPNESS);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SHARPNESS);
+        if (value==null)
+            return null;
         switch (value) {
             case 0xFFFF:
                 return "Low";
@@ -483,10 +549,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSaturationDescription() throws MetadataException
+    @Nullable
+    public String getSaturationDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_SATURATION)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_SATURATION);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SATURATION);
+        if (value==null)
+            return null;
         switch (value) {
             case 0xFFFF:
                 return "Low";
@@ -499,10 +567,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getContrastDescription() throws MetadataException
+    @Nullable
+    public String getContrastDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTRAST)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTRAST);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTRAST);
+        if (value==null)
+            return null;
         switch (value) {
             case 0xFFFF:
                 return "Low";
@@ -515,10 +585,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getEasyShootingModeDescription() throws MetadataException
+    @Nullable
+    public String getEasyShootingModeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_EASY_SHOOTING_MODE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_EASY_SHOOTING_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_EASY_SHOOTING_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Full auto";
@@ -549,10 +621,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getImageSizeDescription() throws MetadataException
+    @Nullable
+    public String getImageSizeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_IMAGE_SIZE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_IMAGE_SIZE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_IMAGE_SIZE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Large";
@@ -565,10 +639,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFocusMode1Description() throws MetadataException
+    @Nullable
+    public String getFocusMode1Description()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_1)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_1);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_1);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "One-shot";
@@ -590,28 +666,29 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getContinuousDriveModeDescription() throws MetadataException
+    @Nullable
+    public String getContinuousDriveModeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTINUOUS_DRIVE_MODE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTINUOUS_DRIVE_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTINUOUS_DRIVE_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
-                if (_directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY) == 0) {
-                    return "Single shot";
-                } else {
-                    return "Single shot with self-timer";
-                }
+                final Integer delay = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY);
+                if (delay!=null)
+                    return delay == 0 ? "Single shot" : "Single shot with self-timer";
             case 1:
                 return "Continuous";
-            default:
-                return "Unknown (" + value + ")";
         }
+        return "Unknown (" + value + ")";
     }
 
-    public String getFlashModeDescription() throws MetadataException
+    @Nullable
+    public String getFlashModeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_MODE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "No flash fired";
@@ -629,16 +706,18 @@ public class CanonMakernoteDescriptor extends TagDescriptor
                 return "On and red-eye reduction";
             case 16:
                 // note: this value not set on Canon D30
-                return "Extenal flash";
+                return "External flash";
             default:
                 return "Unknown (" + value + ")";
         }
     }
 
-    public String getSelfTimerDelayDescription() throws MetadataException
+    @Nullable
+    public String getSelfTimerDelayDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY);
+        if (value==null)
+            return null;
         if (value == 0) {
             return "Self timer not used";
         } else {
@@ -647,10 +726,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getMacroModeDescription() throws MetadataException
+    @Nullable
+    public String getMacroModeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_MACRO_MODE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_MACRO_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_MACRO_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "Macro";
@@ -661,10 +742,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getQualityDescription() throws MetadataException
+    @Nullable
+    public String getQualityDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_QUALITY)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_QUALITY);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_QUALITY);
+        if (value==null)
+            return null;
         switch (value) {
             case 2:
                 return "Normal";
@@ -677,10 +760,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getDigitalZoomDescription() throws MetadataException
+    @Nullable
+    public String getDigitalZoomDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_DIGITAL_ZOOM)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_DIGITAL_ZOOM);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_DIGITAL_ZOOM);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "No digital zoom";
@@ -693,10 +778,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFocusTypeDescription() throws MetadataException
+    @Nullable
+    public String getFocusTypeDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_TYPE)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_TYPE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_TYPE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Manual";
@@ -711,10 +798,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFlashActivityDescription() throws MetadataException
+    @Nullable
+    public String getFlashActivityDescription()
     {
-        if (!_directory.containsTag(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_ACTIVITY)) return null;
-        int value = _directory.getInt(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_ACTIVITY);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_ACTIVITY);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Flash did not fire";

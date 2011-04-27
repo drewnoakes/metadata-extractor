@@ -21,6 +21,7 @@
 package com.drew.metadata;
 
 import com.drew.lang.CompoundException;
+import com.drew.lang.annotations.Nullable;
 
 /**
  * Base class for all metadata specific exceptions.
@@ -29,17 +30,17 @@ import com.drew.lang.CompoundException;
  */
 public class MetadataException extends CompoundException
 {
-    public MetadataException(String msg)
+    public MetadataException(@Nullable String msg)
     {
         super(msg);
     }
 
-    public MetadataException(Throwable exception)
+    public MetadataException(@Nullable Throwable exception)
     {
         super(exception);
     }
 
-    public MetadataException(String msg, Throwable innerException)
+    public MetadataException(@Nullable String msg, @Nullable Throwable innerException)
     {
         super(msg, innerException);
     }

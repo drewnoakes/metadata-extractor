@@ -21,6 +21,7 @@
 package com.drew.imaging.jpeg;
 
 import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.annotations.Nullable;
 
 /**
  * An exception class thrown upon unexpected and fatal conditions while processing a Jpeg file.
@@ -29,17 +30,17 @@ import com.drew.imaging.ImageProcessingException;
  */
 public class JpegProcessingException extends ImageProcessingException
 {
-    public JpegProcessingException(String message)
+    public JpegProcessingException(@Nullable String message)
     {
         super(message);
     }
 
-    public JpegProcessingException(String message, Throwable cause)
+    public JpegProcessingException(@Nullable String message, @Nullable Throwable cause)
     {
         super(message, cause);
     }
 
-    public JpegProcessingException(Throwable cause)
+    public JpegProcessingException(@Nullable Throwable cause)
     {
         super(cause);
     }

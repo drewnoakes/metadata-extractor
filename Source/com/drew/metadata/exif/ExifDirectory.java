@@ -20,6 +20,8 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.MetadataException;
 
@@ -554,7 +556,7 @@ public class ExifDirectory extends Directory
 
     public static final int TAG_LENS = 0xfdea;
 
-
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -710,16 +712,19 @@ public class ExifDirectory extends Directory
         this.setDescriptor(new ExifDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Exif";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
     }
 
+    @Nullable
     public byte[] getThumbnailData() throws MetadataException
     {
         if (!containsThumbnail())
@@ -728,7 +733,7 @@ public class ExifDirectory extends Directory
         return this.getByteArray(ExifDirectory.TAG_THUMBNAIL_DATA);
     }
 
-    public void writeThumbnail(String filename) throws MetadataException, IOException
+    public void writeThumbnail(@NotNull String filename) throws MetadataException, IOException
     {
         byte[] data = getThumbnailData();
 

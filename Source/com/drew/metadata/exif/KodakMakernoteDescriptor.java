@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -33,15 +34,15 @@ import com.drew.metadata.TagDescriptor;
  */
 public class KodakMakernoteDescriptor extends TagDescriptor
 {
-	public KodakMakernoteDescriptor(Directory directory)
+	public KodakMakernoteDescriptor(@NotNull Directory directory)
 	{
 		super(directory);
 	}
-	
-	public String getDescription(int tagType) throws MetadataException
+
+    @Nullable
+	public String getDescription(int tagType)
     {
         // No special tag descriptions, yet.
-
 		return _directory.getString(tagType);
 	}
 }

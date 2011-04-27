@@ -21,9 +21,9 @@
 
 package com.drew.metadata.test;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
@@ -68,32 +68,38 @@ public class ProcessAllImagesInFolderUtility
             } else if (subItem.endsWith(".jpg") || subItem.endsWith(".jpeg") || subItem.endsWith(".nef") || subItem.endsWith(".crw") || subItem.endsWith(".cr2") || subItem.endsWith(".tif")) {
                 // process this item
                 processedCount++;
+
+                // Read metadata
+                final Metadata metadata;
                 try {
-                    JpegSegmentReader segmentReader = new JpegSegmentReader(file);
-                    try {
-                        Metadata metadata = JpegMetadataReader.extractMetadataFromJpegSegmentReader(segmentReader);
-                        for (Directory directory : metadata.getDirectories()) {
-                            for (Tag tag : directory.getTags()) {
-                                // call the code that would obtain the value, just to flush out any potential exceptions
-                                tag.toString();
-                                tag.getDescription();
-                            }
-                        }
-                    } catch (Throwable t) {
-                        // general, uncaught exception during processing of metadata
-                        errorCount++;
-                        System.err.println(t.getClass().getName() + ": " + file + " [BadMetadata]");
-                        t.printStackTrace(System.err);
-                    }
-                } catch (JpegProcessingException e) {
+                    metadata = ImageMetadataReader.readMetadata(file);
+                } catch (ImageProcessingException e) {
                     // this is an error in the Jpeg segment structure.  we're looking for bad handling of
                     // metadata segments.  in this case, we didn't even get a segment.
                     errorCount++;
-                    System.err.println(e.getClass().getName() + ": " + file + "\n\t" + e.getMessage());
+                    System.err.println(e.getClass().getName() + ": " + file + " [Error Extracting Metadata]" + "\n\t" + e.getMessage());
+                    continue;
                 } catch (Throwable t) {
                     // general, uncaught exception during processing of jpeg segments
                     errorCount++;
-                    System.err.println(t.getClass().getName() + ": " + file + " [FAILURE]");
+                    System.err.println(t.getClass().getName() + ": " + file + " [Error Extracting Metadata]");
+                    t.printStackTrace(System.err);
+                    continue;
+                }
+
+                // Iterate through all values
+                try {
+                    for (Directory directory : metadata.getDirectories()) {
+                        for (Tag tag : directory.getTags()) {
+                            // call the code that would obtain the value, just to flush out any potential exceptions
+                            tag.toString();
+                            tag.getDescription();
+                        }
+                    }
+                } catch (Throwable t) {
+                    // general, uncaught exception during processing of metadata
+                    errorCount++;
+                    System.err.println(t.getClass().getName() + ": " + file + " [Error Iterating Metadata]");
                     t.printStackTrace(System.err);
                 }
             }

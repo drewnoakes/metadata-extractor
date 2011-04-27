@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.tiff;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 
@@ -29,43 +30,33 @@ import java.io.*;
  * Obtains all available metadata from TIFF formatted files.  Note that TIFF files include many digital camera RAW
  * formats, including Canon (CRW, CR2) and Nikon (NEF).
  *
- * @author Darren Salomons
+ * @author Darren Salomons, Drew Noakes http://drewnoakes.com
  */
 public class TiffMetadataReader
 {
-	public static Metadata readMetadata(File file) throws TiffProcessingException
+	@NotNull
+    public static Metadata readMetadata(@NotNull File file) throws IOException
     {
 		Metadata metadata = new Metadata();
 		
-		DataInputStream x;
-		try {
-			x = new DataInputStream(new FileInputStream(file));
-		} catch (FileNotFoundException e) {
-			throw new TiffProcessingException("TIFF file does not exist", e);
-		}
+		DataInputStream x = new DataInputStream(new FileInputStream(file));
 		byte[] buffer = new byte[(int)file.length()];
-		try {
-			x.readFully(buffer);
-		} catch (IOException e) {
-			throw new TiffProcessingException("Error copying TIFF file contents to byte buffer", e);
-		}
+        x.readFully(buffer);
 		
 		new ExifReader(buffer).extractTiff(metadata);
 
 		return metadata;
 	}
 
-	public static Metadata readMetadata(InputStream in) throws TiffProcessingException
+	@NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, boolean waitForBytes) throws IOException
     {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		int b;
-		try {
-			while((b = in.read()) != -1) {
-				out.write(b);
-			}
-		} catch (IOException e) {
-			throw new TiffProcessingException("Error processing TIFF stream", e);
-		}
+        // TODO do this in chunks rather than byte-by-byte, and honour 'waitForBytes'
+        while((b = inputStream.read()) != -1) {
+            out.write(b);
+        }
         Metadata metadata = new Metadata();
 		new ExifReader(out.toByteArray()).extractTiff(metadata);
 		return metadata;

@@ -21,8 +21,9 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -49,12 +50,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class FujifilmMakernoteDescriptor extends TagDescriptor
 {
-    public FujifilmMakernoteDescriptor(Directory directory)
+    public FujifilmMakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case FujifilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS:
@@ -90,10 +92,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getAutoExposureWarningDescription() throws MetadataException
+    @Nullable
+    public String getAutoExposureWarningDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "AE good";
@@ -104,10 +108,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFocusWarningDescription() throws MetadataException
+    @Nullable
+    public String getFocusWarningDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Auto focus good";
@@ -118,10 +124,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getBlurWarningDescription() throws MetadataException
+    @Nullable
+    public String getBlurWarningDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "No blur warning";
@@ -132,10 +140,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getContinuousTakingOrAutoBrackettingDescription() throws MetadataException
+    @Nullable
+    public String getContinuousTakingOrAutoBrackettingDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Off";
@@ -146,10 +156,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getPictureModeDescription() throws MetadataException
+    @Nullable
+    public String getPictureModeDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Auto";
@@ -174,10 +186,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSlowSyncDescription() throws MetadataException
+    @Nullable
+    public String getSlowSyncDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Off";
@@ -188,10 +202,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFocusModeDescription() throws MetadataException
+    @Nullable
+    public String getFocusModeDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Auto focus";
@@ -202,10 +218,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getMacroDescription() throws MetadataException
+    @Nullable
+    public String getMacroDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_MACRO)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_MACRO);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_MACRO);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Off";
@@ -216,17 +234,21 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFlashStrengthDescription() throws MetadataException
+    @Nullable
+    public String getFlashStrengthDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_STRENGTH)) return null;
         Rational value = _directory.getRational(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_STRENGTH);
+        if (value==null)
+            return null;
         return value.toSimpleString(false) + " EV (Apex)";
     }
 
-    public String getFlashModeDescription() throws MetadataException
+    @Nullable
+    public String getFlashModeDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Auto";
@@ -241,10 +263,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getToneDescription() throws MetadataException
+    @Nullable
+    public String getToneDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_TONE)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_TONE);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_TONE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Normal (STD)";
@@ -257,10 +281,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getColorDescription() throws MetadataException
+    @Nullable
+    public String getColorDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_COLOR)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_COLOR);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_COLOR);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Normal (STD)";
@@ -273,10 +299,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getWhiteBalanceDescription() throws MetadataException
+    @Nullable
+    public String getWhiteBalanceDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_WHITE_BALANCE)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_WHITE_BALANCE);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_WHITE_BALANCE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Auto";
@@ -291,7 +319,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
             case 770:
                 return "White-fluorescence";
             case 1024:
-                return "Incandenscense";
+                return "Incandescence";
             case 3840:
                 return "Custom white balance";
             default:
@@ -299,10 +327,12 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSharpnessDescription() throws MetadataException
+    @Nullable
+    public String getSharpnessDescription()
     {
-        if (!_directory.containsTag(FujifilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS)) return null;
-        int value = _directory.getInt(FujifilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "Softest";

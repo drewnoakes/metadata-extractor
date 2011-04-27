@@ -18,38 +18,12 @@
  *    http://drewnoakes.com/code/exif/
  *    http://code.google.com/p/metadata-extractor/
  */
-package com.drew.metadata.exif;
 
-import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
-
-import java.util.HashMap;
+package com.drew.lang.annotations;
 
 /**
- * Describes tags specific to Kodak cameras.
- *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class KodakMakernoteDirectory extends Directory
+public @interface NotNull
 {
-	@NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
-
-
-    public KodakMakernoteDirectory()
-    {
-        this.setDescriptor(new KodakMakernoteDescriptor(this));
-    }
-
-	@NotNull
-    public String getName()
-    {
-		return "Kodak Makernote";
-	}
-
-	@NotNull
-    protected HashMap<Integer, String> getTagNameMap()
-    {
-		return _tagNameMap;
-	}
 }

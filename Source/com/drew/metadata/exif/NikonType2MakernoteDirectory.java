@@ -21,8 +21,9 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 
 import java.util.HashMap;
 
@@ -450,6 +451,7 @@ public class NikonType2MakernoteDirectory extends Directory
      */
     public static final int TAG_NIKON_TYPE2_UNKNOWN_16 = 0x0E10;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -517,16 +519,17 @@ public class NikonType2MakernoteDirectory extends Directory
         this.setDescriptor(new NikonType2MakernoteDescriptor(this));
     }
 
-    public Rational getAutoFlashCompensation() throws MetadataException
+    @Nullable
+    public Rational getAutoFlashCompensation()
     {
-        if (!containsTag(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION))
+        byte[] values = getByteArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION);
+        if (values==null)
             return null;
-
-        byte[] bytes = getByteArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION);
-        return CalculateFlashCompensationFromBytes(bytes);
+        return CalculateFlashCompensationFromBytes(values);
     }
 
-    public static Rational CalculateFlashCompensationFromBytes(byte[] bytes)
+    @Nullable
+    public static Rational CalculateFlashCompensationFromBytes(@NotNull byte[] bytes)
     {
         if (bytes.length==3)
         {
@@ -537,11 +540,13 @@ public class NikonType2MakernoteDirectory extends Directory
         return null;
     }
 
+    @NotNull
     public String getName()
     {
         return "Nikon Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

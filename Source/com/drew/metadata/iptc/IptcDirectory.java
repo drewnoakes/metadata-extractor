@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.iptc;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -70,6 +71,7 @@ public class IptcDirectory extends Directory
     public static final int TAG_OBJECT_CYCLE = 0x024b;
     public static final int TAG_COUNTRY_CODE = 0x0264;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -120,11 +122,13 @@ public class IptcDirectory extends Directory
         this.setDescriptor(new IptcDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Iptc";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

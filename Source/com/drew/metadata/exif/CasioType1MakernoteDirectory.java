@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -55,6 +56,7 @@ public class CasioType1MakernoteDirectory extends Directory
     public static final int TAG_CASIO_UNKNOWN_8 = 0x0013;
     public static final int TAG_CASIO_CCD_SENSITIVITY = 0x0014;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -86,11 +88,13 @@ public class CasioType1MakernoteDirectory extends Directory
         this.setDescriptor(new CasioType1MakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Casio Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

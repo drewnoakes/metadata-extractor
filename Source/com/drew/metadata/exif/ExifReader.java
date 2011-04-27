@@ -24,6 +24,8 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -31,6 +33,7 @@ import com.drew.metadata.MetadataReader;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Decodes Exif binary data, populating a <code>Metadata</code> object with tag values in <code>ExifDirectory</code>,
@@ -54,8 +57,7 @@ public class ExifReader implements MetadataReader
     private static final int MAX_FORMAT_CODE = 12;
 
     // Format types
-    // Note: Cannot use the DataFormat enumeration in the case statement that uses these tags.
-    //       Is there a better way?
+    // TODO use an enum for these?
     private static final int FMT_BYTE = 1;
     private static final int FMT_STRING = 2;
     private static final int FMT_USHORT = 3;
@@ -79,6 +81,7 @@ public class ExifReader implements MetadataReader
     /**
      * The Exif segment as an array of bytes.
      */
+    @Nullable
     private final byte[] _data;
 
     /**
@@ -91,13 +94,15 @@ public class ExifReader implements MetadataReader
     /**
      * The Exif directory used (loaded lazily)
      */
+    @Nullable
     private ExifDirectory _exifDirectory = null;
 
     /**
      * Creates an ExifReader for a JpegSegmentData object.  This will process the @JpegSegmentReader.SEGMENT_APP1 segment.
      * @param segmentData the collection of Jpeg segment data from which this reader will take data.
      */
-    public ExifReader(JpegSegmentData segmentData)
+    @Deprecated
+    public ExifReader(@NotNull JpegSegmentData segmentData)
     {
         this(segmentData.getSegment(JpegSegmentReader.SEGMENT_APP1));
     }
@@ -107,7 +112,8 @@ public class ExifReader implements MetadataReader
      * @param jpegFile
      * @throws JpegProcessingException
      */
-    public ExifReader(File jpegFile) throws JpegProcessingException
+    @Deprecated
+    public ExifReader(@NotNull File jpegFile) throws JpegProcessingException
     {
         this(new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_APP1));
     }
@@ -117,16 +123,17 @@ public class ExifReader implements MetadataReader
      * @param jpegInputStream JPEG stream. Stream will be closed.
      * @throws JpegProcessingException
      */
+    @Deprecated
     public ExifReader(InputStream jpegInputStream) throws JpegProcessingException
     {
-        this(new JpegSegmentReader(jpegInputStream).readSegment(JpegSegmentReader.SEGMENT_APP1));
+        this(new JpegSegmentReader(jpegInputStream, true).readSegment(JpegSegmentReader.SEGMENT_APP1));
     }
 
     /**
      * Creates an ExifReader for the given Exif data segment.
      * @param data The byte[] from which Exif data should be read.  This value may be null.
      */
-    public ExifReader(byte[] data)
+    public ExifReader(@Nullable byte[] data)
     {
         _data = data;
     }
@@ -136,7 +143,7 @@ public class ExifReader implements MetadataReader
      * instance of <code>Metadata</code>.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extract(Metadata metadata)
+    public void extract(@NotNull Metadata metadata)
     {
         if (_data==null)
             return;
@@ -157,7 +164,8 @@ public class ExifReader implements MetadataReader
         extractIFD(metadata, TIFF_HEADER_START_OFFSET);
     }
 
-    private ExifDirectory getExifDirectory(Metadata metadata)
+    @NotNull
+    private ExifDirectory getExifDirectory(@NotNull Metadata metadata)
     {
     	if (_exifDirectory == null) {
     		_exifDirectory = (ExifDirectory) metadata.getDirectory(ExifDirectory.class);
@@ -170,12 +178,12 @@ public class ExifReader implements MetadataReader
      * instance of <code>Metadata</code>.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extractTiff(Metadata metadata)
+    public void extractTiff(@NotNull Metadata metadata)
     {
     	extractIFD(metadata, 0);
     }
 
-    private void extractIFD(Metadata metadata, int tiffHeaderOffset)
+    private void extractIFD(@NotNull Metadata metadata, int tiffHeaderOffset)
     {
         if (_data==null)
             return;
@@ -213,8 +221,9 @@ public class ExifReader implements MetadataReader
         storeThumbnailBytes(directory, tiffHeaderOffset);
     }
 
-    private void storeThumbnailBytes(ExifDirectory exifDirectory, int tiffHeaderOffset)
+    private void storeThumbnailBytes(@NotNull ExifDirectory exifDirectory, int tiffHeaderOffset)
     {
+        assert(_data!=null);
         if (!exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_COMPRESSION))
         	return;
 
@@ -245,7 +254,7 @@ public class ExifReader implements MetadataReader
      * @param byteOrderIdentifier a two-character string; either "MM" for Motorolla or "II" for Intel.
      * @return true if successful, otherwise false.
      */
-    private boolean setByteOrder(String byteOrderIdentifier)
+    private boolean setByteOrder(@NotNull String byteOrderIdentifier)
     {
         if ("MM".equals(byteOrderIdentifier)) {
             _isMotorollaByteOrder = true;
@@ -265,8 +274,10 @@ public class ExifReader implements MetadataReader
      *   2 bytes: format code
      *   4 bytes: component count
      */
-    private void processDirectory(Directory directory, HashSet<Integer> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset, final Metadata metadata)
+    private void processDirectory(@NotNull Directory directory, @NotNull Set<Integer> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset, @NotNull final Metadata metadata)
     {
+        assert(_data!=null);
+
         // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
         if (processedDirectoryOffsets.contains(new Integer(dirStartOffset)))
             return;
@@ -364,13 +375,15 @@ public class ExifReader implements MetadataReader
         }
     }
 
-    private void processMakerNote(int subdirOffset, HashSet<Integer> processedDirectoryOffsets, int tiffHeaderOffset, final Metadata metadata)
+    private void processMakerNote(int subdirOffset, @NotNull Set<Integer> processedDirectoryOffsets, int tiffHeaderOffset, @NotNull final Metadata metadata)
     {
+        assert(_data!=null);
+
+        if (!metadata.containsDirectory(ExifDirectory.class))
+            return;
+
         // Determine the camera model and makernote format
         Directory exifDirectory = metadata.getDirectory(ExifDirectory.class);
-
-        if (exifDirectory==null)
-            return;
 
         String cameraModel = exifDirectory.getString(ExifDirectory.TAG_MAKE);
         final String firstTwoChars = new String(_data, subdirOffset, 2);
@@ -496,8 +509,10 @@ public class ExifReader implements MetadataReader
         }
     }
 
-    private void processTag(Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode)
+    private void processTag(@NotNull Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode)
     {
+        assert(_data!=null);
+
         // Directory simply stores raw values
         // The display side uses a Descriptor class per directory to turn the raw values into 'pretty' descriptions
         switch (formatCode)
@@ -605,13 +620,15 @@ public class ExifReader implements MetadataReader
 
     private int calculateTagValueOffset(int byteCount, int dirEntryOffset, int tiffHeaderOffset)
     {
+        assert(_data!=null);
+
         if (byteCount>4) {
             // If its bigger than 4 bytes, the dir entry contains an offset.
             // dirEntryOffset must be passed, as some makernote implementations (e.g. FujiFilm) incorrectly use an
             // offset relative to the start of the makernote itself, not the TIFF segment.
             final int offsetVal = get32Bits(dirEntryOffset + 8);
             if (offsetVal + byteCount>_data.length) {
-                // Bogus pointer offset and / or bytecount value
+                // Bogus pointer offset and / or byteCount value
                 return -1; // signal error
             }
             return tiffHeaderOffset + offsetVal;
@@ -625,8 +642,11 @@ public class ExifReader implements MetadataReader
      * Creates a String from the _data buffer starting at the specified offset,
      * and ending where byte=='\0' or where length==maxLength.
      */
+    @NotNull
     private String readString(int offset, int maxLength)
     {
+        assert(_data!=null);
+
         int length = 0;
         while ((offset + length)<_data.length && _data[offset + length]!='\0' && length<maxLength)
             length++;
@@ -651,6 +671,8 @@ public class ExifReader implements MetadataReader
      */
     private int get16Bits(int offset)
     {
+        assert(_data!=null);
+
         if (offset<0 || offset+2>_data.length)
             throw new ArrayIndexOutOfBoundsException("attempt to read data outside of exif segment (index " + offset + " where max index is " + (_data.length - 1) + ")");
 
@@ -668,6 +690,8 @@ public class ExifReader implements MetadataReader
      */
     private int get32Bits(int offset)
     {
+        assert(_data!=null);
+
         if (offset<0 || offset+4>_data.length)
             throw new ArrayIndexOutOfBoundsException("attempt to read data outside of exif segment (index " + offset + " where max index is " + (_data.length - 1) + ")");
 

@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -31,12 +32,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class ExifInteropDescriptor extends TagDescriptor
 {
-    public ExifInteropDescriptor(Directory directory)
+    public ExifInteropDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case ExifInteropDirectory.TAG_INTEROP_INDEX:
@@ -48,21 +50,25 @@ public class ExifInteropDescriptor extends TagDescriptor
         }
     }
 
-    public String getInteropVersionDescription() throws MetadataException
+    @Nullable
+    public String getInteropVersionDescription()
     {
-        if (!_directory.containsTag(ExifInteropDirectory.TAG_INTEROP_VERSION)) return null;
         int[] ints = _directory.getIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION);
+        if (ints==null)
+            return null;
         return ExifDescriptor.convertBytesToVersionString(ints);
     }
 
+    @Nullable
     public String getInteropIndexDescription()
     {
-        if (!_directory.containsTag(ExifInteropDirectory.TAG_INTEROP_INDEX)) return null;
-        String interopIndex = _directory.getString(ExifInteropDirectory.TAG_INTEROP_INDEX).trim();
-        if ("R98".equalsIgnoreCase(interopIndex)) {
-            return "Recommended Exif Interoperability Rules (ExifR98)";
-        } else {
-            return "Unknown (" + interopIndex + ")";
-        }
+        String interopIndex = _directory.getString(ExifInteropDirectory.TAG_INTEROP_INDEX);
+
+        if (interopIndex==null)
+            return null;
+
+        return "R98".equalsIgnoreCase(interopIndex.trim())
+                ? "Recommended Exif Interoperability Rules (ExifR98)"
+                : "Unknown (" + interopIndex + ")";
     }
 }

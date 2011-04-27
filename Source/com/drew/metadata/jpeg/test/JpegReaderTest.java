@@ -21,6 +21,7 @@
 package com.drew.metadata.jpeg.test;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.jpeg.JpegComponent;
 import com.drew.metadata.jpeg.JpegDirectory;
@@ -44,7 +45,7 @@ public class JpegReaderTest
     {
         // use a known testing image
         File jpegFile = new File("Source/com/drew/metadata/jpeg/test/simple.jpg");
-        JpegReader reader = new JpegReader(jpegFile);
+        JpegReader reader = new JpegReader(new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_SOF0));
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(JpegDirectory.class));

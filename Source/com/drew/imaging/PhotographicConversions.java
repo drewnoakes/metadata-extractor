@@ -29,8 +29,10 @@ public final class PhotographicConversions
 {
     public final static double ROOT_TWO = Math.sqrt(2);
 
-    private PhotographicConversions()
-    {}
+    private PhotographicConversions() throws Exception
+    {
+        throw new Exception("Not intended for instantiation.");
+    }
 
     /**
      * Converts an aperture value to its corresponding F-stop number.
@@ -42,8 +44,7 @@ public final class PhotographicConversions
     {
         return Math.pow(ROOT_TWO, aperture);
 
-        // Puzzle?!
-        // jhead uses a different calculation as far as i can tell...  this confuses me...
+        // NOTE jhead uses a different calculation as far as i can tell...  this confuses me...
         // fStop = (float)Math.exp(aperture * Math.log(2) * 0.5));
     }
 

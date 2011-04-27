@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -37,11 +38,11 @@ public class ExifInteropDirectory extends Directory
     public static final int TAG_RELATED_IMAGE_WIDTH = 0x1001;
     public static final int TAG_RELATED_IMAGE_LENGTH = 0x1002;
 
-    protected static final HashMap<Integer, String> _tagNameMap;
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap = new HashMap<Integer, String>();
         _tagNameMap.put(TAG_INTEROP_INDEX, "Interoperability Index");
         _tagNameMap.put(TAG_INTEROP_VERSION, "Interoperability Version");
         _tagNameMap.put(TAG_RELATED_IMAGE_FILE_FORMAT, "Related Image File Format");
@@ -54,11 +55,13 @@ public class ExifInteropDirectory extends Directory
         this.setDescriptor(new ExifInteropDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Interoperability";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

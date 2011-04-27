@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -50,6 +51,7 @@ public class FujifilmMakernoteDirectory extends Directory
     public static final int TAG_FUJIFILM_FOCUS_WARNING = 0x1301;
     public static final int TAG_FUJIFILM_AE_WARNING = 0x1302;
 
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -79,11 +81,13 @@ public class FujifilmMakernoteDirectory extends Directory
         this.setDescriptor(new FujifilmMakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "FujiFilm Makernote";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

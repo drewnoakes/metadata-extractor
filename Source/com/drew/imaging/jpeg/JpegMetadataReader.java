@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
@@ -44,19 +45,28 @@ public class JpegMetadataReader
 //    public static Metadata readMetadata(IIOImage image) throws JpegProcessingException{}
 //    public static Metadata readMetadata(ImageReader reader) throws JpegProcessingException{}
 
-    public static Metadata readMetadata(InputStream in) throws JpegProcessingException
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException
     {
-        JpegSegmentReader segmentReader = new JpegSegmentReader(in);
+        return readMetadata(inputStream, true);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, final boolean waitForBytes) throws JpegProcessingException
+    {
+        JpegSegmentReader segmentReader = new JpegSegmentReader(inputStream, waitForBytes);
         return extractMetadataFromJpegSegmentReader(segmentReader);
     }
 
-    public static Metadata readMetadata(File file) throws JpegProcessingException
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException
     {
         JpegSegmentReader segmentReader = new JpegSegmentReader(file);
         return extractMetadataFromJpegSegmentReader(segmentReader);
     }
 
-    public static Metadata extractMetadataFromJpegSegmentReader(JpegSegmentReader segmentReader)
+    @NotNull
+    public static Metadata extractMetadataFromJpegSegmentReader(@NotNull JpegSegmentReader segmentReader)
     {
         final Metadata metadata = new Metadata();
 
@@ -77,7 +87,7 @@ public class JpegMetadataReader
 /*
         // alternative jpeg segment code proposed by YB.  untested.
         for (byte i=0;i<16;i++) {
-            if (i!=4 && i!= 12) {
+            if (i!=4 && i!=12) {
                 byte[] jpegSegment = segmentReader.readSegment((byte) (JpegSegmentReader.SEGMENT_SOF0 + i));
                 if (jpegSegment!=null) {
                     JpegDirectory directory = (JpegDirectory)metadata.getDirectory(JpegDirectory.class);
