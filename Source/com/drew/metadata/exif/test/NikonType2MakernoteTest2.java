@@ -83,7 +83,7 @@ public class NikonType2MakernoteTest2
         Assert.assertEquals("AF-C  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_TYPE));
         Assert.assertEquals("NORMAL      ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_SYNC_MODE));
 //        assertEquals(new Rational(4416,500), _nikonDirectory.getRational(NikonType3MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_2));
-        Assert.assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_SELECTION));
+        Assert.assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_MODE));
         Assert.assertEquals(1300, _nikonDirectory.getInt(0x0011));
         Assert.assertEquals("AUTO         ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_IMAGE_ADJUSTMENT));
         Assert.assertEquals("OFF         ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ADAPTER));

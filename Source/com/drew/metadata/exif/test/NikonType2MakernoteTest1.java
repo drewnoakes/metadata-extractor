@@ -92,24 +92,24 @@ public class NikonType2MakernoteTest1
     {
         Assert.assertEquals("48 50 48 48", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION));
         Assert.assertEquals("0 320", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_1));
-        Assert.assertEquals("0 320", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_2));
+        Assert.assertEquals("0 320", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_REQUESTED));
         Assert.assertEquals("FLASH       ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE));
         Assert.assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_SHARPENING));
         Assert.assertEquals("AF-C  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_TYPE));
         Assert.assertEquals("NORMAL      ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_SYNC_MODE));
         Assert.assertEquals("0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE_FINE));
-        Assert.assertEquals("914", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_3));
+        Assert.assertEquals("914", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_PREVIEW_IFD));
         Assert.assertEquals("AUTO    ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_TONE_COMPENSATION));
-        Assert.assertEquals("6", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_4));
+        Assert.assertEquals("6", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS_TYPE));
         Assert.assertEquals("240/10 850/10 35/10 45/10", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS));
-        Assert.assertEquals("0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_5));
-        Assert.assertEquals("1", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_7));
+        Assert.assertEquals("0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_USED));
+        Assert.assertEquals("1", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_SHOOTING_MODE));
         Assert.assertEquals("0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_20));
         Assert.assertEquals("MODE1   ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE));
         Assert.assertEquals("NATURAL    ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LIGHT_SOURCE));
         Assert.assertEquals("0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT));
         Assert.assertEquals("OFF ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_NOISE_REDUCTION));
-        Assert.assertEquals("78/10 78/10", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_15));
+        Assert.assertEquals("78/10 78/10", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_SENSOR_PIXEL_SIZE));
     }
 
     @Test
