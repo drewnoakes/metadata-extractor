@@ -1,0 +1,11 @@
+com.drew.imaging
+com.drew.imaging.jpeg
+com.drew.imaging.tiff
+com.drew.lang
+com.drew.lang.annotations
+com.drew.metadata
+com.drew.metadata.exif
+com.drew.metadata.iptc
+com.drew.metadata.jfif
+com.drew.metadata.jpeg
+com.drew.metadata.xmp

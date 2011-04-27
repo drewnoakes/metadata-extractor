@@ -1,5 +1,26 @@
 <?xml version="1.0"?>
 
+<!--
+  ~ Copyright 2002-2011 Drew Noakes
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  ~
+  ~ More information about this project is available at:
+  ~
+  ~    http://drewnoakes.com/code/exif/
+  ~    http://code.google.com/p/metadata-extractor/
+  -->
+
 <project name="metadata-extractor" default="test" basedir=".">
 
     <description>metadata-extractor build file</description>
@@ -68,7 +89,10 @@
     </target>
 
     <target name="javadoc" description="generate javadoc documentation">
-        <copy file="Website/metadata-extractor-logo-30px.gif" todir="${javadoc}"  />
+        <delete verbose="${verbose}" dir="${javadoc}">
+            <exclude name=".svn" />
+        </delete>
+        <copy file="Documentation/metadata-extractor-logo-30px.gif" todir="${javadoc}"  />
         <javadoc
             destdir="${javadoc}"
             defaultexcludes="yes"
@@ -76,7 +100,7 @@
             version="true"
             use="true"
             access="protected"
-            windowtitle="metadata-extractor javadoc"
+            windowtitle="Metadata-Extractor - JavaDoc - An Open Source Java Library for Image File Metadata"
             failonerror="true">
             <!-- be sure to only use single quotes in the CDATA sections below -->
             <header><![CDATA[<link rel='shortcut icon' href='http://www.drewnoakes.com/code/exif/MetadataExtractor.ico' /><a href='http://www.drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='http://www.drewnoakes.com/code/exif/javadoc/metadata-extractor-logo-30px.gif' border="0" alt='Metadata Extractor Logo'></a>]]></header>
@@ -93,7 +117,7 @@ urchinTracker();
             </packageset>
 
         </javadoc>
-        <copy file="Website/javadoc-stylesheet.css" tofile="${javadoc}/stylesheet.css" overwrite="yes" /> 
+        <copy file="Documentation/javadoc-stylesheet.css" tofile="${javadoc}/stylesheet.css" overwrite="yes" />
     </target>
 
     <target name="all" depends="dist-source, dist-binaries, javadoc" description="prepare source and binary distributions, and javadoc"/>
