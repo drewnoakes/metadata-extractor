@@ -33,6 +33,7 @@ import com.drew.metadata.MetadataReader;
 public class JpegCommentReader implements MetadataReader
 {
     /** The COM data segment. */
+    @NotNull
     private final byte[] _data;
 
     /**
@@ -40,8 +41,10 @@ public class JpegCommentReader implements MetadataReader
      *
      * @param data JPEG data as a byte[].
      */
-    public JpegCommentReader(byte[] data)
+    public JpegCommentReader(@NotNull byte[] data)
     {
+        if (data == null)
+            throw new NullPointerException();
         _data = data;
     }
 
@@ -51,10 +54,7 @@ public class JpegCommentReader implements MetadataReader
      */
     public void extract(@NotNull Metadata metadata)
     {
-        if (_data == null)
-            return;
-
-        JpegCommentDirectory directory = (JpegCommentDirectory)metadata.getDirectory(JpegCommentDirectory.class);
+        JpegCommentDirectory directory = metadata.getOrCreateDirectory(JpegCommentDirectory.class);
 
         directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, new String(_data));
     }

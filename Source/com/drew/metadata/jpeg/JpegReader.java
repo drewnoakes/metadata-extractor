@@ -21,7 +21,6 @@
 package com.drew.metadata.jpeg;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
@@ -34,7 +33,7 @@ import com.drew.metadata.MetadataReader;
 public class JpegReader implements MetadataReader
 {
     /** The SOF0 data segment. */
-    @Nullable
+    @NotNull
     private final byte[] _data;
 
     /**
@@ -42,8 +41,10 @@ public class JpegReader implements MetadataReader
      *
      * @param data the contents of an entire JPEG file as a byte[]
      */
-    public JpegReader(@Nullable byte[] data)
+    public JpegReader(@NotNull byte[] data)
     {
+        if (data == null)
+            throw new NullPointerException();
         _data = data;
     }
 
@@ -53,10 +54,7 @@ public class JpegReader implements MetadataReader
      */
     public void extract(@NotNull Metadata metadata)
     {
-        if (_data == null)
-            return;
-
-        JpegDirectory directory = (JpegDirectory)metadata.getDirectory(JpegDirectory.class);
+        JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
 
         try {
             // data precision
@@ -101,7 +99,6 @@ public class JpegReader implements MetadataReader
      */
     private int get32Bits(int offset) throws MetadataException
     {
-        assert(_data!=null);
         if (offset + 1 >= _data.length)
             throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
         return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
@@ -115,7 +112,6 @@ public class JpegReader implements MetadataReader
      */
     private int get16Bits(int offset) throws MetadataException
     {
-        assert(_data!=null);
         if (offset >= _data.length)
             throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
         return (_data[offset] & 255);

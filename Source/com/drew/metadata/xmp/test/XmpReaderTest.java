@@ -51,7 +51,7 @@ public class XmpReaderTest
         XmpReader reader = new XmpReader(jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APP1, 1));
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(XmpDirectory.class));
-        _directory = (XmpDirectory)metadata.getDirectory(XmpDirectory.class);
+        _directory = metadata.getOrCreateDirectory(XmpDirectory.class);
     }
 
     /*

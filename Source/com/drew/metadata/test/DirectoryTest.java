@@ -36,7 +36,7 @@ public class DirectoryTest
     public void testSetAndGetInt() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(MockDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(MockDirectory.class);
         int value = 321;
         int tagType = 123;
         directory.setInt(tagType, value);
@@ -48,11 +48,12 @@ public class DirectoryTest
     public void testSetAndGetIntArray() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(MockDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(MockDirectory.class);
         int[] inputValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         int tagType = 123;
         directory.setIntArray(tagType, inputValues);
         int[] outputValues = directory.getIntArray(tagType);
+        Assert.assertNotNull(outputValues);
         Assert.assertEquals(inputValues.length, outputValues.length);
         for (int i = 0; i < inputValues.length; i++) {
             int inputValue = inputValues[i];
@@ -60,7 +61,7 @@ public class DirectoryTest
             Assert.assertEquals(inputValue, outputValue);
         }
         Assert.assertEquals(inputValues, directory.getIntArray(tagType));
-        StringBuffer outputString = new StringBuffer();
+        StringBuilder outputString = new StringBuilder();
         for (int i = 0; i < inputValues.length; i++) {
             int inputValue = inputValues[i];
             if (i > 0) {
@@ -75,7 +76,7 @@ public class DirectoryTest
     public void testSetStringAndGetDate() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(MockDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(MockDirectory.class);
         String date1 = "2002:01:30 24:59:59";
         String date2 = "2002:01:30 24:59";
         String date3 = "2002-01-30 24:59:59";
@@ -95,18 +96,20 @@ public class DirectoryTest
     public void testSetIntArrayGetByteArray() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(MockDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(MockDirectory.class);
         int[] ints = {1, 2, 3, 4, 5};
         directory.setIntArray(1, ints);
-        Assert.assertEquals(ints.length, directory.getByteArray(1).length);
-        Assert.assertEquals(1, directory.getByteArray(1)[0]);
+        final byte[] bytes = directory.getByteArray(1);
+        Assert.assertNotNull(bytes);
+        Assert.assertEquals(ints.length, bytes.length);
+        Assert.assertEquals(1, bytes[0]);
     }
 
     @Test
     public void testSetStringGetInt() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(MockDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(MockDirectory.class);
         byte[] bytes = { 0x01, 0x02, 0x03 };
         directory.setString(1, new String(bytes));
         Assert.assertEquals(0x010203, directory.getInt(1));

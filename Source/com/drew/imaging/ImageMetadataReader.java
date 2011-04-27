@@ -173,7 +173,7 @@ public class ImageMetadataReader
             }
 
             if (args.length > 1 && thumbRequested) {
-                ExifDirectory directory = (ExifDirectory) metadata.getDirectory(ExifDirectory.class);
+                ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
                 if (directory.containsThumbnail()) {
                     System.out.println("Writing thumbnail...");
                     directory.writeThumbnail(args[0].trim() + ".thumb.jpg");

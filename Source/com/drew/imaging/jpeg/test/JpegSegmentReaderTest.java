@@ -40,6 +40,14 @@ import java.io.InputStream;
 public class JpegSegmentReaderTest
 {
     @Test
+    public void testLoadJpegWithoutExifDataReturnsNull() throws Exception
+    {
+        String jpegNoExif = "Source/com/drew/metadata/exif/test/noExif.jpg";
+        JpegSegmentReader reader = new JpegSegmentReader(new File(jpegNoExif));
+        Assert.assertNull(reader.readSegment(JpegSegmentReader.SEGMENT_APP1));
+    }
+
+    @Test
     public void testIsJpegWithJpegFile() throws Exception
     {
         File jpeg = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
@@ -68,6 +76,7 @@ public class JpegSegmentReaderTest
         File jpeg = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         JpegSegmentReader segmentReader = new JpegSegmentReader(jpeg);
         byte[] exifData = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1);
+        Assert.assertNotNull(exifData);
         Assert.assertTrue("exif data too short", exifData.length > 4);
         Assert.assertEquals("Exif", new String(exifData, 0, 4));
     }
@@ -78,6 +87,7 @@ public class JpegSegmentReaderTest
         File jpeg = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         JpegSegmentReader segmentReader = new JpegSegmentReader(jpeg);
         byte[] quantizationTableData = segmentReader.readSegment(JpegSegmentReader.SEGMENT_DQT);
+        Assert.assertNotNull(quantizationTableData);
         Assert.assertTrue("shouldn't have zero length quantizationTableData", quantizationTableData.length > 0);
         Assert.assertTrue("quantizationTableData shouldn't start with 'Exif'", !"Exif".equals(new String(quantizationTableData, 0, 4)));
     }
@@ -102,9 +112,6 @@ public class JpegSegmentReaderTest
         } catch (JpegProcessingException e) {
             Assert.fail("Error constructing JpegSegmentReader using InputStream");
         }
-        // this will never happen, as fail() is guaranteed to throw an AssertionException
-        if (reader==null)
-            return;
         byte[] exifData = reader.readSegment(JpegSegmentReader.SEGMENT_APP1);
         Assert.assertEquals("Exif", new String(exifData, 0, 4));
     }
@@ -159,6 +166,8 @@ public class JpegSegmentReaderTest
     {
         byte[] iptcData = reader.readSegment(JpegSegmentReader.SEGMENT_APPD);
         byte[] exifData = reader.readSegment(JpegSegmentReader.SEGMENT_APP1);
+        Assert.assertNotNull(iptcData);
+        Assert.assertNotNull(exifData);
         Assert.assertTrue("exif data too short", exifData.length > 4);
         Metadata metadata = new Metadata();
         new ExifReader(exifData).extract(metadata);

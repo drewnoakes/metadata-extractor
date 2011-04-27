@@ -26,6 +26,7 @@ import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.jfif.JfifReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
+import com.drew.metadata.jpeg.JpegDirectory;
 import com.drew.metadata.jpeg.JpegReader;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -73,36 +74,49 @@ public class JpegMetadataReader
         // TODO Don't assume this ordering of APP1 segments. We might have XMP without Exif, for example.  Instead, investigate the leading bytes of sections to determine the contents and act accordingly.
 
         byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1, 0);
-        new ExifReader(exifSegment).extract(metadata);
+        if (exifSegment != null)
+            new ExifReader(exifSegment).extract(metadata);
 
         byte[] xmpSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1, 1);
-        new XmpReader(xmpSegment).extract(metadata);
+        if (xmpSegment != null)
+            new XmpReader(xmpSegment).extract(metadata);
 
-        byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
-        new IptcReader(iptcSegment).extract(metadata);
+        byte[] appdSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
+        if (appdSegment != null)
+            new IptcReader(appdSegment).extract(metadata);
 
-        byte[] jpegSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0);
-        new JpegReader(jpegSegment).extract(metadata);
+//        byte[] jpegSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0);
+//        new JpegReader(jpegSegment).extract(metadata);
+
+        // alternative jpeg segment code proposed by Yuri B.  untested.
+        for (byte i = 0; i < 16; i++) {
+            if (i == 4 || i == 12)
+                continue;
+            byte[] jpegSegment = segmentReader.readSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + i));
+            if (jpegSegment == null)
+                continue;
+            JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
+            directory.setInt(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE, i);
+            new JpegReader(jpegSegment).extract(metadata);
+            break;
+        }
 
 /*
-        // alternative jpeg segment code proposed by YB.  untested.
-        for (byte i=0;i<16;i++) {
-            if (i!=4 && i!=12) {
-                byte[] jpegSegment = segmentReader.readSegment((byte) (JpegSegmentReader.SEGMENT_SOF0 + i));
-                if (jpegSegment!=null) {
-                    JpegDirectory directory = (JpegDirectory)metadata.getDirectory(JpegDirectory.class);
-                    directory.setInt(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE, i);
-                    new JpegReader(jpegSegment).extract(metadata);
-                }
-            }
+        byte[] app2Segment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP2);
+        if (app2Segment != null && new String(app2Segment, 0, 11).equalsIgnoreCase("ICC_PROFILE")){
+            byte[] icc = new byte[app2Segment.length-14];
+            System.arraycopy(app2Segment, 14, icc, 0, app2Segment.length-14);
+            new com.drew.metadata.icc.iccReader(icc).extract(metadata);
         }
 */
 
         byte[] jfifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP0);
-        new JfifReader(jfifSegment).extract(metadata);
+        if (jfifSegment != null)
+            new JfifReader(jfifSegment).extract(metadata);
 
-        byte[] jpegCommentSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_COM);
-        new JpegCommentReader(jpegCommentSegment).extract(metadata);
+        byte[] comSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_COM);
+        if (comSegment != null)
+            new JpegCommentReader(comSegment).extract(metadata);
 
         return metadata;
     }
@@ -112,3 +126,4 @@ public class JpegMetadataReader
         throw new Exception("Not intended for instantiation");
     }
 }
+

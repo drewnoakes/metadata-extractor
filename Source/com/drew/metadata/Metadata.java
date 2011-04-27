@@ -44,6 +44,7 @@
 package com.drew.metadata;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -118,13 +119,11 @@ public final class Metadata implements Serializable
      * @return a directory of the specified type.
      */
     @NotNull
-    public Directory getDirectory(@NotNull Class<? extends Directory> type)
+    public <T extends Directory> T getOrCreateDirectory(@NotNull Class<T> type)
     {
-        // TODO make one method getDirectory and another getOrCreateDirectory as this method is confusingly named
-
         // check if we've already issued this type of directory
         if (_directoryByClass.containsKey(type))
-            return _directoryByClass.get(type);
+            return (T)_directoryByClass.get(type);
 
         Directory directory;
         try {
@@ -136,12 +135,25 @@ public final class Metadata implements Serializable
         _directoryByClass.put(type, directory);
         _directoryList.add(directory);
 
-        return directory;
+        return (T)directory;
+    }
+
+    /**
+     * If this <code>Metadata</code> object contains a <code>Directory</code> of the specified type, it is returned.
+     * Otherwise <code>null</code> is returned.
+     * @param type
+     * @param <T>
+     * @return a Directory of type T if it exists in this Metadata object, otherwise <code>null</code>.
+     */
+    @Nullable
+    public <T extends Directory> T getDirectory(@NotNull Class<T> type)
+    {
+        return (T)_directoryByClass.get(type);
     }
 
     /**
      * Indicates whether a given directory type has been created in this metadata
-     * repository.  Directories are created by calling getDirectory(Class).
+     * repository.  Directories are created by calling getOrCreateDirectory(Class).
      *
      * @param type the Directory type
      * @return true if the metadata directory has been created

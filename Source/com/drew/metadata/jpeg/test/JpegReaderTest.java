@@ -49,7 +49,7 @@ public class JpegReaderTest
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(JpegDirectory.class));
-        _directory = (JpegDirectory)metadata.getDirectory(JpegDirectory.class);
+        _directory = metadata.getOrCreateDirectory(JpegDirectory.class);
     }
 
     @Test
@@ -80,6 +80,7 @@ public class JpegReaderTest
     public void testComponentData1() throws Exception
     {
         JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1);
+        Assert.assertNotNull(component);
         Assert.assertEquals("Y", component.getComponentName());
         Assert.assertEquals(1, component.getComponentId());
         Assert.assertEquals(0, component.getQuantizationTableNumber());
@@ -91,6 +92,7 @@ public class JpegReaderTest
     public void testComponentData2() throws Exception
     {
         JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_2);
+        Assert.assertNotNull(component);
         Assert.assertEquals("Cb", component.getComponentName());
         Assert.assertEquals(2, component.getComponentId());
         Assert.assertEquals(1, component.getQuantizationTableNumber());
@@ -103,6 +105,7 @@ public class JpegReaderTest
     public void testComponentData3() throws Exception
     {
         JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_3);
+        Assert.assertNotNull(component);
         Assert.assertEquals("Cr", component.getComponentName());
         Assert.assertEquals(3, component.getComponentId());
         Assert.assertEquals(1, component.getQuantizationTableNumber());

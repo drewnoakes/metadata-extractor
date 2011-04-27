@@ -21,6 +21,7 @@
 package com.drew.metadata.exif.test;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
+import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -39,24 +40,26 @@ import java.io.File;
 public class ExifReaderTest
 {
     @Test
+    public void testCreateExifReaderWithNullDataThrows() throws Exception
+    {
+        try{
+            new ExifReader(null);
+            Assert.fail("Exception expected");
+        } catch (NullPointerException npe) {
+            // passed
+        }
+    }
+    
+    @Test
     public void testLoadFujiFilmJpeg() throws Exception
     {
         String jpegWithExif = "Source/com/drew/metadata/exif/test/withExif.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(jpegWithExif)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(jpegWithExif)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Assert.assertEquals("80", directory.getDescription(ExifDirectory.TAG_ISO_EQUIVALENT));
         // TODO decide if this should still be returned -- it was being calculated upon setting of a related tag
 //      assertEquals("F9", directory.getDescription(ExifDirectory.TAG_APERTURE));
-    }
-
-    @Test
-    public void testLoadJpegWithoutExifData() throws Exception
-    {
-        String jpegNoExif = "Source/com/drew/metadata/exif/test/noExif.jpg";
-        Metadata metadata = new Metadata();
-        new ExifReader(new File(jpegNoExif)).extract(metadata);
-        Assert.assertTrue(!metadata.containsDirectory(ExifDirectory.class));
     }
 
     @Test
@@ -67,8 +70,8 @@ public class ExifReaderTest
         // fatal situations.  Now, the Metadata object returned has no new tags.
         String jpegBadExif = "Source/com/drew/metadata/exif/test/badExif.jpg"; // Exif data segment doesn't begin with 'Exif'
         Metadata metadata = new Metadata();
-        new ExifReader(new File(jpegBadExif)).extract(metadata);
-        Assert.assertEquals(0, metadata.getDirectory(ExifDirectory.class).getTagCount());
+        new ExifReader(new JpegSegmentReader(new File(jpegBadExif)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Assert.assertEquals(0, metadata.getOrCreateDirectory(ExifDirectory.class).getTagCount());
     }
 
     @Test
@@ -79,8 +82,8 @@ public class ExifReaderTest
         // i've noticed that ACDSee reports a Comment for this image, yet ExifReader doesn't report one
         String fileName = "Source/com/drew/metadata/exif/test/crash01.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Assert.assertTrue(metadata.getDirectory(ExifDirectory.class).getTagCount() > 0);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Assert.assertTrue(metadata.getOrCreateDirectory(ExifDirectory.class).getTagCount() > 0);
     }
 
     @Test
@@ -88,8 +91,8 @@ public class ExifReaderTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Assert.assertEquals(192, directory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET));
     }
 
@@ -98,8 +101,8 @@ public class ExifReaderTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Assert.assertEquals(2970, directory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH));
     }
 
@@ -108,8 +111,8 @@ public class ExifReaderTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Assert.assertEquals("2002:11:27 18:00:35", directory.getString(ExifDirectory.TAG_DATETIME));
     }
 
@@ -118,8 +121,8 @@ public class ExifReaderTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Rational rational = directory.getRational(ExifDirectory.TAG_X_RESOLUTION);
         Assert.assertEquals(72, rational.getNumerator());
         Assert.assertEquals(1, rational.getDenominator());
@@ -130,8 +133,8 @@ public class ExifReaderTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Rational rational = directory.getRational(ExifDirectory.TAG_Y_RESOLUTION);
         Assert.assertEquals(72, rational.getNumerator());
         Assert.assertEquals(1, rational.getDenominator());
@@ -142,8 +145,8 @@ public class ExifReaderTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         // 6 means JPEG compression
         Assert.assertEquals(6, directory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION));
     }
@@ -156,11 +159,11 @@ public class ExifReaderTest
         // unit test.
         File metadataFile = new File("Source/com/drew/metadata/exif/test/recursiveDirectories.metadata");
         Metadata metadata = new Metadata();
-        new ExifReader(JpegSegmentData.fromFile(metadataFile)).extract(metadata);
-        metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(JpegSegmentData.fromFile(metadataFile).getSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        metadata.getOrCreateDirectory(ExifDirectory.class);
 //        String fileName = "Source/com/drew/metadata/exif/test/recursiveDirectories.jpg";
 //        Metadata metadata = new ExifReader(new File(fileName)).extract();
-//        metadata.getDirectory(ExifDirectory.class);
+//        metadata.getOrCreateDirectory(ExifDirectory.class);
     }
 
 
@@ -170,23 +173,23 @@ public class ExifReaderTest
         String fileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail.jpg";
         String thumnailFileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail.bmp";
         Metadata metadata = new ExifReader(new File(fileName)).extract();
-        ExifDirectory directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        ExifDirectory directory = (ExifDirectory)metadata.getOrCreateDirectory(ExifDirectory.class);
         directory.writeThumbnail(thumnailFileName);
 
         fileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail2.jpg";
         thumnailFileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail2.bmp";
         metadata = new ExifReader(new File(fileName)).extract();
-        directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory = (ExifDirectory)metadata.getOrCreateDirectory(ExifDirectory.class);
         directory.writeThumbnail(thumnailFileName);
         fileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail3.jpg";
         thumnailFileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail3.bmp";
         metadata = new ExifReader(new File(fileName)).extract();
-        directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory = (ExifDirectory)metadata.getOrCreateDirectory(ExifDirectory.class);
         directory.writeThumbnail(thumnailFileName);
         fileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail4.jpg";
         thumnailFileName = "Source/com/drew/metadata/exif/test/withUncompressedYCbCrThumbnail4.bmp";
         metadata = new ExifReader(new File(fileName)).extract();
-        directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        directory = (ExifDirectory)metadata.getOrCreateDirectory(ExifDirectory.class);
         directory.writeThumbnail(thumnailFileName);
     }
 
@@ -195,7 +198,7 @@ public class ExifReaderTest
         String fileName = "Source/com/drew/metadata/exif/test/withUncompressedRGBThumbnail.jpg";
         String thumnailFileName = "Source/com/drew/metadata/exif/test/withUncompressedRGBThumbnail.bmp";
         Metadata metadata = new ExifReader(new File(fileName)).extract();
-        ExifDirectory directory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        ExifDirectory directory = (ExifDirectory)metadata.getOrCreateDirectory(ExifDirectory.class);
         directory.writeThumbnail(thumnailFileName);
     }
 */

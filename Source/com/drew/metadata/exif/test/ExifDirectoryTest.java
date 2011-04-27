@@ -23,10 +23,8 @@ package com.drew.metadata.exif.test;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,7 +39,7 @@ public class ExifDirectoryTest
     public void testGetDirectoryName() throws Exception
     {
         Metadata metadata = new Metadata();
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Assert.assertEquals("Exif", directory.getName());
     }
 
@@ -50,9 +48,10 @@ public class ExifDirectoryTest
     {
         File file = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
-        ExifDirectory exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
         byte[] thumbData = exifDirectory.getThumbnailData();
+        Assert.assertNotNull(thumbData);
         try {
             // attempt to read the thumbnail -- it should be a legal Jpeg file
             new JpegSegmentReader(thumbData);
@@ -66,7 +65,7 @@ public class ExifDirectoryTest
     {
         File file = new File("Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
-        ExifDirectory exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
         Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
 
         File thumbnailFile = File.createTempFile("thumbnail", ".jpg");

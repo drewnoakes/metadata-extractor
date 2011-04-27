@@ -70,6 +70,7 @@ public class JpegDescriptor extends TagDescriptor
         Integer value = _directory.getInteger(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE);
         if (value==null)
             return null;
+        // Note there is no 2 or 12
         switch (value) {
             case 0: return "Baseline";
             case 1: return "Extended sequential, Huffman";

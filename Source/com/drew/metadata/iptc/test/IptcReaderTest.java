@@ -44,7 +44,7 @@ public class IptcReaderTest
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
-        Directory directory = metadata.getDirectory(IptcDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
         Assert.assertEquals("City", directory.getDescription(IptcDirectory.TAG_CITY));
     }
 
@@ -56,7 +56,7 @@ public class IptcReaderTest
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
-        Directory directory = metadata.getDirectory(IptcDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
         Assert.assertEquals("Caption", directory.getDescription(IptcDirectory.TAG_CAPTION));
     }
 
@@ -68,7 +68,7 @@ public class IptcReaderTest
         Metadata metadata = new Metadata();
         reader.extract(metadata);
         Assert.assertTrue(metadata.containsDirectory(IptcDirectory.class));
-        Directory directory = metadata.getDirectory(IptcDirectory.class);
+        Directory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
         Assert.assertEquals("Supl. Category2 Supl. Category1 Cat", directory.getDescription(IptcDirectory.TAG_CATEGORY));
     }
 

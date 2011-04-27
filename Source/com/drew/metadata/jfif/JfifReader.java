@@ -21,7 +21,6 @@
 package com.drew.metadata.jfif;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
@@ -38,7 +37,7 @@ public class JfifReader implements MetadataReader
     // TODO add unit tests for JFIF data
 
     /** The SOF0 data segment. */
-    @Nullable
+    @NotNull
     private final byte[] _data;
 
     /**
@@ -46,8 +45,10 @@ public class JfifReader implements MetadataReader
      *
      * @param data the byte array to read Jfif data from
      */
-    public JfifReader(@Nullable byte[] data)
+    public JfifReader(@NotNull byte[] data)
     {
+        if (data == null)
+            throw new NullPointerException();
         _data = data;
     }
 
@@ -57,10 +58,7 @@ public class JfifReader implements MetadataReader
      */
     public void extract(@NotNull Metadata metadata)
     {
-        if (_data == null)
-            return;
-
-        JfifDirectory directory = (JfifDirectory)metadata.getDirectory(JfifDirectory.class);
+        JfifDirectory directory = metadata.getOrCreateDirectory(JfifDirectory.class);
 
         try {
             int ver = get32Bits(JfifDirectory.TAG_JFIF_VERSION);
@@ -88,7 +86,6 @@ public class JfifReader implements MetadataReader
      */
     private int get32Bits(int offset) throws MetadataException
     {
-        assert (_data != null);
         if (offset + 1 >= _data.length)
             throw new MetadataException("Attempt to read bytes from outside Jfif segment data buffer");
         return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
@@ -102,7 +99,6 @@ public class JfifReader implements MetadataReader
      */
     private int get16Bits(int offset) throws MetadataException
     {
-        assert (_data != null);
         if (offset >= _data.length)
             throw new MetadataException("Attempt to read bytes from outside Jfif segment data buffer");
         return (_data[offset] & 255);

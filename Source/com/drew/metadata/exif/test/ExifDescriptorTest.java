@@ -20,8 +20,8 @@
  */
 package com.drew.metadata.exif.test;
 
+import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.lang.Rational;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDescriptor;
 import com.drew.metadata.exif.ExifDirectory;
@@ -149,8 +149,8 @@ public class ExifDescriptorTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/windowsXpFields.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new File(fileName)).extract(metadata);
-        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         ExifDescriptor descriptor = new ExifDescriptor(directory);
         Assert.assertEquals("Testing artist", descriptor.getDescription(ExifDirectory.TAG_WIN_AUTHOR));
         Assert.assertEquals("Testing comments", descriptor.getDescription(ExifDirectory.TAG_WIN_COMMENT));

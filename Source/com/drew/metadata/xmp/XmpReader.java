@@ -27,7 +27,6 @@ import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
@@ -52,12 +51,14 @@ public class XmpReader implements MetadataReader
     private static final String SCHEMA_EXIF_ADDITIONAL_PROPERTIES = "http://ns.adobe.com/exif/1.0/aux/";
     private static final String SCHEMA_EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
 
-    @Nullable
+    @NotNull
     private final byte[] _data;
 
     /** Creates an XmpReader for the given JPEG header segment. */
-    public XmpReader(@Nullable byte[] data)
+    public XmpReader(@NotNull byte[] data)
     {
+        if (data == null)
+            throw new NullPointerException();
         _data = data;
     }
 
@@ -67,11 +68,8 @@ public class XmpReader implements MetadataReader
      */
     public void extract(@NotNull Metadata metadata)
     {
-        if (_data == null)
-            return;
-
         // once we know there's some data, create the directory and start working on it
-        XmpDirectory directory = (XmpDirectory) metadata.getDirectory(XmpDirectory.class);
+        XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
 
         // check for the header length
         if (_data.length <= 30) {

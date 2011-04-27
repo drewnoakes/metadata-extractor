@@ -44,8 +44,8 @@ public class NikonType2MakernoteTest2
     {
         File nikonJpeg = new File("Source/com/drew/metadata/exif/test/nikonMakernoteType2b.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(nikonJpeg);
-        _nikonDirectory = (NikonType2MakernoteDirectory)metadata.getDirectory(NikonType2MakernoteDirectory.class);
-        _exifDirectory = (ExifDirectory)metadata.getDirectory(ExifDirectory.class);
+        _nikonDirectory = metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class);
+        _exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
     }
 
     /*

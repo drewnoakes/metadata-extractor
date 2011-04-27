@@ -21,6 +21,7 @@
 package com.drew.metadata.exif.test;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
+import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifReader;
@@ -45,9 +46,9 @@ public class NikonType2MakernoteTest1
     {
         File metadataFile = new File("Source/com/drew/metadata/exif/test/nikonMakernoteType2a.metadata");
         Metadata metadata = new Metadata();
-        new ExifReader(JpegSegmentData.fromFile(metadataFile)).extract(metadata);
+        new ExifReader(JpegSegmentData.fromFile(metadataFile).getSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
 
-        _nikonDirectory = (NikonType2MakernoteDirectory)metadata.getDirectory(NikonType2MakernoteDirectory.class);
+        _nikonDirectory = metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class);
         _descriptor = new NikonType2MakernoteDescriptor(_nikonDirectory);
     }
 
@@ -140,7 +141,7 @@ public class NikonType2MakernoteTest1
         NikonType2MakernoteDescriptor descriptor = new NikonType2MakernoteDescriptor(directory);
 
         // no entry exists
-        Assert.assertEquals("Unknown", descriptor.getAutoFlashCompensationDescription());
+        Assert.assertNull(descriptor.getAutoFlashCompensationDescription());
 
         directory.setByteArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION, new byte[] { 0x06, 0x01, 0x06 });
         Assert.assertEquals("1 EV", descriptor.getAutoFlashCompensationDescription());

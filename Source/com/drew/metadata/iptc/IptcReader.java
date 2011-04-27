@@ -21,7 +21,6 @@
 package com.drew.metadata.iptc;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -51,22 +50,21 @@ public class IptcReader implements MetadataReader
     public static final int POST_DATA_RECORD = 9;
 */
     /** The Iptc data segment. */
-    @Nullable
+    @NotNull
     private final byte[] _data;
 
     /** Creates an IptcReader for the given IPTC data segment. */
-    public IptcReader(@Nullable byte[] data)
+    public IptcReader(@NotNull byte[] data)
     {
+        if (data==null)
+            throw new NullPointerException();
         _data = data;
     }
 
     /** Performs the Exif data extraction, adding found values to the specified instance of <code>Metadata</code>. */
     public void extract(@NotNull Metadata metadata)
     {
-        if (_data == null)
-            return;
-
-        Directory directory = metadata.getDirectory(IptcDirectory.class);
+        IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
 
         // find start of data
         int offset = 0;
@@ -122,10 +120,8 @@ public class IptcReader implements MetadataReader
      */
     private int get32Bits(int offset) throws MetadataException
     {
-        assert (_data != null);
-        if (offset >= _data.length) {
+        if (offset >= _data.length)
             throw new MetadataException("Attempt to read bytes from outside Iptc data buffer");
-        }
         return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
     }
 
