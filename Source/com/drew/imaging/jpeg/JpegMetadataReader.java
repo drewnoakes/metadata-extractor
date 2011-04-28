@@ -23,6 +23,7 @@ package com.drew.imaging.jpeg;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.jfif.JfifReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
@@ -88,7 +89,7 @@ public class JpegMetadataReader
 //        byte[] jpegSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0);
 //        new JpegReader(jpegSegment).extract(metadata);
 
-        // alternative jpeg segment code proposed by Yuri B.  untested.
+        // alternative jpeg segment code proposed by Yuri Binev.  untested.
         for (byte i = 0; i < 16; i++) {
             if (i == 4 || i == 12)
                 continue;
@@ -101,14 +102,12 @@ public class JpegMetadataReader
             break;
         }
 
-/*
         byte[] app2Segment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP2);
         if (app2Segment != null && new String(app2Segment, 0, 11).equalsIgnoreCase("ICC_PROFILE")){
             byte[] icc = new byte[app2Segment.length-14];
             System.arraycopy(app2Segment, 14, icc, 0, app2Segment.length-14);
-            new com.drew.metadata.icc.iccReader(icc).extract(metadata);
+            new IccReader(icc).extract(metadata);
         }
-*/
 
         byte[] jfifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP0);
         if (jfifSegment != null)

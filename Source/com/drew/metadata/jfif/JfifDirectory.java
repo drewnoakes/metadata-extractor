@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * Directory of tags and values for the SOF0 Jfif segment.  This segment holds basic metadata about the image.
  *
- * @author Yuri B, Drew Noakes
+ * @author Yuri Binev, Drew Noakes
  */
 public class JfifDirectory extends Directory
 {

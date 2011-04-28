@@ -30,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
  * <p/>
  * More info at: http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
  *
- * @author Yuri B, Drew Noakes
+ * @author Yuri Binev, Drew Noakes
  */
 public class JfifDescriptor extends TagDescriptor
 {

@@ -29,10 +29,7 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Abstract base class for all directory implementations, having methods for getting and setting tag values of various
@@ -758,16 +755,31 @@ public abstract class Directory implements Serializable
         if (o.getClass().isArray()) {
             // handle arrays of objects and primitives
             int arrayLength = Array.getLength(o);
-            // determine if this is an array of objects i.e. [Lcom.drew.blah
-            boolean isObjectArray = o.getClass().toString().startsWith("class [L");
-            StringBuffer string = new StringBuffer();
+            final Class<?> componentType = o.getClass().getComponentType();
+            boolean isObjectArray = Object.class.isAssignableFrom(componentType);
+            boolean isFloatArray = componentType.getName().equals("float");
+            boolean isDoubleArray = componentType.getName().equals("double");
+            boolean isIntArray = componentType.getName().equals("int");
+            boolean isLongArray = componentType.getName().equals("long");
+            boolean isByteArray = componentType.getName().equals("byte");
+            StringBuilder string = new StringBuilder();
             for (int i = 0; i < arrayLength; i++) {
                 if (i != 0)
                     string.append(' ');
                 if (isObjectArray)
                     string.append(Array.get(o, i).toString());
-                else
+                else if (isIntArray)
                     string.append(Array.getInt(o, i));
+                else if (isLongArray)
+                    string.append(Array.getLong(o, i));
+                else if (isFloatArray)
+                    string.append(Array.getFloat(o, i));
+                else if (isDoubleArray)
+                    string.append(Array.getDouble(o, i));
+                else if (isByteArray)
+                    string.append(Array.getByte(o, i));
+                else
+                    addError("Unexpected array component type: " + componentType.getName());
             }
             return string.toString();
         }

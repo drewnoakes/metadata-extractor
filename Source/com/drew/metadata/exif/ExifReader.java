@@ -348,7 +348,7 @@ public class ExifReader implements MetadataReader
                 else if (_data[subdirOffset + 6] == 2)
                     processDirectory(metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 18, subdirOffset + 10, metadata);
                 else
-                    exifDirectory.addError("Unsupported makernote data ignored.");
+                    exifDirectory.addError("Unsupported Nikon makernote data ignored.");
             } else {
                 // The IFD begins with the first MakerNote byte (no ASCII name).  This occurs with CoolPix 775, E990 and D1 models.
                 processDirectory(metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset, metadata);
