@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -41,7 +41,7 @@ public class JpegReaderTest
     private JpegDirectory _directory;
 
     @Before
-    public void setUp() throws JpegProcessingException, FileNotFoundException
+    public void setUp() throws JpegProcessingException, IOException
     {
         // use a known testing image
         File jpegFile = new File("Source/com/drew/metadata/jpeg/test/simple.jpg");

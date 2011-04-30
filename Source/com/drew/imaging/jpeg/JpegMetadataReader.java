@@ -33,6 +33,7 @@ import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -62,7 +63,7 @@ public class JpegMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException
+    public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
         JpegSegmentReader segmentReader = new JpegSegmentReader(file);
         return extractMetadataFromJpegSegmentReader(segmentReader);

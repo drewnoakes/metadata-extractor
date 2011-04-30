@@ -95,19 +95,19 @@ public class JpegSegmentReader
      * Creates a JpegSegmentReader for a specific file.
      * @param file the Jpeg file to read segments from
      */
-    public JpegSegmentReader(@NotNull File file) throws JpegProcessingException
+    public JpegSegmentReader(@NotNull File file) throws JpegProcessingException, IOException
     {
         if (file==null)
-            throw new IllegalArgumentException();
+            throw new NullPointerException();
 
-        InputStream inputStream;
+        InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            throw new JpegProcessingException("Jpeg file does not exist", e);
+            _segmentData = readSegments(new BufferedInputStream(inputStream), false);
+        } finally {
+            if (inputStream != null)
+                inputStream.close();
         }
-
-        _segmentData = readSegments(new BufferedInputStream(inputStream), false);
     }
 
     /**
@@ -116,6 +116,9 @@ public class JpegSegmentReader
      */
     public JpegSegmentReader(@NotNull byte[] fileContents) throws JpegProcessingException
     {
+        if (fileContents==null)
+            throw new NullPointerException();
+
         BufferedInputStream stream = new BufferedInputStream(new ByteArrayInputStream(fileContents));
         _segmentData = readSegments(stream, false);
     }
@@ -126,6 +129,9 @@ public class JpegSegmentReader
      */
     public JpegSegmentReader(@NotNull InputStream inputStream, boolean waitForBytes) throws JpegProcessingException
     {
+        if (inputStream==null)
+            throw new NullPointerException();
+
         BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
                 ? (BufferedInputStream)inputStream
                 : new BufferedInputStream(inputStream);

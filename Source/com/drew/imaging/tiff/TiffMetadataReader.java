@@ -38,11 +38,19 @@ public class TiffMetadataReader
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
 		Metadata metadata = new Metadata();
-		
-		DataInputStream x = new DataInputStream(new FileInputStream(file));
-		byte[] buffer = new byte[(int)file.length()];
-        x.readFully(buffer);
-		
+
+        FileInputStream fileInputStream = null;
+        byte[] buffer;
+        try{
+            fileInputStream = new FileInputStream(file);
+            DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+            buffer = new byte[(int)file.length()];
+            dataInputStream.readFully(buffer);
+        } finally {
+            if (fileInputStream != null)
+                fileInputStream.close();
+        }
+
 		new ExifReader(buffer).extractTiff(metadata);
 
 		return metadata;

@@ -78,6 +78,8 @@ public class SampleUsage
             printImageTags(1, metadata);
         } catch (JpegProcessingException e) {
             System.err.println("error 2a: " + e);
+        } catch (IOException e) {
+            System.err.println("error 2b: " + e);
         }
 
         // Approach 3
@@ -88,11 +90,15 @@ public class SampleUsage
             byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1);
             byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
             Metadata metadata = new Metadata();
-            new ExifReader(exifSegment).extract(metadata);
-            new IptcReader(iptcSegment).extract(metadata);
+            if (exifSegment != null)
+                new ExifReader(exifSegment).extract(metadata);
+            if (iptcSegment != null)
+                new IptcReader(iptcSegment).extract(metadata);
             printImageTags(3, metadata);
         } catch (JpegProcessingException e) {
             System.err.println("error 3a: " + e);
+        } catch (IOException e) {
+            System.err.println("error 3b: " + e);
         }
         
 /*

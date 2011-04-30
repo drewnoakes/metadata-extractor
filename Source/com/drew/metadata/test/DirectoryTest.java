@@ -24,6 +24,7 @@ import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.exif.ExifDirectory;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.GregorianCalendar;
@@ -37,7 +38,7 @@ public class DirectoryTest
 
     private Directory _directory;
 
-    public DirectoryTest()
+    @Before public void setup()
     {
         _directory = new MockDirectory();
     }
