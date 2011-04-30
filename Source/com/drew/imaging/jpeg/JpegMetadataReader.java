@@ -73,35 +73,13 @@ public class JpegMetadataReader
     {
         final Metadata metadata = new Metadata();
 
-        // TODO Don't assume this ordering of APP1 segments. We might have XMP without Exif, for example.  Instead, investigate the leading bytes of sections to determine the contents and act accordingly.
-
-        byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1, 0);
-        if (exifSegment != null)
-            new ExifReader(exifSegment).extract(metadata);
-
-        byte[] xmpSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1, 1);
-        if (xmpSegment != null)
-            new XmpReader(xmpSegment).extract(metadata);
-
-//        byte[] appdSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
-//        if (appdSegment != null)
-//            new IptcReader(appdSegment).extract(metadata);
-
-        for (byte[] appdSegment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APPD)) {
-            if ("Photoshop 3.0".compareTo(new String(appdSegment, 0, 13))==0) {
-                new PhotoshopReader(appdSegment).extract(metadata);
-            } else {
-                new IptcReader(appdSegment).extract(metadata);
-            }
-        }
-
-//        byte[] jpegSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0);
-//        new JpegReader(jpegSegment).extract(metadata);
-
-        // alternative jpeg segment code proposed by Yuri Binev.  untested.
+        // Loop through looking for all SOFn segments.  When we find one, we know what type of compression
+        // was used for the JPEG, and we can process the JPEG metadata in the segment too.
         for (byte i = 0; i < 16; i++) {
+            // There are no SOF4 or SOF12 segments, so don't bother
             if (i == 4 || i == 12)
                 continue;
+            // Should never have more than one SOFn for a given 'n'.
             byte[] jpegSegment = segmentReader.readSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + i));
             if (jpegSegment == null)
                 continue;
@@ -111,20 +89,44 @@ public class JpegMetadataReader
             break;
         }
 
-        byte[] app2Segment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP2);
-        if (app2Segment != null && new String(app2Segment, 0, 11).equalsIgnoreCase("ICC_PROFILE")){
-            byte[] icc = new byte[app2Segment.length-14];
-            System.arraycopy(app2Segment, 14, icc, 0, app2Segment.length-14);
-            new IccReader(icc).extract(metadata);
-        }
-
-        byte[] jfifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP0);
-        if (jfifSegment != null)
-            new JfifReader(jfifSegment).extract(metadata);
-
+        // There should never be more than one COM segment.
         byte[] comSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_COM);
         if (comSegment != null)
             new JpegCommentReader(comSegment).extract(metadata);
+
+        // Loop through all APP0 segments, looking for a JFIF segment.
+        for (byte[] app0Segment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APP0)) {
+            if (app0Segment.length > 3 && new String(app0Segment, 0, 4).equals("JFIF"))
+                new JfifReader(app0Segment).extract(metadata);
+        }
+
+        // Loop through all APP1 segments, checking the leading bytes to identify the format of each.
+        for (byte[] app1Segment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APP1)) {
+            if (app1Segment.length > 3 && "EXIF".equalsIgnoreCase(new String(app1Segment, 0, 4)))
+                new ExifReader(app1Segment).extract(metadata);
+
+            if (app1Segment.length > 27 && "http://ns.adobe.com/xap/1.0/".equalsIgnoreCase(new String(app1Segment, 0, 28)))
+                new XmpReader(app1Segment).extract(metadata);
+        }
+
+        // Loop through all APP2 segments, looking for something we can process.
+        for (byte[] app2Segment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APP2)) {
+            if (app2Segment.length > 10 && new String(app2Segment, 0, 11).equalsIgnoreCase("ICC_PROFILE")) {
+                byte[] icc = new byte[app2Segment.length-14];
+                System.arraycopy(app2Segment, 14, icc, 0, app2Segment.length-14);
+                new IccReader(icc).extract(metadata);
+            }
+        }
+
+        // Loop through all APPD segments, checking the leading bytes to identify the format of each.
+        for (byte[] appdSegment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APPD)) {
+            if (appdSegment.length > 12 && "Photoshop 3.0".compareTo(new String(appdSegment, 0, 13))==0) {
+                new PhotoshopReader(appdSegment).extract(metadata);
+            } else {
+                // TODO might be able to check for a leading 0x1c02 for IPTC data...
+                new IptcReader(appdSegment).extract(metadata);
+            }
+        }
 
         return metadata;
     }

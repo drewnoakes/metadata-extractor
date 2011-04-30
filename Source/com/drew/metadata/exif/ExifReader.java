@@ -257,21 +257,21 @@ public class ExifReader implements MetadataReader
             // 2 bytes for the format code
             final int formatCode = _reader.getUInt16(tagOffset + 2);
             if (formatCode < 1 || formatCode > MAX_FORMAT_CODE) {
-                directory.addError("Invalid format code: " + formatCode);
+                directory.addError("Invalid TIFF tag format code: " + formatCode);
                 continue;
             }
 
             // 4 bytes dictate the number of components in this tag's data
             final int componentCount = _reader.getInt32(tagOffset + 4);
             if (componentCount < 0) {
-                directory.addError("Negative component count in EXIF");
+                directory.addError("Negative TIFF tag component count");
                 continue;
             }
             // each component may have more than one byte... calculate the total number of bytes
             final int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
             final int tagValueOffset = calculateTagValueOffset(byteCount, tagOffset, tiffHeaderOffset);
             if (tagValueOffset < 0 || tagValueOffset > _data.length) {
-                directory.addError("Illegal pointer offset value in EXIF");
+                directory.addError("Illegal TIFF tag pointer offset");
                 continue;
             }
 
@@ -422,7 +422,6 @@ public class ExifReader implements MetadataReader
         } else {
             // TODO how to store makernote data when it's not from a supported camera model?
             // this is difficult as the starting offset is not known.  we could look for it...
-            exifDirectory.addError("Unsupported makernote data ignored.");
         }
     }
 

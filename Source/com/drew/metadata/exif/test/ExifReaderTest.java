@@ -63,15 +63,14 @@ public class ExifReaderTest
     }
 
     @Test
-    public void testLoadJpegWithBadExifData() throws Exception
+    public void testLoadJpegWithNoExifData() throws Exception
     {
-        // This test used to ensure an exception was thrown when loading a particular jpeg
-        // The intention has since changed, and the API should only throw exceptions in completely
-        // fatal situations.  Now, the Metadata object returned has no new tags.
-        String jpegBadExif = "Source/com/drew/metadata/exif/test/badExif.jpg"; // Exif data segment doesn't begin with 'Exif'
+        byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
         Metadata metadata = new Metadata();
-        new ExifReader(new JpegSegmentReader(new File(jpegBadExif)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
-        Assert.assertEquals(0, metadata.getOrCreateDirectory(ExifDirectory.class).getTagCount());
+        new ExifReader(badExifData).extract(metadata);
+        Directory directory = metadata.getDirectory(ExifDirectory.class);
+        Assert.assertNotNull(directory);
+        Assert.assertEquals(0, directory.getTagCount());
     }
 
     @Test

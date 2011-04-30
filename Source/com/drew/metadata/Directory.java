@@ -465,7 +465,7 @@ public abstract class Directory implements Serializable
 
     /**
      * Gets the specified tag's value as an int array, if possible.  Only supported
-     * where the tag is set as String, int[], byte[] or Rational[].
+     * where the tag is set as String, Integer, int[], byte[] or Rational[].
      *
      * @param tagType the tag identifier
      * @return the tag's value as an int array
@@ -503,12 +503,15 @@ public abstract class Directory implements Serializable
             }
             return ints;
         }
+        if (o instanceof Integer)
+            return new int[] { (Integer)o };
+        
         return null;
     }
 
     /**
      * Gets the specified tag's value as an byte array, if possible.  Only supported
-     * where the tag is set as String, int[], byte[] or Rational[].
+     * where the tag is set as String, Integer, int[], byte[] or Rational[].
      *
      * @param tagType the tag identifier
      * @return the tag's value as a byte array
@@ -543,6 +546,9 @@ public abstract class Directory implements Serializable
             }
             return bytes;
         }
+        if (o instanceof Integer)
+            return new byte[] { ((Integer)o).byteValue() };
+
         return null;
     }
 
@@ -717,6 +723,12 @@ public abstract class Directory implements Serializable
 
         if (o instanceof Rational)
             return (Rational)o;
+        if (o instanceof Integer)
+            return new Rational((Integer)o, 1);
+        if (o instanceof Long)
+            return new Rational((Long)o, 1);
+
+        // NOTE not doing conversions for real number types
 
         return null;
     }
