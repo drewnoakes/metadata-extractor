@@ -29,6 +29,7 @@ import com.drew.metadata.jfif.JfifReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
 import com.drew.metadata.jpeg.JpegDirectory;
 import com.drew.metadata.jpeg.JpegReader;
+import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.File;
@@ -82,9 +83,17 @@ public class JpegMetadataReader
         if (xmpSegment != null)
             new XmpReader(xmpSegment).extract(metadata);
 
-        byte[] appdSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
-        if (appdSegment != null)
-            new IptcReader(appdSegment).extract(metadata);
+//        byte[] appdSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
+//        if (appdSegment != null)
+//            new IptcReader(appdSegment).extract(metadata);
+
+        for (byte[] appdSegment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APPD)) {
+            if ("Photoshop 3.0".compareTo(new String(appdSegment, 0, 13))==0) {
+                new PhotoshopReader(appdSegment).extract(metadata);
+            } else {
+                new IptcReader(appdSegment).extract(metadata);
+            }
+        }
 
 //        byte[] jpegSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0);
 //        new JpegReader(jpegSegment).extract(metadata);

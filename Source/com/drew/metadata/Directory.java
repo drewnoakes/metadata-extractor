@@ -111,7 +111,7 @@ public abstract class Directory implements Serializable
      * @return an Iterator of Tag instances
      */
     @NotNull
-    public Iterable<Tag> getTags()
+    public Collection<Tag> getTags()
     {
         return _definedTagList;
     }

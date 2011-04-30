@@ -87,6 +87,16 @@ public class ProcessAllImagesInFolderUtility
                     continue;
                 }
 
+                if (metadata.hasErrors()) {
+                    System.err.println(file);
+                    for (Directory directory : metadata.getDirectories()) {
+                        if (!directory.hasErrors())
+                            continue;
+                        for (String error : directory.getErrors())
+                            System.err.println("[" + directory.getName() + "] " + error);
+                    }
+                }
+
                 // Iterate through all values
                 try {
                     for (Directory directory : metadata.getDirectories()) {

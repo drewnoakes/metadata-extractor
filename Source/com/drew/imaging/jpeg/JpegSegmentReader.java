@@ -159,6 +159,17 @@ public class JpegSegmentReader
     }
 
     /**
+     * Returns all instances of a given Jpeg segment.  If no instances exist, an empty sequence is returned.
+     * @param segmentMarker
+     * @return
+     */
+    @NotNull
+    public Iterable<byte[]> readSegments(byte segmentMarker)
+    {
+        return _segmentData.getSegments(segmentMarker);
+    }
+
+    /**
      * Returns the number of segments having the specified JPEG segment marker.
      * @param segmentMarker the JPEG segment identifying marker.
      * @return the count of matching segments.
@@ -178,6 +189,7 @@ public class JpegSegmentReader
         return _segmentData;
     }
 
+    @NotNull
     private JpegSegmentData readSegments(@NotNull final BufferedInputStream jpegInputStream, boolean waitForBytes) throws JpegProcessingException
     {
         JpegSegmentData segmentData = new JpegSegmentData();

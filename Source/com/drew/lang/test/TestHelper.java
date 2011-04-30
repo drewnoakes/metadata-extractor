@@ -22,6 +22,11 @@ package com.drew.lang.test;
 
 import junit.framework.TestCase;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -33,5 +38,29 @@ public class TestHelper
 
         for (int i = 0; i<array1.length; i++)
             TestCase.assertEquals("Equal value at index " + i, array1[i], array2[i]);
+    }
+
+    public static byte[] loadFileBytes(File file) throws IOException
+    {
+        InputStream stream = new FileInputStream(file);
+
+        long length = file.length();
+
+        if (length > Integer.MAX_VALUE)
+            throw new IOException("File is too large to be read into memory.");
+
+        byte[] bytes = new byte[(int)length];
+
+        // Read in the bytes
+        int offset = 0;
+        int numRead;
+        while (offset < bytes.length && (numRead = stream.read(bytes, offset, bytes.length - offset)) >= 0)
+            offset += numRead;
+
+        if (offset < length)
+            throw new IOException("Could not completely read file " + file.getName());
+
+        stream.close();
+        return bytes;
     }
 }

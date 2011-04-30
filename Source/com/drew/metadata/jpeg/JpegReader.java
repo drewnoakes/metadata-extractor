@@ -20,9 +20,10 @@
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.lang.BufferBoundsException;
+import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
 
 /**
@@ -55,22 +56,23 @@ public class JpegReader implements MetadataReader
     public void extract(@NotNull Metadata metadata)
     {
         JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
+        BufferReader reader = new BufferReader(_data);
 
         try {
             // data precision
-            int dataPrecision = get16Bits(JpegDirectory.TAG_JPEG_DATA_PRECISION);
+            int dataPrecision = reader.getUInt8(JpegDirectory.TAG_JPEG_DATA_PRECISION);
             directory.setInt(JpegDirectory.TAG_JPEG_DATA_PRECISION, dataPrecision);
 
             // process height
-            int height = get32Bits(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
+            int height = reader.getUInt16(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
             directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, height);
 
             // process width
-            int width = get32Bits(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
+            int width = reader.getUInt16(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
             directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, width);
 
             // number of components
-            int numberOfComponents = get16Bits(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS);
+            int numberOfComponents = reader.getUInt8(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS);
             directory.setInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS, numberOfComponents);
 
             // for each component, there are three bytes of data:
@@ -79,41 +81,15 @@ public class JpegReader implements MetadataReader
             // 3 - Quantization table number
             int offset = 6;
             for (int i = 0; i < numberOfComponents; i++) {
-                int componentId = get16Bits(offset++);
-                int samplingFactorByte = get16Bits(offset++);
-                int quantizationTableNumber = get16Bits(offset++);
+                int componentId = reader.getUInt8(offset++);
+                int samplingFactorByte = reader.getUInt8(offset++);
+                int quantizationTableNumber = reader.getUInt8(offset++);
                 JpegComponent component = new JpegComponent(componentId, samplingFactorByte, quantizationTableNumber);
                 directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1 + i, component);
             }
 
-        } catch (MetadataException me) {
-            directory.addError("MetadataException: " + me);
+        } catch (BufferBoundsException ex) {
+            directory.addError(ex.getMessage());
         }
-    }
-
-    /**
-     * Returns an int calculated from two bytes of data at the specified offset (MSB, LSB).
-     *
-     * @param offset position within the data buffer to read first byte
-     * @return the 32 bit int value, between 0x0000 and 0xFFFF
-     */
-    private int get32Bits(int offset) throws MetadataException
-    {
-        if (offset + 1 >= _data.length)
-            throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
-        return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
-    }
-
-    /**
-     * Returns an int calculated from one byte of data at the specified offset.
-     *
-     * @param offset position within the data buffer to read byte
-     * @return the 16 bit int value, between 0x00 and 0xFF
-     */
-    private int get16Bits(int offset) throws MetadataException
-    {
-        if (offset >= _data.length)
-            throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
-        return (_data[offset] & 255);
     }
 }

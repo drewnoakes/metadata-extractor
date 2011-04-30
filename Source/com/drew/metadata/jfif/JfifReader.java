@@ -20,9 +20,10 @@
  */
 package com.drew.metadata.jfif;
 
+import com.drew.lang.BufferBoundsException;
+import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
 
 /**
@@ -59,48 +60,23 @@ public class JfifReader implements MetadataReader
     public void extract(@NotNull Metadata metadata)
     {
         JfifDirectory directory = metadata.getOrCreateDirectory(JfifDirectory.class);
+        BufferReader reader = new BufferReader(_data);
 
         try {
-            int ver = get32Bits(JfifDirectory.TAG_JFIF_VERSION);
+            int ver = reader.getInt32(JfifDirectory.TAG_JFIF_VERSION);
             directory.setInt(JfifDirectory.TAG_JFIF_VERSION, ver);
 
-            int units = get16Bits(JfifDirectory.TAG_JFIF_UNITS);
+            int units = reader.getUInt16(JfifDirectory.TAG_JFIF_UNITS);
             directory.setInt(JfifDirectory.TAG_JFIF_UNITS, units);
 
-            int height = get32Bits(JfifDirectory.TAG_JFIF_RESX);
+            int height = reader.getInt32(JfifDirectory.TAG_JFIF_RESX);
             directory.setInt(JfifDirectory.TAG_JFIF_RESX, height);
 
-            int width = get32Bits(JfifDirectory.TAG_JFIF_RESY);
+            int width = reader.getInt32(JfifDirectory.TAG_JFIF_RESY);
             directory.setInt(JfifDirectory.TAG_JFIF_RESY, width);
 
-        } catch (MetadataException me) {
-            directory.addError("MetadataException: " + me);
+        } catch (BufferBoundsException me) {
+            directory.addError(me.getMessage());
         }
-    }
-
-    /**
-     * Returns an int calculated from two bytes of data at the specified offset (MSB, LSB).
-     *
-     * @param offset position within the data buffer to read first byte
-     * @return the 32 bit int value, between 0x0000 and 0xFFFF
-     */
-    private int get32Bits(int offset) throws MetadataException
-    {
-        if (offset + 1 >= _data.length)
-            throw new MetadataException("Attempt to read bytes from outside Jfif segment data buffer");
-        return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
-    }
-
-    /**
-     * Returns an int calculated from one byte of data at the specified offset.
-     *
-     * @param offset position within the data buffer to read byte
-     * @return the 16 bit int value, between 0x00 and 0xFF
-     */
-    private int get16Bits(int offset) throws MetadataException
-    {
-        if (offset >= _data.length)
-            throw new MetadataException("Attempt to read bytes from outside Jfif segment data buffer");
-        return (_data[offset] & 255);
     }
 }

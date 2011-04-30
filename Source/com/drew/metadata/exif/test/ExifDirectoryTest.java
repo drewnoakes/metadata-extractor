@@ -39,8 +39,9 @@ public class ExifDirectoryTest
     public void testGetDirectoryName() throws Exception
     {
         Metadata metadata = new Metadata();
-        ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
-        Assert.assertEquals("Exif", directory.getName());
+        ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
+        Assert.assertFalse(exifDirectory.hasErrors());
+        Assert.assertEquals("Exif", exifDirectory.getName());
     }
 
     @Test
@@ -49,6 +50,7 @@ public class ExifDirectoryTest
         File file = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
         ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
+        Assert.assertFalse(exifDirectory.getErrors().toString(), exifDirectory.hasErrors());
         Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
         byte[] thumbData = exifDirectory.getThumbnailData();
         Assert.assertNotNull(thumbData);
@@ -66,6 +68,7 @@ public class ExifDirectoryTest
         File file = new File("Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
         ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
+        Assert.assertFalse(exifDirectory.hasErrors());
         Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
 
         File thumbnailFile = File.createTempFile("thumbnail", ".jpg");

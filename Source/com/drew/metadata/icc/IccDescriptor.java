@@ -21,9 +21,10 @@
 
 package com.drew.metadata.icc;
 
+import com.drew.lang.BufferBoundsException;
+import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
@@ -67,23 +68,24 @@ public class IccDescriptor extends TagDescriptor
     {
         try {
         byte[] bytes = _directory.getByteArray(tagType);
-        int iccTagType = IccReader.getInt32(bytes, 0);
+        BufferReader reader = new BufferReader(bytes);
+        int iccTagType = reader.getInt32(0);
         switch (iccTagType) {
             case ICC_TAG_TYPE_TEXT:
                 return new String(bytes, 8, bytes.length - 8 - 1, "ASCII");
             case ICC_TAG_TYPE_DESC:
-                int stringLength = IccReader.getInt32(bytes, 8);
+                int stringLength = reader.getInt32(8);
                 return new String(bytes, 12, stringLength - 1);
             case ICC_TAG_TYPE_SIG:
-                return IccReader.getStringFromInt32(IccReader.getInt32(bytes, 8));
+                return IccReader.getStringFromInt32(reader.getInt32(8));
             case ICC_TAG_TYPE_MEAS: {
-                int observerType = IccReader.getInt32(bytes, 8);
-                float x = IccReader.getS15Fixed16(bytes, 12);
-                float y = IccReader.getS15Fixed16(bytes, 16);
-                float z = IccReader.getS15Fixed16(bytes, 20);
-                int geometryType = IccReader.getInt32(bytes, 24);
-                float flare = IccReader.getS15Fixed16(bytes, 28);
-                int illuminantType = IccReader.getInt32(bytes, 32);
+                int observerType = reader.getInt32(8);
+                float x = reader.getS15Fixed16(12);
+                float y = reader.getS15Fixed16(16);
+                float z = reader.getS15Fixed16(20);
+                int geometryType = reader.getInt32(24);
+                float flare = reader.getS15Fixed16(28);
+                int illuminantType = reader.getInt32(32);
                 String observerString;
                 switch (observerType) {
                     case 0:
@@ -152,9 +154,9 @@ public class IccDescriptor extends TagDescriptor
                 StringBuilder res = new StringBuilder();
                 int count = (bytes.length - 8) / 12;
                 for (int i = 0; i < count; i++) {
-                    float x = IccReader.getS15Fixed16(bytes, 8 + i * 12);
-                    float y = IccReader.getS15Fixed16(bytes, 8 + i * 12 + 4);
-                    float z = IccReader.getS15Fixed16(bytes, 8 + i * 12 + 8);
+                    float x = reader.getS15Fixed16(8 + i * 12);
+                    float y = reader.getS15Fixed16(8 + i * 12 + 4);
+                    float z = reader.getS15Fixed16(8 + i * 12 + 8);
                     if (i > 0)
                         res.append(", ");
                     res.append("(").append(x).append(", ").append(y).append(", ").append(z).append(")");
@@ -162,15 +164,15 @@ public class IccDescriptor extends TagDescriptor
                 return res.toString();
             }
             case ICC_TAG_TYPE_MLUC: {
-                int int1 = IccReader.getInt32(bytes, 8);
+                int int1 = reader.getInt32(8);
                 StringBuilder res = new StringBuilder();
                 res.append(int1);
-                //int int2 = IccReader.getInt32(bytes, 12);
+                //int int2 = reader.getInt32(12);
                 //System.err.format("int1: %d, int2: %d\n", int1, int2);
                 for (int i = 0; i < int1; i++) {
-                    String str = IccReader.getStringFromInt32(IccReader.getInt32(bytes, 16 + i * 12));
-                    int len = IccReader.getInt32(bytes, 16 + i * 12 + 4);
-                    int ofs = IccReader.getInt32(bytes, 16 + i * 12 + 8);
+                    String str = IccReader.getStringFromInt32(reader.getInt32(16 + i * 12));
+                    int len = reader.getInt32(16 + i * 12 + 4);
+                    int ofs = reader.getInt32(16 + i * 12 + 8);
                     String name = new String(bytes, ofs, len, "UTF-16BE");
                     res.append(" ").append(str).append("(").append(name).append(")");
                     //System.err.format("% 3d: %s, len: %d, ofs: %d, \"%s\"\n", i, str, len,ofs,name);
@@ -178,12 +180,12 @@ public class IccDescriptor extends TagDescriptor
                 return res.toString();
             }
             case ICC_TAG_TYPE_CURV: {
-                int num = IccReader.getInt32(bytes, 8);
+                int num = reader.getInt32(8);
                 StringBuilder res = new StringBuilder();
                 for (int i = 0; i < num; i++) {
                     if (i != 0)
                         res.append(", ");
-                    res.append(formatDoubleAsString(((float)IccReader.getInt16(bytes, 12 + i * 2)) / 65535.0, 7, false));
+                    res.append(formatDoubleAsString(((float)reader.getUInt16(12 + i * 2)) / 65535.0, 7, false));
                     //res+=String.format("%1.7g",Math.round(((float)iccReader.getInt16(b,12+i*2))/0.065535)/1E7);
                 }
                 return res.toString();
@@ -250,8 +252,8 @@ public class IccDescriptor extends TagDescriptor
         int i;
         try {
             i = getInt32FromString(str);
-        } catch (MetadataException e) {
-            return null;
+        } catch (BufferBoundsException e) {
+            return str;
         }
         switch (i) {
             case 0x4150504C: // "APPL"
@@ -279,8 +281,8 @@ public class IccDescriptor extends TagDescriptor
         int i;
         try {
             i = getInt32FromString(str);
-        } catch (MetadataException e) {
-            return null;
+        } catch (BufferBoundsException e) {
+            return str;
         }
         switch (i) {
             case 0x73636E72:
@@ -324,9 +326,9 @@ public class IccDescriptor extends TagDescriptor
         return String.format("%d bytes binary data", bytes.length);
     }
 
-    private static int getInt32FromString(@NotNull String s) throws MetadataException
+    private static int getInt32FromString(@NotNull String string) throws BufferBoundsException
     {
-        byte[] b = s.getBytes();
-        return IccReader.getInt32(b, 0);
+        byte[] bytes = string.getBytes();
+        return new BufferReader(bytes).getInt32(0);
     }
 }

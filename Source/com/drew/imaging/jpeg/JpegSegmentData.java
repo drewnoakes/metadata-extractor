@@ -87,6 +87,25 @@ public class JpegSegmentData implements Serializable
     }
 
     /**
+     * Returns all instances of a given Jpeg segment.  If no instances exist, an empty sequence is returned.
+     *
+     * @param segmentMarker
+     * @return
+     */
+    @NotNull
+    public Iterable<byte[]> getSegments(byte segmentMarker)
+    {
+        final List<byte[]> segmentList = getSegmentList(segmentMarker);
+        return segmentList==null ? new ArrayList<byte[]>() : segmentList;
+    }
+
+    @Nullable
+    public List<byte[]> getSegmentList(byte segmentMarker)
+    {
+        return _segmentDataMap.get(new Byte(segmentMarker));
+    }
+
+    /**
      * Returns the count of segment data byte arrays stored for a given segment marker.
      * @param segmentMarker identifies the required segment
      * @return the segment count (zero if no segments exist).
@@ -174,12 +193,6 @@ public class JpegSegmentData implements Serializable
             if (inputStream!=null)
                 inputStream.close();
         }
-    }
-
-    @Nullable
-    private List<byte[]> getSegmentList(byte segmentMarker)
-    {
-        return _segmentDataMap.get(new Byte(segmentMarker));
     }
 
     @NotNull

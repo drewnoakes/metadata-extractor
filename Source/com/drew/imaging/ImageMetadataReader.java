@@ -46,7 +46,7 @@ import java.util.List;
 public class ImageMetadataReader
 {
     private static final int JPEG_FILE_MAGIC_NUMBER = 0xFFD8;
-    private static final int MOTOROLLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
+    private static final int MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
     private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;      // "II"
 
     /**
@@ -98,7 +98,7 @@ public class ImageMetadataReader
                 return JpegMetadataReader.readMetadata(file);
         }
 
-        if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLLA_TIFF_MAGIC_NUMBER) {
+        if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLA_TIFF_MAGIC_NUMBER) {
             if (inputStream != null)
                 return TiffMetadataReader.readMetadata(inputStream, waitForBytes);
             else

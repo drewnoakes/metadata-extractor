@@ -139,4 +139,19 @@ public final class Metadata implements Serializable
     {
         return _directoryByClass.containsKey(type);
     }
+
+    /**
+     * Indicates whether any errors were reported during the reading of metadata values.
+     * This value will be true if Directory.hasErrors() is true for one of the contained Directory objects.
+     *
+     * @return
+     */
+    public boolean hasErrors()
+    {
+        for (Directory directory : _directoryList) {
+            if (directory.hasErrors())
+                return true;
+        }
+        return false;
+    }
 }
