@@ -9,4 +9,5 @@ com.drew.metadata.icc
 com.drew.metadata.iptc
 com.drew.metadata.jfif
 com.drew.metadata.jpeg
+com.drew.metadata.photoshop
 com.drew.metadata.xmp
