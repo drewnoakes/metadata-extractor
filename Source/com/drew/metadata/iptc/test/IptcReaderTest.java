@@ -40,8 +40,8 @@ public class IptcReaderTest
         final byte[] bytes = TestHelper.loadFileBytes(new File("Source/com/drew/metadata/iptc/test/iptc1.bytes"));
 
         Metadata metadata = new Metadata();
-        IptcReader reader = new IptcReader(bytes);
-        reader.extract(metadata);
+        IptcReader reader = new IptcReader();
+        reader.extract(bytes, metadata);
 
         Assert.assertEquals(1, metadata.getDirectoryCount());
         IptcDirectory directory = metadata.getDirectory(IptcDirectory.class);
@@ -105,8 +105,7 @@ public class IptcReaderTest
         final byte[] bytes = TestHelper.loadFileBytes(new File("Source/com/drew/metadata/iptc/test/iptc2-photoshop6.bytes"));
 
         Metadata metadata = new Metadata();
-        IptcReader reader = new IptcReader(bytes);
-        reader.extract(metadata);
+        new IptcReader().extract(bytes, metadata);
 
         Assert.assertEquals(1, metadata.getDirectoryCount());
         IptcDirectory directory = metadata.getDirectory(IptcDirectory.class);

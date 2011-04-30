@@ -35,7 +35,9 @@ public interface MetadataReader
 {
     /**
      * Extract metadata from the source and merge it into an existing Metadata object.
+     *
+     * @param data     The byte array from which the metadata should be extracted.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extract(@NotNull Metadata metadata);
+    public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata);
 }

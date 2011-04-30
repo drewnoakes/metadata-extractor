@@ -91,9 +91,9 @@ public class SampleUsage
             byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
             Metadata metadata = new Metadata();
             if (exifSegment != null)
-                new ExifReader(exifSegment).extract(metadata);
+                new ExifReader().extract(exifSegment, metadata);
             if (iptcSegment != null)
-                new IptcReader(iptcSegment).extract(metadata);
+                new IptcReader().extract(iptcSegment, metadata);
             printImageTags(3, metadata);
         } catch (JpegProcessingException e) {
             System.err.println("error 3a: " + e);

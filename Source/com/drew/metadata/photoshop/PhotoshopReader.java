@@ -30,27 +30,17 @@ import com.drew.metadata.iptc.IptcReader;
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class PhotoshopReader implements MetadataReader
 {
-    @NotNull
-    private final byte[] _data;
-
-    public PhotoshopReader(@NotNull byte[] data)
-    {
-        if (data==null)
-            throw new NullPointerException();
-        _data = data;
-    }
-
-    public void extract(@NotNull Metadata metadata)
+    public void extract(final byte[] data, final @NotNull Metadata metadata)
     {
         final PhotoshopDirectory directory = metadata.getOrCreateDirectory(PhotoshopDirectory.class);
-        final BufferReader reader = new BufferReader(_data);
+        final BufferReader reader = new BufferReader(data);
 
-        int pos = new String(_data, 0, 13).equals("Photoshop 3.0") ? 14 : 0;
+        int pos = new String(data, 0, 13).equals("Photoshop 3.0") ? 14 : 0;
 
-        while (pos < _data.length) {
+        while (pos < data.length) {
             try {
                 // 4 bytes for the signature.  Should always be "8BIM".
-                //String signature = new String(_data, pos, 4);
+                //String signature = new String(data, pos, 4);
                 pos += 4;
 
                 // 2 bytes for the resource identifier (tag type).
@@ -61,9 +51,9 @@ public class PhotoshopReader implements MetadataReader
                 int descriptionLength = reader.getUInt16(pos);
                 pos += 2;
                 // Some basic bounds checking
-                if (descriptionLength < 0 || descriptionLength + pos > _data.length)
+                if (descriptionLength < 0 || descriptionLength + pos > data.length)
                     return;
-                //String description = new String(_data, pos, descriptionLength);
+                //String description = new String(data, pos, descriptionLength);
                 pos += descriptionLength;
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
                 if (pos % 2 == 1)
@@ -82,7 +72,7 @@ public class PhotoshopReader implements MetadataReader
                 directory.setByteArray(tagType, tagBytes);
 
                 if (tagType == PhotoshopDirectory.TAG_PHOTOSHOP_IPTC)
-                    new IptcReader(tagBytes).extract(metadata);
+                    new IptcReader().extract(tagBytes, metadata);
 
                 if (tagType >= 0x0fa0 && tagType <= 0x1387)
                     PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));

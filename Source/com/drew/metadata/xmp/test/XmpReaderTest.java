@@ -48,8 +48,9 @@ public class XmpReaderTest
         File metadataFile = new File("Source/com/drew/metadata/xmp/test/withXmpAndIptc.metadata");
         JpegSegmentData jpegSegmentData = JpegSegmentData.fromFile(metadataFile);
         Metadata metadata = new Metadata();
-        XmpReader reader = new XmpReader(jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APP1, 1));
-        reader.extract(metadata);
+        final byte[] data = jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APP1, 1);
+        XmpReader reader = new XmpReader();
+        reader.extract(data, metadata);
         Assert.assertTrue(metadata.containsDirectory(XmpDirectory.class));
         _directory = metadata.getOrCreateDirectory(XmpDirectory.class);
     }

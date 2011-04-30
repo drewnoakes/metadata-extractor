@@ -51,7 +51,7 @@ public class TiffMetadataReader
                 fileInputStream.close();
         }
 
-        new ExifReader(buffer).extractTiff(metadata);
+        new ExifReader().extractTiff(buffer, metadata);
 
         return metadata;
     }
@@ -66,7 +66,7 @@ public class TiffMetadataReader
             out.write(b);
         }
         Metadata metadata = new Metadata();
-        new ExifReader(out.toByteArray()).extractTiff(metadata);
+        new ExifReader().extractTiff(out.toByteArray(), metadata);
         return metadata;
     }
 }

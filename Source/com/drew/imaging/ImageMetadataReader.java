@@ -30,7 +30,10 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifDirectory;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,7 +50,7 @@ public class ImageMetadataReader
 {
     private static final int JPEG_FILE_MAGIC_NUMBER = 0xFFD8;
     private static final int MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
-    private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;      // "II"
+    private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;     // "II"
 
     /**
      * Reads metadata from an input stream.  The file inputStream examined to determine its type and consequently the
@@ -91,6 +94,7 @@ public class ImageMetadataReader
     @NotNull
     private static Metadata readMetadata(@Nullable BufferedInputStream inputStream, @Nullable File file, int magicNumber, boolean waitForBytes) throws ImageProcessingException, IOException
     {
+        // This covers all JPEG files
         if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
             if (inputStream != null)
                 return JpegMetadataReader.readMetadata(inputStream, waitForBytes);
@@ -98,6 +102,7 @@ public class ImageMetadataReader
                 return JpegMetadataReader.readMetadata(file);
         }
 
+        // This covers all TIFF and camera RAW files
         if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLA_TIFF_MAGIC_NUMBER) {
             if (inputStream != null)
                 return TiffMetadataReader.readMetadata(inputStream, waitForBytes);
@@ -105,7 +110,7 @@ public class ImageMetadataReader
                 return TiffMetadataReader.readMetadata(file);
         }
 
-        throw new ImageProcessingException("File is not the correct format");
+        throw new ImageProcessingException("File format is not supported");
     }
 
     private static int readMagicNumber(@NotNull BufferedInputStream inputStream) throws ImageProcessingException

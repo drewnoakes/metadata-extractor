@@ -32,30 +32,14 @@ import com.drew.metadata.MetadataReader;
  */
 public class JpegCommentReader implements MetadataReader
 {
-    /** The COM data segment. */
-    @NotNull
-    private final byte[] _data;
-
-    /**
-     * Creates a JpegCommentReader for raw JPEG data.
-     *
-     * @param data JPEG data as a byte[].
-     */
-    public JpegCommentReader(@NotNull byte[] data)
-    {
-        if (data == null)
-            throw new NullPointerException();
-        _data = data;
-    }
-
     /**
      * Performs the Jpeg data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public void extract(@NotNull Metadata metadata)
+    public void extract(@NotNull final byte[] data, @NotNull Metadata metadata)
     {
         JpegCommentDirectory directory = metadata.getOrCreateDirectory(JpegCommentDirectory.class);
 
-        directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, new String(_data));
+        directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, new String(data));
     }
 }

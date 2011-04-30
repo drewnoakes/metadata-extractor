@@ -37,30 +37,14 @@ public class JfifReader implements MetadataReader
 {
     // TODO add unit tests for JFIF data
 
-    /** The SOF0 data segment. */
-    @NotNull
-    private final byte[] _data;
-
-    /**
-     * Initialises a new JfifReader for a given byte array.
-     *
-     * @param data the byte array to read Jfif data from
-     */
-    public JfifReader(@NotNull byte[] data)
-    {
-        if (data == null)
-            throw new NullPointerException();
-        _data = data;
-    }
-
     /**
      * Performs the Jfif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public void extract(@NotNull Metadata metadata)
+    public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata)
     {
         JfifDirectory directory = metadata.getOrCreateDirectory(JfifDirectory.class);
-        BufferReader reader = new BufferReader(_data);
+        BufferReader reader = new BufferReader(data);
 
         try {
             int ver = reader.getInt32(JfifDirectory.TAG_JFIF_VERSION);

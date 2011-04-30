@@ -33,30 +33,14 @@ import com.drew.metadata.MetadataReader;
  */
 public class JpegReader implements MetadataReader
 {
-    /** The SOF0 data segment. */
-    @NotNull
-    private final byte[] _data;
-
-    /**
-     * Creates a JpegReader for a byte[] containing JPEG data.
-     *
-     * @param data the contents of an entire JPEG file as a byte[]
-     */
-    public JpegReader(@NotNull byte[] data)
-    {
-        if (data == null)
-            throw new NullPointerException();
-        _data = data;
-    }
-
     /**
      * Performs the Jpeg data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public void extract(@NotNull Metadata metadata)
+    public void extract(@NotNull final byte[] data, @NotNull Metadata metadata)
     {
         JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
-        BufferReader reader = new BufferReader(_data);
+        BufferReader reader = new BufferReader(data);
 
         try {
             // data precision

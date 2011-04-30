@@ -169,9 +169,10 @@ public class JpegSegmentReaderTest
         Assert.assertNotNull(iptcData);
         Assert.assertNotNull(exifData);
         Assert.assertTrue("exif data too short", exifData.length > 4);
+        // TODO extracting the data doesn't mean anything in this test case...
         Metadata metadata = new Metadata();
-        new ExifReader(exifData).extract(metadata);
-        new IptcReader(iptcData).extract(metadata);
+        new ExifReader().extract(exifData, metadata);
+        new IptcReader().extract(iptcData, metadata);
         Assert.assertEquals("Exif", new String(exifData, 0, 4));
     }
 }

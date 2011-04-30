@@ -51,42 +51,36 @@ public class XmpReader implements MetadataReader
     private static final String SCHEMA_EXIF_ADDITIONAL_PROPERTIES = "http://ns.adobe.com/exif/1.0/aux/";
     private static final String SCHEMA_EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
 
-    @NotNull
-    private final byte[] _data;
-
-    /** Creates an XmpReader for the given JPEG header segment. */
-    public XmpReader(@NotNull byte[] data)
-    {
-        if (data == null)
-            throw new NullPointerException();
-        _data = data;
-    }
-
     /**
      * Performs the XMP data extraction, adding found values to the specified instance of <code>Metadata</code>.
      * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit)
      */
-    public void extract(@NotNull Metadata metadata)
+    public void extract(@NotNull final byte[] data, @NotNull Metadata metadata)
     {
+        if (data == null)
+            throw new NullPointerException("data");
+        if (metadata == null)
+            throw new NullPointerException("metadata");
+
         // once we know there's some data, create the directory and start working on it
         XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
 
         // check for the header length
-        if (_data.length <= 30) {
+        if (data.length <= 30) {
             directory.addError("Xmp data segment must contain at least 30 bytes");
             return;
         }
 
         // check for the header preamble
-        if (!"http://ns.adobe.com/xap/1.0/\0".equals(new String(_data, 0, 29))) {
+        if (!"http://ns.adobe.com/xap/1.0/\0".equals(new String(data, 0, 29))) {
             directory.addError("Xmp data segment doesn't begin with 'http://ns.adobe.com/xap/1.0/'");
             return;
         }
 
         try {
             // the parser starts at offset of 29 Bytes
-            byte[] xmpBuffer = new byte[_data.length - 29];
-            System.arraycopy(_data, 29, xmpBuffer, 0, _data.length - 29);
+            byte[] xmpBuffer = new byte[data.length - 29];
+            System.arraycopy(data, 29, xmpBuffer, 0, data.length - 29);
 
             // use XMPMetaFactory to create a XMPMeta instance based on the parsed data buffer
             XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBuffer);

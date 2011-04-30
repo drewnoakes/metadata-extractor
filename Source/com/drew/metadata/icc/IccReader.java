@@ -43,40 +43,29 @@ import java.util.TimeZone;
  */
 public class IccReader implements MetadataReader
 {
-    @NotNull
-    private final byte[] _data;
-    private final BufferReader _reader;
-
-    public IccReader(@NotNull byte[] data)
+    public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata)
     {
-        if (data == null)
-            throw new NullPointerException();
+        final IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
+        final BufferReader reader = new BufferReader(data);
 
-        _data = data;
-        _reader = new BufferReader(data);
-    }
-
-    public void extract(@NotNull Metadata metadata)
-    {
-        IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
-        directory.setByteArray(IccDirectory.TAG_ICC_PROFILE_BYTES, _data);
+        directory.setByteArray(IccDirectory.TAG_ICC_PROFILE_BYTES, data);
 
         try {
-            directory.setInt(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT, _reader.getInt32(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT));
+            directory.setInt(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT, reader.getInt32(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT));
 
             // For these tags, the int value of the tag is in fact it's offset within the buffer.
-            set4ByteString(directory, IccDirectory.TAG_ICC_CMM_TYPE);
-            setInt32(directory, IccDirectory.TAG_ICC_PROFILE_VERSION);
-            set4ByteString(directory, IccDirectory.TAG_ICC_PROFILE_CLASS);
-            set4ByteString(directory, IccDirectory.TAG_ICC_COLOR_SPACE);
-            set4ByteString(directory, IccDirectory.TAG_ICC_PROFILE_CONNECTION_SPACE);
-            setDate(directory, _data, IccDirectory.TAG_ICC_PROFILE_DATETIME);
-            set4ByteString(directory, IccDirectory.TAG_ICC_SIGNATURE);
-            set4ByteString(directory, IccDirectory.TAG_ICC_PLATFORM);
-            setInt32(directory, IccDirectory.TAG_ICC_CMM_FLAGS);
-            set4ByteString(directory, IccDirectory.TAG_ICC_DEVICE_MAKE);
+            set4ByteString(directory, IccDirectory.TAG_ICC_CMM_TYPE, reader);
+            setInt32(directory, IccDirectory.TAG_ICC_PROFILE_VERSION, reader);
+            set4ByteString(directory, IccDirectory.TAG_ICC_PROFILE_CLASS, reader);
+            set4ByteString(directory, IccDirectory.TAG_ICC_COLOR_SPACE, reader);
+            set4ByteString(directory, IccDirectory.TAG_ICC_PROFILE_CONNECTION_SPACE, reader);
+            setDate(directory, IccDirectory.TAG_ICC_PROFILE_DATETIME, reader);
+            set4ByteString(directory, IccDirectory.TAG_ICC_SIGNATURE, reader);
+            set4ByteString(directory, IccDirectory.TAG_ICC_PLATFORM, reader);
+            setInt32(directory, IccDirectory.TAG_ICC_CMM_FLAGS, reader);
+            set4ByteString(directory, IccDirectory.TAG_ICC_DEVICE_MAKE, reader);
 
-            int temp = _reader.getInt32(IccDirectory.TAG_ICC_DEVICE_MODEL);
+            int temp = reader.getInt32(IccDirectory.TAG_ICC_DEVICE_MODEL);
             if (temp != 0) {
                 if (temp <= 0x20202020)
                     directory.setInt(IccDirectory.TAG_ICC_DEVICE_MODEL, temp);
@@ -84,29 +73,29 @@ public class IccReader implements MetadataReader
                     directory.setString(IccDirectory.TAG_ICC_DEVICE_MODEL, getStringFromInt32(temp));
             }
 
-            setInt32(directory, IccDirectory.TAG_ICC_RENDERING_INTENT);
-            setInt64(directory, IccDirectory.TAG_ICC_DEVICE_ATTR);
+            setInt32(directory, IccDirectory.TAG_ICC_RENDERING_INTENT, reader);
+            setInt64(directory, IccDirectory.TAG_ICC_DEVICE_ATTR, reader);
 
             float[] xyz = new float[] {
-                    _reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES),
-                    _reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 4),
-                    _reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 8)
+                    reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES),
+                    reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 4),
+                    reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 8)
             };
             directory.setObject(IccDirectory.TAG_ICC_XYZ_VALUES, xyz);
 
             // Process 'ICC tags'
-            int tagCount = _reader.getInt32(IccDirectory.TAG_ICC_TAG_COUNT);
+            int tagCount = reader.getInt32(IccDirectory.TAG_ICC_TAG_COUNT);
             directory.setInt(IccDirectory.TAG_ICC_TAG_COUNT, tagCount);
 
             for (int i = 0; i < tagCount; i++) {
                 int pos = 128 + 4 + i*12;
-                int tagType = _reader.getInt32(pos);
-                int tagPtr = _reader.getInt32(pos + 4);
-                int tagLen = _reader.getInt32(pos + 8);
-                if (tagPtr + tagLen > _data.length)
+                int tagType = reader.getInt32(pos);
+                int tagPtr = reader.getInt32(pos + 4);
+                int tagLen = reader.getInt32(pos + 8);
+                if (tagPtr + tagLen > data.length)
                     throw new MetadataException("Tag '" + getStringFromInt32(tagType) + "' data outside segment data buffer");
                 byte[] b = new byte[tagLen];
-                System.arraycopy(_data, tagPtr, b, 0, tagLen);
+                System.arraycopy(data, tagPtr, b, 0, tagLen);
                 directory.setByteArray(tagType, b);
             }
         } catch (Exception e) {
@@ -114,35 +103,35 @@ public class IccReader implements MetadataReader
         }
     }
 
-    private void set4ByteString(Directory directory, int tagType) throws BufferBoundsException
+    private void set4ByteString(Directory directory, int tagType, BufferReader reader) throws BufferBoundsException
     {
-        int i = _reader.getInt32(tagType);
+        int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setString(tagType, getStringFromInt32(i));
     }
 
-    private void setInt32(Directory directory, int tagType) throws BufferBoundsException
+    private void setInt32(Directory directory, int tagType, BufferReader reader) throws BufferBoundsException
     {
-        int i = _reader.getInt32(tagType);
+        int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setInt(tagType, i);
     }
 
-    private void setInt64(Directory directory, int tagType) throws BufferBoundsException
+    private void setInt64(Directory directory, int tagType, BufferReader reader) throws BufferBoundsException
     {
-        long l = _reader.getInt64(tagType);
+        long l = reader.getInt64(tagType);
         if (l != 0)
             directory.setLong(tagType, l);
     }
 
-    private void setDate(final IccDirectory directory, final byte[] buffer, final int tagType) throws BufferBoundsException
+    private void setDate(final IccDirectory directory, final int tagType, BufferReader reader) throws BufferBoundsException
     {
-        final int y = _reader.getUInt16(tagType);
-        final int m = _reader.getUInt16(tagType + 2);
-        final int d = _reader.getUInt16(tagType + 4);
-        final int h = _reader.getUInt16(tagType + 6);
-        final int M = _reader.getUInt16(tagType + 8);
-        final int s = _reader.getUInt16(tagType + 10);
+        final int y = reader.getUInt16(tagType);
+        final int m = reader.getUInt16(tagType + 2);
+        final int d = reader.getUInt16(tagType + 4);
+        final int h = reader.getUInt16(tagType + 6);
+        final int M = reader.getUInt16(tagType + 8);
+        final int s = reader.getUInt16(tagType + 10);
 
 //        final Date value = new Date(Date.UTC(y - 1900, m - 1, d, h, M, s));
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));

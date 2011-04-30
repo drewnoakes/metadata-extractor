@@ -149,7 +149,9 @@ public class ExifDescriptorTest
     {
         String fileName = "Source/com/drew/metadata/exif/test/windowsXpFields.jpg";
         Metadata metadata = new Metadata();
-        new ExifReader(new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1)).extract(metadata);
+        final byte[] data = new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1);
+        Assert.assertNotNull(data);
+        new ExifReader().extract(data, metadata);
         ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         ExifDescriptor descriptor = new ExifDescriptor(directory);
         Assert.assertEquals("Testing artist", descriptor.getDescription(ExifDirectory.TAG_WIN_AUTHOR));
