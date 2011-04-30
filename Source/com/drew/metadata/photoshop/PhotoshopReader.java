@@ -50,7 +50,7 @@ public class PhotoshopReader implements MetadataReader
         while (pos < _data.length) {
             try {
                 // 4 bytes for the signature.  Should always be "8BIM".
-                String signature = new String(_data, pos, 4);
+                //String signature = new String(_data, pos, 4);
                 pos += 4;
 
                 // 2 bytes for the resource identifier (tag type).
@@ -63,7 +63,7 @@ public class PhotoshopReader implements MetadataReader
                 // Some basic bounds checking
                 if (descriptionLength < 0 || descriptionLength + pos > _data.length)
                     return;
-                String description = new String(_data, pos, descriptionLength);
+                //String description = new String(_data, pos, descriptionLength);
                 pos += descriptionLength;
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
                 if (pos % 2 == 1)

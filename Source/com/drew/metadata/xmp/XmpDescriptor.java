@@ -56,7 +56,7 @@ public class XmpDescriptor extends TagDescriptor
                 return _directory.getString(tagType);
             case XmpDirectory.TAG_EXPOSURE_TIME:
                 return getExposureTimeDescription();
-            case XmpDirectory.TAG_EXPOSURE_PROG:
+            case XmpDirectory.TAG_EXPOSURE_PROGRAM:
                 return getExposureProgramDescription();
             case XmpDirectory.TAG_SHUTTER_SPEED:
                 return getShutterSpeedDescription();
@@ -64,7 +64,7 @@ public class XmpDescriptor extends TagDescriptor
                 return getFNumberDescription();
             case XmpDirectory.TAG_LENS:
             case XmpDirectory.TAG_LENS_INFO:
-            case XmpDirectory.TAG_SERIAL:
+            case XmpDirectory.TAG_CAMERA_SERIAL_NUMBER:
             case XmpDirectory.TAG_FIRMWARE:
                 return _directory.getString(tagType);
             case XmpDirectory.TAG_FOCAL_LENGTH:
@@ -93,7 +93,7 @@ public class XmpDescriptor extends TagDescriptor
         // '1' means manual control, '2' program normal, '3' aperture priority,
         // '4' shutter priority, '5' program creative (slow program),
         // '6' program action(high-speed program), '7' portrait mode, '8' landscape mode.
-        final Integer value = _directory.getInteger(XmpDirectory.TAG_EXPOSURE_PROG);
+        final Integer value = _directory.getInteger(XmpDirectory.TAG_EXPOSURE_PROGRAM);
         if (value==null)
             return null;
         switch (value) {

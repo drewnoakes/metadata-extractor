@@ -23,15 +23,13 @@ package com.drew.metadata;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.Serializable;
-
 /**
  * Models a particular tag within a directory and provides methods for obtaining its value.  Note that a Tag isntance is
  * specific to a particular metadata extraction and cannot be reused.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class Tag implements Serializable
+public class Tag
 {
     private final int _tagType;
     @NotNull

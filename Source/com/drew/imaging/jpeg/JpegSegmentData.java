@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class JpegSegmentData implements Serializable
 {
-    static final long serialVersionUID = 7110175216435025451L;
+    private static final long serialVersionUID = 7110175216435025451L;
     
     /** A map of byte[], keyed by the segment marker */
     @NotNull
@@ -105,6 +105,19 @@ public class JpegSegmentData implements Serializable
         return _segmentDataMap.get(new Byte(segmentMarker));
     }
 
+    @NotNull
+    private List<byte[]> getOrCreateSegmentList(byte segmentMarker)
+    {
+        List<byte[]> segmentList;
+        if (_segmentDataMap.containsKey(segmentMarker)) {
+            segmentList = _segmentDataMap.get(segmentMarker);
+        } else {
+            segmentList = new ArrayList<byte[]>();
+            _segmentDataMap.put(segmentMarker, segmentList);
+        }
+        return segmentList;
+    }
+
     /**
      * Returns the count of segment data byte arrays stored for a given segment marker.
      * @param segmentMarker identifies the required segment
@@ -155,20 +168,16 @@ public class JpegSegmentData implements Serializable
      */
     public static void toFile(@NotNull File file, @NotNull JpegSegmentData segmentData) throws IOException
     {
-        ObjectOutputStream outputStream = null;
         FileOutputStream fileOutputStream = null;
         try
         {
             fileOutputStream = new FileOutputStream(file);
-            outputStream = new ObjectOutputStream(fileOutputStream);
-            outputStream.writeObject(segmentData);
+            new ObjectOutputStream(fileOutputStream).writeObject(segmentData);
         }
         finally
         {
             if (fileOutputStream!=null)
                 fileOutputStream.close();
-            if (outputStream!=null)
-                outputStream.close();
         }
     }
 
@@ -193,18 +202,5 @@ public class JpegSegmentData implements Serializable
             if (inputStream!=null)
                 inputStream.close();
         }
-    }
-
-    @NotNull
-    private List<byte[]> getOrCreateSegmentList(byte segmentMarker)
-    {
-        List<byte[]> segmentList;
-        if (_segmentDataMap.containsKey(segmentMarker)) {
-            segmentList = _segmentDataMap.get(segmentMarker);
-        } else {
-            segmentList = new ArrayList<byte[]>();
-            _segmentDataMap.put(segmentMarker, segmentList);
-        }
-        return segmentList;
     }
 }

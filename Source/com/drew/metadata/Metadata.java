@@ -23,13 +23,11 @@ package com.drew.metadata;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
- * A top-level object to hold various types of metadata (such as Exif or IPTC) relating to one entity (such as a file
+ * A top-level object to hold the various types of metadata (Exif/IPTC/etc) related to one entity (such as a file
  * or stream).
  * <p/>
  * Metadata objects may contain zero or more directories.  Each directory may contain zero or more tags with
@@ -37,34 +35,17 @@ import java.util.Iterator;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public final class Metadata implements Serializable
+public final class Metadata
 {
     @NotNull
-    private final HashMap<Class, Directory> _directoryByClass = new HashMap<Class, Directory>();
-
+    private final HashMap<Class<? extends Directory>, Directory> _directoryByClass = new HashMap<Class<? extends Directory>, Directory>();
+    
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes
      * creation of an Iterator and counting tags simple.
      */
     @NotNull
     private final ArrayList<Directory> _directoryList = new ArrayList<Directory>();
-
-// OTHER METHODS
-
-    /**
-     * Creates an Iterator over the tag types set against this image, preserving the order
-     * in which they were set.  Should the same tag have been set more than once, it's first
-     * position is maintained, even though the final value is used.
-     *
-     * @return an Iterator of tag types set for this image
-     * @deprecated Use getDirectories() instead
-     */
-    @Deprecated
-    @NotNull
-    public Iterator<Directory> getDirectoryIterator()
-    {
-        return _directoryList.iterator();
-    }
 
     /**
      * Returns an objects for iterating over Directory objects in the order in which they were added.
@@ -96,8 +77,12 @@ public final class Metadata implements Serializable
      * @return a directory of the specified type.
      */
     @NotNull
+    @SuppressWarnings("unchecked")
     public <T extends Directory> T getOrCreateDirectory(@NotNull Class<T> type)
     {
+        // We suppress the warning here as the code asserts a map signature of Class<T>,T.
+        // So after get(Class<T>) it is for sure the result is from type T.
+
         // check if we've already issued this type of directory
         if (_directoryByClass.containsKey(type))
             return (T)_directoryByClass.get(type);
@@ -123,14 +108,18 @@ public final class Metadata implements Serializable
      * @return a Directory of type T if it exists in this Metadata object, otherwise <code>null</code>.
      */
     @Nullable
+    @SuppressWarnings("unchecked")
     public <T extends Directory> T getDirectory(@NotNull Class<T> type)
     {
+        // We suppress the warning here as the code asserts a map signature of Class<T>,T.
+        // So after get(Class<T>) it is for sure the result is from type T.
+
         return (T)_directoryByClass.get(type);
     }
 
     /**
      * Indicates whether a given directory type has been created in this metadata
-     * repository.  Directories are created by calling getOrCreateDirectory(Class).
+     * repository.  Directories are created by calling <code>getOrCreateDirectory(Class)</code>.
      *
      * @param type the Directory type
      * @return true if the metadata directory has been created

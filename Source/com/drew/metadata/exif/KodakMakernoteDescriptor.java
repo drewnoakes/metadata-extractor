@@ -34,15 +34,15 @@ import com.drew.metadata.TagDescriptor;
  */
 public class KodakMakernoteDescriptor extends TagDescriptor
 {
-	public KodakMakernoteDescriptor(@NotNull Directory directory)
-	{
-		super(directory);
-	}
+    public KodakMakernoteDescriptor(@NotNull Directory directory)
+    {
+        super(directory);
+    }
 
     @Nullable
-	public String getDescription(int tagType)
+    public String getDescription(int tagType)
     {
         // No special tag descriptions, yet.
-		return _directory.getString(tagType);
-	}
+        return _directory.getString(tagType);
+    }
 }

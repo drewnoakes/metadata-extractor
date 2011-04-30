@@ -32,24 +32,23 @@ import java.util.HashMap;
  */
 public class KodakMakernoteDirectory extends Directory
 {
-	@NotNull
+    @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
-
 
     public KodakMakernoteDirectory()
     {
         this.setDescriptor(new KodakMakernoteDescriptor(this));
     }
 
-	@NotNull
+    @NotNull
     public String getName()
     {
-		return "Kodak Makernote";
-	}
+        return "Kodak Makernote";
+    }
 
-	@NotNull
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
-		return _tagNameMap;
-	}
+        return _tagNameMap;
+    }
 }

@@ -23,8 +23,6 @@ package com.drew.metadata;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.Serializable;
-
 /**
  * Abstract base class for all tag descriptor classes.  Implementations are responsible for
  * providing the human-readable string representation of tag values stored in a directory.
@@ -32,7 +30,7 @@ import java.io.Serializable;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public abstract class TagDescriptor implements Serializable
+public abstract class TagDescriptor
 {
     @NotNull
     protected final Directory _directory;

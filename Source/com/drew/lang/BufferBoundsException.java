@@ -28,6 +28,8 @@ package com.drew.lang;
  */
 public final class BufferBoundsException extends Exception
 {
+    private static final long serialVersionUID = 2911102837808946396L;
+
     public BufferBoundsException(byte[] buffer, int index, int bytesRequested)
     {
         super(getMessage(buffer, index, bytesRequested));

@@ -766,9 +766,9 @@ public class ExifDirectory extends Directory
 
         int compression = 0;
         try {
-        	compression = this.getInt(ExifDirectory.TAG_COMPRESSION);
+            compression = this.getInt(ExifDirectory.TAG_COMPRESSION);
         } catch (Throwable e) {
-        	this.addError("Unable to determine thumbnail type " + e.getMessage());
+            this.addError("Unable to determine thumbnail type " + e.getMessage());
         }
 
         final byte[] thumbnailBytes = getThumbnailData();
@@ -794,34 +794,34 @@ public class ExifDirectory extends Directory
         else if (compression == ExifDirectory.COMPRESSION_NONE)
         {
             // uncompressed thumbnail (raw RGB data)
-        	if (!this.containsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION))
-	            return null;
+            if (!this.containsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION))
+                return null;
 
-        	try
+            try
             {
-        		// If the image is RGB format, then convert it to a bitmap
+                // If the image is RGB format, then convert it to a bitmap
                 final int photometricInterpretation = this.getInt(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION);
                 if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_RGB)
                 {
                     // RGB
                     Image image = createImageFromRawRgb(thumbnailBytes);
                     return image;
-        		}
+                }
                 else if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_YCBCR)
                 {
                     // YCbCr
                     Image image = createImageFromRawYCbCr(thumbnailBytes);
                     return image;
-        		}
+                }
                 else if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_MONOCHROME)
                 {
                     // Monochrome
                     // TODO
                     return null;
                 }
-	        } catch (Throwable e) {
-	            this.addError("Unable to extract thumbnail: " + e.getMessage());
-	        }
+            } catch (Throwable e) {
+                this.addError("Unable to extract thumbnail: " + e.getMessage());
+            }
         }
         return null;
     }

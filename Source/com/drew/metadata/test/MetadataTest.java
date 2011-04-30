@@ -20,16 +20,12 @@
  */
 package com.drew.metadata.test;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.lang.NullOutputStream;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.*;
 
 /**
  * JUnit test case for class Metadata.
@@ -81,33 +77,5 @@ public class MetadataTest
         final ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
         directory.addError("Test Error 1");
         Assert.assertTrue(metadata.hasErrors());
-    }
-
-    @Test
-    public void testMetadataSerializable() throws Exception
-    {
-        Metadata metadata = JpegMetadataReader.readMetadata(new File("Source/com/drew/metadata/test/withIptcExifGps.jpg"));
-        new ObjectOutputStream(new NullOutputStream()).writeObject(metadata);
-    }
-
-    @Test
-    public void testSerializeAndRestore() throws Exception
-    {
-        // TODO convert to use a memory stream rather than a temp file
-        Metadata metadataWrite = JpegMetadataReader.readMetadata(new File("Source/com/drew/metadata/test/withIptcExifGps.jpg"));
-        Metadata metadataRead;
-        File ser = File.createTempFile("test", "ser");
-        try {
-            // write the ser object
-            new ObjectOutputStream(new FileOutputStream(ser)).writeObject(metadataWrite);
-            // read the ser object
-            metadataRead = (Metadata)new ObjectInputStream(new FileInputStream(ser)).readObject();
-            // make sure they're equivalent
-            // TODO should compare the two objects via iteration of directories and tags
-            Assert.assertTrue(metadataRead.containsDirectory(ExifDirectory.class));
-            Assert.assertTrue(metadataRead.containsDirectory(IptcDirectory.class));
-        } finally {
-            ser.delete();
-        }
     }
 }

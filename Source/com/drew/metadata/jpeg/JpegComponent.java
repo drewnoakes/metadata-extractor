@@ -32,6 +32,8 @@ import java.io.Serializable;
  */
 public class JpegComponent implements Serializable
 {
+    private static final long serialVersionUID = 61121257899091914L;
+
     private final int _componentId;
     private final int _samplingFactorByte;
     private final int _quantizationTableNumber;

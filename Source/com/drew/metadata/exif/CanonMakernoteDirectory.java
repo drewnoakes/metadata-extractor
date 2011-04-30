@@ -36,7 +36,7 @@ import java.util.HashMap;
  */
 public class CanonMakernoteDirectory extends Directory
 {
-    // CANON cameras have some funny bespoke fields that need further processing...
+    // CANON cameras have some bespoke fields that need further processing...
     public static final int TAG_CANON_CAMERA_STATE_1 = 0x0001;
     public static final int TAG_CANON_CAMERA_STATE_2 = 0x0004;
 

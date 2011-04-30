@@ -24,7 +24,6 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -37,7 +36,7 @@ import java.util.*;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public abstract class Directory implements Serializable
+public abstract class Directory
 {
     // TODO get Array methods need to return cloned data, to maintain this directory's integrity
 

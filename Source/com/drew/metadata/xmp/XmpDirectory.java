@@ -29,9 +29,9 @@ import java.util.Map;
 /** @author Torsten Skadell, Drew Noakes http://drewnoakes.com */
 public class XmpDirectory extends Directory
 {
-    //	These are some Tags, belonging to xmp-data-tags
-    //	The numeration is more like enums. The real xmp-tags are strings,
-    //	so we do some kind off mapping here...
+    // These are some Tags, belonging to xmp-data-tags
+    // The numeration is more like enums. The real xmp-tags are strings,
+    // so we do some kind off mapping here...
     public static final int TAG_MAKE = 0x0001;
     public static final int TAG_MODEL = 0x0002;
     public static final int TAG_EXPOSURE_TIME = 0x0003;
@@ -39,12 +39,11 @@ public class XmpDirectory extends Directory
     public static final int TAG_F_NUMBER = 0x0005;
     public static final int TAG_LENS_INFO = 0x0006;
     public static final int TAG_LENS = 0x0007;
-    /** The serial number of the camera. */
-    public static final int TAG_SERIAL = 0x0008;
+    public static final int TAG_CAMERA_SERIAL_NUMBER = 0x0008;
     public static final int TAG_FIRMWARE = 0x0009;
     public static final int TAG_FOCAL_LENGTH = 0x000a;
     public static final int TAG_APERTURE_VALUE = 0x000b;
-    public static final int TAG_EXPOSURE_PROG = 0x000c;
+    public static final int TAG_EXPOSURE_PROGRAM = 0x000c;
     public static final int TAG_DATETIME_ORIGINAL = 0x000d;
     public static final int TAG_DATETIME_DIGITIZED = 0x000e;
 
@@ -61,11 +60,11 @@ public class XmpDirectory extends Directory
         _tagNameMap.put(TAG_F_NUMBER, "F-Number");
         _tagNameMap.put(TAG_LENS_INFO, "Lens Information");
         _tagNameMap.put(TAG_LENS, "Lens");
-        _tagNameMap.put(TAG_SERIAL, "Serial Number");
+        _tagNameMap.put(TAG_CAMERA_SERIAL_NUMBER, "Serial Number");
         _tagNameMap.put(TAG_FIRMWARE, "Firmware");
         _tagNameMap.put(TAG_FOCAL_LENGTH, "Focal Length");
         _tagNameMap.put(TAG_APERTURE_VALUE, "Aperture Value");
-        _tagNameMap.put(TAG_EXPOSURE_PROG, "Exposure Program");
+        _tagNameMap.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
         _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
         _tagNameMap.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
     }

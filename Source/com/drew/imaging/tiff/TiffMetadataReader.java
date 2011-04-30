@@ -34,10 +34,10 @@ import java.io.*;
  */
 public class TiffMetadataReader
 {
-	@NotNull
+    @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
-		Metadata metadata = new Metadata();
+        Metadata metadata = new Metadata();
 
         FileInputStream fileInputStream = null;
         byte[] buffer;
@@ -51,22 +51,22 @@ public class TiffMetadataReader
                 fileInputStream.close();
         }
 
-		new ExifReader(buffer).extractTiff(metadata);
+        new ExifReader(buffer).extractTiff(metadata);
 
-		return metadata;
-	}
+        return metadata;
+    }
 
-	@NotNull
+    @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream, boolean waitForBytes) throws IOException
     {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		int b;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int b;
         // TODO do this in chunks rather than byte-by-byte, and honour 'waitForBytes'
         while((b = inputStream.read()) != -1) {
             out.write(b);
         }
         Metadata metadata = new Metadata();
-		new ExifReader(out.toByteArray()).extractTiff(metadata);
-		return metadata;
-	}
+        new ExifReader(out.toByteArray()).extractTiff(metadata);
+        return metadata;
+    }
 }

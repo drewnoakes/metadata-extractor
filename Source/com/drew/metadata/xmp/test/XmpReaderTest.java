@@ -93,7 +93,7 @@ public class XmpReaderTest
     @Test
     public void testExtract_SerialNumber() throws Exception
     {
-        Assert.assertEquals("380319450", _directory.getString(XmpDirectory.TAG_SERIAL));
+        Assert.assertEquals("380319450", _directory.getString(XmpDirectory.TAG_CAMERA_SERIAL_NUMBER));
     }
 
     @Test
@@ -125,7 +125,7 @@ public class XmpReaderTest
     @Test
     public void testExtract_ExposureProgram() throws Exception
     {
-        Assert.assertEquals(1, _directory.getInt(XmpDirectory.TAG_EXPOSURE_PROG));
+        Assert.assertEquals(1, _directory.getInt(XmpDirectory.TAG_EXPOSURE_PROGRAM));
     }
 
     @Test

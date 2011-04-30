@@ -21,7 +21,6 @@
 package com.drew.lang.test;
 
 import com.drew.lang.NullOutputStream;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.OutputStream;

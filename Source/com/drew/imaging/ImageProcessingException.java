@@ -30,6 +30,8 @@ import com.drew.lang.annotations.Nullable;
  */
 public class ImageProcessingException extends CompoundException
 {
+    private static final long serialVersionUID = -9115669182209912676L;
+
     public ImageProcessingException(@Nullable String message)
     {
         super(message);

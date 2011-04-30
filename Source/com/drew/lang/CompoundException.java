@@ -35,6 +35,8 @@ import java.io.PrintWriter;
  */
 public class CompoundException extends Exception
 {
+    private static final long serialVersionUID = -9207883813472069925L;
+
     @Nullable
     private final Throwable _innerException;
 

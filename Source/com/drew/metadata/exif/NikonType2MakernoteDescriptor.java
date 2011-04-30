@@ -46,12 +46,6 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor
         super(directory);
     }
 
-    @NotNull
-    private NikonType2MakernoteDirectory getMakernoteDirectory()
-    {
-        return (NikonType2MakernoteDirectory)_directory;
-    }
-
     @Nullable
     public String getDescription(int tagType)
     {

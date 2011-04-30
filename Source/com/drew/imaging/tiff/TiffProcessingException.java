@@ -31,6 +31,8 @@ import com.drew.lang.annotations.Nullable;
  */
 public class TiffProcessingException extends ImageProcessingException
 {
+    private static final long serialVersionUID = -1658134119488001891L;
+
     public TiffProcessingException(@Nullable String message)
     {
         super(message);
