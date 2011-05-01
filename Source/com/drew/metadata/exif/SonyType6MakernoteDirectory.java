@@ -18,6 +18,7 @@
  *    http://drewnoakes.com/code/exif/
  *    http://code.google.com/p/metadata-extractor/
  */
+
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
@@ -26,21 +27,31 @@ import com.drew.metadata.Directory;
 import java.util.HashMap;
 
 /**
- * Describes tags specific to Sony cameras.
- * <p/>
- * At present, this class doesn't define any tags.  If you are able to decode some of the Sony
- * tags, please feel free to provide a patched version of this class ;)
+ * Describes tags specific to Sony cameras that use the Sony Type 6 makernote tags.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class SonyMakernoteDirectory extends Directory
+public class SonyType6MakernoteDirectory extends Directory
 {
+    public static final int TAG_MAKER_NOTE_THUMB_OFFSET = 0x0513;
+    public static final int TAG_MAKER_NOTE_THUMB_LENGTH = 0x0514;
+    public static final int TAG_UNKNOWN_1 = 0x0515;
+    public static final int TAG_MAKER_NOTE_THUMB_VERSION = 0x2000;
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-    public SonyMakernoteDirectory()
+    static
     {
-        this.setDescriptor(new SonyMakernoteDescriptor(this));
+        _tagNameMap.put(TAG_MAKER_NOTE_THUMB_OFFSET, "Maker Note Thumb Offset");
+        _tagNameMap.put(TAG_MAKER_NOTE_THUMB_LENGTH, "Maker Note Thumb Length");
+        _tagNameMap.put(TAG_UNKNOWN_1, "Sony-6-0x0203");
+        _tagNameMap.put(TAG_MAKER_NOTE_THUMB_VERSION, "Maker Note Thumb Version");
+    }
+
+    public SonyType6MakernoteDirectory()
+    {
+        this.setDescriptor(new SonyType6MakernoteDescriptor(this));
     }
 
     @NotNull

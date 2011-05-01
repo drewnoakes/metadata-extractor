@@ -34,6 +34,10 @@ public class NullOutputStreamTest
     public void testCreateNullOutputStream() throws Exception
     {
         OutputStream out = new NullOutputStream();
-        out.write(1);
+        try {
+            out.write(1);
+        } finally {
+            out.close();
+        }
     }
 }

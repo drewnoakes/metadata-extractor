@@ -9,5 +9,194 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
   </component>
+  <component name="org.twodividedbyzero.idea.findbugs">
+    <option name="_basePreferences">
+      <map>
+        <entry key="property.analysisEffortLevel" value="default" />
+        <entry key="property.analyzeAfterCompile" value="false" />
+        <entry key="property.exportAsHtml" value="true" />
+        <entry key="property.exportAsXml" value="true" />
+        <entry key="property.exportBaseDir" value="" />
+        <entry key="property.exportCreateArchiveDir" value="false" />
+        <entry key="property.exportOpenBrowser" value="true" />
+        <entry key="property.minPriorityToReport" value="Medium" />
+        <entry key="property.runAnalysisInBackground" value="false" />
+        <entry key="property.showHiddenDetectors" value="false" />
+        <entry key="property.toolWindowToFront" value="true" />
+      </map>
+    </option>
+    <option name="_detectors">
+      <map>
+        <entry key="AppendingToAnObjectOutputStream" value="false" />
+        <entry key="BCPMethodReturnCheck" value="false" />
+        <entry key="BadAppletConstructor" value="false" />
+        <entry key="BadResultSetAccess" value="false" />
+        <entry key="BadSyntaxForRegularExpression" value="false" />
+        <entry key="BadUseOfReturnValue" value="false" />
+        <entry key="BadlyOverriddenAdapter" value="false" />
+        <entry key="BooleanReturnNull" value="false" />
+        <entry key="BuildInterproceduralCallGraph" value="false" />
+        <entry key="BuildObligationPolicyDatabase" value="true" />
+        <entry key="CallToUnsupportedMethod" value="false" />
+        <entry key="CalledMethods" value="true" />
+        <entry key="CheckCalls" value="false" />
+        <entry key="CheckExpectedWarnings" value="false" />
+        <entry key="CheckImmutableAnnotation" value="false" />
+        <entry key="CheckTypeQualifiers" value="false" />
+        <entry key="CloneIdiom" value="false" />
+        <entry key="ComparatorIdiom" value="false" />
+        <entry key="ConfusedInheritance" value="false" />
+        <entry key="ConfusionBetweenInheritedAndOuterMethod" value="false" />
+        <entry key="CrossSiteScripting" value="false" />
+        <entry key="DoInsideDoPrivileged" value="false" />
+        <entry key="DontCatchIllegalMonitorStateException" value="false" />
+        <entry key="DontIgnoreResultOfPutIfAbsent" value="false" />
+        <entry key="DontUseEnum" value="false" />
+        <entry key="DroppedException" value="false" />
+        <entry key="DumbMethodInvocations" value="false" />
+        <entry key="DumbMethods" value="false" />
+        <entry key="DuplicateBranches" value="false" />
+        <entry key="EmptyZipFileEntry" value="false" />
+        <entry key="EqStringTest" value="false" />
+        <entry key="EqualsOperandShouldHaveClassCompatibleWithThis" value="false" />
+        <entry key="FieldItemSummary" value="true" />
+        <entry key="FinalizerNullsFields" value="false" />
+        <entry key="FindBadCast" value="false" />
+        <entry key="FindBadCast2" value="false" />
+        <entry key="FindBadEqualsImplementation" value="false" />
+        <entry key="FindBadForLoop" value="false" />
+        <entry key="FindBugsSummaryStats" value="true" />
+        <entry key="FindCircularDependencies" value="false" />
+        <entry key="FindDeadLocalStores" value="false" />
+        <entry key="FindDoubleCheck" value="false" />
+        <entry key="FindEmptySynchronizedBlock" value="false" />
+        <entry key="FindFieldSelfAssignment" value="false" />
+        <entry key="FindFinalizeInvocations" value="false" />
+        <entry key="FindFloatEquality" value="false" />
+        <entry key="FindFloatMath" value="false" />
+        <entry key="FindHEmismatch" value="false" />
+        <entry key="FindInconsistentSync2" value="false" />
+        <entry key="FindJSR166LockMonitorenter" value="false" />
+        <entry key="FindLocalSelfAssignment2" value="false" />
+        <entry key="FindMaskedFields" value="false" />
+        <entry key="FindMismatchedWaitOrNotify" value="false" />
+        <entry key="FindNakedNotify" value="false" />
+        <entry key="FindNonSerializableStoreIntoSession" value="false" />
+        <entry key="FindNonSerializableValuePassedToWriteObject" value="false" />
+        <entry key="FindNonShortCircuit" value="false" />
+        <entry key="FindNullDeref" value="false" />
+        <entry key="FindNullDerefsInvolvingNonShortCircuitEvaluation" value="false" />
+        <entry key="FindOpenStream" value="false" />
+        <entry key="FindPuzzlers" value="false" />
+        <entry key="FindRefComparison" value="false" />
+        <entry key="FindReturnRef" value="false" />
+        <entry key="FindRunInvocations" value="false" />
+        <entry key="FindSelfComparison" value="false" />
+        <entry key="FindSelfComparison2" value="false" />
+        <entry key="FindSleepWithLockHeld" value="false" />
+        <entry key="FindSpinLoop" value="false" />
+        <entry key="FindSqlInjection" value="false" />
+        <entry key="FindTwoLockWait" value="false" />
+        <entry key="FindUncalledPrivateMethods" value="false" />
+        <entry key="FindUnconditionalWait" value="false" />
+        <entry key="FindUninitializedGet" value="false" />
+        <entry key="FindUnrelatedTypesInGenericContainer" value="false" />
+        <entry key="FindUnreleasedLock" value="false" />
+        <entry key="FindUnsatisfiedObligation" value="false" />
+        <entry key="FindUnsyncGet" value="false" />
+        <entry key="FindUselessControlFlow" value="false" />
+        <entry key="FormatStringChecker" value="false" />
+        <entry key="HugeSharedStringConstants" value="false" />
+        <entry key="IDivResultCastToDouble" value="false" />
+        <entry key="IncompatMask" value="false" />
+        <entry key="InconsistentAnnotations" value="false" />
+        <entry key="InefficientMemberAccess" value="false" />
+        <entry key="InefficientToArray" value="false" />
+        <entry key="InfiniteLoop" value="false" />
+        <entry key="InfiniteRecursiveLoop" value="false" />
+        <entry key="InfiniteRecursiveLoop2" value="false" />
+        <entry key="InheritanceUnsafeGetResource" value="false" />
+        <entry key="InitializationChain" value="false" />
+        <entry key="InstantiateStaticClass" value="false" />
+        <entry key="InvalidJUnitTest" value="false" />
+        <entry key="IteratorIdioms" value="false" />
+        <entry key="LazyInit" value="false" />
+        <entry key="LoadOfKnownNullValue" value="false" />
+        <entry key="LockedFields" value="false" />
+        <entry key="LostLoggerDueToWeakReference" value="false" />
+        <entry key="MethodReturnCheck" value="false" />
+        <entry key="Methods" value="true" />
+        <entry key="MultithreadedInstanceAccess" value="false" />
+        <entry key="MutableLock" value="false" />
+        <entry key="MutableStaticFields" value="false" />
+        <entry key="Naming" value="false" />
+        <entry key="Noise" value="false" />
+        <entry key="NoiseNullDeref" value="false" />
+        <entry key="NoteAnnotationRetention" value="true" />
+        <entry key="NoteCheckReturnValue" value="true" />
+        <entry key="NoteCheckReturnValueAnnotations" value="true" />
+        <entry key="NoteDirectlyRelevantTypeQualifiers" value="true" />
+        <entry key="NoteJCIPAnnotation" value="true" />
+        <entry key="NoteNonNullAnnotations" value="true" />
+        <entry key="NoteNonnullReturnValues" value="true" />
+        <entry key="NoteSuppressedWarnings" value="true" />
+        <entry key="NoteUnconditionalParamDerefs" value="true" />
+        <entry key="NumberConstructor" value="false" />
+        <entry key="OverridingEqualsNotSymmetrical" value="false" />
+        <entry key="PreferZeroLengthArrays" value="false" />
+        <entry key="PublicSemaphores" value="false" />
+        <entry key="QuestionableBooleanAssignment" value="false" />
+        <entry key="ReadOfInstanceFieldInMethodInvokedByConstructorInSuperclass" value="false" />
+        <entry key="ReadReturnShouldBeChecked" value="false" />
+        <entry key="RedundantInterfaces" value="false" />
+        <entry key="ReflectiveClasses" value="true" />
+        <entry key="RepeatedConditionals" value="false" />
+        <entry key="ResolveAllReferences" value="false" />
+        <entry key="RuntimeExceptionCapture" value="false" />
+        <entry key="SerializableIdiom" value="false" />
+        <entry key="StartInConstructor" value="false" />
+        <entry key="StaticCalendarDetector" value="false" />
+        <entry key="StringConcatenation" value="false" />
+        <entry key="SuperfluousInstanceOf" value="false" />
+        <entry key="SuspiciousThreadInterrupted" value="false" />
+        <entry key="SwitchFallthrough" value="false" />
+        <entry key="SynchronizationOnSharedBuiltinConstant" value="true" />
+        <entry key="SynchronizeAndNullCheckField" value="false" />
+        <entry key="SynchronizeOnClassLiteralNotGetClass" value="false" />
+        <entry key="SynchronizingOnContentsOfFieldToProtectField" value="false" />
+        <entry key="TestASM" value="false" />
+        <entry key="TestDataflowAnalysis" value="false" />
+        <entry key="TestingGround" value="false" />
+        <entry key="TrainFieldStoreTypes" value="true" />
+        <entry key="TrainNonNullAnnotations" value="true" />
+        <entry key="TrainUnconditionalDerefParams" value="true" />
+        <entry key="URLProblems" value="false" />
+        <entry key="UncallableMethodOfAnonymousClass" value="false" />
+        <entry key="UnnecessaryMath" value="false" />
+        <entry key="UnreadFields" value="false" />
+        <entry key="UseObjectEquals" value="false" />
+        <entry key="UselessSubclassMethod" value="false" />
+        <entry key="VarArgsProblems" value="false" />
+        <entry key="VolatileUsage" value="false" />
+        <entry key="WaitInLoop" value="false" />
+        <entry key="WrongMapIterator" value="false" />
+        <entry key="XMLFactoryBypass" value="false" />
+      </map>
+    </option>
+    <option name="_reportCategories">
+      <map>
+        <entry key="BAD_PRACTICE" value="false" />
+        <entry key="CORRECTNESS" value="false" />
+        <entry key="EXPERIMENTAL" value="false" />
+        <entry key="I18N" value="false" />
+        <entry key="MALICIOUS_CODE" value="false" />
+        <entry key="MT_CORRECTNESS" value="false" />
+        <entry key="NOISE" value="false" />
+        <entry key="PERFORMANCE" value="false" />
+        <entry key="SECURITY" value="false" />
+        <entry key="STYLE" value="false" />
+      </map>
+    </option>
+  </component>
 </module>
 

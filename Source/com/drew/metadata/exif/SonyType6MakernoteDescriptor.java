@@ -18,6 +18,7 @@
  *    http://drewnoakes.com/code/exif/
  *    http://code.google.com/p/metadata-extractor/
  */
+
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
@@ -26,14 +27,13 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>SonyMakernoteDirectory</code>.
- * Thanks to David Carson for the initial version of this class.
+ * Provides human-readable string representations of tag values stored in a <code>SonyType6MakernoteDirectory</code>.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class SonyMakernoteDescriptor extends TagDescriptor
+public class SonyType6MakernoteDescriptor extends TagDescriptor
 {
-    public SonyMakernoteDescriptor(@NotNull Directory directory)
+    public SonyType6MakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
@@ -41,6 +41,19 @@ public class SonyMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getDescription(int tagType)
     {
+        switch (tagType) {
+            case SonyType6MakernoteDirectory.TAG_MAKER_NOTE_THUMB_VERSION:
+                return getMakerNoteThumbVersionDescription();
+        }
         return _directory.getString(tagType);
+    }
+
+    @Nullable
+    public String getMakerNoteThumbVersionDescription()
+    {
+        byte[] value = _directory.getByteArray(SonyType6MakernoteDirectory.TAG_MAKER_NOTE_THUMB_VERSION);
+        if (value==null)
+            return null;
+        return new String(value);
     }
 }

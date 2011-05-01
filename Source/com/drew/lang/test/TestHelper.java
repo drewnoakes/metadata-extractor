@@ -20,6 +20,9 @@
  */
 package com.drew.lang.test;
 
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentData;
+import com.drew.metadata.Metadata;
 import junit.framework.TestCase;
 
 import java.io.File;
@@ -42,8 +45,6 @@ public class TestHelper
 
     public static byte[] loadFileBytes(File file) throws IOException
     {
-        InputStream stream = new FileInputStream(file);
-
         long length = file.length();
 
         if (length > Integer.MAX_VALUE)
@@ -51,6 +52,8 @@ public class TestHelper
 
         byte[] bytes = new byte[(int)length];
 
+        InputStream stream = new FileInputStream(file);
+        try {
         // Read in the bytes
         int offset = 0;
         int numRead;
@@ -59,8 +62,16 @@ public class TestHelper
 
         if (offset < length)
             throw new IOException("Could not completely read file " + file.getName());
-
-        stream.close();
+        } finally {
+            stream.close();
+        }
         return bytes;
+    }
+
+    public static Metadata readJpegMetadataFile(String path) throws ClassNotFoundException, IOException
+    {
+        final File file = new File(path);
+        final JpegSegmentData data = JpegSegmentData.fromFile(file);
+        return JpegMetadataReader.extractMetadataFromJpegSegmentReader(data);
     }
 }

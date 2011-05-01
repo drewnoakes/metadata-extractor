@@ -322,8 +322,14 @@ public abstract class Directory
         if (value == null)
             throw new NullPointerException("cannot set a null object");
 
-        if (!_tagMap.containsKey(tagType))
+        if (_tagMap.containsKey(Integer.valueOf(tagType))) {
+//            final Object oldValue = _tagMap.get(tagType);
+//            if (!oldValue.equals(value))
+//                addError(String.format("Attempting to overwrite tag %d (%s).  Old=%s, New=%s", tagType, getTagName(tagType), oldValue, value));
+//            return;
+        } else {
             _definedTagList.add(new Tag(tagType, this));
+        }
         _tagMap.put(tagType, value);
     }
 

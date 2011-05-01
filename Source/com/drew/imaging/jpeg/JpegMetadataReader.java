@@ -59,18 +59,18 @@ public class JpegMetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream, final boolean waitForBytes) throws JpegProcessingException
     {
         JpegSegmentReader segmentReader = new JpegSegmentReader(inputStream, waitForBytes);
-        return extractMetadataFromJpegSegmentReader(segmentReader);
+        return extractMetadataFromJpegSegmentReader(segmentReader.getSegmentData());
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
         JpegSegmentReader segmentReader = new JpegSegmentReader(file);
-        return extractMetadataFromJpegSegmentReader(segmentReader);
+        return extractMetadataFromJpegSegmentReader(segmentReader.getSegmentData());
     }
 
     @NotNull
-    public static Metadata extractMetadataFromJpegSegmentReader(@NotNull JpegSegmentReader segmentReader)
+    public static Metadata extractMetadataFromJpegSegmentReader(@NotNull JpegSegmentData segmentReader)
     {
         final Metadata metadata = new Metadata();
 
@@ -81,7 +81,7 @@ public class JpegMetadataReader
             if (i == 4 || i == 12)
                 continue;
             // Should never have more than one SOFn for a given 'n'.
-            byte[] jpegSegment = segmentReader.readSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + i));
+            byte[] jpegSegment = segmentReader.getSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + i));
             if (jpegSegment == null)
                 continue;
             JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
@@ -91,18 +91,18 @@ public class JpegMetadataReader
         }
 
         // There should never be more than one COM segment.
-        byte[] comSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_COM);
+        byte[] comSegment = segmentReader.getSegment(JpegSegmentReader.SEGMENT_COM);
         if (comSegment != null)
             new JpegCommentReader().extract(comSegment, metadata);
 
         // Loop through all APP0 segments, looking for a JFIF segment.
-        for (byte[] app0Segment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APP0)) {
+        for (byte[] app0Segment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APP0)) {
             if (app0Segment.length > 3 && new String(app0Segment, 0, 4).equals("JFIF"))
                 new JfifReader().extract(app0Segment, metadata);
         }
 
         // Loop through all APP1 segments, checking the leading bytes to identify the format of each.
-        for (byte[] app1Segment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APP1)) {
+        for (byte[] app1Segment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APP1)) {
             if (app1Segment.length > 3 && "EXIF".equalsIgnoreCase(new String(app1Segment, 0, 4)))
                 new ExifReader().extract(app1Segment, metadata);
 
@@ -111,7 +111,7 @@ public class JpegMetadataReader
         }
 
         // Loop through all APP2 segments, looking for something we can process.
-        for (byte[] app2Segment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APP2)) {
+        for (byte[] app2Segment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APP2)) {
             if (app2Segment.length > 10 && new String(app2Segment, 0, 11).equalsIgnoreCase("ICC_PROFILE")) {
                 byte[] icc = new byte[app2Segment.length-14];
                 System.arraycopy(app2Segment, 14, icc, 0, app2Segment.length-14);
@@ -120,7 +120,7 @@ public class JpegMetadataReader
         }
 
         // Loop through all APPD segments, checking the leading bytes to identify the format of each.
-        for (byte[] appdSegment : segmentReader.readSegments(JpegSegmentReader.SEGMENT_APPD)) {
+        for (byte[] appdSegment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APPD)) {
             if (appdSegment.length > 12 && "Photoshop 3.0".compareTo(new String(appdSegment, 0, 13))==0) {
                 new PhotoshopReader().extract(appdSegment, metadata);
             } else {

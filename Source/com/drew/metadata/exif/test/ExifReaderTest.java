@@ -30,6 +30,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.ExifReader;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -162,6 +163,16 @@ public class ExifReaderTest
         // repeatedly.  thanks to Alistair Dickie for providing the sample image used in this
         // unit test.
         readExifDirectoryFromMetadataFile("Source/com/drew/metadata/exif/test/recursiveDirectories.metadata");
+    }
+
+    @Test @Ignore(value="Need to determine best plan of action here")
+    public void testRepeatedOrientationTagWithDifferentValues() throws Exception
+    {
+        // This metadata contains ExifDirectory.TAG_ORIENTATION twice, the first time as 1, second time as 8
+        // The spec doesn't specify what this means.  In fact it's likely an error.
+        // In the case of this image, the first value seems to be correct.
+        // My guess is that the image was rotated by a software program incorrectly.
+        readExifDirectoryFromMetadataFile("Source/com/drew/metadata/exif/test/repeatedOrientationTagWithDifferentValues.metadata");
     }
 
 /*

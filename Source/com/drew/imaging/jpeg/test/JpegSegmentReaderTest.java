@@ -22,6 +22,7 @@ package com.drew.imaging.jpeg.test;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.test.TestHelper;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
@@ -96,9 +97,8 @@ public class JpegSegmentReaderTest
     public void testReadJpegByteArray() throws Exception
     {
         File jpeg = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
-        byte[] fileContents = new byte[(int)jpeg.length()];
-        new FileInputStream(jpeg).read(fileContents);
-        new JpegSegmentReader(fileContents).readSegment(JpegSegmentReader.SEGMENT_APP1);
+        final byte[] bytes = TestHelper.loadFileBytes(jpeg);
+        new JpegSegmentReader(bytes).readSegment(JpegSegmentReader.SEGMENT_APP1);
     }
 
     @Test

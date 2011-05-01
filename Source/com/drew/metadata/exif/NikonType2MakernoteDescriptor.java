@@ -107,7 +107,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor
     {
         Long value = _directory.getLongObject(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_POWER_UP_TIME);
         if (value==null)
-            return null;
+            return null; // TODO have observed a byte[8] here which is likely some kind of date (ticks as long?)
         return new Date(value).toString();
     }
 

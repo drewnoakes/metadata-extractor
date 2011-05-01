@@ -63,7 +63,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
                 return getSharpnessDescription();
             case FujifilmMakernoteDirectory.TAG_FUJIFILM_WHITE_BALANCE:
                 return getWhiteBalanceDescription();
-            case FujifilmMakernoteDirectory.TAG_FUJIFILM_COLOR:
+            case FujifilmMakernoteDirectory.TAG_FUJIFILM_COLOR_SATURATION:
                 return getColorDescription();
             case FujifilmMakernoteDirectory.TAG_FUJIFILM_TONE:
                 return getToneDescription();
@@ -75,7 +75,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
                 return getMacroDescription();
             case FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE:
                 return getFocusModeDescription();
-            case FujifilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO:
+            case FujifilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCH:
                 return getSlowSyncDescription();
             case FujifilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE:
                 return getPictureModeDescription();
@@ -93,207 +93,22 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
     }
 
     @Nullable
-    public String getAutoExposureWarningDescription()
+    public String getSharpnessDescription()
     {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS);
         if (value==null)
             return null;
         switch (value) {
-            case 0:
-                return "AE good";
             case 1:
-                return "Over exposed (>1/1000s @ F11)";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getFocusWarningDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Auto focus good";
-            case 1:
-                return "Out of focus";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getBlurWarningDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "No blur warning";
-            case 1:
-                return "Blur warning";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getContinuousTakingOrAutoBrackettingDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Off";
-            case 1:
-                return "On";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getPictureModeDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Auto";
-            case 1:
-                return "Portrait scene";
+                return "Softest";
             case 2:
-                return "Landscape scene";
-            case 4:
-                return "Sports scene";
-            case 5:
-                return "Night scene";
-            case 6:
-                return "Program AE";
-            case 256:
-                return "Aperture priority AE";
-            case 512:
-                return "Shutter priority AE";
-            case 768:
-                return "Manual exposure";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getSlowSyncDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Off";
-            case 1:
-                return "On";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getFocusModeDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Auto focus";
-            case 1:
-                return "Manual focus";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getMacroDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_MACRO);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Off";
-            case 1:
-                return "On";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getFlashStrengthDescription()
-    {
-        Rational value = _directory.getRational(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_STRENGTH);
-        if (value==null)
-            return null;
-        return value.toSimpleString(false) + " EV (Apex)";
-    }
-
-    @Nullable
-    public String getFlashModeDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Auto";
-            case 1:
-                return "On";
-            case 2:
-                return "Off";
+                return "Soft";
             case 3:
-                return "Red-eye reduction";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getToneDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_TONE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Normal (STD)";
-            case 256:
-                return "High (HARD)";
-            case 512:
-                return "Low (ORG)";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
-
-    @Nullable
-    public String getColorDescription()
-    {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_COLOR);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Normal (STD)";
-            case 256:
-                return "High";
-            case 512:
-                return "Low (ORG)";
+                return "Normal";
+            case 4:
+                return "Hard";
+            case 5:
+                return "Hardest";
             default:
                 return "Unknown (" + value + ")";
         }
@@ -328,22 +143,194 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor
     }
 
     @Nullable
-    public String getSharpnessDescription()
+    public String getColorDescription()
     {
-        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS);
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_COLOR_SATURATION);
         if (value==null)
             return null;
         switch (value) {
+            case 0:
+                return "Normal (STD)";
+            case 256:
+                return "High (HARD)";
+            case 512:
+                return "Low (ORG)";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getToneDescription()
+    {
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_TONE);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Normal (STD)";
+            case 256:
+                return "High (HARD)";
+            case 512:
+                return "Low (ORG)";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getFlashModeDescription()
+    {
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Auto";
             case 1:
-                return "Softest";
+                return "On";
             case 2:
-                return "Soft";
+                return "Off";
             case 3:
-                return "Normal";
+                return "Red-eye reduction";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getFlashStrengthDescription()
+    {
+        Rational value = _directory.getRational(FujifilmMakernoteDirectory.TAG_FUJIFILM_FLASH_STRENGTH);
+        if (value==null)
+            return null;
+        return value.toSimpleString(false) + " EV (Apex)";
+    }
+
+    @Nullable
+    public String getMacroDescription()
+    {
+        return getOnOffDescription(FujifilmMakernoteDirectory.TAG_FUJIFILM_MACRO);
+    }
+
+    @Nullable
+    public String getFocusModeDescription()
+    {
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Auto focus";
+            case 1:
+                return "Manual focus";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getSlowSyncDescription()
+    {
+        return getOnOffDescription(FujifilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCH);
+    }
+
+    @Nullable
+    public String getPictureModeDescription()
+    {
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Auto";
+            case 1:
+                return "Portrait scene";
+            case 2:
+                return "Landscape scene";
             case 4:
-                return "Hard";
+                return "Sports scene";
             case 5:
-                return "Hardest";
+                return "Night scene";
+            case 6:
+                return "Program AE";
+            case 256:
+                return "Aperture priority AE";
+            case 512:
+                return "Shutter priority AE";
+            case 768:
+                return "Manual exposure";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getContinuousTakingOrAutoBrackettingDescription()
+    {
+        return getOnOffDescription(FujifilmMakernoteDirectory.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING);
+    }
+
+    @Nullable
+    public String getBlurWarningDescription()
+    {
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "No blur warning";
+            case 1:
+                return "Blur warning";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getFocusWarningDescription()
+    {
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Auto focus good";
+            case 1:
+                return "Out of focus";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getAutoExposureWarningDescription()
+    {
+        final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "AE good";
+            case 1:
+                return "Over exposed (>1/1000s @ F11)";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+
+    @Nullable
+    private String getOnOffDescription(final int tagType)
+    {
+        final Integer value = _directory.getInteger(tagType);
+        if (value==null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Off";
+            case 1:
+                return "On";
             default:
                 return "Unknown (" + value + ")";
         }
