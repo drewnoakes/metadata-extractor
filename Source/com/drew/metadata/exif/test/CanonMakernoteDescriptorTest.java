@@ -20,16 +20,12 @@
  */
 package com.drew.metadata.exif.test;
 
-import com.drew.metadata.exif.CanonMakernoteDescriptor;
-import com.drew.metadata.exif.CanonMakernoteDirectory;
-import org.junit.Assert;
-import org.junit.Test;
-
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
 public class CanonMakernoteDescriptorTest
 {
+/*
     @Test
     public void testGetFlashBiasDescription() throws Exception
     {
@@ -68,4 +64,5 @@ public class CanonMakernoteDescriptorTest
         directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0040);
         Assert.assertEquals("2.0 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
     }
+*/
 }

@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
@@ -31,7 +32,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class CanonMakernoteDescriptor extends TagDescriptor
 {
-    public CanonMakernoteDescriptor(Directory directory)
+    public CanonMakernoteDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
@@ -40,89 +41,105 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_ACTIVITY:
+            case CanonMakernoteDirectory.TAG_CANON_SERIAL_NUMBER:
+                return getSerialNumberDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_FLASH_ACTIVITY:
                 return getFlashActivityDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_TYPE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_TYPE:
                 return getFocusTypeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_DIGITAL_ZOOM:
+            case CanonMakernoteDirectory.CameraSettings.TAG_DIGITAL_ZOOM:
                 return getDigitalZoomDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_QUALITY:
+            case CanonMakernoteDirectory.CameraSettings.TAG_QUALITY:
                 return getQualityDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_MACRO_MODE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_MACRO_MODE:
                 return getMacroModeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY:
+            case CanonMakernoteDirectory.CameraSettings.TAG_SELF_TIMER_DELAY:
                 return getSelfTimerDelayDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_MODE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_FLASH_MODE:
                 return getFlashModeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_CONTINUOUS_DRIVE_MODE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_CONTINUOUS_DRIVE_MODE:
                 return getContinuousDriveModeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_1:
+            case CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_1:
                 return getFocusMode1Description();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_IMAGE_SIZE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_IMAGE_SIZE:
                 return getImageSizeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_EASY_SHOOTING_MODE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_EASY_SHOOTING_MODE:
                 return getEasyShootingModeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_CONTRAST:
+            case CanonMakernoteDirectory.CameraSettings.TAG_CONTRAST:
                 return getContrastDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_SATURATION:
+            case CanonMakernoteDirectory.CameraSettings.TAG_SATURATION:
                 return getSaturationDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_SHARPNESS:
+            case CanonMakernoteDirectory.CameraSettings.TAG_SHARPNESS:
                 return getSharpnessDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_ISO:
+            case CanonMakernoteDirectory.CameraSettings.TAG_ISO:
                 return getIsoDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_METERING_MODE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_METERING_MODE:
                 return getMeteringModeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_AF_POINT_SELECTED:
+            case CanonMakernoteDirectory.CameraSettings.TAG_AF_POINT_SELECTED:
                 return getAfPointSelectedDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_EXPOSURE_MODE:
+            case CanonMakernoteDirectory.CameraSettings.TAG_EXPOSURE_MODE:
                 return getExposureModeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_LONG_FOCAL_LENGTH:
+            case CanonMakernoteDirectory.CameraSettings.TAG_LONG_FOCAL_LENGTH:
                 return getLongFocalLengthDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_SHORT_FOCAL_LENGTH:
+            case CanonMakernoteDirectory.CameraSettings.TAG_SHORT_FOCAL_LENGTH:
                 return getShortFocalLengthDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_FOCAL_UNITS_PER_MM:
+            case CanonMakernoteDirectory.CameraSettings.TAG_FOCAL_UNITS_PER_MM:
                 return getFocalUnitsPerMillimetreDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_DETAILS:
+            case CanonMakernoteDirectory.CameraSettings.TAG_FLASH_DETAILS:
                 return getFlashDetailsDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_2:
+            case CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_2:
                 return getFocusMode2Description();
-            case CanonMakernoteDirectory.TAG_CANON_STATE2_WHITE_BALANCE:
+            case CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE:
                 return getWhiteBalanceDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE2_AF_POINT_USED:
+            case CanonMakernoteDirectory.FocalLength.TAG_AF_POINT_USED:
                 return getAfPointUsedDescription();
-            case CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS:
+            case CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS:
                 return getFlashBiasDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION:
-                return getLongExposureNoiseReductionDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS:
-                return getShutterAutoExposureLockButtonDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP:
-                return getMirrorLockupDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL:
-                return getTvAndAvExposureLevelDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT:
-                return getAutoFocusAssistLightDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE:
-                return getShutterSpeedInAvModeDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETTING:
-                return getAutoExposureBrackettingSequenceAndAutoCancellationDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC:
-                return getShutterCurtainSyncDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_STOP:
-                return getLensAutoFocusStopButtonDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION:
-                return getFillFlashReductionDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MENU_BUTTON_RETURN:
-                return getMenuButtonReturnPositionDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SET_BUTTON_FUNCTION:
-                return getSetButtonFunctionWhenShootingDescription();
-            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING:
-                return getSensorCleaningDescription();
+
+            // It turns out that these values are dependent upon the camera model and therefore the below code was
+            // incorrect for some Canon models.  This needs to be revisited.
+
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION:
+//                return getLongExposureNoiseReductionDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS:
+//                return getShutterAutoExposureLockButtonDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP:
+//                return getMirrorLockupDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL:
+//                return getTvAndAvExposureLevelDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT:
+//                return getAutoFocusAssistLightDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE:
+//                return getShutterSpeedInAvModeDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETTING:
+//                return getAutoExposureBrackettingSequenceAndAutoCancellationDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC:
+//                return getShutterCurtainSyncDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_STOP:
+//                return getLensAutoFocusStopButtonDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION:
+//                return getFillFlashReductionDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_MENU_BUTTON_RETURN:
+//                return getMenuButtonReturnPositionDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SET_BUTTON_FUNCTION:
+//                return getSetButtonFunctionWhenShootingDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING:
+//                return getSensorCleaningDescription();
             default:
                 return _directory.getString(tagType);
         }
     }
 
+    @Nullable
+    public String getSerialNumberDescription()
+    {
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_SERIAL_NUMBER);
+        if (value==null)
+            return null;
+        return String.format("%04X%05d", (value >> 8) & 0xFF, value & 0xFF);
+    }
+
+/*
     @Nullable
     public String getLongExposureNoiseReductionDescription()
     {
@@ -299,11 +316,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
             default:    return "Unknown (" + value + ")";
         }
     }
+*/
 
     @Nullable
     public String getFlashBiasDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS);
 
         if (value==null)
             return null;
@@ -327,7 +345,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getAfPointUsedDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE2_AF_POINT_USED);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.FocalLength.TAG_AF_POINT_USED);
         if (value==null)
             return null;
         if ((value & 0x7) == 0) {
@@ -344,7 +362,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE2_WHITE_BALANCE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE);
         if (value==null)
             return null;
         switch (value) {
@@ -370,7 +388,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getFocusMode2Description()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_2);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_2);
         if (value==null)
             return null;
         switch (value) {
@@ -386,7 +404,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getFlashDetailsDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_DETAILS);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FLASH_DETAILS);
         if (value==null)
             return null;
         if (((value << 14) & 1) > 0) {
@@ -407,7 +425,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getFocalUnitsPerMillimetreDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCAL_UNITS_PER_MM);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FOCAL_UNITS_PER_MM);
         if (value==null)
             return null;
         if (value != 0) {
@@ -420,7 +438,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getShortFocalLengthDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SHORT_FOCAL_LENGTH);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_SHORT_FOCAL_LENGTH);
         if (value==null)
             return null;
         String units = getFocalUnitsPerMillimetreDescription();
@@ -430,7 +448,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getLongFocalLengthDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_LONG_FOCAL_LENGTH);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_LONG_FOCAL_LENGTH);
         if (value==null)
             return null;
         String units = getFocalUnitsPerMillimetreDescription();
@@ -440,7 +458,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getExposureModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_EXPOSURE_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_EXPOSURE_MODE);
         if (value==null)
             return null;
         switch (value) {
@@ -464,7 +482,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getAfPointSelectedDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_AF_POINT_SELECTED);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_AF_POINT_SELECTED);
         if (value==null)
             return null;
         switch (value) {
@@ -486,7 +504,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getMeteringModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_METERING_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_METERING_MODE);
         if (value==null)
             return null;
         switch (value) {
@@ -504,7 +522,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getIsoDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_ISO);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_ISO);
         if (value==null)
             return null;
 
@@ -534,7 +552,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getSharpnessDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SHARPNESS);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_SHARPNESS);
         if (value==null)
             return null;
         switch (value) {
@@ -552,7 +570,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getSaturationDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SATURATION);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_SATURATION);
         if (value==null)
             return null;
         switch (value) {
@@ -570,7 +588,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getContrastDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTRAST);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_CONTRAST);
         if (value==null)
             return null;
         switch (value) {
@@ -588,7 +606,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getEasyShootingModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_EASY_SHOOTING_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_EASY_SHOOTING_MODE);
         if (value==null)
             return null;
         switch (value) {
@@ -624,7 +642,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getImageSizeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_IMAGE_SIZE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_IMAGE_SIZE);
         if (value==null)
             return null;
         switch (value) {
@@ -642,7 +660,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getFocusMode1Description()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_MODE_1);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_1);
         if (value==null)
             return null;
         switch (value) {
@@ -669,12 +687,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getContinuousDriveModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_CONTINUOUS_DRIVE_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_CONTINUOUS_DRIVE_MODE);
         if (value==null)
             return null;
         switch (value) {
             case 0:
-                final Integer delay = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY);
+                final Integer delay = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_SELF_TIMER_DELAY);
                 if (delay!=null)
                     return delay == 0 ? "Single shot" : "Single shot with self-timer";
             case 1:
@@ -686,7 +704,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getFlashModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FLASH_MODE);
         if (value==null)
             return null;
         switch (value) {
@@ -715,7 +733,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getSelfTimerDelayDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_SELF_TIMER_DELAY);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_SELF_TIMER_DELAY);
         if (value==null)
             return null;
         if (value == 0) {
@@ -729,7 +747,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getMacroModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_MACRO_MODE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_MACRO_MODE);
         if (value==null)
             return null;
         switch (value) {
@@ -745,7 +763,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getQualityDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_QUALITY);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_QUALITY);
         if (value==null)
             return null;
         switch (value) {
@@ -763,7 +781,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getDigitalZoomDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_DIGITAL_ZOOM);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_DIGITAL_ZOOM);
         if (value==null)
             return null;
         switch (value) {
@@ -781,7 +799,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getFocusTypeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FOCUS_TYPE);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_TYPE);
         if (value==null)
             return null;
         switch (value) {
@@ -801,7 +819,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor
     @Nullable
     public String getFlashActivityDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_STATE1_FLASH_ACTIVITY);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FLASH_ACTIVITY);
         if (value==null)
             return null;
         switch (value) {
