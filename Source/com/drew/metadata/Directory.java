@@ -89,7 +89,7 @@ public abstract class Directory
      */
     public boolean containsTag(int tagType)
     {
-        return _tagMap.containsKey(new Integer(tagType));
+        return _tagMap.containsKey(Integer.valueOf(tagType));
     }
 
     /**
@@ -401,7 +401,7 @@ public abstract class Directory
                 long val = 0;
                 for (byte aByte : bytes) {
                     val = val << 8;
-                    val += aByte;
+                    val += (aByte & 0xff);
                 }
                 return (int)val;
             }
@@ -811,7 +811,7 @@ public abstract class Directory
     @Nullable
     public Object getObject(int tagType)
     {
-        return _tagMap.get(new Integer(tagType));
+        return _tagMap.get(Integer.valueOf(tagType));
     }
 
 // OTHER METHODS

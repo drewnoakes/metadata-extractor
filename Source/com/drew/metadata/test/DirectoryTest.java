@@ -66,7 +66,7 @@ public class DirectoryTest
         _directory.setInt(tagType, value);
 
         Assert.assertEquals(value, _directory.getInt(tagType));
-        Assert.assertEquals(new Integer(value), _directory.getInteger(tagType));
+        Assert.assertEquals(Integer.valueOf(value), _directory.getInteger(tagType));
         Assert.assertEquals((float)value, _directory.getFloat(tagType), 0.00001);
         Assert.assertEquals((double)value, _directory.getDouble(tagType), 0.00001);
         Assert.assertEquals((long)value, _directory.getLong(tagType));

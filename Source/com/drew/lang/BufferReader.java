@@ -23,6 +23,8 @@ package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
 
+import java.io.UnsupportedEncodingException;
+
 /** @author Drew Noakes http://drewnoakes.com */
 public class BufferReader
 {
@@ -200,6 +202,19 @@ public class BufferReader
 
         byte[] bytes = getBytes(index, bytesRequested);
         return new String(bytes);
+    }
+
+    @NotNull
+    public String getString(int index, int bytesRequested, String charset) throws BufferBoundsException
+    {
+        CheckBounds(index, bytesRequested);
+
+        byte[] bytes = getBytes(index, bytesRequested);
+        try {
+            return new String(bytes, charset);
+        } catch (UnsupportedEncodingException e) {
+            return new String(bytes);
+        }
     }
 
     /**

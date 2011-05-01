@@ -25,7 +25,6 @@ import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
 
 import java.util.Calendar;
@@ -93,12 +92,12 @@ public class IccReader implements MetadataReader
                 int tagPtr = reader.getInt32(pos + 4);
                 int tagLen = reader.getInt32(pos + 8);
                 if (tagPtr + tagLen > data.length)
-                    throw new MetadataException("Tag '" + getStringFromInt32(tagType) + "' data outside segment data buffer");
+                    throw new BufferBoundsException(data, tagPtr, tagLen);
                 byte[] b = new byte[tagLen];
                 System.arraycopy(data, tagPtr, b, 0, tagLen);
                 directory.setByteArray(tagType, b);
             }
-        } catch (Exception e) {
+        } catch (BufferBoundsException e) {
             directory.addError(String.format("Reading ICC Header %s:%s", e.getClass().getSimpleName(), e.getMessage()));
         }
     }

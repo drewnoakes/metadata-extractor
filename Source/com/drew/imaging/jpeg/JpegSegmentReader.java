@@ -227,8 +227,8 @@ public class JpegSegmentReader
                 offset++;
                 // next 2-bytes are <segment-size>: [high-byte] [low-byte]
                 byte[] segmentLengthBytes = new byte[2];
-                // TODO what if 'read' doesn't return 2.  bug?
-                jpegInputStream.read(segmentLengthBytes, 0, 2);
+                if (jpegInputStream.read(segmentLengthBytes, 0, 2) != 2)
+                    throw new JpegProcessingException("Jpeg data ended unexpectedly.");
                 offset += 2;
                 int segmentLength = ((segmentLengthBytes[0] << 8) & 0xFF00) | (segmentLengthBytes[1] & 0xFF);
                 // segment length includes size bytes, so subtract two
@@ -238,8 +238,8 @@ public class JpegSegmentReader
                 if (segmentLength < 0)
                     throw new JpegProcessingException("segment size would be less than zero");
                 byte[] segmentBytes = new byte[segmentLength];
-                // TODO what if 'read' doesn't return segmentLength.  bug?
-                jpegInputStream.read(segmentBytes, 0, segmentLength);
+                if (jpegInputStream.read(segmentBytes, 0, segmentLength) != segmentLength)
+                    throw new JpegProcessingException("Jpeg data ended unexpectedly.");
                 offset += segmentLength;
                 if ((thisSegmentMarker & 0xFF) == (SEGMENT_SOS & 0xFF)) {
                     // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would

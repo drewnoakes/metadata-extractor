@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.photoshop;
 
+import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
@@ -127,7 +128,7 @@ public class PhotoshopDescriptor extends TagDescriptor
                     ? String.format("%d", s + 2)
                     : String.format("Unknown 0x%04X", s);
             return String.format("%d (%s), %s format, %s scans", q1, quality, format, scans);
-        } catch (Exception e) {
+        } catch (BufferBoundsException e) {
             return null;
         }
     }
@@ -200,15 +201,15 @@ public class PhotoshopDescriptor extends TagDescriptor
             pos++;
             int readerLength = reader.getInt32(5);
             pos += 4;
-            String readerStr = new String(bytes, 9, readerLength * 2, "UTF-16");
+            String readerStr = reader.getString(9, readerLength * 2, "UTF-16");
             pos += readerLength * 2;
             int writerLength = reader.getInt32(pos);
             pos += 4;
-            String writerStr = new String(bytes, pos, writerLength * 2, "UTF-16");
+            String writerStr = reader.getString(pos, writerLength * 2, "UTF-16");
             pos += writerLength * 2;
             int fileVersion = reader.getInt32(pos);
             return String.format("%d (%s, %s) %d", ver, readerStr, writerStr, fileVersion);
-        } catch (Exception e) {
+        } catch (BufferBoundsException e) {
             return null;
         }
     }
@@ -221,10 +222,10 @@ public class PhotoshopDescriptor extends TagDescriptor
                 return null;
             BufferReader reader = new BufferReader(bytes);
             int nameLength = reader.getInt32(20);
-            String name = new String(bytes, 24, nameLength * 2, "UTF-16");
+            String name = reader.getString(24, nameLength * 2, "UTF-16");
             int pos = 24 + nameLength * 2;
             int sliceCount = reader.getInt32(pos);
-            pos += 4;
+            //pos += 4;
             return String.format("%s (%d,%d,%d,%d) %d Slices",
                     name, reader.getInt32(4), reader.getInt32(8), reader.getInt32(12), reader.getInt32(16), sliceCount);
             /*for (int i=0;i<sliceCount;i++){
@@ -234,7 +235,7 @@ public class PhotoshopDescriptor extends TagDescriptor
                 String slName=new String(b, pos, slNameLen*2,"UTF-16");
                 res+=slName;
             }*/
-        } catch (Exception e) {
+        } catch (BufferBoundsException e) {
             return null;
         }
     }
@@ -265,7 +266,7 @@ public class PhotoshopDescriptor extends TagDescriptor
             return String.format("%s, %dx%d, Decomp %d bytes, %d bpp, %d bytes",
                     format == 1 ? "JpegRGB" : "RawRGB",
                     width, height, totalSize, bpp, compSize);
-        } catch (Exception e) {
+        } catch (BufferBoundsException e) {
             return null;
         }
     }
@@ -280,39 +281,30 @@ public class PhotoshopDescriptor extends TagDescriptor
 
     private String get32BitNumberString(int tag)
     {
+        byte[] bytes = _directory.getByteArray(tag);
+        if (bytes == null)
+            return null;
+        BufferReader reader = new BufferReader(bytes);
         try {
-            byte[] bytes = _directory.getByteArray(tag);
-            if (bytes == null)
-                return null;
-            BufferReader reader = new BufferReader(bytes);
             return String.format("%d", reader.getInt32(0));
-        } catch (Exception e) {
+        } catch (BufferBoundsException e) {
             return null;
         }
     }
 
     private String getSimpleString(int tagType)
     {
-        try {
-            final byte[] bytes = _directory.getByteArray(tagType);
-            if (bytes == null)
-                return null;
-            return new String(bytes);
-        } catch (Exception e) {
+        final byte[] bytes = _directory.getByteArray(tagType);
+        if (bytes == null)
             return null;
-        }
+        return new String(bytes);
     }
-
 
     private String getBinaryDataString(int tagType)
     {
-        try {
-            final byte[] bytes = _directory.getByteArray(tagType);
-            if (bytes == null)
-                return null;
-            return String.format("%d bytes binary data", bytes.length);
-        } catch (Exception e) {
+        final byte[] bytes = _directory.getByteArray(tagType);
+        if (bytes == null)
             return null;
-        }
+        return String.format("%d bytes binary data", bytes.length);
     }
 }

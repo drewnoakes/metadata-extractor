@@ -40,13 +40,16 @@ public class TiffMetadataReader
         Metadata metadata = new Metadata();
 
         FileInputStream fileInputStream = null;
+        DataInputStream dataInputStream = null;
         byte[] buffer;
         try{
             fileInputStream = new FileInputStream(file);
-            DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+            dataInputStream = new DataInputStream(fileInputStream);
             buffer = new byte[(int)file.length()];
             dataInputStream.readFully(buffer);
         } finally {
+            if (dataInputStream != null)
+                dataInputStream.close();
             if (fileInputStream != null)
                 fileInputStream.close();
         }

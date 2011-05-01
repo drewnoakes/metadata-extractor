@@ -452,8 +452,9 @@ public class ExifDescriptor extends TagDescriptor
                 String firstTenBytesString = new String(commentBytes, 0, 10);
 
                 // try each encoding name
-                for (String encodingName : encodingMap.keySet()) {
-                    String charset = encodingMap.get(encodingName);
+                for (Map.Entry<String, String> pair : encodingMap.entrySet()) {
+                    String encodingName = pair.getKey();
+                    String charset = pair.getValue();
                     if (firstTenBytesString.startsWith(encodingName)) {
                         // skip any null or blank characters commonly present after the encoding name, up to a limit of 10 from the start
                         for (int j = encodingName.length(); j < 10; j++) {

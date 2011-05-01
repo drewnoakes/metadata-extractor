@@ -39,9 +39,6 @@ import java.util.Set;
  */
 public class ExifReader implements MetadataReader
 {
-    // TODO we assume Exif is always in the first instance of APP1 data which may not always be the case
-    // TODO simplify this type by removing some of the state fields (data, directory, etc) and do everything on the stack, passing around args
-
     /** The number of bytes used per format descriptor. */
     @NotNull
     private static final int[] BYTES_PER_FORMAT = { 0, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8 };
@@ -199,7 +196,7 @@ public class ExifReader implements MetadataReader
     private void processDirectory(@NotNull Directory directory, @NotNull Set<Integer> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset, @NotNull final Metadata metadata, @NotNull final byte[] data, @NotNull final BufferReader reader) throws BufferBoundsException
     {
         // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
-        if (processedDirectoryOffsets.contains(new Integer(dirStartOffset)))
+        if (processedDirectoryOffsets.contains(Integer.valueOf(dirStartOffset)))
             return;
 
         // remember that we've visited this directory so that we don't visit it again later
@@ -349,7 +346,6 @@ public class ExifReader implements MetadataReader
             else
                 processDirectory(metadata.getOrCreateDirectory(CasioType1MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset, metadata, data, reader);
         } else if ("FUJIFILM".equals(firstEightChars) || "Fujifilm".equalsIgnoreCase(cameraModel)) {
-            // TODO make this field a passed parameter, to avoid threading issues
             boolean byteOrderBefore = reader.isMotorolaByteOrder();
             // bug in fujifilm makernote ifd means we temporarily use Intel byte ordering
             reader.setMotorolaByteOrder(false);
@@ -363,11 +359,6 @@ public class ExifReader implements MetadataReader
             // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
             // area that commences immediately.
             processDirectory(metadata.getOrCreateDirectory(OlympusMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset, metadata, data, reader);
-        } else if ("KC".equals(firstTwoChars) || "MINOL".equals(firstFiveChars) || "MLY".equals(firstThreeChars) || "+M+M+M+M".equals(firstEightChars)) {
-            // This Konica data is not understood.  Header identified in accordance with information at this site:
-            // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html
-            // TODO determine how to process the information described at the above website
-            exifDirectory.addError("Unsupported Konica/Minolta data ignored.");
         } else if ("KYOCERA".equals(firstSevenChars)) {
             // http://www.ozhiker.com/electronics/pjmt/jpeg_info/kyocera_mn.html
             processDirectory(metadata.getOrCreateDirectory(KyoceraMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 22, tiffHeaderOffset, metadata, data, reader);
@@ -391,6 +382,11 @@ public class ExifReader implements MetadataReader
             // - PENTAX Optio 330
             // - PENTAX Optio 430
             processDirectory(metadata.getOrCreateDirectory(PentaxMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset, subdirOffset, metadata, data, reader);
+//        } else if ("KC".equals(firstTwoChars) || "MINOL".equals(firstFiveChars) || "MLY".equals(firstThreeChars) || "+M+M+M+M".equals(firstEightChars)) {
+//            // This Konica data is not understood.  Header identified in accordance with information at this site:
+//            // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html
+//            // TODO add support for minolta/konica cameras
+//            exifDirectory.addError("Unsupported Konica/Minolta data ignored.");
         } else {
             // TODO how to store makernote data when it's not from a supported camera model?
             // this is difficult as the starting offset is not known.  we could look for it...

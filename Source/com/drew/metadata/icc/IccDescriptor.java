@@ -27,6 +27,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
+import java.io.UnsupportedEncodingException;
+
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class IccDescriptor extends TagDescriptor
 {
@@ -67,133 +69,142 @@ public class IccDescriptor extends TagDescriptor
     private String getTagDataString(int tagType)
     {
         try {
-        byte[] bytes = _directory.getByteArray(tagType);
-        BufferReader reader = new BufferReader(bytes);
-        int iccTagType = reader.getInt32(0);
-        switch (iccTagType) {
-            case ICC_TAG_TYPE_TEXT:
-                return new String(bytes, 8, bytes.length - 8 - 1, "ASCII");
-            case ICC_TAG_TYPE_DESC:
-                int stringLength = reader.getInt32(8);
-                return new String(bytes, 12, stringLength - 1);
-            case ICC_TAG_TYPE_SIG:
-                return IccReader.getStringFromInt32(reader.getInt32(8));
-            case ICC_TAG_TYPE_MEAS: {
-                int observerType = reader.getInt32(8);
-                float x = reader.getS15Fixed16(12);
-                float y = reader.getS15Fixed16(16);
-                float z = reader.getS15Fixed16(20);
-                int geometryType = reader.getInt32(24);
-                float flare = reader.getS15Fixed16(28);
-                int illuminantType = reader.getInt32(32);
-                String observerString;
-                switch (observerType) {
-                    case 0:
-                        observerString = "Unknown";
-                        break;
-                    case 1:
-                        observerString = "1931 2°";
-                        break;
-                    case 2:
-                        observerString = "1964 10°";
-                        break;
-                    default:
-                        observerString = String.format("Unknown %d", observerType);
+            byte[] bytes = _directory.getByteArray(tagType);
+            BufferReader reader = new BufferReader(bytes);
+            int iccTagType = reader.getInt32(0);
+            switch (iccTagType) {
+                case ICC_TAG_TYPE_TEXT:
+                    try {
+                        return new String(bytes, 8, bytes.length - 8 - 1, "ASCII");
+                    } catch (UnsupportedEncodingException ex) {
+                        return new String(bytes, 8, bytes.length - 8 - 1);
+                    }
+                case ICC_TAG_TYPE_DESC:
+                    int stringLength = reader.getInt32(8);
+                    return new String(bytes, 12, stringLength - 1);
+                case ICC_TAG_TYPE_SIG:
+                    return IccReader.getStringFromInt32(reader.getInt32(8));
+                case ICC_TAG_TYPE_MEAS: {
+                    int observerType = reader.getInt32(8);
+                    float x = reader.getS15Fixed16(12);
+                    float y = reader.getS15Fixed16(16);
+                    float z = reader.getS15Fixed16(20);
+                    int geometryType = reader.getInt32(24);
+                    float flare = reader.getS15Fixed16(28);
+                    int illuminantType = reader.getInt32(32);
+                    String observerString;
+                    switch (observerType) {
+                        case 0:
+                            observerString = "Unknown";
+                            break;
+                        case 1:
+                            observerString = "1931 2°";
+                            break;
+                        case 2:
+                            observerString = "1964 10°";
+                            break;
+                        default:
+                            observerString = String.format("Unknown %d", observerType);
+                    }
+                    String geometryString;
+                    switch (geometryType) {
+                        case 0:
+                            geometryString = "Unknown";
+                            break;
+                        case 1:
+                            geometryString = "0/45 or 45/0";
+                            break;
+                        case 2:
+                            geometryString = "0/d or d/0";
+                            break;
+                        default:
+                            geometryString = String.format("Unknown %d", observerType);
+                    }
+                    String illuminantString;
+                    switch (illuminantType) {
+                        case 0:
+                            illuminantString = "unknown";
+                            break;
+                        case 1:
+                            illuminantString = "D50";
+                            break;
+                        case 2:
+                            illuminantString = "D65";
+                            break;
+                        case 3:
+                            illuminantString = "D93";
+                            break;
+                        case 4:
+                            illuminantString = "F2";
+                            break;
+                        case 5:
+                            illuminantString = "D55";
+                            break;
+                        case 6:
+                            illuminantString = "A";
+                            break;
+                        case 7:
+                            illuminantString = "Equi-Power (E)";
+                            break;
+                        case 8:
+                            illuminantString = "F8";
+                            break;
+                        default:
+                            illuminantString = String.format("Unknown %d", illuminantType);
+                            break;
+                    }
+                    return String.format("%s Observer, Backing (%s, %s, %s), Geometry %s, Flare %d%%, Illuminant %s",
+                            observerString, x, y, z, geometryString, Math.round(flare * 100), illuminantString);
                 }
-                String geometryString;
-                switch (geometryType) {
-                    case 0:
-                        geometryString = "Unknown";
-                        break;
-                    case 1:
-                        geometryString = "0/45 or 45/0";
-                        break;
-                    case 2:
-                        geometryString = "0/d or d/0";
-                        break;
-                    default:
-                        geometryString = String.format("Unknown %d", observerType);
+                case ICC_TAG_TYPE_XYZ_ARRAY: {
+                    StringBuilder res = new StringBuilder();
+                    int count = (bytes.length - 8) / 12;
+                    for (int i = 0; i < count; i++) {
+                        float x = reader.getS15Fixed16(8 + i * 12);
+                        float y = reader.getS15Fixed16(8 + i * 12 + 4);
+                        float z = reader.getS15Fixed16(8 + i * 12 + 8);
+                        if (i > 0)
+                            res.append(", ");
+                        res.append("(").append(x).append(", ").append(y).append(", ").append(z).append(")");
+                    }
+                    return res.toString();
                 }
-                String illuminantString;
-                switch (illuminantType) {
-                    case 0:
-                        illuminantString = "unknown";
-                        break;
-                    case 1:
-                        illuminantString = "D50";
-                        break;
-                    case 2:
-                        illuminantString = "D65";
-                        break;
-                    case 3:
-                        illuminantString = "D93";
-                        break;
-                    case 4:
-                        illuminantString = "F2";
-                        break;
-                    case 5:
-                        illuminantString = "D55";
-                        break;
-                    case 6:
-                        illuminantString = "A";
-                        break;
-                    case 7:
-                        illuminantString = "Equi-Power (E)";
-                        break;
-                    case 8:
-                        illuminantString = "F8";
-                        break;
-                    default:
-                        illuminantString = String.format("Unknown %d", illuminantType);
-                        break;
+                case ICC_TAG_TYPE_MLUC: {
+                    int int1 = reader.getInt32(8);
+                    StringBuilder res = new StringBuilder();
+                    res.append(int1);
+                    //int int2 = reader.getInt32(12);
+                    //System.err.format("int1: %d, int2: %d\n", int1, int2);
+                    for (int i = 0; i < int1; i++) {
+                        String str = IccReader.getStringFromInt32(reader.getInt32(16 + i * 12));
+                        int len = reader.getInt32(16 + i * 12 + 4);
+                        int ofs = reader.getInt32(16 + i * 12 + 8);
+                        String name;
+                        try {
+                            name = new String(bytes, ofs, len, "UTF-16BE");
+                        } catch (UnsupportedEncodingException ex) {
+                            name = new String(bytes, ofs, len);
+                        }
+                        res.append(" ").append(str).append("(").append(name).append(")");
+                        //System.err.format("% 3d: %s, len: %d, ofs: %d, \"%s\"\n", i, str, len,ofs,name);
+                    }
+                    return res.toString();
                 }
-                return String.format("%s Observer, Backing (%s, %s, %s), Geometry %s, Flare %d%%, Illuminant %s",
-                        observerString, x, y, z, geometryString, Math.round(flare * 100), illuminantString);
+                case ICC_TAG_TYPE_CURV: {
+                    int num = reader.getInt32(8);
+                    StringBuilder res = new StringBuilder();
+                    for (int i = 0; i < num; i++) {
+                        if (i != 0)
+                            res.append(", ");
+                        res.append(formatDoubleAsString(((float)reader.getUInt16(12 + i * 2)) / 65535.0, 7, false));
+                        //res+=String.format("%1.7g",Math.round(((float)iccReader.getInt16(b,12+i*2))/0.065535)/1E7);
+                    }
+                    return res.toString();
+                }
+                default:
+                    return String.format("%s(0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
             }
-            case ICC_TAG_TYPE_XYZ_ARRAY: {
-                StringBuilder res = new StringBuilder();
-                int count = (bytes.length - 8) / 12;
-                for (int i = 0; i < count; i++) {
-                    float x = reader.getS15Fixed16(8 + i * 12);
-                    float y = reader.getS15Fixed16(8 + i * 12 + 4);
-                    float z = reader.getS15Fixed16(8 + i * 12 + 8);
-                    if (i > 0)
-                        res.append(", ");
-                    res.append("(").append(x).append(", ").append(y).append(", ").append(z).append(")");
-                }
-                return res.toString();
-            }
-            case ICC_TAG_TYPE_MLUC: {
-                int int1 = reader.getInt32(8);
-                StringBuilder res = new StringBuilder();
-                res.append(int1);
-                //int int2 = reader.getInt32(12);
-                //System.err.format("int1: %d, int2: %d\n", int1, int2);
-                for (int i = 0; i < int1; i++) {
-                    String str = IccReader.getStringFromInt32(reader.getInt32(16 + i * 12));
-                    int len = reader.getInt32(16 + i * 12 + 4);
-                    int ofs = reader.getInt32(16 + i * 12 + 8);
-                    String name = new String(bytes, ofs, len, "UTF-16BE");
-                    res.append(" ").append(str).append("(").append(name).append(")");
-                    //System.err.format("% 3d: %s, len: %d, ofs: %d, \"%s\"\n", i, str, len,ofs,name);
-                }
-                return res.toString();
-            }
-            case ICC_TAG_TYPE_CURV: {
-                int num = reader.getInt32(8);
-                StringBuilder res = new StringBuilder();
-                for (int i = 0; i < num; i++) {
-                    if (i != 0)
-                        res.append(", ");
-                    res.append(formatDoubleAsString(((float)reader.getUInt16(12 + i * 2)) / 65535.0, 7, false));
-                    //res+=String.format("%1.7g",Math.round(((float)iccReader.getInt16(b,12+i*2))/0.065535)/1E7);
-                }
-                return res.toString();
-            }
-            default:
-                return String.format("%s(0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
-        }
-        } catch (Exception e) {
+        } catch (BufferBoundsException e) {
             // TODO decode these values during IccReader.extract so we can report any errors at that time
             // It is convention to return null if a description cannot be formulated.
             // If an error is to be reported, it should be done during the extraction process.

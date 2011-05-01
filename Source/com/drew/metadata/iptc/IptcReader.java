@@ -116,7 +116,7 @@ public class IptcReader implements MetadataReader
         switch (tagIdentifier) {
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
                 // short
-                short shortValue = (short)((data[offset] << 8) | data[offset + 1]);
+                short shortValue = (short)(((data[offset] << 8) & 0xFF) | (data[offset + 1] & 0xFF));
                 directory.setInt(tagIdentifier, shortValue);
                 return;
             case IptcDirectory.TAG_URGENCY:

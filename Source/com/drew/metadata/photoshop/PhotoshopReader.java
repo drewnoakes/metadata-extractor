@@ -56,7 +56,7 @@ public class PhotoshopReader implements MetadataReader
                 //String description = new String(data, pos, descriptionLength);
                 pos += descriptionLength;
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
-                if (pos % 2 == 1)
+                if (pos % 2 != 0)
                     pos++;
 
                 // 4 bytes for the size of the resource data that follows.
@@ -66,7 +66,7 @@ public class PhotoshopReader implements MetadataReader
                 byte[] tagBytes = reader.getBytes(pos, byteCount);
                 pos += byteCount;
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
-                if (pos % 2 == 1)
+                if (pos % 2 != 0)
                     pos++;
 
                 directory.setByteArray(tagType, tagBytes);

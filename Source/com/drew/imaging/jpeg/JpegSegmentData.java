@@ -102,7 +102,7 @@ public class JpegSegmentData implements Serializable
     @Nullable
     public List<byte[]> getSegmentList(byte segmentMarker)
     {
-        return _segmentDataMap.get(new Byte(segmentMarker));
+        return _segmentDataMap.get(Byte.valueOf(segmentMarker));
     }
 
     @NotNull
@@ -137,7 +137,7 @@ public class JpegSegmentData implements Serializable
      */
     public void removeSegmentOccurrence(byte segmentMarker, int occurrence)
     {
-        final List<byte[]> segmentList = _segmentDataMap.get(new Byte(segmentMarker));
+        final List<byte[]> segmentList = _segmentDataMap.get(Byte.valueOf(segmentMarker));
         segmentList.remove(occurrence);
     }
 
@@ -147,7 +147,7 @@ public class JpegSegmentData implements Serializable
      */
     public void removeSegment(byte segmentMarker)
     {
-        _segmentDataMap.remove(new Byte(segmentMarker));
+        _segmentDataMap.remove(Byte.valueOf(segmentMarker));
     }
 
     /**
@@ -157,7 +157,7 @@ public class JpegSegmentData implements Serializable
      */
     public boolean containsSegment(byte segmentMarker)
     {
-        return _segmentDataMap.containsKey(new Byte(segmentMarker));
+        return _segmentDataMap.containsKey(Byte.valueOf(segmentMarker));
     }
 
     /**

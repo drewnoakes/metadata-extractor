@@ -217,12 +217,19 @@ public class Rational extends java.lang.Number implements Serializable
      * @return true if instances are mathematically equivalent, otherwise false.  Will also
      *         return false if <code>obj</code> is not an instance of <code>Rational</code>.
      */
+    @Override
     public boolean equals(@Nullable Object obj)
     {
         if (obj==null || !(obj instanceof Rational))
             return false;
         Rational that = (Rational) obj;
         return this.doubleValue() == that.doubleValue();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return (23 * (int)_denominator) + (int)_numerator;
     }
 
     /**

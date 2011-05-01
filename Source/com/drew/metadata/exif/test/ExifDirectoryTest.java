@@ -76,7 +76,8 @@ public class ExifDirectoryTest
             exifDirectory.writeThumbnail(thumbnailFile.getAbsolutePath());
             Assert.assertTrue(new File(thumbnailFile.getAbsolutePath()).exists());
         } finally {
-            thumbnailFile.delete();
+            if (!thumbnailFile.delete())
+                Assert.fail("Unable to delete temp thumbnail file.");
         }
     }
 
