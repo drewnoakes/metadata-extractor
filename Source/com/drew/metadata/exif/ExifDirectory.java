@@ -756,11 +756,6 @@ public class ExifDirectory extends Directory
     // This thumbnail extraction code is not complete, and is included to assist anyone who feels like looking into
     // it.  Please share any progress with the original author, and hence the community.  Thanks.
 
-    /**
-     *
-     * @return
-     * @throws MetadataException
-     * /
     public Image getThumbnailImage() throws MetadataException
     {
         if (!containsThumbnail())
@@ -836,7 +831,7 @@ public class ExifDirectory extends Directory
      *
      * Y(0,0),Y(1,0),Cb(0,0),Cr(0,0), Y(2,0),Y(3,0),Cb(2,0),Cr(3.0), Y(4,0),Y(5,0),Cb(4,0),Cr(4,0). . . .
      *
-     * The numerics in parenthesis are pixel coordinates. DX series' YCbCrCoefficients(0x0211) has values '0.299/0.587/0.114',
+     * The numbers in parenthesis are pixel coordinates. DX series' YCbCrCoefficients(0x0211) has values '0.299/0.587/0.114',
      * ReferenceBlackWhite(0x0214) has values '0,255,128,255,128,255'. Therefore to convert from Y/Cb/Cr to RGB is;
      *
      * B(0,0)=(Cb-128)*(2-0.114*2)+Y(0,0)

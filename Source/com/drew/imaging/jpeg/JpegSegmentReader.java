@@ -95,6 +95,7 @@ public class JpegSegmentReader
      * Creates a JpegSegmentReader for a specific file.
      * @param file the Jpeg file to read segments from
      */
+    @SuppressWarnings({ "ConstantConditions" })
     public JpegSegmentReader(@NotNull File file) throws JpegProcessingException, IOException
     {
         if (file==null)
@@ -114,6 +115,7 @@ public class JpegSegmentReader
      * Creates a JpegSegmentReader for a byte array.
      * @param fileContents the byte array containing Jpeg data
      */
+    @SuppressWarnings({ "ConstantConditions" })
     public JpegSegmentReader(@NotNull byte[] fileContents) throws JpegProcessingException
     {
         if (fileContents==null)
@@ -127,6 +129,7 @@ public class JpegSegmentReader
      * Creates a JpegSegmentReader for an InputStream.
      * @param inputStream the InputStream containing Jpeg data
      */
+    @SuppressWarnings({ "ConstantConditions" })
     public JpegSegmentReader(@NotNull InputStream inputStream, boolean waitForBytes) throws JpegProcessingException
     {
         if (inputStream==null)

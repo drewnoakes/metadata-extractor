@@ -331,8 +331,7 @@ public class ExifReader implements MetadataReader
 
         if ("OLYMP".equals(firstFiveChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars)) {
             // Olympus Makernote
-            // Epson and Agfa use Olympus maker note standard, see:
-            //     http://www.ozhiker.com/electronics/pjmt/jpeg_info/
+            // Epson and Agfa use Olympus maker note standard: http://www.ozhiker.com/electronics/pjmt/jpeg_info/
             processDirectory(metadata.getOrCreateDirectory(OlympusMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset, metadata, reader);
         } else if (cameraModel != null && cameraModel.trim().toUpperCase().startsWith("NIKON")) {
             if ("Nikon".equals(firstFiveChars)) {
@@ -344,14 +343,17 @@ public class ExifReader implements MetadataReader
                  * :0000: 4E 69 6B 6F 6E 00 02 00-00 00 4D 4D 00 2A 00 00 Nikon....MM.*...
                  * :0010: 00 08 00 1E 00 01 00 07-00 00 00 04 30 32 30 30 ............0200
                  */
-//                final byte b = data[subdirOffset + 6];
-                final byte b = reader.getByte(subdirOffset + 6);
-                if (b == 1)
-                    processDirectory(metadata.getOrCreateDirectory(NikonType1MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset, metadata, reader);
-                else if (b == 2)
-                    processDirectory(metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 18, subdirOffset + 10, metadata, reader);
-                else
-                    exifDirectory.addError("Unsupported Nikon makernote data ignored.");
+                switch (reader.getByte(subdirOffset + 6)) {
+                    case 1:
+                        processDirectory(metadata.getOrCreateDirectory(NikonType1MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset, metadata, reader);
+                        break;
+                    case 2:
+                        processDirectory(metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 18, subdirOffset + 10, metadata, reader);
+                        break;
+                    default:
+                        exifDirectory.addError("Unsupported Nikon makernote data ignored.");
+                        break;
+                }
             } else {
                 // The IFD begins with the first MakerNote byte (no ASCII name).  This occurs with CoolPix 775, E990 and D1 models.
                 processDirectory(metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset, metadata, reader);

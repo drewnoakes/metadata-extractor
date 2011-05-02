@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.test;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -38,11 +39,13 @@ public class MockDirectory extends Directory
         this._tagNameMap = new HashMap<Integer, String>();
     }
 
+    @NotNull
     public String getName()
     {
         return "";
     }
 
+    @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

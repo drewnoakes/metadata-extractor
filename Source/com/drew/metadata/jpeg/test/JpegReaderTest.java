@@ -48,6 +48,7 @@ public class JpegReaderTest
         final byte[] data = new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_SOF0);
         JpegReader reader = new JpegReader();
         Metadata metadata = new Metadata();
+        Assert.assertNotNull(data);
         reader.extract(data, metadata);
         Assert.assertTrue(metadata.containsDirectory(JpegDirectory.class));
         _directory = metadata.getOrCreateDirectory(JpegDirectory.class);

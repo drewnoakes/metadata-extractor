@@ -29,6 +29,7 @@ import org.junit.Test;
 /** @author Drew Noakes http://drewnoakes.com */
 public class BufferReaderTest
 {
+    @SuppressWarnings({ "ConstantConditions" })
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullBufferThrows()
     {

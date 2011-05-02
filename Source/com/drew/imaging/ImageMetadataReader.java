@@ -94,6 +94,8 @@ public class ImageMetadataReader
     @NotNull
     private static Metadata readMetadata(@Nullable BufferedInputStream inputStream, @Nullable File file, int magicNumber, boolean waitForBytes) throws ImageProcessingException, IOException
     {
+        assert(file!=null ^ inputStream!=null);
+        
         // This covers all JPEG files
         if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
             if (inputStream != null)

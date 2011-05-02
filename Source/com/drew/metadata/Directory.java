@@ -131,6 +131,7 @@ public abstract class Directory
      *
      * @param descriptor the descriptor used to interpret tag values
      */
+    @java.lang.SuppressWarnings({ "ConstantConditions" })
     public void setDescriptor(@NotNull TagDescriptor descriptor)
     {
         if (descriptor == null)
@@ -249,6 +250,7 @@ public abstract class Directory
      * @param tagType the tag's value as an int
      * @param value   the value for the specified tag as a String
      */
+    @java.lang.SuppressWarnings({ "ConstantConditions" })
     public void setString(int tagType, @NotNull String value)
     {
         if (value == null)
@@ -340,6 +342,7 @@ public abstract class Directory
      * @param value   the value for the specified tag
      * @throws NullPointerException if value is <code>null</code>
      */
+    @java.lang.SuppressWarnings({ "ConstantConditions" })
     public void setObject(int tagType, @NotNull Object value)
     {
         if (value == null)

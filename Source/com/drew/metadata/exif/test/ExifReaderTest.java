@@ -71,9 +71,12 @@ public class ExifReaderTest
         String jpegWithExif = "Source/com/drew/metadata/exif/test/withExif.jpg";
         Metadata metadata = new Metadata();
         final byte[] data = new JpegSegmentReader(new File(jpegWithExif)).readSegment(JpegSegmentReader.SEGMENT_APP1);
+        Assert.assertNotNull(data);
         new ExifReader().extract(data, metadata);
         ExifDirectory directory = metadata.getDirectory(ExifDirectory.class);
-        Assert.assertEquals("80", directory.getDescription(ExifDirectory.TAG_ISO_EQUIVALENT));
+        final String description = directory.getDescription(ExifDirectory.TAG_ISO_EQUIVALENT);
+        Assert.assertNotNull(description);
+        Assert.assertEquals("80", description);
         // TODO decide if this should still be returned -- it was being calculated upon setting of a related tag
 //      assertEquals("F9", directory.getDescription(ExifDirectory.TAG_APERTURE));
     }

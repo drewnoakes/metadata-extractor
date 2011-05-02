@@ -24,6 +24,7 @@ package com.drew.lang;
 import com.drew.lang.annotations.*;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.SuppressWarnings;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class BufferReader
@@ -32,6 +33,7 @@ public class BufferReader
     private final byte[] _buffer;
     private boolean _isMotorolaByteOrder = true;
 
+    @SuppressWarnings({ "ConstantConditions" })
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public BufferReader(@NotNull byte[] buffer)
     {

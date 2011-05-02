@@ -47,6 +47,7 @@ public class NikonType2MakernoteTest1
         File metadataFile = new File("Source/com/drew/metadata/exif/test/nikonMakernoteType2a.metadata");
         Metadata metadata = new Metadata();
         final byte[] data = JpegSegmentData.fromFile(metadataFile).getSegment(JpegSegmentReader.SEGMENT_APP1);
+        Assert.assertNotNull(data);
         new ExifReader().extract(data, metadata);
 
         _nikonDirectory = metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class);

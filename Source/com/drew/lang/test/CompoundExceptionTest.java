@@ -55,7 +55,9 @@ public class CompoundExceptionTest
             }
         } catch (CompoundException e) {
             Assert.assertEquals("compound", e.getMessage());
-            Assert.assertEquals("io", e.getInnerException().getMessage());
+            final Throwable innerException = e.getInnerException();
+            Assert.assertNotNull(innerException);
+            Assert.assertEquals("io", innerException.getMessage());
         }
     }
 

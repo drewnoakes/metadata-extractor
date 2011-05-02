@@ -66,7 +66,7 @@ public class CasioType1MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_CASIO_DIGITAL_ZOOM, "Digital Zoom");
         _tagNameMap.put(TAG_CASIO_FLASH_INTENSITY, "Flash Intensity");
         _tagNameMap.put(TAG_CASIO_FLASH_MODE, "Flash Mode");
-        _tagNameMap.put(TAG_CASIO_FOCUSING_MODE, "Focussing Mode");
+        _tagNameMap.put(TAG_CASIO_FOCUSING_MODE, "Focusing Mode");
         _tagNameMap.put(TAG_CASIO_OBJECT_DISTANCE, "Object Distance");
         _tagNameMap.put(TAG_CASIO_QUALITY, "Quality");
         _tagNameMap.put(TAG_CASIO_RECORDING_MODE, "Recording Mode");

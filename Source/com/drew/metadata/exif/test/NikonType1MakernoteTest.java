@@ -89,6 +89,7 @@ public class NikonType1MakernoteTest
         Assert.assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER));
         int[] unknown3 = _nikonDirectory.getIntArray(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_UNKNOWN_3);
         int[] expected = new int[] { 0, 0, 16777216, 0, -1609193200, 0, 34833, 6931, 16178, 4372, 4372, -972290529, -921882880, 15112, 0, 0, 1151495, 252903424, 17, 0, 0, 844038208, 55184128, 218129428, 1476410198, 370540566, -250604010, 16711749, 204629079, 1729 };
+        Assert.assertNotNull(unknown3);
         Assert.assertEquals(expected.length, unknown3.length);
         for (int i = 0; i<expected.length; i++) {
             Assert.assertEquals(expected[i], unknown3[i]);

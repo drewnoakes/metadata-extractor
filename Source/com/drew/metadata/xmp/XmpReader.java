@@ -58,6 +58,7 @@ public class XmpReader implements MetadataReader
      * Performs the XMP data extraction, adding found values to the specified instance of <code>Metadata</code>.
      * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit)
      */
+    @SuppressWarnings({ "ConstantConditions" })
     public void extract(@NotNull final byte[] data, @NotNull Metadata metadata)
     {
         if (data == null)

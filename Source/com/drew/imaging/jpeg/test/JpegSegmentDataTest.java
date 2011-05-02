@@ -30,6 +30,7 @@ import java.io.File;
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
+@SuppressWarnings({ "ConstantConditions" })
 public class JpegSegmentDataTest
 {
     @Test
