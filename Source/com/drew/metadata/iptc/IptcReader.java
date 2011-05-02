@@ -155,7 +155,7 @@ public class IptcReader implements MetadataReader
         } else {
             try {
 //              str = new String(data, offset, tagByteCount);
-                str = new String(data, offset, tagByteCount, System.getProperty("file.encoding"));
+                str = new String(data, offset, tagByteCount, System.getProperty("file.encoding")); // "ISO-8859-1"
             } catch (UnsupportedEncodingException ex) {
                 directory.addError("Unable to decode a string for the IPTC tag " + Integer.toHexString(tagType));
                 str = "";

@@ -21,29 +21,50 @@
 
 package com.drew.lang;
 
+import com.drew.lang.annotations.NotNull;
+
 import java.util.Iterator;
-import java.util.List;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class StringUtil
 {
-    public static String join(List<? extends CharSequence> s, String delimiter)
+    public static String join(@NotNull Iterable<? extends CharSequence> strings, @NotNull String delimiter)
     {
         int capacity = 0;
         int delimLength = delimiter.length();
-        Iterator<? extends CharSequence> iter = s.iterator();
-        if (iter.hasNext()) {
+
+        Iterator<? extends CharSequence> iter = strings.iterator();
+        if (iter.hasNext())
             capacity += iter.next().length() + delimLength;
-        }
 
         StringBuilder buffer = new StringBuilder(capacity);
-        iter = s.iterator();
+        iter = strings.iterator();
         if (iter.hasNext()) {
             buffer.append(iter.next());
             while (iter.hasNext()) {
                 buffer.append(delimiter);
                 buffer.append(iter.next());
             }
+        }
+        return buffer.toString();
+    }
+
+    public static <T extends CharSequence> String join(@NotNull T[] strings, @NotNull String delimiter)
+    {
+        int capacity = 0;
+        int delimLength = delimiter.length();
+        for (T value : strings)
+            capacity += value.length() + delimLength;
+
+        StringBuilder buffer = new StringBuilder(capacity);
+        boolean first = true;
+        for (T value : strings) {
+            if (!first) {
+                buffer.append(delimiter);
+            } else {
+                first = false;
+            }
+            buffer.append(value);
         }
         return buffer.toString();
     }

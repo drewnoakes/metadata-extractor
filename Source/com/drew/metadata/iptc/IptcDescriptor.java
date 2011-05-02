@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.iptc;
 
+import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
@@ -45,6 +46,8 @@ public class IptcDescriptor extends TagDescriptor
         switch (tagType) {
             case IptcDirectory.TAG_FILE_FORMAT:
                 return getFileFormatDescription();
+            case IptcDirectory.TAG_KEYWORDS:
+                return getKeywordsDescription();
         }
         
         return _directory.getString(tagType);
@@ -153,7 +156,10 @@ public class IptcDescriptor extends TagDescriptor
     @Nullable
     public String getKeywordsDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_KEYWORDS);
+        final String[] keywords = _directory.getStringArray(IptcDirectory.TAG_KEYWORDS);
+        if (keywords==null)
+            return null;
+        return StringUtil.join(keywords, ";");
     }
 
     @Nullable

@@ -21,9 +21,12 @@
 package com.drew.metadata.iptc;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Describes tags used by the International Press Telecommunications Council (IPTC) metadata format.
@@ -217,5 +220,17 @@ public class IptcDirectory extends Directory
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
+    }
+
+    /**
+     * Returns any keywords contained in the IPTC data.  This value may be <code>null</code>.
+     */
+    @Nullable
+    public List<String> getKeywords()
+    {
+        final String[] array = getStringArray(IptcDirectory.TAG_KEYWORDS);
+        if (array==null)
+            return null;
+        return Arrays.asList(array);
     }
 }
