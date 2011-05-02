@@ -115,7 +115,7 @@ public class GpsDirectory extends Directory
         _tagNameMap.put(TAG_GPS_TRACK_REF, "GPS Track Ref");
         _tagNameMap.put(TAG_GPS_TRACK, "GPS Track");
         _tagNameMap.put(TAG_GPS_IMG_DIRECTION_REF, "GPS Img Direction Ref");
-        _tagNameMap.put(TAG_GPS_IMG_DIRECTION_REF, "GPS Img Direction");
+        _tagNameMap.put(TAG_GPS_IMG_DIRECTION, "GPS Img Direction");
         _tagNameMap.put(TAG_GPS_MAP_DATUM, "GPS Map Datum");
         _tagNameMap.put(TAG_GPS_DEST_LATITUDE_REF, "GPS Dest Latitude Ref");
         _tagNameMap.put(TAG_GPS_DEST_LATITUDE, "GPS Dest Latitude");
