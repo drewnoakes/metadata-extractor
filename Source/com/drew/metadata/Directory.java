@@ -720,9 +720,9 @@ public abstract class Directory
             return (java.util.Date)o;
 
         if (o instanceof String) {
-            // add new dateformat strings to make this method even smarter
-            // so far, this seems to cover all known date strings
-            // (for example, AM and PM strings are not supported...)
+            // TODO add new date format strings to make this method even smarter (for example, AM and PM strings are not supported...)
+            // This seems to cover all known Exif date strings
+            // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
             String datePatterns[] = {
                     "yyyy:MM:dd HH:mm:ss",
                     "yyyy:MM:dd HH:mm",
