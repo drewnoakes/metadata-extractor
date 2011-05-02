@@ -61,14 +61,16 @@ public class IptcReader implements MetadataReader
 
         int offset = 0;
 
+/*
         // find start-of-segment marker (potentially need to skip some ASCII photoshop header info)
         try {
-            while (offset < data.length - 1 && reader.getUInt16(offset) != 0x1c02)
+            while (offset < data.length - 1 && reader.getUInt16(offset) != 0x1c01 && reader.getUInt16(offset) != 0x1c02)
                 offset++;
         } catch (BufferBoundsException e) {
             directory.addError("Couldn't find start of IPTC data (invalid segment)");
             return;
         }
+*/
 
         // for each tag
         while (offset < data.length) {
