@@ -189,14 +189,14 @@ public abstract class Directory
     }
 
     /**
-     * Sets a <code>double</code> value for the specified tag.
+     * Sets an <code>int[]</code> (array) for the specified tag.
      *
-     * @param tagType the tag's value as an int
-     * @param value   the value for the specified tag as a double
+     * @param tagType the tag identifier
+     * @param ints    the int array to store
      */
-    public void setDouble(int tagType, double value)
+    public void setIntArray(int tagType, @NotNull int[] ints)
     {
-        setObject(tagType, value);
+        setObjectArray(tagType, ints);
     }
 
     /**
@@ -211,6 +211,39 @@ public abstract class Directory
     }
 
     /**
+     * Sets a <code>float[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param floats  the float array to store
+     */
+    public void setFloatArray(int tagType, @NotNull float[] floats)
+    {
+        setObjectArray(tagType, floats);
+    }
+
+    /**
+     * Sets a <code>double</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a double
+     */
+    public void setDouble(int tagType, double value)
+    {
+        setObject(tagType, value);
+    }
+
+    /**
+     * Sets a <code>double[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param doubles the double array to store
+     */
+    public void setDoubleArray(int tagType, @NotNull double[] doubles)
+    {
+        setObjectArray(tagType, doubles);
+    }
+
+    /**
      * Sets a <code>String</code> value for the specified tag.
      *
      * @param tagType the tag's value as an int
@@ -221,6 +254,17 @@ public abstract class Directory
         if (value == null)
             throw new NullPointerException("cannot set a null String");
         setObject(tagType, value);
+    }
+
+    /**
+     * Sets a <code>String[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param strings the String array to store
+     */
+    public void setStringArray(int tagType, @NotNull String[] strings)
+    {
+        setObjectArray(tagType, strings);
     }
 
     /**
@@ -279,17 +323,6 @@ public abstract class Directory
     }
 
     /**
-     * Sets an <code>int[]</code> (array) for the specified tag.
-     *
-     * @param tagType the tag identifier
-     * @param ints    the int array to store
-     */
-    public void setIntArray(int tagType, @NotNull int[] ints)
-    {
-        setObjectArray(tagType, ints);
-    }
-
-    /**
      * Sets a <code>byte[]</code> (array) for the specified tag.
      *
      * @param tagType the tag identifier
@@ -298,17 +331,6 @@ public abstract class Directory
     public void setByteArray(int tagType, @NotNull byte[] bytes)
     {
         setObjectArray(tagType, bytes);
-    }
-
-    /**
-     * Sets a <code>String[]</code> (array) for the specified tag.
-     *
-     * @param tagType the tag identifier
-     * @param strings the String array to store
-     */
-    public void setStringArray(int tagType, @NotNull String[] strings)
-    {
-        setObjectArray(tagType, strings);
     }
 
     /**

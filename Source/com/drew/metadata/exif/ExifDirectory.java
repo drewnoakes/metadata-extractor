@@ -195,7 +195,9 @@ public class ExifDirectory extends Directory
     public static final int TAG_Y_RESOLUTION = 0x011B;
     public static final int TAG_PAGE_NAME = 0x011D;
     public static final int TAG_RESOLUTION_UNIT = 0x0128;
+    /** The offset to thumbnail image bytes. */
     public static final int TAG_THUMBNAIL_OFFSET = 0x0201;
+    /** The size of the thumbnail image data in bytes. */
     public static final int TAG_THUMBNAIL_LENGTH = 0x0202;
     public static final int TAG_YCBCR_POSITIONING = 0x0213;
     /**

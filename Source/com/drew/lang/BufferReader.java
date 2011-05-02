@@ -42,6 +42,16 @@ public class BufferReader
     }
 
     /**
+     * Returns the length of the buffer.  This value represents the total number of bytes in the underlying array.
+     * @return
+     */
+    public int getLength()
+    {
+        return _buffer.length;
+    }
+
+
+    /**
      * Sets the endianness of this reader.
      * <ul>
      *     <li><code>true</code> for Motorola (or big) endianness</li>
@@ -61,7 +71,20 @@ public class BufferReader
     }
 
     /**
-     * Returns an int calculated from one byte of data at the specified offset.
+     * Returns the byte at the specified index.
+     *
+     * @param index position within the data buffer to read byte
+     * @return the 8 bit int value, between 0x0 and 0xF
+     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public byte getByte(int index) throws BufferBoundsException
+    {
+        CheckBounds(index, 1);
+        return _buffer[index];
+    }
+
+    /**
+     * Returns an int calculated from one byte of data at the specified index.
      *
      * @param index position within the data buffer to read byte
      * @return the 8 bit int value, between 0x0 and 0xF
@@ -75,7 +98,7 @@ public class BufferReader
     }
 
     /**
-     * Returns an int calculated from four bytes of data at the specified offset (MSB, LSB).
+     * Returns an int calculated from four bytes of data at the specified index (MSB, LSB).
      * 
      * @param index position within the data buffer to read first byte
      * @return the 32 bit int value, between 0x0000 and 0xFFFF
@@ -219,7 +242,7 @@ public class BufferReader
     }
 
     /**
-     * Creates a String from the _data buffer starting at the specified offset,
+     * Creates a String from the _data buffer starting at the specified index,
      * and ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
      */
     @NotNull
