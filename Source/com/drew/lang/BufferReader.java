@@ -21,7 +21,7 @@
 
 package com.drew.lang;
 
-import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.*;
 
 import java.io.UnsupportedEncodingException;
 
@@ -32,6 +32,7 @@ public class BufferReader
     private final byte[] _buffer;
     private boolean _isMotorolaByteOrder = true;
 
+    @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public BufferReader(@NotNull byte[] buffer)
     {
         if (buffer == null)

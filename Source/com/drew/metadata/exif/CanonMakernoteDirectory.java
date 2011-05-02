@@ -107,7 +107,7 @@ public class CanonMakernoteDirectory extends Directory
     public static final int TAG_AMBIANCE_INFO_ARRAY         = 0x4020; // not currently decoded
     public static final int TAG_FILTER_INFO_ARRAY           = 0x4024; // not currently decoded
 
-    public final class CameraSettings
+    public final static class CameraSettings
     {
         // These 'sub'-tag values have been created for consistency -- they don't exist within the exif segment
         private static final int OFFSET = 0xC100;
@@ -259,7 +259,7 @@ public class CanonMakernoteDirectory extends Directory
         public static final int TAG_FOCUS_MODE_2 = OFFSET + 0x20;
     }
     
-    public final class FocalLength
+    public final static class FocalLength
     {
         // These 'sub'-tag values have been created for consistency -- they don't exist within the exif segment
 
@@ -304,7 +304,7 @@ public class CanonMakernoteDirectory extends Directory
         public static final int TAG_SUBJECT_DISTANCE = OFFSET + 0x13;
     }
     
-    public final class ShotInfo
+    public final static class ShotInfo
     {
         // These 'sub'-tag values have been created for consistency -- they don't exist within the exif segment
 
@@ -340,7 +340,7 @@ public class CanonMakernoteDirectory extends Directory
         public static final int TAG_FLASH_OUTPUT = OFFSET + 33;
     }
 
-    public final class Panorama
+    public final static class Panorama
     {
         // These 'sub'-tag values have been created for consistency -- they don't exist within the exif segment
 
@@ -350,7 +350,7 @@ public class CanonMakernoteDirectory extends Directory
         public static final int TAG_PANORAMA_DIRECTION = OFFSET + 5;
     }
 
-    public final class AFInfo
+    public final static class AFInfo
     {
         // These 'sub'-tag values have been created for consistency -- they don't exist within the exif segment
 

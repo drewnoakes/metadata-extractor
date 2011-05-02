@@ -21,6 +21,7 @@
 package com.drew.metadata;
 
 import com.drew.lang.Rational;
+import com.drew.lang.annotations.SuppressWarnings;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
@@ -664,6 +665,7 @@ public abstract class Directory
 
     /** Returns the specified tag's value as a boolean.  If the tag is not set or cannot be converted, <code>null</code> is returned. */
     @Nullable
+    @SuppressWarnings(value = "NP_BOOLEAN_RETURN_NULL", justification = "keep API interface consistent")
     public Boolean getBooleanObject(int tagType)
     {
         Object o = getObject(tagType);

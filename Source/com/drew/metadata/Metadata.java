@@ -87,7 +87,7 @@ public final class Metadata
         if (_directoryByClass.containsKey(type))
             return (T)_directoryByClass.get(type);
 
-        Directory directory;
+        T directory;
         try {
             directory = type.newInstance();
         } catch (Exception e) {
@@ -97,7 +97,7 @@ public final class Metadata
         _directoryByClass.put(type, directory);
         _directoryList.add(directory);
 
-        return (T)directory;
+        return directory;
     }
 
     /**
