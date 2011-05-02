@@ -21,6 +21,8 @@
 
 package com.drew.lang;
 
+import com.drew.lang.annotations.NotNull;
+
 /**
  * A checked replacement for IndexOutOfBoundsException.  Used by BufferReader.
  * 
@@ -30,12 +32,12 @@ public final class BufferBoundsException extends Exception
 {
     private static final long serialVersionUID = 2911102837808946396L;
 
-    public BufferBoundsException(byte[] buffer, int index, int bytesRequested)
+    public BufferBoundsException(@NotNull byte[] buffer, int index, int bytesRequested)
     {
         super(getMessage(buffer, index, bytesRequested));
     }
 
-    private static String getMessage(byte[] buffer, int index, int bytesRequested)
+    private static String getMessage(@NotNull byte[] buffer, int index, int bytesRequested)
     {
         if (index < 0)
             return String.format("Attempt to read from buffer using a negative index (%s)", index);

@@ -22,6 +22,7 @@ package com.drew.lang.test;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentData;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import junit.framework.TestCase;
 
@@ -35,7 +36,7 @@ import java.io.InputStream;
  */
 public class TestHelper
 {
-    public static void assertEqualArrays(byte[] array1, byte[] array2)
+    public static void assertEqualArrays(@NotNull byte[] array1, @NotNull byte[] array2)
     {
         TestCase.assertEquals("Equal array length", array1.length, array2.length);
 
@@ -43,7 +44,8 @@ public class TestHelper
             TestCase.assertEquals("Equal value at index " + i, array1[i], array2[i]);
     }
 
-    public static byte[] loadFileBytes(File file) throws IOException
+    @NotNull
+    public static byte[] loadFileBytes(@NotNull File file) throws IOException
     {
         long length = file.length();
 
@@ -68,6 +70,7 @@ public class TestHelper
         return bytes;
     }
 
+    @NotNull
     public static Metadata readJpegMetadataFile(String path) throws ClassNotFoundException, IOException
     {
         final File file = new File(path);

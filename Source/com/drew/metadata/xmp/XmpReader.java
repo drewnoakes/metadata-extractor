@@ -47,8 +47,11 @@ public class XmpReader implements MetadataReader
     private static final int FMT_INT = 3;
     private static final int FMT_DOUBLE = 4;
 
+    @NotNull
     private static final String SCHEMA_EXIF_SPECIFIC_PROPERTIES = "http://ns.adobe.com/exif/1.0/";
+    @NotNull
     private static final String SCHEMA_EXIF_ADDITIONAL_PROPERTIES = "http://ns.adobe.com/exif/1.0/aux/";
+    @NotNull
     private static final String SCHEMA_EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
 
     /**

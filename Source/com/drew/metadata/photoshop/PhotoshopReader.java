@@ -30,7 +30,7 @@ import com.drew.metadata.iptc.IptcReader;
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class PhotoshopReader implements MetadataReader
 {
-    public void extract(final byte[] data, final @NotNull Metadata metadata)
+    public void extract(@NotNull final byte[] data, final @NotNull Metadata metadata)
     {
         final PhotoshopDirectory directory = metadata.getOrCreateDirectory(PhotoshopDirectory.class);
         final BufferReader reader = new BufferReader(data);

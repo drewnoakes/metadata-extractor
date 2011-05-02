@@ -102,28 +102,28 @@ public class IccReader implements MetadataReader
         }
     }
 
-    private void set4ByteString(Directory directory, int tagType, BufferReader reader) throws BufferBoundsException
+    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull BufferReader reader) throws BufferBoundsException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setString(tagType, getStringFromInt32(i));
     }
 
-    private void setInt32(Directory directory, int tagType, BufferReader reader) throws BufferBoundsException
+    private void setInt32(@NotNull Directory directory, int tagType, @NotNull BufferReader reader) throws BufferBoundsException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setInt(tagType, i);
     }
 
-    private void setInt64(Directory directory, int tagType, BufferReader reader) throws BufferBoundsException
+    private void setInt64(@NotNull Directory directory, int tagType, @NotNull BufferReader reader) throws BufferBoundsException
     {
         long l = reader.getInt64(tagType);
         if (l != 0)
             directory.setLong(tagType, l);
     }
 
-    private void setDate(final IccDirectory directory, final int tagType, BufferReader reader) throws BufferBoundsException
+    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull BufferReader reader) throws BufferBoundsException
     {
         final int y = reader.getUInt16(tagType);
         final int m = reader.getUInt16(tagType + 2);

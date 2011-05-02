@@ -53,6 +53,7 @@ public class IptcDescriptor extends TagDescriptor
         return _directory.getString(tagType);
     }
 
+    @Nullable
     public String getFileFormatDescription()
     {
         Integer value = _directory.getInteger(IptcDirectory.TAG_FILE_FORMAT);

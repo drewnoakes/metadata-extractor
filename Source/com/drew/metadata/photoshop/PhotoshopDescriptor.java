@@ -22,13 +22,15 @@ package com.drew.metadata.photoshop;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class PhotoshopDescriptor extends TagDescriptor
 {
-    public PhotoshopDescriptor(Directory directory)
+    public PhotoshopDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
@@ -68,6 +70,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getJpegQualityString()
     {
         try {
@@ -133,6 +136,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getPixelAspectRatioString()
     {
         try {
@@ -147,6 +151,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getPrintScaleDescription()
     {
         try {
@@ -173,6 +178,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getResolutionInfoDescription()
     {
         try {
@@ -188,6 +194,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getVersionDescription()
     {
         try {
@@ -214,6 +221,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getSlicesDescription()
     {
         try {
@@ -240,6 +248,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     public String getThumbnailDescription(int tagType)
     {
         try {
@@ -271,6 +280,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     private String getBooleanString(int tag)
     {
         final byte[] bytes = _directory.getByteArray(tag);
@@ -279,6 +289,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         return bytes[0] == 0 ? "No" : "Yes";
     }
 
+    @Nullable
     private String get32BitNumberString(int tag)
     {
         byte[] bytes = _directory.getByteArray(tag);
@@ -292,6 +303,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     private String getSimpleString(int tagType)
     {
         final byte[] bytes = _directory.getByteArray(tagType);
@@ -300,6 +312,7 @@ public class PhotoshopDescriptor extends TagDescriptor
         return new String(bytes);
     }
 
+    @Nullable
     private String getBinaryDataString(int tagType)
     {
         final byte[] bytes = _directory.getByteArray(tagType);

@@ -24,6 +24,7 @@ package com.drew.metadata.icc;
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
@@ -32,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class IccDescriptor extends TagDescriptor
 {
-    public IccDescriptor(Directory directory)
+    public IccDescriptor(@NotNull Directory directory)
     {
         super(directory);
     }
@@ -66,6 +67,7 @@ public class IccDescriptor extends TagDescriptor
     private static final int ICC_TAG_TYPE_MLUC = 0x6d6c7563;
     private static final int ICC_TAG_TYPE_CURV = 0x63757276;
 
+    @Nullable
     private String getTagDataString(int tagType)
     {
         try {
@@ -212,6 +214,7 @@ public class IccDescriptor extends TagDescriptor
         }
     }
 
+    @NotNull
     public static String formatDoubleAsString(double value, int precision, boolean zeroes)
     {
         if (precision < 1)
@@ -232,6 +235,7 @@ public class IccDescriptor extends TagDescriptor
         return (isNegative ? "-" : "") + intPart + "." + res;
     }
 
+    @Nullable
     private String getRenderingIntentDescription()
     {
         Integer value = _directory.getInteger(IccDirectory.TAG_ICC_RENDERING_INTENT);
@@ -253,6 +257,7 @@ public class IccDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     private String getPlatformDescription()
     {
         String str = _directory.getString(IccDirectory.TAG_ICC_PLATFORM);
@@ -282,6 +287,7 @@ public class IccDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     private String getProfileClassDescription()
     {
         String str = _directory.getString(IccDirectory.TAG_ICC_PROFILE_CLASS);
@@ -315,6 +321,7 @@ public class IccDescriptor extends TagDescriptor
         }
     }
 
+    @Nullable
     private String getProfileVersionDescription()
     {
         Integer value = _directory.getInteger(IccDirectory.TAG_ICC_PROFILE_VERSION);
@@ -329,6 +336,7 @@ public class IccDescriptor extends TagDescriptor
         return String.format("%d.%d.%d", m, r, R);
     }
 
+    @Nullable
     public String getProfileBytesDescription()
     {
         final byte[] bytes = _directory.getByteArray(IccDirectory.TAG_ICC_PROFILE_BYTES);
