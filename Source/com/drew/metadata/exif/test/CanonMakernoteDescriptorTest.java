@@ -20,12 +20,16 @@
  */
 package com.drew.metadata.exif.test;
 
+import com.drew.metadata.exif.CanonMakernoteDescriptor;
+import com.drew.metadata.exif.CanonMakernoteDirectory;
+import junit.framework.Assert;
+import org.junit.Test;
+
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
 public class CanonMakernoteDescriptorTest
 {
-/*
     @Test
     public void testGetFlashBiasDescription() throws Exception
     {
@@ -34,35 +38,34 @@ public class CanonMakernoteDescriptorTest
 
         // set and check values
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0xFFC0);
-        Assert.assertEquals("-2.0 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0xFFC0);
+        Assert.assertEquals("-2.0 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0xffd4);
-        Assert.assertEquals("-1.375 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0xffd4);
+        Assert.assertEquals("-1.375 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0000);
-        Assert.assertEquals("0.0 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x0000);
+        Assert.assertEquals("0.0 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x000c);
-        Assert.assertEquals("0.375 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x000c);
+        Assert.assertEquals("0.375 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0010);
-        Assert.assertEquals("0.5 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x0010);
+        Assert.assertEquals("0.5 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0014);
-        Assert.assertEquals("0.625 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x0014);
+        Assert.assertEquals("0.625 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0020);
-        Assert.assertEquals("1.0 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x0020);
+        Assert.assertEquals("1.0 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0030);
-        Assert.assertEquals("1.5 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x0030);
+        Assert.assertEquals("1.5 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0034);
-        Assert.assertEquals("1.625 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x0034);
+        Assert.assertEquals("1.625 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
 
-        directory.setInt(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS, 0x0040);
-        Assert.assertEquals("2.0 EV", descriptor.getDescription(CanonMakernoteDirectory.TAG_CANON_STATE2_FLASH_BIAS));
+        directory.setInt(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS, 0x0040);
+        Assert.assertEquals("2.0 EV", descriptor.getDescription(CanonMakernoteDirectory.FocalLength.TAG_FLASH_BIAS));
     }
-*/
 }
