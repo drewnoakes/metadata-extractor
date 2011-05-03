@@ -699,9 +699,27 @@ public abstract class Directory
         return null;
     }
 
-    /** Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned. */
+    /**
+     * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
+     * <p/>
+     * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
+     * the current {@link TimeZone}.  If the {@link TimeZone} is known, call the overload that accepts one as an argument.
+     */
     @Nullable
     public java.util.Date getDate(int tagType)
+    {
+        return getDate(tagType, null);
+    }
+    
+    /**
+     * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
+     * <p/>
+     * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
+     * the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).  Note that this parameter
+     * is only considered if the underlying value is a string and parsing occurs, otherwise it has no effect.
+     */
+    @Nullable
+    public java.util.Date getDate(int tagType, @Nullable TimeZone timeZone)
     {
         Object o = getObject(tagType);
 
@@ -712,7 +730,6 @@ public abstract class Directory
             return (java.util.Date)o;
 
         if (o instanceof String) {
-            // TODO add new date format strings to make this method even smarter (for example, AM and PM strings are not supported...)
             // This seems to cover all known Exif date strings
             // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
             String datePatterns[] = {
@@ -724,6 +741,8 @@ public abstract class Directory
             for (String datePattern : datePatterns) {
                 try {
                     DateFormat parser = new SimpleDateFormat(datePattern);
+                    if (timeZone != null)
+                        parser.setTimeZone(timeZone);
                     return parser.parse(dateString);
                 } catch (ParseException ex) {
                     // simply try the next pattern
