@@ -25,7 +25,6 @@ import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.*;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -67,17 +66,6 @@ public class ExifDescriptorTest
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
         Assert.assertEquals("This is a comment", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
-    }
-
-    @Test
-    @Ignore(value = "Need a decent sample image with non-ASCII user comment field to show realistic test values")
-    public void testUserCommentDescription_AsciiHeaderExtendedAsciiEncoding() throws Exception
-    {
-        byte[] commentBytes = "ASCII\0\0This is a comment with extended characters ��� ���".getBytes();
-        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
-        ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("This is a comment with extended characters ��� ���", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 
     @Test

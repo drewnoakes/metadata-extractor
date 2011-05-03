@@ -34,9 +34,9 @@ import java.text.DecimalFormat;
  *
  * @author Torsten Skadell, Drew Noakes http://drewnoakes.com
  */
-public class XmpDescriptor extends TagDescriptor
+public class XmpDescriptor extends TagDescriptor<XmpDirectory>
 {
-    // TODO some of these methods look similar to those found in ExifSubIFDDescriptor... extract common functionality from both
+    // TODO some of these methods look similar to those found in Exif*Descriptor... extract common functionality from both
 
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");

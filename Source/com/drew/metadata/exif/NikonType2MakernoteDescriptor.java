@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class NikonType2MakernoteDescriptor extends TagDescriptor
+public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2MakernoteDirectory>
 {
     public NikonType2MakernoteDescriptor(@NotNull NikonType2MakernoteDirectory directory)
     {

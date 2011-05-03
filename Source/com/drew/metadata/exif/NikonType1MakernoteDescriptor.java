@@ -41,7 +41,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class NikonType1MakernoteDescriptor extends TagDescriptor
+public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1MakernoteDirectory>
 {
     public NikonType1MakernoteDescriptor(@NotNull NikonType1MakernoteDirectory directory)
     {

@@ -30,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class SonyType6MakernoteDescriptor extends TagDescriptor
+public class SonyType6MakernoteDescriptor extends TagDescriptor<SonyType6MakernoteDirectory>
 {
     public SonyType6MakernoteDescriptor(@NotNull SonyType6MakernoteDirectory directory)
     {

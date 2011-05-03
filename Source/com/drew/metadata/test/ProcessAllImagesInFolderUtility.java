@@ -98,19 +98,12 @@ public class ProcessAllImagesInFolderUtility
                 }
 
                 // Iterate through all values
-                try {
-                    for (Directory directory : metadata.getDirectories()) {
-                        for (Tag tag : directory.getTags()) {
-                            // call the code that would obtain the value, just to flush out any potential exceptions
-                            tag.toString();
-                            tag.getDescription();
-                        }
+                for (Directory directory : metadata.getDirectories()) {
+                    for (Tag tag : directory.getTags()) {
+                        // call the code that would obtain the value, just to flush out any potential exceptions
+                        tag.toString();
+                        tag.getDescription();
                     }
-                } catch (Throwable t) {
-                    // general, uncaught exception during processing of metadata
-                    errorCount++;
-                    System.err.println(t.getClass().getName() + ": " + file + " [Error Iterating Metadata]");
-                    t.printStackTrace(System.err);
                 }
             }
         }

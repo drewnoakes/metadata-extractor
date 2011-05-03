@@ -36,7 +36,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class KyoceraMakernoteDescriptor extends TagDescriptor
+public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDirectory>
 {
     public KyoceraMakernoteDescriptor(@NotNull KyoceraMakernoteDirectory directory)
     {

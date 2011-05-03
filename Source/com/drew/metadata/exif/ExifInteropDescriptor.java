@@ -29,7 +29,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class ExifInteropDescriptor extends TagDescriptor
+public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
 {
     public ExifInteropDescriptor(@NotNull ExifInteropDirectory directory)
     {

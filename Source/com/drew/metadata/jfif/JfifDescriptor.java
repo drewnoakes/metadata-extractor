@@ -31,7 +31,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Yuri Binev, Drew Noakes
  */
-public class JfifDescriptor extends TagDescriptor
+public class JfifDescriptor extends TagDescriptor<JfifDirectory>
 {
     public JfifDescriptor(@NotNull JfifDirectory directory)
     {

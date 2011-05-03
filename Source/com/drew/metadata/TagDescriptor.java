@@ -30,12 +30,12 @@ import com.drew.lang.annotations.Nullable;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public abstract class TagDescriptor
+public abstract class TagDescriptor<T extends Directory>
 {
     @NotNull
-    protected final Directory _directory;
+    protected final T _directory;
 
-    public TagDescriptor(@NotNull Directory directory)
+    public TagDescriptor(@NotNull T directory)
     {
         _directory = directory;
     }

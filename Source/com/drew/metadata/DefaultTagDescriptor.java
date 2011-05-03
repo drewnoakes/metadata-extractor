@@ -30,7 +30,7 @@ import com.drew.lang.annotations.Nullable;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class DefaultTagDescriptor extends TagDescriptor
+public class DefaultTagDescriptor extends TagDescriptor<Directory>
 {
     public DefaultTagDescriptor(@NotNull Directory directory)
     {

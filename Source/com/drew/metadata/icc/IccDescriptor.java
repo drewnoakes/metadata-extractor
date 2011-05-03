@@ -30,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
 import java.io.UnsupportedEncodingException;
 
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
-public class IccDescriptor extends TagDescriptor
+public class IccDescriptor extends TagDescriptor<IccDirectory>
 {
     public IccDescriptor(@NotNull IccDirectory directory)
     {

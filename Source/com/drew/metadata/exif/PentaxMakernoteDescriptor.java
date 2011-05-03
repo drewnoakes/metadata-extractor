@@ -32,7 +32,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class PentaxMakernoteDescriptor extends TagDescriptor
+public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDirectory>
 {
     public PentaxMakernoteDescriptor(@NotNull PentaxMakernoteDirectory directory)
     {

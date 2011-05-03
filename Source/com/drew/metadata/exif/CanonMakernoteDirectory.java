@@ -356,7 +356,7 @@ public class CanonMakernoteDirectory extends Directory
 
         private static final int OFFSET = 0xD200;
 
-        public static final int TAG_NUM_AF_POINTS = OFFSET + 0;
+        public static final int TAG_NUM_AF_POINTS = OFFSET;
         public static final int TAG_VALID_AF_POINTS = OFFSET + 1;
         public static final int TAG_IMAGE_WIDTH = OFFSET + 2;
         public static final int TAG_IMAGE_HEIGHT = OFFSET + 3;

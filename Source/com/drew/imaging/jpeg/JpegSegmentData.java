@@ -51,6 +51,7 @@ public class JpegSegmentData implements Serializable
      * @param segmentMarker
      * @param segmentBytes
      */
+    @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
     public void addSegment(byte segmentMarker, @NotNull byte[] segmentBytes)
     {
         final List<byte[]> segmentList = getOrCreateSegmentList(segmentMarker);
@@ -135,6 +136,7 @@ public class JpegSegmentData implements Serializable
      * @param segmentMarker identifies the required segment
      * @param occurrence the zero-based index of the segment occurrence to remove.
      */
+    @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
     public void removeSegmentOccurrence(byte segmentMarker, int occurrence)
     {
         final List<byte[]> segmentList = _segmentDataMap.get(Byte.valueOf(segmentMarker));

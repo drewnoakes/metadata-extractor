@@ -23,7 +23,6 @@ package com.drew.metadata.exif;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -31,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class GpsDescriptor extends TagDescriptor
+public class GpsDescriptor extends TagDescriptor<GpsDirectory>
 {
     public GpsDescriptor(@NotNull GpsDirectory directory)
     {

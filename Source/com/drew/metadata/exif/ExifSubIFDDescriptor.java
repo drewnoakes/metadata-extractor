@@ -36,13 +36,13 @@ import java.util.Map;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class ExifSubIFDDescriptor extends TagDescriptor
+public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
 {
     /**
      * Dictates whether rational values will be represented in decimal format in instances
      * where decimal notation is elegant (such as 1/2 -> 0.5, but not 1/3).
      */
-    private boolean _allowDecimalRepresentationOfRationals = true;
+    private final boolean _allowDecimalRepresentationOfRationals = true;
 
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");

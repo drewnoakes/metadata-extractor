@@ -24,7 +24,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 /**
- * Models a particular tag within a directory and provides methods for obtaining its value.  Note that a Tag isntance is
+ * Models a particular tag within a directory and provides methods for obtaining its value.  Note that a Tag instance is
  * specific to a particular metadata extraction and cannot be reused.
  *
  * @author Drew Noakes http://drewnoakes.com
@@ -72,7 +72,7 @@ public class Tag
      * @return a description of the tag's value
      */
     @Nullable
-    public String getDescription() throws MetadataException
+    public String getDescription()
     {
         return _directory.getDescription(_tagType);
     }
@@ -102,20 +102,16 @@ public class Tag
     }
 
     /**
-     * A basic representation of the tag's type and value in format:
-     * <code>FNumber - F2.8</code>.
+     * A basic representation of the tag's type and value.  EG: <code>[FNumber] F2.8</code>.
      *
      * @return the tag's type and value
      */
     @NotNull
     public String toString()
     {
-        String description;
-        try {
-            description = getDescription();
-        } catch (MetadataException e) {
+        String description = getDescription();
+        if (description==null)
             description = _directory.getString(getTagType()) + " (unable to formulate description)";
-        }
         return "[" + _directory.getName() + "] " + getTagName() + " - " + description;
     }
 }

@@ -23,7 +23,6 @@ package com.drew.metadata.iptc;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -33,7 +32,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class IptcDescriptor extends TagDescriptor
+public class IptcDescriptor extends TagDescriptor<IptcDirectory>
 {
     public IptcDescriptor(@NotNull IptcDirectory directory)
     {

@@ -33,13 +33,13 @@ import java.io.UnsupportedEncodingException;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class ExifIFD0Descriptor extends TagDescriptor
+public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
 {
     /**
      * Dictates whether rational values will be represented in decimal format in instances
      * where decimal notation is elegant (such as 1/2 -> 0.5, but not 1/3).
      */
-    private boolean _allowDecimalRepresentationOfRationals = true;
+    private final boolean _allowDecimalRepresentationOfRationals = true;
 
     public ExifIFD0Descriptor(@NotNull ExifIFD0Directory directory)
     {

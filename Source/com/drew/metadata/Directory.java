@@ -98,18 +98,6 @@ public abstract class Directory
      * Returns an Iterator of Tag instances that have been set in this Directory.
      *
      * @return an Iterator of Tag instances
-     * @deprecated Use getTags instead
-     */
-    @Deprecated
-    public Iterator<Tag> getTagIterator()
-    {
-        return _definedTagList.iterator();
-    }
-
-    /**
-     * Returns an Iterator of Tag instances that have been set in this Directory.
-     *
-     * @return an Iterator of Tag instances
      */
     @NotNull
     public Collection<Tag> getTags()
@@ -349,14 +337,14 @@ public abstract class Directory
         if (value == null)
             throw new NullPointerException("cannot set a null object");
 
-        if (_tagMap.containsKey(Integer.valueOf(tagType))) {
-//            final Object oldValue = _tagMap.get(tagType);
-//            if (!oldValue.equals(value))
-//                addError(String.format("Attempting to overwrite tag %d (%s).  Old=%s, New=%s", tagType, getTagName(tagType), oldValue, value));
-//            return;
-        } else {
+        if (!_tagMap.containsKey(Integer.valueOf(tagType))) {
             _definedTagList.add(new Tag(tagType, this));
         }
+//        else {
+//            final Object oldValue = _tagMap.get(tagType);
+//            if (!oldValue.equals(value))
+//                addError(String.format("Overwritten tag 0x%s (%s).  Old=%s, New=%s", Integer.toHexString(tagType), getTagName(tagType), oldValue, value));
+//        }
         _tagMap.put(tagType, value);
     }
 

@@ -32,7 +32,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class PanasonicMakernoteDescriptor extends TagDescriptor
+public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakernoteDirectory>
 {
     public PanasonicMakernoteDescriptor(@NotNull PanasonicMakernoteDirectory directory)
     {

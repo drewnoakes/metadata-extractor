@@ -24,11 +24,10 @@ import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
-public class PhotoshopDescriptor extends TagDescriptor
+public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
 {
     public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory)
     {

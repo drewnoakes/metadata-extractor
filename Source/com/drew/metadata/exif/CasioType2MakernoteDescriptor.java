@@ -29,7 +29,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class CasioType2MakernoteDescriptor extends TagDescriptor
+public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2MakernoteDirectory>
 {
     public CasioType2MakernoteDescriptor(@NotNull CasioType2MakernoteDirectory directory)
     {

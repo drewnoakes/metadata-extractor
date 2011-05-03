@@ -179,12 +179,12 @@ public class ExifThumbnailDirectory extends Directory
     }
 
     @Nullable
-    public byte[] getThumbnailData() throws MetadataException
+    public byte[] getThumbnailData()
     {
         if (!hasThumbnailData())
             return null;
         
-        return this.getByteArray(ExifThumbnailDirectory.TAG_THUMBNAIL_DATA);
+        return getByteArray(ExifThumbnailDirectory.TAG_THUMBNAIL_DATA);
     }
 
     public void writeThumbnail(@NotNull String filename) throws MetadataException, IOException

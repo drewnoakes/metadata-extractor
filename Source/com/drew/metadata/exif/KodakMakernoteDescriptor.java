@@ -31,7 +31,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class KodakMakernoteDescriptor extends TagDescriptor
+public class KodakMakernoteDescriptor extends TagDescriptor<KodakMakernoteDirectory>
 {
     public KodakMakernoteDescriptor(@NotNull KodakMakernoteDirectory directory)
     {

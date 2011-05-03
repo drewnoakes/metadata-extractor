@@ -30,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegDescriptor extends TagDescriptor
+public class JpegDescriptor extends TagDescriptor<JpegDirectory>
 {
     public JpegDescriptor(@NotNull JpegDirectory directory)
     {
@@ -119,7 +119,7 @@ public class JpegDescriptor extends TagDescriptor
     @Nullable
     public String getComponentDataDescription(int componentNumber)
     {
-        JpegComponent value = ((JpegDirectory)_directory).getComponent(componentNumber);
+        JpegComponent value = _directory.getComponent(componentNumber);
 
         if (value==null)
             return null;

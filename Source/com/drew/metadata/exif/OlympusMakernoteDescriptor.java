@@ -29,7 +29,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class OlympusMakernoteDescriptor extends TagDescriptor
+public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDirectory>
 {
     public OlympusMakernoteDescriptor(@NotNull OlympusMakernoteDirectory directory)
     {

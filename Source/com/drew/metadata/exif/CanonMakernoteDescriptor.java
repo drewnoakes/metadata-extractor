@@ -29,7 +29,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class CanonMakernoteDescriptor extends TagDescriptor
+public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirectory>
 {
     public CanonMakernoteDescriptor(@NotNull CanonMakernoteDirectory directory)
     {

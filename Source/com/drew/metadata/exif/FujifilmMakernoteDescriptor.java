@@ -47,7 +47,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class FujifilmMakernoteDescriptor extends TagDescriptor
+public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernoteDirectory>
 {
     public FujifilmMakernoteDescriptor(@NotNull FujifilmMakernoteDirectory directory)
     {

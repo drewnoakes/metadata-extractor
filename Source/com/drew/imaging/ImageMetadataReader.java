@@ -165,14 +165,8 @@ public class ImageMetadataReader
 
             // iterate over the exif data and print to System.out
             for (Directory directory : metadata.getDirectories()) {
-                for (Tag tag : directory.getTags()) {
-                    try {
-                        System.out.println("[" + directory.getName() + "] " + tag.getTagName() + " = " + tag.getDescription());
-                    } catch (MetadataException e) {
-                        System.err.println(e.getMessage());
-                        System.err.println(tag.getDirectoryName() + " " + tag.getTagName() + " (error)");
-                    }
-                }
+                for (Tag tag : directory.getTags())
+                    System.out.println("[" + directory.getName() + "] " + tag.getTagName() + " = " + tag.getDescription());
 
                 // print out any errors
                 for (String error : directory.getErrors())
