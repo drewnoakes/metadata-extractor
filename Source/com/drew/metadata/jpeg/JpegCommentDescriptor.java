@@ -22,7 +22,6 @@ package com.drew.metadata.jpeg;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -32,7 +31,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class JpegCommentDescriptor extends TagDescriptor
 {
-    public JpegCommentDescriptor(@NotNull Directory directory)
+    public JpegCommentDescriptor(@NotNull JpegCommentDirectory directory)
     {
         super(directory);
     }

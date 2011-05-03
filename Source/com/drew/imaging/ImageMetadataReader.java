@@ -28,7 +28,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifThumbnailDirectory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -180,8 +180,8 @@ public class ImageMetadataReader
             }
 
             if (args.length > 1 && thumbRequested) {
-                ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
-                if (directory.containsThumbnail()) {
+                ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
+                if (directory!=null && directory.hasThumbnailData()) {
                     System.out.println("Writing thumbnail...");
                     directory.writeThumbnail(args[0].trim() + ".thumb.jpg");
                 } else {

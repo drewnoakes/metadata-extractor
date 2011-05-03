@@ -22,7 +22,6 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -32,7 +31,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class CasioType1MakernoteDescriptor extends TagDescriptor
 {
-    public CasioType1MakernoteDescriptor(@NotNull Directory directory)
+    public CasioType1MakernoteDescriptor(@NotNull CasioType1MakernoteDirectory directory)
     {
         super(directory);
     }

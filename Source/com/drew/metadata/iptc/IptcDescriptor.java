@@ -35,7 +35,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class IptcDescriptor extends TagDescriptor
 {
-    public IptcDescriptor(@NotNull Directory directory)
+    public IptcDescriptor(@NotNull IptcDirectory directory)
     {
         super(directory);
     }

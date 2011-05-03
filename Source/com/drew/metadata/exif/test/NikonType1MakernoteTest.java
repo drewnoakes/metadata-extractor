@@ -24,6 +24,7 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.drew.metadata.exif.NikonType1MakernoteDirectory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,6 +39,7 @@ public class NikonType1MakernoteTest
 {
     private NikonType1MakernoteDirectory _nikonDirectory;
     private ExifDirectory _exifDirectory;
+    private ExifThumbnailDirectory _thumbDirectory;
 
     /*
         [Interoperability] Interoperability Index = Recommended Exif Interoperability Rules (ExifR98)
@@ -58,6 +60,7 @@ public class NikonType1MakernoteTest
         Metadata metadata = JpegMetadataReader.readMetadata(nikonJpeg);
         _nikonDirectory = metadata.getDirectory(NikonType1MakernoteDirectory.class);
         _exifDirectory = metadata.getDirectory(ExifDirectory.class);
+        _thumbDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
     }
 
     /*
@@ -155,7 +158,7 @@ public class NikonType1MakernoteTest
         Assert.assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_DIGITIZED));
         Assert.assertEquals("2001:04:06 11:51:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME_ORIGINAL));
         Assert.assertEquals("1 2 3 0", _exifDirectory.getString(ExifDirectory.TAG_COMPONENTS_CONFIGURATION));
-        Assert.assertEquals(4, _exifDirectory.getInt(ExifDirectory.TAG_COMPRESSION_LEVEL));
+        Assert.assertEquals(4, _exifDirectory.getInt(ExifDirectory.TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL));
         Assert.assertEquals(0, _exifDirectory.getInt(ExifDirectory.TAG_EXPOSURE_BIAS));
         // this 2.6 *apex*, which is F2.5
         Assert.assertEquals(2.6, _exifDirectory.getDouble(ExifDirectory.TAG_MAX_APERTURE), 0.001);
@@ -170,8 +173,9 @@ public class NikonType1MakernoteTest
         Assert.assertEquals(1200, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));
         Assert.assertEquals(3, _exifDirectory.getInt(ExifDirectory.TAG_FILE_SOURCE));
         Assert.assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_SCENE_TYPE));
-        Assert.assertEquals(6, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION));
-        Assert.assertEquals(2036, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET));
-        Assert.assertEquals(4662, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH));
+
+        Assert.assertEquals(6, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION));
+        Assert.assertEquals(2036, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
+        Assert.assertEquals(4662, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH));
     }
 }

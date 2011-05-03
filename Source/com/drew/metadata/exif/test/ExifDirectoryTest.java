@@ -24,11 +24,14 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifThumbnailDirectory;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -49,10 +52,13 @@ public class ExifDirectoryTest
     {
         File file = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
-        ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
-        Assert.assertFalse(exifDirectory.getErrors().toString(), exifDirectory.hasErrors());
-        Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
-        byte[] thumbData = exifDirectory.getThumbnailData();
+        Assert.assertFalse(metadata.hasErrors());
+
+        ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        Assert.assertNotNull(directory);
+        Assert.assertTrue(directory.hasThumbnailData());
+        
+        byte[] thumbData = directory.getThumbnailData();
         Assert.assertNotNull(thumbData);
         try {
             // attempt to read the thumbnail -- it should be a legal Jpeg file
@@ -67,13 +73,15 @@ public class ExifDirectoryTest
     {
         File file = new File("Source/com/drew/metadata/exif/test/manuallyAddedThumbnail.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
-        ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
-        Assert.assertFalse(exifDirectory.hasErrors());
-        Assert.assertTrue(exifDirectory.containsTag(ExifDirectory.TAG_THUMBNAIL_DATA));
+        Assert.assertFalse(metadata.hasErrors());
+
+        ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        Assert.assertNotNull(directory);
+        Assert.assertTrue(directory.hasThumbnailData());
 
         File thumbnailFile = File.createTempFile("thumbnail", ".jpg");
         try {
-            exifDirectory.writeThumbnail(thumbnailFile.getAbsolutePath());
+            directory.writeThumbnail(thumbnailFile.getAbsolutePath());
             Assert.assertTrue(new File(thumbnailFile.getAbsolutePath()).exists());
         } finally {
             if (!thumbnailFile.delete())
@@ -81,15 +89,30 @@ public class ExifDirectoryTest
         }
     }
 
+//    @Test
+//    public void testContainsThumbnail()
+//    {
+//        ExifDirectory exifDirectory = new ExifDirectory();
+//
+//        Assert.assertTrue(!exifDirectory.hasThumbnailData());
+//
+//        exifDirectory.setObject(ExifDirectory.TAG_THUMBNAIL_DATA, "foo");
+//
+//        Assert.assertTrue(exifDirectory.hasThumbnailData());
+//    }
+
     @Test
-    public void testContainsThumbnail()
+    public void testResolution() throws JpegProcessingException, IOException, MetadataException
     {
-        ExifDirectory exifDirectory = new ExifDirectory();
+        File file = new File("Source/com/drew/metadata/exif/test/withUncompressedRGBThumbnail.jpg");
+        Metadata metadata = JpegMetadataReader.readMetadata(file);
 
-        Assert.assertTrue(!exifDirectory.containsThumbnail());
-
-        exifDirectory.setObject(ExifDirectory.TAG_THUMBNAIL_DATA, "foo");
-
-        Assert.assertTrue(exifDirectory.containsThumbnail());
+        ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        Assert.assertNotNull(thumbnailDirectory);
+        Assert.assertEquals(72, thumbnailDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
+        
+        ExifDirectory exifDirectory = metadata.getDirectory(ExifDirectory.class);
+        Assert.assertNotNull(exifDirectory);
+        Assert.assertEquals(216, exifDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
     }
 }

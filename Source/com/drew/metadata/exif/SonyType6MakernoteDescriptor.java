@@ -23,7 +23,6 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -33,7 +32,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class SonyType6MakernoteDescriptor extends TagDescriptor
 {
-    public SonyType6MakernoteDescriptor(@NotNull Directory directory)
+    public SonyType6MakernoteDescriptor(@NotNull SonyType6MakernoteDirectory directory)
     {
         super(directory);
     }

@@ -25,7 +25,6 @@ import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.UnsupportedEncodingException;
@@ -33,7 +32,7 @@ import java.io.UnsupportedEncodingException;
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class IccDescriptor extends TagDescriptor
 {
-    public IccDescriptor(@NotNull Directory directory)
+    public IccDescriptor(@NotNull IccDirectory directory)
     {
         super(directory);
     }

@@ -22,7 +22,6 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -34,7 +33,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class KodakMakernoteDescriptor extends TagDescriptor
 {
-    public KodakMakernoteDescriptor(@NotNull Directory directory)
+    public KodakMakernoteDescriptor(@NotNull KodakMakernoteDirectory directory)
     {
         super(directory);
     }

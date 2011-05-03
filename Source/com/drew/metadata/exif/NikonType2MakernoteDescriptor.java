@@ -24,7 +24,6 @@ import com.drew.lang.Rational;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
@@ -41,7 +40,7 @@ import java.util.List;
  */
 public class NikonType2MakernoteDescriptor extends TagDescriptor
 {
-    public NikonType2MakernoteDescriptor(@NotNull Directory directory)
+    public NikonType2MakernoteDescriptor(@NotNull NikonType2MakernoteDirectory directory)
     {
         super(directory);
     }

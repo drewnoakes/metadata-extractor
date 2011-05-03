@@ -30,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class PhotoshopDescriptor extends TagDescriptor
 {
-    public PhotoshopDescriptor(@NotNull Directory directory)
+    public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory)
     {
         super(directory);
     }

@@ -32,8 +32,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Decodes Exif binary data, populating a <code>Metadata</code> object with tag values in <code>ExifDirectory</code>,
- * <code>GpsDirectory</code> and one of the many camera makernote directories.
+ * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifDirectory},
+ * {@link ExifThumbnailDirectory}, {@link ExifInteropDirectory}, {@link GpsDirectory} and one of the many camera makernote directories.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -50,13 +50,16 @@ public class ExifReader implements MetadataReader
 
     // Format types
     // TODO use an enum for these?
+    /** An 8-bit unsigned integer. */
     private static final int FMT_BYTE = 1;
+    /** A fixed-length character string. */
     private static final int FMT_STRING = 2;
     /** An unsigned 16-bit integer. */
     private static final int FMT_USHORT = 3;
     /** An unsigned 32-bit integer. */
     private static final int FMT_ULONG = 4;
     private static final int FMT_URATIONAL = 5;
+    /** An 8-bit signed integer. */
     private static final int FMT_SBYTE = 6;
     private static final int FMT_UNDEFINED = 7;
     /** A signed 16-bit integer. */
@@ -69,13 +72,14 @@ public class ExifReader implements MetadataReader
     /** A 64-bit floating point number. */
     private static final int FMT_DOUBLE = 12;
 
-    /**
-     * This tag is a pointer to the Exif SubIFD.
-     */
+    /** This tag is a pointer to the Exif SubIFD. */
     public static final int TAG_EXIF_OFFSET = 0x8769;
+    /** This tag is a pointer to the Exif Interop IFD. */
     public static final int TAG_INTEROP_OFFSET = 0xA005;
+    /** This tag is a pointer to the Exif GPS IFD. */
     public static final int TAG_GPS_INFO_OFFSET = 0x8825;
-    public static final int TAG_MAKER_NOTE = 0x927C;
+    /** This tag is a pointer to the Exif Makernote IFD. */
+    public static final int TAG_MAKER_NOTE_OFFSET = 0x927C;
 
     public static final int TIFF_HEADER_START_OFFSET = 6;
 
@@ -92,7 +96,7 @@ public class ExifReader implements MetadataReader
         final BufferReader reader = new BufferReader(data);
 
         // check for the header length
-        if (data.length <= 14) {
+        if (reader.getLength() <= 14) {
             directory.addError("Exif data segment must contain at least 14 bytes");
             return;
         }
@@ -104,7 +108,7 @@ public class ExifReader implements MetadataReader
                 return;
             }
 
-            extractIFD(metadata, metadata.getOrCreateDirectory(ExifDirectory.class), TIFF_HEADER_START_OFFSET, data, reader);
+            extractIFD(metadata, metadata.getOrCreateDirectory(ExifDirectory.class), TIFF_HEADER_START_OFFSET, reader);
         } catch (BufferBoundsException e) {
             directory.addError("Exif data segment ended prematurely");
         }
@@ -123,13 +127,13 @@ public class ExifReader implements MetadataReader
         final BufferReader reader = new BufferReader(data);
 
         try {
-            extractIFD(metadata, directory, 0, data, reader);
+            extractIFD(metadata, directory, 0, reader);
         } catch (BufferBoundsException e) {
             directory.addError("Exif data segment ended prematurely");
         }
     }
 
-    private void extractIFD(@NotNull Metadata metadata, @NotNull final ExifDirectory directory, int tiffHeaderOffset, @NotNull byte[] data, @NotNull BufferReader reader) throws BufferBoundsException
+    private void extractIFD(@NotNull Metadata metadata, @NotNull final ExifDirectory directory, int tiffHeaderOffset, @NotNull BufferReader reader) throws BufferBoundsException
     {
         // this should be either "MM" or "II"
         String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
@@ -152,7 +156,7 @@ public class ExifReader implements MetadataReader
         int firstDirectoryOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
 
         // David Ekholm sent a digital camera image that has this problem
-        if (firstDirectoryOffset >= data.length - 1) {
+        if (firstDirectoryOffset >= reader.getLength() - 1) {
             directory.addError("First exif directory offset is beyond end of Exif data segment");
             // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
             firstDirectoryOffset = 14;
@@ -164,13 +168,13 @@ public class ExifReader implements MetadataReader
         processDirectory(directory, processedDirectoryOffsets, firstDirectoryOffset, tiffHeaderOffset, metadata, reader);
 
         // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
-        if (directory.containsTag(ExifDirectory.TAG_THUMBNAIL_COMPRESSION)) {
-
-            Integer offset = directory.getInteger(ExifDirectory.TAG_THUMBNAIL_OFFSET);
-            Integer length = directory.getInteger(ExifDirectory.TAG_THUMBNAIL_LENGTH);
+        ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        if (thumbnailDirectory!=null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION)) {
+            Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
+            Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
             if (offset != null && length != null) {
                 try {
-                    directory.setByteArray(ExifDirectory.TAG_THUMBNAIL_DATA, reader.getBytes(tiffHeaderOffset + offset, length));
+                    thumbnailDirectory.setByteArray(ExifThumbnailDirectory.TAG_THUMBNAIL_DATA, reader.getBytes(tiffHeaderOffset + offset, length));
                 } catch (BufferBoundsException ex) {
                     directory.addError("Invalid thumbnail data specification: " + ex.getMessage());
                 }
@@ -281,7 +285,7 @@ public class ExifReader implements MetadataReader
                     processDirectory(metadata.getOrCreateDirectory(GpsDirectory.class), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset, metadata, reader);
                     continue;
                 }
-                case TAG_MAKER_NOTE: {
+                case TAG_MAKER_NOTE_OFFSET: {
                     processMakerNote(tagValueOffset, processedDirectoryOffsets, tiffHeaderOffset, metadata, reader);
                     continue;
                 }
@@ -306,7 +310,7 @@ public class ExifReader implements MetadataReader
                 return;
             }
             // the next directory is of same type as this one
-            processDirectory(directory, processedDirectoryOffsets, nextDirectoryOffset, tiffHeaderOffset, metadata, reader);
+            processDirectory(metadata.getOrCreateDirectory(ExifThumbnailDirectory.class), processedDirectoryOffsets, nextDirectoryOffset, tiffHeaderOffset, metadata, reader);
         }
     }
 

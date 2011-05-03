@@ -33,7 +33,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class GpsDescriptor extends TagDescriptor
 {
-    public GpsDescriptor(@NotNull Directory directory)
+    public GpsDescriptor(@NotNull GpsDirectory directory)
     {
         super(directory);
     }

@@ -24,6 +24,7 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.drew.metadata.exif.NikonType2MakernoteDirectory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,14 +39,20 @@ public class NikonType2MakernoteTest2
 {
     private NikonType2MakernoteDirectory _nikonDirectory;
     private ExifDirectory _exifDirectory;
+    private ExifThumbnailDirectory _thumbDirectory;
 
     @Before
     public void setUp() throws Exception
     {
         File nikonJpeg = new File("Source/com/drew/metadata/exif/test/nikonMakernoteType2b.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(nikonJpeg);
-        _nikonDirectory = metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class);
-        _exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
+        
+        _nikonDirectory = metadata.getDirectory(NikonType2MakernoteDirectory.class);
+        _exifDirectory = metadata.getDirectory(ExifDirectory.class);
+        _thumbDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
+
+        Assert.assertNotNull(_nikonDirectory);
+        Assert.assertNotNull(_exifDirectory);
     }
 
     /*
@@ -101,8 +108,8 @@ public class NikonType2MakernoteTest2
         [Exif] Image Description =
         [Exif] Make = NIKON
         [Exif] Model = E995
-        [Exif] X Resolution = 72 dots per inch
-        [Exif] Y Resolution = 72 dots per inch
+        [Exif] X Resolution = 300 dots per inch
+        [Exif] Y Resolution = 300 dots per inch
         [Exif] Resolution Unit = Inch
         [Exif] Software = E995v1.6
         [Exif] Date/Time = 2002:08:29 17:31:40
@@ -115,10 +122,10 @@ public class NikonType2MakernoteTest2
         [Exif] Date/Time Original = 2002:08:29 17:31:40
         [Exif] Date/Time Digitized = 2002:08:29 17:31:40
         [Exif] Components Configuration = YCbCr
-        [Exif] Exposure Bias Value = 0
+        [Exif] Exposure Bias Value = 0 EV
         [Exif] Max Aperture Value = F1
         [Exif] Metering Mode = Multi-segment
-        [Exif] Light Source = Unknown
+        [Exif] White Balance = Unknown
         [Exif] Flash = Flash fired
         [Exif] Focal Length = 8.2 mm
         [Exif] User Comment =
@@ -128,10 +135,6 @@ public class NikonType2MakernoteTest2
         [Exif] Exif Image Height = 1536 pixels
         [Exif] File Source = Digital Still Camera (DSC)
         [Exif] Scene Type = Directly photographed image
-        [Exif] Compression = JPEG compression
-        [Exif] Thumbnail Offset = 1494 bytes
-        [Exif] Thumbnail Length = 6077 bytes
-        [Exif] Thumbnail Data = [6077 bytes of thumbnail data]
     */
     @Test
     public void testExifDirectory_MatchesKnownValues() throws Exception
@@ -139,8 +142,8 @@ public class NikonType2MakernoteTest2
         Assert.assertEquals("          ", _exifDirectory.getString(ExifDirectory.TAG_IMAGE_DESCRIPTION));
         Assert.assertEquals("NIKON", _exifDirectory.getString(ExifDirectory.TAG_MAKE));
         Assert.assertEquals("E995", _exifDirectory.getString(ExifDirectory.TAG_MODEL));
-        Assert.assertEquals(72, _exifDirectory.getDouble(ExifDirectory.TAG_X_RESOLUTION), 0.001);
-        Assert.assertEquals(72, _exifDirectory.getDouble(ExifDirectory.TAG_Y_RESOLUTION), 0.001);
+        Assert.assertEquals(300, _exifDirectory.getDouble(ExifDirectory.TAG_X_RESOLUTION), 0.001);
+        Assert.assertEquals(300, _exifDirectory.getDouble(ExifDirectory.TAG_Y_RESOLUTION), 0.001);
         Assert.assertEquals(2, _exifDirectory.getInt(ExifDirectory.TAG_RESOLUTION_UNIT));
         Assert.assertEquals("E995v1.6", _exifDirectory.getString(ExifDirectory.TAG_SOFTWARE));
         Assert.assertEquals("2002:08:29 17:31:40", _exifDirectory.getString(ExifDirectory.TAG_DATETIME));
@@ -166,8 +169,24 @@ public class NikonType2MakernoteTest2
         Assert.assertEquals(1536, _exifDirectory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT));
         Assert.assertEquals(3, _exifDirectory.getInt(ExifDirectory.TAG_FILE_SOURCE));
         Assert.assertEquals(1, _exifDirectory.getInt(ExifDirectory.TAG_SCENE_TYPE));
-        Assert.assertEquals(6, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_COMPRESSION));
-        Assert.assertEquals(1494, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET));
-        Assert.assertEquals(6077, _exifDirectory.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH));
+    }
+
+    /*
+        [Exif Thumbnail] Thumbnail Compression = JPEG (old-style)
+        [Exif Thumbnail] X Resolution = 72 dots per inch
+        [Exif Thumbnail] Y Resolution = 72 dots per inch
+        [Exif Thumbnail] Resolution Unit = Inch
+        [Exif Thumbnail] Thumbnail Offset = 1494 bytes
+        [Exif Thumbnail] Thumbnail Length = 6077 bytes
+    */
+    @Test
+    public void testExifThumbnailDirectory_MatchesKnownValues() throws Exception
+    {
+        Assert.assertEquals(6, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION));
+        Assert.assertEquals(1494, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
+        Assert.assertEquals(6077, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH));
+        Assert.assertEquals(1494, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
+        Assert.assertEquals(72, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
+        Assert.assertEquals(72, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_Y_RESOLUTION));
     }
 }

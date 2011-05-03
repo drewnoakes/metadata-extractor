@@ -24,7 +24,6 @@ import com.drew.imaging.PhotographicConversions;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.UnsupportedEncodingException;
@@ -48,7 +47,7 @@ public class ExifDescriptor extends TagDescriptor
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
 
-    public ExifDescriptor(@NotNull Directory directory)
+    public ExifDescriptor(@NotNull ExifDirectory directory)
     {
         super(directory);
     }
@@ -96,12 +95,8 @@ public class ExifDescriptor extends TagDescriptor
                 return getXResolutionDescription();
             case ExifDirectory.TAG_Y_RESOLUTION:
                 return getYResolutionDescription();
-            case ExifDirectory.TAG_THUMBNAIL_OFFSET:
-                return getThumbnailOffsetDescription();
-            case ExifDirectory.TAG_THUMBNAIL_LENGTH:
-                return getThumbnailLengthDescription();
-            case ExifDirectory.TAG_COMPRESSION_LEVEL:
-                return getCompressionLevelDescription();
+            case ExifDirectory.TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL:
+                return getCompressedAverageBitsPerPixelDescription();
             case ExifDirectory.TAG_SUBJECT_DISTANCE:
                 return getSubjectDistanceDescription();
             case ExifDirectory.TAG_METERING_MODE:
@@ -124,14 +119,8 @@ public class ExifDescriptor extends TagDescriptor
                 return getFocalPlaneXResolutionDescription();
             case ExifDirectory.TAG_FOCAL_PLANE_Y_RES:
                 return getFocalPlaneYResolutionDescription();
-            case ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH:
-                return getThumbnailImageWidthDescription();
-            case ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT:
-                return getThumbnailImageHeightDescription();
             case ExifDirectory.TAG_BITS_PER_SAMPLE:
                 return getBitsPerSampleDescription();
-            case ExifDirectory.TAG_THUMBNAIL_COMPRESSION:
-                return getCompressionDescription();
             case ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION:
                 return getPhotometricInterpretationDescription();
             case ExifDirectory.TAG_ROWS_PER_STRIP:
@@ -168,8 +157,8 @@ public class ExifDescriptor extends TagDescriptor
                 return getReferenceBlackWhiteDescription();
             case ExifDirectory.TAG_ISO_EQUIVALENT:
                 return getIsoEquivalentDescription();
-            case ExifDirectory.TAG_THUMBNAIL_DATA:
-                return getThumbnailDescription();
+//            case ExifDirectory.TAG_THUMBNAIL_DATA:
+//                return getThumbnailDescription();
             case ExifDirectory.TAG_USER_COMMENT:
                 return getUserCommentDescription();
             case ExifDirectory.TAG_CUSTOM_RENDERED:
@@ -474,15 +463,6 @@ public class ExifDescriptor extends TagDescriptor
     }
 
     @Nullable
-    public String getThumbnailDescription()
-    {
-        int[] thumbnailBytes = _directory.getIntArray(ExifDirectory.TAG_THUMBNAIL_DATA);
-        if (thumbnailBytes==null)
-            return null;
-        return "[" + thumbnailBytes.length + " bytes of thumbnail data]";
-    }
-
-    @Nullable
     public String getIsoEquivalentDescription()
     {
         // Have seen an exception here from files produced by ACDSEE that stored an int[] here with two values
@@ -684,63 +664,10 @@ public class ExifDescriptor extends TagDescriptor
     }
 
     @Nullable
-    public String getCompressionDescription()
-    {
-        Integer value = _directory.getInteger(ExifDirectory.TAG_THUMBNAIL_COMPRESSION);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "Uncompressed";
-            case 2: return "CCITT 1D";
-            case 3: return "T4/Group 3 Fax";
-            case 4: return "T6/Group 4 Fax";
-            case 5: return "LZW";
-            case 6: return "JPEG (old-style)";
-            case 7: return "JPEG";
-            case 8: return "Adobe Deflate";
-            case 9: return "JBIG B&W";
-            case 10: return "JBIG Color";
-            case 32766: return "Next";
-            case 32771: return "CCIRLEW";
-            case 32773: return "PackBits";
-            case 32809: return "Thunderscan";
-            case 32895: return "IT8CTPAD";
-            case 32896: return "IT8LW";
-            case 32897: return "IT8MP";
-            case 32898: return "IT8BL";
-            case 32908: return "PixarFilm";
-            case 32909: return "PixarLog";
-            case 32946: return "Deflate";
-            case 32947: return "DCS";
-            case 32661: return "JBIG";
-            case 32676: return "SGILog";
-            case 32677: return "SGILog24";
-            case 32712: return "JPEG 2000";
-            case 32713: return "Nikon NEF Compressed";
-            default:
-                return "Unknown compression";
-        }
-    }
-
-    @Nullable
     public String getBitsPerSampleDescription()
     {
         String value = _directory.getString(ExifDirectory.TAG_BITS_PER_SAMPLE);
         return value==null ? null : value + " bits/component/pixel";
-    }
-
-    @Nullable
-    public String getThumbnailImageWidthDescription()
-    {
-        String value = _directory.getString(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-        return value==null ? null : value + " pixels";
-    }
-
-    @Nullable
-    public String getThumbnailImageHeightDescription()
-    {
-        String value = _directory.getString(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
-        return value==null ? null : value + " pixels";
     }
 
     @Nullable
@@ -927,9 +854,9 @@ public class ExifDescriptor extends TagDescriptor
     }
 
     @Nullable
-    public String getCompressionLevelDescription()
+    public String getCompressedAverageBitsPerPixelDescription()
     {
-        Rational value = _directory.getRational(ExifDirectory.TAG_COMPRESSION_LEVEL);
+        Rational value = _directory.getRational(ExifDirectory.TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL);
         if (value==null)
             return null;
         String ratio = value.toSimpleString(_allowDecimalRepresentationOfRationals);
@@ -938,20 +865,6 @@ public class ExifDescriptor extends TagDescriptor
         } else {
             return ratio + " bits/pixel";
         }
-    }
-
-    @Nullable
-    public String getThumbnailLengthDescription()
-    {
-        String value = _directory.getString(ExifDirectory.TAG_THUMBNAIL_LENGTH);
-        return value==null ? null : value + " bytes";
-    }
-
-    @Nullable
-    public String getThumbnailOffsetDescription()
-    {
-        String value = _directory.getString(ExifDirectory.TAG_THUMBNAIL_OFFSET);
-        return value==null ? null : value + " bytes";
     }
 
     @Nullable

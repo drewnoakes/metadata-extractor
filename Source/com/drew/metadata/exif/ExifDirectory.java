@@ -21,12 +21,8 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -36,10 +32,6 @@ import java.util.HashMap;
  */
 public class ExifDirectory extends Directory
 {
-    // TODO do these tags belong in the exif directory?
-    public static final int TAG_SUB_IFDS = 0x014A;
-    public static final int TAG_GPS_INFO = 0x8825;
-
     /**
      * The actual aperture value of lens when the image was taken. Unit is APEX.
      * To convert this value to ordinary F-number (F-stop), calculate this value's
@@ -52,37 +44,6 @@ public class ExifDirectory extends Directory
      * per component for each pixel. Usually this value is '8,8,8'.
      */
     public static final int TAG_BITS_PER_SAMPLE = 0x0102;
-    /**
-     * Shows compression method for Thumbnail.
-     * 1 = Uncompressed
-     * 2 = CCITT 1D
-     * 3 = T4/Group 3 Fax
-     * 4 = T6/Group 4 Fax
-     * 5 = LZW
-     * 6 = JPEG (old-style)
-     * 7 = JPEG
-     * 8 = Adobe Deflate
-     * 9 = JBIG B&W
-     * 10 = JBIG Color
-     * 32766 = Next
-     * 32771 = CCIRLEW
-     * 32773 = PackBits
-     * 32809 = Thunderscan
-     * 32895 = IT8CTPAD
-     * 32896 = IT8LW
-     * 32897 = IT8MP
-     * 32898 = IT8BL
-     * 32908 = PixarFilm
-     * 32909 = PixarLog
-     * 32946 = Deflate
-     * 32947 = DCS
-     * 34661 = JBIG
-     * 34676 = SGILog
-     * 34677 = SGILog24
-     * 34712 = JPEG 2000
-     * 34713 = Nikon NEF Compressed
-     */
-    public static final int TAG_THUMBNAIL_COMPRESSION = 0x0103;
 
     /**
      * Shows the color space of the image data components.
@@ -171,7 +132,19 @@ public class ExifDirectory extends Directory
     public static final int TAG_IPTC_NAA = 0x83BB;
     public static final int TAG_INTER_COLOR_PROFILE = 0x8773;
     public static final int TAG_SPECTRAL_SENSITIVITY = 0x8824;
-    public static final int TAG_OECF = 0x8828;
+    /**
+     * Indicates the Opto-Electric Conversion Function (OECF) specified in ISO 14524.
+     * <p/>
+     * OECF is the relationship between the camera optical input and the image values.
+     * <p/>
+     * The values are:
+     * <ul>
+     *   <li>Two shorts, indicating respectively number of columns, and number of rows.</li>
+     *   <li>For each column, the column name in a null-terminated ASCII string.</li>
+     *   <li>For each cell, an SRATIONAL value.</li>
+     * </ul>
+     */
+    public static final int TAG_OPTO_ELECTRIC_CONVERSION_FUNCTION = 0x8828;
     public static final int TAG_INTERLACE = 0x8829;
     public static final int TAG_TIME_ZONE_OFFSET = 0x882A;
     public static final int TAG_SELF_TIMER_MODE = 0x882B;
@@ -195,10 +168,6 @@ public class ExifDirectory extends Directory
     public static final int TAG_Y_RESOLUTION = 0x011B;
     public static final int TAG_PAGE_NAME = 0x011D;
     public static final int TAG_RESOLUTION_UNIT = 0x0128;
-    /** The offset to thumbnail image bytes. */
-    public static final int TAG_THUMBNAIL_OFFSET = 0x0201;
-    /** The size of the thumbnail image data in bytes. */
-    public static final int TAG_THUMBNAIL_LENGTH = 0x0202;
     public static final int TAG_YCBCR_POSITIONING = 0x0213;
     /**
      * Exposure time (reciprocal of shutter speed). Unit is second.
@@ -223,7 +192,7 @@ public class ExifDirectory extends Directory
     /**
      * Average (rough estimate) compression level in JPEG bits per pixel.
      * */
-    public static final int TAG_COMPRESSION_LEVEL = 0x9102;
+    public static final int TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL = 0x9102;
     /**
      * Shutter speed by APEX value. To convert this value to ordinary 'Shutter Speed';
      * calculate this value's power of 2, then reciprocal. For example, if the
@@ -510,6 +479,17 @@ public class ExifDirectory extends Directory
     public static final int TAG_SUBJECT_DISTANCE_RANGE = 0xA40C;
 
     /**
+     * This tag indicates an identifier assigned uniquely to each image. It is
+     * recorded as an ASCII string equivalent to hexadecimal notation and 128-bit
+     * fixed length.
+     * Tag = 42016 (A420.H)
+     * Type = ASCII
+     * Count = 33
+     * Default = none
+     */
+    public static final int TAG_IMAGE_UNIQUE_ID = 0xA420;
+
+    /**
      * The image title, as used by Windows XP.
      */
     public static final int TAG_WIN_TITLE = 0x9C9B;
@@ -535,21 +515,6 @@ public class ExifDirectory extends Directory
     public static final int TAG_WIN_SUBJECT = 0x9C9F;
 
     /**
-     * This tag indicates an identifier assigned uniquely to each image. It is
-     * recorded as an ASCII string equivalent to hexadecimal notation and 128-bit
-     * fixed length.
-     * Tag = 42016 (A420.H)
-     * Type = ASCII
-     * Count = 33
-     * Default = none
-     */
-    public static final int TAG_IMAGE_UNIQUE_ID = 0xA420;
-
-    public static final int TAG_THUMBNAIL_IMAGE_WIDTH = 0x0100;
-    public static final int TAG_THUMBNAIL_IMAGE_HEIGHT = 0x0101;
-    public static final int TAG_THUMBNAIL_DATA = 0xF001;
-
-    /**
      * 1 = Normal
      * 2 = Reversed
      */
@@ -571,16 +536,13 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(0x0156, "Transfer Range");
         _tagNameMap.put(0x0200, "JPEG Proc");
         _tagNameMap.put(0x8769, "Exif Offset");
-        _tagNameMap.put(TAG_COMPRESSION_LEVEL, "Compressed Bits Per Pixel");
+        _tagNameMap.put(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL, "Compressed Bits Per Pixel");
         _tagNameMap.put(0x927C, "Maker Note");
         _tagNameMap.put(0xA005, "Interoperability Offset");
 
         _tagNameMap.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
         _tagNameMap.put(TAG_SUBFILE_TYPE, "Subfile Type");
-        _tagNameMap.put(TAG_THUMBNAIL_IMAGE_WIDTH, "Thumbnail Image Width");
-        _tagNameMap.put(TAG_THUMBNAIL_IMAGE_HEIGHT, "Thumbnail Image Height");
         _tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
-        _tagNameMap.put(TAG_THUMBNAIL_COMPRESSION, "Thumbnail Compression");
         _tagNameMap.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
         _tagNameMap.put(TAG_THRESHOLDING, "Thresholding");
         _tagNameMap.put(TAG_IMAGE_DESCRIPTION, "Image Description");
@@ -607,11 +569,7 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(TAG_TILE_LENGTH, "Tile Length");
         _tagNameMap.put(TAG_TILE_OFFSETS, "Tile Offsets");
         _tagNameMap.put(TAG_TILE_BYTE_COUNTS, "Tile Byte Counts");
-        _tagNameMap.put(TAG_SUB_IFDS, "Sub IFDs");
         _tagNameMap.put(TAG_JPEG_TABLES, "JPEG Tables");
-        _tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
-        _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
-        _tagNameMap.put(TAG_THUMBNAIL_DATA, "Thumbnail Data");
         _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
         _tagNameMap.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
         _tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
@@ -626,9 +584,8 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(TAG_INTER_COLOR_PROFILE, "Inter Color Profile");
         _tagNameMap.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
         _tagNameMap.put(TAG_SPECTRAL_SENSITIVITY, "Spectral Sensitivity");
-        _tagNameMap.put(TAG_GPS_INFO, "GPS Info");
         _tagNameMap.put(TAG_ISO_EQUIVALENT, "ISO Speed Ratings");
-        _tagNameMap.put(TAG_OECF, "OECF");
+        _tagNameMap.put(TAG_OPTO_ELECTRIC_CONVERSION_FUNCTION, "Opto-electric Conversion Function (OECF)");
         _tagNameMap.put(TAG_INTERLACE, "Interlace");
         _tagNameMap.put(TAG_TIME_ZONE_OFFSET, "Time Zone Offset");
         _tagNameMap.put(TAG_SELF_TIMER_MODE, "Self Timer Mode");
@@ -643,7 +600,8 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(TAG_MAX_APERTURE, "Max Aperture Value");
         _tagNameMap.put(TAG_SUBJECT_DISTANCE, "Subject Distance");
         _tagNameMap.put(TAG_METERING_MODE, "Metering Mode");
-        _tagNameMap.put(TAG_WHITE_BALANCE, "Light Source");
+        _tagNameMap.put(TAG_LIGHT_SOURCE, "Light Source");
+        _tagNameMap.put(TAG_WHITE_BALANCE, "White Balance");
         _tagNameMap.put(TAG_FLASH, "Flash");
         _tagNameMap.put(TAG_FOCAL_LENGTH, "Focal Length");
         _tagNameMap.put(TAG_FLASH_ENERGY, "Flash Energy");
@@ -686,7 +644,7 @@ public class ExifDirectory extends Directory
 
         _tagNameMap.put(TAG_CUSTOM_RENDERED, "Custom Rendered");
         _tagNameMap.put(TAG_EXPOSURE_MODE, "Exposure Mode");
-        _tagNameMap.put(TAG_WHITE_BALANCE_MODE, "White Balance");
+        _tagNameMap.put(TAG_WHITE_BALANCE_MODE, "White Balance Mode");
         _tagNameMap.put(TAG_DIGITAL_ZOOM_RATIO, "Digital Zoom Ratio");
         _tagNameMap.put(TAG_35MM_FILM_EQUIV_FOCAL_LENGTH, "Focal Length 35");
         _tagNameMap.put(TAG_SCENE_CAPTURE_TYPE, "Scene Capture Type");
@@ -696,6 +654,7 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(TAG_SHARPNESS, "Sharpness");
         _tagNameMap.put(TAG_DEVICE_SETTING_DESCRIPTION, "Device Setting Description");
         _tagNameMap.put(TAG_SUBJECT_DISTANCE_RANGE, "Subject Distance Range");
+        _tagNameMap.put(TAG_IMAGE_UNIQUE_ID, "Unique Image ID");
 
         _tagNameMap.put(TAG_WIN_AUTHOR, "Windows XP Author");
         _tagNameMap.put(TAG_WIN_COMMENT, "Windows XP Comment");
@@ -724,238 +683,5 @@ public class ExifDirectory extends Directory
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
-    }
-
-    @Nullable
-    public byte[] getThumbnailData() throws MetadataException
-    {
-        if (!containsThumbnail())
-            return null;
-        
-        return this.getByteArray(ExifDirectory.TAG_THUMBNAIL_DATA);
-    }
-
-    public void writeThumbnail(@NotNull String filename) throws MetadataException, IOException
-    {
-        byte[] data = getThumbnailData();
-
-        if (data==null)
-            throw new MetadataException("No thumbnail data exists.");
-
-        FileOutputStream stream = null;
-        try {
-            stream = new FileOutputStream(filename);
-            stream.write(data);
-        } finally {
-            if (stream!=null)
-                stream.close();
-        }
-    }
-
-/*
-    // This thumbnail extraction code is not complete, and is included to assist anyone who feels like looking into
-    // it.  Please share any progress with the original author, and hence the community.  Thanks.
-
-    public Image getThumbnailImage() throws MetadataException
-    {
-        if (!containsThumbnail())
-            return null;
-
-        int compression = 0;
-        try {
-            compression = this.getInt(ExifDirectory.TAG_COMPRESSION);
-        } catch (Throwable e) {
-            this.addError("Unable to determine thumbnail type " + e.getMessage());
-        }
-
-        final byte[] thumbnailBytes = getThumbnailData();
-
-        if (compression == ExifDirectory.COMPRESSION_JPEG)
-        {
-            // JPEG Thumbnail
-            // operate directly on thumbnailBytes
-//            try {
-//                int offset = this.getInt(ExifDirectory.TAG_THUMBNAIL_OFFSET);
-//                int length = this.getInt(ExifDirectory.TAG_THUMBNAIL_LENGTH);
-//                byte[] result = new byte[length];
-//                for (int i = 0; i<result.length; i++) {
-//                    result[i] = _data[tiffHeaderOffset + offset + i];
-//                }
-//                this.setByteArray(ExifDirectory.TAG_THUMBNAIL_DATA, result);
-//            } catch (Throwable e) {
-//                this.addError("Unable to extract thumbnail: " + e.getMessage());
-//            }
-            // TODO decode the JPEG bytes as an image
-            return null; //new Image();
-        }
-        else if (compression == ExifDirectory.COMPRESSION_NONE)
-        {
-            // uncompressed thumbnail (raw RGB data)
-            if (!this.containsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION))
-                return null;
-
-            try
-            {
-                // If the image is RGB format, then convert it to a bitmap
-                final int photometricInterpretation = this.getInt(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION);
-                if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_RGB)
-                {
-                    // RGB
-                    Image image = createImageFromRawRgb(thumbnailBytes);
-                    return image;
-                }
-                else if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_YCBCR)
-                {
-                    // YCbCr
-                    Image image = createImageFromRawYCbCr(thumbnailBytes);
-                    return image;
-                }
-                else if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_MONOCHROME)
-                {
-                    // Monochrome
-                    // TODO
-                    return null;
-                }
-            } catch (Throwable e) {
-                this.addError("Unable to extract thumbnail: " + e.getMessage());
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Handle the YCbCr thumbnail encoding used by Ricoh RDC4200/4300, Fuji DS-7/300 and DX-5/7/9 cameras.
-     *
-     * At DX-5/7/9, YCbCrSubsampling(0x0212) has values of '2,1', PlanarConfiguration(0x011c) has a value '1'. So the
-     * data align of this image is below.
-     *
-     * Y(0,0),Y(1,0),Cb(0,0),Cr(0,0), Y(2,0),Y(3,0),Cb(2,0),Cr(3.0), Y(4,0),Y(5,0),Cb(4,0),Cr(4,0). . . .
-     *
-     * The numbers in parenthesis are pixel coordinates. DX series' YCbCrCoefficients(0x0211) has values '0.299/0.587/0.114',
-     * ReferenceBlackWhite(0x0214) has values '0,255,128,255,128,255'. Therefore to convert from Y/Cb/Cr to RGB is;
-     *
-     * B(0,0)=(Cb-128)*(2-0.114*2)+Y(0,0)
-     * R(0,0)=(Cr-128)*(2-0.299*2)+Y(0,0)
-     * G(0,0)=(Y(0,0)-0.114*B(0,0)-0.299*R(0,0))/0.587
-     *
-     * Horizontal subsampling is a value '2', so you can calculate B(1,0)/R(1,0)/G(1,0) by using the Y(1,0) and Cr(0,0)/Cb(0,0).
-     * Repeat this conversion by value of ImageWidth(0x0100) and ImageLength(0x0101).
-     *
-     * @param thumbnailBytes
-     * @return
-     * @throws com.drew.metadata.MetadataException
-     * /
-    private Image createImageFromRawYCbCr(byte[] thumbnailBytes) throws MetadataException
-    {
-        /*
-            Y  =  0.257R + 0.504G + 0.098B + 16
-            Cb = -0.148R - 0.291G + 0.439B + 128
-            Cr =  0.439R - 0.368G - 0.071B + 128
-
-            G = 1.164(Y-16) - 0.391(Cb-128) - 0.813(Cr-128)
-            R = 1.164(Y-16) + 1.596(Cr-128)
-            B = 1.164(Y-16) + 2.018(Cb-128)
-
-            R, G and B range from 0 to 255.
-            Y ranges from 16 to 235.
-            Cb and Cr range from 16 to 240.
-
-            http://www.faqs.org/faqs/graphics/colorspace-faq/
-        * /
-
-        int length = thumbnailBytes.length; // this.getInt(ExifDirectory.TAG_STRIP_BYTE_COUNTS);
-        final int imageWidth = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-        final int imageHeight = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
-//        final int headerLength = 54;
-//        byte[] result = new byte[length + headerLength];
-//        // Add a windows BMP header described:
-//        // http://www.onicos.com/staff/iz/formats/bmp.html
-//        result[0] = 'B';
-//        result[1] = 'M'; // File Type identifier
-//        result[3] = (byte)(result.length / 256);
-//        result[2] = (byte)result.length;
-//        result[10] = (byte)headerLength;
-//        result[14] = 40; // MS Windows BMP header
-//        result[18] = (byte)imageWidth;
-//        result[22] = (byte)imageHeight;
-//        result[26] = 1;  // 1 Plane
-//        result[28] = 24; // Colour depth
-//        result[34] = (byte)length;
-//        result[35] = (byte)(length / 256);
-
-        final BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-
-        // order is YCbCr and image is upside down, bitmaps are BGR
-////        for (int i = headerLength, dataOffset = length; i<result.length; i += 3, dataOffset -= 3)
-//        {
-//            final int y =  thumbnailBytes[dataOffset - 2] & 0xFF;
-//            final int cb = thumbnailBytes[dataOffset - 1] & 0xFF;
-//            final int cr = thumbnailBytes[dataOffset] & 0xFF;
-//            if (y<16 || y>235 || cb<16 || cb>240 || cr<16 || cr>240)
-//                "".toString();
-//
-//            int g = (int)(1.164*(y-16) - 0.391*(cb-128) - 0.813*(cr-128));
-//            int r = (int)(1.164*(y-16) + 1.596*(cr-128));
-//            int b = (int)(1.164*(y-16) + 2.018*(cb-128));
-//
-////            result[i] = (byte)b;
-////            result[i + 1] = (byte)g;
-////            result[i + 2] = (byte)r;
-//
-//            // TODO compose the image here
-//            image.setRGB(1, 2, 3);
-//        }
-
-        return image;
-    }
-
-    /**
-     * Creates a thumbnail image in (Windows) BMP format from raw RGB data.
-     * @param thumbnailBytes
-     * @return
-     * @throws com.drew.metadata.MetadataException
-     * /
-    private Image createImageFromRawRgb(byte[] thumbnailBytes) throws MetadataException
-    {
-        final int length = thumbnailBytes.length; // this.getInt(ExifDirectory.TAG_STRIP_BYTE_COUNTS);
-        final int imageWidth = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-        final int imageHeight = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
-//        final int headerlength = 54;
-//        final byte[] result = new byte[length + headerlength];
-//        // Add a windows BMP header described:
-//        // http://www.onicos.com/staff/iz/formats/bmp.html
-//        result[0] = 'B';
-//        result[1] = 'M'; // File Type identifier
-//        result[3] = (byte)(result.length / 256);
-//        result[2] = (byte)result.length;
-//        result[10] = (byte)headerlength;
-//        result[14] = 40; // MS Windows BMP header
-//        result[18] = (byte)imageWidth;
-//        result[22] = (byte)imageHeight;
-//        result[26] = 1;  // 1 Plane
-//        result[28] = 24; // Colour depth
-//        result[34] = (byte)length;
-//        result[35] = (byte)(length / 256);
-
-        final BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-
-        // order is RGB and image is upside down, bitmaps are BGR
-//        for (int i = headerlength, dataOffset = length; i<result.length; i += 3, dataOffset -= 3)
-//        {
-//            byte b = thumbnailBytes[dataOffset - 2];
-//            byte g = thumbnailBytes[dataOffset - 1];
-//            byte r = thumbnailBytes[dataOffset];
-//
-//            // TODO compose the image here
-//            image.setRGB(1, 2, 3);
-//        }
-
-        return image;
-    }
-*/
-
-    public boolean containsThumbnail()
-    {
-        return containsTag(ExifDirectory.TAG_THUMBNAIL_DATA);
     }
 }

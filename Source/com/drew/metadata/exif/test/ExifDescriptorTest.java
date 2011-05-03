@@ -72,7 +72,7 @@ public class ExifDescriptorTest
     }
 
     @Test
-    @Ignore
+    @Ignore(value = "Need a decent sample image with non-ASCII user comment field to show realistic test values")
     public void testUserCommentDescription_AsciiHeaderExtendedAsciiEncoding() throws Exception
     {
         byte[] commentBytes = "ASCII\0\0This is a comment with extended characters ��� ���".getBytes();

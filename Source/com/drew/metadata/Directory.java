@@ -396,7 +396,7 @@ public abstract class Directory
 
         Object o = getObject(tagType);
         if (o == null)
-            throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
+            throw new MetadataException("Tag '" + getTagName(tagType) + "' has not been set -- check using containsTag() first");
         throw new MetadataException("Tag '" + tagType + "' cannot be converted to int.  It is of type '" + o.getClass() + "'.");
     }
 
@@ -591,7 +591,7 @@ public abstract class Directory
             return value;
         Object o = getObject(tagType);
         if (o == null)
-            throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
+            throw new MetadataException("Tag '" + getTagName(tagType) + "' has not been set -- check using containsTag() first");
         throw new MetadataException("Tag '" + tagType + "' cannot be converted to a double.  It is of type '" + o.getClass() + "'.");
     }
     /** Returns the specified tag's value as a Double.  If the tag is not set or cannot be converted, <code>null</code> is returned. */
@@ -622,7 +622,7 @@ public abstract class Directory
             return value;
         Object o = getObject(tagType);
         if (o == null)
-            throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
+            throw new MetadataException("Tag '" + getTagName(tagType) + "' has not been set -- check using containsTag() first");
         throw new MetadataException("Tag '" + tagType + "' cannot be converted to a float.  It is of type '" + o.getClass() + "'.");
     }
 
@@ -653,7 +653,7 @@ public abstract class Directory
             return value;
         Object o = getObject(tagType);
         if (o == null)
-            throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
+            throw new MetadataException("Tag '" + getTagName(tagType) + "' has not been set -- check using containsTag() first");
         throw new MetadataException("Tag '" + tagType + "' cannot be converted to a long.  It is of type '" + o.getClass() + "'.");
     }
 
@@ -684,7 +684,7 @@ public abstract class Directory
             return value;
         Object o = getObject(tagType);
         if (o == null)
-            throw new MetadataException("Tag " + getTagName(tagType) + " has not been set -- check using containsTag() first");
+            throw new MetadataException("Tag '" + getTagName(tagType) + "' has not been set -- check using containsTag() first");
         throw new MetadataException("Tag '" + tagType + "' cannot be converted to a boolean.  It is of type '" + o.getClass() + "'.");
     }
 

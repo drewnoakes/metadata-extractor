@@ -22,7 +22,6 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -35,7 +34,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class PanasonicMakernoteDescriptor extends TagDescriptor
 {
-    public PanasonicMakernoteDescriptor(@NotNull Directory directory)
+    public PanasonicMakernoteDescriptor(@NotNull PanasonicMakernoteDirectory directory)
     {
         super(directory);
     }

@@ -22,7 +22,6 @@ package com.drew.metadata.jfif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -34,7 +33,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class JfifDescriptor extends TagDescriptor
 {
-    public JfifDescriptor(@NotNull Directory directory)
+    public JfifDescriptor(@NotNull JfifDirectory directory)
     {
         super(directory);
     }

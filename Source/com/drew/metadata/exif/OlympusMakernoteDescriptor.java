@@ -22,7 +22,6 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -32,7 +31,7 @@ import com.drew.metadata.TagDescriptor;
  */
 public class OlympusMakernoteDescriptor extends TagDescriptor
 {
-    public OlympusMakernoteDescriptor(@NotNull Directory directory)
+    public OlympusMakernoteDescriptor(@NotNull OlympusMakernoteDirectory directory)
     {
         super(directory);
     }
