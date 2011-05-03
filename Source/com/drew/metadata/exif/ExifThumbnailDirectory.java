@@ -215,42 +215,42 @@ public class ExifThumbnailDirectory extends Directory
 
         int compression = 0;
         try {
-            compression = this.getInt(ExifDirectory.TAG_COMPRESSION);
+            compression = this.getInt(ExifSubIFDDirectory.TAG_COMPRESSION);
         } catch (Throwable e) {
             this.addError("Unable to determine thumbnail type " + e.getMessage());
         }
 
         final byte[] thumbnailBytes = getThumbnailData();
 
-        if (compression == ExifDirectory.COMPRESSION_JPEG)
+        if (compression == ExifSubIFDDirectory.COMPRESSION_JPEG)
         {
             // JPEG Thumbnail
             // operate directly on thumbnailBytes
             return decodeBytesAsImage(thumbnailBytes);
         }
-        else if (compression == ExifDirectory.COMPRESSION_NONE)
+        else if (compression == ExifSubIFDDirectory.COMPRESSION_NONE)
         {
             // uncompressed thumbnail (raw RGB data)
-            if (!this.containsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION))
+            if (!this.containsTag(ExifSubIFDDirectory.TAG_PHOTOMETRIC_INTERPRETATION))
                 return null;
 
             try
             {
                 // If the image is RGB format, then convert it to a bitmap
-                final int photometricInterpretation = this.getInt(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION);
-                if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_RGB)
+                final int photometricInterpretation = this.getInt(ExifSubIFDDirectory.TAG_PHOTOMETRIC_INTERPRETATION);
+                if (photometricInterpretation == ExifSubIFDDirectory.PHOTOMETRIC_INTERPRETATION_RGB)
                 {
                     // RGB
                     Image image = createImageFromRawRgb(thumbnailBytes);
                     return image;
                 }
-                else if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_YCBCR)
+                else if (photometricInterpretation == ExifSubIFDDirectory.PHOTOMETRIC_INTERPRETATION_YCBCR)
                 {
                     // YCbCr
                     Image image = createImageFromRawYCbCr(thumbnailBytes);
                     return image;
                 }
-                else if (photometricInterpretation == ExifDirectory.PHOTOMETRIC_INTERPRETATION_MONOCHROME)
+                else if (photometricInterpretation == ExifSubIFDDirectory.PHOTOMETRIC_INTERPRETATION_MONOCHROME)
                 {
                     // Monochrome
                     return null;
@@ -302,9 +302,9 @@ public class ExifThumbnailDirectory extends Directory
             http://www.faqs.org/faqs/graphics/colorspace-faq/
         * /
 
-        int length = thumbnailBytes.length; // this.getInt(ExifDirectory.TAG_STRIP_BYTE_COUNTS);
-        final int imageWidth = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-        final int imageHeight = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
+        int length = thumbnailBytes.length; // this.getInt(ExifSubIFDDirectory.TAG_STRIP_BYTE_COUNTS);
+        final int imageWidth = this.getInt(ExifSubIFDDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
+        final int imageHeight = this.getInt(ExifSubIFDDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
 //        final int headerLength = 54;
 //        byte[] result = new byte[length + headerLength];
 //        // Add a windows BMP header described:
@@ -356,9 +356,9 @@ public class ExifThumbnailDirectory extends Directory
      * /
     private Image createImageFromRawRgb(byte[] thumbnailBytes) throws MetadataException
     {
-        final int length = thumbnailBytes.length; // this.getInt(ExifDirectory.TAG_STRIP_BYTE_COUNTS);
-        final int imageWidth = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-        final int imageHeight = this.getInt(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
+        final int length = thumbnailBytes.length; // this.getInt(ExifSubIFDDirectory.TAG_STRIP_BYTE_COUNTS);
+        final int imageWidth = this.getInt(ExifSubIFDDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
+        final int imageHeight = this.getInt(ExifSubIFDDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
 //        final int headerLength = 54;
 //        final byte[] result = new byte[length + headerLength];
 //        // Add a windows BMP header described:

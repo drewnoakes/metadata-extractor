@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifDirectory},
+ * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifSubIFDDirectory},
  * {@link ExifThumbnailDirectory}, {@link ExifInteropDirectory}, {@link GpsDirectory} and one of the many camera makernote directories.
  *
  * @author Drew Noakes http://drewnoakes.com
@@ -73,7 +73,7 @@ public class ExifReader implements MetadataReader
     private static final int FMT_DOUBLE = 12;
 
     /** This tag is a pointer to the Exif SubIFD. */
-    public static final int TAG_EXIF_OFFSET = 0x8769;
+    public static final int TAG_EXIF_SUB_IFD_OFFSET = 0x8769;
     /** This tag is a pointer to the Exif Interop IFD. */
     public static final int TAG_INTEROP_OFFSET = 0xA005;
     /** This tag is a pointer to the Exif GPS IFD. */
@@ -92,7 +92,7 @@ public class ExifReader implements MetadataReader
      */
     public void extract(@NotNull byte[] data, @NotNull Metadata metadata)
     {
-        final ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
+        final ExifSubIFDDirectory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
         final BufferReader reader = new BufferReader(data);
 
         // check for the header length
@@ -108,7 +108,7 @@ public class ExifReader implements MetadataReader
                 return;
             }
 
-            extractIFD(metadata, metadata.getOrCreateDirectory(ExifDirectory.class), TIFF_HEADER_START_OFFSET, reader);
+            extractIFD(metadata, metadata.getOrCreateDirectory(ExifIFD0Directory.class), TIFF_HEADER_START_OFFSET, reader);
         } catch (BufferBoundsException e) {
             directory.addError("Exif data segment ended prematurely");
         }
@@ -123,7 +123,7 @@ public class ExifReader implements MetadataReader
      */
     public void extractTiff(@NotNull byte[] data, @NotNull Metadata metadata)
     {
-        final ExifDirectory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
+        final ExifIFD0Directory directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
         final BufferReader reader = new BufferReader(data);
 
         try {
@@ -133,7 +133,7 @@ public class ExifReader implements MetadataReader
         }
     }
 
-    private void extractIFD(@NotNull Metadata metadata, @NotNull final ExifDirectory directory, int tiffHeaderOffset, @NotNull BufferReader reader) throws BufferBoundsException
+    private void extractIFD(@NotNull Metadata metadata, @NotNull final ExifIFD0Directory directory, int tiffHeaderOffset, @NotNull BufferReader reader) throws BufferBoundsException
     {
         // this should be either "MM" or "II"
         String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
@@ -164,7 +164,6 @@ public class ExifReader implements MetadataReader
 
         HashSet<Integer> processedDirectoryOffsets = new HashSet<Integer>();
 
-        // 0th IFD (we merge with Exif IFD)
         processDirectory(directory, processedDirectoryOffsets, firstDirectoryOffset, tiffHeaderOffset, metadata, reader);
 
         // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
@@ -270,9 +269,9 @@ public class ExifReader implements MetadataReader
             }
 
             switch (tagType) {
-                case TAG_EXIF_OFFSET: {
+                case TAG_EXIF_SUB_IFD_OFFSET: {
                     final int subdirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset);
-                    processDirectory(metadata.getOrCreateDirectory(ExifDirectory.class), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset, metadata, reader);
+                    processDirectory(metadata.getOrCreateDirectory(ExifSubIFDDirectory.class), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset, metadata, reader);
                     continue;
                 }
                 case TAG_INTEROP_OFFSET: {
@@ -309,20 +308,21 @@ public class ExifReader implements MetadataReader
                 // Last 4 bytes of IFD reference another IFD with an address that is before the start of this directory
                 return;
             }
-            // the next directory is of same type as this one
-            processDirectory(metadata.getOrCreateDirectory(ExifThumbnailDirectory.class), processedDirectoryOffsets, nextDirectoryOffset, tiffHeaderOffset, metadata, reader);
+            // TODO in Exif, the only known 'follower' IFD is the thumbnail one, however this may not be the case
+            final ExifThumbnailDirectory nextDirectory = metadata.getOrCreateDirectory(ExifThumbnailDirectory.class);
+            processDirectory(nextDirectory, processedDirectoryOffsets, nextDirectoryOffset, tiffHeaderOffset, metadata, reader);
         }
     }
 
     private void processMakerNote(int subdirOffset, @NotNull Set<Integer> processedDirectoryOffsets, int tiffHeaderOffset, @NotNull final Metadata metadata, @NotNull BufferReader reader) throws BufferBoundsException
     {
         // Determine the camera model and makernote format
-        Directory exifDirectory = metadata.getDirectory(ExifDirectory.class);
+        Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
 
-        if (exifDirectory==null)
+        if (ifd0Directory==null)
             return;
 
-        String cameraModel = exifDirectory.getString(ExifDirectory.TAG_MAKE);
+        String cameraModel = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
         //final String firstTwoChars = reader.getString(subdirOffset, 2);
         final String firstThreeChars = reader.getString(subdirOffset, 3);
@@ -355,7 +355,7 @@ public class ExifReader implements MetadataReader
                         processDirectory(metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 18, subdirOffset + 10, metadata, reader);
                         break;
                     default:
-                        exifDirectory.addError("Unsupported Nikon makernote data ignored.");
+                        ifd0Directory.addError("Unsupported Nikon makernote data ignored.");
                         break;
                 }
             } else {
@@ -444,9 +444,9 @@ public class ExifReader implements MetadataReader
                 // special handling for certain known tags, proposed by Yuri Binev but left out for now,
                 // as it gives the false impression that the image was captured in the same timezone
                 // in which the string is parsed
-                if (tagType==ExifDirectory.TAG_DATETIME ||
-                    tagType==ExifDirectory.TAG_DATETIME_ORIGINAL ||
-                    tagType==ExifDirectory.TAG_DATETIME_DIGITIZED) {
+                if (tagType==ExifSubIFDDirectory.TAG_DATETIME ||
+                    tagType==ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL ||
+                    tagType==ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED) {
                     String[] datePatterns = {
                         "yyyy:MM:dd HH:mm:ss",
                         "yyyy:MM:dd HH:mm",

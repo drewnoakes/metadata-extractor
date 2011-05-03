@@ -26,11 +26,11 @@ import com.drew.metadata.Directory;
 import java.util.HashMap;
 
 /**
- * Describes Exif tags such as Camera Model, Date Taken, Aperture and Shutter Speed.
+ * Describes Exif tags from the SubIFD directory.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class ExifDirectory extends Directory
+public class ExifSubIFDDirectory extends Directory
 {
     /**
      * The actual aperture value of lens when the image was taken. Unit is APEX.
@@ -89,14 +89,6 @@ public class ExifDirectory extends Directory
      */
     public static final int TAG_PLANAR_CONFIGURATION = 0x011C;
     public static final int TAG_YCBCR_SUBSAMPLING = 0x0212;
-    public static final int TAG_IMAGE_DESCRIPTION = 0x010E;
-    public static final int TAG_SOFTWARE = 0x0131;
-    public static final int TAG_DATETIME = 0x0132;
-    public static final int TAG_WHITE_POINT = 0x013E;
-    public static final int TAG_PRIMARY_CHROMATICITIES = 0x013F;
-    public static final int TAG_YCBCR_COEFFICIENTS = 0x0211;
-    public static final int TAG_REFERENCE_BLACK_WHITE = 0x0214;
-    public static final int TAG_COPYRIGHT = 0x8298;
 
     /**
      * The new subfile type tag.
@@ -161,14 +153,7 @@ public class ExifDirectory extends Directory
     public static final int TAG_FLASH_ENERGY_2 = 0xA20B;
     public static final int TAG_SPATIAL_FREQ_RESPONSE_2 = 0xA20C;
     public static final int TAG_SUBJECT_LOCATION_2 = 0xA214;
-    public static final int TAG_MAKE = 0x010F;
-    public static final int TAG_MODEL = 0x0110;
-    public static final int TAG_ORIENTATION = 0x0112;
-    public static final int TAG_X_RESOLUTION = 0x011A;
-    public static final int TAG_Y_RESOLUTION = 0x011B;
     public static final int TAG_PAGE_NAME = 0x011D;
-    public static final int TAG_RESOLUTION_UNIT = 0x0128;
-    public static final int TAG_YCBCR_POSITIONING = 0x0213;
     /**
      * Exposure time (reciprocal of shutter speed). Unit is second.
      */
@@ -490,31 +475,6 @@ public class ExifDirectory extends Directory
     public static final int TAG_IMAGE_UNIQUE_ID = 0xA420;
 
     /**
-     * The image title, as used by Windows XP.
-     */
-    public static final int TAG_WIN_TITLE = 0x9C9B;
-
-    /**
-     * The image comment, as used by Windows XP.
-     */
-    public static final int TAG_WIN_COMMENT = 0x9C9C;
-
-    /**
-     * The image author, as used by Windows XP (called Artist in the Windows shell).
-     */
-    public static final int TAG_WIN_AUTHOR = 0x9C9D;
-
-    /**
-     * The image keywords, as used by Windows XP.
-     */
-    public static final int TAG_WIN_KEYWORDS = 0x9C9E;
-
-    /**
-     * The image subject, as used by Windows XP.
-     */
-    public static final int TAG_WIN_SUBJECT = 0x9C9F;
-
-    /**
      * 1 = Normal
      * 2 = Reversed
      */
@@ -530,12 +490,12 @@ public class ExifDirectory extends Directory
     {
         _tagNameMap.put(TAG_FILL_ORDER, "Fill Order");
         _tagNameMap.put(TAG_DOCUMENT_NAME, "Document Name");
+        // TODO why don't these tags have fields associated with them?
         _tagNameMap.put(0x1000, "Related Image File Format");
         _tagNameMap.put(0x1001, "Related Image Width");
         _tagNameMap.put(0x1002, "Related Image Length");
         _tagNameMap.put(0x0156, "Transfer Range");
         _tagNameMap.put(0x0200, "JPEG Proc");
-        _tagNameMap.put(0x8769, "Exif Offset");
         _tagNameMap.put(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL, "Compressed Bits Per Pixel");
         _tagNameMap.put(0x927C, "Maker Note");
         _tagNameMap.put(0xA005, "Interoperability Offset");
@@ -545,39 +505,24 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
         _tagNameMap.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
         _tagNameMap.put(TAG_THRESHOLDING, "Thresholding");
-        _tagNameMap.put(TAG_IMAGE_DESCRIPTION, "Image Description");
-        _tagNameMap.put(TAG_MAKE, "Make");
-        _tagNameMap.put(TAG_MODEL, "Model");
         _tagNameMap.put(TAG_STRIP_OFFSETS, "Strip Offsets");
-        _tagNameMap.put(TAG_ORIENTATION, "Orientation");
         _tagNameMap.put(TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
         _tagNameMap.put(TAG_ROWS_PER_STRIP, "Rows Per Strip");
         _tagNameMap.put(TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
-        _tagNameMap.put(TAG_X_RESOLUTION, "X Resolution");
-        _tagNameMap.put(TAG_Y_RESOLUTION, "Y Resolution");
         _tagNameMap.put(TAG_PAGE_NAME, "Page Name");
         _tagNameMap.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
-        _tagNameMap.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
         _tagNameMap.put(TAG_TRANSFER_FUNCTION, "Transfer Function");
-        _tagNameMap.put(TAG_SOFTWARE, "Software");
-        _tagNameMap.put(TAG_DATETIME, "Date/Time");
         _tagNameMap.put(TAG_ARTIST, "Artist");
         _tagNameMap.put(TAG_PREDICTOR, "Predictor");
-        _tagNameMap.put(TAG_WHITE_POINT, "White Point");
-        _tagNameMap.put(TAG_PRIMARY_CHROMATICITIES, "Primary Chromaticities");
         _tagNameMap.put(TAG_TILE_WIDTH, "Tile Width");
         _tagNameMap.put(TAG_TILE_LENGTH, "Tile Length");
         _tagNameMap.put(TAG_TILE_OFFSETS, "Tile Offsets");
         _tagNameMap.put(TAG_TILE_BYTE_COUNTS, "Tile Byte Counts");
         _tagNameMap.put(TAG_JPEG_TABLES, "JPEG Tables");
-        _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
         _tagNameMap.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
-        _tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
-        _tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
         _tagNameMap.put(TAG_CFA_REPEAT_PATTERN_DIM, "CFA Repeat Pattern Dim");
         _tagNameMap.put(TAG_CFA_PATTERN_2, "CFA Pattern");
         _tagNameMap.put(TAG_BATTERY_LEVEL, "Battery Level");
-        _tagNameMap.put(TAG_COPYRIGHT, "Copyright");
         _tagNameMap.put(TAG_EXPOSURE_TIME, "Exposure Time");
         _tagNameMap.put(TAG_FNUMBER, "F-Number");
         _tagNameMap.put(TAG_IPTC_NAA, "IPTC/NAA");
@@ -656,27 +601,21 @@ public class ExifDirectory extends Directory
         _tagNameMap.put(TAG_SUBJECT_DISTANCE_RANGE, "Subject Distance Range");
         _tagNameMap.put(TAG_IMAGE_UNIQUE_ID, "Unique Image ID");
 
-        _tagNameMap.put(TAG_WIN_AUTHOR, "Windows XP Author");
-        _tagNameMap.put(TAG_WIN_COMMENT, "Windows XP Comment");
-        _tagNameMap.put(TAG_WIN_KEYWORDS, "Windows XP Keywords");
-        _tagNameMap.put(TAG_WIN_SUBJECT, "Windows XP Subject");
-        _tagNameMap.put(TAG_WIN_TITLE, "Windows XP Title");
-
         _tagNameMap.put(TAG_MIN_SAMPLE_VALUE, "Minimum sample value");
         _tagNameMap.put(TAG_MAX_SAMPLE_VALUE, "Maximum sample value");
 
         _tagNameMap.put(TAG_LENS, "Lens");
     }
 
-    public ExifDirectory()
+    public ExifSubIFDDirectory()
     {
-        this.setDescriptor(new ExifDescriptor(this));
+        this.setDescriptor(new ExifSubIFDDescriptor(this));
     }
 
     @NotNull
     public String getName()
     {
-        return "Exif";
+        return "Exif SubIFD";
     }
 
     @NotNull

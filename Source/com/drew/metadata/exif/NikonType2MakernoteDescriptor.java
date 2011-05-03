@@ -417,6 +417,6 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION);
         if (values==null)
             return null;
-        return ExifDescriptor.convertBytesToVersionString(values);
+        return ExifSubIFDDescriptor.convertBytesToVersionString(values);
     }
 }

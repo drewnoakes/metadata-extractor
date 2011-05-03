@@ -36,7 +36,7 @@ import java.text.DecimalFormat;
  */
 public class XmpDescriptor extends TagDescriptor
 {
-    // TODO some of these methods look similar to those found in ExifDescriptor... extract common functionality from both
+    // TODO some of these methods look similar to those found in ExifSubIFDDescriptor... extract common functionality from both
 
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
@@ -75,7 +75,7 @@ public class XmpDescriptor extends TagDescriptor
         }
     }
 
-    /** Do a simple formatting like ExifDescriptor.java */
+    /** Do a simple formatting like ExifSubIFDDescriptor.java */
     @Nullable
     public String getExposureTimeDescription()
     {
@@ -85,7 +85,7 @@ public class XmpDescriptor extends TagDescriptor
         return value + " sec";
     }
 
-    /** This code is from ExifDescriptor.java */
+    /** This code is from ExifSubIFDDescriptor.java */
     @Nullable
     public String getExposureProgramDescription()
     {
@@ -118,7 +118,7 @@ public class XmpDescriptor extends TagDescriptor
     }
 
 
-    /** This code is from ExifDescriptor.java */
+    /** This code is from ExifSubIFDDescriptor.java */
     @Nullable
     public String getShutterSpeedDescription()
     {
@@ -140,7 +140,7 @@ public class XmpDescriptor extends TagDescriptor
         }
     }
 
-    /** Do a simple formatting like ExifDescriptor.java */
+    /** Do a simple formatting like ExifSubIFDDescriptor.java */
     @Nullable
     public String getFNumberDescription()
     {
@@ -150,7 +150,7 @@ public class XmpDescriptor extends TagDescriptor
         return "F" + SimpleDecimalFormatter.format(value.doubleValue());
     }
 
-    /** This code is from ExifDescriptor.java */
+    /** This code is from ExifSubIFDDescriptor.java */
     @Nullable
     public String getFocalLengthDescription()
     {
@@ -161,7 +161,7 @@ public class XmpDescriptor extends TagDescriptor
         return formatter.format(value.doubleValue()) + " mm";
     }
 
-    /** This code is from ExifDescriptor.java */
+    /** This code is from ExifSubIFDDescriptor.java */
     @Nullable
     public String getApertureValueDescription()
     {

@@ -55,7 +55,7 @@ public class ExifInteropDescriptor extends TagDescriptor
         int[] ints = _directory.getIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION);
         if (ints==null)
             return null;
-        return ExifDescriptor.convertBytesToVersionString(ints);
+        return ExifSubIFDDescriptor.convertBytesToVersionString(ints);
     }
 
     @Nullable

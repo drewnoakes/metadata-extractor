@@ -22,7 +22,7 @@ package com.drew.metadata.test;
 
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,17 +45,17 @@ public class DirectoryTest
 
     @Test public void testSetAndGetMultipleTagsInSingleDirectory() throws Exception
     {
-        _directory.setString(ExifDirectory.TAG_APERTURE, "TAG_APERTURE");
-        _directory.setString(ExifDirectory.TAG_BATTERY_LEVEL, "TAG_BATTERY_LEVEL");
-        Assert.assertEquals("TAG_APERTURE", _directory.getString(ExifDirectory.TAG_APERTURE));
-        Assert.assertEquals("TAG_BATTERY_LEVEL", _directory.getString(ExifDirectory.TAG_BATTERY_LEVEL));
+        _directory.setString(ExifSubIFDDirectory.TAG_APERTURE, "TAG_APERTURE");
+        _directory.setString(ExifSubIFDDirectory.TAG_BATTERY_LEVEL, "TAG_BATTERY_LEVEL");
+        Assert.assertEquals("TAG_APERTURE", _directory.getString(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertEquals("TAG_BATTERY_LEVEL", _directory.getString(ExifSubIFDDirectory.TAG_BATTERY_LEVEL));
     }
 
     @Test public void testSetSameTagMultipleTimesOverwritesValue() throws Exception
     {
-        _directory.setInt(ExifDirectory.TAG_APERTURE, 1);
-        _directory.setInt(ExifDirectory.TAG_APERTURE, 2);
-        Assert.assertEquals(2, _directory.getInt(ExifDirectory.TAG_APERTURE));
+        _directory.setInt(ExifSubIFDDirectory.TAG_APERTURE, 1);
+        _directory.setInt(ExifSubIFDDirectory.TAG_APERTURE, 2);
+        Assert.assertEquals(2, _directory.getInt(ExifSubIFDDirectory.TAG_APERTURE));
     }
 
     @Test
@@ -142,25 +142,25 @@ public class DirectoryTest
     @Test
     public void testContainsTag() throws Exception
     {
-        Assert.assertFalse(_directory.containsTag(ExifDirectory.TAG_APERTURE));
-        _directory.setString(ExifDirectory.TAG_APERTURE, "Tag Value");
-        Assert.assertTrue(_directory.containsTag(ExifDirectory.TAG_APERTURE));
+        Assert.assertFalse(_directory.containsTag(ExifSubIFDDirectory.TAG_APERTURE));
+        _directory.setString(ExifSubIFDDirectory.TAG_APERTURE, "Tag Value");
+        Assert.assertTrue(_directory.containsTag(ExifSubIFDDirectory.TAG_APERTURE));
     }
 
     @Test
     public void testGetNonExistentTagIsNullForAllTypes() throws Exception
     {
-        Assert.assertNull(_directory.getString(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getInteger(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getDoubleObject(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getFloatObject(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getByteArray(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getDate(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getIntArray(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getLongObject(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getObject(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getRational(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getRationalArray(ExifDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getStringArray(ExifDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getString(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getInteger(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getDoubleObject(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getFloatObject(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getByteArray(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getDate(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getIntArray(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getLongObject(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getObject(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getRational(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getRationalArray(ExifSubIFDDirectory.TAG_APERTURE));
+        Assert.assertNull(_directory.getStringArray(ExifSubIFDDirectory.TAG_APERTURE));
     }
 }

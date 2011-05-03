@@ -23,7 +23,7 @@ package com.drew.imaging.jpeg.test;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,9 +42,9 @@ public class JpegMetadataReaderTest
     {
         File withExif = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(withExif);
-        Assert.assertTrue(metadata.containsDirectory(ExifDirectory.class));
-        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
-        Assert.assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));
+        Assert.assertTrue(metadata.containsDirectory(ExifSubIFDDirectory.class));
+        Directory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
+        Assert.assertEquals("80", directory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
     }
 
     @Test
@@ -53,8 +53,8 @@ public class JpegMetadataReaderTest
         File withExif = new File("Source/com/drew/metadata/exif/test/withExif.jpg");
         InputStream in = new BufferedInputStream(new FileInputStream((withExif)));
         Metadata metadata = JpegMetadataReader.readMetadata(in);
-        Assert.assertTrue(metadata.containsDirectory(ExifDirectory.class));
-        Directory directory = metadata.getOrCreateDirectory(ExifDirectory.class);
-        Assert.assertEquals("80", directory.getString(ExifDirectory.TAG_ISO_EQUIVALENT));
+        Assert.assertTrue(metadata.containsDirectory(ExifSubIFDDirectory.class));
+        Directory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
+        Assert.assertEquals("80", directory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
     }
 }

@@ -23,9 +23,11 @@ package com.drew.metadata.exif.test;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,9 +44,15 @@ public class ExifDirectoryTest
     public void testGetDirectoryName() throws Exception
     {
         Metadata metadata = new Metadata();
-        ExifDirectory exifDirectory = metadata.getOrCreateDirectory(ExifDirectory.class);
-        Assert.assertFalse(exifDirectory.hasErrors());
-        Assert.assertEquals("Exif", exifDirectory.getName());
+        Directory subIFDDirectory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
+        Directory ifd0Directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
+        Directory thumbDirectory = metadata.getOrCreateDirectory(ExifThumbnailDirectory.class);
+
+        Assert.assertFalse(subIFDDirectory.hasErrors());
+
+        Assert.assertEquals("Exif IFD0", ifd0Directory.getName());
+        Assert.assertEquals("Exif SubIFD", subIFDDirectory.getName());
+        Assert.assertEquals("Exif Thumbnail", thumbDirectory.getName());
     }
 
     @Test
@@ -92,11 +100,11 @@ public class ExifDirectoryTest
 //    @Test
 //    public void testContainsThumbnail()
 //    {
-//        ExifDirectory exifDirectory = new ExifDirectory();
+//        ExifSubIFDDirectory exifDirectory = new ExifSubIFDDirectory();
 //
 //        Assert.assertTrue(!exifDirectory.hasThumbnailData());
 //
-//        exifDirectory.setObject(ExifDirectory.TAG_THUMBNAIL_DATA, "foo");
+//        exifDirectory.setObject(ExifSubIFDDirectory.TAG_THUMBNAIL_DATA, "foo");
 //
 //        Assert.assertTrue(exifDirectory.hasThumbnailData());
 //    }
@@ -111,8 +119,8 @@ public class ExifDirectoryTest
         Assert.assertNotNull(thumbnailDirectory);
         Assert.assertEquals(72, thumbnailDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
         
-        ExifDirectory exifDirectory = metadata.getDirectory(ExifDirectory.class);
-        Assert.assertNotNull(exifDirectory);
-        Assert.assertEquals(216, exifDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
+        ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+        Assert.assertNotNull(exifIFD0Directory);
+        Assert.assertEquals(216, exifIFD0Directory.getInt(ExifIFD0Directory.TAG_X_RESOLUTION));
     }
 }

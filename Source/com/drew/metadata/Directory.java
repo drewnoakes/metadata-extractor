@@ -25,6 +25,7 @@ import com.drew.lang.annotations.SuppressWarnings;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -833,6 +834,19 @@ public abstract class Directory
         // do not trim.  Also, if support is added for writing data back to files, this may cause issues.
         // We leave trimming to the presentation layer.
         return o.toString();
+    }
+
+    @Nullable
+    public String getString(int tagType, String charset)
+    {
+        byte[] bytes = getByteArray(tagType);
+        if (bytes==null)
+            return null;
+        try {
+            return new String(bytes, charset);
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
 
     /**
