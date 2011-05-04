@@ -364,6 +364,8 @@ public class ExifReader implements MetadataReader
             }
         } else if ("SONY CAM".equals(firstEightChars) || "SONY DSC".equals(firstEightChars)) {
             processDirectory(metadata.getOrCreateDirectory(SonyType1MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 12, tiffHeaderOffset, metadata, reader);
+        } else if ("SIGMA\u0000\u0000\u0000".equals(firstEightChars) || "FOVEON\u0000\u0000".equals(firstEightChars)) {
+            processDirectory(metadata.getOrCreateDirectory(SigmaMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 10, tiffHeaderOffset, metadata, reader);
         } else if ("SEMC MS\u0000\u0000\u0000\u0000\u0000".equals(firstTwelveChars)) {
             // force MM for this directory
             boolean isMotorola = reader.isMotorolaByteOrder();
