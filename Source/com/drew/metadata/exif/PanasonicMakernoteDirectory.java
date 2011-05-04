@@ -517,6 +517,8 @@ public class PanasonicMakernoteDirectory extends Directory
             return null;
 
         BufferReader reader = new BufferReader(bytes);
+        reader.setMotorolaByteOrder(false);
+        
         try {
             int faceCount = reader.getUInt16(0);
             if (faceCount==0)
@@ -546,6 +548,8 @@ public class PanasonicMakernoteDirectory extends Directory
             return null;
 
         BufferReader reader = new BufferReader(bytes);
+        reader.setMotorolaByteOrder(false);
+
         try {
             int faceCount = reader.getUInt16(0);
             if (faceCount==0)

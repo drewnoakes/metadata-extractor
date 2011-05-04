@@ -27,7 +27,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.PanasonicMakernoteDirectory;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -42,12 +41,12 @@ public class PanasonicMakernoteDescriptorTest
     @Before
     public void setUp() throws Exception
     {
-        File file = new File("Source/com/drew/metadata/exif/test/Panasonic.jpg");
+        File file = new File("Source/com/drew/metadata/exif/test/withPanasonicFaces.jpg");
         Metadata metadata = JpegMetadataReader.readMetadata(file);
         _panasonicDirectory = metadata.getDirectory(PanasonicMakernoteDirectory.class);
     }
 
-    @Test @Ignore(value = "Need a sample image that contains a detected face")
+    @Test // @Ignore(value = "Need a sample image that contains a detected face")
     public void testGetDetectedFaces() throws Exception
     {
         Face expResult = new Face(142, 120, 76, 76, null, null);
@@ -56,7 +55,7 @@ public class PanasonicMakernoteDescriptorTest
         Assert.assertEquals(expResult, result[0]);
     }
 
-    @Test @Ignore(value = "Need a sample image that contains a recognised face")
+    @Test // @Ignore(value = "Need a sample image that contains a recognised face")
     public void testGetRecognizedFaces() throws Exception
     {
         Face expResult = new Face(142, 120, 76, 76, "NIELS", "0031:07:15 00:00:00");
