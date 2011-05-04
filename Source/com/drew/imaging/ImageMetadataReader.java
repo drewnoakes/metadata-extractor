@@ -81,11 +81,11 @@ public class ImageMetadataReader
     {
         BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
 
-        int magicNumber = readMagicNumber(inputStream);
+        int magicNumber;
         try {
+            magicNumber = readMagicNumber(inputStream);
+        } finally {
             inputStream.close();
-        } catch (IOException e) {
-            throw new ImageProcessingException("Error closing file: " + file.getPath(), e);
         }
 
         return readMetadata(null, file, magicNumber, false);
@@ -115,17 +115,11 @@ public class ImageMetadataReader
         throw new ImageProcessingException("File format is not supported");
     }
 
-    private static int readMagicNumber(@NotNull BufferedInputStream inputStream) throws ImageProcessingException
+    private static int readMagicNumber(@NotNull BufferedInputStream inputStream) throws IOException
     {
-        int magicNumber;
-        try {
-            inputStream.mark(2);
-            magicNumber = inputStream.read() << 8;
-            magicNumber |= inputStream.read();
-            inputStream.reset();
-        } catch (IOException e) {
-            throw new ImageProcessingException("Error reading image data", e);
-        }
+        inputStream.mark(2);
+        int magicNumber = inputStream.read() << 8 | inputStream.read();
+        inputStream.reset();
         return magicNumber;
     }
 
