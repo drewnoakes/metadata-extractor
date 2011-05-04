@@ -736,7 +736,9 @@ public abstract class Directory
                     "yyyy:MM:dd HH:mm:ss",
                     "yyyy:MM:dd HH:mm",
                     "yyyy-MM-dd HH:mm:ss",
-                    "yyyy-MM-dd HH:mm" };
+                    "yyyy-MM-dd HH:mm",
+                    "yyyy.MM.dd HH:mm:ss",
+                    "yyyy.MM.dd HH:mm" };
             String dateString = (String)o;
             for (String datePattern : datePatterns) {
                 try {
