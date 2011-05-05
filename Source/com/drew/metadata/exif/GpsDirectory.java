@@ -89,7 +89,7 @@ public class GpsDirectory extends Directory
 
     /** Values of "GPS", "CELLID", "WLAN" or "MANUAL" by the EXIF spec. */
     public static final int TAG_GPS_PROCESSING_METHOD = 0x001B;
-    public static final int TAG_GPS_AREA_INFORMATION = 0x001D;
+    public static final int TAG_GPS_AREA_INFORMATION = 0x001C;
     public static final int TAG_GPS_DATE_STAMP = 0x001D;
     public static final int TAG_GPS_DIFFERENTIAL = 0x001E;
 
