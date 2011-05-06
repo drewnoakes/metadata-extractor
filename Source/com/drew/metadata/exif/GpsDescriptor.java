@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.text.DecimalFormat;
+
 /**
  * Provides human-readable string representations of tag values stored in a <code>GpsDirectory</code>.
  *
@@ -126,8 +128,12 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsDirectionDescription(int tagType)
     {
-        final String value = _directory.getString(tagType);
-        if (value==null)
+        Rational angle = _directory.getRational(tagType);
+        // provide a decimal version of rational numbers in the description, to avoid strings like "35334/199 degrees"
+        String value = angle != null
+                ? new DecimalFormat("0.##").format(angle.doubleValue())
+                : _directory.getString(tagType);
+        if (value==null || value.trim().length()==0)
             return null;
         return value.trim() + " degrees";
     }
