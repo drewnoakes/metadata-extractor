@@ -44,7 +44,7 @@ public abstract class Directory
 
     /** Map of values hashed by type identifiers. */
     @NotNull
-    protected final HashMap<Integer, Object> _tagMap = new HashMap<Integer, Object>();
+    protected final Map<Integer, Object> _tagMap = new HashMap<Integer, Object>();
 
     /**
      * A convenient list holding tag values in the order in which they were stored.
@@ -52,10 +52,10 @@ public abstract class Directory
      * defined tags.
      */
     @NotNull
-    protected final List<Tag> _definedTagList = new ArrayList<Tag>();
+    protected final Collection<Tag> _definedTagList = new ArrayList<Tag>();
 
     @NotNull
-    private final List<String> _errorList = new ArrayList<String>(4);
+    private final Collection<String> _errorList = new ArrayList<String>(4);
 
     /** The descriptor used to interpret tag values. */
     protected TagDescriptor _descriptor;
@@ -515,8 +515,8 @@ public abstract class Directory
             }
             return ints;
         }
-        if (o instanceof String) {
-            String str = (String)o;
+        if (o instanceof CharSequence) {
+            CharSequence str = (CharSequence)o;
             int[] ints = new int[str.length()];
             for (int i = 0; i < str.length(); i++) {
                 ints[i] = str.charAt(i);
@@ -558,8 +558,8 @@ public abstract class Directory
                 bytes[i] = (byte)ints[i];
             }
             return bytes;
-        } else if (o instanceof String) {
-            String str = (String)o;
+        } else if (o instanceof CharSequence) {
+            CharSequence str = (CharSequence)o;
             byte[] bytes = new byte[str.length()];
             for (int i = 0; i < str.length(); i++) {
                 bytes[i] = (byte)str.charAt(i);

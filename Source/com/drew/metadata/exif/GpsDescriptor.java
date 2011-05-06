@@ -43,6 +43,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
+            case GpsDirectory.TAG_GPS_VERSION_ID:
+                return getGpsVersionIdDescription();
             case GpsDirectory.TAG_GPS_ALTITUDE:
                 return getGpsAltitudeDescription();
             case GpsDirectory.TAG_GPS_ALTITUDE_REF:
@@ -76,6 +78,12 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
             default:
                 return _directory.getString(tagType);
         }
+    }
+
+    @Nullable
+    private String getGpsVersionIdDescription()
+    {
+        return convertBytesToVersionString(_directory.getIntArray(GpsDirectory.TAG_GPS_VERSION_ID), 1);
     }
 
     @Nullable

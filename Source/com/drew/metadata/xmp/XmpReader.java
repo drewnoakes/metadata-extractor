@@ -154,6 +154,7 @@ public class XmpReader implements MetadataReader
         }
     }
 
+    @SuppressWarnings({ "SameParameterValue" })
     void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
     {
         Calendar cal = meta.getPropertyCalendar(schemaNS, propName);

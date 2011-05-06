@@ -30,13 +30,13 @@ public @interface SuppressWarnings
 {
     /**
      * The name of the warning to be suppressed.
-     * @return
+     * @return The name of the warning to be suppressed.
      */
     @NotNull String value();
 
     /**
      * An explanation of why it is valid to suppress the warning in a particular situation/context.
-     * @return
+     * @return An explanation of why it is valid to suppress the warning in a particular situation/context.
      */
     @NotNull String justification();
 }

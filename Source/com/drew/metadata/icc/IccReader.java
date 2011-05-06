@@ -116,6 +116,7 @@ public class IccReader implements MetadataReader
             directory.setInt(tagType, i);
     }
 
+    @SuppressWarnings({ "SameParameterValue" })
     private void setInt64(@NotNull Directory directory, int tagType, @NotNull BufferReader reader) throws BufferBoundsException
     {
         long l = reader.getInt64(tagType);
@@ -123,6 +124,7 @@ public class IccReader implements MetadataReader
             directory.setLong(tagType, l);
     }
 
+    @SuppressWarnings({ "SameParameterValue" })
     private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull BufferReader reader) throws BufferBoundsException
     {
         final int y = reader.getUInt16(tagType);

@@ -28,8 +28,8 @@ import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Provides human-readable string representations of tag values stored in a <code>NikonType2MakernoteDirectory</code>.
@@ -85,7 +85,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
             case NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION:
                 return getAutoFocusPositionDescription();
             case NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION:
-                return getAutoFirmwareVersionDescription();
+                return getFirmwareVersionDescription();
             case NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS_TYPE:
                 return getLensTypeDescription();
             case NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_SHOOTING_MODE:
@@ -164,7 +164,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
         Integer value = _directory.getInteger(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_SHOOTING_MODE);
         if (value==null)
             return null;
-        List<String> bits = new ArrayList<String>();
+        Collection<String> bits = new ArrayList<String>();
 
         if ((value&1)==1)
             bits.add("Continuous");
@@ -195,7 +195,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
         if (value==null)
             return null;
 
-        List<String> bits = new ArrayList<String>();
+        Collection<String> bits = new ArrayList<String>();
 
         // TODO validate these values, as 14 is labelled as AF-C elsewhere but appears here as AF-D-G-VR
 
@@ -412,11 +412,11 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     }
 
     @Nullable
-    public String getAutoFirmwareVersionDescription()
+    public String getFirmwareVersionDescription()
     {
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION);
         if (values==null)
             return null;
-        return ExifSubIFDDescriptor.convertBytesToVersionString(values);
+        return ExifSubIFDDescriptor.convertBytesToVersionString(values, 2);
     }
 }

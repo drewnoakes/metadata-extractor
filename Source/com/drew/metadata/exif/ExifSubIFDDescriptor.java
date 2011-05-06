@@ -455,7 +455,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
         int[] ints = _directory.getIntArray(ExifSubIFDDirectory.TAG_EXIF_VERSION);
         if (ints==null)
             return null;
-        return ExifSubIFDDescriptor.convertBytesToVersionString(ints);
+        return ExifSubIFDDescriptor.convertBytesToVersionString(ints, 2);
     }
 
     @Nullable
@@ -464,7 +464,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
         int[] ints = _directory.getIntArray(ExifSubIFDDirectory.TAG_FLASHPIX_VERSION);
         if (ints==null)
             return null;
-        return ExifSubIFDDescriptor.convertBytesToVersionString(ints);
+        return ExifSubIFDDescriptor.convertBytesToVersionString(ints, 2);
     }
 
     @Nullable
@@ -927,24 +927,5 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
             }
         }
         return componentConfig.toString();
-    }
-
-    /**
-     * Takes a series of 4 bytes from the specified offset, and converts these to a
-     * well-known version number, where possible.  For example, (hex) 30 32 31 30 == 2.10).
-     * @param components the four version values
-     * @return the version as a string of form 2.10
-     */
-    @Nullable
-    public static String convertBytesToVersionString(@NotNull int[] components)
-    {
-        StringBuilder version = new StringBuilder();
-        for (int i = 0; i < 4 && i < components.length; i++) {
-            if (i == 2) version.append('.');
-            String digit = String.valueOf((char)components[i]);
-            if (i == 0 && "0".equals(digit)) continue;
-            version.append(digit);
-        }
-        return version.toString();
     }
 }

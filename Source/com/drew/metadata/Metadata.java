@@ -24,7 +24,9 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A top-level object to hold the various types of metadata (Exif/IPTC/etc) related to one entity (such as a file
@@ -38,14 +40,14 @@ import java.util.HashMap;
 public final class Metadata
 {
     @NotNull
-    private final HashMap<Class<? extends Directory>, Directory> _directoryByClass = new HashMap<Class<? extends Directory>, Directory>();
+    private final Map<Class<? extends Directory>,Directory> _directoryByClass = new HashMap<Class<? extends Directory>, Directory>();
     
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes
      * creation of an Iterator and counting tags simple.
      */
     @NotNull
-    private final ArrayList<Directory> _directoryList = new ArrayList<Directory>();
+    private final Collection<Directory> _directoryList = new ArrayList<Directory>();
 
     /**
      * Returns an objects for iterating over Directory objects in the order in which they were added.

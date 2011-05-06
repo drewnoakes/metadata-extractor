@@ -162,7 +162,7 @@ public class ExifReader implements MetadataReader
             firstDirectoryOffset = 14;
         }
 
-        HashSet<Integer> processedDirectoryOffsets = new HashSet<Integer>();
+        Set<Integer> processedDirectoryOffsets = new HashSet<Integer>();
 
         processDirectory(directory, processedDirectoryOffsets, firstDirectoryOffset, tiffHeaderOffset, metadata, reader);
 

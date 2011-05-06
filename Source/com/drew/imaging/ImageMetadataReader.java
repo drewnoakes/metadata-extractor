@@ -28,14 +28,16 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Obtains metadata from all supported file formats, including JPEG, RAW (NEF/CRw/CR2) and TIFF.
@@ -137,16 +139,17 @@ public class ImageMetadataReader
      */
     public static void main(@NotNull String[] args) throws MetadataException, IOException
     {
-        if (args.length < 1) {
-            System.out.println("Usage: java -jar metadata-extractor-a.b.c.jar <filename> [<filename>] [/thumb]");
+        Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
+        boolean thumbRequested = argList.remove("/thumb");
+        boolean wikiFormat = argList.remove("/wiki");
+
+        if (argList.size() < 1) {
+            System.out.println("Usage: java -jar metadata-extractor-a.b.c.jar <filename> [<filename>] [/thumb] [/wiki]");
             System.exit(1);
         }
 
-        List<String> argList = Arrays.asList(args);
-        boolean thumbRequested = argList.remove("/thumb");
-
         for (String file : argList) {
-            if (argList.size()>1)
+            if (!wikiFormat && argList.size()>1)
                 System.out.println("***** PROCESSING: " + file);
 
             Metadata metadata = null;
@@ -157,10 +160,42 @@ public class ImageMetadataReader
                 System.exit(1);
             }
 
+            if (wikiFormat) {
+                String fileName = new File(file).getName();
+                String urlName = fileName.replace(" ", "%20"); // How to do this using framework?
+                ExifIFD0Directory exifIFD0Directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
+                String make = escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
+                String model = escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
+                System.out.println();
+                System.out.println("-----");
+                System.out.println();
+                System.out.printf("= %s - %s =%n", make, model);
+                System.out.println();
+                System.out.printf("<a href=\"http://metadata-extractor.googlecode.com/svn/sample-images/%s\">%n", urlName);
+                System.out.printf("<img src=\"http://metadata-extractor.googlecode.com/svn/sample-images/%s\" width=\"300\"/><br/>%n", urlName);
+                System.out.println(fileName);
+                System.out.println("</a>");
+                System.out.println();
+                System.out.println("|| *Directory* || *Tag Name* || *Tag Value* ||");
+            }
+
             // iterate over the exif data and print to System.out
             for (Directory directory : metadata.getDirectories()) {
-                for (Tag tag : directory.getTags())
-                    System.out.println("[" + directory.getName() + "] " + tag.getTagName() + " = " + tag.getDescription());
+                for (Tag tag : directory.getTags()) {
+                    String tagName = tag.getTagName();
+                    String directoryName = directory.getName();
+                    String description = tag.getDescription();
+
+                    if (wikiFormat) {
+                        tagName = escapeForWiki(tagName);
+                        directoryName = escapeForWiki(directoryName);
+                        description = escapeForWiki(description);
+                    }
+
+                    String format = wikiFormat ? "||%s||%s||%s||%n" : "[%s] %s = %s%n";
+
+                    System.out.printf(format, directoryName, tagName, description);
+                }
 
                 // print out any errors
                 for (String error : directory.getErrors())
@@ -177,5 +212,18 @@ public class ImageMetadataReader
                 }
             }
         }
+    }
+
+    @Nullable
+    private static String escapeForWiki(@Nullable String text)
+    {
+        if (text==null)
+            return null;
+        text = text.replaceAll("(\\W|^)(([A-Z][a-z0-9]+){2,})", "$1!$2");
+        if (text!=null && text.length() > 120)
+            text = text.substring(0, 120) + "...";
+        if (text != null)
+            text = text.replace("[", "`[`").replace("]", "`]`").replace("<", "`<`").replace(">", "`>`");
+        return text;
     }
 }

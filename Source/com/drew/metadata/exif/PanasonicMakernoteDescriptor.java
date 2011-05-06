@@ -125,6 +125,12 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return getSceneModeDescription();
             case PanasonicMakernoteDirectory.TAG_FLASH_FIRED:
                 return getFlashFiredDescription();
+            case PanasonicMakernoteDirectory.TAG_MAKERNOTE_VERSION:
+                return getMakernoteVersionDescription();
+            case PanasonicMakernoteDirectory.TAG_EXIF_VERSION:
+                return getExifVersionDescription();
+            case PanasonicMakernoteDirectory.TAG_INTERNAL_SERIAL_NUMBER:
+                return getInternalSerialNumberDescription();
             default:
                 return _directory.getString(tagType);
         }
@@ -969,7 +975,39 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getVersionDescription()
     {
-        return _directory.getString(PanasonicMakernoteDirectory.TAG_VERSION);
+        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_VERSION), 2);
+    }
+
+    @Nullable
+    public String getMakernoteVersionDescription()
+    {
+        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_MAKERNOTE_VERSION), 2);
+    }
+
+    @Nullable
+    public String getExifVersionDescription()
+    {
+        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_EXIF_VERSION), 2);
+    }
+
+    @Nullable
+    public String getInternalSerialNumberDescription()
+    {
+        final byte[] bytes = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_INTERNAL_SERIAL_NUMBER);
+
+        if (bytes==null)
+            return null;
+
+        int length = bytes.length;
+        for (int i = 0; i < bytes.length; i++) {
+            byte b = bytes[i];
+            if (b == 0 || b > 0x7F) {
+                length = i;
+                break;
+            }
+        }
+
+        return new String(bytes, 0, length);
     }
 
     @Nullable
