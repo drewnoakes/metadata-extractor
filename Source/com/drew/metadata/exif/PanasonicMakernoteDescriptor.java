@@ -35,7 +35,7 @@ import java.io.UnsupportedEncodingException;
  * Some information about this makernote taken from here:
  * <ul>
  * <li><a href="http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html">http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html</a></li>
- * <li><a href="http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.htmll">http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.html</a></li>
+ * <li><a href="http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.html">http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.html</a></li>
  * </ul>
  *
  * @author Drew Noakes http://drewnoakes.com, Philipp Sandhaus
@@ -103,6 +103,8 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return getDetectedFacesDescription();
             case PanasonicMakernoteDirectory.TAG_TRANSFORM:
                 return getTransformDescription();
+			case PanasonicMakernoteDirectory.TAG_TRANSFORM_1:
+	            return getTransform1Description();
             case PanasonicMakernoteDirectory.TAG_INTELLIGENT_EXPOSURE:
                 return getIntelligentExposureDescription();
             case PanasonicMakernoteDirectory.TAG_FLASH_WARNING:
@@ -125,13 +127,27 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return getSceneModeDescription();
             case PanasonicMakernoteDirectory.TAG_FLASH_FIRED:
                 return getFlashFiredDescription();
+            case PanasonicMakernoteDirectory.TAG_TEXT_STAMP:
+		        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP);
+			case PanasonicMakernoteDirectory.TAG_TEXT_STAMP_1:
+	             return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_1);
+			case PanasonicMakernoteDirectory.TAG_TEXT_STAMP_2:
+		         return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_2);
+			case PanasonicMakernoteDirectory.TAG_TEXT_STAMP_3:
+			     return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_3);
             case PanasonicMakernoteDirectory.TAG_MAKERNOTE_VERSION:
                 return getMakernoteVersionDescription();
             case PanasonicMakernoteDirectory.TAG_EXIF_VERSION:
                 return getExifVersionDescription();
             case PanasonicMakernoteDirectory.TAG_INTERNAL_SERIAL_NUMBER:
                 return getInternalSerialNumberDescription();
-            default:
+            case PanasonicMakernoteDirectory.TAG_TITLE:
+	            return getTitleDescription();
+			case PanasonicMakernoteDirectory.TAG_BABY_NAME:
+	            return getBabyNameDescription();
+			case PanasonicMakernoteDirectory.TAG_LOCATION:
+	            return getLocationDescription();
+			default:
                 return _directory.getString(tagType);
         }
     }
@@ -148,33 +164,13 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getMacroModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_MACRO_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "On";
-            case 2:
-                return "Off";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_MACRO_MODE);
     }
 
     @Nullable
     public String getFlashFiredDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_FLASH_FIRED);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "No";
-            case 2:
-                return "Yes";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_FLASH_FIRED);
     }
 
     @Nullable
@@ -198,23 +194,25 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getAudioDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_AUDIO);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Yes";
-            case 2:
-                return "No";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_AUDIO);
     }
 
     @Nullable
     public String getTransformDescription()
     {
-        byte[] values = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_TRANSFORM);
+        return getTransformDescription(PanasonicMakernoteDirectory.TAG_TRANSFORM);
+    }
+
+    @Nullable
+    public String getTransform1Description()
+    {
+        return getTransformDescription(PanasonicMakernoteDirectory.TAG_TRANSFORM_1);
+    }
+
+    @Nullable
+    private String getTransformDescription(int tag)
+    {
+        byte[] values = _directory.getByteArray(tag);
         if (values == null)
             return null;
 
@@ -278,61 +276,47 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return "Unknown (" + value + ")";
         }
     }
-
+	
     @Nullable
     public String getCountryDescription()
     {
-        byte[] values = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_COUNTRY);
-        if (values == null)
-            return null;
-        try {
-            return new String(values, "ASCII").trim();
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
-//        return getSubstring(0,values.length,values).trim();
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_COUNTRY);
     }
 
     @Nullable
     public String getStateDescription()
     {
-        byte[] values = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_STATE);
-        if (values == null)
-            return null;
-        try {
-            return new String(values, "ASCII").trim();
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
-//        return getSubstring(0,values.length,values).trim();
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_STATE);
     }
 
     @Nullable
     public String getCityDescription()
     {
-        byte[] values = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_CITY);
-        if (values == null)
-            return null;
-        try {
-            return new String(values, "ASCII").trim();
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
-//        return getSubstring(0,values.length,values).trim();
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_CITY);
     }
 
     @Nullable
     public String getLandmarkDescription()
     {
-        byte[] values = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_LANDMARK);
-        if (values == null)
-            return null;
-        try {
-            return new String(values, "ASCII").trim();
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
-//        return getSubstring(0,values.length,values).trim();
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_LANDMARK);
+    }
+
+	@Nullable
+    public String getTitleDescription()
+    {
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_LANDMARK);
+    }
+
+	@Nullable
+    public String getBabyNameDescription()
+    {
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_BABY_NAME);
+    }
+
+	@Nullable
+    public String getLocationDescription()
+    {
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_LOCATION);
     }
 
     @Nullable
@@ -1035,6 +1019,34 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return "Manual";
             case 12:
                 return "Shade";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+	@Nullable
+	private String getTextDescription(int tag) {
+		byte[] values = _directory.getByteArray(tag);
+        if (values == null)
+            return null;
+        try {
+            return new String(values, "ASCII").trim();
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+	}
+
+    @Nullable
+    private String getOnOffDescription(int tag)
+    {
+        Integer value = _directory.getInteger(tag);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 1:
+                return "Off";
+            case 2:
+                return "On";
             default:
                 return "Unknown (" + value + ")";
         }

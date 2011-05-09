@@ -317,6 +317,8 @@ public class PanasonicMakernoteDirectory extends Directory
      * 2 = On 
      */
     public static final int TAG_TEXT_STAMP = 0x003b;
+
+	public static final int TAG_PROGRAM_ISO = 0x003c;
     
     /**
      * <br>
@@ -335,12 +337,28 @@ public class PanasonicMakernoteDirectory extends Directory
      */
     public static final int TAG_ADVANCED_SCENE_MODE = 0x003d;
     
-    
+    /**
+     * 1 = Off   <br>
+     * 2 = On 
+     */
+    public static final int TAG_TEXT_STAMP_1 = 0x003e;
+	
     public static final int TAG_FACES_DETECTED = 0x003f;
 
     public static final int TAG_SATURATION = 0x0040;
     public static final int TAG_SHARPNESS = 0x0041;
     public static final int TAG_FILM_MODE = 0x0042;
+
+    /**
+	 * WB adjust AB. Positive is a shift toward blue.
+	 */
+	public static final int TAG_WB_ADJUST_AB = 0x0046;
+    /**
+	 * WB adjust GM. Positive is a shift toward green.
+	 */
+	public static final int TAG_WB_ADJUST_GM = 0x0047;
+	
+
     public static final int TAG_AF_POINT_POSITION = 0x004d;
     
     
@@ -380,7 +398,11 @@ public class PanasonicMakernoteDirectory extends Directory
     */
     public static final int TAG_INTELLIGENT_EXPOSURE = 0x005d;
     
-    public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
+    /**
+	  * Info at http://www.ozhiker.com/electronics/pjmt/jpeg_info/pim.html
+	  * 
+     */
+	public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
 
 
@@ -409,7 +431,10 @@ public class PanasonicMakernoteDirectory extends Directory
     */
     public static final int TAG_FLASH_WARNING = 0x0062;
     public static final int TAG_RECOGNIZED_FACE_FLAGS = 0x0063;
-    public static final int TAG_COUNTRY = 0x0069;
+    public static final int TAG_TITLE = 0x0065;
+	public static final int TAG_BABY_NAME = 0x0066;
+	public static final int TAG_LOCATION = 0x0067;
+	public static final int TAG_COUNTRY = 0x0069;
     public static final int TAG_STATE = 0x006b;
     public static final int TAG_CITY = 0x006d;
     public static final int TAG_LANDMARK = 0x006f;
@@ -427,7 +452,20 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_WB_GREEN_LEVEL = 0x8005;
     public static final int TAG_WB_BLUE_LEVEL = 0x8006;
     public static final int TAG_FLASH_FIRED = 0x8007;
-    
+    public static final int TAG_TEXT_STAMP_2 = 0x8008;
+	public static final int TAG_TEXT_STAMP_3 = 0x8009;
+	public static final int TAG_BABY_AGE_1 = 0x8010;
+	
+	/**
+     * (decoded as two 16-bit signed integers) 
+     * '-1 1' = Slim Low 
+     * '-3 2' = Slim High 
+     * '0 0' = Off 
+     * '1 1' = Stretch Low 
+     * '3 2' = Stretch High  
+     */
+    public static final int TAG_TRANSFORM_1 = 0x8012;
+
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
@@ -463,13 +501,16 @@ public class PanasonicMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_CONTRAST, "Contrast");
         _tagNameMap.put(TAG_WORLD_TIME_LOCATION, "World Time Location");
         _tagNameMap.put(TAG_TEXT_STAMP, "Text Stamp");
-        _tagNameMap.put(TAG_ADVANCED_SCENE_MODE, "Advanced Scene Mode");
+        _tagNameMap.put(TAG_PROGRAM_ISO, "Program ISO");
+		_tagNameMap.put(TAG_ADVANCED_SCENE_MODE, "Advanced Scene Mode");
         _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
         _tagNameMap.put(TAG_FACES_DETECTED, "Number of Detected Faces");
         _tagNameMap.put(TAG_SATURATION, "Saturation");
         _tagNameMap.put(TAG_SHARPNESS, "Sharpness");
         _tagNameMap.put(TAG_FILM_MODE, "Film Mode");
-        _tagNameMap.put(TAG_AF_POINT_POSITION, "Af Point Position");
+        _tagNameMap.put(TAG_WB_ADJUST_AB, "White Balance Adjust (AB)");
+		_tagNameMap.put(TAG_WB_ADJUST_GM, "White Balance Adjust (GM)");
+		_tagNameMap.put(TAG_AF_POINT_POSITION, "Af Point Position");
         _tagNameMap.put(TAG_FACE_DETECTION_INFO, "Face Detection Info");
         _tagNameMap.put(TAG_LENS_TYPE, "Lens Type");
         _tagNameMap.put(TAG_LENS_SERIAL_NUMBER, "Lens Serial Number");
@@ -479,7 +520,10 @@ public class PanasonicMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_FACE_RECOGNITION_INFO, "Face Recognition Info");
         _tagNameMap.put(TAG_FLASH_WARNING, "Flash Warning");
         _tagNameMap.put(TAG_RECOGNIZED_FACE_FLAGS, "Recognized Face Flags");
-        _tagNameMap.put(TAG_COUNTRY, "Country");
+		_tagNameMap.put(TAG_TITLE, "Title");
+		_tagNameMap.put(TAG_BABY_NAME, "Baby Name");
+		_tagNameMap.put(TAG_LOCATION, "Location");
+		_tagNameMap.put(TAG_COUNTRY, "Country");
         _tagNameMap.put(TAG_STATE, "State");
         _tagNameMap.put(TAG_CITY, "City");
         _tagNameMap.put(TAG_LANDMARK, "Landmark");
@@ -490,6 +534,11 @@ public class PanasonicMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_WB_GREEN_LEVEL, "White Balance (Green)");
         _tagNameMap.put(TAG_WB_BLUE_LEVEL, "White Balance (Blue)");
         _tagNameMap.put(TAG_FLASH_FIRED, "Flash Fired");
+		_tagNameMap.put(TAG_TEXT_STAMP_1, "Text Stamp 1");
+		_tagNameMap.put(TAG_TEXT_STAMP_2, "Text Stamp 2");
+		_tagNameMap.put(TAG_TEXT_STAMP_3, "Text Stamp 3");
+		_tagNameMap.put(TAG_BABY_AGE_1, "Baby Age 1");
+		_tagNameMap.put(TAG_TRANSFORM_1, "Transform 1");
     }
 
     public PanasonicMakernoteDirectory()
