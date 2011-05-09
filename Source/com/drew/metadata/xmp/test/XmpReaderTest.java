@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -151,13 +151,31 @@ public class XmpReaderTest
     @Test
     public void testExtract_OriginalDateTime() throws Exception
     {
-		Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MMM yyyy Z").parse("11:41:35 12 Dec 2010 +0000"), _directory.getDate(XmpDirectory.TAG_DATETIME_ORIGINAL));
+        final Date actual = _directory.getDate(XmpDirectory.TAG_DATETIME_ORIGINAL);
+
+        // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
+
+        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
+//        Assert.assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
+
+        Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Assert.assertEquals(calendar.getTime(), actual);
     }
 
     @Test
     public void testExtract_DigitizedDateTime() throws Exception
     {
-        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MMM yyyy Z").parse("11:41:35 12 Dec 2010 +0000"), _directory.getDate(XmpDirectory.TAG_DATETIME_DIGITIZED));
+        final Date actual = _directory.getDate(XmpDirectory.TAG_DATETIME_DIGITIZED);
+
+        // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
+
+        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
+//        Assert.assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
+
+        Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Assert.assertEquals(calendar.getTime(), actual);
     }
 
     @Test
