@@ -50,9 +50,7 @@ public class SonyType6MakernoteDescriptor extends TagDescriptor<SonyType6Makerno
     @Nullable
     public String getMakerNoteThumbVersionDescription()
     {
-        byte[] value = _directory.getByteArray(SonyType6MakernoteDirectory.TAG_MAKER_NOTE_THUMB_VERSION);
-        if (value==null)
-            return null;
-        return new String(value);
+        int[] values = _directory.getIntArray(SonyType6MakernoteDirectory.TAG_MAKER_NOTE_THUMB_VERSION);
+        return convertBytesToVersionString(values, 2);
     }
 }
