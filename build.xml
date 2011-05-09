@@ -52,7 +52,7 @@
         <!--<copyfile src="LICENSE-2.0.txt" dest="${build}" forceoverwrite="true" />-->
     </target>
 
-    <target name="test" description="run all junit tests">
+    <target name="test" depends="clean, compile" description="run all junit tests">
         <delete verbose="${verbose}" dir="${test.reports}"/>
         <mkdir dir="${test.reports}"/>
         <junit printsummary="yes" logfailedtests="true" fork="yes" haltonfailure="yes">
@@ -74,7 +74,9 @@
     </target>
 
     <target name="dist-binaries" depends="clean, compile, test" description="generate binary distribution">
-        <jar destfile="${dist}/metadata-extractor-${version}.jar" update="false">
+        <property name="bin-jar" value="${dist}/metadata-extractor-${version}.jar" />
+        <property name="bin-zip" value="${dist}/metadata-extractor-${version}.zip" />
+        <jar destfile="${bin-jar}" update="false">
             <manifest>
                 <attribute name="Main-Class" value="com.drew.imaging.ImageMetadataReader"/>
             </manifest>
@@ -82,6 +84,12 @@
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </jar>
+        <zip file="${bin-zip}" comment="Metadata Extractor - http://drewnoakes.com/code/">
+            <file file="${bin-jar}" />
+            <file file="${lib}/xmpcore.jar" />
+            <file file="LICENSE-2.0.txt" />
+            <file file="README.txt" />
+        </zip>
     </target>
 
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
