@@ -151,13 +151,14 @@ public class XmpReaderTest
     @Test
     public void testExtract_OriginalDateTime() throws Exception
     {
-        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MMM yyyy").parse("11:41:35 12 Dec 2010"), _directory.getDate(XmpDirectory.TAG_DATETIME_ORIGINAL));
+        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd-MM-yyyy").parse("11:41:35 12-12-2010"), _directory.getDate(XmpDirectory.TAG_DATETIME_ORIGINAL));
     }
 
     @Test
     public void testExtract_DigitizedDateTime() throws Exception
     {
-        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MMM yyyy").parse("11:41:35 12 Dec 2010"), _directory.getDate(XmpDirectory.TAG_DATETIME_DIGITIZED));
+        
+        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd-MM-yyyy").parse("11:41:35 12-12-2010"), _directory.getDate(XmpDirectory.TAG_DATETIME_DIGITIZED));
     }
 
     @Test
