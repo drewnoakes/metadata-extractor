@@ -346,7 +346,8 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
         return getEVDescription(values);
     }
 
-    private static String getEVDescription(int[] values)
+    @Nullable
+    private static String getEVDescription(@Nullable int[] values)
     {
         if (values==null)
             return null;

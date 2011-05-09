@@ -64,8 +64,8 @@ public abstract class TagDescriptor<T extends Directory>
         if (object.getClass().isArray()) {
             final Class<?> componentType = object.getClass().getComponentType();
             boolean isByteArray = componentType.getName().equals("byte");
-            if (isByteArray) {
-                final int length = Array.getLength(object);
+            final int length = Array.getLength(object);
+            if (isByteArray && length > 12) {
                 return String.format("[%d byte%s]", length, length==1 ? "" : "s");
             }
         }

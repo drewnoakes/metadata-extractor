@@ -71,6 +71,13 @@ public class ExifSubIFDDirectory extends Directory
      */
     public static final int TAG_THRESHOLDING = 0x0107;
 
+    /**
+     * 1 = Normal
+     * 2 = Reversed
+     */
+    public static final int TAG_FILL_ORDER = 0x010A;
+    public static final int TAG_DOCUMENT_NAME = 0x010D;
+
     /** The position in the file of raster data. */
     public static final int TAG_STRIP_OFFSETS = 0x0111;
     /** Each pixel is composed of this many samples. */
@@ -474,14 +481,22 @@ public class ExifSubIFDDirectory extends Directory
      */
     public static final int TAG_IMAGE_UNIQUE_ID = 0xA420;
 
-    /**
-     * 1 = Normal
-     * 2 = Reversed
-     */
-    public static final int TAG_FILL_ORDER = 0x010A;
-    public static final int TAG_DOCUMENT_NAME = 0x010D;
+    /** String. */
+    public static final int TAG_CAMERA_OWNER_NAME = 0xA430;
+    /** String. */
+    public static final int TAG_BODY_SERIAL_NUMBER = 0xA431;
+    /** An array of four Rational64u numbers giving focal and aperture ranges. */
+    public static final int TAG_LENS_SPECIFICATION = 0xA432;
+    /** String. */
+    public static final int TAG_LENS_MAKE = 0xA433;
+    /** String. */
+    public static final int TAG_LENS_MODEL = 0xA434;
+    /** String. */
+    public static final int TAG_LENS_SERIAL_NUMBER = 0xA435;
+    /** Rational64u. */
+    public static final int TAG_GAMMA = 0xA500;
 
-    public static final int TAG_LENS = 0xfdea;
+    public static final int TAG_LENS = 0xFDEA;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -600,6 +615,14 @@ public class ExifSubIFDDirectory extends Directory
         _tagNameMap.put(TAG_DEVICE_SETTING_DESCRIPTION, "Device Setting Description");
         _tagNameMap.put(TAG_SUBJECT_DISTANCE_RANGE, "Subject Distance Range");
         _tagNameMap.put(TAG_IMAGE_UNIQUE_ID, "Unique Image ID");
+        
+        _tagNameMap.put(TAG_CAMERA_OWNER_NAME, "Camera Owner Name");
+        _tagNameMap.put(TAG_BODY_SERIAL_NUMBER, "Body Serial Number");
+        _tagNameMap.put(TAG_LENS_SPECIFICATION, "Lens Specification");
+        _tagNameMap.put(TAG_LENS_MAKE, "Lens Make");
+        _tagNameMap.put(TAG_LENS_MODEL, "Lens Model");
+        _tagNameMap.put(TAG_LENS_SERIAL_NUMBER, "Lens Serial Number");
+        _tagNameMap.put(TAG_GAMMA, "Gamma");
 
         _tagNameMap.put(TAG_MIN_SAMPLE_VALUE, "Minimum sample value");
         _tagNameMap.put(TAG_MAX_SAMPLE_VALUE, "Maximum sample value");

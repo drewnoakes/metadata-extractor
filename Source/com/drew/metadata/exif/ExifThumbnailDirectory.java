@@ -125,9 +125,6 @@ public class ExifThumbnailDirectory extends Directory
     public static final int TAG_YCBCR_POSITIONING = 0x0213;
     public static final int TAG_REFERENCE_BLACK_WHITE = 0x0214;
 
-    /** A fake tag, used to store the thumbnail data. */
-    static final int TAG_THUMBNAIL_DATA = 0xF001;
-
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -149,12 +146,14 @@ public class ExifThumbnailDirectory extends Directory
         _tagNameMap.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
         _tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
         _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
-        _tagNameMap.put(TAG_THUMBNAIL_DATA, "Thumbnail Data");
         _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
         _tagNameMap.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
         _tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
         _tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
     }
+
+    @Nullable
+    private byte[] _thumbnailData;
 
     public ExifThumbnailDirectory()
     {
@@ -175,21 +174,24 @@ public class ExifThumbnailDirectory extends Directory
 
     public boolean hasThumbnailData()
     {
-        return containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_DATA);
+        return _thumbnailData != null;
     }
 
     @Nullable
     public byte[] getThumbnailData()
     {
-        if (!hasThumbnailData())
-            return null;
-        
-        return getByteArray(ExifThumbnailDirectory.TAG_THUMBNAIL_DATA);
+        return _thumbnailData;
+    }
+
+    @Nullable
+    public void setThumbnailData(byte[] data)
+    {
+        _thumbnailData = data;
     }
 
     public void writeThumbnail(@NotNull String filename) throws MetadataException, IOException
     {
-        byte[] data = getThumbnailData();
+        byte[] data = _thumbnailData;
 
         if (data==null)
             throw new MetadataException("No thumbnail data exists.");

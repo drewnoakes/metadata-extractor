@@ -173,7 +173,8 @@ public class ExifReader implements MetadataReader
             Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
             if (offset != null && length != null) {
                 try {
-                    thumbnailDirectory.setByteArray(ExifThumbnailDirectory.TAG_THUMBNAIL_DATA, reader.getBytes(tiffHeaderOffset + offset, length));
+                    byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
+                    thumbnailDirectory.setThumbnailData(thumbnailData);
                 } catch (BufferBoundsException ex) {
                     directory.addError("Invalid thumbnail data specification: " + ex.getMessage());
                 }

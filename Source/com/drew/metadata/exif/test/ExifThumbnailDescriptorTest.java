@@ -48,18 +48,4 @@ public class ExifThumbnailDescriptorTest
         Assert.assertEquals("YCbCr4:2:0", descriptor.getDescription(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING));
         Assert.assertEquals("YCbCr4:2:0", descriptor.getYCbCrSubsamplingDescription());
     }
-
-    @Test
-    public void testThumbnailDataGetDescription() throws Exception
-    {
-        // This isn't a real Exif tag, but we use it as though it is one just to store the bytes and so it can
-        // be used in conjunction with the descriptor.
-        final int thumbnailDataTagId = 0xF001;
-
-        ExifThumbnailDirectory directory = new ExifThumbnailDirectory();
-        directory.setByteArray(thumbnailDataTagId, new byte[50]);
-
-        ExifThumbnailDescriptor descriptor = new ExifThumbnailDescriptor(directory);
-        Assert.assertEquals("[50 bytes]", descriptor.getDescription(thumbnailDataTagId));
-    }
 }
