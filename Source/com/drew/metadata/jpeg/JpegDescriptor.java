@@ -58,9 +58,9 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
                 return getImageHeightDescription();
             case JpegDirectory.TAG_JPEG_IMAGE_WIDTH:
                 return getImageWidthDescription();
+            default:
+                return super.getDescription(tagType);
         }
-
-        return _directory.getString(tagType);
     }
 
     @Nullable

@@ -47,9 +47,9 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
                 return getFileFormatDescription();
             case IptcDirectory.TAG_KEYWORDS:
                 return getKeywordsDescription();
+            default:
+                return super.getDescription(tagType);
         }
-        
-        return _directory.getString(tagType);
     }
 
     @Nullable

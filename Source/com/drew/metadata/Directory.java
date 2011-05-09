@@ -864,6 +864,7 @@ public abstract class Directory
      * @param tagType the tag type identifier
      * @return the tag's value as an Object if available, else <code>null</code>
      */
+    @java.lang.SuppressWarnings({ "UnnecessaryBoxing" })
     @Nullable
     public Object getObject(int tagType)
     {

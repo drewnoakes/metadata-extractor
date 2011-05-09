@@ -33,7 +33,7 @@
     <property name="lib" value="Libraries"/>
     <property name="verbose" value="true"/>
     <property name="debug" value="off"/>
-    <property name="version" value="2.4.0-beta-1"/>
+    <property name="version" value="2.5.0-RC1"/>
     <property name="classpath" value="${lib}/junit-4.8.2.jar;${lib}/xmpcore.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
@@ -49,6 +49,7 @@
                destdir="${build}"
                debug="${debug}"
                verbose="${verbose}"/>
+        <!--<copyfile src="LICENSE-2.0.txt" dest="${build}" forceoverwrite="true" />-->
     </target>
 
     <target name="test" description="run all junit tests">
@@ -78,6 +79,8 @@
                 <attribute name="Main-Class" value="com.drew.imaging.ImageMetadataReader"/>
             </manifest>
             <fileset dir="${build}" excludes="**/test/*.class" />
+            <file file="LICENSE-2.0.txt" />
+            <file file="README.txt" />
         </jar>
     </target>
 
@@ -85,6 +88,8 @@
         <jar destfile="${dist}/metadata-extractor-${version}-src.jar" update="false">
             <fileset dir="."
                 includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.metadata, ${src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
+            <file file="LICENSE-2.0.txt" />
+            <file file="README.txt" />
         </jar>
     </target>
 

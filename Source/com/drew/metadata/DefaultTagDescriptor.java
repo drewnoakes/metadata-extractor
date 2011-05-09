@@ -21,7 +21,6 @@
 package com.drew.metadata;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 
 /**
  * A default implementation of the abstract TagDescriptor.  As this class is not coded with awareness of any metadata
@@ -48,16 +47,5 @@ public class DefaultTagDescriptor extends TagDescriptor<Directory>
         String hex = Integer.toHexString(tagType).toUpperCase();
         while (hex.length() < 4) hex = "0" + hex;
         return "Unknown tag 0x" + hex;
-    }
-
-    /**
-     * Gets the default string representation of the tag's value.
-     * @param tagType the tag type identifier.
-     * @return a string representation of the tag's value.
-     */
-    @Nullable
-    public String getDescription(int tagType)
-    {
-        return _directory.getString(tagType);
     }
 }

@@ -36,11 +36,6 @@ public class JpegCommentDescriptor extends TagDescriptor<JpegCommentDirectory>
         super(directory);
     }
 
-    public String getDescription(int tagType)
-    {
-        return _directory.getString(tagType);
-    }
-
     @Nullable
     public String getJpegCommentDescription()
     {

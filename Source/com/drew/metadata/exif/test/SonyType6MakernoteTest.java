@@ -44,6 +44,6 @@ public class SonyType6MakernoteTest
 
         SonyType6MakernoteDescriptor descriptor = new SonyType6MakernoteDescriptor(directory);
 
-        Assert.assertEquals("0200", descriptor.getMakerNoteThumbVersionDescription());
+        Assert.assertEquals("2.00", descriptor.getMakerNoteThumbVersionDescription());
     }
 }

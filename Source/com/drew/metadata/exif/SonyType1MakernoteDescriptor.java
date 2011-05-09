@@ -67,8 +67,9 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
                 return getAntiBlurDescription();
             case SonyType1MakernoteDirectory.TAG_LONG_EXPOSURE_NOISE_REDUCTION:
                 return getLongExposureNoiseReductionDescription();
+            default:
+                return super.getDescription(tagType);
         }
-        return _directory.getString(tagType);
     }
 
     @Nullable

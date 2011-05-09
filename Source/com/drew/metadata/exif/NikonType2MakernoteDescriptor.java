@@ -97,7 +97,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
             case NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_POWER_UP_TIME:
                 return getPowerUpTimeDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

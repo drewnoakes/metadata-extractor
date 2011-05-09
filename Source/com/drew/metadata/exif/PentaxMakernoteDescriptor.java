@@ -67,7 +67,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
             case PentaxMakernoteDirectory.TAG_PENTAX_COLOUR:
                 return getColourDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

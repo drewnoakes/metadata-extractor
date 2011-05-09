@@ -125,7 +125,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
 //            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING:
 //                return getSensorCleaningDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

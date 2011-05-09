@@ -52,7 +52,7 @@ public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDi
             case KyoceraMakernoteDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL:
                 return getProprietaryThumbnailDataDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

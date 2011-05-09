@@ -69,7 +69,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
             case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER:
                 return getConverterDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

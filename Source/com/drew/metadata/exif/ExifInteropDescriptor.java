@@ -45,7 +45,7 @@ public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
             case ExifInteropDirectory.TAG_INTEROP_VERSION:
                 return getInteropVersionDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 
@@ -59,13 +59,13 @@ public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
     @Nullable
     public String getInteropIndexDescription()
     {
-        String interopIndex = _directory.getString(ExifInteropDirectory.TAG_INTEROP_INDEX);
+        String value = _directory.getString(ExifInteropDirectory.TAG_INTEROP_INDEX);
 
-        if (interopIndex==null)
+        if (value==null)
             return null;
 
-        return "R98".equalsIgnoreCase(interopIndex.trim())
+        return "R98".equalsIgnoreCase(value.trim())
                 ? "Recommended Exif Interoperability Rules (ExifR98)"
-                : "Unknown (" + interopIndex + ")";
+                : "Unknown (" + value + ")";
     }
 }

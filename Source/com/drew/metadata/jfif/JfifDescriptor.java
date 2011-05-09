@@ -50,9 +50,9 @@ public class JfifDescriptor extends TagDescriptor<JfifDirectory>
                 return getImageVersionDescription();
             case JfifDirectory.TAG_JFIF_UNITS:
                 return getImageResUnitsDescription();
+            default:
+                return super.getDescription(tagType);
         }
-
-        return _directory.getString(tagType);
     }
 
     @Nullable

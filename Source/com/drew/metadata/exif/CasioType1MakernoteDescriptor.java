@@ -65,7 +65,7 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
             case CasioType1MakernoteDirectory.TAG_CASIO_CCD_SENSITIVITY:
                 return getCcdSensitivityDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

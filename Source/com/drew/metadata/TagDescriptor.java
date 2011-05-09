@@ -23,6 +23,8 @@ package com.drew.metadata;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.lang.reflect.Array;
+
 /**
  * Abstract base class for all tag descriptor classes.  Implementations are responsible for
  * providing the human-readable string representation of tag values stored in a directory.
@@ -51,7 +53,26 @@ public abstract class TagDescriptor<T extends Directory>
      *         <code>null</code> if the tag hasn't been defined.
      */
     @Nullable
-    public abstract String getDescription(int tagType);
+    public String getDescription(int tagType)
+    {
+        Object object = _directory.getObject(tagType);
+
+        if (object==null)
+            return null;
+
+        // special presentation for frequently very long byte arrays
+        if (object.getClass().isArray()) {
+            final Class<?> componentType = object.getClass().getComponentType();
+            boolean isByteArray = componentType.getName().equals("byte");
+            if (isByteArray) {
+                final int length = Array.getLength(object);
+                return String.format("[%d byte%s]", length, length==1 ? "" : "s");
+            }
+        }
+
+        // no special handling required, so use default conversion to a string
+        return _directory.getString(tagType);
+    }
 
     /**
      * Takes a series of 4 bytes from the specified offset, and converts these to a

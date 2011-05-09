@@ -90,7 +90,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
                return getWindowsTitleDescription();
 
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

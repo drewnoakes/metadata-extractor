@@ -170,7 +170,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
             case ExifSubIFDDirectory.TAG_SUBJECT_DISTANCE_RANGE:
                 return getSubjectDistanceRangeDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

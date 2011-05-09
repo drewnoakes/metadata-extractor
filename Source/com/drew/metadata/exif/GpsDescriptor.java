@@ -76,7 +76,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
             case GpsDirectory.TAG_GPS_DIFFERENTIAL:
                 return getGpsDifferentialDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

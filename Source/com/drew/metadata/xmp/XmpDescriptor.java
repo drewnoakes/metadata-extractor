@@ -71,7 +71,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
             case XmpDirectory.TAG_APERTURE_VALUE:
                 return getApertureValueDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

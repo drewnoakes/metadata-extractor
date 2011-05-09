@@ -87,7 +87,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
             case FujifilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING:
                 return getAutoExposureWarningDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

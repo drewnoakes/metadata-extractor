@@ -97,7 +97,7 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
             case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FILTER:
                 return getFilterDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

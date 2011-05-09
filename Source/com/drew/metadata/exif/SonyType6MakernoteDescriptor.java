@@ -43,8 +43,9 @@ public class SonyType6MakernoteDescriptor extends TagDescriptor<SonyType6Makerno
         switch (tagType) {
             case SonyType6MakernoteDirectory.TAG_MAKER_NOTE_THUMB_VERSION:
                 return getMakerNoteThumbVersionDescription();
+            default:
+                return super.getDescription(tagType);
         }
-        return _directory.getString(tagType);
     }
 
     @Nullable

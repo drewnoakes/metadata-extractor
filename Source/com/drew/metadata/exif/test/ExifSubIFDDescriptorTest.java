@@ -20,44 +20,18 @@
  */
 package com.drew.metadata.exif.test;
 
-import com.drew.imaging.jpeg.JpegSegmentReader;
-import com.drew.lang.Rational;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.*;
+import com.drew.metadata.exif.ExifSubIFDDescriptor;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.File;
 
 /**
  * JUnit test case for class ExifSubIFDDescriptor.
  *
  * @author  Drew Noakes http://drewnoakes.com
  */
-public class ExifDescriptorTest
+public class ExifSubIFDDescriptorTest
 {
-    @Test
-    public void testXResolutionDescription() throws Exception
-    {
-        ExifIFD0Directory directory = new ExifIFD0Directory();
-        directory.setRational(ExifIFD0Directory.TAG_X_RESOLUTION, new Rational(72, 1));
-        // 2 is for 'Inch'
-        directory.setInt(ExifIFD0Directory.TAG_RESOLUTION_UNIT, 2);
-        ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
-        Assert.assertEquals("72 dots per inch", descriptor.getDescription(ExifIFD0Directory.TAG_X_RESOLUTION));
-    }
-
-    @Test
-    public void testYResolutionDescription() throws Exception
-    {
-        ExifIFD0Directory directory = new ExifIFD0Directory();
-        directory.setRational(ExifIFD0Directory.TAG_Y_RESOLUTION, new Rational(50, 1));
-        // 3 is for 'cm'
-        directory.setInt(ExifIFD0Directory.TAG_RESOLUTION_UNIT, 3);
-        ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
-        Assert.assertEquals("50 dots per cm", descriptor.getDescription(ExifIFD0Directory.TAG_Y_RESOLUTION));
-    }
-
     @Test
     public void testUserCommentDescription_EmptyEncoding() throws Exception
     {
@@ -128,30 +102,5 @@ public class ExifDescriptorTest
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
         Assert.assertEquals("I am a comment. Yey.", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
-    }
-
-    @Test
-    public void testWindowsXpFields() throws Exception
-    {
-        String fileName = "Source/com/drew/metadata/exif/test/windowsXpFields.jpg";
-        Metadata metadata = new Metadata();
-        final byte[] data = new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1);
-        Assert.assertNotNull(data);
-        new ExifReader().extract(data, metadata);
-        ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
-        Assert.assertNotNull(directory);
-
-        Assert.assertEquals("Testing artist\0", directory.getString(ExifIFD0Directory.TAG_WIN_AUTHOR, "UTF-16LE"));
-        Assert.assertEquals("Testing comments\0", directory.getString(ExifIFD0Directory.TAG_WIN_COMMENT, "UTF-16LE"));
-        Assert.assertEquals("Testing keywords\0", directory.getString(ExifIFD0Directory.TAG_WIN_KEYWORDS, "UTF-16LE"));
-        Assert.assertEquals("Testing subject\0", directory.getString(ExifIFD0Directory.TAG_WIN_SUBJECT, "UTF-16LE"));
-        Assert.assertEquals("Testing title\0", directory.getString(ExifIFD0Directory.TAG_WIN_TITLE, "UTF-16LE"));
-
-        ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
-        Assert.assertEquals("Testing artist", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_AUTHOR));
-        Assert.assertEquals("Testing comments", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_COMMENT));
-        Assert.assertEquals("Testing keywords", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_KEYWORDS));
-        Assert.assertEquals("Testing subject", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_SUBJECT));
-        Assert.assertEquals("Testing title", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_TITLE));
     }
 }

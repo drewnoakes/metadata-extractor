@@ -65,7 +65,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             case PhotoshopDirectory.TAG_PHOTOSHOP_PIXEL_ASPECT_RATIO:
                 return getPixelAspectRatioString();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

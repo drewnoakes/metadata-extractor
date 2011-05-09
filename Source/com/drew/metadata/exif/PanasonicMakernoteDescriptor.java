@@ -148,7 +148,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
 			case PanasonicMakernoteDirectory.TAG_LOCATION:
 	            return getLocationDescription();
 			default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 

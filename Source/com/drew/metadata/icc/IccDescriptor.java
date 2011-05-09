@@ -55,7 +55,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         if (tagType > 0x20202020 && tagType < 0x7a7a7a7a)
             return getTagDataString(tagType);
 
-        return _directory.getString(tagType);
+        return super.getDescription(tagType);
     }
 
     private static final int ICC_TAG_TYPE_TEXT = 0x74657874;

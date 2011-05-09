@@ -100,7 +100,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
             case ExifThumbnailDirectory.TAG_REFERENCE_BLACK_WHITE:
                 return getReferenceBlackWhiteDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 
@@ -124,7 +124,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     public String getYCbCrSubsamplingDescription()
     {
         int[] positions = _directory.getIntArray(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING);
-        if (positions==null)
+        if (positions==null || positions.length < 2)
             return null;
         if (positions[0] == 2 && positions[1] == 1) {
             return "YCbCr4:2:2";
