@@ -183,8 +183,7 @@ public class ExifThumbnailDirectory extends Directory
         return _thumbnailData;
     }
 
-    @Nullable
-    public void setThumbnailData(byte[] data)
+    public void setThumbnailData(@Nullable byte[] data)
     {
         _thumbnailData = data;
     }

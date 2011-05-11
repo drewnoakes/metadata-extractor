@@ -24,6 +24,7 @@ import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.Age;
 import com.drew.metadata.Face;
 import com.drew.metadata.TagDescriptor;
 
@@ -128,13 +129,13 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
             case PanasonicMakernoteDirectory.TAG_FLASH_FIRED:
                 return getFlashFiredDescription();
             case PanasonicMakernoteDirectory.TAG_TEXT_STAMP:
-		        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP);
+		        return getTextStampDescription();
 			case PanasonicMakernoteDirectory.TAG_TEXT_STAMP_1:
-	             return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_1);
+	             return getTextStamp1Description();
 			case PanasonicMakernoteDirectory.TAG_TEXT_STAMP_2:
-		         return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_2);
+		         return getTextStamp2Description();
 			case PanasonicMakernoteDirectory.TAG_TEXT_STAMP_3:
-			     return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_3);
+			     return getTextStamp3Description();
             case PanasonicMakernoteDirectory.TAG_MAKERNOTE_VERSION:
                 return getMakernoteVersionDescription();
             case PanasonicMakernoteDirectory.TAG_EXIF_VERSION:
@@ -147,6 +148,10 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
 	            return getBabyNameDescription();
 			case PanasonicMakernoteDirectory.TAG_LOCATION:
 	            return getLocationDescription();
+			case PanasonicMakernoteDirectory.TAG_BABY_AGE:
+		        return getBabyAgeDescription();
+			case PanasonicMakernoteDirectory.TAG_BABY_AGE_1:
+		        return getBabyAge1Description();
 			default:
                 return super.getDescription(tagType);
         }
@@ -162,6 +167,30 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     }
 
     @Nullable
+    public String getTextStampDescription()
+    {
+        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP);
+    }
+
+	@Nullable
+    public String getTextStamp1Description()
+    {
+        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_1);
+    }
+
+	@Nullable
+    public String getTextStamp2Description()
+    {
+        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_2);
+    }
+
+	@Nullable
+    public String getTextStamp3Description()
+    {
+        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_3);
+    }
+
+	@Nullable
     public String getMacroModeDescription()
     {
         return getOnOffDescription(PanasonicMakernoteDirectory.TAG_MACRO_MODE);
@@ -304,7 +333,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
 	@Nullable
     public String getTitleDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_LANDMARK);
+        return getTextDescription(PanasonicMakernoteDirectory.TAG_TITLE);
     }
 
 	@Nullable
@@ -983,10 +1012,10 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
             return null;
 
         int length = bytes.length;
-        for (int i = 0; i < bytes.length; i++) {
-            byte b = bytes[i];
-            if (b == 0 || b > 0x7F) {
-                length = i;
+        for (int index = 0; index < bytes.length; index++) {
+            int i = bytes[index] & 0xFF;
+            if (i == 0 || i > 0x7F) {
+                length = index;
                 break;
             }
         }
@@ -1025,7 +1054,26 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     }
 
 	@Nullable
-	private String getTextDescription(int tag) {
+	public String getBabyAgeDescription()
+    {
+        final Age age = _directory.getAge(PanasonicMakernoteDirectory.TAG_BABY_AGE);
+        if (age==null)
+            return null;
+        return age.toFriendlyString();
+	}
+	
+	@Nullable
+	public String getBabyAge1Description()
+    {
+        final Age age = _directory.getAge(PanasonicMakernoteDirectory.TAG_BABY_AGE_1);
+        if (age==null)
+            return null;
+        return age.toFriendlyString();
+	}
+
+	@Nullable
+	private String getTextDescription(int tag)
+    {
 		byte[] values = _directory.getByteArray(tag);
         if (values == null)
             return null;

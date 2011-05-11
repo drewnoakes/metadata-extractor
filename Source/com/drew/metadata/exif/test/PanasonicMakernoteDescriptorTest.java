@@ -22,6 +22,7 @@
 package com.drew.metadata.exif.test;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.metadata.Age;
 import com.drew.metadata.Face;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.PanasonicMakernoteDirectory;
@@ -46,7 +47,7 @@ public class PanasonicMakernoteDescriptorTest
         _panasonicDirectory = metadata.getDirectory(PanasonicMakernoteDirectory.class);
     }
 
-    @Test // @Ignore(value = "Need a sample image that contains a detected face")
+    @Test
     public void testGetDetectedFaces() throws Exception
     {
         Face expResult = new Face(142, 120, 76, 76, null, null);
@@ -55,10 +56,10 @@ public class PanasonicMakernoteDescriptorTest
         Assert.assertEquals(expResult, result[0]);
     }
 
-    @Test // @Ignore(value = "Need a sample image that contains a recognised face")
+    @Test
     public void testGetRecognizedFaces() throws Exception
     {
-        Face expResult = new Face(142, 120, 76, 76, "NIELS", "0031:07:15 00:00:00");
+        Face expResult = new Face(142, 120, 76, 76, "NIELS", new Age(31, 7, 15, 0, 0, 0));
         Face[] result = _panasonicDirectory.getRecognizedFaces();
         Assert.assertNotNull(result);
         Assert.assertEquals(expResult, result[0]);

@@ -24,6 +24,7 @@ import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.Age;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Face;
 
@@ -616,11 +617,25 @@ public class PanasonicMakernoteDirectory extends Directory
                         reader.getUInt16(offset + 24),
                         reader.getUInt16(offset + 26),
                         name,
-                        age);
+                        Age.fromPanasonicString(age));
             }
             return faces;
         } catch (BufferBoundsException e) {
             return null;
         }
     }
+
+    /**
+     * Attempts to convert the underlying string value (as stored in the directory) into an Age object.
+     * @param tag The tag identifier.
+     * @return The parsed Age object, or null if the tag was empty of the value unable to be parsed.
+     */
+	@Nullable
+	public Age getAge(int tag)
+    {
+        final String ageString = getString(tag);
+        if (ageString==null)
+            return null;
+        return Age.fromPanasonicString(ageString);
+	}
 }
