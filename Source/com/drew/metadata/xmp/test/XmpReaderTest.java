@@ -93,6 +93,30 @@ public class XmpReaderTest
     }
 
     @Test
+    public void testExtract_Format() throws Exception
+    {
+        Assert.assertEquals("image/tiff", _directory.getString(XmpDirectory.TAG_FORMAT));
+    }
+
+    @Test
+    public void testExtract_Creator() throws Exception
+    {
+        Assert.assertEquals("", _directory.getString(XmpDirectory.TAG_CREATOR));
+    }
+
+    @Test
+    public void testExtract_Rights() throws Exception
+    {
+        Assert.assertEquals("", _directory.getString(XmpDirectory.TAG_RIGHTS));
+    }
+
+    @Test
+    public void testExtract_Description() throws Exception
+    {
+        Assert.assertEquals("", _directory.getString(XmpDirectory.TAG_DESCRIPTION));
+    }
+
+    @Test
     public void testExtract_SerialNumber() throws Exception
     {
         Assert.assertEquals("380319450", _directory.getString(XmpDirectory.TAG_CAMERA_SERIAL_NUMBER));
