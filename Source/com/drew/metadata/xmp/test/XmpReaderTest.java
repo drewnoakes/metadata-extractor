@@ -87,10 +87,19 @@ public class XmpReaderTest
     }
 
     @Test
+    public void testExtract_HasXMPMeta() throws Exception
+    {
+        Assert.assertNotNull(_directory.getXMPMeta());
+    }
+
+    @Test
     public void testExtract_Lens() throws Exception
     {
         Assert.assertEquals("EF24-70mm f/2.8L USM", _directory.getString(XmpDirectory.TAG_LENS));
     }
+
+/*
+    // this requires further research
 
     @Test
     public void testExtract_Format() throws Exception
@@ -115,6 +124,7 @@ public class XmpReaderTest
     {
         Assert.assertEquals("", _directory.getString(XmpDirectory.TAG_DESCRIPTION));
     }
+*/
 
     @Test
     public void testExtract_SerialNumber() throws Exception

@@ -20,7 +20,9 @@
  */
 package com.drew.metadata.xmp;
 
+import com.adobe.xmp.XMPMeta;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -47,7 +49,9 @@ public class XmpDirectory extends Directory
     public static final int TAG_DATETIME_ORIGINAL = 0x000d;
     public static final int TAG_DATETIME_DIGITIZED = 0x000e;
 
+/*
     // dublin core properties
+    // this requires further research
     public static int TAG_TITLE = 0x100;
     public static int TAG_SUBJECT = 0x1001;
     public static int TAG_DATE = 0x1002;
@@ -69,6 +73,7 @@ public class XmpDirectory extends Directory
     public static int TAG_ACCRUAL_METHOD = 0x1012;
     public static int TAG_ACCRUAL_PERIODICITY = 0x1013;
     public static int TAG_ACCRUAL_POLICY = 0x1014;
+*/
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -91,6 +96,8 @@ public class XmpDirectory extends Directory
         _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
         _tagNameMap.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
         
+/*
+        // this requires further research
         _tagNameMap.put(TAG_TITLE, "Title");
         _tagNameMap.put(TAG_SUBJECT, "Subject");
         _tagNameMap.put(TAG_DATE, "Date");
@@ -112,7 +119,11 @@ public class XmpDirectory extends Directory
         _tagNameMap.put(TAG_ACCRUAL_METHOD, "Accrual Method");
         _tagNameMap.put(TAG_ACCRUAL_PERIODICITY, "Accrual Periodicity");
         _tagNameMap.put(TAG_ACCRUAL_POLICY, "Accrual Policy");
+*/
     }
+
+    @Nullable
+    private XMPMeta _xmpMeta;
 
     public XmpDirectory()
     {
@@ -146,5 +157,19 @@ public class XmpDirectory extends Directory
     public Map<String, String> getXmpProperties()
     {
         return _propertyValueByPath;
+    }
+
+    public void setXMPMeta(@NotNull XMPMeta xmpMeta)
+    {
+        _xmpMeta = xmpMeta;
+    }
+
+    /**
+     * Gets the XMPMeta object used to populate this directory.  It can be used for more XMP-oriented operations.
+     */
+    @Nullable
+    public XMPMeta getXMPMeta()
+    {
+        return _xmpMeta;
     }
 }

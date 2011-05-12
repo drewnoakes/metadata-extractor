@@ -91,6 +91,9 @@ public class XmpReader implements MetadataReader
             // use XMPMetaFactory to create a XMPMeta instance based on the parsed data buffer
             XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBuffer);
 
+            // store the XMPMeta object on the directory in case others wish to use it
+            directory.setXMPMeta(xmpMeta);
+
             // read all the tags and send them to the directory
             // I've added some popular tags, feel free to add more tags
             processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:LensInfo", XmpDirectory.TAG_LENS_INFO, FMT_STRING);
@@ -111,6 +114,8 @@ public class XmpReader implements MetadataReader
             processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeOriginal", XmpDirectory.TAG_DATETIME_ORIGINAL);
             processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeDigitized", XmpDirectory.TAG_DATETIME_DIGITIZED);
 
+/*
+            // this requires further research
             processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:title", XmpDirectory.TAG_TITLE, FMT_STRING);
             processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:subject", XmpDirectory.TAG_SUBJECT, FMT_STRING);
             processXmpDateTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:date", XmpDirectory.TAG_DATE);
@@ -132,6 +137,7 @@ public class XmpReader implements MetadataReader
             processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualMethod", XmpDirectory.TAG_ACCRUAL_METHOD, FMT_STRING);
             processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPeriodicity", XmpDirectory.TAG_ACCRUAL_PERIODICITY, FMT_STRING);
             processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPolicy", XmpDirectory.TAG_ACCRUAL_POLICY, FMT_STRING);
+*/
 
             for (XMPIterator iterator = xmpMeta.iterator(); iterator.hasNext();) {
                 XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
