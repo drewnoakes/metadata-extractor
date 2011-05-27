@@ -22,6 +22,7 @@ package com.drew.imaging.jpeg;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.adobe.AdobeJpegReader;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
@@ -126,6 +127,13 @@ public class JpegMetadataReader
             } else {
                 // TODO might be able to check for a leading 0x1c02 for IPTC data...
                 new IptcReader().extract(appdSegment, metadata);
+            }
+        }
+
+        // Loop through all APPE segments, checking the leading bytes to identify the format of each.
+        for (byte[] appeSegment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APPE)) {
+            if (appeSegment.length == 12 && "Adobe".compareTo(new String(appeSegment, 0, 5))==0) {
+                new AdobeJpegReader().extract(appeSegment, metadata);
             }
         }
 

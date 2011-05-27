@@ -21,12 +21,19 @@
 
 package com.drew.lang;
 
-import com.drew.lang.annotations.*;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.SuppressWarnings;
 
-/** @author Drew Noakes http://drewnoakes.com */
+/**
+ * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
+ * issues.
+ * <p/>
+ * By default, the buffer reader operates with Motorola byte order (big endianness).  This can be changed by calling
+ * <code>setMotorolaByteOrder</code>.
+ * 
+ * @author Drew Noakes http://drewnoakes.com
+ * */
 public class BufferReader
 {
     @NotNull
@@ -45,7 +52,7 @@ public class BufferReader
 
     /**
      * Returns the length of the buffer.  This value represents the total number of bytes in the underlying array.
-     * @return
+     * @return The number of bytes in the buffer.
      */
     public int getLength()
     {
@@ -67,6 +74,13 @@ public class BufferReader
         _isMotorolaByteOrder = motorolaByteOrder;
     }
 
+    /**
+     * Gets the endianness of this reader.
+     * <ul>
+     *     <li><code>true</code> for Motorola (or big) endianness</li>
+     *     <li><code>false</code> for Intel (or little) endianness</li>
+     * </ul>
+     */
     public boolean isMotorolaByteOrder()
     {
         return _isMotorolaByteOrder;
@@ -246,6 +260,12 @@ public class BufferReader
     /**
      * Creates a String from the _data buffer starting at the specified index,
      * and ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
+     *
+     * @param index The index within the buffer at which to start reading the string.
+     * @param maxLengthBytes The maximum number of bytes to read.  If a zero-byte is not reached within this limit,
+     * reading will stop and the string will be truncated to this length.
+     * @return The read string.
+     * @throws BufferBoundsException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
     public String getNullTerminatedString(int index, int maxLengthBytes) throws BufferBoundsException

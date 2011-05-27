@@ -21,9 +21,9 @@
 package com.drew.metadata;
 
 import com.drew.lang.Rational;
-import com.drew.lang.annotations.SuppressWarnings;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.lang.annotations.SuppressWarnings;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
@@ -89,6 +89,7 @@ public abstract class Directory
      * @param tagType the tag type to check for
      * @return true if a value exists for the specified tag type, false if not
      */
+    @java.lang.SuppressWarnings({ "UnnecessaryBoxing" })
     public boolean containsTag(int tagType)
     {
         return _tagMap.containsKey(Integer.valueOf(tagType));
@@ -331,7 +332,7 @@ public abstract class Directory
      * @param value   the value for the specified tag
      * @throws NullPointerException if value is <code>null</code>
      */
-    @java.lang.SuppressWarnings({ "ConstantConditions" })
+    @java.lang.SuppressWarnings( { "ConstantConditions", "UnnecessaryBoxing" })
     public void setObject(int tagType, @NotNull Object value)
     {
         if (value == null)
