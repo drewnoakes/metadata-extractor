@@ -4,6 +4,7 @@ com.drew.imaging.tiff
 com.drew.lang
 com.drew.lang.annotations
 com.drew.metadata
+com.drew.metadata.adobe
 com.drew.metadata.exif
 com.drew.metadata.icc
 com.drew.metadata.iptc
