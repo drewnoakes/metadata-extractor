@@ -91,10 +91,7 @@ public class IccReader implements MetadataReader
                 int tagType = reader.getInt32(pos);
                 int tagPtr = reader.getInt32(pos + 4);
                 int tagLen = reader.getInt32(pos + 8);
-                if (tagPtr + tagLen > data.length)
-                    throw new BufferBoundsException(data, tagPtr, tagLen);
-                byte[] b = new byte[tagLen];
-                System.arraycopy(data, tagPtr, b, 0, tagLen);
+                byte[] b = reader.getBytes(tagPtr, tagLen);
                 directory.setByteArray(tagType, b);
             }
         } catch (BufferBoundsException e) {

@@ -285,7 +285,7 @@ public class BufferReader
 
     private void CheckBounds(final int index, final int bytesRequested) throws BufferBoundsException
     {
-        if (bytesRequested < 0 || index < 0 || index + bytesRequested - 1 >= _buffer.length)
+        if (bytesRequested < 0 || index < 0 || (long)index + (long)bytesRequested - 1L >= (long)_buffer.length)
             throw new BufferBoundsException(_buffer, index, bytesRequested);
     }
 }

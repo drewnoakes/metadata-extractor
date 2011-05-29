@@ -225,4 +225,17 @@ public class BufferReaderTest
 
         Assert.assertEquals("\0EF", reader.getString(4, 3));
     }
+
+    @Test
+    public void testOverflowBoundsCalculation()
+    {
+        byte[] bytes = new byte[10];
+        BufferReader reader = new BufferReader(bytes);
+
+        try {
+            reader.getBytes(0x6FFFFFFF, 0x6FFFFFFF);
+        } catch (BufferBoundsException e) {
+            Assert.assertEquals("Attempt to read 1879048191 bytes from beyond end of buffer (requested index: 1879048191, max index: 9)", e.getMessage());
+        }
+    }
 }

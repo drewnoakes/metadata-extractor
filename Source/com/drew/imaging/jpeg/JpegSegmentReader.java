@@ -68,17 +68,17 @@ public class JpegSegmentReader
     public static final byte SEGMENT_APP8 = (byte)0xE8;
     /** APP9 Jpeg segment identifier. */
     public static final byte SEGMENT_APP9 = (byte)0xE9;
-    /** APPA Jpeg segment identifier -- can hold Unicode comments. */
+    /** APPA (App10) Jpeg segment identifier -- can hold Unicode comments. */
     public static final byte SEGMENT_APPA = (byte)0xEA;
-    /** APPB Jpeg segment identifier. */
+    /** APPB (App11) Jpeg segment identifier. */
     public static final byte SEGMENT_APPB = (byte)0xEB;
-    /** APPC Jpeg segment identifier. */
+    /** APPC (App12) Jpeg segment identifier. */
     public static final byte SEGMENT_APPC = (byte)0xEC;
-    /** APPD Jpeg segment identifier -- IPTC data in here. */
+    /** APPD (App13) Jpeg segment identifier -- IPTC data in here. */
     public static final byte SEGMENT_APPD = (byte)0xED;
-    /** APPE Jpeg segment identifier. */
+    /** APPE (App14) Jpeg segment identifier. */
     public static final byte SEGMENT_APPE = (byte)0xEE;
-    /** APPF Jpeg segment identifier. */
+    /** APPF (App15) Jpeg segment identifier. */
     public static final byte SEGMENT_APPF = (byte)0xEF;
     /** Start Of Image segment identifier. */
     public static final byte SEGMENT_SOI = (byte)0xD8;

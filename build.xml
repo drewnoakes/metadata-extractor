@@ -33,7 +33,7 @@
     <property name="lib" value="Libraries"/>
     <property name="verbose" value="true"/>
     <property name="debug" value="off"/>
-    <property name="version" value="2.5.0-RC1"/>
+    <property name="version" value="2.5.0-RC3"/>
     <property name="classpath" value="${lib}/junit-4.8.2.jar;${lib}/xmpcore.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
