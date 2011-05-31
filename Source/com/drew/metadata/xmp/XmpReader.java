@@ -163,25 +163,36 @@ public class XmpReader implements MetadataReader
         switch (formatCode) {
             case FMT_RATIONAL:
                 String[] rationalParts = property.split("/", 2);
-
                 if (rationalParts.length == 2) {
-                    Rational rational = new Rational((long) Float.parseFloat(rationalParts[0]), (long) Float.parseFloat(rationalParts[1]));
-                    directory.setRational(tagType, rational);
+                    try{
+                        Rational rational = new Rational((long) Float.parseFloat(rationalParts[0]), (long) Float.parseFloat(rationalParts[1]));
+                        directory.setRational(tagType, rational);
+                    } catch (NumberFormatException ex) {
+                        directory.addError(String.format("Unable to parse XMP property %s as a Rational.", propName));
+                    }
                 } else {
                     directory.addError("Error in rational format for tag " + tagType);
                 }
                 break;
             case FMT_INT:
-                directory.setInt(tagType, Integer.valueOf(property));
+                try{
+                    directory.setInt(tagType, Integer.valueOf(property));
+                } catch (NumberFormatException ex) {
+                    directory.addError(String.format("Unable to parse XMP property %s as an int.", propName));
+                }
                 break;
             case FMT_DOUBLE:
-                directory.setDouble(tagType, Double.valueOf(property));
+                try{
+                    directory.setDouble(tagType, Double.valueOf(property));
+                } catch (NumberFormatException ex) {
+                    directory.addError(String.format("Unable to parse XMP property %s as an double.", propName));
+                }
                 break;
             case FMT_STRING:
                 directory.setString(tagType, property);
                 break;
             default:
-                directory.addError("Unknown format code " + formatCode + " for tag " + tagType);
+                directory.addError(String.format("Unknown format code %d for tag %d", formatCode, tagType));
         }
     }
 
