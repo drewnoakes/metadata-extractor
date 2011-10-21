@@ -31,12 +31,10 @@ import com.drew.metadata.MetadataReader;
  * <p/>
  * More info at: http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
  *
- * @author Yuri Binev, Drew Noakes
+ * @author Yuri Binev, Drew Noakes, Markus Meyer
  */
 public class JfifReader implements MetadataReader
 {
-    // TODO add unit tests for JFIF data
-
     /**
      * Performs the Jfif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
@@ -47,16 +45,18 @@ public class JfifReader implements MetadataReader
         BufferReader reader = new BufferReader(data);
 
         try {
-            int ver = reader.getInt32(JfifDirectory.TAG_JFIF_VERSION);
+            // For JFIF, the tag number is also the offset into the segment
+            
+            int ver = reader.getUInt16(JfifDirectory.TAG_JFIF_VERSION);
             directory.setInt(JfifDirectory.TAG_JFIF_VERSION, ver);
 
-            int units = reader.getUInt16(JfifDirectory.TAG_JFIF_UNITS);
+            int units = reader.getUInt8(JfifDirectory.TAG_JFIF_UNITS);
             directory.setInt(JfifDirectory.TAG_JFIF_UNITS, units);
 
-            int height = reader.getInt32(JfifDirectory.TAG_JFIF_RESX);
+            int height = reader.getUInt16(JfifDirectory.TAG_JFIF_RESX);
             directory.setInt(JfifDirectory.TAG_JFIF_RESX, height);
 
-            int width = reader.getInt32(JfifDirectory.TAG_JFIF_RESY);
+            int width = reader.getUInt16(JfifDirectory.TAG_JFIF_RESY);
             directory.setInt(JfifDirectory.TAG_JFIF_RESY, width);
 
         } catch (BufferBoundsException me) {
