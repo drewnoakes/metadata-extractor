@@ -444,8 +444,8 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
         Integer isoEquiv = _directory.getInteger(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
         if (isoEquiv==null)
             return null;
-        if (isoEquiv < 50)
-            isoEquiv *= 200;
+        // There used to be a check here that multiplied ISO values < 50 by 200.
+        // Issue 36 shows a smart-phone image from a Samsung Galaxy S2 with ISO-40.
         return Integer.toString(isoEquiv);
     }
 
