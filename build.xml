@@ -95,7 +95,7 @@
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
         <jar destfile="${dist}/metadata-extractor-${version}-src.jar" update="false">
             <fileset dir="."
-                includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.metadata, ${src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
+                includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.bytes, ${src}/**/*.metadata, ${src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </jar>
