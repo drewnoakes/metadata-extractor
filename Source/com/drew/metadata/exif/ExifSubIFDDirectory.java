@@ -117,7 +117,6 @@ public class ExifSubIFDDirectory extends Directory
      */
     public static final int TAG_SUBFILE_TYPE = 0x00FF;
     public static final int TAG_TRANSFER_FUNCTION = 0x012D;
-    public static final int TAG_ARTIST = 0x013B;
     public static final int TAG_PREDICTOR = 0x013D;
     public static final int TAG_TILE_WIDTH = 0x0142;
     public static final int TAG_TILE_LENGTH = 0x0143;
@@ -527,7 +526,6 @@ public class ExifSubIFDDirectory extends Directory
         _tagNameMap.put(TAG_PAGE_NAME, "Page Name");
         _tagNameMap.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
         _tagNameMap.put(TAG_TRANSFER_FUNCTION, "Transfer Function");
-        _tagNameMap.put(TAG_ARTIST, "Artist");
         _tagNameMap.put(TAG_PREDICTOR, "Predictor");
         _tagNameMap.put(TAG_TILE_WIDTH, "Tile Width");
         _tagNameMap.put(TAG_TILE_LENGTH, "Tile Length");

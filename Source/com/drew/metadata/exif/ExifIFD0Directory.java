@@ -42,6 +42,7 @@ public class ExifIFD0Directory extends Directory
     public static final int TAG_RESOLUTION_UNIT = 0x0128;
     public static final int TAG_SOFTWARE = 0x0131;
     public static final int TAG_DATETIME = 0x0132;
+    public static final int TAG_ARTIST = 0x013B;
     public static final int TAG_WHITE_POINT = 0x013E;
     public static final int TAG_PRIMARY_CHROMATICITIES = 0x013F;
     public static final int TAG_YCBCR_COEFFICIENTS = 0x0211;
@@ -74,6 +75,7 @@ public class ExifIFD0Directory extends Directory
         _tagNameMap.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
         _tagNameMap.put(TAG_SOFTWARE, "Software");
         _tagNameMap.put(TAG_DATETIME, "Date/Time");
+        _tagNameMap.put(TAG_ARTIST, "Artist");
         _tagNameMap.put(TAG_WHITE_POINT, "White Point");
         _tagNameMap.put(TAG_PRIMARY_CHROMATICITIES, "Primary Chromaticities");
         _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
