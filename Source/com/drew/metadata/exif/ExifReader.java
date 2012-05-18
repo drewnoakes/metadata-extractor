@@ -469,13 +469,22 @@ public class ExifReader implements MetadataReader
 */
                 break;
             case FMT_SRATIONAL:
-            case FMT_URATIONAL:
                 if (componentCount == 1) {
                     directory.setRational(tagType, new Rational(reader.getInt32(tagValueOffset), reader.getInt32(tagValueOffset + 4)));
                 } else if (componentCount > 1) {
                     Rational[] rationals = new Rational[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         rationals[i] = new Rational(reader.getInt32(tagValueOffset + (8 * i)), reader.getInt32(tagValueOffset + 4 + (8 * i)));
+                    directory.setRationalArray(tagType, rationals);
+                }
+                break;
+            case FMT_URATIONAL:
+                if (componentCount == 1) {
+                    directory.setRational(tagType, new Rational(reader.getUInt32(tagValueOffset), reader.getUInt32(tagValueOffset + 4)));
+                } else if (componentCount > 1) {
+                    Rational[] rationals = new Rational[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        rationals[i] = new Rational(reader.getUInt32(tagValueOffset + (8 * i)), reader.getUInt32(tagValueOffset + 4 + (8 * i)));
                     directory.setRationalArray(tagType, rationals);
                 }
                 break;

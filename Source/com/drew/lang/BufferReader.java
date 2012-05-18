@@ -136,10 +136,10 @@ public class BufferReader
     }
 
     /**
-     * Get a 32-bit integer from the buffer.
+     * Get a 32-bit signed integer from the buffer.
      * 
      * @param index position within the data buffer to read first byte
-     * @return the 32 bit int value, between 0x00000000 and 0xFFFFFFFF
+     * @return the signed 32 bit int value, between 0x00000000 and 0xFFFFFFFF
      * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
      */
     public int getInt32(int index) throws BufferBoundsException
@@ -158,6 +158,32 @@ public class BufferReader
                    (_buffer[index + 2] << 16 & 0xFF0000) |
                    (_buffer[index + 1] << 8  & 0xFF00) |
                    (_buffer[index    ]       & 0xFF);
+        }
+    }
+
+    /**
+     * Get a 32-bit unsigned integer from the buffer, returning it as a long.
+     *
+     * @param index position within the data buffer to read first byte
+     * @return the unsigned 32-bit int value as a long, between 0x00000000 and 0xFFFFFFFF
+     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public long getUInt32(int index) throws BufferBoundsException
+    {
+        CheckBounds(index, 4);
+
+        if (_isMotorolaByteOrder) {
+            // Motorola - MSB first (big endian)
+            return (((long)_buffer[index    ]) << 24 & 0xFF000000L) |
+                   (((long)_buffer[index + 1]) << 16 & 0xFF0000L) |
+                   (((long)_buffer[index + 2]) << 8  & 0xFF00L) |
+                   (((long)_buffer[index + 3])       & 0xFFL);
+        } else {
+            // Intel ordering - LSB first (little endian)
+            return (((long)_buffer[index + 3]) << 24 & 0xFF000000L) |
+                   (((long)_buffer[index + 2]) << 16 & 0xFF0000L) |
+                   (((long)_buffer[index + 1]) << 8  & 0xFF00L) |
+                   (((long)_buffer[index    ])       & 0xFFL);
         }
     }
 

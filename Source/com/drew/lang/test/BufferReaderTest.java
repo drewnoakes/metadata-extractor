@@ -115,6 +115,27 @@ public class BufferReaderTest
     }
 
     @Test
+    public void testGetUInt32() throws BufferBoundsException
+    {
+        Assert.assertEquals(0x00017FFF, new BufferReader(new byte[]{(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff}).getUInt32(0));
+
+        byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04 };
+        BufferReader reader = new BufferReader(buffer);
+
+        Assert.assertEquals(0x00017FFF, reader.getUInt32(0));
+        Assert.assertEquals(0x017FFF02, reader.getUInt32(1));
+        Assert.assertEquals(0x7FFF0203, reader.getUInt32(2));
+        Assert.assertEquals(0xFF020304, reader.getUInt32(3)); // equiv
+        Assert.assertEquals(-16645372, reader.getUInt32(3));  //
+
+        reader.setMotorolaByteOrder(false);
+
+        Assert.assertEquals(0xFF7F0100, reader.getUInt32(0));
+        Assert.assertEquals(0x02FF7F01, reader.getUInt32(1));
+        Assert.assertEquals(0x0302FF7F, reader.getUInt32(2));
+    }
+
+    @Test
     public void testGetInt32_OutOfBounds()
     {
         try {
