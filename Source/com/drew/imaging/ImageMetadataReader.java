@@ -176,7 +176,7 @@ public class ImageMetadataReader
                 System.out.println(fileName);
                 System.out.println("</a>");
                 System.out.println();
-                System.out.println("|| *Directory* || *Tag Name* || *Tag Value* ||");
+                System.out.println("|| *Directory* || *Tag Name* || *Tag Description* ||");
             }
 
             // iterate over the exif data and print to System.out
