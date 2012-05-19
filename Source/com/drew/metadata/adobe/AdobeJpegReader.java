@@ -56,7 +56,7 @@ public class AdobeJpegReader implements MetadataReader
             directory.setInt(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION, reader.getUInt16(5));
             directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS0, reader.getUInt16(7));
             directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS1, reader.getUInt16(9));
-            directory.setInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM, reader.getByte(11));
+            directory.setInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM, reader.getInt8(11));
         } catch (BufferBoundsException ex) {
             directory.addError("Exif data segment ended prematurely");
         }

@@ -87,37 +87,38 @@ public class BufferReader
     }
 
     /**
-     * Returns the byte at the specified index.
+     * Returns an unsigned 8-bit int calculated from one byte of data at the specified index.
      *
      * @param index position within the data buffer to read byte
-     * @return the 8 bit int value, between 0x0 and 0xF
+     * @return the 8 bit int value, between 0 and 255
      * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public byte getByte(int index) throws BufferBoundsException
+    public short getUInt8(int index) throws BufferBoundsException
     {
         CheckBounds(index, 1);
+
+        return (short) (_buffer[index] & 255);
+    }
+
+    /**
+     * Returns a signed 8-bit int calculated from one byte of data at the specified index.
+     *
+     * @param index position within the data buffer to read byte
+     * @return the 8 bit int value, between 0x00 and 0xFF
+     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public byte getInt8(int index) throws BufferBoundsException
+    {
+        CheckBounds(index, 1);
+
         return _buffer[index];
     }
 
     /**
-     * Returns an int calculated from one byte of data at the specified index.
-     *
-     * @param index position within the data buffer to read byte
-     * @return the 8 bit int value, between 0x0 and 0xF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
-     */
-    public int getUInt8(int index) throws BufferBoundsException
-    {
-        CheckBounds(index, 1);
-
-        return _buffer[index] & 255;
-    }
-
-    /**
-     * Returns an int calculated from four bytes of data at the specified index (MSB, LSB).
+     * Returns an unsigned 16-bit int calculated from two bytes of data at the specified index.
      * 
      * @param index position within the data buffer to read first byte
-     * @return the 32 bit int value, between 0x0000 and 0xFFFF
+     * @return the 16 bit int value, between 0x0000 and 0xFFFF
      * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
      */
     public int getUInt16(int index) throws BufferBoundsException
@@ -136,7 +137,55 @@ public class BufferReader
     }
 
     /**
-     * Get a 32-bit signed integer from the buffer.
+     * Returns a signed 16-bit int calculated from two bytes of data at the specified index (MSB, LSB).
+     *
+     * @param index position within the data buffer to read first byte
+     * @return the 16 bit int value, between 0x0000 and 0xFFFF
+     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public short getInt16(int index) throws BufferBoundsException
+    {
+        CheckBounds(index, 2);
+
+        if (_isMotorolaByteOrder) {
+            // Motorola - MSB first
+            return (short) (((short)_buffer[index    ] << 8 & (short)0xFF00) |
+                            ((short)_buffer[index + 1]      & (short)0xFF));
+        } else {
+            // Intel ordering - LSB first
+            return (short) (((short)_buffer[index + 1] << 8 & (short)0xFF00) |
+                            ((short)_buffer[index    ]      & (short)0xFF));
+        }
+    }
+
+    /**
+     * Get a 32-bit unsigned integer from the buffer, returning it as a long.
+     *
+     * @param index position within the data buffer to read first byte
+     * @return the unsigned 32-bit int value as a long, between 0x00000000 and 0xFFFFFFFF
+     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public long getUInt32(int index) throws BufferBoundsException
+    {
+        CheckBounds(index, 4);
+
+        if (_isMotorolaByteOrder) {
+            // Motorola - MSB first (big endian)
+            return (((long)_buffer[index    ]) << 24 & 0xFF000000L) |
+                    (((long)_buffer[index + 1]) << 16 & 0xFF0000L) |
+                    (((long)_buffer[index + 2]) << 8  & 0xFF00L) |
+                    (((long)_buffer[index + 3])       & 0xFFL);
+        } else {
+            // Intel ordering - LSB first (little endian)
+            return (((long)_buffer[index + 3]) << 24 & 0xFF000000L) |
+                    (((long)_buffer[index + 2]) << 16 & 0xFF0000L) |
+                    (((long)_buffer[index + 1]) << 8  & 0xFF00L) |
+                    (((long)_buffer[index    ])       & 0xFFL);
+        }
+    }
+
+    /**
+     * Returns a signed 32-bit integer from four bytes of data at the specified index the buffer.
      * 
      * @param index position within the data buffer to read first byte
      * @return the signed 32 bit int value, between 0x00000000 and 0xFFFFFFFF
@@ -158,32 +207,6 @@ public class BufferReader
                    (_buffer[index + 2] << 16 & 0xFF0000) |
                    (_buffer[index + 1] << 8  & 0xFF00) |
                    (_buffer[index    ]       & 0xFF);
-        }
-    }
-
-    /**
-     * Get a 32-bit unsigned integer from the buffer, returning it as a long.
-     *
-     * @param index position within the data buffer to read first byte
-     * @return the unsigned 32-bit int value as a long, between 0x00000000 and 0xFFFFFFFF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
-     */
-    public long getUInt32(int index) throws BufferBoundsException
-    {
-        CheckBounds(index, 4);
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (((long)_buffer[index    ]) << 24 & 0xFF000000L) |
-                   (((long)_buffer[index + 1]) << 16 & 0xFF0000L) |
-                   (((long)_buffer[index + 2]) << 8  & 0xFF00L) |
-                   (((long)_buffer[index + 3])       & 0xFFL);
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (((long)_buffer[index + 3]) << 24 & 0xFF000000L) |
-                   (((long)_buffer[index + 2]) << 16 & 0xFF0000L) |
-                   (((long)_buffer[index + 1]) << 8  & 0xFF00L) |
-                   (((long)_buffer[index    ])       & 0xFFL);
         }
     }
 
@@ -250,7 +273,6 @@ public class BufferReader
     {
         return Double.longBitsToDouble(getInt64(index));
     }
-
     
     @NotNull
     public byte[] getBytes(int index, int count) throws BufferBoundsException

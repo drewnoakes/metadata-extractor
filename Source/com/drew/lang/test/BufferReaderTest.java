@@ -67,6 +67,25 @@ public class BufferReaderTest
     }
 
     @Test
+    public void testGetInt16() throws BufferBoundsException
+    {
+        Assert.assertEquals(-1, new BufferReader(new byte[]{(byte)0xff,(byte)0xff}).getInt16(0));
+
+        byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
+        BufferReader reader = new BufferReader(buffer);
+
+        Assert.assertEquals((short)0x0001, reader.getInt16(0));
+        Assert.assertEquals((short)0x017F, reader.getInt16(1));
+        Assert.assertEquals((short)0x7FFF, reader.getInt16(2));
+
+        reader.setMotorolaByteOrder(false);
+
+        Assert.assertEquals((short)0x0100, reader.getInt16(0));
+        Assert.assertEquals((short)0x7F01, reader.getInt16(1));
+        Assert.assertEquals((short)0xFF7F, reader.getInt16(2));
+    }
+
+    @Test
     public void testGetUInt16() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
@@ -98,6 +117,8 @@ public class BufferReaderTest
     @Test
     public void testGetInt32() throws BufferBoundsException
     {
+        Assert.assertEquals(-1, new BufferReader(new byte[]{(byte)0xff,(byte)0xff, (byte)0xff,(byte)0xff}).getInt32(0));
+
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04 };
         BufferReader reader = new BufferReader(buffer);
 
@@ -117,7 +138,7 @@ public class BufferReaderTest
     @Test
     public void testGetUInt32() throws BufferBoundsException
     {
-        Assert.assertEquals(0x00017FFF, new BufferReader(new byte[]{(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff}).getUInt32(0));
+        Assert.assertEquals(4294967295L, new BufferReader(new byte[]{(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff}).getUInt32(0));
 
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04 };
         BufferReader reader = new BufferReader(buffer);
@@ -125,12 +146,11 @@ public class BufferReaderTest
         Assert.assertEquals(0x00017FFF, reader.getUInt32(0));
         Assert.assertEquals(0x017FFF02, reader.getUInt32(1));
         Assert.assertEquals(0x7FFF0203, reader.getUInt32(2));
-        Assert.assertEquals(0xFF020304, reader.getUInt32(3)); // equiv
-        Assert.assertEquals(-16645372, reader.getUInt32(3));  //
+        Assert.assertEquals(4278321924L, reader.getUInt32(3)); // equiv
 
         reader.setMotorolaByteOrder(false);
 
-        Assert.assertEquals(0xFF7F0100, reader.getUInt32(0));
+        Assert.assertEquals(4286513408L, reader.getUInt32(0));
         Assert.assertEquals(0x02FF7F01, reader.getUInt32(1));
         Assert.assertEquals(0x0302FF7F, reader.getUInt32(2));
     }

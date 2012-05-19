@@ -348,7 +348,7 @@ public class ExifReader implements MetadataReader
                  * :0000: 4E 69 6B 6F 6E 00 02 00-00 00 4D 4D 00 2A 00 00 Nikon....MM.*...
                  * :0010: 00 08 00 1E 00 01 00 07-00 00 00 04 30 32 30 30 ............0200
                  */
-                switch (reader.getByte(subdirOffset + 6)) {
+                switch (reader.getUInt8(subdirOffset + 6)) {
                     case 1:
                         processDirectory(metadata.getOrCreateDirectory(NikonType1MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset, metadata, reader);
                         break;
@@ -488,18 +488,6 @@ public class ExifReader implements MetadataReader
                     directory.setRationalArray(tagType, rationals);
                 }
                 break;
-            case FMT_SBYTE:
-            case FMT_BYTE:
-                // note that all integral types are stored as int32 internally (the largest supported by TIFF)
-                if (componentCount == 1) {
-                    directory.setInt(tagType, reader.getUInt8(tagValueOffset));
-                } else {
-                    int[] bytes = new int[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        bytes[i] = reader.getUInt8(tagValueOffset + i);
-                    directory.setIntArray(tagType, bytes);
-                }
-                break;
             case FMT_SINGLE:
                 if (componentCount == 1) {
                     directory.setFloat(tagType, reader.getFloat32(tagValueOffset));
@@ -520,9 +508,32 @@ public class ExifReader implements MetadataReader
                     directory.setDoubleArray(tagType, doubles);
                 }
                 break;
+
+            //
+            // Note that all integral types are stored as int32 internally (the largest supported by TIFF)
+            //
+
+            case FMT_SBYTE:
+                if (componentCount == 1) {
+                    directory.setInt(tagType, reader.getInt8(tagValueOffset));
+                } else {
+                    int[] bytes = new int[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        bytes[i] = reader.getInt8(tagValueOffset + i);
+                    directory.setIntArray(tagType, bytes);
+                }
+                break;
+            case FMT_BYTE:
+                if (componentCount == 1) {
+                    directory.setInt(tagType, reader.getUInt8(tagValueOffset));
+                } else {
+                    int[] bytes = new int[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        bytes[i] = reader.getUInt8(tagValueOffset + i);
+                    directory.setIntArray(tagType, bytes);
+                }
+                break;
             case FMT_USHORT:
-            case FMT_SSHORT:
-                // note that all integral types are stored as int32 internally (the largest supported by TIFF)
                 if (componentCount == 1) {
                     int i = reader.getUInt16(tagValueOffset);
                     directory.setInt(tagType, i);
@@ -533,9 +544,20 @@ public class ExifReader implements MetadataReader
                     directory.setIntArray(tagType, ints);
                 }
                 break;
+            case FMT_SSHORT:
+                if (componentCount == 1) {
+                    int i = reader.getInt16(tagValueOffset);
+                    directory.setInt(tagType, i);
+                } else {
+                    int[] ints = new int[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        ints[i] = reader.getInt16(tagValueOffset + (i * 2));
+                    directory.setIntArray(tagType, ints);
+                }
+                break;
             case FMT_SLONG:
             case FMT_ULONG:
-                // note that all integral types are stored as int32 internally (the largest supported by TIFF)
+                // NOTE 'long' in this case means 32 bit, not 64
                 if (componentCount == 1) {
                     int i = reader.getInt32(tagValueOffset);
                     directory.setInt(tagType, i);
