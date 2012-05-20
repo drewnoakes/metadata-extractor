@@ -25,20 +25,25 @@
 
     <description>metadata-extractor build file</description>
 
-    <property name="dist" location="Releases"/>
-    <property name="build" value="Output"/>
-    <property name="src" value="Source"/>
-    <property name="javadoc" value="Javadoc"/>
-    <property name="test.reports" value="TestReports"/>
-    <property name="lib" value="Libraries"/>
-    <property name="verbose" value="true"/>
-    <property name="debug" value="off"/>
-    <property name="version" value="2.5.0-RC3"/>
-    <property name="classpath" value="${lib}/junit-4.8.2.jar;${lib}/xmpcore.jar"/>
+    <property name="version"        value="2.5.1"/>
+    <property name="dist"           location="Releases"/>
+    <property name="src"            value="Source"/>
+    <property name="output"         value="Output/Source"/>
+    <property name="test-src"       value="Tests"/>
+    <property name="test-output"    value="Output/Tests"/>
+    <property name="sample-src"     value="Samples"/>
+    <property name="javadoc"        value="Javadoc"/>
+    <property name="test.reports"   value="TestReports"/>
+    <property name="lib"            value="Libraries"/>
+    <property name="verbose"        value="true"/>
+    <property name="debug"          value="off"/>
+    <property name="classpath"      value="${lib}/junit-4.8.2.jar;${lib}/xmpcore.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
-        <delete verbose="${verbose}" dir="${build}"/>
-        <mkdir dir="${build}"/>
+        <delete verbose="${verbose}" dir="${output}"/>
+        <mkdir dir="${output}"/>
+        <delete verbose="${verbose}" dir="${test-output}"/>
+        <mkdir dir="${test-output}"/>
         <mkdir dir="${dist}"/>
     </target>
 
@@ -46,7 +51,12 @@
         <!-- TODO somehow exclude file "${src}/com/drew/metadata/test/SampleUsage.java" to get rid of warnings -->
         <javac classpath="${classpath}"
                srcdir="${src}"
-               destdir="${build}"
+               destdir="${output}"
+               debug="${debug}"
+               verbose="${verbose}"/>
+        <javac classpath="${classpath};${output}"
+               srcdir="${test-src}"
+               destdir="${test-output}"
                debug="${debug}"
                verbose="${verbose}"/>
         <!--<copyfile src="LICENSE-2.0.txt" dest="${build}" forceoverwrite="true" />-->
@@ -57,7 +67,8 @@
         <mkdir dir="${test.reports}"/>
         <junit printsummary="yes" logfailedtests="true" fork="yes" haltonfailure="yes">
             <classpath>
-                <pathelement location="${build}"/>
+                <pathelement location="${output}"/>
+                <pathelement location="${test-output}"/>
                 <pathelement path="${java.class.path}"/>
                 <pathelement path="${lib}/junit-4.8.2.jar"/>
                 <pathelement path="${lib}/xmpcore.jar"/>
@@ -66,7 +77,7 @@
             <!--<test name="com.drew.metadata.test.AllTests" />-->
             <!--todir="${test.report.dir}"-->
             <batchtest todir="${test.reports}">
-				<fileset dir="${src}">
+				<fileset dir="${test-src}">
 					<include name="**/*Test.java" />
 				</fileset>
 			</batchtest>
@@ -80,11 +91,11 @@
             <manifest>
                 <attribute name="Main-Class" value="com.drew.imaging.ImageMetadataReader"/>
             </manifest>
-            <fileset dir="${build}" excludes="**/test/*.class" />
+            <fileset dir="${output}" />
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </jar>
-        <zip file="${bin-zip}" comment="Metadata Extractor - http://drewnoakes.com/code/">
+        <zip file="${bin-zip}" comment="Metadata Extractor - http://drewnoakes.com/code/exif/">
             <file file="${bin-jar}" />
             <file file="${lib}/xmpcore.jar" />
             <file file="LICENSE-2.0.txt" />
@@ -94,18 +105,15 @@
 
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
         <jar destfile="${dist}/metadata-extractor-${version}-src.jar" update="false">
-            <fileset dir="."
-                includes="${src}/**/*.java, ${src}/**/*.jpg, ${src}/**/*.bytes, ${src}/**/*.metadata, ${src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
+            <fileset dir="." includes="${src}/**/*.java, ${test-src}/**/*.java, ${sample-src}/**/*.*, ${test-src}/**/*.jpg, ${test-src}/**/*.bytes, ${test-src}/**/*.metadata, ${src}/**/package.html, ${test-src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </jar>
     </target>
 
     <target name="javadoc" description="generate javadoc documentation">
-        <delete verbose="${verbose}" dir="${javadoc}">
-            <exclude name=".svn" />
-        </delete>
-        <copy file="Documentation/metadata-extractor-logo-30px.gif" todir="${javadoc}"  />
+        <delete verbose="${verbose}" dir="${javadoc}" />
+        <copy file="Resources/metadata-extractor-logo-30px.gif" todir="${javadoc}"  />
         <javadoc
             destdir="${javadoc}"
             defaultexcludes="yes"
@@ -116,7 +124,7 @@
             windowtitle="Metadata-Extractor - JavaDoc - An Open Source Java Library for Image File Metadata"
             failonerror="true">
             <!-- be sure to only use single quotes in the CDATA sections below -->
-            <header><![CDATA[<link rel='shortcut icon' href='http://www.drewnoakes.com/code/exif/MetadataExtractor.ico' /><a href='http://www.drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='http://www.drewnoakes.com/code/exif/javadoc/metadata-extractor-logo-30px.gif' border="0" alt='Metadata Extractor Logo'></a>]]></header>
+            <header><![CDATA[<link rel='shortcut icon' href='http://metadata-extractor.googlecode.com/git/Resources/metadata-extractor.ico' /><a href='http://www.drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='http://metadata-extractor.googlecode.com/git/Resources/metadata-extractor-logo-30px.gif' border="0" alt='Metadata Extractor Logo'></a>]]></header>
             <bottom><![CDATA[<i>Copyright &#169; 2003-2012 Drew Noakes. All Rights Reserved.</i>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -126,13 +134,15 @@ urchinTracker();
 
             <packageset dir="${src}" defaultexcludes="yes">
                 <include name="com/**"/>
-                <exclude name="com/**/test"/>
+                <!--<exclude name="com/**/test"/>-->
             </packageset>
 
         </javadoc>
-        <copy file="Documentation/javadoc-stylesheet.css" tofile="${javadoc}/stylesheet.css" overwrite="yes" />
+        <copy file="Resources/javadoc-stylesheet.css" tofile="${javadoc}/stylesheet.css" overwrite="yes" />
     </target>
 
     <target name="all" depends="dist-source, dist-binaries, javadoc" description="prepare source and binary distributions, and javadoc"/>
+
+    <target name="dist-all" depends="dist-source, dist-binaries" description="prepare source and binary distributions"/>
 
 </project>
