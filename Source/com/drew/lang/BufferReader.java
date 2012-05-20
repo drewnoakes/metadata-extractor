@@ -211,7 +211,7 @@ public class BufferReader
     }
 
     /**
-     * Get a 64-bit integer from the buffer.
+     * Get a signed 64-bit integer from the buffer.
      *
      * @param index position within the data buffer to read first byte
      * @return the 64 bit int value, between 0x0000000000000000 and 0xFFFFFFFFFFFFFFFF
