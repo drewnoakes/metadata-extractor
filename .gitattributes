@@ -1,0 +1,3 @@
+*.bytes -crlf
+*.*bytes -crlf
+*.metadata -crlf
