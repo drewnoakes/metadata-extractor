@@ -20,7 +20,10 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.GeoLocation;
+import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -146,5 +149,37 @@ public class GpsDirectory extends Directory
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
+    }
+
+    /**
+     * Parses various tags in an attempt to obtain a single object representing the latitude and longitude
+     * at which this image was captured.
+     *
+     * @return The geographical location of this image, if possible, otherwise null
+     */
+    @Nullable
+    public GeoLocation getGeoLocation()
+    {
+        Rational[] latitudes = getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
+        Rational[] longitudes = getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+        String latitudeRef = getString(GpsDirectory.TAG_GPS_LATITUDE_REF);
+        String longitudeRef = getString(GpsDirectory.TAG_GPS_LONGITUDE_REF);
+
+        // Make sure we have the required values
+        if (latitudes == null || latitudes.length != 3)
+            return null;
+        if (longitudes == null || longitudes.length != 3)
+            return null;
+        if (latitudeRef == null || longitudeRef == null)
+            return null;
+
+        Double lat = GeoLocation.degreesMinutesSecondsToDecimal(latitudes[0], latitudes[1], latitudes[2], latitudeRef.equalsIgnoreCase("S"));
+        Double lon = GeoLocation.degreesMinutesSecondsToDecimal(longitudes[0], longitudes[1], longitudes[2], longitudeRef.equalsIgnoreCase("W"));
+
+        // This can return null, in cases where the conversion was not possible
+        if (lat == null || lon == null)
+            return null;
+
+        return new GeoLocation(lat, lon);
     }
 }

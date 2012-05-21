@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.GeoLocation;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -89,13 +90,23 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsLatitudeDescription()
     {
-        return getDegreesMinutesSecondsDescription(GpsDirectory.TAG_GPS_LATITUDE);
+        GeoLocation location = _directory.getGeoLocation();
+
+        if (location == null)
+            return null;
+
+        return GeoLocation.decimalToDegreesMinutesSecondsString(location.getLatitude());
     }
 
     @Nullable
     public String getGpsLongitudeDescription()
     {
-        return getDegreesMinutesSecondsDescription(GpsDirectory.TAG_GPS_LONGITUDE);
+        GeoLocation location = _directory.getGeoLocation();
+
+        if (location == null)
+            return null;
+
+        return GeoLocation.decimalToDegreesMinutesSecondsString(location.getLongitude());
     }
 
     @Nullable
@@ -247,70 +258,14 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         return "Unknown (" + value + ")";
     }
 
-    /**
-     * New version. Should really be called getDegreesMinutesSecondsDescription
-     *
-     * @author David Ekholm
-     */
     @Nullable
-    public String getDegreesMinutesSecondsDescription(int tagType)
+    public String getDegreesMinutesSecondsDescription()
     {
-        Rational[] values = _directory.getRationalArray(tagType);
+        GeoLocation location = _directory.getGeoLocation();
 
-        if (values==null)
+        if (location == null)
             return null;
-        
-        Rational degs = values[0];
-        Rational mins = values[1];
-        Rational secs = values[2];
-        //System.out.println("The three rationals: " + degs + " " + mins + " " + secs);
 
-        // Protect against modern Nikon software writing GPS coordinates using extremely large nominators and denominators
-        if (degs.intValue() != degs.floatValue() || mins.intValue() != mins.floatValue()) {
-            // Find out least common denominator of the three
-            long lcd = degs.getDenominator();
-            if (lcd == 0) { // Yes, some cameras put 0/0 here
-                return "";
-            }
-            if (mins.getNumerator() != 0) {
-                lcd = calcLCD(lcd, mins.getDenominator());
-            }
-            if (secs.getNumerator() != 0) {
-                lcd = calcLCD(lcd, secs.getDenominator());
-            }
-
-            long asSecsNum = 3600L * degs.getNumerator() * (lcd / degs.getDenominator());
-            if (mins.getNumerator() != 0) {
-                asSecsNum += 60L * mins.getNumerator() * (lcd / mins.getDenominator());
-            }
-            if (secs.getNumerator() != 0) {
-                asSecsNum += secs.getNumerator() * (lcd / secs.getDenominator());
-            }
-            //System.out.println("asSecsNum: " + asSecsNum);
-            //System.out.println("lcd: " + lcd);
-
-            degs = new Rational(asSecsNum / lcd / 3600L, 1);
-            mins = new Rational((asSecsNum - 3600L * degs.getNumerator() * lcd) / 60L / lcd, 1);
-            secs = new Rational(asSecsNum - 3600L * degs.getNumerator() * lcd - 60L * mins.getNumerator() * lcd, lcd);
-        }
-        return "" + degs.intValue() + "°" + mins.intValue() + "'" + secs.floatValue() + "\"";
-    }
-
-    /** Greatest Common Divisor using Euclides */
-    private long calcGCD(long nr1, long nr2)
-    {
-        long temp;
-        while (nr2 != 0) {
-            temp = nr2;
-            nr2 = nr1 % temp;
-            nr1 = temp;
-        }
-        return nr1;
-    }
-
-    /** Least common denominator */
-    private long calcLCD(long nr1, long nr2)
-    {
-        return (nr1 * nr2) / calcGCD(nr1, nr2);
+        return location.toDMSString();
     }
 }
