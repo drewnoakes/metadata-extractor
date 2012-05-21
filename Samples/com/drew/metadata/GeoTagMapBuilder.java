@@ -77,7 +77,7 @@ public class GeoTagMapBuilder
             if (gpsDirectory == null)
                 continue;
             // Try to read out the location, making sure it's non-zero
-            final GeoLocation geoLocation = gpsDirectory.getGeoLocation();
+            GeoLocation geoLocation = gpsDirectory.getGeoLocation();
             if (geoLocation == null || geoLocation.isZero())
                 continue;
             // Add to our collection for use below
