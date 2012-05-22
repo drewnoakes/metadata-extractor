@@ -25,26 +25,26 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 /** @author Drew Noakes http://drewnoakes.com */
-public class BufferReaderTest
+public class ByteArrayReaderTest
 {
     @SuppressWarnings({ "ConstantConditions" })
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullBufferThrows()
     {
-        new BufferReader(null);
+        new ByteArrayReader(null);
     }
 
     @Test
     public void testDefaultEndianness()
     {
-        Assert.assertEquals(true, new BufferReader(new byte[1]).isMotorolaByteOrder());
+        Assert.assertEquals(true, new ByteArrayReader(new byte[1]).isMotorolaByteOrder());
     }
 
     @Test
     public void testGetUInt8() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals(0, reader.getUInt8(0));
         Assert.assertEquals(1, reader.getUInt8(1));
@@ -56,7 +56,7 @@ public class BufferReaderTest
     public void testGetUInt8_OutOfBounds()
     {
         try {
-            BufferReader reader = new BufferReader(new byte[2]);
+            BufferReader reader = new ByteArrayReader(new byte[2]);
             reader.getUInt8(2);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -67,10 +67,10 @@ public class BufferReaderTest
     @Test
     public void testGetInt16() throws BufferBoundsException
     {
-        Assert.assertEquals(-1, new BufferReader(new byte[]{(byte)0xff,(byte)0xff}).getInt16(0));
+        Assert.assertEquals(-1, new ByteArrayReader(new byte[]{(byte)0xff,(byte)0xff}).getInt16(0));
 
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals((short)0x0001, reader.getInt16(0));
         Assert.assertEquals((short)0x017F, reader.getInt16(1));
@@ -87,7 +87,7 @@ public class BufferReaderTest
     public void testGetUInt16() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals(0x0001, reader.getUInt16(0));
         Assert.assertEquals(0x017F, reader.getUInt16(1));
@@ -104,7 +104,7 @@ public class BufferReaderTest
     public void testGetUInt16_OutOfBounds()
     {
         try {
-            BufferReader reader = new BufferReader(new byte[2]);
+            BufferReader reader = new ByteArrayReader(new byte[2]);
             reader.getUInt16(1);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -115,10 +115,10 @@ public class BufferReaderTest
     @Test
     public void testGetInt32() throws BufferBoundsException
     {
-        Assert.assertEquals(-1, new BufferReader(new byte[]{(byte)0xff,(byte)0xff, (byte)0xff,(byte)0xff}).getInt32(0));
+        Assert.assertEquals(-1, new ByteArrayReader(new byte[]{(byte)0xff,(byte)0xff, (byte)0xff,(byte)0xff}).getInt32(0));
 
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04 };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals(0x00017FFF, reader.getInt32(0));
         Assert.assertEquals(0x017FFF02, reader.getInt32(1));
@@ -136,10 +136,10 @@ public class BufferReaderTest
     @Test
     public void testGetUInt32() throws BufferBoundsException
     {
-        Assert.assertEquals(4294967295L, new BufferReader(new byte[]{(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff}).getUInt32(0));
+        Assert.assertEquals(4294967295L, new ByteArrayReader(new byte[]{(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff}).getUInt32(0));
 
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04 };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals(0x00017FFF, reader.getUInt32(0));
         Assert.assertEquals(0x017FFF02, reader.getUInt32(1));
@@ -157,7 +157,7 @@ public class BufferReaderTest
     public void testGetInt32_OutOfBounds()
     {
         try {
-            BufferReader reader = new BufferReader(new byte[3]);
+            BufferReader reader = new ByteArrayReader(new byte[3]);
             reader.getInt32(0);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -169,7 +169,7 @@ public class BufferReaderTest
     public void testGetInt64() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)0xFF };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals(0x0001020304050607L, reader.getInt64(0));
         Assert.assertEquals(0x01020304050607FFL, reader.getInt64(1));
@@ -184,14 +184,14 @@ public class BufferReaderTest
     public void testGetInt64_OutOfBounds()
     {
         try {
-            BufferReader reader = new BufferReader(new byte[7]);
+            BufferReader reader = new ByteArrayReader(new byte[7]);
             reader.getInt64(0);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
             Assert.assertEquals("Attempt to read 8 bytes from beyond end of buffer (requested index: 0, max index: 6)", ex.getMessage());
         }
         try {
-            BufferReader reader = new BufferReader(new byte[7]);
+            BufferReader reader = new ByteArrayReader(new byte[7]);
             reader.getInt64(-1);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -206,7 +206,7 @@ public class BufferReaderTest
         Assert.assertEquals(Float.NaN, Float.intBitsToFloat(nanBits));
 
         byte[] buffer = new byte[] { 0x7f, (byte)0xc0, 0x00, 0x00 };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals(Float.NaN, reader.getFloat32(0));
     }
@@ -218,7 +218,7 @@ public class BufferReaderTest
         Assert.assertEquals(Double.NaN, Double.longBitsToDouble(nanBits));
 
         byte[] buffer = new byte[] { (byte)0xff, (byte)0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
-        BufferReader reader = new BufferReader(buffer);
+        BufferReader reader = new ByteArrayReader(buffer);
 
         Assert.assertEquals(Double.NaN, reader.getDouble64(0));
     }
@@ -227,7 +227,7 @@ public class BufferReaderTest
     public void testGetNullTerminatedString() throws BufferBoundsException
     {
         byte[] bytes = new byte[]{ 0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47 };
-        BufferReader reader = new BufferReader(bytes);
+        BufferReader reader = new ByteArrayReader(bytes);
 
         Assert.assertEquals("", reader.getNullTerminatedString(0, 0));
         Assert.assertEquals("A", reader.getNullTerminatedString(0, 1));
@@ -248,7 +248,7 @@ public class BufferReaderTest
     public void testGetString() throws BufferBoundsException
     {
         byte[] bytes = new byte[]{ 0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47 };
-        BufferReader reader = new BufferReader(bytes);
+        BufferReader reader = new ByteArrayReader(bytes);
 
         Assert.assertEquals("", reader.getString(0, 0));
         Assert.assertEquals("A", reader.getString(0, 1));
@@ -269,7 +269,7 @@ public class BufferReaderTest
     public void testOverflowBoundsCalculation()
     {
         byte[] bytes = new byte[10];
-        BufferReader reader = new BufferReader(bytes);
+        BufferReader reader = new ByteArrayReader(bytes);
 
         try {
             reader.getBytes(0x6FFFFFFF, 0x6FFFFFFF);

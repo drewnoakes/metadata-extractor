@@ -22,6 +22,7 @@ package com.drew.metadata.icc;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -45,7 +46,7 @@ public class IccReader implements MetadataReader
     public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata)
     {
         final IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
-        final BufferReader reader = new BufferReader(data);
+        final BufferReader reader = new ByteArrayReader(data);
 
         directory.setByteArray(IccDirectory.TAG_ICC_PROFILE_BYTES, data);
 

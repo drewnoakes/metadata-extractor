@@ -23,6 +23,8 @@ package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
 
+import java.io.IOException;
+
 /**
  * A checked replacement for IndexOutOfBoundsException.  Used by BufferReader.
  * 
@@ -35,6 +37,16 @@ public final class BufferBoundsException extends Exception
     public BufferBoundsException(@NotNull byte[] buffer, int index, int bytesRequested)
     {
         super(getMessage(buffer, index, bytesRequested));
+    }
+
+    public BufferBoundsException(final String message)
+    {
+        super(message);
+    }
+
+    public BufferBoundsException(final String message, final IOException innerException)
+    {
+        super(message, innerException);
     }
 
     private static String getMessage(@NotNull byte[] buffer, int index, int bytesRequested)

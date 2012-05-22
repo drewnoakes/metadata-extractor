@@ -148,20 +148,26 @@ public class ImageMetadataReader
             System.exit(1);
         }
 
-        for (String file : argList) {
+        for (String filePath : argList) {
+            long startTime = System.nanoTime();
+            File file = new File(filePath);
+
             if (!wikiFormat && argList.size()>1)
-                System.out.println("***** PROCESSING: " + file);
+                System.out.println("***** PROCESSING: " + filePath);
 
             Metadata metadata = null;
             try {
-                metadata = ImageMetadataReader.readMetadata(new File(file));
+                metadata = ImageMetadataReader.readMetadata(file);
             } catch (Exception e) {
                 e.printStackTrace(System.err);
                 System.exit(1);
             }
+            long took = System.nanoTime() - startTime;
+            if (!wikiFormat)
+                System.out.println("Processed " + (file.length()/(1024d*1024)) + "MB file in " + (took / 1000000d) + "ms");
 
             if (wikiFormat) {
-                String fileName = new File(file).getName();
+                String fileName = file.getName();
                 String urlName = fileName.replace(" ", "%20"); // How to do this using framework?
                 ExifIFD0Directory exifIFD0Directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
                 String make = escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));

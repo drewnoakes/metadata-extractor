@@ -23,6 +23,7 @@ package com.drew.metadata.adobe;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -45,7 +46,7 @@ public class AdobeJpegReader implements MetadataReader
         }
 
         try {
-            BufferReader reader = new BufferReader(data);
+            BufferReader reader = new ByteArrayReader(data);
             reader.setMotorolaByteOrder(false);
 
             if (!reader.getString(0, 5).equals("Adobe")) {

@@ -22,6 +22,7 @@ package com.drew.metadata.iptc;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -52,12 +53,12 @@ public class IptcReader implements MetadataReader
     public static final int POST_DATA_RECORD = 9;
 */
 
-    /** Performs the Exif data extraction, adding found values to the specified instance of <code>Metadata</code>. */
+    /** Performs the IPTC data extraction, adding found values to the specified instance of <code>Metadata</code>. */
     public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata)
     {
         IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
 
-        BufferReader reader = new BufferReader(data);
+        BufferReader reader = new ByteArrayReader(data);
 
         int offset = 0;
 

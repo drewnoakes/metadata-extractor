@@ -22,6 +22,7 @@ package com.drew.metadata.photoshop;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -74,7 +75,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     {
         try {
             byte[] b = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_JPEG_QUALITY);
-            BufferReader reader = new BufferReader(b);
+            BufferReader reader = new ByteArrayReader(b);
             int q = reader.getUInt16(0); // & 0xFFFF;
             int f = reader.getUInt16(2); // & 0xFFFF;
             int s = reader.getUInt16(4);
@@ -142,7 +143,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_PIXEL_ASPECT_RATIO);
             if (bytes == null)
                 return null;
-            BufferReader reader = new BufferReader(bytes);
+            BufferReader reader = new ByteArrayReader(bytes);
             double d = reader.getDouble64(4);
             return Double.toString(d);
         } catch (Exception e) {
@@ -157,7 +158,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte bytes[] = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_PRINT_SCALE);
             if (bytes == null)
                 return null;
-            BufferReader reader = new BufferReader(bytes);
+            BufferReader reader = new ByteArrayReader(bytes);
             int style = reader.getInt32(0);
             float locX = reader.getFloat32(2);
             float locY = reader.getFloat32(6);
@@ -184,7 +185,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_RESOLUTION_INFO);
             if (bytes == null)
                 return null;
-            BufferReader reader = new BufferReader(bytes);
+            BufferReader reader = new ByteArrayReader(bytes);
             float resX = reader.getS15Fixed16(0);
             float resY = reader.getS15Fixed16(8); // is this the correct offset? it's only reading 4 bytes each time
             return resX + "x" + resY + " DPI";
@@ -200,7 +201,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             final byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_VERSION);
             if (bytes == null)
                 return null;
-            BufferReader reader = new BufferReader(bytes);
+            BufferReader reader = new ByteArrayReader(bytes);
             int pos = 0;
             int ver = reader.getInt32(0);
             pos += 4;
@@ -227,7 +228,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             final byte bytes[] = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_SLICES);
             if (bytes == null)
                 return null;
-            BufferReader reader = new BufferReader(bytes);
+            BufferReader reader = new ByteArrayReader(bytes);
             int nameLength = reader.getInt32(20);
             String name = reader.getString(24, nameLength * 2, "UTF-16");
             int pos = 24 + nameLength * 2;
@@ -254,7 +255,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] v = _directory.getByteArray(tagType);
             if (v == null)
                 return null;
-            BufferReader reader = new BufferReader(v);
+            BufferReader reader = new ByteArrayReader(v);
             //int pos = 0;
             int format = reader.getInt32(0);
             //pos += 4;
@@ -294,7 +295,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
         byte[] bytes = _directory.getByteArray(tag);
         if (bytes == null)
             return null;
-        BufferReader reader = new BufferReader(bytes);
+        BufferReader reader = new ByteArrayReader(bytes);
         try {
             return String.format("%d", reader.getInt32(0));
         } catch (BufferBoundsException e) {

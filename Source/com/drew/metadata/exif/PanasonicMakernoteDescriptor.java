@@ -22,6 +22,7 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Age;
@@ -245,7 +246,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         if (values == null)
             return null;
 
-        BufferReader reader = new BufferReader(values);
+        BufferReader reader = new ByteArrayReader(values);
 
         try
         {

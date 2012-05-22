@@ -22,6 +22,7 @@ package com.drew.metadata.photoshop;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -33,7 +34,7 @@ public class PhotoshopReader implements MetadataReader
     public void extract(@NotNull final byte[] data, final @NotNull Metadata metadata)
     {
         final PhotoshopDirectory directory = metadata.getOrCreateDirectory(PhotoshopDirectory.class);
-        final BufferReader reader = new BufferReader(data);
+        final BufferReader reader = new ByteArrayReader(data);
 
         int pos = new String(data, 0, 13).equals("Photoshop 3.0") ? 14 : 0;
 

@@ -20,6 +20,8 @@
  */
 package com.drew.imaging.tiff;
 
+import com.drew.lang.ByteArrayReader;
+import com.drew.lang.RandomAccessFileReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
@@ -39,29 +41,34 @@ public class TiffMetadataReader
     {
         Metadata metadata = new Metadata();
 
-        FileInputStream fileInputStream = null;
-        DataInputStream dataInputStream = null;
-        byte[] buffer;
-        try{
-            fileInputStream = new FileInputStream(file);
-            dataInputStream = new DataInputStream(fileInputStream);
-            buffer = new byte[(int)file.length()];
-            dataInputStream.readFully(buffer);
-        } finally {
-            if (dataInputStream != null)
-                dataInputStream.close();
-            if (fileInputStream != null)
-                fileInputStream.close();
-        }
+//        FileInputStream fileInputStream = null;
+//        DataInputStream dataInputStream = null;
+//        byte[] buffer;
+//        try{
+//            fileInputStream = new FileInputStream(file);
+//            dataInputStream = new DataInputStream(fileInputStream);
+//            buffer = new byte[(int)file.length()];
+//            dataInputStream.readFully(buffer);
+//        } finally {
+//            if (dataInputStream != null)
+//                dataInputStream.close();
+//            if (fileInputStream != null)
+//                fileInputStream.close();
+//        }
 
-        new ExifReader().extractTiff(buffer, metadata);
+        new ExifReader().extractTiff(new RandomAccessFileReader(new RandomAccessFile(file, "r")), metadata);
 
         return metadata;
     }
 
+    @Deprecated
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream, boolean waitForBytes) throws IOException
     {
+        // NOTE this method is very inefficient, as it attempts to read the entire TIFF file into a byte[]
+        // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
+        // InputStream does not support seeking backwards, and so is not a viable option for TIFF processing
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int b;
         // TODO do this in chunks rather than byte-by-byte, and honour 'waitForBytes'
@@ -69,7 +76,7 @@ public class TiffMetadataReader
             out.write(b);
         }
         Metadata metadata = new Metadata();
-        new ExifReader().extractTiff(out.toByteArray(), metadata);
+        new ExifReader().extractTiff(new ByteArrayReader(out.toByteArray()), metadata);
         return metadata;
     }
 }

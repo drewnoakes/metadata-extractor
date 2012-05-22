@@ -23,6 +23,7 @@ package com.drew.metadata.icc;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -71,7 +72,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     {
         try {
             byte[] bytes = _directory.getByteArray(tagType);
-            BufferReader reader = new BufferReader(bytes);
+            BufferReader reader = new ByteArrayReader(bytes);
             int iccTagType = reader.getInt32(0);
             switch (iccTagType) {
                 case ICC_TAG_TYPE_TEXT:
@@ -347,6 +348,6 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     private static int getInt32FromString(@NotNull String string) throws BufferBoundsException
     {
         byte[] bytes = string.getBytes();
-        return new BufferReader(bytes).getInt32(0);
+        return new ByteArrayReader(bytes).getInt32(0);
     }
 }
