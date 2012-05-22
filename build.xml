@@ -101,11 +101,12 @@
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </zip>
+        <delete file="${bin-jar}" />
     </target>
 
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
         <jar destfile="${dist}/metadata-extractor-${version}-src.jar" update="false">
-            <fileset dir="." includes="${src}/**/*.java, ${test-src}/**/*.java, ${sample-src}/**/*.*, ${test-src}/**/*.jpg, ${test-src}/**/*.bytes, ${test-src}/**/*.metadata, ${src}/**/package.html, ${test-src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
+            <fileset dir="." includes="${src}/**/*.java, ${test-src}/**/*.java, ${sample-src}/**/*.*, ${test-src}/**/*.jpg, ${test-src}/**/*.psd, ${test-src}/**/*.bytes, ${test-src}/**/*.metadata, ${src}/**/package.html, ${test-src}/**/package.html, ${lib}/junit.jar, build.xml, ChangeLog.txt"/>
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </jar>
