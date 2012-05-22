@@ -90,8 +90,8 @@ public class JpegSegmentData implements Serializable
     /**
      * Returns all instances of a given Jpeg segment.  If no instances exist, an empty sequence is returned.
      *
-     * @param segmentMarker
-     * @return
+     * @param segmentMarker a number which identifies the type of Jpeg segment being queried
+     * @return zero or more byte arrays, each holding the data of a Jpeg segment
      */
     @NotNull
     public Iterable<byte[]> getSegments(byte segmentMarker)

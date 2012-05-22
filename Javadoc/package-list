@@ -1,5 +1,6 @@
 com.drew.imaging
 com.drew.imaging.jpeg
+com.drew.imaging.psd
 com.drew.imaging.tiff
 com.drew.lang
 com.drew.lang.annotations

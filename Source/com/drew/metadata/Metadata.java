@@ -105,8 +105,9 @@ public final class Metadata
     /**
      * If this <code>Metadata</code> object contains a <code>Directory</code> of the specified type, it is returned.
      * Otherwise <code>null</code> is returned.
-     * @param type
-     * @param <T>
+     *
+     * @param type the Directory type
+     * @param <T> the Directory type
      * @return a Directory of type T if it exists in this Metadata object, otherwise <code>null</code>.
      */
     @Nullable
@@ -135,7 +136,7 @@ public final class Metadata
      * Indicates whether any errors were reported during the reading of metadata values.
      * This value will be true if Directory.hasErrors() is true for one of the contained Directory objects.
      *
-     * @return
+     * @return whether one of the contained directories has an error
      */
     public boolean hasErrors()
     {
