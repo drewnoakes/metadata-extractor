@@ -41,22 +41,13 @@ public class TiffMetadataReader
     {
         Metadata metadata = new Metadata();
 
-//        FileInputStream fileInputStream = null;
-//        DataInputStream dataInputStream = null;
-//        byte[] buffer;
-//        try{
-//            fileInputStream = new FileInputStream(file);
-//            dataInputStream = new DataInputStream(fileInputStream);
-//            buffer = new byte[(int)file.length()];
-//            dataInputStream.readFully(buffer);
-//        } finally {
-//            if (dataInputStream != null)
-//                dataInputStream.close();
-//            if (fileInputStream != null)
-//                fileInputStream.close();
-//        }
+        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
-        new ExifReader().extractTiff(new RandomAccessFileReader(new RandomAccessFile(file, "r")), metadata);
+        try {
+        new ExifReader().extractTiff(new RandomAccessFileReader(randomAccessFile), metadata);
+        } finally {
+            randomAccessFile.close();
+        }
 
         return metadata;
     }
