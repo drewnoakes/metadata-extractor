@@ -23,6 +23,7 @@ package com.drew.metadata.adobe;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class AdobeJpegReaderTest
         Assert.assertNotNull(bytes);
 
         final Metadata metadata = new Metadata();
-        new AdobeJpegReader().extract(bytes, metadata);
+        new AdobeJpegReader().extract(new ByteArrayReader(bytes), metadata);
 
         Assert.assertEquals(1, metadata.getDirectoryCount());
         AdobeJpegDirectory directory = metadata.getDirectory(AdobeJpegDirectory.class);

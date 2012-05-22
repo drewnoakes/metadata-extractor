@@ -22,7 +22,6 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -88,13 +87,12 @@ public class ExifReader implements MetadataReader
      * Performs the Exif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      *
-     * @param data The byte[] from which Exif data should be read.
+     * @param reader   The buffer reader from which Exif data should be read.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extract(@NotNull byte[] data, @NotNull Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
     {
         final ExifSubIFDDirectory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
-        final BufferReader reader = new ByteArrayReader(data);
 
         // check for the header length
         if (reader.getLength() <= 14) {

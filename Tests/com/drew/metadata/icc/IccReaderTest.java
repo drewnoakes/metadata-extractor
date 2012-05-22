@@ -21,6 +21,7 @@
 
 package com.drew.metadata.icc;
 
+import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.ExtractAppSegmentBytesToFileUtility;
 import com.drew.metadata.Metadata;
 import junit.framework.TestCase;
@@ -39,6 +40,6 @@ public class IccReaderTest extends TestCase
         System.arraycopy(app2Bytes, 14, icc, 0, app2Bytes.length-14);
 
         Metadata metadata = new Metadata();
-        new IccReader().extract(icc, metadata);
+        new IccReader().extract(new ByteArrayReader(icc), metadata);
     }
 }

@@ -22,13 +22,11 @@ package com.drew.metadata.iptc;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 /**
@@ -54,11 +52,9 @@ public class IptcReader implements MetadataReader
 */
 
     /** Performs the IPTC data extraction, adding found values to the specified instance of <code>Metadata</code>. */
-    public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata)
     {
         IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
-
-        BufferReader reader = new ByteArrayReader(data);
 
         int offset = 0;
 
@@ -74,14 +70,24 @@ public class IptcReader implements MetadataReader
 */
 
         // for each tag
-        while (offset < data.length) {
+        while (offset < reader.getLength()) {
+
             // identifies start of a tag
-            if (data[offset] != 0x1c) {
+            short startByte;
+            try {
+                startByte = reader.getUInt8(offset);
+            } catch (BufferBoundsException e) {
+                directory.addError("Unable to read starting byte of IPTC tag");
+                break;
+            }
+
+            if (startByte != 0x1c) {
                 directory.addError("Invalid start to IPTC tag");
                 break;
             }
+
             // we need at least five bytes left to read a tag
-            if (offset + 5 >= data.length) {
+            if (offset + 5 >= reader.getLength()) {
                 directory.addError("Too few bytes remain for a valid IPTC tag");
                 break;
             }
@@ -92,8 +98,8 @@ public class IptcReader implements MetadataReader
             int tagType;
             int tagByteCount;
             try {
-                directoryType = data[offset++];
-                tagType = data[offset++];
+                directoryType = reader.getUInt8(offset++);
+                tagType = reader.getUInt8(offset++);
                 tagByteCount = reader.getUInt16(offset);
                 offset += 2;
             } catch (BufferBoundsException e) {
@@ -101,36 +107,41 @@ public class IptcReader implements MetadataReader
                 return;
             }
 
-            if (offset + tagByteCount > data.length) {
+            if (offset + tagByteCount > reader.getLength()) {
                 directory.addError("Data for tag extends beyond end of IPTC segment");
                 break;
             }
 
-            processTag(data, directory, directoryType, tagType, offset, tagByteCount);
+            try {
+                processTag(reader, directory, directoryType, tagType, offset, tagByteCount);
+            } catch (BufferBoundsException e) {
+                directory.addError("Error processing IPTC tag");
+                break;
+            }
 
             offset += tagByteCount;
         }
     }
 
-    private void processTag(@NotNull byte[] data, @NotNull Directory directory, int directoryType, int tagType, int offset, int tagByteCount)
+    private void processTag(@NotNull BufferReader reader, @NotNull Directory directory, int directoryType, int tagType, int offset, int tagByteCount) throws BufferBoundsException
     {
         int tagIdentifier = tagType | (directoryType << 8);
 
         switch (tagIdentifier) {
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
                 // short
-                short shortValue = (short)(((data[offset] << 8) & 0xFF) | (data[offset + 1] & 0xFF));
+                int shortValue = reader.getUInt16(offset);
                 directory.setInt(tagIdentifier, shortValue);
                 return;
             case IptcDirectory.TAG_URGENCY:
                 // byte
-                directory.setInt(tagIdentifier, data[offset]);
+                directory.setInt(tagIdentifier, reader.getUInt8(offset));
                 return;
             case IptcDirectory.TAG_RELEASE_DATE:
             case IptcDirectory.TAG_DATE_CREATED:
                 // Date object
                 if (tagByteCount >= 8) {
-                    String dateStr = new String(data, offset, tagByteCount);
+                    String dateStr = reader.getString(offset, tagByteCount);
                     try {
                         int year = Integer.parseInt(dateStr.substring(0, 4));
                         int month = Integer.parseInt(dateStr.substring(4, 6)) - 1;
@@ -154,13 +165,7 @@ public class IptcReader implements MetadataReader
         if (tagByteCount < 1) {
             str = "";
         } else {
-            try {
-//              str = new String(data, offset, tagByteCount);
-                str = new String(data, offset, tagByteCount, System.getProperty("file.encoding")); // "ISO-8859-1"
-            } catch (UnsupportedEncodingException ex) {
-                directory.addError("Unable to decode a string for the IPTC tag " + Integer.toHexString(tagType));
-                str = "";
-            }
+            str = reader.getString(offset, tagByteCount, System.getProperty("file.encoding")); // "ISO-8859-1"
         }
 
         if (directory.containsTag(tagIdentifier)) {

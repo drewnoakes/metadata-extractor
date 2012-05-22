@@ -22,6 +22,7 @@ package com.drew.metadata.xmp;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import org.junit.Assert;
@@ -48,7 +49,7 @@ public class XmpReaderTest
         Metadata metadata = new Metadata();
         final byte[] data = jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APP1, 1);
         Assert.assertNotNull(data);
-        new XmpReader().extract(data, metadata);
+        new XmpReader().extract(new ByteArrayReader(data), metadata);
         Assert.assertTrue(metadata.containsDirectory(XmpDirectory.class));
         _directory = metadata.getOrCreateDirectory(XmpDirectory.class);
     }

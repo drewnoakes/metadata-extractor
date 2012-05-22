@@ -21,6 +21,7 @@
 
 package com.drew.metadata.jfif;
 
+import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 import com.drew.metadata.Tag;
@@ -38,7 +39,7 @@ public class JfifReaderTest
 
         final Metadata metadata = new Metadata();
         final MetadataReader reader = new JfifReader();
-        reader.extract(jfifData, metadata);
+        reader.extract(new ByteArrayReader(jfifData), metadata);
 
         Assert.assertEquals(1, metadata.getDirectoryCount());
         JfifDirectory directory = metadata.getDirectory(JfifDirectory.class);

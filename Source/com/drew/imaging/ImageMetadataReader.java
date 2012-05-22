@@ -21,6 +21,7 @@
 package com.drew.imaging;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -53,6 +54,7 @@ public class ImageMetadataReader
     private static final int JPEG_FILE_MAGIC_NUMBER = 0xFFD8;
     private static final int MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
     private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;     // "II"
+    private static final int PSD_MAGIC_NUMBER = 0x3842;            // "8B" note that the full magic number is 8BPS
 
     /**
      * Reads metadata from an input stream.  The file inputStream examined to determine its type and consequently the
@@ -112,6 +114,15 @@ public class ImageMetadataReader
                 return TiffMetadataReader.readMetadata(inputStream, waitForBytes);
             else
                 return TiffMetadataReader.readMetadata(file);
+        }
+
+        // This covers PSD files
+        // TODO we should really check all 4 bytes of the PSD magic number
+        if (magicNumber == PSD_MAGIC_NUMBER) {
+            if (inputStream != null)
+                return PsdMetadataReader.readMetadata(inputStream, waitForBytes);
+            else
+                return PsdMetadataReader.readMetadata(file);
         }
 
         throw new ImageProcessingException("File format is not supported");

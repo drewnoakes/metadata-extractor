@@ -22,6 +22,7 @@ package com.drew.metadata.exif;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import org.junit.Assert;
@@ -45,7 +46,7 @@ public class NikonType2MakernoteTest1
         Metadata metadata = new Metadata();
         final byte[] data = JpegSegmentData.fromFile(metadataFile).getSegment(JpegSegmentReader.SEGMENT_APP1);
         Assert.assertNotNull(data);
-        new ExifReader().extract(data, metadata);
+        new ExifReader().extract(new ByteArrayReader(data), metadata);
 
         _nikonDirectory = metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class);
         _descriptor = new NikonType2MakernoteDescriptor(_nikonDirectory);

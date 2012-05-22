@@ -28,17 +28,28 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 import com.drew.metadata.iptc.IptcReader;
 
-/** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
+/**
+ * Reads metadata created by Photoshop and stored in the APPD segment of Jpeg files.
+ * Note that IPTC data may be stored within this segment, in which case this reader will
+ * create both a {@link PhotoshopDirectory} and a {@link com.drew.metadata.iptc.IptcDirectory}.
+ *
+ * @author Yuri Binev, Drew Noakes http://drewnoakes.com
+ */
 public class PhotoshopReader implements MetadataReader
 {
-    public void extract(@NotNull final byte[] data, final @NotNull Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, final @NotNull Metadata metadata)
     {
         final PhotoshopDirectory directory = metadata.getOrCreateDirectory(PhotoshopDirectory.class);
-        final BufferReader reader = new ByteArrayReader(data);
 
-        int pos = new String(data, 0, 13).equals("Photoshop 3.0") ? 14 : 0;
+        int pos = 0;
+        try {
+            pos = reader.getString(0, 13).equals("Photoshop 3.0") ? 14 : 0;
+        } catch (BufferBoundsException e) {
+            directory.addError("Unable to read header");
+            return;
+        }
 
-        while (pos < data.length) {
+        while (pos < reader.getLength()) {
             try {
                 // 4 bytes for the signature.  Should always be "8BIM".
                 //String signature = new String(data, pos, 4);
@@ -52,7 +63,7 @@ public class PhotoshopReader implements MetadataReader
                 int descriptionLength = reader.getUInt16(pos);
                 pos += 2;
                 // Some basic bounds checking
-                if (descriptionLength < 0 || descriptionLength + pos > data.length)
+                if (descriptionLength < 0 || descriptionLength + pos > reader.getLength())
                     return;
                 //String description = new String(data, pos, descriptionLength);
                 pos += descriptionLength;
@@ -72,8 +83,9 @@ public class PhotoshopReader implements MetadataReader
 
                 directory.setByteArray(tagType, tagBytes);
 
+                // TODO allow rebasing the reader with a new zero-point, rather than copying data here
                 if (tagType == PhotoshopDirectory.TAG_PHOTOSHOP_IPTC)
-                    new IptcReader().extract(tagBytes, metadata);
+                    new IptcReader().extract(new ByteArrayReader(tagBytes), metadata);
 
                 if (tagType >= 0x0fa0 && tagType <= 0x1387)
                     PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));

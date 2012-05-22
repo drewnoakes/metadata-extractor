@@ -22,7 +22,9 @@ package com.drew.metadata.jpeg;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataReader;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,10 +45,10 @@ public class JpegReaderTest
         // use a known testing image
         File jpegFile = new File("Tests/com/drew/metadata/jpeg/simple.jpg");
         final byte[] data = new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_SOF0);
-        JpegReader reader = new JpegReader();
+        MetadataReader reader = new JpegReader();
         Metadata metadata = new Metadata();
         Assert.assertNotNull(data);
-        reader.extract(data, metadata);
+        reader.extract(new ByteArrayReader(data), metadata);
         Assert.assertTrue(metadata.containsDirectory(JpegDirectory.class));
         _directory = metadata.getOrCreateDirectory(JpegDirectory.class);
     }

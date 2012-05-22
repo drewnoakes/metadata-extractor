@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.TestHelper;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
@@ -169,8 +170,8 @@ public class JpegSegmentReaderTest
         Assert.assertTrue("exif data too short", exifData.length > 4);
         // TODO extracting the data doesn't mean anything in this test case...
         Metadata metadata = new Metadata();
-        new ExifReader().extract(exifData, metadata);
-        new IptcReader().extract(iptcData, metadata);
+        new ExifReader().extract(new ByteArrayReader(exifData), metadata);
+        new IptcReader().extract(new ByteArrayReader(iptcData), metadata);
         Assert.assertEquals("Exif", new String(exifData, 0, 4));
     }
 }

@@ -23,7 +23,6 @@ package com.drew.metadata.adobe;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -36,17 +35,16 @@ import com.drew.metadata.MetadataReader;
  */
 public class AdobeJpegReader implements MetadataReader
 {
-    public void extract(@NotNull byte[] data, @NotNull Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
     {
         final Directory directory = metadata.getOrCreateDirectory(AdobeJpegDirectory.class);
 
-        if (data.length != 12) {
-            directory.addError(String.format("Adobe JPEG data is expected to be 12 bytes long, not %d.", data.length));
+        if (reader.getLength() != 12) {
+            directory.addError(String.format("Adobe JPEG data is expected to be 12 bytes long, not %d.", reader.getLength()));
             return;
         }
 
         try {
-            BufferReader reader = new ByteArrayReader(data);
             reader.setMotorolaByteOrder(false);
 
             if (!reader.getString(0, 5).equals("Adobe")) {

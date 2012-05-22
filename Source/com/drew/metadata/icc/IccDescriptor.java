@@ -41,8 +41,6 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case IccDirectory.TAG_ICC_PROFILE_BYTES:
-                return getProfileBytesDescription();
             case IccDirectory.TAG_ICC_PROFILE_VERSION:
                 return getProfileVersionDescription();
             case IccDirectory.TAG_ICC_PROFILE_CLASS:
@@ -334,15 +332,6 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         int R = (value & 0x000F0000) >> 16;
 
         return String.format("%d.%d.%d", m, r, R);
-    }
-
-    @Nullable
-    public String getProfileBytesDescription()
-    {
-        final byte[] bytes = _directory.getByteArray(IccDirectory.TAG_ICC_PROFILE_BYTES);
-        if (bytes == null)
-            return null;
-        return String.format("%d bytes binary data", bytes.length);
     }
 
     private static int getInt32FromString(@NotNull String string) throws BufferBoundsException

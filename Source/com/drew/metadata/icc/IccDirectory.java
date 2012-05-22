@@ -21,7 +21,6 @@
 package com.drew.metadata.icc;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -29,8 +28,6 @@ import java.util.HashMap;
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class IccDirectory extends Directory
 {
-    public static final int TAG_ICC_PROFILE_BYTES = -1;
-
     // These (smaller valued) tags have an integer value that's equal to their offset within the ICC data buffer.
 
     public static final int TAG_ICC_PROFILE_BYTE_COUNT = 0;
@@ -107,7 +104,6 @@ public class IccDirectory extends Directory
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-        _tagNameMap.put(TAG_ICC_PROFILE_BYTES, "Profile Bytes");
         _tagNameMap.put(TAG_ICC_PROFILE_BYTE_COUNT, "Profile Size");
         _tagNameMap.put(TAG_ICC_CMM_TYPE, "CMM Type");
         _tagNameMap.put(TAG_ICC_PROFILE_VERSION, "Version");
@@ -190,11 +186,5 @@ public class IccDirectory extends Directory
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
-    }
-
-    @Nullable
-    public byte[] getProfileBytes()
-    {
-        return getByteArray(TAG_ICC_PROFILE_BYTES);
     }
 }

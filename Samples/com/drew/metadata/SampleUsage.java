@@ -25,6 +25,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 
@@ -85,9 +86,9 @@ public class SampleUsage
             byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
             Metadata metadata = new Metadata();
             if (exifSegment != null)
-                new ExifReader().extract(exifSegment, metadata);
+                new ExifReader().extract(new ByteArrayReader(exifSegment), metadata);
             if (iptcSegment != null)
-                new IptcReader().extract(iptcSegment, metadata);
+                new IptcReader().extract(new ByteArrayReader(iptcSegment), metadata);
             printImageTags(3, metadata);
         } catch (JpegProcessingException e) {
             System.err.println("error 3a: " + e);

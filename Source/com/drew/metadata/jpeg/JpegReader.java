@@ -22,7 +22,6 @@ package com.drew.metadata.jpeg;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -38,10 +37,9 @@ public class JpegReader implements MetadataReader
      * Performs the Jpeg data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public void extract(@NotNull final byte[] data, @NotNull Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
     {
         JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
-        BufferReader reader = new ByteArrayReader(data);
 
         try {
             // data precision

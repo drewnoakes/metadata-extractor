@@ -27,7 +27,11 @@ import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
-/** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
+/**
+ * Holds the metadata found in the APPD segment of a JPEG file saved by Photoshop.
+ *
+ * @author Yuri Binev, Drew Noakes http://drewnoakes.com
+ */
 public class PhotoshopDirectory extends Directory
 {
     public static final int TAG_PHOTOSHOP_THUMBNAIL = 0x040C;

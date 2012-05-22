@@ -22,7 +22,6 @@ package com.drew.metadata.icc;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -43,12 +42,9 @@ import java.util.TimeZone;
  */
 public class IccReader implements MetadataReader
 {
-    public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata)
     {
         final IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
-        final BufferReader reader = new ByteArrayReader(data);
-
-        directory.setByteArray(IccDirectory.TAG_ICC_PROFILE_BYTES, data);
 
         try {
             directory.setInt(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT, reader.getInt32(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT));

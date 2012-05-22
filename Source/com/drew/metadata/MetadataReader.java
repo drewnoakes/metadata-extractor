@@ -20,6 +20,7 @@
  */
 package com.drew.metadata;
 
+import com.drew.lang.BufferReader;
 import com.drew.lang.annotations.NotNull;
 
 /**
@@ -36,8 +37,8 @@ public interface MetadataReader
     /**
      * Extract metadata from the source and merge it into an existing Metadata object.
      *
-     * @param data     The byte array from which the metadata should be extracted.
+     * @param reader   The reader from which the metadata should be extracted.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata);
+    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata);
 }

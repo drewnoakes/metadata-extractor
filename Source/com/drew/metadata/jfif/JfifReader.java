@@ -22,7 +22,6 @@ package com.drew.metadata.jfif;
 
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -40,10 +39,9 @@ public class JfifReader implements MetadataReader
      * Performs the Jfif data extraction, adding found values to the specified
      * instance of <code>Metadata</code>.
      */
-    public void extract(@NotNull final byte[] data, @NotNull final Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata)
     {
         JfifDirectory directory = metadata.getOrCreateDirectory(JfifDirectory.class);
-        BufferReader reader = new ByteArrayReader(data);
 
         try {
             // For JFIF, the tag number is also the offset into the segment

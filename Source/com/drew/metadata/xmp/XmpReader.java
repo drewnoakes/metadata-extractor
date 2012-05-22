@@ -25,6 +25,8 @@ import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.drew.lang.BufferBoundsException;
+import com.drew.lang.BufferReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -61,10 +63,10 @@ public class XmpReader implements MetadataReader
      * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit)
      */
     @SuppressWarnings({ "ConstantConditions" })
-    public void extract(@NotNull final byte[] data, @NotNull Metadata metadata)
+    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
     {
-        if (data == null)
-            throw new NullPointerException("data");
+        if (reader == null)
+            throw new NullPointerException("reader");
         if (metadata == null)
             throw new NullPointerException("metadata");
 
@@ -72,21 +74,33 @@ public class XmpReader implements MetadataReader
         XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
 
         // check for the header length
-        if (data.length <= 30) {
+        if (reader.getLength() <= 30) {
             directory.addError("Xmp data segment must contain at least 30 bytes");
             return;
         }
 
         // check for the header preamble
-        if (!"http://ns.adobe.com/xap/1.0/\0".equals(new String(data, 0, 29))) {
+        String preamble;
+        try {
+            preamble = reader.getString(0, 29);
+        } catch (BufferBoundsException e) {
+            directory.addError("Unable to read XMP preamble");
+            return;
+        }
+        if (!"http://ns.adobe.com/xap/1.0/\0".equals(preamble)) {
             directory.addError("Xmp data segment doesn't begin with 'http://ns.adobe.com/xap/1.0/'");
             return;
         }
 
         try {
             // the parser starts at offset of 29 Bytes
-            byte[] xmpBuffer = new byte[data.length - 29];
-            System.arraycopy(data, 29, xmpBuffer, 0, data.length - 29);
+            byte[] xmpBuffer;
+            try {
+                xmpBuffer = reader.getBytes(29, (int) (reader.getLength() - 29));
+            } catch (BufferBoundsException e) {
+                directory.addError("Unable to read XMP data");
+                return;
+            }
 
             // use XMPMetaFactory to create a XMPMeta instance based on the parsed data buffer
             XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBuffer);

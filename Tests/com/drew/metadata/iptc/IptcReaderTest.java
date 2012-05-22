@@ -20,8 +20,10 @@
  */
 package com.drew.metadata.iptc;
 
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.TestHelper;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataReader;
 import com.drew.metadata.Tag;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,8 +40,8 @@ public class IptcReaderTest
         final byte[] bytes = TestHelper.loadFileBytes(new File("Tests/com/drew/metadata/iptc/iptc1.bytes"));
 
         Metadata metadata = new Metadata();
-        IptcReader reader = new IptcReader();
-        reader.extract(bytes, metadata);
+        MetadataReader reader = new IptcReader();
+        reader.extract(new ByteArrayReader(bytes), metadata);
 
         Assert.assertEquals(1, metadata.getDirectoryCount());
         IptcDirectory directory = metadata.getDirectory(IptcDirectory.class);
@@ -103,7 +105,7 @@ public class IptcReaderTest
         final byte[] bytes = TestHelper.loadFileBytes(new File("Tests/com/drew/metadata/iptc/iptc2-photoshop6.bytes"));
 
         Metadata metadata = new Metadata();
-        new IptcReader().extract(bytes, metadata);
+        new IptcReader().extract(new ByteArrayReader(bytes), metadata);
 
         Assert.assertEquals(1, metadata.getDirectoryCount());
         IptcDirectory directory = metadata.getDirectory(IptcDirectory.class);
