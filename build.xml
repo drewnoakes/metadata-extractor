@@ -25,7 +25,7 @@
 
     <description>metadata-extractor build file</description>
 
-    <property name="version"        value="2.5.1"/>
+    <property name="version"        value="2.5.2"/>
     <property name="dist"           location="Releases"/>
     <property name="src"            value="Source"/>
     <property name="output"         value="Output/Source"/>
