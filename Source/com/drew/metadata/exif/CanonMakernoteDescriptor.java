@@ -406,16 +406,16 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FLASH_DETAILS);
         if (value==null)
             return null;
-        if (((value << 14) & 1) > 0) {
+        if (((value >> 14) & 1) > 0) {
             return "External E-TTL";
         }
-        if (((value << 13) & 1) > 0) {
+        if (((value >> 13) & 1) > 0) {
             return "Internal flash";
         }
-        if (((value << 11) & 1) > 0) {
+        if (((value >> 11) & 1) > 0) {
             return "FP sync used";
         }
-        if (((value << 4) & 1) > 0) {
+        if (((value >> 4) & 1) > 0) {
             return "FP sync enabled";
         }
         return "Unknown (" + value + ")";
