@@ -193,7 +193,7 @@ public class ImageMetadataReader
                 System.out.println(fileName);
                 System.out.println("</a>");
                 System.out.println();
-                System.out.println("|| *Directory* || *Tag Name* || *Tag Description* ||");
+                System.out.println("|| *Directory* || *Tag Id* || *Tag Name* || *Tag Description* ||");
             }
 
             // iterate over the exif data and print to System.out
@@ -204,14 +204,16 @@ public class ImageMetadataReader
                     String description = tag.getDescription();
 
                     if (wikiFormat) {
-                        tagName = escapeForWiki(tagName);
-                        directoryName = escapeForWiki(directoryName);
-                        description = escapeForWiki(description);
+                        System.out.printf("||%s||0x%s||%s||%s||%n",
+                                escapeForWiki(directoryName),
+                                Integer.toHexString(tag.getTagType()),
+                                escapeForWiki(tagName),
+                                escapeForWiki(description));
                     }
-
-                    String format = wikiFormat ? "||%s||%s||%s||%n" : "[%s] %s = %s%n";
-
-                    System.out.printf(format, directoryName, tagName, description);
+                    else
+                    {
+                        System.out.printf("[%s] %s = %s%n", directoryName, tagName, description);
+                    }
                 }
 
                 // print out any errors

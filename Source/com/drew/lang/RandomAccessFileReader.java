@@ -86,6 +86,7 @@ public class RandomAccessFileReader implements BufferReader
         if (b < 0)
             throw new BufferBoundsException("Unexpected end of file encountered.");
         assert(b <= 0xff);
+        _currentIndex++;
         return (byte) b;
     }
 
@@ -271,6 +272,7 @@ public class RandomAccessFileReader implements BufferReader
         final int bytesRead;
         try {
             bytesRead = _file.read(bytes);
+            _currentIndex += bytesRead;
         } catch (IOException e) {
             throw new BufferBoundsException("Unexpected end of file encountered.", e);
         }
