@@ -128,9 +128,9 @@ public class IptcDirectory extends Directory
         _tagNameMap.put(TAG_FILE_FORMAT, "File Format");
         _tagNameMap.put(TAG_FILE_VERSION, "File Version");
         _tagNameMap.put(TAG_SERVICE_ID, "Service Identifier");
-        _tagNameMap.put(TAG_ENVELOPE_NUMBER, "Service Identifier");
-        _tagNameMap.put(TAG_PRODUCT_ID, "Service Identifier");
-        _tagNameMap.put(TAG_ENVELOPE_PRIORITY, "Service Identifier");
+        _tagNameMap.put(TAG_ENVELOPE_NUMBER, "Envelope Number");
+        _tagNameMap.put(TAG_PRODUCT_ID, "Product ID");
+        _tagNameMap.put(TAG_ENVELOPE_PRIORITY, "Envelope Priority");
         _tagNameMap.put(TAG_DATE_SENT, "Date Sent");
         _tagNameMap.put(TAG_TIME_SENT, "Time Sent");
         _tagNameMap.put(TAG_CODED_CHARACTER_SET, "Coded Character Set");
