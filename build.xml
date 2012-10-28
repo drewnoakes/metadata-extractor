@@ -114,7 +114,6 @@
 
     <target name="javadoc" description="generate javadoc documentation">
         <delete verbose="${verbose}" dir="${javadoc}" />
-        <copy file="Resources/metadata-extractor-logo-30px.gif" todir="${javadoc}"  />
         <javadoc
             destdir="${javadoc}"
             defaultexcludes="yes"
@@ -125,7 +124,7 @@
             windowtitle="Metadata-Extractor - JavaDoc - An Open Source Java Library for Image File Metadata"
             failonerror="true">
             <!-- be sure to only use single quotes in the CDATA sections below -->
-            <header><![CDATA[<link rel='shortcut icon' href='http://metadata-extractor.googlecode.com/git/Resources/metadata-extractor.ico' /><a href='http://www.drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='http://metadata-extractor.googlecode.com/git/Resources/metadata-extractor-logo-30px.gif' border="0" alt='Metadata Extractor Logo'></a>]]></header>
+            <header><![CDATA[<link rel='shortcut icon' href='http://metadata-extractor.googlecode.com/git/Resources/metadata-extractor.ico' /><a href='http://www.drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='http://metadata-extractor.googlecode.com/git/Resources/metadata-extractor-logo-131x30.png' border="0" alt='Metadata Extractor Logo'></a>]]></header>
             <bottom><![CDATA[<i>Copyright &#169; 2003-2012 Drew Noakes. All Rights Reserved.</i>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
 <script type="text/javascript">
