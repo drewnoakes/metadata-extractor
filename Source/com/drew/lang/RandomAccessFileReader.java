@@ -61,7 +61,6 @@ public class RandomAccessFileReader implements BufferReader
         return _length;
     }
 
-
     @Override
     public void setMotorolaByteOrder(boolean motorolaByteOrder)
     {
