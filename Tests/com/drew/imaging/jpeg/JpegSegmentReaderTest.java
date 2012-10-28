@@ -107,7 +107,7 @@ public class JpegSegmentReaderTest
         InputStream in = new FileInputStream(jpeg);
         JpegSegmentReader reader = null;
         try {
-            reader = new JpegSegmentReader(in, false);
+            reader = new JpegSegmentReader(in);
         } catch (JpegProcessingException e) {
             Assert.fail("Error constructing JpegSegmentReader using InputStream");
         }
@@ -157,7 +157,7 @@ public class JpegSegmentReaderTest
     {
         File jpeg = new File("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
         InputStream in = new FileInputStream(jpeg);
-        JpegSegmentReader reader = new JpegSegmentReader(in, false);
+        JpegSegmentReader reader = new JpegSegmentReader(in);
         validateMultipleSegmentRead(reader);
     }
 

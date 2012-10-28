@@ -30,7 +30,7 @@ import java.io.*;
 
 /**
  * Obtains all available metadata from TIFF formatted files.  Note that TIFF files include many digital camera RAW
- * formats, including Canon (CRW, CR2) and Nikon (NEF).
+ * formats, including Canon (CRW, CR2), Nikon (NEF), Olympus (ORF) and Panasonic (RW2).
  *
  * @author Darren Salomons, Drew Noakes http://drewnoakes.com
  */
@@ -44,7 +44,7 @@ public class TiffMetadataReader
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
         try {
-        new ExifReader().extractTiff(new RandomAccessFileReader(randomAccessFile), metadata);
+            new ExifReader().extractTiff(new RandomAccessFileReader(randomAccessFile), metadata);
         } finally {
             randomAccessFile.close();
         }
@@ -54,20 +54,24 @@ public class TiffMetadataReader
 
     @Deprecated
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream, boolean waitForBytes) throws IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
         // NOTE this method is very inefficient, as it attempts to read the entire TIFF file into a byte[]
         // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
         // InputStream does not support seeking backwards, and so is not a viable option for TIFF processing
 
+        final int chunkSize = 1024;
+        final byte[] buffer = new byte[chunkSize];
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int b;
-        // TODO do this in chunks rather than byte-by-byte, and honour 'waitForBytes'
-        while((b = inputStream.read()) != -1) {
-            out.write(b);
+        int bytesRead;
+        while((bytesRead = inputStream.read(buffer)) != -1) {
+            out.write(buffer, 0, bytesRead);
         }
+        final byte[] tiffBytes = out.toByteArray();
+
         Metadata metadata = new Metadata();
-        new ExifReader().extractTiff(new ByteArrayReader(out.toByteArray()), metadata);
+        new ExifReader().extractTiff(new ByteArrayReader(tiffBytes), metadata);
         return metadata;
     }
 }

@@ -111,7 +111,7 @@ public class ImageMetadataReader
         // This covers all TIFF and camera RAW files
         if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLA_TIFF_MAGIC_NUMBER) {
             if (inputStream != null)
-                return TiffMetadataReader.readMetadata(inputStream, waitForBytes);
+                return TiffMetadataReader.readMetadata(inputStream);
             else
                 return TiffMetadataReader.readMetadata(file);
         }
@@ -120,7 +120,7 @@ public class ImageMetadataReader
         // TODO we should really check all 4 bytes of the PSD magic number
         if (magicNumber == PSD_MAGIC_NUMBER) {
             if (inputStream != null)
-                return PsdMetadataReader.readMetadata(inputStream, waitForBytes);
+                return PsdMetadataReader.readMetadata(inputStream);
             else
                 return PsdMetadataReader.readMetadata(file);
         }

@@ -104,7 +104,7 @@ public class JpegSegmentReader
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
-            _segmentData = readSegments(new BufferedInputStream(inputStream), false);
+            _segmentData = readSegments(inputStream);
         } finally {
             if (inputStream != null)
                 inputStream.close();
@@ -121,8 +121,7 @@ public class JpegSegmentReader
         if (fileContents==null)
             throw new NullPointerException();
 
-        BufferedInputStream stream = new BufferedInputStream(new ByteArrayInputStream(fileContents));
-        _segmentData = readSegments(stream, false);
+        _segmentData = readSegments(new ByteArrayInputStream(fileContents));
     }
 
     /**
@@ -130,16 +129,12 @@ public class JpegSegmentReader
      * @param inputStream the InputStream containing Jpeg data
      */
     @SuppressWarnings({ "ConstantConditions" })
-    public JpegSegmentReader(@NotNull InputStream inputStream, boolean waitForBytes) throws JpegProcessingException
+    public JpegSegmentReader(@NotNull InputStream inputStream) throws JpegProcessingException
     {
         if (inputStream==null)
             throw new NullPointerException();
 
-        BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
-                ? (BufferedInputStream)inputStream
-                : new BufferedInputStream(inputStream);
-
-        _segmentData = readSegments(bufferedInputStream, waitForBytes);
+        _segmentData = readSegments(inputStream);
     }
 
     /**
@@ -200,7 +195,7 @@ public class JpegSegmentReader
     }
 
     @NotNull
-    private JpegSegmentData readSegments(@NotNull final BufferedInputStream jpegInputStream, boolean waitForBytes) throws JpegProcessingException
+    private JpegSegmentData readSegments(@NotNull final InputStream jpegInputStream) throws JpegProcessingException
     {
         JpegSegmentData segmentData = new JpegSegmentData();
 
@@ -217,7 +212,7 @@ public class JpegSegmentReader
             offset += 2;
             do {
                 // need four bytes from stream for segment header before continuing
-                if (!checkForBytesOnStream(jpegInputStream, 4, waitForBytes))
+                if (!checkForBytesOnStream(jpegInputStream, 4))
                     throw new JpegProcessingException("stream ended before segment header could be read");
 
                 // next byte is 0xFF
@@ -237,7 +232,7 @@ public class JpegSegmentReader
                 int segmentLength = ((segmentLengthBytes[0] << 8) & 0xFF00) | (segmentLengthBytes[1] & 0xFF);
                 // segment length includes size bytes, so subtract two
                 segmentLength -= 2;
-                if (!checkForBytesOnStream(jpegInputStream, segmentLength, waitForBytes))
+                if (!checkForBytesOnStream(jpegInputStream, segmentLength))
                     throw new JpegProcessingException("segment size would extend beyond file stream length");
                 if (segmentLength < 0)
                     throw new JpegProcessingException("segment size would be less than zero");
@@ -270,24 +265,9 @@ public class JpegSegmentReader
         }
     }
 
-    private boolean checkForBytesOnStream(@NotNull BufferedInputStream stream, int bytesNeeded, boolean waitForBytes) throws IOException
+    private boolean checkForBytesOnStream(@NotNull InputStream stream, int bytesNeeded) throws IOException
     {
-        // NOTE  waiting is essential for network streams where data can be delayed, but it is not necessary for byte[] or filesystems
-
-        if (!waitForBytes)
-            return bytesNeeded <= stream.available();
-
-        int count = 40; // * 100ms = approx 4 seconds
-        while (count > 0) {
-            if (bytesNeeded <= stream.available())
-               return true;
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // continue
-            }
-            count--;
-        }
-        return false;
+        // NOTE  waiting is essential for network streams where data can be delayed, but it is not necessary for byte[] or file systems
+        return bytesNeeded <= stream.available();
     }
 }

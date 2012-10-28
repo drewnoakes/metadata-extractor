@@ -56,7 +56,7 @@ public class PsdMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream, boolean waitForBytes) throws IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
         Metadata metadata = new Metadata();
 

@@ -60,7 +60,7 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream, final boolean waitForBytes) throws JpegProcessingException
     {
-        JpegSegmentReader segmentReader = new JpegSegmentReader(inputStream, waitForBytes);
+        JpegSegmentReader segmentReader = new JpegSegmentReader(inputStream);
         return extractMetadataFromJpegSegmentReader(segmentReader.getSegmentData());
     }
 
