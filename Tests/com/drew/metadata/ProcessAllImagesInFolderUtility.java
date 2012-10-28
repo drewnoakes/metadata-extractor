@@ -54,6 +54,7 @@ public class ProcessAllImagesInFolderUtility
             return;
 
         int processedCount = 0;
+        int exceptionCount = 0;
         int errorCount = 0;
 
         for (String pathItem : pathItems) {
@@ -73,12 +74,12 @@ public class ProcessAllImagesInFolderUtility
                 } catch (ImageProcessingException e) {
                     // this is an error in the Jpeg segment structure.  we're looking for bad handling of
                     // metadata segments.  in this case, we didn't even get a segment.
-                    errorCount++;
+                    exceptionCount++;
                     System.err.println(e.getClass().getName() + ": " + file + " [Error Extracting Metadata]" + "\n\t" + e.getMessage());
                     continue;
                 } catch (Throwable t) {
                     // general, uncaught exception during processing of jpeg segments
-                    errorCount++;
+                    exceptionCount++;
                     System.err.println(t.getClass().getName() + ": " + file + " [Error Extracting Metadata]");
                     t.printStackTrace(System.err);
                     continue;
@@ -89,8 +90,10 @@ public class ProcessAllImagesInFolderUtility
                     for (Directory directory : metadata.getDirectories()) {
                         if (!directory.hasErrors())
                             continue;
-                        for (String error : directory.getErrors())
-                            System.err.println("[" + directory.getName() + "] " + error);
+                        for (String error : directory.getErrors()) {
+                            System.err.println("\t[" + directory.getName() + "] " + error);
+                            errorCount++;
+                        }
                     }
                 }
 
@@ -106,6 +109,6 @@ public class ProcessAllImagesInFolderUtility
         }
 
         if (processedCount > 0)
-            System.out.println(String.format("Processed %d files with %d errors in %s", processedCount, errorCount, path));
+            System.out.println(String.format("Processed %d files with %d exceptions and %d file errors in %s", processedCount, exceptionCount, errorCount, path));
     }
 }
