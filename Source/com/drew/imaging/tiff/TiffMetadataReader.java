@@ -52,7 +52,6 @@ public class TiffMetadataReader
         return metadata;
     }
 
-    @Deprecated
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
