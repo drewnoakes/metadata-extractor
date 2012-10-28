@@ -56,6 +56,7 @@ public class ProcessAllImagesInFolderUtility
         int processedCount = 0;
         int exceptionCount = 0;
         int errorCount = 0;
+        long byteCount = 0;
 
         for (String pathItem : pathItems) {
             String subItem = pathItem.toLowerCase();
@@ -66,6 +67,8 @@ public class ProcessAllImagesInFolderUtility
             } else if (subItem.endsWith(".jpg") || subItem.endsWith(".jpeg") || subItem.endsWith(".nef") || subItem.endsWith(".crw") || subItem.endsWith(".cr2") || subItem.endsWith(".tif")) {
                 // process this item
                 processedCount++;
+
+                byteCount += file.length();
 
                 // Read metadata
                 final Metadata metadata;
@@ -109,6 +112,6 @@ public class ProcessAllImagesInFolderUtility
         }
 
         if (processedCount > 0)
-            System.out.println(String.format("Processed %d files with %d exceptions and %d file errors in %s", processedCount, exceptionCount, errorCount, path));
+            System.out.println(String.format("Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors in %s", processedCount, byteCount, exceptionCount, errorCount, path));
     }
 }
