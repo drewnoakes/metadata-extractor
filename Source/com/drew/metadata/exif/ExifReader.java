@@ -146,8 +146,14 @@ public class ExifReader implements MetadataReader
         }
 
         // Check the next two values for correctness.
-        if (reader.getUInt16(2 + tiffHeaderOffset) != 0x2a) {
-            directory.addError("Invalid Exif start - should have 0x2A at offset 8 in Exif header");
+        final int tiffMarker = reader.getUInt16(2 + tiffHeaderOffset);
+
+        final int standardTiffMarker = 0x002A;
+        final int olympusRawTiffMarker = 0x4F52; // for ORF files
+        final int panasonicRawTiffMarker = 0x0055; // for RW2 files
+
+        if (tiffMarker != standardTiffMarker && tiffMarker != olympusRawTiffMarker && tiffMarker != panasonicRawTiffMarker) {
+            directory.addError("Unexpected TIFF marker after byte order identifier: 0x" + Integer.toHexString(tiffMarker));
             return;
         }
 

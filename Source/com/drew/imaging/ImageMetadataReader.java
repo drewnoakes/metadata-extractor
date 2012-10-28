@@ -62,7 +62,7 @@ public class ImageMetadataReader
      *
      * @param inputStream a stream from which the image data may be read.  The stream must be positioned at the
      *                    beginning of the image data.
-     * @return a populated Metadata error containing directories of tags with values and any processing errors.
+     * @return a populated Metadata object containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException for general processing errors.
      */
     @NotNull
@@ -77,7 +77,7 @@ public class ImageMetadataReader
      * method to extract the data, though this is transparent to the caller.
      *
      * @param file a file from which the image data may be read.
-     * @return a populated Metadata error containing directories of tags with values and any processing errors.
+     * @return a populated Metadata object containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException for general processing errors.
      */
     @NotNull
@@ -196,12 +196,17 @@ public class ImageMetadataReader
                 System.out.println("|| *Directory* || *Tag Id* || *Tag Name* || *Tag Description* ||");
             }
 
-            // iterate over the exif data and print to System.out
+            // iterate over the metadata and print to System.out
             for (Directory directory : metadata.getDirectories()) {
                 for (Tag tag : directory.getTags()) {
                     String tagName = tag.getTagName();
                     String directoryName = directory.getName();
                     String description = tag.getDescription();
+
+                    // truncate the description if it's too long
+                    if (description != null && description.length() > 1024) {
+                        description = description.substring(0, 1024) + "...";
+                    }
 
                     if (wikiFormat) {
                         System.out.printf("||%s||0x%s||%s||%s||%n",

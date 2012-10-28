@@ -60,13 +60,12 @@ public abstract class TagDescriptor<T extends Directory>
         if (object==null)
             return null;
 
-        // special presentation for frequently very long byte arrays
+        // special presentation for long arrays
         if (object.getClass().isArray()) {
-            final Class<?> componentType = object.getClass().getComponentType();
-            boolean isByteArray = componentType.getName().equals("byte");
             final int length = Array.getLength(object);
-            if (isByteArray && length > 12) {
-                return String.format("[%d byte%s]", length, length==1 ? "" : "s");
+            if (length > 16) {
+                final String componentTypeName = object.getClass().getComponentType().getName();
+                return String.format("[%d %s%s]", length, componentTypeName, length==1 ? "" : "s");
             }
         }
 
