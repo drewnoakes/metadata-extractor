@@ -27,10 +27,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.photoshop.PsdReader;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
  * Obtains metadata from Photoshop's PSD files.
@@ -60,10 +57,21 @@ public class PsdMetadataReader
     {
         Metadata metadata = new Metadata();
 
-        byte[] headerBytes = new byte[26];
-        inputStream.read(headerBytes, 0, 26);
+        final int headerLength = 26;
 
-        new PsdReader().extract(new ByteArrayReader(headerBytes), metadata);
+        byte[] bytes = new byte[headerLength];
+        int totalBytesRead = 0;
+        while (totalBytesRead != headerLength)
+        {
+            int bytesRead = inputStream.read(bytes, totalBytesRead, headerLength - totalBytesRead);
+
+            if (bytesRead == -1)
+                throw new EOFException("PSD data ended prematurely.");
+
+            totalBytesRead += bytesRead;
+        }
+
+        new PsdReader().extract(new ByteArrayReader(bytes), metadata);
 
         return metadata;
     }
