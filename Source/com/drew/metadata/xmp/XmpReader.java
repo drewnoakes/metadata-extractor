@@ -26,7 +26,7 @@ import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -66,10 +66,11 @@ public class XmpReader implements MetadataReader
 
     /**
      * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p/>
      * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit).
      */
     @SuppressWarnings({ "ConstantConditions" })
-    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
     {
         if (reader == null)
             throw new NullPointerException("reader");

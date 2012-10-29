@@ -59,15 +59,17 @@ public class TiffMetadataReader
         // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
         // InputStream does not support seeking backwards, and so is not a viable option for TIFF processing
 
-        final int chunkSize = 1024;
-        final byte[] buffer = new byte[chunkSize];
+        final int chunkSize = 8 * 1024;
 
+        byte[] buffer = new byte[chunkSize];
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+
         int bytesRead;
         while((bytesRead = inputStream.read(buffer)) != -1) {
             out.write(buffer, 0, bytesRead);
         }
-        final byte[] tiffBytes = out.toByteArray();
+
+        byte[] tiffBytes = out.toByteArray();
 
         Metadata metadata = new Metadata();
         new ExifReader().extractTiff(new ByteArrayReader(tiffBytes), metadata);

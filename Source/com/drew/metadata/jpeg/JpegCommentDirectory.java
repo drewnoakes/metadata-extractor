@@ -42,7 +42,7 @@ public class JpegCommentDirectory extends Directory
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-        _tagNameMap.put(TAG_JPEG_COMMENT, "Jpeg Comment");
+        _tagNameMap.put(TAG_JPEG_COMMENT, "JPEG Comment");
     }
 
     public JpegCommentDirectory()

@@ -63,7 +63,7 @@ public class AdobeJpegDirectory extends Directory {
     @NotNull
     @Override
     public String getName() {
-        return "Adobe Jpeg";
+        return "Adobe JPEG";
     }
 
     @NotNull

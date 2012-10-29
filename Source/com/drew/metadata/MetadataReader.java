@@ -20,7 +20,7 @@
  */
 package com.drew.metadata;
 
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 
 /**
@@ -40,5 +40,5 @@ public interface MetadataReader
      * @param reader   The reader from which the metadata should be extracted.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata);
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
 }

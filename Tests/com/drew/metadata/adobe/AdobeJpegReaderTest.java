@@ -36,8 +36,8 @@ public class AdobeJpegReaderTest
     @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        final File metadataFile = new File("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg");
-        final JpegSegmentData jpegSegmentData = new JpegSegmentReader(metadataFile).getSegmentData();
+        final JpegSegmentReader segmentReader = JpegSegmentReader.fromFile("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg");
+        final JpegSegmentData jpegSegmentData = segmentReader.getSegmentData();
         final byte[] bytes = jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APPE);
 
         Assert.assertNotNull(bytes);

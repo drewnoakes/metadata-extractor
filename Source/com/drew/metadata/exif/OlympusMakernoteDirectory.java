@@ -165,7 +165,7 @@ public class OlympusMakernoteDirectory extends Directory
 
     static {
         _tagNameMap.put(TAG_OLYMPUS_SPECIAL_MODE, "Special Mode");
-        _tagNameMap.put(TAG_OLYMPUS_JPEG_QUALITY, "Jpeg Quality");
+        _tagNameMap.put(TAG_OLYMPUS_JPEG_QUALITY, "JPEG Quality");
         _tagNameMap.put(TAG_OLYMPUS_MACRO_MODE, "Macro");
         _tagNameMap.put(TAG_OLYMPUS_UNKNOWN_1, "Makernote Unknown 1");
         _tagNameMap.put(TAG_OLYMPUS_DIGI_ZOOM_RATIO, "DigiZoom Ratio");

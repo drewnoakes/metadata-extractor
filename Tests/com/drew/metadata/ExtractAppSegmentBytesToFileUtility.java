@@ -46,7 +46,7 @@ public class ExtractAppSegmentBytesToFileUtility
 
         String filePath = args[0];
 
-        JpegSegmentData segmentData = new JpegSegmentReader(new File(filePath)).getSegmentData();
+        JpegSegmentData segmentData = JpegSegmentReader.fromFile(filePath).getSegmentData();
         final int segmentCount = segmentData.getSegmentCount(segment);
         if (segmentCount == 0) {
             System.err.printf("No data was found in app segment %d.\n", segmentNumber);

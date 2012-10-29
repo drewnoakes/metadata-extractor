@@ -43,8 +43,8 @@ public class JpegReaderTest
     public void setUp() throws JpegProcessingException, IOException
     {
         // use a known testing image
-        File jpegFile = new File("Tests/com/drew/metadata/jpeg/simple.jpg");
-        final byte[] data = new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_SOF0);
+        final JpegSegmentReader segmentReader = JpegSegmentReader.fromFile("Tests/com/drew/metadata/jpeg/simple.jpg");
+        final byte[] data = segmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0);
         MetadataReader reader = new JpegReader();
         Metadata metadata = new Metadata();
         Assert.assertNotNull(data);

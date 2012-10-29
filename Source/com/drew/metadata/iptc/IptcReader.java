@@ -21,7 +21,7 @@
 package com.drew.metadata.iptc;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -30,7 +30,7 @@ import com.drew.metadata.MetadataReader;
 import java.util.Date;
 
 /**
- * Decodes IPTC binary data, populating a <code>Metadata</code> object with tag values in an <code>IptcDirectory</code>.
+ * Decodes IPTC binary data, populating a {@link Metadata} object with tag values in an {@link IptcDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -51,8 +51,8 @@ public class IptcReader implements MetadataReader
     public static final int POST_DATA_RECORD = 9;
 */
 
-    /** Performs the IPTC data extraction, adding found values to the specified instance of <code>Metadata</code>. */
-    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata)
+    /** Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
         IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
 
@@ -123,7 +123,7 @@ public class IptcReader implements MetadataReader
         }
     }
 
-    private void processTag(@NotNull BufferReader reader, @NotNull Directory directory, int directoryType, int tagType, int offset, int tagByteCount) throws BufferBoundsException
+    private void processTag(@NotNull RandomAccessReader reader, @NotNull Directory directory, int directoryType, int tagType, int offset, int tagByteCount) throws BufferBoundsException
     {
         int tagIdentifier = tagType | (directoryType << 8);
 

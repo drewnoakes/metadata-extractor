@@ -24,7 +24,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.annotations.Nullable;
 
 /**
- * An exception class thrown upon unexpected and fatal conditions while processing a Jpeg file.
+ * An exception class thrown upon unexpected and fatal conditions while processing a JPEG file.
  *
  * @author Drew Noakes http://drewnoakes.com
  */

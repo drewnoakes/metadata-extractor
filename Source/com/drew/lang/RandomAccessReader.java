@@ -23,7 +23,7 @@ package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
 
-public interface BufferReader
+public interface RandomAccessReader
 {
     /**
      * Returns the length of the buffer.  This value represents the total number of bytes in the underlying source.

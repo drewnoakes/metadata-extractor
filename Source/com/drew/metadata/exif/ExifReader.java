@@ -21,7 +21,7 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -85,12 +85,12 @@ public class ExifReader implements MetadataReader
 
     /**
      * Performs the Exif data extraction, adding found values to the specified
-     * instance of <code>Metadata</code>.
+     * instance of {@link Metadata}.
      *
      * @param reader   The buffer reader from which Exif data should be read.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
     {
         final ExifSubIFDDirectory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
 
@@ -115,12 +115,12 @@ public class ExifReader implements MetadataReader
 
     /**
      * Performs the Exif data extraction on a TIFF/RAW, adding found values to the specified
-     * instance of <code>Metadata</code>.
+     * instance of {@link Metadata}.
      *
-     * @param reader   The BufferReader from which TIFF data should be read.
+     * @param reader   The {@link RandomAccessReader} from which TIFF data should be read.
      * @param metadata The Metadata object into which extracted values should be merged.
      */
-    public void extractTiff(@NotNull BufferReader reader, @NotNull Metadata metadata)
+    public void extractTiff(@NotNull RandomAccessReader reader, @NotNull Metadata metadata)
     {
         final ExifIFD0Directory directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
 
@@ -131,7 +131,7 @@ public class ExifReader implements MetadataReader
         }
     }
 
-    private void extractIFD(@NotNull Metadata metadata, @NotNull final ExifIFD0Directory directory, int tiffHeaderOffset, @NotNull BufferReader reader) throws BufferBoundsException
+    private void extractIFD(@NotNull Metadata metadata, @NotNull final ExifIFD0Directory directory, int tiffHeaderOffset, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         // this should be either "MM" or "II"
         String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
@@ -197,7 +197,7 @@ public class ExifReader implements MetadataReader
      * 2 bytes: format code
      * 4 bytes: component count
      */
-    private void processDirectory(@NotNull Directory directory, @NotNull Set<Integer> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset, @NotNull final Metadata metadata, @NotNull final BufferReader reader) throws BufferBoundsException
+    private void processDirectory(@NotNull Directory directory, @NotNull Set<Integer> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset, @NotNull final Metadata metadata, @NotNull final RandomAccessReader reader) throws BufferBoundsException
     {
         // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
         if (processedDirectoryOffsets.contains(Integer.valueOf(dirStartOffset)))
@@ -319,7 +319,7 @@ public class ExifReader implements MetadataReader
         }
     }
 
-    private void processMakerNote(int subdirOffset, @NotNull Set<Integer> processedDirectoryOffsets, int tiffHeaderOffset, @NotNull final Metadata metadata, @NotNull BufferReader reader) throws BufferBoundsException
+    private void processMakerNote(int subdirOffset, @NotNull Set<Integer> processedDirectoryOffsets, int tiffHeaderOffset, @NotNull final Metadata metadata, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         // Determine the camera model and makernote format
         Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
@@ -435,7 +435,7 @@ public class ExifReader implements MetadataReader
         }
     }
 
-    private void processTag(@NotNull Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode, @NotNull final BufferReader reader) throws BufferBoundsException
+    private void processTag(@NotNull Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode, @NotNull final RandomAccessReader reader) throws BufferBoundsException
     {
         // Directory simply stores raw values
         // The display side uses a Descriptor class per directory to turn the raw values into 'pretty' descriptions

@@ -81,7 +81,7 @@ public class SampleUsage
         // As fast as approach 1 (this is what goes on inside the JpegMetadataReader's readMetadata() method), this code
         // is handy if you want to look into other Jpeg segments as well.
         try {
-            JpegSegmentReader segmentReader = new JpegSegmentReader(file);
+            JpegSegmentReader segmentReader = JpegSegmentReader.fromFile(file);
             byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1);
             byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
             Metadata metadata = new Metadata();

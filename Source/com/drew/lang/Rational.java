@@ -153,7 +153,7 @@ public class Rational extends java.lang.Number implements Serializable
         return new Rational(this._denominator, this._numerator);
     }
 
-    /** Checks if this rational number is an Integer, either positive or negative. */
+    /** Checks if this {@link Rational} number is an Integer, either positive or negative. */
     public boolean isInteger()
     {
         return _denominator == 1 ||
@@ -172,7 +172,7 @@ public class Rational extends java.lang.Number implements Serializable
         return _numerator + "/" + _denominator;
     }
 
-    /** Returns the simplest representation of this Rational's value possible. */
+    /** Returns the simplest representation of this {@link Rational}'s value possible. */
     @NotNull
     public String toSimpleString(boolean allowDecimal)
     {
@@ -210,12 +210,12 @@ public class Rational extends java.lang.Number implements Serializable
     }
 
     /**
-     * Compares two <code>Rational</code> instances, returning true if they are mathematically
+     * Compares two {@link Rational} instances, returning true if they are mathematically
      * equivalent.
      *
-     * @param obj the Rational to compare this instance to.
+     * @param obj the {@link Rational} to compare this instance to.
      * @return true if instances are mathematically equivalent, otherwise false.  Will also
-     *         return false if <code>obj</code> is not an instance of <code>Rational</code>.
+     *         return false if <code>obj</code> is not an instance of {@link Rational}.
      */
     @Override
     public boolean equals(@Nullable Object obj)
@@ -234,7 +234,7 @@ public class Rational extends java.lang.Number implements Serializable
 
     /**
      * <p>
-     * Simplifies the Rational number.</p>
+     * Simplifies the {@link Rational} number.</p>
      * <p>
      * Prime number series: 1, 2, 3, 5, 7, 9, 11, 13, 17</p>
      * <p>

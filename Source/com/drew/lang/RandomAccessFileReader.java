@@ -36,7 +36,7 @@ import java.io.UnsupportedEncodingException;
  * 
  * @author Drew Noakes http://drewnoakes.com
  * */
-public class RandomAccessFileReader implements BufferReader
+public class RandomAccessFileReader implements RandomAccessReader
 {
     @NotNull
     private final RandomAccessFile _file;
@@ -107,7 +107,7 @@ public class RandomAccessFileReader implements BufferReader
         checkBounds(index, 1);
         seek(index);
 
-        return (short) (read() & 255);
+        return (short) (read() & 0xFF);
     }
 
     @Override
@@ -126,11 +126,11 @@ public class RandomAccessFileReader implements BufferReader
         seek(index);
 
         if (_isMotorolaByteOrder) {
-            // Motorola - MSB first
+            // Motorola - MSB first (big endian)
             return (read() << 8 & 0xFF00) |
                    (read()      & 0xFF);
         } else {
-            // Intel ordering - LSB first
+            // Intel ordering - LSB first (little endian)
             return (read()      & 0xFF) |
                    (read() << 8 & 0xFF00);
         }
@@ -143,11 +143,11 @@ public class RandomAccessFileReader implements BufferReader
         seek(index);
 
         if (_isMotorolaByteOrder) {
-            // Motorola - MSB first
+            // Motorola - MSB first (big endian)
             return (short) (((short) read() << 8 & (short)0xFF00) |
                             ((short) read()      & (short)0xFF));
         } else {
-            // Intel ordering - LSB first
+            // Intel ordering - LSB first (little endian)
             return (short) (((short) read()      & (short)0xFF) |
                             ((short) read() << 8 & (short)0xFF00));
         }
@@ -203,7 +203,7 @@ public class RandomAccessFileReader implements BufferReader
         seek(index);
 
         if (_isMotorolaByteOrder) {
-            // Motorola - MSB first
+            // Motorola - MSB first (big endian)
             return ((long) read() << 56 & 0xFF00000000000000L) |
                    ((long) read() << 48 & 0xFF000000000000L) |
                    ((long) read() << 40 & 0xFF0000000000L) |
@@ -213,7 +213,7 @@ public class RandomAccessFileReader implements BufferReader
                    ((long) read() << 8  & 0xFF00L) |
                    ((long) read()       & 0xFFL);
         } else {
-            // Intel ordering - LSB first
+            // Intel ordering - LSB first (little endian)
             return ((long) read()       & 0xFFL) |
                    ((long) read() << 8  & 0xFF00L) |
                    ((long) read() << 16 & 0xFF0000L) |
@@ -233,17 +233,17 @@ public class RandomAccessFileReader implements BufferReader
         seek(index);
 
         if (_isMotorolaByteOrder) {
-            float res = (read() & 255) << 8 |
-                        (read() & 255);
-            int d =     (read() & 255) << 8 |
-                        (read() & 255);
+            float res = (read() & 0xFF) << 8 |
+                        (read() & 0xFF);
+            int d =     (read() & 0xFF) << 8 |
+                        (read() & 0xFF);
             return (float)(res + d/65536.0);
         } else {
             // this particular branch is untested
-            int d =     (read() & 255) |
-                        (read() & 255) << 8;
-            float res = (read() & 255) |
-                        (read() & 255) << 8;
+            int d =     (read() & 0xFF) |
+                        (read() & 0xFF) << 8;
+            float res = (read() & 0xFF) |
+                        (read() & 0xFF) << 8;
             return (float)(res + d/65536.0);
         }
     }

@@ -32,18 +32,18 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Obtains metadata from all supported file formats, including JPEG, RAW (NEF/CRw/CR2) and TIFF.
+ * Obtains metadata from all supported file formats, including JPEG, RAW (NEF/CRW/CR2/ORF/RW2), TIFF and PSD.
+ * <p/>
  * If the caller knows their file to be of a particular type, they may prefer to use the dedicated MetadataReader
- * directly (<code>JpegMetadataReader</code> for Jpeg files, or <code>TiffMetadataReader</code> for TIFF and RAW files).
+ * directly ({@link JpegMetadataReader} for JPEG files, {@link TiffMetadataReader} for TIFF and RAW files, and
+ * {@link PsdMetadataReader} for Photoshop files).
+ * <p/>
  * The dedicated readers offer a very slight performance improvement, though for most scenarios it is simpler,
  * more convenient and more robust to use this class.
  *
@@ -57,24 +57,46 @@ public class ImageMetadataReader
     private static final int PSD_MAGIC_NUMBER = 0x3842;            // "8B" note that the full magic number is 8BPS
 
     /**
-     * Reads metadata from an input stream.  The file inputStream examined to determine its type and consequently the
-     * appropriate method to extract the data, though this inputStream transparent to the caller.
+     * Reads metadata from an {@link InputStream}. The file type is determined by inspecting the leading bytes of the
+     * stream, and parsing of the file is delegated to either {@link JpegMetadataReader}, {@link TiffMetadataReader} or
+     * {@link PsdMetadataReader}.
      *
      * @param inputStream a stream from which the image data may be read.  The stream must be positioned at the
      *                    beginning of the image data.
-     * @return a populated Metadata object containing directories of tags with values and any processing errors.
-     * @throws ImageProcessingException for general processing errors.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
      */
     @NotNull
-    public static Metadata readMetadata(@NotNull BufferedInputStream inputStream, boolean waitForBytes) throws ImageProcessingException, IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws ImageProcessingException, IOException
     {
-        int magicNumber = readMagicNumber(inputStream);
-        return readMetadata(inputStream, null, magicNumber, waitForBytes);
+        InputStream bufferedInputStream = new BufferedInputStream(inputStream);
+        int magicNumber = readMagicNumber(bufferedInputStream);
+        if (magicNumber == -1)
+            throw new ImageProcessingException("Could not determine file's magic number.");
+
+        // This covers all JPEG files
+        if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
+            return JpegMetadataReader.readMetadata(bufferedInputStream);
+        }
+
+        // This covers all TIFF and camera RAW files
+        if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLA_TIFF_MAGIC_NUMBER) {
+            return TiffMetadataReader.readMetadata(bufferedInputStream);
+        }
+
+        // This covers PSD files
+        // TODO we should really check all 4 bytes of the PSD magic number
+        if (magicNumber == PSD_MAGIC_NUMBER) {
+            return PsdMetadataReader.readMetadata(bufferedInputStream);
+        }
+
+        throw new ImageProcessingException("File format is not supported");
     }
 
     /**
-     * Reads metadata from a file.  The file is examined to determine its type and consequently the appropriate
-     * method to extract the data, though this is transparent to the caller.
+     * Reads metadata from a file.  The file type is determined by inspecting the leading bytes of the
+     * stream, and parsing of the file is delegated to either {@link JpegMetadataReader}, {@link TiffMetadataReader} or
+     * {@link PsdMetadataReader}.
      *
      * @param file a file from which the image data may be read.
      * @return a populated Metadata object containing directories of tags with values and any processing errors.
@@ -83,57 +105,29 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws ImageProcessingException, IOException
     {
-        BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-
-        int magicNumber;
+        InputStream inputStream = new FileInputStream(file);
         try {
-            magicNumber = readMagicNumber(inputStream);
+            return readMetadata(inputStream);
         } finally {
             inputStream.close();
         }
-
-        return readMetadata(null, file, magicNumber, false);
     }
 
-    @NotNull
-    private static Metadata readMetadata(@Nullable BufferedInputStream inputStream, @Nullable File file, int magicNumber, boolean waitForBytes) throws ImageProcessingException, IOException
-    {
-        assert(file!=null ^ inputStream!=null);
-        
-        // This covers all JPEG files
-        if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
-            if (inputStream != null)
-                return JpegMetadataReader.readMetadata(inputStream, waitForBytes);
-            else
-                return JpegMetadataReader.readMetadata(file);
-        }
-
-        // This covers all TIFF and camera RAW files
-        if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLA_TIFF_MAGIC_NUMBER) {
-            if (inputStream != null)
-                return TiffMetadataReader.readMetadata(inputStream);
-            else
-                return TiffMetadataReader.readMetadata(file);
-        }
-
-        // This covers PSD files
-        // TODO we should really check all 4 bytes of the PSD magic number
-        if (magicNumber == PSD_MAGIC_NUMBER) {
-            if (inputStream != null)
-                return PsdMetadataReader.readMetadata(inputStream);
-            else
-                return PsdMetadataReader.readMetadata(file);
-        }
-
-        throw new ImageProcessingException("File format is not supported");
-    }
-
-    private static int readMagicNumber(@NotNull BufferedInputStream inputStream) throws IOException
+    /**
+     * Reads the first two bytes from the input stream, then rewinds.
+     * @throws IOException
+     */
+    private static int readMagicNumber(@NotNull InputStream inputStream) throws IOException
     {
         inputStream.mark(2);
-        int magicNumber = inputStream.read() << 8 | inputStream.read();
+        final int byte1 = inputStream.read();
+        final int byte2 = inputStream.read();
         inputStream.reset();
-        return magicNumber;
+
+        if (byte1 == -1 || byte2 == -1)
+            return -1;
+
+        return byte1 << 8 | byte2;
     }
 
     private ImageMetadataReader() throws Exception

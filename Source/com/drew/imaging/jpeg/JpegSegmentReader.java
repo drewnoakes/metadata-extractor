@@ -20,17 +20,40 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.SequentialReader;
+import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Performs read functions of Jpeg files, returning specific file segments.
+ * Performs read functions of JPEG files, returning specific file segments.
+ *
  * @author  Drew Noakes http://drewnoakes.com
  */
 public class JpegSegmentReader
 {
+    public static JpegSegmentReader fromFile(String fileName) throws IOException, JpegProcessingException
+    {
+        return fromFile(new File(fileName));
+    }
+
+    public static JpegSegmentReader fromFile(File file) throws IOException, JpegProcessingException
+    {
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            return new JpegSegmentReader(inputStream);
+        } finally {
+            if (inputStream != null)
+                inputStream.close();
+        }
+    }
+
     // TODO add a findAvailableSegments() method
     // TODO add more segment identifiers
     // TODO add a getSegmentDescription() method, returning for example 'App1 application data segment, commonly containing Exif data'
@@ -48,37 +71,37 @@ public class JpegSegmentReader
      */
     private static final byte MARKER_EOI = (byte)0xD9;
 
-    /** APP0 Jpeg segment identifier -- JFIF data (also JFXX apparently). */
+    /** APP0 JPEG segment identifier -- JFIF data (also JFXX apparently). */
     public static final byte SEGMENT_APP0 = (byte)0xE0;
-    /** APP1 Jpeg segment identifier -- where Exif data is kept.  XMP data is also kept in here, though usually in a second instance. */
+    /** APP1 JPEG segment identifier -- where Exif data is kept.  XMP data is also kept in here, though usually in a second instance. */
     public static final byte SEGMENT_APP1 = (byte)0xE1;
-    /** APP2 Jpeg segment identifier. */
+    /** APP2 JPEG segment identifier. */
     public static final byte SEGMENT_APP2 = (byte)0xE2;
-    /** APP3 Jpeg segment identifier. */
+    /** APP3 JPEG segment identifier. */
     public static final byte SEGMENT_APP3 = (byte)0xE3;
-    /** APP4 Jpeg segment identifier. */
+    /** APP4 JPEG segment identifier. */
     public static final byte SEGMENT_APP4 = (byte)0xE4;
-    /** APP5 Jpeg segment identifier. */
+    /** APP5 JPEG segment identifier. */
     public static final byte SEGMENT_APP5 = (byte)0xE5;
-    /** APP6 Jpeg segment identifier. */
+    /** APP6 JPEG segment identifier. */
     public static final byte SEGMENT_APP6 = (byte)0xE6;
-    /** APP7 Jpeg segment identifier. */
+    /** APP7 JPEG segment identifier. */
     public static final byte SEGMENT_APP7 = (byte)0xE7;
-    /** APP8 Jpeg segment identifier. */
+    /** APP8 JPEG segment identifier. */
     public static final byte SEGMENT_APP8 = (byte)0xE8;
-    /** APP9 Jpeg segment identifier. */
+    /** APP9 JPEG segment identifier. */
     public static final byte SEGMENT_APP9 = (byte)0xE9;
-    /** APPA (App10) Jpeg segment identifier -- can hold Unicode comments. */
+    /** APPA (App10) JPEG segment identifier -- can hold Unicode comments. */
     public static final byte SEGMENT_APPA = (byte)0xEA;
-    /** APPB (App11) Jpeg segment identifier. */
+    /** APPB (App11) JPEG segment identifier. */
     public static final byte SEGMENT_APPB = (byte)0xEB;
-    /** APPC (App12) Jpeg segment identifier. */
+    /** APPC (App12) JPEG segment identifier. */
     public static final byte SEGMENT_APPC = (byte)0xEC;
-    /** APPD (App13) Jpeg segment identifier -- IPTC data in here. */
+    /** APPD (App13) JPEG segment identifier -- IPTC data in here. */
     public static final byte SEGMENT_APPD = (byte)0xED;
-    /** APPE (App14) Jpeg segment identifier. */
+    /** APPE (App14) JPEG segment identifier. */
     public static final byte SEGMENT_APPE = (byte)0xEE;
-    /** APPF (App15) Jpeg segment identifier. */
+    /** APPF (App15) JPEG segment identifier. */
     public static final byte SEGMENT_APPF = (byte)0xEF;
     /** Start Of Image segment identifier. */
     public static final byte SEGMENT_SOI = (byte)0xD8;
@@ -88,12 +111,12 @@ public class JpegSegmentReader
     public static final byte SEGMENT_DHT = (byte)0xC4;
     /** Start-of-Frame Zero segment identifier. */
     public static final byte SEGMENT_SOF0 = (byte)0xC0;
-    /** Jpeg comment segment identifier. */
+    /** JPEG comment segment identifier. */
     public static final byte SEGMENT_COM = (byte)0xFE;
 
     /**
      * Creates a JpegSegmentReader for a specific file.
-     * @param file the Jpeg file to read segments from
+     * @param file the JPEG file to read segments from
      */
     @SuppressWarnings({ "ConstantConditions" })
     public JpegSegmentReader(@NotNull File file) throws JpegProcessingException, IOException
@@ -104,7 +127,7 @@ public class JpegSegmentReader
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
-            _segmentData = readSegments(inputStream);
+            _segmentData = readSegments(new StreamReader(inputStream));
         } finally {
             if (inputStream != null)
                 inputStream.close();
@@ -112,21 +135,8 @@ public class JpegSegmentReader
     }
 
     /**
-     * Creates a JpegSegmentReader for a byte array.
-     * @param fileContents the byte array containing Jpeg data
-     */
-    @SuppressWarnings({ "ConstantConditions" })
-    public JpegSegmentReader(@NotNull byte[] fileContents) throws JpegProcessingException
-    {
-        if (fileContents==null)
-            throw new NullPointerException();
-
-        _segmentData = readSegments(new ByteArrayInputStream(fileContents));
-    }
-
-    /**
      * Creates a JpegSegmentReader for an InputStream.
-     * @param inputStream the InputStream containing Jpeg data
+     * @param inputStream the InputStream containing JPEG data
      */
     @SuppressWarnings({ "ConstantConditions" })
     public JpegSegmentReader(@NotNull InputStream inputStream) throws JpegProcessingException
@@ -134,12 +144,17 @@ public class JpegSegmentReader
         if (inputStream==null)
             throw new NullPointerException();
 
-        _segmentData = readSegments(inputStream);
+        try {
+            _segmentData = readSegments(new StreamReader(inputStream));
+        } catch (IOException e) {
+            throw new JpegProcessingException(e);
+        }
     }
 
     /**
-     * Reads the first instance of a given Jpeg segment, returning the contents as
+     * Reads the first instance of a given JPEG segment, returning the contents as
      * a byte array.
+     *
      * @param segmentMarker the byte identifier for the desired segment
      * @return the byte array if found, else null
      */
@@ -150,10 +165,10 @@ public class JpegSegmentReader
     }
 
     /**
-     * Reads the Nth instance of a given Jpeg segment, returning the contents as a byte array.
+     * Reads the Nth instance of a given JPEG segment, returning the contents as a byte array.
      * 
      * @param segmentMarker the byte identifier for the desired segment
-     * @param occurrence the occurrence of the specified segment within the jpeg file
+     * @param occurrence the occurrence of the specified segment within the JPEG file
      * @return the byte array if found, else null
      */
     @Nullable
@@ -163,10 +178,10 @@ public class JpegSegmentReader
     }
 
     /**
-     * Returns all instances of a given Jpeg segment.  If no instances exist, an empty sequence is returned.
+     * Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.
      *
-     * @param segmentMarker a number which identifies the type of Jpeg segment being queried
-     * @return zero or more byte arrays, each holding the data of a Jpeg segment
+     * @param segmentMarker a number which identifies the type of JPEG segment being queried
+     * @return zero or more byte arrays, each holding the data of a JPEG segment
      */
     @NotNull
     public Iterable<byte[]> readSegments(byte segmentMarker)
@@ -176,6 +191,7 @@ public class JpegSegmentReader
 
     /**
      * Returns the number of segments having the specified JPEG segment marker.
+     *
      * @param segmentMarker the JPEG segment identifying marker.
      * @return the count of matching segments.
      */
@@ -186,6 +202,7 @@ public class JpegSegmentReader
 
     /**
      * Returns the JpegSegmentData object used by this reader.
+     *
      * @return the JpegSegmentData object.
      */
     @NotNull
@@ -195,79 +212,53 @@ public class JpegSegmentReader
     }
 
     @NotNull
-    private JpegSegmentData readSegments(@NotNull final InputStream jpegInputStream) throws JpegProcessingException
+    private JpegSegmentData readSegments(@NotNull final SequentialReader reader) throws JpegProcessingException, IOException
     {
+        // Must be big-endian
+        assert(reader.isMotorolaByteOrder());
+
         JpegSegmentData segmentData = new JpegSegmentData();
 
-        try {
-            int offset = 0;
-            // first two bytes should be jpeg magic number
-            byte[] headerBytes = new byte[2];
-            if (jpegInputStream.read(headerBytes, 0, 2)!=2)
-                throw new JpegProcessingException("not a jpeg file");
-            final boolean hasValidHeader = (headerBytes[0] & 0xFF) == 0xFF && (headerBytes[1] & 0xFF) == 0xD8;
-            if (!hasValidHeader)
-                throw new JpegProcessingException("not a jpeg file");
+        // first two bytes should be JPEG magic number
+        final int magicNumber = reader.getUInt16();
+        if (magicNumber != 0xFFD8)
+            throw new JpegProcessingException("JPEG data is expected to begin with 0xFFD8 (ÿØ) not 0x" + Integer.toHexString(magicNumber));
 
-            offset += 2;
-            do {
-                // need four bytes from stream for segment header before continuing
-                if (!checkForBytesOnStream(jpegInputStream, 4))
-                    throw new JpegProcessingException("stream ended before segment header could be read");
+        do {
+            // next byte is the segment identifier: 0xFF
+            final short segmentIdentifier = reader.getUInt8();
 
-                // next byte is 0xFF
-                byte segmentIdentifier = (byte)(jpegInputStream.read() & 0xFF);
-                if ((segmentIdentifier & 0xFF) != 0xFF) {
-                    throw new JpegProcessingException("expected jpeg segment start identifier 0xFF at offset " + offset + ", not 0x" + Integer.toHexString(segmentIdentifier & 0xFF));
-                }
-                offset++;
-                // next byte is <segment-marker>
-                byte thisSegmentMarker = (byte)(jpegInputStream.read() & 0xFF);
-                offset++;
-                // next 2-bytes are <segment-size>: [high-byte] [low-byte]
-                byte[] segmentLengthBytes = new byte[2];
-                if (jpegInputStream.read(segmentLengthBytes, 0, 2) != 2)
-                    throw new JpegProcessingException("Jpeg data ended unexpectedly.");
-                offset += 2;
-                int segmentLength = ((segmentLengthBytes[0] << 8) & 0xFF00) | (segmentLengthBytes[1] & 0xFF);
-                // segment length includes size bytes, so subtract two
-                segmentLength -= 2;
-                if (!checkForBytesOnStream(jpegInputStream, segmentLength))
-                    throw new JpegProcessingException("segment size would extend beyond file stream length");
-                if (segmentLength < 0)
-                    throw new JpegProcessingException("segment size would be less than zero");
-                byte[] segmentBytes = new byte[segmentLength];
-                if (jpegInputStream.read(segmentBytes, 0, segmentLength) != segmentLength)
-                    throw new JpegProcessingException("Jpeg data ended unexpectedly.");
-                offset += segmentLength;
-                if ((thisSegmentMarker & 0xFF) == (SEGMENT_SOS & 0xFF)) {
+            if (segmentIdentifier != 0xFF)
+                throw new JpegProcessingException("Expected JPEG segment start identifier 0xFF, not 0x" + Integer.toHexString(segmentIdentifier));
+
+            // next byte is <segment-marker>
+            byte thisSegmentMarker = reader.getInt8();
+
+            // next 2-bytes are <segment-size>: [high-byte] [low-byte]
+            int segmentLength = reader.getUInt16();
+
+            // segment length includes size bytes, so subtract two
+            segmentLength -= 2;
+
+            if (segmentLength < 0)
+                throw new JpegProcessingException("JPEG segment size would be less than zero");
+
+            byte[] segmentBytes = reader.getBytes(segmentLength);
+            assert(segmentLength == segmentBytes.length);
+
+            switch (thisSegmentMarker) {
+                case SEGMENT_SOS:
                     // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
                     // have to search for the two bytes: 0xFF 0xD9 (EOI).
                     // It comes last so simply return at this point
                     return segmentData;
-                } else if ((thisSegmentMarker & 0xFF) == (MARKER_EOI & 0xFF)) {
+                case MARKER_EOI:
                     // the 'End-Of-Image' segment -- this should never be found in this fashion
                     return segmentData;
-                } else {
+                default:
                     segmentData.addSegment(thisSegmentMarker, segmentBytes);
-                }
-            } while (true);
-        } catch (IOException ioe) {
-            throw new JpegProcessingException("IOException processing Jpeg file: " + ioe.getMessage(), ioe);
-        } finally {
-            try {
-                if (jpegInputStream != null) {
-                    jpegInputStream.close();
-                }
-            } catch (IOException ioe) {
-                throw new JpegProcessingException("IOException processing Jpeg file: " + ioe.getMessage(), ioe);
             }
-        }
-    }
 
-    private boolean checkForBytesOnStream(@NotNull InputStream stream, int bytesNeeded) throws IOException
-    {
-        // NOTE  waiting is essential for network streams where data can be delayed, but it is not necessary for byte[] or file systems
-        return bytesNeeded <= stream.available();
+        } while (true);
     }
 }

@@ -21,13 +21,13 @@
 package com.drew.metadata.jfif;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
 /**
- * Reader for JFIF data, found in the APP0 Jpeg segment.
+ * Reader for JFIF data, found in the APP0 JPEG segment.
  * <p/>
  * More info at: http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
  *
@@ -37,9 +37,9 @@ public class JfifReader implements MetadataReader
 {
     /**
      * Performs the Jfif data extraction, adding found values to the specified
-     * instance of <code>Metadata</code>.
+     * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
         JfifDirectory directory = metadata.getOrCreateDirectory(JfifDirectory.class);
 

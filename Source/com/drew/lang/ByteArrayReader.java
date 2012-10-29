@@ -34,7 +34,7 @@ import java.io.UnsupportedEncodingException;
  * 
  * @author Drew Noakes http://drewnoakes.com
  * */
-public class ByteArrayReader implements BufferReader
+public class ByteArrayReader implements RandomAccessReader
 {
     @NotNull
     private final byte[] _buffer;
@@ -74,7 +74,7 @@ public class ByteArrayReader implements BufferReader
     {
         checkBounds(index, 1);
 
-        return (short) (_buffer[index] & 255);
+        return (short) (_buffer[index] & 0xFF);
     }
 
     @Override
@@ -191,17 +191,17 @@ public class ByteArrayReader implements BufferReader
         checkBounds(index, 4);
 
         if (_isMotorolaByteOrder) {
-            float res = (_buffer[index    ] & 255) << 8 |
-                        (_buffer[index + 1] & 255);
-            int d =     (_buffer[index + 2] & 255) << 8 |
-                        (_buffer[index + 3] & 255);
+            float res = (_buffer[index    ] & 0xFF) << 8 |
+                        (_buffer[index + 1] & 0xFF);
+            int d =     (_buffer[index + 2] & 0xFF) << 8 |
+                        (_buffer[index + 3] & 0xFF);
             return (float)(res + d/65536.0);
         } else {
             // this particular branch is untested
-            float res = (_buffer[index + 3] & 255) << 8 |
-                        (_buffer[index + 2] & 255);
-            int d =     (_buffer[index + 1] & 255) << 8 |
-                        (_buffer[index    ] & 255);
+            float res = (_buffer[index + 3] & 0xFF) << 8 |
+                        (_buffer[index + 2] & 0xFF);
+            int d =     (_buffer[index + 1] & 0xFF) << 8 |
+                        (_buffer[index    ] & 0xFF);
             return (float)(res + d/65536.0);
         }
     }

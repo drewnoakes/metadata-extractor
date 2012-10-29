@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Holds a collection of Jpeg data segments.  This need not necessarily be all segments
- * within the Jpeg.  For example, it may be convenient to store only the non-image
+ * Holds a collection of JPEG data segments.  This need not necessarily be all segments
+ * within the JPEG.  For example, it may be convenient to store only the non-image
  * segments when analysing (or serializing) metadata.
  * <p/>
  * Segments are keyed via their segment marker (a byte).  Where multiple segments use the
@@ -59,7 +59,7 @@ public class JpegSegmentData implements Serializable
     }
 
     /**
-     * Gets the first Jpeg segment data for the specified marker.
+     * Gets the first JPEG segment data for the specified marker.
      * @param segmentMarker the byte identifier for the desired segment
      * @return a byte[] containing segment data or null if no data exists for that segment
      */
@@ -88,10 +88,10 @@ public class JpegSegmentData implements Serializable
     }
 
     /**
-     * Returns all instances of a given Jpeg segment.  If no instances exist, an empty sequence is returned.
+     * Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.
      *
-     * @param segmentMarker a number which identifies the type of Jpeg segment being queried
-     * @return zero or more byte arrays, each holding the data of a Jpeg segment
+     * @param segmentMarker a number which identifies the type of JPEG segment being queried
+     * @return zero or more byte arrays, each holding the data of a JPEG segment
      */
     @NotNull
     public Iterable<byte[]> getSegments(byte segmentMarker)

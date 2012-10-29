@@ -21,7 +21,7 @@
 package com.drew.metadata.icc;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -42,7 +42,7 @@ import java.util.TimeZone;
  */
 public class IccReader implements MetadataReader
 {
-    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
         final IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
 
@@ -96,14 +96,14 @@ public class IccReader implements MetadataReader
         }
     }
 
-    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull BufferReader reader) throws BufferBoundsException
+    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setString(tagType, getStringFromInt32(i));
     }
 
-    private void setInt32(@NotNull Directory directory, int tagType, @NotNull BufferReader reader) throws BufferBoundsException
+    private void setInt32(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
@@ -111,7 +111,7 @@ public class IccReader implements MetadataReader
     }
 
     @SuppressWarnings({ "SameParameterValue" })
-    private void setInt64(@NotNull Directory directory, int tagType, @NotNull BufferReader reader) throws BufferBoundsException
+    private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         long l = reader.getInt64(tagType);
         if (l != 0)
@@ -119,7 +119,7 @@ public class IccReader implements MetadataReader
     }
 
     @SuppressWarnings({ "SameParameterValue" })
-    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull BufferReader reader) throws BufferBoundsException
+    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         final int y = reader.getUInt16(tagType);
         final int m = reader.getUInt16(tagType + 2);

@@ -26,7 +26,7 @@ import com.drew.lang.annotations.NotNull;
 import java.io.IOException;
 
 /**
- * A checked replacement for IndexOutOfBoundsException.  Used by BufferReader.
+ * A checked replacement for {@link IndexOutOfBoundsException}.  Used by {@link RandomAccessReader}.
  * 
  * @author Drew Noakes http://drewnoakes.com
  */

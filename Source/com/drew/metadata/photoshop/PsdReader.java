@@ -22,7 +22,7 @@
 package com.drew.metadata.photoshop;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -34,7 +34,7 @@ import com.drew.metadata.MetadataReader;
  */
 public class PsdReader implements MetadataReader
 {
-    public void extract(@NotNull final BufferReader reader, final @NotNull Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, final @NotNull Metadata metadata)
     {
         final PsdHeaderDirectory directory = metadata.getOrCreateDirectory(PsdHeaderDirectory.class);
 

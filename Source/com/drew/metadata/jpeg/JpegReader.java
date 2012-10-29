@@ -21,23 +21,23 @@
 package com.drew.metadata.jpeg;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
 /**
- * Decodes Jpeg SOF0 data, populating a <code>Metadata</code> object with tag values in a <code>JpegDirectory</code>.
+ * Decodes JPEG SOF0 data, populating a {@link Metadata} object with tag values in a <code>JpegDirectory</code>.
  *
  * @author Darrell Silver http://www.darrellsilver.com and Drew Noakes http://drewnoakes.com
  */
 public class JpegReader implements MetadataReader
 {
     /**
-     * Performs the Jpeg data extraction, adding found values to the specified
-     * instance of <code>Metadata</code>.
+     * Performs the JPEG data extraction, adding found values to the specified
+     * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
     {
         JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
 

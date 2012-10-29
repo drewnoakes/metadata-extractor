@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Obtains all available metadata from Jpeg formatted files.
+ * Obtains all available metadata from JPEG formatted files.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -53,12 +53,6 @@ public class JpegMetadataReader
 
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException
-    {
-        return readMetadata(inputStream, true);
-    }
-
-    @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream, final boolean waitForBytes) throws JpegProcessingException
     {
         JpegSegmentReader segmentReader = new JpegSegmentReader(inputStream);
         return extractMetadataFromJpegSegmentReader(segmentReader.getSegmentData());

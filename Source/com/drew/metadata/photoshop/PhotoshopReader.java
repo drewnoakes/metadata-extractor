@@ -21,15 +21,15 @@
 package com.drew.metadata.photoshop;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 import com.drew.metadata.iptc.IptcReader;
 
 /**
- * Reads metadata created by Photoshop and stored in the APPD segment of Jpeg files.
+ * Reads metadata created by Photoshop and stored in the APPD segment of JPEG files.
  * Note that IPTC data may be stored within this segment, in which case this reader will
  * create both a {@link PhotoshopDirectory} and a {@link com.drew.metadata.iptc.IptcDirectory}.
  *
@@ -37,7 +37,7 @@ import com.drew.metadata.iptc.IptcReader;
  */
 public class PhotoshopReader implements MetadataReader
 {
-    public void extract(@NotNull final BufferReader reader, final @NotNull Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, final @NotNull Metadata metadata)
     {
         final PhotoshopDirectory directory = metadata.getOrCreateDirectory(PhotoshopDirectory.class);
 

@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import java.io.Serializable;
 
 /**
- * Stores information about a Jpeg image component such as the component id, horiz/vert sampling factor and
+ * Stores information about a JPEG image component such as the component id, horiz/vert sampling factor and
  * quantization table number.
  *
  * @author Drew Noakes http://drewnoakes.com

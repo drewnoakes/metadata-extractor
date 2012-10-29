@@ -21,8 +21,8 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Age;
@@ -568,7 +568,7 @@ public class PanasonicMakernoteDirectory extends Directory
         if (bytes==null)
             return null;
 
-        BufferReader reader = new ByteArrayReader(bytes);
+        RandomAccessReader reader = new ByteArrayReader(bytes);
         reader.setMotorolaByteOrder(false);
         
         try {
@@ -599,7 +599,7 @@ public class PanasonicMakernoteDirectory extends Directory
         if (bytes == null)
             return null;
 
-        BufferReader reader = new ByteArrayReader(bytes);
+        RandomAccessReader reader = new ByteArrayReader(bytes);
         reader.setMotorolaByteOrder(false);
 
         try {

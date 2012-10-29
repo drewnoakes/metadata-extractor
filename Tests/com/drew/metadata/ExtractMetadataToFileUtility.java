@@ -42,7 +42,7 @@ public class ExtractMetadataToFileUtility
         String filePath = args[0];
         String outputFilePath = filePath + ".metadata";
 
-        JpegSegmentData segmentData = new JpegSegmentReader(new File(filePath)).getSegmentData();
+        JpegSegmentData segmentData = JpegSegmentReader.fromFile(filePath).getSegmentData();
         segmentData.removeSegment(JpegSegmentReader.SEGMENT_DHT);
         segmentData.removeSegment(JpegSegmentReader.SEGMENT_DQT);
         segmentData.removeSegment(JpegSegmentReader.SEGMENT_SOF0);
