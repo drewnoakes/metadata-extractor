@@ -54,19 +54,19 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException
     {
-        JpegSegmentReader segmentReader = new JpegSegmentReader(inputStream);
-        return extractMetadataFromJpegSegmentReader(segmentReader.getSegmentData());
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(inputStream);
+        return extractMetadataFromJpegSegments(segmentData);
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
-        JpegSegmentReader segmentReader = new JpegSegmentReader(file);
-        return extractMetadataFromJpegSegmentReader(segmentReader.getSegmentData());
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(file);
+        return extractMetadataFromJpegSegments(segmentData);
     }
 
     @NotNull
-    public static Metadata extractMetadataFromJpegSegmentReader(@NotNull JpegSegmentData segmentReader)
+    public static Metadata extractMetadataFromJpegSegments(@NotNull JpegSegmentData segmentReader)
     {
         final Metadata metadata = new Metadata();
 
@@ -77,7 +77,7 @@ public class JpegMetadataReader
             if (i == 4 || i == 12)
                 continue;
             // Should never have more than one SOFn for a given 'n'.
-            byte[] jpegSegment = segmentReader.getSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + i));
+            byte[] jpegSegment = segmentReader.getSegment((byte)(JpegSegmentType.SOF0.byteValue + i));
             if (jpegSegment == null)
                 continue;
             JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
@@ -87,18 +87,18 @@ public class JpegMetadataReader
         }
 
         // There should never be more than one COM segment.
-        byte[] comSegment = segmentReader.getSegment(JpegSegmentReader.SEGMENT_COM);
+        byte[] comSegment = segmentReader.getSegment(JpegSegmentType.COM);
         if (comSegment != null)
             new JpegCommentReader().extract(new ByteArrayReader(comSegment), metadata);
 
         // Loop through all APP0 segments, looking for a JFIF segment.
-        for (byte[] app0Segment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APP0)) {
+        for (byte[] app0Segment : segmentReader.getSegments(JpegSegmentType.APP0)) {
             if (app0Segment.length > 3 && new String(app0Segment, 0, 4).equals("JFIF"))
                 new JfifReader().extract(new ByteArrayReader(app0Segment), metadata);
         }
 
         // Loop through all APP1 segments, checking the leading bytes to identify the format of each.
-        for (byte[] app1Segment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APP1)) {
+        for (byte[] app1Segment : segmentReader.getSegments(JpegSegmentType.APP1)) {
             if (app1Segment.length > 3 && "EXIF".equalsIgnoreCase(new String(app1Segment, 0, 4)))
                 new ExifReader().extract(new ByteArrayReader(app1Segment), metadata);
 
@@ -107,7 +107,7 @@ public class JpegMetadataReader
         }
 
         // Loop through all APP2 segments, looking for something we can process.
-        for (byte[] app2Segment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APP2)) {
+        for (byte[] app2Segment : segmentReader.getSegments(JpegSegmentType.APP2)) {
             if (app2Segment.length > 10 && new String(app2Segment, 0, 11).equalsIgnoreCase("ICC_PROFILE")) {
                 byte[] icc = new byte[app2Segment.length-14];
                 System.arraycopy(app2Segment, 14, icc, 0, app2Segment.length-14);
@@ -116,7 +116,7 @@ public class JpegMetadataReader
         }
 
         // Loop through all APPD segments, checking the leading bytes to identify the format of each.
-        for (byte[] appdSegment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APPD)) {
+        for (byte[] appdSegment : segmentReader.getSegments(JpegSegmentType.APPD)) {
             if (appdSegment.length > 12 && "Photoshop 3.0".compareTo(new String(appdSegment, 0, 13))==0) {
                 new PhotoshopReader().extract(new ByteArrayReader(appdSegment), metadata);
             } else {
@@ -126,7 +126,7 @@ public class JpegMetadataReader
         }
 
         // Loop through all APPE segments, checking the leading bytes to identify the format of each.
-        for (byte[] appeSegment : segmentReader.getSegments(JpegSegmentReader.SEGMENT_APPE)) {
+        for (byte[] appeSegment : segmentReader.getSegments(JpegSegmentType.APPE)) {
             if (appeSegment.length == 12 && "Adobe".compareTo(new String(appeSegment, 0, 5))==0) {
                 new AdobeJpegReader().extract(new ByteArrayReader(appeSegment), metadata);
             }

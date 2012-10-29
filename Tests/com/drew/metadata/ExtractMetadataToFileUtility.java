@@ -23,6 +23,7 @@ package com.drew.metadata;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,24 +43,24 @@ public class ExtractMetadataToFileUtility
         String filePath = args[0];
         String outputFilePath = filePath + ".metadata";
 
-        JpegSegmentData segmentData = JpegSegmentReader.fromFile(filePath).getSegmentData();
-        segmentData.removeSegment(JpegSegmentReader.SEGMENT_DHT);
-        segmentData.removeSegment(JpegSegmentReader.SEGMENT_DQT);
-        segmentData.removeSegment(JpegSegmentReader.SEGMENT_SOF0);
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 1));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 2));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 3)); // No 4
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 5));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 6));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 7));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 8));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 9));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 10));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 11)); // No 12
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 13));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 14));
-        segmentData.removeSegment((byte)(JpegSegmentReader.SEGMENT_SOF0 + 15));
-        segmentData.removeSegment(JpegSegmentReader.SEGMENT_SOI);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(filePath);
+        segmentData.removeSegment(JpegSegmentType.DHT);
+        segmentData.removeSegment(JpegSegmentType.DQT);
+        segmentData.removeSegment(JpegSegmentType.SOF0);
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 1));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 2));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 3)); // No 4
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 5));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 6));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 7));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 8));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 9));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 10));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 11)); // No 12
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 13));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 14));
+        segmentData.removeSegment((byte)(JpegSegmentType.SOF0.byteValue + 15));
+        segmentData.removeSegment(JpegSegmentType.SOI);
 
         System.out.println("Writing output to: " + outputFilePath);
         JpegSegmentData.toFile(new File(outputFilePath), segmentData);

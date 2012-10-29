@@ -33,8 +33,8 @@ import java.util.List;
  * within the JPEG.  For example, it may be convenient to store only the non-image
  * segments when analysing (or serializing) metadata.
  * <p/>
- * Segments are keyed via their segment marker (a byte).  Where multiple segments use the
- * same segment marker, they will all be stored and available.
+ * Segments are keyed via their {@link JpegSegmentType}.  Where multiple segments use the
+ * same segment type, they will all be stored and available.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -42,44 +42,68 @@ public class JpegSegmentData implements Serializable
 {
     private static final long serialVersionUID = 7110175216435025451L;
     
-    /** A map of byte[], keyed by the segment marker */
+    /** A map of byte[], keyed by the JpegSegmentType */
     @NotNull
     private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
 
     /**
      * Adds segment bytes to the collection.
-     * @param segmentMarker
+     * @param segmentType
      * @param segmentBytes
      */
     @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
-    public void addSegment(byte segmentMarker, @NotNull byte[] segmentBytes)
+    public void addSegment(byte segmentType, @NotNull byte[] segmentBytes)
     {
-        final List<byte[]> segmentList = getOrCreateSegmentList(segmentMarker);
+        final List<byte[]> segmentList = getOrCreateSegmentList(segmentType);
         segmentList.add(segmentBytes);
     }
 
     /**
-     * Gets the first JPEG segment data for the specified marker.
-     * @param segmentMarker the byte identifier for the desired segment
+     * Gets the first JPEG segment data for the specified type.
+     * @param segmentType the JpegSegmentType for the desired segment
      * @return a byte[] containing segment data or null if no data exists for that segment
      */
     @Nullable
-    public byte[] getSegment(byte segmentMarker)
+    public byte[] getSegment(byte segmentType)
     {
-        return getSegment(segmentMarker, 0);
+        return getSegment(segmentType, 0);
     }
 
     /**
-     * Gets segment data for a specific occurrence and marker.  Use this method when more than one occurrence
-     * of segment data for a given marker exists.
-     * @param segmentMarker identifies the required segment
-     * @param occurrence the zero-based index of the occurrence
-     * @return the segment data as a byte[], or null if no segment exists for the marker & occurrence
+     * Gets the first JPEG segment data for the specified type.
+     * @param segmentType the JpegSegmentType for the desired segment
+     * @return a byte[] containing segment data or null if no data exists for that segment
      */
     @Nullable
-    public byte[] getSegment(byte segmentMarker, int occurrence)
+    public byte[] getSegment(JpegSegmentType segmentType)
     {
-        final List<byte[]> segmentList = getSegmentList(segmentMarker);
+        return getSegment(segmentType.byteValue, 0);
+    }
+
+    /**
+     * Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
+     * of segment data for a given type exists.
+     * @param segmentType identifies the required segment
+     * @param occurrence the zero-based index of the occurrence
+     * @return the segment data as a byte[], or null if no segment exists for the type & occurrence
+     */
+    @Nullable
+    public byte[] getSegment(JpegSegmentType segmentType, int occurrence)
+    {
+        return getSegment(segmentType.byteValue, occurrence);
+    }
+
+    /**
+     * Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
+     * of segment data for a given type exists.
+     * @param segmentType identifies the required segment
+     * @param occurrence the zero-based index of the occurrence
+     * @return the segment data as a byte[], or null if no segment exists for the type & occurrence
+     */
+    @Nullable
+    public byte[] getSegment(byte segmentType, int occurrence)
+    {
+        final List<byte[]> segmentList = getSegmentList(segmentType);
 
         if (segmentList==null || segmentList.size()<=occurrence)
             return null;
@@ -90,76 +114,130 @@ public class JpegSegmentData implements Serializable
     /**
      * Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.
      *
-     * @param segmentMarker a number which identifies the type of JPEG segment being queried
+     * @param segmentType a number which identifies the type of JPEG segment being queried
      * @return zero or more byte arrays, each holding the data of a JPEG segment
      */
     @NotNull
-    public Iterable<byte[]> getSegments(byte segmentMarker)
+    public Iterable<byte[]> getSegments(JpegSegmentType segmentType)
     {
-        final List<byte[]> segmentList = getSegmentList(segmentMarker);
+        return getSegments(segmentType.byteValue);
+    }
+
+    /**
+     * Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.
+     *
+     * @param segmentType a number which identifies the type of JPEG segment being queried
+     * @return zero or more byte arrays, each holding the data of a JPEG segment
+     */
+    @NotNull
+    public Iterable<byte[]> getSegments(byte segmentType)
+    {
+        final List<byte[]> segmentList = getSegmentList(segmentType);
         return segmentList==null ? new ArrayList<byte[]>() : segmentList;
     }
 
     @Nullable
-    public List<byte[]> getSegmentList(byte segmentMarker)
+    public List<byte[]> getSegmentList(byte segmentType)
     {
-        return _segmentDataMap.get(Byte.valueOf(segmentMarker));
+        return _segmentDataMap.get(segmentType);
     }
 
     @NotNull
-    private List<byte[]> getOrCreateSegmentList(byte segmentMarker)
+    private List<byte[]> getOrCreateSegmentList(byte segmentType)
     {
+
         List<byte[]> segmentList;
-        if (_segmentDataMap.containsKey(segmentMarker)) {
-            segmentList = _segmentDataMap.get(segmentMarker);
+        if (_segmentDataMap.containsKey(segmentType)) {
+            segmentList = _segmentDataMap.get(segmentType);
         } else {
             segmentList = new ArrayList<byte[]>();
-            _segmentDataMap.put(segmentMarker, segmentList);
+            _segmentDataMap.put(segmentType, segmentList);
         }
         return segmentList;
     }
 
     /**
-     * Returns the count of segment data byte arrays stored for a given segment marker.
-     * @param segmentMarker identifies the required segment
+     * Returns the count of segment data byte arrays stored for a given segment type.
+     * @param segmentType identifies the required segment
      * @return the segment count (zero if no segments exist).
      */
-    public int getSegmentCount(byte segmentMarker)
+    public int getSegmentCount(JpegSegmentType segmentType)
     {
-        final List<byte[]> segmentList = getSegmentList(segmentMarker);
+        return getSegmentCount(segmentType.byteValue);
+    }
+
+    /**
+     * Returns the count of segment data byte arrays stored for a given segment type.
+     * @param segmentType identifies the required segment
+     * @return the segment count (zero if no segments exist).
+     */
+    public int getSegmentCount(byte segmentType)
+    {
+        final List<byte[]> segmentList = getSegmentList(segmentType);
         return segmentList == null ? 0 : segmentList.size();
     }
 
     /**
      * Removes a specified instance of a segment's data from the collection.  Use this method when more than one
-     * occurrence of segment data for a given marker exists.
-     * @param segmentMarker identifies the required segment
+     * occurrence of segment data exists for a given type exists.
+     * @param segmentType identifies the required segment
      * @param occurrence the zero-based index of the segment occurrence to remove.
      */
     @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
-    public void removeSegmentOccurrence(byte segmentMarker, int occurrence)
+    public void removeSegmentOccurrence(JpegSegmentType segmentType, int occurrence)
     {
-        final List<byte[]> segmentList = _segmentDataMap.get(Byte.valueOf(segmentMarker));
+        removeSegmentOccurrence(segmentType.byteValue, occurrence);
+    }
+
+    /**
+     * Removes a specified instance of a segment's data from the collection.  Use this method when more than one
+     * occurrence of segment data exists for a given type exists.
+     * @param segmentType identifies the required segment
+     * @param occurrence the zero-based index of the segment occurrence to remove.
+     */
+    @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
+    public void removeSegmentOccurrence(byte segmentType, int occurrence)
+    {
+        final List<byte[]> segmentList = _segmentDataMap.get(segmentType);
         segmentList.remove(occurrence);
     }
 
     /**
-     * Removes all segments from the collection having the specified marker.
-     * @param segmentMarker identifies the required segment
+     * Removes all segments from the collection having the specified type.
+     * @param segmentType identifies the required segment
      */
-    public void removeSegment(byte segmentMarker)
+    public void removeSegment(JpegSegmentType segmentType)
     {
-        _segmentDataMap.remove(Byte.valueOf(segmentMarker));
+        removeSegment(segmentType.byteValue);
     }
 
     /**
-     * Determines whether data is present for a given segment marker.
-     * @param segmentMarker identifies the required segment
+     * Removes all segments from the collection having the specified type.
+     * @param segmentType identifies the required segment
+     */
+    public void removeSegment(byte segmentType)
+    {
+        _segmentDataMap.remove(segmentType);
+    }
+
+    /**
+     * Determines whether data is present for a given segment type.
+     * @param segmentType identifies the required segment
      * @return true if data exists, otherwise false
      */
-    public boolean containsSegment(byte segmentMarker)
+    public boolean containsSegment(JpegSegmentType segmentType)
     {
-        return _segmentDataMap.containsKey(Byte.valueOf(segmentMarker));
+        return containsSegment(segmentType.byteValue);
+    }
+
+    /**
+     * Determines whether data is present for a given segment type.
+     * @param segmentType identifies the required segment
+     * @return true if data exists, otherwise false
+     */
+    public boolean containsSegment(byte segmentType)
+    {
+        return _segmentDataMap.containsKey(segmentType);
     }
 
     /**

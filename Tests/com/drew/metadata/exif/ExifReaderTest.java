@@ -23,6 +23,7 @@ package com.drew.metadata.exif;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
@@ -68,7 +69,7 @@ public class ExifReaderTest
     {
         String jpegWithExif = "Tests/com/drew/metadata/exif/withExif.jpg";
         Metadata metadata = new Metadata();
-        final byte[] data = JpegSegmentReader.fromFile(jpegWithExif).readSegment(JpegSegmentReader.SEGMENT_APP1);
+        final byte[] data = JpegSegmentReader.readSegments(jpegWithExif).getSegment(JpegSegmentType.APP1);
         Assert.assertNotNull(data);
         new ExifReader().extract(new ByteArrayReader(data), metadata);
         ExifSubIFDDirectory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
@@ -229,7 +230,7 @@ public class ExifReaderTest
     private static Metadata readMetadataFromJpegFile(String fileName) throws JpegProcessingException, IOException
     {
         Metadata metadata = new Metadata();
-        byte[] data = JpegSegmentReader.fromFile(fileName).readSegment(JpegSegmentReader.SEGMENT_APP1);
+        byte[] data = JpegSegmentReader.readSegments(fileName).getSegment(JpegSegmentType.APP1);
         Assert.assertNotNull(data);
         new ExifReader().extract(new ByteArrayReader(data), metadata);
         return metadata;
@@ -249,7 +250,7 @@ public class ExifReaderTest
     {
         Metadata metadata = new Metadata();
         final JpegSegmentData jpegSegmentData = JpegSegmentData.fromFile(new File(fileName));
-        byte[] data = jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APP1);
+        byte[] data = jpegSegmentData.getSegment(JpegSegmentType.APP1);
         Assert.assertNotNull(data);
         new ExifReader().extract(new ByteArrayReader(data), metadata);
         final T directory = metadata.getDirectory(directoryClass);

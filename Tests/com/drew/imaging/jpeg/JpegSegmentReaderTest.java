@@ -43,15 +43,15 @@ public class JpegSegmentReaderTest
     @Test
     public void testLoadJpegWithoutExifDataReturnsNull() throws Exception
     {
-        JpegSegmentReader reader = JpegSegmentReader.fromFile("Tests/com/drew/metadata/exif/noExif.jpg");
-        Assert.assertNull(reader.readSegment(JpegSegmentReader.SEGMENT_APP1));
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/metadata/exif/noExif.jpg");
+        Assert.assertNull(segmentData.getSegment(JpegSegmentType.APP1));
     }
 
     @Test
     public void testWithJpegFile() throws Exception
     {
         try {
-            JpegSegmentReader.fromFile("Tests/com/drew/metadata/exif/withExif.jpg");
+            JpegSegmentReader.readSegments("Tests/com/drew/metadata/exif/withExif.jpg");
         } catch (JpegProcessingException e) {
             Assert.fail("Error creating JpegSegmentReader");
         }
@@ -61,7 +61,7 @@ public class JpegSegmentReaderTest
     public void testWithNonJpegFile() throws Exception
     {
         try {
-            JpegSegmentReader.fromFile("Tests/com/drew/imaging/jpeg/JpegSegmentReaderTest.java");
+            JpegSegmentReader.readSegments("Tests/com/drew/imaging/jpeg/JpegSegmentReaderTest.java");
             Assert.fail("shouldn't be able to construct JpegSegmentReader with non-jpeg file");
         } catch (JpegProcessingException e) {
             // expect exception
@@ -71,8 +71,8 @@ public class JpegSegmentReaderTest
     @Test
     public void testReadApp1Segment() throws Exception
     {
-        JpegSegmentReader segmentReader = JpegSegmentReader.fromFile("Tests/com/drew/metadata/exif/withExif.jpg");
-        byte[] exifData = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/metadata/exif/withExif.jpg");
+        byte[] exifData = segmentData.getSegment(JpegSegmentType.APP1);
         Assert.assertNotNull(exifData);
         Assert.assertTrue("exif data too short", exifData.length > 4);
         Assert.assertEquals("Exif", new String(exifData, 0, 4));
@@ -81,8 +81,8 @@ public class JpegSegmentReaderTest
     @Test
     public void testReadDQTSegment() throws Exception
     {
-        JpegSegmentReader segmentReader = JpegSegmentReader.fromFile("Tests/com/drew/metadata/exif/withExif.jpg");
-        byte[] quantizationTableData = segmentReader.readSegment(JpegSegmentReader.SEGMENT_DQT);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/metadata/exif/withExif.jpg");
+        byte[] quantizationTableData = segmentData.getSegment(JpegSegmentType.DQT);
         Assert.assertNotNull(quantizationTableData);
         Assert.assertTrue("shouldn't have zero length quantizationTableData", quantizationTableData.length > 0);
         Assert.assertTrue("quantizationTableData shouldn't start with 'Exif'", !"Exif".equals(new String(quantizationTableData, 0, 4)));
@@ -93,7 +93,7 @@ public class JpegSegmentReaderTest
     {
         File jpeg = new File("Tests/com/drew/metadata/exif/withExif.jpg");
         final byte[] bytes = TestHelper.loadFileBytes(jpeg);
-        new JpegSegmentReader(new ByteArrayInputStream(bytes)).readSegment(JpegSegmentReader.SEGMENT_APP1);
+        JpegSegmentReader.readSegments(new ByteArrayInputStream(bytes)).getSegment(JpegSegmentType.APP1);
     }
 
     @Test
@@ -101,22 +101,22 @@ public class JpegSegmentReaderTest
     {
         File jpeg = new File("Tests/com/drew/metadata/exif/withExif.jpg");
         InputStream in = new FileInputStream(jpeg);
-        JpegSegmentReader reader = null;
+        JpegSegmentData segmentData = null;
         try {
-            reader = new JpegSegmentReader(in);
+            segmentData = JpegSegmentReader.readSegments(in);
         } catch (JpegProcessingException e) {
             Assert.fail("Error constructing JpegSegmentReader using InputStream");
         }
-        byte[] exifData = reader.readSegment(JpegSegmentReader.SEGMENT_APP1);
+        byte[] exifData = segmentData.getSegment(JpegSegmentType.APP1);
         Assert.assertEquals("Exif", new String(exifData, 0, 4));
     }
 
     @Test
     public void testReadSecondSegmentInstance() throws Exception
     {
-        JpegSegmentReader reader = JpegSegmentReader.fromFile("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
-        byte[] exifData0 = reader.readSegment(JpegSegmentReader.SEGMENT_APP1, 0);
-        byte[] exifData1 = reader.readSegment(JpegSegmentReader.SEGMENT_APP1, 1);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
+        byte[] exifData0 = segmentData.getSegment(JpegSegmentType.APP1, 0);
+        byte[] exifData1 = segmentData.getSegment(JpegSegmentType.APP1, 1);
         Assert.assertEquals("Exif", new String(exifData0, 0, 4));
         Assert.assertEquals("http", new String(exifData1, 0, 4));
     }
@@ -124,39 +124,36 @@ public class JpegSegmentReaderTest
     @Test
     public void testReadNonExistentSegmentInstance() throws Exception
     {
-        JpegSegmentReader reader = JpegSegmentReader.fromFile("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
-        Assert.assertNull("third exif segment shouldn't exist", reader.readSegment(JpegSegmentReader.SEGMENT_APP1, 3));
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
+        Assert.assertNull("third exif segment shouldn't exist", segmentData.getSegment(JpegSegmentType.APP1, 3));
     }
 
     @Test
     public void testGetSegmentCount() throws Exception
     {
-        JpegSegmentReader reader = JpegSegmentReader.fromFile("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
-        Assert.assertEquals(2, reader.getSegmentCount(JpegSegmentReader.SEGMENT_APP1));
-        Assert.assertEquals(1, reader.getSegmentCount(JpegSegmentReader.SEGMENT_APP2));
-        Assert.assertEquals(0, reader.getSegmentCount(JpegSegmentReader.SEGMENT_APP3));
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
+        Assert.assertEquals(2, segmentData.getSegmentCount(JpegSegmentType.APP1));
+        Assert.assertEquals(1, segmentData.getSegmentCount(JpegSegmentType.APP2));
+        Assert.assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP3));
     }
 
     @Test
     public void testCreateWithFileAndReadMultipleSegments() throws Exception
     {
-        JpegSegmentReader reader = JpegSegmentReader.fromFile("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
-        validateMultipleSegmentRead(reader);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
+        validateMultipleSegmentRead(segmentData);
     }
 
     @Test
     public void testCreateWithInputStreamAndReadMultipleSegments() throws Exception
     {
-        File jpeg = new File("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg");
-        InputStream in = new FileInputStream(jpeg);
-        JpegSegmentReader reader = new JpegSegmentReader(in);
-        validateMultipleSegmentRead(reader);
+        validateMultipleSegmentRead(JpegSegmentReader.readSegments("Tests/com/drew/imaging/jpeg/withExifAndIptc.jpg"));
     }
 
-    private void validateMultipleSegmentRead(JpegSegmentReader reader) throws JpegProcessingException
+    private void validateMultipleSegmentRead(JpegSegmentData segmentData) throws JpegProcessingException
     {
-        byte[] iptcData = reader.readSegment(JpegSegmentReader.SEGMENT_APPD);
-        byte[] exifData = reader.readSegment(JpegSegmentReader.SEGMENT_APP1);
+        byte[] iptcData = segmentData.getSegment(JpegSegmentType.APPD);
+        byte[] exifData = segmentData.getSegment(JpegSegmentType.APP1);
         Assert.assertNotNull(iptcData);
         Assert.assertNotNull(exifData);
         Assert.assertTrue("exif data too short", exifData.length > 4);

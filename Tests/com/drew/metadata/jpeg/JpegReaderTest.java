@@ -21,7 +21,9 @@
 package com.drew.metadata.jpeg;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -29,7 +31,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -43,8 +44,8 @@ public class JpegReaderTest
     public void setUp() throws JpegProcessingException, IOException
     {
         // use a known testing image
-        final JpegSegmentReader segmentReader = JpegSegmentReader.fromFile("Tests/com/drew/metadata/jpeg/simple.jpg");
-        final byte[] data = segmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0);
+        final JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/metadata/jpeg/simple.jpg");
+        final byte[] data = segmentData.getSegment(JpegSegmentType.SOF0);
         MetadataReader reader = new JpegReader();
         Metadata metadata = new Metadata();
         Assert.assertNotNull(data);
@@ -123,29 +124,29 @@ public class JpegReaderTest
         File jpegFile = new File("Tests/com/drew/metadata/jpeg/audioPresent.jpg");
 
         JpegSegmentReader jpegSegmentReader = new JpegSegmentReader(jpegFile);
-        byte[] segment1Bytes = jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP2);
+        byte[] segment1Bytes = jpegSegmentReader.readSegment(JpegSegmentReader.APP2);
         System.out.println(segment1Bytes.length);
 
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1));
-        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP2).length);
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP3));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP4));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP5));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP6));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP7));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP8));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APP9));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPA));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPB));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPC));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPE));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_APPF));
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_COM));
-        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_DHT).length);
-        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_DQT).length);
-        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_SOF0).length);
-//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SEGMENT_SOI));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP1));
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP2).length);
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP3));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP4));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP5));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP6));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP7));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP8));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APP9));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APPA));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APPB));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APPC));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APPD));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APPE));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.APPF));
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.COM));
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.DHT).length);
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.DQT).length);
+        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SOF0).length);
+//        System.out.println(jpegSegmentReader.readSegment(JpegSegmentReader.SOI));
 
         // write the segment's data out to a wav file...
         File audioFile = new File("Tests/com/drew/metadata/jpeg/audio.wav");

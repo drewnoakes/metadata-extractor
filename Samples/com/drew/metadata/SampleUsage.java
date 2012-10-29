@@ -22,9 +22,7 @@ package com.drew.metadata;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.*;
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
@@ -81,9 +79,9 @@ public class SampleUsage
         // As fast as approach 1 (this is what goes on inside the JpegMetadataReader's readMetadata() method), this code
         // is handy if you want to look into other Jpeg segments as well.
         try {
-            JpegSegmentReader segmentReader = JpegSegmentReader.fromFile(file);
-            byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APP1);
-            byte[] iptcSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPD);
+            JpegSegmentData segmentData = JpegSegmentReader.readSegments(file);
+            byte[] exifSegment = segmentData.getSegment(JpegSegmentType.APP1);
+            byte[] iptcSegment = segmentData.getSegment(JpegSegmentType.APPD);
             Metadata metadata = new Metadata();
             if (exifSegment != null)
                 new ExifReader().extract(new ByteArrayReader(exifSegment), metadata);

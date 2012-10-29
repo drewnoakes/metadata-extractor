@@ -24,6 +24,7 @@ package com.drew.metadata;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 
 import java.io.*;
 
@@ -42,11 +43,11 @@ public class ExtractAppSegmentBytesToFileUtility
             System.err.println("Segment number must be between 0 (App0) and 15 (AppF).");
             System.exit(1);
         }
-        byte segment = (byte)(JpegSegmentReader.SEGMENT_APP0 + segmentNumber);
+        byte segment = (byte)(JpegSegmentType.APP0.byteValue + segmentNumber);
 
         String filePath = args[0];
 
-        JpegSegmentData segmentData = JpegSegmentReader.fromFile(filePath).getSegmentData();
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(filePath);
         final int segmentCount = segmentData.getSegmentCount(segment);
         if (segmentCount == 0) {
             System.err.printf("No data was found in app segment %d.\n", segmentNumber);

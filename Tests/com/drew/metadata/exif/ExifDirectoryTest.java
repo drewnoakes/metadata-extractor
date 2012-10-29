@@ -68,7 +68,7 @@ public class ExifDirectoryTest
         Assert.assertNotNull(thumbData);
         try {
             // attempt to read the thumbnail -- it should be a legal Jpeg file
-            new JpegSegmentReader(new ByteArrayInputStream(thumbData));
+            JpegSegmentReader.readSegments(new ByteArrayInputStream(thumbData));
         } catch (JpegProcessingException e) {
             Assert.fail("Unable to construct JpegSegmentReader from thumbnail data");
         }

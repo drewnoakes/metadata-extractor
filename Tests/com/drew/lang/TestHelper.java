@@ -75,6 +75,6 @@ public class TestHelper
     {
         final File file = new File(path);
         final JpegSegmentData data = JpegSegmentData.fromFile(file);
-        return JpegMetadataReader.extractMetadataFromJpegSegmentReader(data);
+        return JpegMetadataReader.extractMetadataFromJpegSegments(data);
     }
 }

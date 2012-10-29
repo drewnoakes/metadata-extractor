@@ -63,10 +63,6 @@ public class ExifIFD0DescriptorTest
     {
         String fileName = "Tests/com/drew/metadata/exif/windowsXpFields.jpg";
         Metadata metadata = ImageMetadataReader.readMetadata(new File(fileName));
-//        Metadata metadata = new Metadata();
-//        final byte[] data = new JpegSegmentReader(new File(fileName)).readSegment(JpegSegmentReader.SEGMENT_APP1);
-//        Assert.assertNotNull(data);
-//        new ExifReader().extract(data, metadata);
         ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
         Assert.assertNotNull(directory);
 

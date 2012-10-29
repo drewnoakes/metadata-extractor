@@ -21,7 +21,7 @@
 package com.drew.metadata.xmp;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
@@ -47,7 +47,7 @@ public class XmpReaderTest
         File metadataFile = new File("Tests/com/drew/metadata/xmp/withXmpAndIptc.metadata");
         JpegSegmentData jpegSegmentData = JpegSegmentData.fromFile(metadataFile);
         Metadata metadata = new Metadata();
-        final byte[] data = jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APP1, 1);
+        final byte[] data = jpegSegmentData.getSegment(JpegSegmentType.APP1, 1);
         Assert.assertNotNull(data);
         new XmpReader().extract(new ByteArrayReader(data), metadata);
         Assert.assertTrue(metadata.containsDirectory(XmpDirectory.class));

@@ -23,12 +23,11 @@ package com.drew.metadata.adobe;
 
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.File;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class AdobeJpegReaderTest
@@ -36,9 +35,8 @@ public class AdobeJpegReaderTest
     @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        final JpegSegmentReader segmentReader = JpegSegmentReader.fromFile("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg");
-        final JpegSegmentData jpegSegmentData = segmentReader.getSegmentData();
-        final byte[] bytes = jpegSegmentData.getSegment(JpegSegmentReader.SEGMENT_APPE);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg");
+        byte[] bytes = segmentData.getSegment(JpegSegmentType.APPE);
 
         Assert.assertNotNull(bytes);
 
