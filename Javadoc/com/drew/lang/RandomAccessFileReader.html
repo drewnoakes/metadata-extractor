@@ -36,7 +36,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/drew/lang/NullOutputStream.html" title="class in com.drew.lang"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/drew/lang/Rational.html" title="class in com.drew.lang"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/drew/lang/RandomAccessFileReader.html" target="_top">Frames</a></li>
@@ -95,13 +95,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></dd>
+<dd><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">RandomAccessFileReader</span>
 extends java.lang.Object
-implements <a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></pre>
+implements <a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></pre>
 <div class="block">Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
  issues.
  <p/>
@@ -184,7 +184,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <tr class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/drew/lang/RandomAccessFileReader.html#getLength()">getLength</a></strong>()</code>
-<div class="block">Returns the length of the buffer.</div>
+<div class="block">Returns the length of the data source in bytes.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -289,12 +289,19 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <li class="blockList">
 <h4>getLength</h4>
 <pre>public&nbsp;long&nbsp;getLength()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getLength()">BufferReader</a></code></strong></div>
-<div class="block">Returns the length of the buffer.  This value represents the total number of bytes in the underlying source.</div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getLength()">RandomAccessReader</a></code></strong></div>
+<div class="block">Returns the length of the data source in bytes.
+ <p/>
+ This is a simple operation for implementations (such as <a href="../../../com/drew/lang/RandomAccessFileReader.html" title="class in com.drew.lang"><code>RandomAccessFileReader</code></a> and
+ <a href="../../../com/drew/lang/ByteArrayReader.html" title="class in com.drew.lang"><code>ByteArrayReader</code></a>) that have the entire data source available.
+ <p/>
+ Users of this method must be aware that sequentially accessed implementations such as
+ <a href="../../../com/drew/lang/RandomAccessStreamReader.html" title="class in com.drew.lang"><code>RandomAccessStreamReader</code></a> will have to read and buffer the entire data source in
+ order to determine the length.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getLength()">getLength</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>The number of bytes in the buffer.</dd></dl>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getLength()">getLength</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>the length of the data source, in bytes.</dd></dl>
 </li>
 </ul>
 <a name="setMotorolaByteOrder(boolean)">
@@ -304,7 +311,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <li class="blockList">
 <h4>setMotorolaByteOrder</h4>
 <pre>public&nbsp;void&nbsp;setMotorolaByteOrder(boolean&nbsp;motorolaByteOrder)</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#setMotorolaByteOrder(boolean)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#setMotorolaByteOrder(boolean)">RandomAccessReader</a></code></strong></div>
 <div class="block">Sets the endianness of this reader.
  <ul>
  <li><code>true</code> for Motorola (or big) endianness</li>
@@ -312,7 +319,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
  </ul></div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#setMotorolaByteOrder(boolean)">setMotorolaByteOrder</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#setMotorolaByteOrder(boolean)">setMotorolaByteOrder</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>motorolaByteOrder</code> - <code>true</code> for motorola/big endian, <code>false</code> for intel/little endian</dd></dl>
 </li>
 </ul>
@@ -323,7 +330,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <li class="blockList">
 <h4>isMotorolaByteOrder</h4>
 <pre>public&nbsp;boolean&nbsp;isMotorolaByteOrder()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#isMotorolaByteOrder()">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#isMotorolaByteOrder()">RandomAccessReader</a></code></strong></div>
 <div class="block">Gets the endianness of this reader.
  <ul>
  <li><code>true</code> for Motorola (or big) endianness</li>
@@ -331,7 +338,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
  </ul></div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#isMotorolaByteOrder()">isMotorolaByteOrder</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#isMotorolaByteOrder()">isMotorolaByteOrder</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -343,11 +350,11 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <h4>getUInt8</h4>
 <pre>public&nbsp;short&nbsp;getUInt8(int&nbsp;index)
                throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getUInt8(int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getUInt8(int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Returns an unsigned 8-bit int calculated from one byte of data at the specified index.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getUInt8(int)">getUInt8</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getUInt8(int)">getUInt8</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - position within the data buffer to read byte</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the 8 bit int value, between 0 and 255</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -362,11 +369,11 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <h4>getInt8</h4>
 <pre>public&nbsp;byte&nbsp;getInt8(int&nbsp;index)
              throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getInt8(int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt8(int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Returns a signed 8-bit int calculated from one byte of data at the specified index.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getInt8(int)">getInt8</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt8(int)">getInt8</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - position within the data buffer to read byte</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the 8 bit int value, between 0x00 and 0xFF</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -381,11 +388,11 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <h4>getUInt16</h4>
 <pre>public&nbsp;int&nbsp;getUInt16(int&nbsp;index)
               throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getUInt16(int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getUInt16(int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Returns an unsigned 16-bit int calculated from two bytes of data at the specified index.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getUInt16(int)">getUInt16</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getUInt16(int)">getUInt16</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - position within the data buffer to read first byte</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the 16 bit int value, between 0x0000 and 0xFFFF</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -400,11 +407,11 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <h4>getInt16</h4>
 <pre>public&nbsp;short&nbsp;getInt16(int&nbsp;index)
                throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getInt16(int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt16(int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Returns a signed 16-bit int calculated from two bytes of data at the specified index (MSB, LSB).</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getInt16(int)">getInt16</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt16(int)">getInt16</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - position within the data buffer to read first byte</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the 16 bit int value, between 0x0000 and 0xFFFF</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -419,11 +426,11 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <h4>getUInt32</h4>
 <pre>public&nbsp;long&nbsp;getUInt32(int&nbsp;index)
                throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getUInt32(int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getUInt32(int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Get a 32-bit unsigned integer from the buffer, returning it as a long.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getUInt32(int)">getUInt32</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getUInt32(int)">getUInt32</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - position within the data buffer to read first byte</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the unsigned 32-bit int value as a long, between 0x00000000 and 0xFFFFFFFF</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -438,11 +445,11 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <h4>getInt32</h4>
 <pre>public&nbsp;int&nbsp;getInt32(int&nbsp;index)
              throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getInt32(int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt32(int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Returns a signed 32-bit integer from four bytes of data at the specified index the buffer.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getInt32(int)">getInt32</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt32(int)">getInt32</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - position within the data buffer to read first byte</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the signed 32 bit int value, between 0x00000000 and 0xFFFFFFFF</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -457,11 +464,11 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <h4>getInt64</h4>
 <pre>public&nbsp;long&nbsp;getInt64(int&nbsp;index)
               throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getInt64(int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt64(int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Get a signed 64-bit integer from the buffer.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getInt64(int)">getInt64</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getInt64(int)">getInt64</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - position within the data buffer to read first byte</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the 64 bit int value, between 0x0000000000000000 and 0xFFFFFFFFFFFFFFFF</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -478,7 +485,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
                     throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getS15Fixed16(int)">getS15Fixed16</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getS15Fixed16(int)">getS15Fixed16</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></code></dd></dl>
 </li>
@@ -493,7 +500,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
                  throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getFloat32(int)">getFloat32</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getFloat32(int)">getFloat32</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></code></dd></dl>
 </li>
@@ -508,7 +515,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
                    throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getDouble64(int)">getDouble64</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getDouble64(int)">getDouble64</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></code></dd></dl>
 </li>
@@ -524,7 +531,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
                 throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getBytes(int, int)">getBytes</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getBytes(int, int)">getBytes</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></code></dd></dl>
 </li>
@@ -540,7 +547,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
                            throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getString(int, int)">getString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getString(int, int)">getString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></code></dd></dl>
 </li>
@@ -557,7 +564,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
                            throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getString(int, int, java.lang.String)">getString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getString(int, int, java.lang.String)">getString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></code></dd></dl>
 </li>
@@ -571,12 +578,12 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <pre>public&nbsp;java.lang.String&nbsp;getNullTerminatedString(int&nbsp;index,
                                        int&nbsp;maxLengthBytes)
                                          throws <a href="../../../com/drew/lang/BufferBoundsException.html" title="class in com.drew.lang">BufferBoundsException</a></pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html#getNullTerminatedString(int, int)">BufferReader</a></code></strong></div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html#getNullTerminatedString(int, int)">RandomAccessReader</a></code></strong></div>
 <div class="block">Creates a String from the _data buffer starting at the specified index,
  and ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/drew/lang/BufferReader.html#getNullTerminatedString(int, int)">getNullTerminatedString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a></code></dd>
+<dd><code><a href="../../../com/drew/lang/RandomAccessReader.html#getNullTerminatedString(int, int)">getNullTerminatedString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - The index within the buffer at which to start reading the string.</dd><dd><code>maxLengthBytes</code> - The maximum number of bytes to read.  If a zero-byte is not reached within this limit,
                        reading will stop and the string will be truncated to this length.</dd>
 <dt><span class="strong">Returns:</span></dt><dd>The read string.</dd>
@@ -612,7 +619,7 @@ implements <a href="../../../com/drew/lang/BufferReader.html" title="interface i
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/drew/lang/NullOutputStream.html" title="class in com.drew.lang"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/drew/lang/Rational.html" title="class in com.drew.lang"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/drew/lang/RandomAccessFileReader.html" target="_top">Frames</a></li>

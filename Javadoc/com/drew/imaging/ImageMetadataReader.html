@@ -97,9 +97,12 @@
 <br>
 <pre>public class <span class="strong">ImageMetadataReader</span>
 extends java.lang.Object</pre>
-<div class="block">Obtains metadata from all supported file formats, including JPEG, RAW (NEF/CRw/CR2) and TIFF.
+<div class="block">Obtains metadata from all supported file formats, including JPEG, RAW (NEF/CRW/CR2/ORF/RW2), TIFF and PSD.
+ <p/>
  If the caller knows their file to be of a particular type, they may prefer to use the dedicated MetadataReader
- directly (<code>JpegMetadataReader</code> for Jpeg files, or <code>TiffMetadataReader</code> for TIFF and RAW files).
+ directly (<a href="../../../com/drew/imaging/jpeg/JpegMetadataReader.html" title="class in com.drew.imaging.jpeg"><code>JpegMetadataReader</code></a> for JPEG files, <a href="../../../com/drew/imaging/tiff/TiffMetadataReader.html" title="class in com.drew.imaging.tiff"><code>TiffMetadataReader</code></a> for TIFF and RAW files, and
+ <a href="../../../com/drew/imaging/psd/PsdMetadataReader.html" title="class in com.drew.imaging.psd"><code>PsdMetadataReader</code></a> for Photoshop files).
+ <p/>
  The dedicated readers offer a very slight performance improvement, though for most scenarios it is simpler,
  more convenient and more robust to use this class.</div>
 <dl><dt><span class="strong">Author:</span></dt>
@@ -130,15 +133,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/drew/imaging/ImageMetadataReader.html#readMetadata(java.io.BufferedInputStream, boolean)">readMetadata</a></strong>(java.io.BufferedInputStream&nbsp;inputStream,
-            boolean&nbsp;waitForBytes)</code>
-<div class="block">Reads metadata from an input stream.</div>
+<td class="colLast"><code><strong><a href="../../../com/drew/imaging/ImageMetadataReader.html#readMetadata(java.io.File)">readMetadata</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Reads metadata from a file.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/drew/imaging/ImageMetadataReader.html#readMetadata(java.io.File)">readMetadata</a></strong>(java.io.File&nbsp;file)</code>
-<div class="block">Reads metadata from a file.</div>
+<td class="colLast"><code><strong><a href="../../../com/drew/imaging/ImageMetadataReader.html#readMetadata(java.io.InputStream)">readMetadata</a></strong>(java.io.InputStream&nbsp;inputStream)</code>
+<div class="block">Reads metadata from an <code>InputStream</code>.</div>
 </td>
 </tr>
 </table>
@@ -163,23 +165,23 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="readMetadata(java.io.BufferedInputStream, boolean)">
+<a name="readMetadata(java.io.InputStream)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>readMetadata</h4>
-<pre>public static&nbsp;<a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;readMetadata(java.io.BufferedInputStream&nbsp;inputStream,
-                    boolean&nbsp;waitForBytes)
+<pre>public static&nbsp;<a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;readMetadata(java.io.InputStream&nbsp;inputStream)
                              throws <a href="../../../com/drew/imaging/ImageProcessingException.html" title="class in com.drew.imaging">ImageProcessingException</a>,
                                     java.io.IOException</pre>
-<div class="block">Reads metadata from an input stream.  The file inputStream examined to determine its type and consequently the
- appropriate method to extract the data, though this inputStream transparent to the caller.</div>
+<div class="block">Reads metadata from an <code>InputStream</code>. The file type is determined by inspecting the leading bytes of the
+ stream, and parsing of the file is delegated to either <a href="../../../com/drew/imaging/jpeg/JpegMetadataReader.html" title="class in com.drew.imaging.jpeg"><code>JpegMetadataReader</code></a>, <a href="../../../com/drew/imaging/tiff/TiffMetadataReader.html" title="class in com.drew.imaging.tiff"><code>TiffMetadataReader</code></a> or
+ <a href="../../../com/drew/imaging/psd/PsdMetadataReader.html" title="class in com.drew.imaging.psd"><code>PsdMetadataReader</code></a>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>inputStream</code> - a stream from which the image data may be read.  The stream must be positioned at the
                     beginning of the image data.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a populated Metadata object containing directories of tags with values and any processing errors.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a populated <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object containing directories of tags with values and any processing errors.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="../../../com/drew/imaging/ImageProcessingException.html" title="class in com.drew.imaging">ImageProcessingException</a></code> - for general processing errors.</dd>
+<dd><code><a href="../../../com/drew/imaging/ImageProcessingException.html" title="class in com.drew.imaging">ImageProcessingException</a></code> - if the file type is unknown, or for general processing errors.</dd>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
@@ -192,8 +194,9 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;<a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;readMetadata(java.io.File&nbsp;file)
                              throws <a href="../../../com/drew/imaging/ImageProcessingException.html" title="class in com.drew.imaging">ImageProcessingException</a>,
                                     java.io.IOException</pre>
-<div class="block">Reads metadata from a file.  The file is examined to determine its type and consequently the appropriate
- method to extract the data, though this is transparent to the caller.</div>
+<div class="block">Reads metadata from a file.  The file type is determined by inspecting the leading bytes of the
+ stream, and parsing of the file is delegated to either <a href="../../../com/drew/imaging/jpeg/JpegMetadataReader.html" title="class in com.drew.imaging.jpeg"><code>JpegMetadataReader</code></a>, <a href="../../../com/drew/imaging/tiff/TiffMetadataReader.html" title="class in com.drew.imaging.tiff"><code>TiffMetadataReader</code></a> or
+ <a href="../../../com/drew/imaging/psd/PsdMetadataReader.html" title="class in com.drew.imaging.psd"><code>PsdMetadataReader</code></a>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - a file from which the image data may be read.</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a populated Metadata object containing directories of tags with values and any processing errors.</dd>
 <dt><span class="strong">Throws:</span></dt>

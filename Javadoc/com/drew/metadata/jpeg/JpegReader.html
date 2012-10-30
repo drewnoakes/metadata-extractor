@@ -102,7 +102,7 @@
 <pre>public class <span class="strong">JpegReader</span>
 extends java.lang.Object
 implements <a href="../../../../com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a></pre>
-<div class="block">Decodes Jpeg SOF0 data, populating a <code>Metadata</code> object with tag values in a <code>JpegDirectory</code>.</div>
+<div class="block">Decodes JPEG SOF0 data, populating a <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object with tag values in a <code>JpegDirectory</code>.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Darrell Silver http://www.darrellsilver.com and Drew Noakes http://drewnoakes.com</dd></dl>
 </li>
@@ -142,10 +142,10 @@ implements <a href="../../../../com/drew/metadata/MetadataReader.html" title="in
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/jpeg/JpegReader.html#extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">extract</a></strong>(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/jpeg/JpegReader.html#extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">extract</a></strong>(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
        <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</code>
-<div class="block">Performs the Jpeg data extraction, adding found values to the specified
- instance of <code>Metadata</code>.</div>
+<div class="block">Performs the JPEG data extraction, adding found values to the specified
+ instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -187,19 +187,19 @@ implements <a href="../../../../com/drew/metadata/MetadataReader.html" title="in
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">
+<a name="extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>extract</h4>
-<pre>public&nbsp;void&nbsp;extract(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<pre>public&nbsp;void&nbsp;extract(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
            <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</pre>
-<div class="block">Performs the Jpeg data extraction, adding found values to the specified
- instance of <code>Metadata</code>.</div>
+<div class="block">Performs the JPEG data extraction, adding found values to the specified
+ instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../com/drew/metadata/MetadataReader.html#extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">extract</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a></code></dd>
+<dd><code><a href="../../../../com/drew/metadata/MetadataReader.html#extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">extract</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>reader</code> - The reader from which the metadata should be extracted.</dd><dd><code>metadata</code> - The Metadata object into which extracted values should be merged.</dd></dl>
 </li>
 </ul>

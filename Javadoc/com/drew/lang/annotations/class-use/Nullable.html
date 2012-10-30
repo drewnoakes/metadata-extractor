@@ -185,34 +185,33 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte)">getSegment</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Gets the first Jpeg segment data for the specified marker.</div>
+<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte)">getSegment</a></strong>(byte&nbsp;segmentType)</code>
+<div class="block">Gets the first JPEG segment data for the specified type.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte, int)">getSegment</a></strong>(byte&nbsp;segmentMarker,
+<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte, int)">getSegment</a></strong>(byte&nbsp;segmentType,
           int&nbsp;occurrence)</code>
-<div class="block">Gets segment data for a specific occurrence and marker.</div>
+<div class="block">Gets segment data for a specific occurrence and type.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(com.drew.imaging.jpeg.JpegSegmentType)">getSegment</a></strong>(<a href="../../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</code>
+<div class="block">Gets the first JPEG segment data for the specified type.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(com.drew.imaging.jpeg.JpegSegmentType, int)">getSegment</a></strong>(<a href="../../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType,
+          int&nbsp;occurrence)</code>
+<div class="block">Gets segment data for a specific occurrence and type.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;byte[]&gt;</code></td>
-<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegmentList(byte)">getSegmentList</a></strong>(byte&nbsp;segmentMarker)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><span class="strong">JpegSegmentReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegment(byte)">readSegment</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Reads the first instance of a given Jpeg segment, returning the contents as
- a byte array.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><span class="strong">JpegSegmentReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegment(byte, int)">readSegment</a></strong>(byte&nbsp;segmentMarker,
-           int&nbsp;occurrence)</code>
-<div class="block">Reads the Nth instance of a given Jpeg segment, returning the contents as a byte array.</div>
-</td>
+<td class="colLast"><span class="strong">JpegSegmentData.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegmentList(byte)">getSegmentList</a></strong>(byte&nbsp;segmentType)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -303,7 +302,7 @@
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="strong">Rational.</span><code><strong><a href="../../../../../com/drew/lang/Rational.html#equals(java.lang.Object)">equals</a></strong>(java.lang.Object&nbsp;obj)</code>
-<div class="block">Compares two <code>Rational</code> instances, returning true if they are mathematically
+<div class="block">Compares two <a href="../../../../../com/drew/lang/Rational.html" title="class in com.drew.lang"><code>Rational</code></a> instances, returning true if they are mathematically
  equivalent.</div>
 </td>
 </tr>
@@ -410,7 +409,7 @@
 <tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata">Directory</a>&gt;&nbsp;<br>T</code></td>
 <td class="colLast"><span class="strong">Metadata.</span><code><strong><a href="../../../../../com/drew/metadata/Metadata.html#getDirectory(java.lang.Class)">getDirectory</a></strong>(java.lang.Class&lt;T&gt;&nbsp;type)</code>
-<div class="block">If this <code>Metadata</code> object contains a <code>Directory</code> of the specified type, it is returned.</div>
+<div class="block">If this <a href="../../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object contains a <a href="../../../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> of the specified type, it is returned.</div>
 </td>
 </tr>
 <tr class="rowColor">

@@ -36,7 +36,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg"><span class="strong">Prev Class</span></a></li>
-<li>Next Class</li>
+<li><a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/drew/imaging/jpeg/JpegSegmentReader.html" target="_top">Frames</a></li>
@@ -61,14 +61,14 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
 </div>
@@ -97,7 +97,7 @@
 <br>
 <pre>public class <span class="strong">JpegSegmentReader</span>
 extends java.lang.Object</pre>
-<div class="block">Performs read functions of Jpeg files, returning specific file segments.</div>
+<div class="block">Performs read functions of JPEG files, returning specific file segments.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Drew Noakes http://drewnoakes.com</dd></dl>
 </li>
@@ -106,177 +106,6 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_summary">
-<!--   -->
-</a>
-<h3>Field Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP0">SEGMENT_APP0</a></strong></code>
-<div class="block">APP0 Jpeg segment identifier -- JFIF data (also JFXX apparently).</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP1">SEGMENT_APP1</a></strong></code>
-<div class="block">APP1 Jpeg segment identifier -- where Exif data is kept.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP2">SEGMENT_APP2</a></strong></code>
-<div class="block">APP2 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP3">SEGMENT_APP3</a></strong></code>
-<div class="block">APP3 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP4">SEGMENT_APP4</a></strong></code>
-<div class="block">APP4 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP5">SEGMENT_APP5</a></strong></code>
-<div class="block">APP5 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP6">SEGMENT_APP6</a></strong></code>
-<div class="block">APP6 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP7">SEGMENT_APP7</a></strong></code>
-<div class="block">APP7 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP8">SEGMENT_APP8</a></strong></code>
-<div class="block">APP8 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APP9">SEGMENT_APP9</a></strong></code>
-<div class="block">APP9 Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APPA">SEGMENT_APPA</a></strong></code>
-<div class="block">APPA (App10) Jpeg segment identifier -- can hold Unicode comments.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APPB">SEGMENT_APPB</a></strong></code>
-<div class="block">APPB (App11) Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APPC">SEGMENT_APPC</a></strong></code>
-<div class="block">APPC (App12) Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APPD">SEGMENT_APPD</a></strong></code>
-<div class="block">APPD (App13) Jpeg segment identifier -- IPTC data in here.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APPE">SEGMENT_APPE</a></strong></code>
-<div class="block">APPE (App14) Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_APPF">SEGMENT_APPF</a></strong></code>
-<div class="block">APPF (App15) Jpeg segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_COM">SEGMENT_COM</a></strong></code>
-<div class="block">Jpeg comment segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_DHT">SEGMENT_DHT</a></strong></code>
-<div class="block">Define Huffman Table segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_DQT">SEGMENT_DQT</a></strong></code>
-<div class="block">Define Quantization Table segment identifier.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_SOF0">SEGMENT_SOF0</a></strong></code>
-<div class="block">Start-of-Frame Zero segment identifier.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#SEGMENT_SOI">SEGMENT_SOI</a></strong></code>
-<div class="block">Start Of Image segment identifier.</div>
-</td>
-</tr>
-</table>
-</li>
-</ul>
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_summary">
-<!--   -->
-</a>
-<h3>Constructor Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
-<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colOne" scope="col">Constructor and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#JpegSegmentReader(byte[])">JpegSegmentReader</a></strong>(byte[]&nbsp;fileContents)</code>
-<div class="block">Creates a JpegSegmentReader for a byte array.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#JpegSegmentReader(java.io.File)">JpegSegmentReader</a></strong>(java.io.File&nbsp;file)</code>
-<div class="block">Creates a JpegSegmentReader for a specific file.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#JpegSegmentReader(java.io.InputStream, boolean)">JpegSegmentReader</a></strong>(java.io.InputStream&nbsp;inputStream,
-                 boolean&nbsp;waitForBytes)</code>
-<div class="block">Creates a JpegSegmentReader for an InputStream.</div>
-</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_summary">
@@ -290,36 +119,24 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#getSegmentCount(byte)">getSegmentCount</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Returns the number of segments having the specified JPEG segment marker.</div>
+<td class="colFirst"><code>static <a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(java.io.File)">readSegments</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Creates a JpegSegmentReader for a specific file.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#getSegmentData()">getSegmentData</a></strong>()</code>
-<div class="block">Returns the JpegSegmentData object used by this reader.</div>
+<td class="colFirst"><code>static <a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(java.io.InputStream)">readSegments</a></strong>(java.io.InputStream&nbsp;inputStream)</code>
+<div class="block">Creates a JpegSegmentReader for an InputStream.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegment(byte)">readSegment</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Reads the first instance of a given Jpeg segment, returning the contents as
- a byte array.</div>
-</td>
+<td class="colFirst"><code>static <a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(com.drew.lang.SequentialReader)">readSegments</a></strong>(<a href="../../../../com/drew/lang/SequentialReader.html" title="interface in com.drew.lang">SequentialReader</a>&nbsp;reader)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegment(byte, int)">readSegment</a></strong>(byte&nbsp;segmentMarker,
-           int&nbsp;occurrence)</code>
-<div class="block">Reads the Nth instance of a given Jpeg segment, returning the contents as a byte array.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>java.lang.Iterable&lt;byte[]&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(byte)">readSegments</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Returns all instances of a given Jpeg segment.</div>
-</td>
+<td class="colFirst"><code>static <a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(java.lang.String)">readSegments</a></strong>(java.lang.String&nbsp;fileName)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -337,363 +154,68 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="SEGMENT_APP0">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP0</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP0</pre>
-<div class="block">APP0 Jpeg segment identifier -- JFIF data (also JFXX apparently).</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP0">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP1">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP1</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP1</pre>
-<div class="block">APP1 Jpeg segment identifier -- where Exif data is kept.  XMP data is also kept in here, though usually in a second instance.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP1">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP2">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP2</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP2</pre>
-<div class="block">APP2 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP2">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP3">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP3</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP3</pre>
-<div class="block">APP3 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP3">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP4">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP4</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP4</pre>
-<div class="block">APP4 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP4">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP5">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP5</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP5</pre>
-<div class="block">APP5 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP5">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP6">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP6</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP6</pre>
-<div class="block">APP6 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP6">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP7">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP7</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP7</pre>
-<div class="block">APP7 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP7">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP8">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP8</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP8</pre>
-<div class="block">APP8 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP8">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APP9">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APP9</h4>
-<pre>public static final&nbsp;byte SEGMENT_APP9</pre>
-<div class="block">APP9 Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APP9">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APPA">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APPA</h4>
-<pre>public static final&nbsp;byte SEGMENT_APPA</pre>
-<div class="block">APPA (App10) Jpeg segment identifier -- can hold Unicode comments.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APPA">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APPB">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APPB</h4>
-<pre>public static final&nbsp;byte SEGMENT_APPB</pre>
-<div class="block">APPB (App11) Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APPB">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APPC">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APPC</h4>
-<pre>public static final&nbsp;byte SEGMENT_APPC</pre>
-<div class="block">APPC (App12) Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APPC">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APPD">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APPD</h4>
-<pre>public static final&nbsp;byte SEGMENT_APPD</pre>
-<div class="block">APPD (App13) Jpeg segment identifier -- IPTC data in here.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APPD">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APPE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APPE</h4>
-<pre>public static final&nbsp;byte SEGMENT_APPE</pre>
-<div class="block">APPE (App14) Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APPE">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_APPF">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_APPF</h4>
-<pre>public static final&nbsp;byte SEGMENT_APPF</pre>
-<div class="block">APPF (App15) Jpeg segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_APPF">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_SOI">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_SOI</h4>
-<pre>public static final&nbsp;byte SEGMENT_SOI</pre>
-<div class="block">Start Of Image segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_SOI">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_DQT">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_DQT</h4>
-<pre>public static final&nbsp;byte SEGMENT_DQT</pre>
-<div class="block">Define Quantization Table segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_DQT">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_DHT">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_DHT</h4>
-<pre>public static final&nbsp;byte SEGMENT_DHT</pre>
-<div class="block">Define Huffman Table segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_DHT">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_SOF0">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SEGMENT_SOF0</h4>
-<pre>public static final&nbsp;byte SEGMENT_SOF0</pre>
-<div class="block">Start-of-Frame Zero segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_SOF0">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="SEGMENT_COM">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>SEGMENT_COM</h4>
-<pre>public static final&nbsp;byte SEGMENT_COM</pre>
-<div class="block">Jpeg comment segment identifier.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#com.drew.imaging.jpeg.JpegSegmentReader.SEGMENT_COM">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-</li>
-</ul>
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_detail">
-<!--   -->
-</a>
-<h3>Constructor Detail</h3>
-<a name="JpegSegmentReader(java.io.File)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>JpegSegmentReader</h4>
-<pre>public&nbsp;JpegSegmentReader(java.io.File&nbsp;file)
-                  throws <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a>,
-                         java.io.IOException</pre>
-<div class="block">Creates a JpegSegmentReader for a specific file.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the Jpeg file to read segments from</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="JpegSegmentReader(byte[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>JpegSegmentReader</h4>
-<pre>public&nbsp;JpegSegmentReader(byte[]&nbsp;fileContents)
-                  throws <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></pre>
-<div class="block">Creates a JpegSegmentReader for a byte array.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fileContents</code> - the byte array containing Jpeg data</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd></dl>
-</li>
-</ul>
-<a name="JpegSegmentReader(java.io.InputStream, boolean)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>JpegSegmentReader</h4>
-<pre>public&nbsp;JpegSegmentReader(java.io.InputStream&nbsp;inputStream,
-                 boolean&nbsp;waitForBytes)
-                  throws <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></pre>
-<div class="block">Creates a JpegSegmentReader for an InputStream.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>inputStream</code> - the InputStream containing Jpeg data</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd></dl>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_detail">
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="readSegment(byte)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readSegment</h4>
-<pre>public&nbsp;byte[]&nbsp;readSegment(byte&nbsp;segmentMarker)</pre>
-<div class="block">Reads the first instance of a given Jpeg segment, returning the contents as
- a byte array.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - the byte identifier for the desired segment</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the byte array if found, else null</dd></dl>
-</li>
-</ul>
-<a name="readSegment(byte, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readSegment</h4>
-<pre>public&nbsp;byte[]&nbsp;readSegment(byte&nbsp;segmentMarker,
-                 int&nbsp;occurrence)</pre>
-<div class="block">Reads the Nth instance of a given Jpeg segment, returning the contents as a byte array.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - the byte identifier for the desired segment</dd><dd><code>occurrence</code> - the occurrence of the specified segment within the jpeg file</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the byte array if found, else null</dd></dl>
-</li>
-</ul>
-<a name="readSegments(byte)">
+<a name="readSegments(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>readSegments</h4>
-<pre>public&nbsp;java.lang.Iterable&lt;byte[]&gt;&nbsp;readSegments(byte&nbsp;segmentMarker)</pre>
-<div class="block">Returns all instances of a given Jpeg segment.  If no instances exist, an empty sequence is returned.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - a number which identifies the type of Jpeg segment being queried</dd>
-<dt><span class="strong">Returns:</span></dt><dd>zero or more byte arrays, each holding the data of a Jpeg segment</dd></dl>
+<pre>public static&nbsp;<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;readSegments(java.lang.String&nbsp;fileName)
+                                    throws java.io.IOException,
+                                           <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd></dl>
 </li>
 </ul>
-<a name="getSegmentCount(byte)">
+<a name="readSegments(java.io.File)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSegmentCount</h4>
-<pre>public final&nbsp;int&nbsp;getSegmentCount(byte&nbsp;segmentMarker)</pre>
-<div class="block">Returns the number of segments having the specified JPEG segment marker.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - the JPEG segment identifying marker.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the count of matching segments.</dd></dl>
+<h4>readSegments</h4>
+<pre>public static&nbsp;<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;readSegments(java.io.File&nbsp;file)
+                                    throws <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a>,
+                                           java.io.IOException</pre>
+<div class="block">Creates a JpegSegmentReader for a specific file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the JPEG file to read segments from</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="getSegmentData()">
+<a name="readSegments(java.io.InputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readSegments</h4>
+<pre>public static&nbsp;<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;readSegments(java.io.InputStream&nbsp;inputStream)
+                                    throws <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></pre>
+<div class="block">Creates a JpegSegmentReader for an InputStream.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>inputStream</code> - the InputStream containing JPEG data</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd></dl>
+</li>
+</ul>
+<a name="readSegments(com.drew.lang.SequentialReader)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getSegmentData</h4>
-<pre>public final&nbsp;<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;getSegmentData()</pre>
-<div class="block">Returns the JpegSegmentData object used by this reader.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the JpegSegmentData object.</dd></dl>
+<h4>readSegments</h4>
+<pre>public static&nbsp;<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;readSegments(<a href="../../../../com/drew/lang/SequentialReader.html" title="interface in com.drew.lang">SequentialReader</a>&nbsp;reader)
+                                    throws <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a>,
+                                           java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 </li>
@@ -724,7 +246,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg"><span class="strong">Prev Class</span></a></li>
-<li>Next Class</li>
+<li><a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/drew/imaging/jpeg/JpegSegmentReader.html" target="_top">Frames</a></li>
@@ -749,14 +271,14 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
 </div>

@@ -89,7 +89,7 @@
 <ul>
 <li type="circle">com.drew.metadata.adobe.<a href="com/drew/metadata/adobe/AdobeJpegReader.html" title="class in com.drew.metadata.adobe"><span class="strong">AdobeJpegReader</span></a> (implements com.drew.metadata.<a href="com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a>)</li>
 <li type="circle">com.drew.metadata.<a href="com/drew/metadata/Age.html" title="class in com.drew.metadata"><span class="strong">Age</span></a></li>
-<li type="circle">com.drew.lang.<a href="com/drew/lang/ByteArrayReader.html" title="class in com.drew.lang"><span class="strong">ByteArrayReader</span></a> (implements com.drew.lang.<a href="com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>)</li>
+<li type="circle">com.drew.lang.<a href="com/drew/lang/ByteArrayReader.html" title="class in com.drew.lang"><span class="strong">ByteArrayReader</span></a> (implements com.drew.lang.<a href="com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>)</li>
 <li type="circle">com.drew.metadata.exif.<a href="com/drew/metadata/exif/CanonMakernoteDirectory.AFInfo.html" title="class in com.drew.metadata.exif"><span class="strong">CanonMakernoteDirectory.AFInfo</span></a></li>
 <li type="circle">com.drew.metadata.exif.<a href="com/drew/metadata/exif/CanonMakernoteDirectory.CameraSettings.html" title="class in com.drew.metadata.exif"><span class="strong">CanonMakernoteDirectory.CameraSettings</span></a></li>
 <li type="circle">com.drew.metadata.exif.<a href="com/drew/metadata/exif/CanonMakernoteDirectory.FocalLength.html" title="class in com.drew.metadata.exif"><span class="strong">CanonMakernoteDirectory.FocalLength</span></a></li>
@@ -156,7 +156,9 @@
 <li type="circle">com.drew.metadata.photoshop.<a href="com/drew/metadata/photoshop/PhotoshopReader.html" title="class in com.drew.metadata.photoshop"><span class="strong">PhotoshopReader</span></a> (implements com.drew.metadata.<a href="com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a>)</li>
 <li type="circle">com.drew.imaging.psd.<a href="com/drew/imaging/psd/PsdMetadataReader.html" title="class in com.drew.imaging.psd"><span class="strong">PsdMetadataReader</span></a></li>
 <li type="circle">com.drew.metadata.photoshop.<a href="com/drew/metadata/photoshop/PsdReader.html" title="class in com.drew.metadata.photoshop"><span class="strong">PsdReader</span></a> (implements com.drew.metadata.<a href="com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a>)</li>
-<li type="circle">com.drew.lang.<a href="com/drew/lang/RandomAccessFileReader.html" title="class in com.drew.lang"><span class="strong">RandomAccessFileReader</span></a> (implements com.drew.lang.<a href="com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>)</li>
+<li type="circle">com.drew.lang.<a href="com/drew/lang/RandomAccessFileReader.html" title="class in com.drew.lang"><span class="strong">RandomAccessFileReader</span></a> (implements com.drew.lang.<a href="com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>)</li>
+<li type="circle">com.drew.lang.<a href="com/drew/lang/RandomAccessStreamReader.html" title="class in com.drew.lang"><span class="strong">RandomAccessStreamReader</span></a> (implements com.drew.lang.<a href="com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>)</li>
+<li type="circle">com.drew.lang.<a href="com/drew/lang/StreamReader.html" title="class in com.drew.lang"><span class="strong">StreamReader</span></a> (implements com.drew.lang.<a href="com/drew/lang/SequentialReader.html" title="interface in com.drew.lang">SequentialReader</a>)</li>
 <li type="circle">com.drew.lang.<a href="com/drew/lang/StringUtil.html" title="class in com.drew.lang"><span class="strong">StringUtil</span></a></li>
 <li type="circle">com.drew.metadata.<a href="com/drew/metadata/Tag.html" title="class in com.drew.metadata"><span class="strong">Tag</span></a></li>
 <li type="circle">com.drew.metadata.<a href="com/drew/metadata/TagDescriptor.html" title="class in com.drew.metadata"><span class="strong">TagDescriptor</span></a>&lt;T&gt;
@@ -219,14 +221,27 @@
 </ul>
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
-<li type="circle">com.drew.lang.<a href="com/drew/lang/BufferReader.html" title="interface in com.drew.lang"><span class="strong">BufferReader</span></a></li>
 <li type="circle">com.drew.metadata.<a href="com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata"><span class="strong">MetadataReader</span></a></li>
+<li type="circle">com.drew.lang.<a href="com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang"><span class="strong">RandomAccessReader</span></a></li>
+<li type="circle">com.drew.lang.<a href="com/drew/lang/SequentialReader.html" title="interface in com.drew.lang"><span class="strong">SequentialReader</span></a></li>
 </ul>
 <h2 title="Annotation Type Hierarchy">Annotation Type Hierarchy</h2>
 <ul>
 <li type="circle">com.drew.lang.annotations.<a href="com/drew/lang/annotations/SuppressWarnings.html" title="annotation in com.drew.lang.annotations"><span class="strong">SuppressWarnings</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">com.drew.lang.annotations.<a href="com/drew/lang/annotations/Nullable.html" title="annotation in com.drew.lang.annotations"><span class="strong">Nullable</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">com.drew.lang.annotations.<a href="com/drew/lang/annotations/NotNull.html" title="annotation in com.drew.lang.annotations"><span class="strong">NotNull</span></a> (implements java.lang.annotation.Annotation)</li>
+</ul>
+<h2 title="Enum Hierarchy">Enum Hierarchy</h2>
+<ul>
+<li type="circle">java.lang.Object
+<ul>
+<li type="circle">java.lang.Enum&lt;E&gt; (implements java.lang.Comparable&lt;T&gt;, java.io.Serializable)
+<ul>
+<li type="circle">com.drew.imaging.jpeg.<a href="com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg"><span class="strong">JpegSegmentType</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->

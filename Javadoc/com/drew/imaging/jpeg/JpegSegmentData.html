@@ -102,12 +102,12 @@
 <pre>public class <span class="strong">JpegSegmentData</span>
 extends java.lang.Object
 implements java.io.Serializable</pre>
-<div class="block">Holds a collection of Jpeg data segments.  This need not necessarily be all segments
- within the Jpeg.  For example, it may be convenient to store only the non-image
+<div class="block">Holds a collection of JPEG data segments.  This need not necessarily be all segments
+ within the JPEG.  For example, it may be convenient to store only the non-image
  segments when analysing (or serializing) metadata.
  <p/>
- Segments are keyed via their segment marker (a byte).  Where multiple segments use the
- same segment marker, they will all be stored and available.</div>
+ Segments are keyed via their <a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg"><code>JpegSegmentType</code></a>.  Where multiple segments use the
+ same segment type, they will all be stored and available.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Drew Noakes http://drewnoakes.com</dd>
 <dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#com.drew.imaging.jpeg.JpegSegmentData">Serialized Form</a></dd></dl>
@@ -148,66 +148,110 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#addSegment(byte, byte[])">addSegment</a></strong>(byte&nbsp;segmentMarker,
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#addSegment(byte, byte[])">addSegment</a></strong>(byte&nbsp;segmentType,
           byte[]&nbsp;segmentBytes)</code>
 <div class="block">Adds segment bytes to the collection.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#containsSegment(byte)">containsSegment</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Determines whether data is present for a given segment marker.</div>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#containsSegment(byte)">containsSegment</a></strong>(byte&nbsp;segmentType)</code>
+<div class="block">Determines whether data is present for a given segment type.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#containsSegment(com.drew.imaging.jpeg.JpegSegmentType)">containsSegment</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</code>
+<div class="block">Determines whether data is present for a given segment type.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#fromFile(java.io.File)">fromFile</a></strong>(java.io.File&nbsp;file)</code>
 <div class="block">Deserialises the contents of a JpegSegmentData from a file.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte)">getSegment</a></strong>(byte&nbsp;segmentType)</code>
+<div class="block">Gets the first JPEG segment data for the specified type.</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte)">getSegment</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Gets the first Jpeg segment data for the specified marker.</div>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte, int)">getSegment</a></strong>(byte&nbsp;segmentType,
+          int&nbsp;occurrence)</code>
+<div class="block">Gets segment data for a specific occurrence and type.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(byte, int)">getSegment</a></strong>(byte&nbsp;segmentMarker,
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(com.drew.imaging.jpeg.JpegSegmentType)">getSegment</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</code>
+<div class="block">Gets the first JPEG segment data for the specified type.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegment(com.drew.imaging.jpeg.JpegSegmentType, int)">getSegment</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType,
           int&nbsp;occurrence)</code>
-<div class="block">Gets segment data for a specific occurrence and marker.</div>
+<div class="block">Gets segment data for a specific occurrence and type.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegmentCount(byte)">getSegmentCount</a></strong>(byte&nbsp;segmentType)</code>
+<div class="block">Returns the count of segment data byte arrays stored for a given segment type.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegmentCount(byte)">getSegmentCount</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Returns the count of segment data byte arrays stored for a given segment marker.</div>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegmentCount(com.drew.imaging.jpeg.JpegSegmentType)">getSegmentCount</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</code>
+<div class="block">Returns the count of segment data byte arrays stored for a given segment type.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;byte[]&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegmentList(byte)">getSegmentList</a></strong>(byte&nbsp;segmentMarker)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegmentList(byte)">getSegmentList</a></strong>(byte&nbsp;segmentType)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.Iterable&lt;byte[]&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegments(byte)">getSegments</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Returns all instances of a given Jpeg segment.</div>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegments(byte)">getSegments</a></strong>(byte&nbsp;segmentType)</code>
+<div class="block">Returns all instances of a given JPEG segment.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.Iterable&lt;byte[]&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#getSegments(com.drew.imaging.jpeg.JpegSegmentType)">getSegments</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</code>
+<div class="block">Returns all instances of a given JPEG segment.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#removeSegment(byte)">removeSegment</a></strong>(byte&nbsp;segmentType)</code>
+<div class="block">Removes all segments from the collection having the specified type.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#removeSegment(byte)">removeSegment</a></strong>(byte&nbsp;segmentMarker)</code>
-<div class="block">Removes all segments from the collection having the specified marker.</div>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#removeSegment(com.drew.imaging.jpeg.JpegSegmentType)">removeSegment</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</code>
+<div class="block">Removes all segments from the collection having the specified type.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#removeSegmentOccurrence(byte, int)">removeSegmentOccurrence</a></strong>(byte&nbsp;segmentMarker,
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#removeSegmentOccurrence(byte, int)">removeSegmentOccurrence</a></strong>(byte&nbsp;segmentType,
                        int&nbsp;occurrence)</code>
 <div class="block">Removes a specified instance of a segment's data from the collection.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#removeSegmentOccurrence(com.drew.imaging.jpeg.JpegSegmentType, int)">removeSegmentOccurrence</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType,
+                       int&nbsp;occurrence)</code>
+<div class="block">Removes a specified instance of a segment's data from the collection.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html#toFile(java.io.File, com.drew.imaging.jpeg.JpegSegmentData)">toFile</a></strong>(java.io.File&nbsp;file,
       <a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;segmentData)</code>
@@ -259,10 +303,10 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addSegment</h4>
-<pre>public&nbsp;void&nbsp;addSegment(byte&nbsp;segmentMarker,
+<pre>public&nbsp;void&nbsp;addSegment(byte&nbsp;segmentType,
               byte[]&nbsp;segmentBytes)</pre>
 <div class="block">Adds segment bytes to the collection.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - </dd><dd><code>segmentBytes</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - </dd><dd><code>segmentBytes</code> - </dd></dl>
 </li>
 </ul>
 <a name="getSegment(byte)">
@@ -271,10 +315,36 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSegment</h4>
-<pre>public&nbsp;byte[]&nbsp;getSegment(byte&nbsp;segmentMarker)</pre>
-<div class="block">Gets the first Jpeg segment data for the specified marker.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - the byte identifier for the desired segment</dd>
+<pre>public&nbsp;byte[]&nbsp;getSegment(byte&nbsp;segmentType)</pre>
+<div class="block">Gets the first JPEG segment data for the specified type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - the JpegSegmentType for the desired segment</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a byte[] containing segment data or null if no data exists for that segment</dd></dl>
+</li>
+</ul>
+<a name="getSegment(com.drew.imaging.jpeg.JpegSegmentType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSegment</h4>
+<pre>public&nbsp;byte[]&nbsp;getSegment(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</pre>
+<div class="block">Gets the first JPEG segment data for the specified type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - the JpegSegmentType for the desired segment</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a byte[] containing segment data or null if no data exists for that segment</dd></dl>
+</li>
+</ul>
+<a name="getSegment(com.drew.imaging.jpeg.JpegSegmentType, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSegment</h4>
+<pre>public&nbsp;byte[]&nbsp;getSegment(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType,
+                int&nbsp;occurrence)</pre>
+<div class="block">Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
+ of segment data for a given type exists.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd><dd><code>occurrence</code> - the zero-based index of the occurrence</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the segment data as a byte[], or null if no segment exists for the type & occurrence</dd></dl>
 </li>
 </ul>
 <a name="getSegment(byte, int)">
@@ -283,12 +353,24 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSegment</h4>
-<pre>public&nbsp;byte[]&nbsp;getSegment(byte&nbsp;segmentMarker,
+<pre>public&nbsp;byte[]&nbsp;getSegment(byte&nbsp;segmentType,
                 int&nbsp;occurrence)</pre>
-<div class="block">Gets segment data for a specific occurrence and marker.  Use this method when more than one occurrence
- of segment data for a given marker exists.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - identifies the required segment</dd><dd><code>occurrence</code> - the zero-based index of the occurrence</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the segment data as a byte[], or null if no segment exists for the marker & occurrence</dd></dl>
+<div class="block">Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
+ of segment data for a given type exists.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd><dd><code>occurrence</code> - the zero-based index of the occurrence</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the segment data as a byte[], or null if no segment exists for the type & occurrence</dd></dl>
+</li>
+</ul>
+<a name="getSegments(com.drew.imaging.jpeg.JpegSegmentType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSegments</h4>
+<pre>public&nbsp;java.lang.Iterable&lt;byte[]&gt;&nbsp;getSegments(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</pre>
+<div class="block">Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - a number which identifies the type of JPEG segment being queried</dd>
+<dt><span class="strong">Returns:</span></dt><dd>zero or more byte arrays, each holding the data of a JPEG segment</dd></dl>
 </li>
 </ul>
 <a name="getSegments(byte)">
@@ -297,10 +379,10 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSegments</h4>
-<pre>public&nbsp;java.lang.Iterable&lt;byte[]&gt;&nbsp;getSegments(byte&nbsp;segmentMarker)</pre>
-<div class="block">Returns all instances of a given Jpeg segment.  If no instances exist, an empty sequence is returned.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - a number which identifies the type of Jpeg segment being queried</dd>
-<dt><span class="strong">Returns:</span></dt><dd>zero or more byte arrays, each holding the data of a Jpeg segment</dd></dl>
+<pre>public&nbsp;java.lang.Iterable&lt;byte[]&gt;&nbsp;getSegments(byte&nbsp;segmentType)</pre>
+<div class="block">Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - a number which identifies the type of JPEG segment being queried</dd>
+<dt><span class="strong">Returns:</span></dt><dd>zero or more byte arrays, each holding the data of a JPEG segment</dd></dl>
 </li>
 </ul>
 <a name="getSegmentList(byte)">
@@ -309,7 +391,19 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSegmentList</h4>
-<pre>public&nbsp;java.util.List&lt;byte[]&gt;&nbsp;getSegmentList(byte&nbsp;segmentMarker)</pre>
+<pre>public&nbsp;java.util.List&lt;byte[]&gt;&nbsp;getSegmentList(byte&nbsp;segmentType)</pre>
+</li>
+</ul>
+<a name="getSegmentCount(com.drew.imaging.jpeg.JpegSegmentType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSegmentCount</h4>
+<pre>public&nbsp;int&nbsp;getSegmentCount(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</pre>
+<div class="block">Returns the count of segment data byte arrays stored for a given segment type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the segment count (zero if no segments exist).</dd></dl>
 </li>
 </ul>
 <a name="getSegmentCount(byte)">
@@ -318,10 +412,23 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSegmentCount</h4>
-<pre>public&nbsp;int&nbsp;getSegmentCount(byte&nbsp;segmentMarker)</pre>
-<div class="block">Returns the count of segment data byte arrays stored for a given segment marker.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - identifies the required segment</dd>
+<pre>public&nbsp;int&nbsp;getSegmentCount(byte&nbsp;segmentType)</pre>
+<div class="block">Returns the count of segment data byte arrays stored for a given segment type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the segment count (zero if no segments exist).</dd></dl>
+</li>
+</ul>
+<a name="removeSegmentOccurrence(com.drew.imaging.jpeg.JpegSegmentType, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeSegmentOccurrence</h4>
+<pre>public&nbsp;void&nbsp;removeSegmentOccurrence(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType,
+                           int&nbsp;occurrence)</pre>
+<div class="block">Removes a specified instance of a segment's data from the collection.  Use this method when more than one
+ occurrence of segment data exists for a given type exists.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd><dd><code>occurrence</code> - the zero-based index of the segment occurrence to remove.</dd></dl>
 </li>
 </ul>
 <a name="removeSegmentOccurrence(byte, int)">
@@ -330,11 +437,22 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>removeSegmentOccurrence</h4>
-<pre>public&nbsp;void&nbsp;removeSegmentOccurrence(byte&nbsp;segmentMarker,
+<pre>public&nbsp;void&nbsp;removeSegmentOccurrence(byte&nbsp;segmentType,
                            int&nbsp;occurrence)</pre>
 <div class="block">Removes a specified instance of a segment's data from the collection.  Use this method when more than one
- occurrence of segment data for a given marker exists.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - identifies the required segment</dd><dd><code>occurrence</code> - the zero-based index of the segment occurrence to remove.</dd></dl>
+ occurrence of segment data exists for a given type exists.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd><dd><code>occurrence</code> - the zero-based index of the segment occurrence to remove.</dd></dl>
+</li>
+</ul>
+<a name="removeSegment(com.drew.imaging.jpeg.JpegSegmentType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeSegment</h4>
+<pre>public&nbsp;void&nbsp;removeSegment(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</pre>
+<div class="block">Removes all segments from the collection having the specified type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd></dl>
 </li>
 </ul>
 <a name="removeSegment(byte)">
@@ -343,9 +461,21 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>removeSegment</h4>
-<pre>public&nbsp;void&nbsp;removeSegment(byte&nbsp;segmentMarker)</pre>
-<div class="block">Removes all segments from the collection having the specified marker.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - identifies the required segment</dd></dl>
+<pre>public&nbsp;void&nbsp;removeSegment(byte&nbsp;segmentType)</pre>
+<div class="block">Removes all segments from the collection having the specified type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd></dl>
+</li>
+</ul>
+<a name="containsSegment(com.drew.imaging.jpeg.JpegSegmentType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>containsSegment</h4>
+<pre>public&nbsp;boolean&nbsp;containsSegment(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentType.html" title="enum in com.drew.imaging.jpeg">JpegSegmentType</a>&nbsp;segmentType)</pre>
+<div class="block">Determines whether data is present for a given segment type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if data exists, otherwise false</dd></dl>
 </li>
 </ul>
 <a name="containsSegment(byte)">
@@ -354,9 +484,9 @@ implements java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>containsSegment</h4>
-<pre>public&nbsp;boolean&nbsp;containsSegment(byte&nbsp;segmentMarker)</pre>
-<div class="block">Determines whether data is present for a given segment marker.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentMarker</code> - identifies the required segment</dd>
+<pre>public&nbsp;boolean&nbsp;containsSegment(byte&nbsp;segmentType)</pre>
+<div class="block">Determines whether data is present for a given segment type.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>segmentType</code> - identifies the required segment</dd>
 <dt><span class="strong">Returns:</span></dt><dd>true if data exists, otherwise false</dd></dl>
 </li>
 </ul>

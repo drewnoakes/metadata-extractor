@@ -97,11 +97,10 @@
 <br>
 <pre>public final class <span class="strong">Metadata</span>
 extends java.lang.Object</pre>
-<div class="block">A top-level object to hold the various types of metadata (Exif/IPTC/etc) related to one entity (such as a file
- or stream).
+<div class="block">A top-level object that holds the metadata values extracted from an image.
  <p/>
- Metadata objects may contain zero or more directories.  Each directory may contain zero or more tags with
- corresponding values.</div>
+ Metadata objects may contain zero or more <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> objects.  Each directory may contain zero or more tags
+ with corresponding values.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Drew Noakes http://drewnoakes.com</dd></dl>
 </li>
@@ -155,7 +154,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata">Directory</a>&gt;&nbsp;<br>T</code></td>
 <td class="colLast"><code><strong><a href="../../../com/drew/metadata/Metadata.html#getDirectory(java.lang.Class)">getDirectory</a></strong>(java.lang.Class&lt;T&gt;&nbsp;type)</code>
-<div class="block">If this <code>Metadata</code> object contains a <code>Directory</code> of the specified type, it is returned.</div>
+<div class="block">If this <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object contains a <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> of the specified type, it is returned.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -167,7 +166,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata">Directory</a>&gt;&nbsp;<br>T</code></td>
 <td class="colLast"><code><strong><a href="../../../com/drew/metadata/Metadata.html#getOrCreateDirectory(java.lang.Class)">getOrCreateDirectory</a></strong>(java.lang.Class&lt;T&gt;&nbsp;type)</code>
-<div class="block">Returns a <code>Directory</code> of specified type.</div>
+<div class="block">Returns a <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> of specified type.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -244,9 +243,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getOrCreateDirectory</h4>
 <pre>public&nbsp;&lt;T extends <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata">Directory</a>&gt;&nbsp;T&nbsp;getOrCreateDirectory(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
-<div class="block">Returns a <code>Directory</code> of specified type.  If this <code>Metadata</code> object already contains
+<div class="block">Returns a <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> of specified type.  If this <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object already contains
  such a directory, it is returned.  Otherwise a new instance of this directory will be created and stored within
- this Metadata object.</div>
+ this <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - the type of the Directory implementation required.</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a directory of the specified type.</dd></dl>
 </li>
@@ -258,10 +257,10 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDirectory</h4>
 <pre>public&nbsp;&lt;T extends <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata">Directory</a>&gt;&nbsp;T&nbsp;getDirectory(java.lang.Class&lt;T&gt;&nbsp;type)</pre>
-<div class="block">If this <code>Metadata</code> object contains a <code>Directory</code> of the specified type, it is returned.
+<div class="block">If this <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object contains a <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> of the specified type, it is returned.
  Otherwise <code>null</code> is returned.</div>
 <dl><dt><span class="strong">Type Parameters:</span></dt><dd><code>T</code> - the Directory type</dd><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - the Directory type</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a Directory of type T if it exists in this Metadata object, otherwise <code>null</code>.</dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>a Directory of type T if it exists in this <a href="../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a> object, otherwise <code>null</code>.</dd></dl>
 </li>
 </ul>
 <a name="containsDirectory(java.lang.Class)">
@@ -273,8 +272,8 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;boolean&nbsp;containsDirectory(java.lang.Class&lt;? extends <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata">Directory</a>&gt;&nbsp;type)</pre>
 <div class="block">Indicates whether a given directory type has been created in this metadata
  repository.  Directories are created by calling <code>getOrCreateDirectory(Class)</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - the Directory type</dd>
-<dt><span class="strong">Returns:</span></dt><dd>true if the metadata directory has been created</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - the <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> type</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if the <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> has been created</dd></dl>
 </li>
 </ul>
 <a name="hasErrors()">
@@ -285,7 +284,7 @@ extends java.lang.Object</pre>
 <h4>hasErrors</h4>
 <pre>public&nbsp;boolean&nbsp;hasErrors()</pre>
 <div class="block">Indicates whether any errors were reported during the reading of metadata values.
- This value will be true if Directory.hasErrors() is true for one of the contained Directory objects.</div>
+ This value will be true if Directory.hasErrors() is true for one of the contained <a href="../../../com/drew/metadata/Directory.html" title="class in com.drew.metadata"><code>Directory</code></a> objects.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>whether one of the contained directories has an error</dd></dl>
 </li>
 </ul>

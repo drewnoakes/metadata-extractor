@@ -145,9 +145,9 @@ implements <a href="../../../../com/drew/metadata/MetadataReader.html" title="in
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/xmp/XmpReader.html#extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">extract</a></strong>(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/xmp/XmpReader.html#extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">extract</a></strong>(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
        <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</code>
-<div class="block">Performs the XMP data extraction, adding found values to the specified instance of <code>Metadata</code>.</div>
+<div class="block">Performs the XMP data extraction, adding found values to the specified instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -189,19 +189,19 @@ implements <a href="../../../../com/drew/metadata/MetadataReader.html" title="in
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">
+<a name="extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>extract</h4>
-<pre>public&nbsp;void&nbsp;extract(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<pre>public&nbsp;void&nbsp;extract(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
            <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</pre>
-<div class="block">Performs the XMP data extraction, adding found values to the specified instance of <code>Metadata</code>.
+<div class="block">Performs the XMP data extraction, adding found values to the specified instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.
  The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit)</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../com/drew/metadata/MetadataReader.html#extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">extract</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a></code></dd>
+<dd><code><a href="../../../../com/drew/metadata/MetadataReader.html#extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">extract</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>reader</code> - The reader from which the metadata should be extracted.</dd><dd><code>metadata</code> - The Metadata object into which extracted values should be merged.</dd></dl>
 </li>
 </ul>

@@ -186,18 +186,18 @@ implements <a href="../../../../com/drew/metadata/MetadataReader.html" title="in
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/exif/ExifReader.html#extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">extract</a></strong>(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/exif/ExifReader.html#extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">extract</a></strong>(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
        <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</code>
 <div class="block">Performs the Exif data extraction, adding found values to the specified
- instance of <code>Metadata</code>.</div>
+ instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/exif/ExifReader.html#extractTiff(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">extractTiff</a></strong>(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<td class="colLast"><code><strong><a href="../../../../com/drew/metadata/exif/ExifReader.html#extractTiff(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">extractTiff</a></strong>(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
            <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</code>
 <div class="block">Performs the Exif data extraction on a TIFF/RAW, adding found values to the specified
- instance of <code>Metadata</code>.</div>
+ instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -301,33 +301,33 @@ implements <a href="../../../../com/drew/metadata/MetadataReader.html" title="in
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">
+<a name="extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>extract</h4>
-<pre>public&nbsp;void&nbsp;extract(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<pre>public&nbsp;void&nbsp;extract(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
            <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</pre>
 <div class="block">Performs the Exif data extraction, adding found values to the specified
- instance of <code>Metadata</code>.</div>
+ instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../com/drew/metadata/MetadataReader.html#extract(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">extract</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a></code></dd>
+<dd><code><a href="../../../../com/drew/metadata/MetadataReader.html#extract(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">extract</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/drew/metadata/MetadataReader.html" title="interface in com.drew.metadata">MetadataReader</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>reader</code> - The buffer reader from which Exif data should be read.</dd><dd><code>metadata</code> - The Metadata object into which extracted values should be merged.</dd></dl>
 </li>
 </ul>
-<a name="extractTiff(com.drew.lang.BufferReader, com.drew.metadata.Metadata)">
+<a name="extractTiff(com.drew.lang.RandomAccessReader, com.drew.metadata.Metadata)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>extractTiff</h4>
-<pre>public&nbsp;void&nbsp;extractTiff(<a href="../../../../com/drew/lang/BufferReader.html" title="interface in com.drew.lang">BufferReader</a>&nbsp;reader,
+<pre>public&nbsp;void&nbsp;extractTiff(<a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang">RandomAccessReader</a>&nbsp;reader,
                <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;metadata)</pre>
 <div class="block">Performs the Exif data extraction on a TIFF/RAW, adding found values to the specified
- instance of <code>Metadata</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>reader</code> - The BufferReader from which TIFF data should be read.</dd><dd><code>metadata</code> - The Metadata object into which extracted values should be merged.</dd></dl>
+ instance of <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata"><code>Metadata</code></a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>reader</code> - The <a href="../../../../com/drew/lang/RandomAccessReader.html" title="interface in com.drew.lang"><code>RandomAccessReader</code></a> from which TIFF data should be read.</dd><dd><code>metadata</code> - The Metadata object into which extracted values should be merged.</dd></dl>
 </li>
 </ul>
 </li>

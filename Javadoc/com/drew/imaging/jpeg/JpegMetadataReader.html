@@ -97,7 +97,7 @@
 <br>
 <pre>public class <span class="strong">JpegMetadataReader</span>
 extends java.lang.Object</pre>
-<div class="block">Obtains all available metadata from Jpeg formatted files.</div>
+<div class="block">Obtains all available metadata from JPEG formatted files.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Drew Noakes http://drewnoakes.com</dd></dl>
 </li>
@@ -120,7 +120,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegMetadataReader.html#extractMetadataFromJpegSegmentReader(com.drew.imaging.jpeg.JpegSegmentData)">extractMetadataFromJpegSegmentReader</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;segmentReader)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegMetadataReader.html#extractMetadataFromJpegSegments(com.drew.imaging.jpeg.JpegSegmentData)">extractMetadataFromJpegSegments</a></strong>(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;segmentReader)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a></code></td>
@@ -129,11 +129,6 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegMetadataReader.html#readMetadata(java.io.InputStream)">readMetadata</a></strong>(java.io.InputStream&nbsp;inputStream)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../com/drew/imaging/jpeg/JpegMetadataReader.html#readMetadata(java.io.InputStream, boolean)">readMetadata</a></strong>(java.io.InputStream&nbsp;inputStream,
-            boolean&nbsp;waitForBytes)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -169,19 +164,6 @@ extends java.lang.Object</pre>
 <dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd></dl>
 </li>
 </ul>
-<a name="readMetadata(java.io.InputStream, boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readMetadata</h4>
-<pre>public static&nbsp;<a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;readMetadata(java.io.InputStream&nbsp;inputStream,
-                    boolean&nbsp;waitForBytes)
-                             throws <a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="../../../../com/drew/imaging/jpeg/JpegProcessingException.html" title="class in com.drew.imaging.jpeg">JpegProcessingException</a></code></dd></dl>
-</li>
-</ul>
 <a name="readMetadata(java.io.File)">
 <!--   -->
 </a>
@@ -196,13 +178,13 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="extractMetadataFromJpegSegmentReader(com.drew.imaging.jpeg.JpegSegmentData)">
+<a name="extractMetadataFromJpegSegments(com.drew.imaging.jpeg.JpegSegmentData)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>extractMetadataFromJpegSegmentReader</h4>
-<pre>public static&nbsp;<a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;extractMetadataFromJpegSegmentReader(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;segmentReader)</pre>
+<h4>extractMetadataFromJpegSegments</h4>
+<pre>public static&nbsp;<a href="../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a>&nbsp;extractMetadataFromJpegSegments(<a href="../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;segmentReader)</pre>
 </li>
 </ul>
 </li>

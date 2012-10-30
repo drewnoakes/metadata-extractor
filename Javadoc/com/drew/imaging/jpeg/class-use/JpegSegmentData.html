@@ -103,10 +103,24 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
-<td class="colLast"><span class="strong">JpegSegmentReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#getSegmentData()">getSegmentData</a></strong>()</code>
-<div class="block">Returns the JpegSegmentData object used by this reader.</div>
+<td class="colFirst"><code>static <a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><span class="strong">JpegSegmentReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(java.io.File)">readSegments</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Creates a JpegSegmentReader for a specific file.</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><span class="strong">JpegSegmentReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(java.io.InputStream)">readSegments</a></strong>(java.io.InputStream&nbsp;inputStream)</code>
+<div class="block">Creates a JpegSegmentReader for an InputStream.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><span class="strong">JpegSegmentReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(com.drew.lang.SequentialReader)">readSegments</a></strong>(<a href="../../../../../com/drew/lang/SequentialReader.html" title="interface in com.drew.lang">SequentialReader</a>&nbsp;reader)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a></code></td>
+<td class="colLast"><span class="strong">JpegSegmentReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegSegmentReader.html#readSegments(java.lang.String)">readSegments</a></strong>(java.lang.String&nbsp;fileName)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -119,7 +133,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/drew/metadata/Metadata.html" title="class in com.drew.metadata">Metadata</a></code></td>
-<td class="colLast"><span class="strong">JpegMetadataReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegMetadataReader.html#extractMetadataFromJpegSegmentReader(com.drew.imaging.jpeg.JpegSegmentData)">extractMetadataFromJpegSegmentReader</a></strong>(<a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;segmentReader)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">JpegMetadataReader.</span><code><strong><a href="../../../../../com/drew/imaging/jpeg/JpegMetadataReader.html#extractMetadataFromJpegSegments(com.drew.imaging.jpeg.JpegSegmentData)">extractMetadataFromJpegSegments</a></strong>(<a href="../../../../../com/drew/imaging/jpeg/JpegSegmentData.html" title="class in com.drew.imaging.jpeg">JpegSegmentData</a>&nbsp;segmentReader)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
