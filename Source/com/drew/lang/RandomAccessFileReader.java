@@ -192,7 +192,6 @@ public class RandomAccessFileReader implements RandomAccessReader
                    (read() << 8  & 0xFF00) |
                    (read() << 16 & 0xFF0000) |
                    (read() << 24 & 0xFF000000);
-
         }
     }
 
@@ -222,7 +221,6 @@ public class RandomAccessFileReader implements RandomAccessReader
                    ((long) read() << 40 & 0xFF0000000000L) |
                    ((long) read() << 48 & 0xFF000000000000L) |
                    ((long) read() << 56 & 0xFF00000000000000L);
-
         }
     }
 

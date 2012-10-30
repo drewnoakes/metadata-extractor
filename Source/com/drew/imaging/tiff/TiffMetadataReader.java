@@ -40,7 +40,6 @@ public class TiffMetadataReader
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
         Metadata metadata = new Metadata();
-
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
         try {

@@ -26,9 +26,16 @@ import com.drew.lang.annotations.NotNull;
 public interface RandomAccessReader
 {
     /**
-     * Returns the length of the buffer.  This value represents the total number of bytes in the underlying source.
+     * Returns the length of the data source in bytes.
+     * <p/>
+     * This is a simple operation for implementations (such as {@link RandomAccessFileReader} and
+     * {@link ByteArrayReader}) that have the entire data source available.
+     * <p/>
+     * Users of this method must be aware that sequentially accessed implementations such as
+     * {@link RandomAccessStreamReader} will have to read and buffer the entire data source in
+     * order to determine the length.
      *
-     * @return The number of bytes in the buffer.
+     * @return the length of the data source, in bytes.
      */
     long getLength();
 
