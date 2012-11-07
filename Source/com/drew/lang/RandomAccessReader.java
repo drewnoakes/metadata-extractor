@@ -25,12 +25,46 @@ import com.drew.lang.annotations.NotNull;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Base class for random access data reading operations of common data types.
+ * <p/>
+ * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
+ * <code>setMotorolaByteOrder(boolean)</code>.
+ * <p/>
+ * Concrete implementations include:
+ * <ul>
+ *     <li>{@link ByteArrayReader}</li>
+ *     <li>{@link RandomAccessReader}</li>
+ *     <li>{@link RandomAccessStreamReader}</li>
+ * </ul>
+ *
+ * @author Drew Noakes http://drewnoakes.com
+ */
 public abstract class RandomAccessReader
 {
     private boolean _isMotorolaByteOrder = true;
 
+    /**
+     * Gets the byte value at the specified byte index.
+     * <p/>
+     * Implementations should not perform any bounds checking in this method. That should be performed
+     * in <code>validateIndex</code> and <code>isValidIndex</code>.
+     *
+     * @param index The index from which to read the byte
+     * @return The read byte value
+     * @throws BufferBoundsException If the index is invalid, or otherwise unable to be read
+     */
     protected abstract byte getByte(int index) throws BufferBoundsException;
 
+    /**
+     * Returns the required number of bytes from the specified index from the underlying source.
+     *
+     * @param index The index from which the bytes begins in the underlying source
+     * @param count The number of bytes to be returned
+     * @return The requested bytes
+     * @throws BufferBoundsException If the index is invalid, or if the requested number of bytes were unavailable
+     * or otherwise unable to be read
+     */
     @NotNull
     public abstract byte[] getBytes(int index, int count) throws BufferBoundsException;
 

@@ -27,12 +27,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
- * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
+ * Provides methods to read specific values from a {@link RandomAccessFile}, with a consistent, checked exception structure for
  * issues.
- * <p/>
- * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
- * {@see setMotorolaByteOrder(boolean)}.
- * 
+ *
  * @author Drew Noakes http://drewnoakes.com
  * */
 public class RandomAccessFileReader extends RandomAccessReader
