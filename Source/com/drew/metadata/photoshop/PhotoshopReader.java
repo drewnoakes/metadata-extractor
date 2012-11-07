@@ -49,7 +49,15 @@ public class PhotoshopReader implements MetadataReader
             return;
         }
 
-        while (pos < reader.getLength()) {
+        long length;
+        try {
+            length = reader.getLength();
+        } catch (BufferBoundsException e) {
+            directory.addError("Unable to read Photoshop data: " + e.getMessage());
+            return;
+        }
+
+        while (pos < length) {
             try {
                 // 4 bytes for the signature.  Should always be "8BIM".
                 //String signature = new String(data, pos, 4);
@@ -63,7 +71,7 @@ public class PhotoshopReader implements MetadataReader
                 int descriptionLength = reader.getUInt16(pos);
                 pos += 2;
                 // Some basic bounds checking
-                if (descriptionLength < 0 || descriptionLength + pos > reader.getLength())
+                if (descriptionLength < 0 || descriptionLength + pos > length)
                     return;
                 //String description = new String(data, pos, descriptionLength);
                 pos += descriptionLength;

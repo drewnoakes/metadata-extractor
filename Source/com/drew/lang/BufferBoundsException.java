@@ -21,8 +21,6 @@
 
 package com.drew.lang;
 
-import com.drew.lang.annotations.NotNull;
-
 import java.io.IOException;
 
 /**
@@ -34,9 +32,9 @@ public final class BufferBoundsException extends Exception
 {
     private static final long serialVersionUID = 2911102837808946396L;
 
-    public BufferBoundsException(@NotNull byte[] buffer, int index, int bytesRequested)
+    public BufferBoundsException(int bufferLength, int index, int bytesRequested)
     {
-        super(getMessage(buffer, index, bytesRequested));
+        super(getMessage(bufferLength, index, bytesRequested));
     }
 
     public BufferBoundsException(final String message)
@@ -49,12 +47,12 @@ public final class BufferBoundsException extends Exception
         super(message, innerException);
     }
 
-    private static String getMessage(@NotNull byte[] buffer, int index, int bytesRequested)
+    private static String getMessage(int bufferLength, int index, int bytesRequested)
     {
         if (index < 0)
             return String.format("Attempt to read from buffer using a negative index (%s)", index);
 
         return String.format("Attempt to read %d byte%s from beyond end of buffer (requested index: %d, max index: %d)",
-                bytesRequested, bytesRequested==1?"":"s", index, buffer.length - 1);
+                bytesRequested, bytesRequested==1?"":"s", index, bufferLength - 1);
     }
 }

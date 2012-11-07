@@ -37,7 +37,7 @@ public interface RandomAccessReader
      *
      * @return the length of the data source, in bytes.
      */
-    long getLength();
+    long getLength() throws BufferBoundsException;
 
     /**
      * Sets the endianness of this reader.

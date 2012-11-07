@@ -69,8 +69,16 @@ public class IptcReader implements MetadataReader
         }
 */
 
+        long length;
+        try {
+            length = reader.getLength();
+        } catch (BufferBoundsException e) {
+            directory.addError("Unable to read IPTC data: " + e.getMessage());
+            return;
+        }
+
         // for each tag
-        while (offset < reader.getLength()) {
+        while (offset < length) {
 
             // identifies start of a tag
             short startByte;
@@ -87,7 +95,7 @@ public class IptcReader implements MetadataReader
             }
 
             // we need at least five bytes left to read a tag
-            if (offset + 5 >= reader.getLength()) {
+            if (offset + 5 >= length) {
                 directory.addError("Too few bytes remain for a valid IPTC tag");
                 break;
             }
@@ -107,7 +115,7 @@ public class IptcReader implements MetadataReader
                 return;
             }
 
-            if (offset + tagByteCount > reader.getLength()) {
+            if (offset + tagByteCount > length) {
                 directory.addError("Data for tag extends beyond end of IPTC segment");
                 break;
             }

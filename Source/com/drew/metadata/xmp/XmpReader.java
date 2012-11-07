@@ -81,8 +81,13 @@ public class XmpReader implements MetadataReader
         XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
 
         // check for the header length
-        if (reader.getLength() <= 30) {
-            directory.addError("Xmp data segment must contain at least 30 bytes");
+        try {
+            if (reader.getLength() <= 30) {
+                directory.addError("Xmp data segment must contain at least 30 bytes");
+                return;
+            }
+        } catch (BufferBoundsException e) {
+            directory.addError("Unable to read XMP data: " + e.getMessage());
             return;
         }
 

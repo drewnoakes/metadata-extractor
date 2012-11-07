@@ -39,8 +39,13 @@ public class AdobeJpegReader implements MetadataReader
     {
         final Directory directory = metadata.getOrCreateDirectory(AdobeJpegDirectory.class);
 
-        if (reader.getLength() != 12) {
-            directory.addError(String.format("Adobe JPEG data is expected to be 12 bytes long, not %d.", reader.getLength()));
+        try {
+            if (reader.getLength() != 12) {
+                directory.addError(String.format("Adobe JPEG data is expected to be 12 bytes long, not %d.", reader.getLength()));
+                return;
+            }
+        } catch (BufferBoundsException e) {
+            directory.addError("Unable to read Adobe JPEG data: " + e.getMessage());
             return;
         }
 

@@ -95,8 +95,13 @@ public class ExifReader implements MetadataReader
         final ExifSubIFDDirectory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
 
         // check for the header length
-        if (reader.getLength() <= 14) {
-            directory.addError("Exif data segment must contain at least 14 bytes");
+        try {
+            if (reader.getLength() <= 14) {
+                directory.addError("Exif data segment must contain at least 14 bytes");
+                return;
+            }
+        } catch (BufferBoundsException e) {
+            directory.addError("Unable to read Exif data: " + e.getMessage());
             return;
         }
 

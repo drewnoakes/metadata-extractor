@@ -268,6 +268,6 @@ public class ByteArrayReader implements RandomAccessReader
     private void checkBounds(final int index, final int bytesRequested) throws BufferBoundsException
     {
         if (bytesRequested < 0 || index < 0 || (long)index + (long)bytesRequested - 1L >= (long)_buffer.length)
-            throw new BufferBoundsException(_buffer, index, bytesRequested);
+            throw new BufferBoundsException(_buffer.length, index, bytesRequested);
     }
 }

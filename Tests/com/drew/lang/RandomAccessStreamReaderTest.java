@@ -24,27 +24,31 @@ package com.drew.lang;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+
 /** @author Drew Noakes http://drewnoakes.com */
-public class ByteArrayReaderTest
+public class RandomAccessStreamReaderTest
 {
     @SuppressWarnings({ "ConstantConditions" })
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullBufferThrows()
     {
-        new ByteArrayReader(null);
+        new RandomAccessStreamReader(null);
     }
 
     @Test
     public void testDefaultEndianness()
     {
-        Assert.assertEquals(true, new ByteArrayReader(new byte[1]).isMotorolaByteOrder());
+        ByteArrayInputStream stream = new ByteArrayInputStream(new byte[0]);
+
+        Assert.assertEquals(true, new RandomAccessStreamReader(stream).isMotorolaByteOrder());
     }
 
     @Test
     public void testGetInt8() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals((byte)0, reader.getInt8(0));
         Assert.assertEquals((byte)1, reader.getInt8(1));
@@ -56,7 +60,7 @@ public class ByteArrayReaderTest
     public void testGetUInt8() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals(0, reader.getUInt8(0));
         Assert.assertEquals(1, reader.getUInt8(1));
@@ -68,7 +72,7 @@ public class ByteArrayReaderTest
     public void testGetUInt8_OutOfBounds()
     {
         try {
-            RandomAccessReader reader = new ByteArrayReader(new byte[2]);
+            RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(new byte[2]));
             reader.getUInt8(2);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -79,10 +83,10 @@ public class ByteArrayReaderTest
     @Test
     public void testGetInt16() throws BufferBoundsException
     {
-        Assert.assertEquals(-1, new ByteArrayReader(new byte[]{(byte)0xff,(byte)0xff}).getInt16(0));
+        Assert.assertEquals(-1, new RandomAccessStreamReader(new ByteArrayInputStream(new byte[]{(byte)0xff,(byte)0xff})).getInt16(0));
 
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals((short)0x0001, reader.getInt16(0));
         Assert.assertEquals((short)0x017F, reader.getInt16(1));
@@ -99,7 +103,7 @@ public class ByteArrayReaderTest
     public void testGetUInt16() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals(0x0001, reader.getUInt16(0));
         Assert.assertEquals(0x017F, reader.getUInt16(1));
@@ -116,7 +120,7 @@ public class ByteArrayReaderTest
     public void testGetUInt16_OutOfBounds()
     {
         try {
-            RandomAccessReader reader = new ByteArrayReader(new byte[2]);
+            RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(new byte[2]));
             reader.getUInt16(1);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -127,10 +131,10 @@ public class ByteArrayReaderTest
     @Test
     public void testGetInt32() throws BufferBoundsException
     {
-        Assert.assertEquals(-1, new ByteArrayReader(new byte[]{(byte)0xff,(byte)0xff, (byte)0xff,(byte)0xff}).getInt32(0));
+        Assert.assertEquals(-1, new RandomAccessStreamReader(new ByteArrayInputStream(new byte[]{(byte)0xff,(byte)0xff, (byte)0xff,(byte)0xff})).getInt32(0));
 
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04 };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals(0x00017FFF, reader.getInt32(0));
         Assert.assertEquals(0x017FFF02, reader.getInt32(1));
@@ -148,10 +152,10 @@ public class ByteArrayReaderTest
     @Test
     public void testGetUInt32() throws BufferBoundsException
     {
-        Assert.assertEquals(4294967295L, new ByteArrayReader(new byte[]{(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff}).getUInt32(0));
+        Assert.assertEquals(4294967295L, new RandomAccessStreamReader(new ByteArrayInputStream(new byte[]{(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff})).getUInt32(0));
 
         byte[] buffer = new byte[] { 0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04 };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals(0x00017FFF, reader.getUInt32(0));
         Assert.assertEquals(0x017FFF02, reader.getUInt32(1));
@@ -169,7 +173,7 @@ public class ByteArrayReaderTest
     public void testGetInt32_OutOfBounds()
     {
         try {
-            RandomAccessReader reader = new ByteArrayReader(new byte[3]);
+            RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(new byte[3]));
             reader.getInt32(0);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -181,7 +185,7 @@ public class ByteArrayReaderTest
     public void testGetInt64() throws BufferBoundsException
     {
         byte[] buffer = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)0xFF };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals(0x0001020304050607L, reader.getInt64(0));
         Assert.assertEquals(0x01020304050607FFL, reader.getInt64(1));
@@ -196,14 +200,14 @@ public class ByteArrayReaderTest
     public void testGetInt64_OutOfBounds()
     {
         try {
-            RandomAccessReader reader = new ByteArrayReader(new byte[7]);
+            RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(new byte[7]));
             reader.getInt64(0);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
             Assert.assertEquals("Attempt to read 8 bytes from beyond end of buffer (requested index: 0, max index: 6)", ex.getMessage());
         }
         try {
-            RandomAccessReader reader = new ByteArrayReader(new byte[7]);
+            RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(new byte[7]));
             reader.getInt64(-1);
             Assert.fail("Exception expected");
         } catch (BufferBoundsException ex) {
@@ -218,7 +222,7 @@ public class ByteArrayReaderTest
         Assert.assertEquals(Float.NaN, Float.intBitsToFloat(nanBits));
 
         byte[] buffer = new byte[] { 0x7f, (byte)0xc0, 0x00, 0x00 };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals(Float.NaN, reader.getFloat32(0));
     }
@@ -230,7 +234,7 @@ public class ByteArrayReaderTest
         Assert.assertEquals(Double.NaN, Double.longBitsToDouble(nanBits));
 
         byte[] buffer = new byte[] { (byte)0xff, (byte)0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
-        RandomAccessReader reader = new ByteArrayReader(buffer);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
 
         Assert.assertEquals(Double.NaN, reader.getDouble64(0));
     }
@@ -239,7 +243,7 @@ public class ByteArrayReaderTest
     public void testGetNullTerminatedString() throws BufferBoundsException
     {
         byte[] bytes = new byte[]{ 0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47 };
-        RandomAccessReader reader = new ByteArrayReader(bytes);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(bytes));
 
         Assert.assertEquals("", reader.getNullTerminatedString(0, 0));
         Assert.assertEquals("A", reader.getNullTerminatedString(0, 1));
@@ -260,7 +264,7 @@ public class ByteArrayReaderTest
     public void testGetString() throws BufferBoundsException
     {
         byte[] bytes = new byte[]{ 0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47 };
-        RandomAccessReader reader = new ByteArrayReader(bytes);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(bytes));
 
         Assert.assertEquals("", reader.getString(0, 0));
         Assert.assertEquals("A", reader.getString(0, 1));
@@ -281,7 +285,7 @@ public class ByteArrayReaderTest
     public void testOverflowBoundsCalculation()
     {
         byte[] bytes = new byte[10];
-        RandomAccessReader reader = new ByteArrayReader(bytes);
+        RandomAccessReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(bytes));
 
         try {
             reader.getBytes(0x6FFFFFFF, 0x6FFFFFFF);
