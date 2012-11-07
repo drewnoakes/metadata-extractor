@@ -33,10 +33,11 @@ import java.util.ArrayList;
  */
 public class RandomAccessStreamReader implements RandomAccessReader
 {
-    private final static int _chunkLength = 2 * 1024;
+    private final static int DEFAULT_CHUNK_LENGTH = 2 * 1024;
 
     @NotNull
     private final InputStream _stream;
+    private final int _chunkLength;
 
     private final ArrayList<byte[]> _chunks = new ArrayList<byte[]>();
 
@@ -44,12 +45,20 @@ public class RandomAccessStreamReader implements RandomAccessReader
     private boolean _isStreamFinished;
     private int _streamLength;
 
-    @SuppressWarnings("ConstantConditions")
     public RandomAccessStreamReader(@NotNull InputStream stream)
+    {
+        this(stream, DEFAULT_CHUNK_LENGTH);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength)
     {
         if (stream == null)
             throw new NullPointerException();
+        if (chunkLength <= 0)
+            throw new IllegalArgumentException("chunkLength must be greater than zero");
 
+        _chunkLength = chunkLength;
         _stream = stream;
     }
 
