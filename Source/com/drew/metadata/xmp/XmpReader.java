@@ -35,9 +35,9 @@ import com.drew.metadata.MetadataReader;
 import java.util.Calendar;
 
 /**
- * Extracts Xmp data from a JPEG header segment.
+ * Extracts XMP data from a JPEG header segment.
  * <p/>
- * The extractions is done with adobe's XmpCore-Library (XMP-Toolkit)
+ * The extraction is done with Adobe's XmpCore-Library (XMP-Toolkit)
  * Copyright (c) 1999 - 2007, Adobe Systems Incorporated All rights reserved.
  *
  * @author Torsten Skadell, Drew Noakes http://drewnoakes.com
@@ -49,6 +49,12 @@ public class XmpReader implements MetadataReader
     private static final int FMT_INT = 3;
     private static final int FMT_DOUBLE = 4;
 
+    /**
+     * XMP tag namespace.
+     * TODO the older "xap", "xapBJ", "xapMM" or "xapRights" namespace prefixes should be translated to the newer "xmp", "xmpBJ", "xmpMM" and "xmpRights" prefixes for use in family 1 group names
+     */
+    @NotNull
+    private static final String SCHEMA_XMP_PROPERTIES = "http://ns.adobe.com/xap/1.0/";
     @NotNull
     private static final String SCHEMA_EXIF_SPECIFIC_PROPERTIES = "http://ns.adobe.com/exif/1.0/";
     @NotNull
@@ -59,8 +65,8 @@ public class XmpReader implements MetadataReader
     private static final String SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES = "http://purl.org/dc/elements/1.1/";
 
     /**
-     * Performs the XMP data extraction, adding found values to the specified instance of <code>Metadata</code>.
-     * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit)
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit).
      */
     @SuppressWarnings({ "ConstantConditions" })
     public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
@@ -127,6 +133,8 @@ public class XmpReader implements MetadataReader
 
             processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeOriginal", XmpDirectory.TAG_DATETIME_ORIGINAL);
             processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeDigitized", XmpDirectory.TAG_DATETIME_DIGITIZED);
+
+            processXmpTag(xmpMeta, directory, SCHEMA_XMP_PROPERTIES, "xmp:Rating", XmpDirectory.TAG_RATING, FMT_DOUBLE);
 
 /*
             // this requires further research

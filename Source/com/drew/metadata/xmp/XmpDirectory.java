@@ -49,6 +49,11 @@ public class XmpDirectory extends Directory
     public static final int TAG_DATETIME_ORIGINAL = 0x000d;
     public static final int TAG_DATETIME_DIGITIZED = 0x000e;
 
+    /**
+     * A value from 0 to 5, or -1 if the image is rejected.
+     */
+    public static final int TAG_RATING = 0x1001;
+
 /*
     // dublin core properties
     // this requires further research
@@ -95,7 +100,9 @@ public class XmpDirectory extends Directory
         _tagNameMap.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
         _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
         _tagNameMap.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
-        
+
+        _tagNameMap.put(TAG_RATING, "Rating");
+
 /*
         // this requires further research
         _tagNameMap.put(TAG_TITLE, "Title");
