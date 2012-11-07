@@ -25,7 +25,6 @@ import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
@@ -36,13 +35,12 @@ import java.io.UnsupportedEncodingException;
  * 
  * @author Drew Noakes http://drewnoakes.com
  * */
-public class RandomAccessFileReader implements RandomAccessReader
+public class RandomAccessFileReader extends RandomAccessReader
 {
     @NotNull
     private final RandomAccessFile _file;
     private final long _length;
     private int _currentIndex;
-    private boolean _isMotorolaByteOrder = true;
 
     @SuppressWarnings({ "ConstantConditions" })
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
@@ -62,19 +60,11 @@ public class RandomAccessFileReader implements RandomAccessReader
     }
 
     @Override
-    public void setMotorolaByteOrder(boolean motorolaByteOrder)
+    protected byte getByte(int index) throws BufferBoundsException
     {
-        _isMotorolaByteOrder = motorolaByteOrder;
-    }
+        if (index != _currentIndex)
+            seek(index);
 
-    @Override
-    public boolean isMotorolaByteOrder()
-    {
-        return _isMotorolaByteOrder;
-    }
-
-    private byte read() throws BufferBoundsException
-    {
         final int b;
         try {
             b = _file.read();
@@ -93,6 +83,7 @@ public class RandomAccessFileReader implements RandomAccessReader
     {
         if (index == _currentIndex)
             return;
+
         try {
             _file.seek(index);
             _currentIndex = index;
@@ -102,168 +93,10 @@ public class RandomAccessFileReader implements RandomAccessReader
     }
 
     @Override
-    public short getUInt8(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 1);
-        seek(index);
-
-        return (short) (read() & 0xFF);
-    }
-
-    @Override
-    public byte getInt8(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 1);
-        seek(index);
-
-        return read();
-    }
-
-    @Override
-    public int getUInt16(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 2);
-        seek(index);
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (read() << 8 & 0xFF00) |
-                   (read()      & 0xFF);
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (read()      & 0xFF) |
-                   (read() << 8 & 0xFF00);
-        }
-    }
-
-    @Override
-    public short getInt16(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 2);
-        seek(index);
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (short) (((short) read() << 8 & (short)0xFF00) |
-                            ((short) read()      & (short)0xFF));
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (short) (((short) read()      & (short)0xFF) |
-                            ((short) read() << 8 & (short)0xFF00));
-        }
-    }
-
-    @Override
-    public long getUInt32(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 4);
-        seek(index);
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (((long) read()) << 24 & 0xFF000000L) |
-                   (((long) read()) << 16 & 0xFF0000L) |
-                   (((long) read()) << 8  & 0xFF00L) |
-                   (((long) read())       & 0xFFL);
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (((long) read())       & 0xFFL) |
-                   (((long) read()) << 8  & 0xFF00L) |
-                   (((long) read()) << 16 & 0xFF0000L) |
-                   (((long) read()) << 24 & 0xFF000000L);
-        }
-    }
-
-    @Override
-    public int getInt32(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 4);
-        seek(index);
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (read() << 24 & 0xFF000000) |
-                   (read() << 16 & 0xFF0000) |
-                   (read() << 8  & 0xFF00) |
-                   (read()       & 0xFF);
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (read()       & 0xFF) |
-                   (read() << 8  & 0xFF00) |
-                   (read() << 16 & 0xFF0000) |
-                   (read() << 24 & 0xFF000000);
-        }
-    }
-
-    @Override
-    public long getInt64(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 8);
-        seek(index);
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return ((long) read() << 56 & 0xFF00000000000000L) |
-                   ((long) read() << 48 & 0xFF000000000000L) |
-                   ((long) read() << 40 & 0xFF0000000000L) |
-                   ((long) read() << 32 & 0xFF00000000L) |
-                   ((long) read() << 24 & 0xFF000000L) |
-                   ((long) read() << 16 & 0xFF0000L) |
-                   ((long) read() << 8  & 0xFF00L) |
-                   ((long) read()       & 0xFFL);
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return ((long) read()       & 0xFFL) |
-                   ((long) read() << 8  & 0xFF00L) |
-                   ((long) read() << 16 & 0xFF0000L) |
-                   ((long) read() << 24 & 0xFF000000L) |
-                   ((long) read() << 32 & 0xFF00000000L) |
-                   ((long) read() << 40 & 0xFF0000000000L) |
-                   ((long) read() << 48 & 0xFF000000000000L) |
-                   ((long) read() << 56 & 0xFF00000000000000L);
-        }
-    }
-
-    @Override
-    public float getS15Fixed16(int index) throws BufferBoundsException
-    {
-        checkBounds(index, 4);
-        seek(index);
-
-        if (_isMotorolaByteOrder) {
-            float res = (read() & 0xFF) << 8 |
-                        (read() & 0xFF);
-            int d =     (read() & 0xFF) << 8 |
-                        (read() & 0xFF);
-            return (float)(res + d/65536.0);
-        } else {
-            // this particular branch is untested
-            int d =     (read() & 0xFF) |
-                        (read() & 0xFF) << 8;
-            float res = (read() & 0xFF) |
-                        (read() & 0xFF) << 8;
-            return (float)(res + d/65536.0);
-        }
-    }
-
-    @Override
-    public float getFloat32(int index) throws BufferBoundsException
-    {
-        return Float.intBitsToFloat(getInt32(index));
-    }
-
-    @Override
-    public double getDouble64(int index) throws BufferBoundsException
-    {
-        return Double.longBitsToDouble(getInt64(index));
-    }
-    
-    @Override
     @NotNull
     public byte[] getBytes(int index, int count) throws BufferBoundsException
     {
-        checkBounds(index, count);
-        seek(index);
+        validateIndex(index, count);
 
         byte[] bytes = new byte[count];
         final int bytesRead;
@@ -279,45 +112,15 @@ public class RandomAccessFileReader implements RandomAccessReader
     }
 
     @Override
-    @NotNull
-    public String getString(int index, int bytesRequested) throws BufferBoundsException
+    protected boolean isValidIndex(int index, int bytesRequested) throws BufferBoundsException
     {
-        return new String(getBytes(index, bytesRequested));
+        return bytesRequested >= 0
+                && index >= 0
+                && (long)index + (long)bytesRequested - 1L < _length;
     }
 
     @Override
-    @NotNull
-    public String getString(int index, int bytesRequested, String charset) throws BufferBoundsException
-    {
-        checkBounds(index, bytesRequested);
-
-        byte[] bytes = getBytes(index, bytesRequested);
-        try {
-            return new String(bytes, charset);
-        } catch (UnsupportedEncodingException e) {
-            return new String(bytes);
-        }
-    }
-
-    @Override
-    @NotNull
-    public String getNullTerminatedString(int index, int maxLengthBytes) throws BufferBoundsException
-    {
-        // NOTE currently only really suited to single-byte character strings
-
-        checkBounds(index, maxLengthBytes);
-        seek(index);
-
-        // Check for null terminators
-        int length = 0;
-        while ((index + length) < _length && read() != '\0' && length < maxLengthBytes)
-            length++;
-
-        byte[] bytes = getBytes(index, length);
-        return new String(bytes);
-    }
-
-    private void checkBounds(final int index, final int bytesRequested) throws BufferBoundsException
+    protected void validateIndex(final int index, final int bytesRequested) throws BufferBoundsException
     {
         if (bytesRequested < 0)
             throw new BufferBoundsException("Requested negative number of bytes.");
