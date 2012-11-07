@@ -26,7 +26,6 @@ import com.drew.lang.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -45,6 +44,7 @@ public class RandomAccessStreamReader implements RandomAccessReader
     private boolean _isStreamFinished;
     private int _streamLength;
 
+    @SuppressWarnings("ConstantConditions")
     public RandomAccessStreamReader(@NotNull InputStream stream)
     {
         if (stream == null)
@@ -375,13 +375,10 @@ public class RandomAccessStreamReader implements RandomAccessReader
 
         byte[] bytes = getBytes(index, maxLengthBytes);
 
-        // Check for null terminators
+        // Count the number of non-null bytes
         int length = 0;
-        while (length < bytes.length && bytes[length] != '\0' && length < maxLengthBytes)
+        while (length < bytes.length && bytes[length] != '\0')
             length++;
-
-//        byte[] outputBytes = new byte[length];
-//        System.arraycopy(bytes, 0, outputBytes, 0, length);
 
         return new String(bytes, 0, length);
     }

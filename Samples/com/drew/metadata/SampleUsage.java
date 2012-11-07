@@ -52,7 +52,7 @@ public class SampleUsage
         // Approach 1
         // This is the most generic approach.  It will transparently determine the file type and invoke the appropriate
         // readers.  In most cases, this is the most appropriate usage.  This will handle Jpeg, TIFF and RAW
-        // (CRW/CR2/NEF) files and extract Exif & IPTC metadata as available.
+        // (CRW/CR2/NEF/RW2) files and extract Exif & IPTC metadata as available.
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(file);
             printImageTags(1, metadata);
