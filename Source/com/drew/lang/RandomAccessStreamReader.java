@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -45,6 +47,9 @@ public class RandomAccessStreamReader implements RandomAccessReader
 
     public RandomAccessStreamReader(@NotNull InputStream stream)
     {
+        if (stream == null)
+            throw new NullPointerException();
+
         _stream = stream;
     }
 
@@ -88,8 +93,10 @@ public class RandomAccessStreamReader implements RandomAccessReader
     {
         if (index < 0) {
             throw new BufferBoundsException(String.format("Attempt to read from buffer using a negative index (%d)", index));
-        } else if (bytesRequested < 1) {
-            throw new BufferBoundsException("Number of requested bytes must be one or greater");
+        } else if (bytesRequested < 0) {
+            throw new BufferBoundsException("Number of requested bytes must be zero or greater");
+        } else if ((long)index + bytesRequested - 1 > Integer.MAX_VALUE) {
+            throw new BufferBoundsException("Number of requested bytes summed with starting index exceed maximum range of signed 32 bit integers");
         }
 
         if (!isValidIndex(index, bytesRequested)) {
@@ -101,20 +108,20 @@ public class RandomAccessStreamReader implements RandomAccessReader
 
     private boolean isValidIndex(int index, int bytesRequested) throws BufferBoundsException
     {
-        if (index < 0 || bytesRequested < 1) {
+        if (index < 0 || bytesRequested < 0) {
             return false;
         }
 
-        int endIndex = index + bytesRequested - 1;
+        long endIndexLong = (long)index + bytesRequested - 1;
+
+        if (endIndexLong > Integer.MAX_VALUE) {
+            return false;
+        }
+
+        int endIndex = (int)endIndexLong;
 
         if (_isStreamFinished) {
-            if (endIndex >= _streamLength) {
-                // Caller is attempting to read from beyond the end of the source stream
-                return false;
-            } else {
-                // We have enough bytes for this request
-                return true;
-            }
+            return endIndex < _streamLength;
         }
 
         int chunkIndex = endIndex / _chunkLength;
@@ -316,27 +323,66 @@ public class RandomAccessStreamReader implements RandomAccessReader
     @Override
     public byte[] getBytes(int index, int count) throws BufferBoundsException
     {
-        return new byte[0];
+        validateIndex(index, count);
+
+        byte[] bytes = new byte[count];
+
+        int remaining = count;
+        int fromIndex = index;
+        int toIndex = 0;
+
+        while (remaining != 0) {
+            int fromChunkIndex = fromIndex / _chunkLength;
+            int fromInnerIndex = fromIndex % _chunkLength;
+            int length = Math.min(remaining, _chunkLength - fromInnerIndex);
+
+            byte[] chunk = _chunks.get(fromChunkIndex);
+
+            System.arraycopy(chunk, fromInnerIndex, bytes, toIndex, length);
+
+            remaining -= length;
+            fromIndex += length;
+            toIndex += length;
+        }
+
+        return bytes;
     }
 
     @NotNull
     @Override
     public String getString(int index, int bytesRequested) throws BufferBoundsException
     {
-        return null;
+        return new String(getBytes(index, bytesRequested));
     }
 
     @NotNull
     @Override
     public String getString(int index, int bytesRequested, String charset) throws BufferBoundsException
     {
-        return null;
+        byte[] bytes = getBytes(index, bytesRequested);
+        try {
+            return new String(bytes, charset);
+        } catch (UnsupportedEncodingException e) {
+            return new String(bytes);
+        }
     }
 
     @NotNull
     @Override
     public String getNullTerminatedString(int index, int maxLengthBytes) throws BufferBoundsException
     {
-        return null;
+        // NOTE currently only really suited to single-byte character strings
+
+        byte[] bytes = getBytes(index, maxLengthBytes);
+
+        // Check for null terminators
+        int length = 0;
+        while (length < bytes.length && bytes[length] != '\0' && length < maxLengthBytes)
+            length++;
+
+//        byte[] outputBytes = new byte[length];
+//        System.arraycopy(bytes, 0, outputBytes, 0, length);
+
+        return new String(bytes, 0, length);
     }
 }

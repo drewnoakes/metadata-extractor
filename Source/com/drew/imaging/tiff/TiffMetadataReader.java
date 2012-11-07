@@ -22,6 +22,7 @@ package com.drew.imaging.tiff;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessFileReader;
+import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
@@ -54,24 +55,12 @@ public class TiffMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
-        // NOTE this method is very inefficient, as it attempts to read the entire TIFF file into a byte[]
         // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
-        // InputStream does not support seeking backwards, and so is not a viable option for TIFF processing
-
-        final int chunkSize = 8 * 1024;
-
-        byte[] buffer = new byte[chunkSize];
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        int bytesRead;
-        while((bytesRead = inputStream.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
-        }
-
-        byte[] tiffBytes = out.toByteArray();
+        // InputStream does not support seeking backwards, and so is not a viable option for TIFF processing.
+        // We use RandomAccessStreamReader, which buffers data from the stream as we seek forward.
 
         Metadata metadata = new Metadata();
-        new ExifReader().extractTiff(new ByteArrayReader(tiffBytes), metadata);
+        new ExifReader().extractTiff(new RandomAccessStreamReader(inputStream), metadata);
         return metadata;
     }
 }

@@ -290,7 +290,7 @@ public class RandomAccessStreamReaderTest
         try {
             reader.getBytes(0x6FFFFFFF, 0x6FFFFFFF);
         } catch (BufferBoundsException e) {
-            Assert.assertEquals("Attempt to read 1879048191 bytes from beyond end of buffer (requested index: 1879048191, max index: 9)", e.getMessage());
+            Assert.assertEquals("Number of requested bytes summed with starting index exceed maximum range of signed 32 bit integers", e.getMessage());
         }
     }
 }
