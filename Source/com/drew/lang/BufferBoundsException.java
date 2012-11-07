@@ -50,9 +50,15 @@ public final class BufferBoundsException extends Exception
     private static String getMessage(int bufferLength, int index, int bytesRequested)
     {
         if (index < 0)
-            return String.format("Attempt to read from buffer using a negative index (%s)", index);
+            return String.format("Attempt to read from buffer using a negative index (%d)", index);
 
-        return String.format("Attempt to read %d byte%s from beyond end of buffer (requested index: %d, max index: %d)",
-                bytesRequested, bytesRequested==1?"":"s", index, bufferLength - 1);
+        if (bytesRequested < 0)
+            return String.format("Number of requested bytes cannot be negative (%d)", bytesRequested);
+
+        if ((long)index + (long)bytesRequested - 1L > (long)Integer.MAX_VALUE)
+            return String.format("Number of requested bytes summed with starting index exceed maximum range of signed 32 bit integers (requested index: %d, requested count: %d)", index, bytesRequested);
+
+        return String.format("Attempt to read from beyond end of underlying data source (requested index: %d, requested count: %d, max index: %d)",
+                index, bytesRequested, bufferLength - 1);
     }
 }

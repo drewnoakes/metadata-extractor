@@ -92,7 +92,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
         } else if (bytesRequested < 0) {
             throw new BufferBoundsException("Number of requested bytes must be zero or greater");
         } else if ((long)index + bytesRequested - 1 > Integer.MAX_VALUE) {
-            throw new BufferBoundsException("Number of requested bytes summed with starting index exceed maximum range of signed 32 bit integers");
+            throw new BufferBoundsException(String.format("Number of requested bytes summed with starting index exceed maximum range of signed 32 bit integers (requested index: %d, requested count: %d)", index, bytesRequested));
         }
 
         if (!isValidIndex(index, bytesRequested)) {
