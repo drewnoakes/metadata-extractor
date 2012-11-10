@@ -63,7 +63,7 @@ public class ByteArrayReader extends RandomAccessReader
     protected void validateIndex(int index, int bytesRequested) throws BufferBoundsException
     {
         if (!isValidIndex(index, bytesRequested))
-            throw new BufferBoundsException(_buffer.length, index, bytesRequested);
+            throw new BufferBoundsException(index, bytesRequested, _buffer.length);
     }
 
     @Override

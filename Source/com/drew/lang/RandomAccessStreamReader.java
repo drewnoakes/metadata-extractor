@@ -98,7 +98,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
         if (!isValidIndex(index, bytesRequested)) {
             assert(_isStreamFinished);
             // TODO test that can continue using an instance of this type after this exception
-            throw new BufferBoundsException(_streamLength, index, bytesRequested);
+            throw new BufferBoundsException(index, bytesRequested, _streamLength);
         }
     }
 

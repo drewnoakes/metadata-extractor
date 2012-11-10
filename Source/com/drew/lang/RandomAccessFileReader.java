@@ -76,24 +76,14 @@ public class RandomAccessFileReader extends RandomAccessReader
         return (byte) b;
     }
 
-    private void seek(final int index) throws BufferBoundsException
-    {
-        if (index == _currentIndex)
-            return;
-
-        try {
-            _file.seek(index);
-            _currentIndex = index;
-        } catch (IOException e) {
-            throw new BufferBoundsException("IOException seeking in file.", e);
-        }
-    }
-
     @Override
     @NotNull
     public byte[] getBytes(int index, int count) throws BufferBoundsException
     {
         validateIndex(index, count);
+
+        if (index != _currentIndex)
+            seek(index);
 
         byte[] bytes = new byte[count];
         final int bytesRead;
@@ -108,6 +98,19 @@ public class RandomAccessFileReader extends RandomAccessReader
         return bytes;
     }
 
+    private void seek(final int index) throws BufferBoundsException
+    {
+        if (index == _currentIndex)
+            return;
+
+        try {
+            _file.seek(index);
+            _currentIndex = index;
+        } catch (IOException e) {
+            throw new BufferBoundsException("IOException seeking in file.", e);
+        }
+    }
+
     @Override
     protected boolean isValidIndex(int index, int bytesRequested) throws BufferBoundsException
     {
@@ -119,11 +122,7 @@ public class RandomAccessFileReader extends RandomAccessReader
     @Override
     protected void validateIndex(final int index, final int bytesRequested) throws BufferBoundsException
     {
-        if (bytesRequested < 0)
-            throw new BufferBoundsException("Requested negative number of bytes.");
-        if (index < 0)
-            throw new BufferBoundsException("Requested data from a negative index within the file.");
-        if ((long)index + (long)bytesRequested - 1L >= _length)
-            throw new BufferBoundsException("Requested data from beyond the end of the file.");
+        if (!isValidIndex(index, bytesRequested))
+            throw new BufferBoundsException(index, bytesRequested, _length);
     }
 }
