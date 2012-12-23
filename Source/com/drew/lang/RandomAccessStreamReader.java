@@ -143,6 +143,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
 
                     // check we have enough bytes for the requested index
                     if (endIndex >= _streamLength) {
+                        _chunks.add(chunk);
                         return false;
                     }
                 } else {
