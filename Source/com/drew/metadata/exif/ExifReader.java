@@ -165,8 +165,9 @@ public class ExifReader implements MetadataReader
         int firstDirectoryOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
 
         // David Ekholm sent a digital camera image that has this problem
+        // TODO getLength should be avoided as it causes RandomAccessStreamReader to read to the end of the stream
         if (firstDirectoryOffset >= reader.getLength() - 1) {
-            directory.addError("First exif directory offset is beyond end of Exif data segment");
+            directory.addError("First Exif directory offset is beyond end of Exif data segment");
             // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
             firstDirectoryOffset = 14;
         }
