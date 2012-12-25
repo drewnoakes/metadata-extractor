@@ -26,7 +26,9 @@ import com.drew.lang.annotations.Nullable;
 
 /**
  * Represents a latitude and longitude pair, giving a position on earth in spherical coordinates.
+ * <p/>
  * Values of latitude and longitude are given in degrees.
+ * <p/>
  * This type is immutable.
  */
 public final class GeoLocation
