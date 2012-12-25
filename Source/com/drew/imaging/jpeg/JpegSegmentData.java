@@ -30,10 +30,10 @@ import java.util.List;
 
 /**
  * Holds a collection of JPEG data segments.  This need not necessarily be all segments
- * within the JPEG.  For example, it may be convenient to store only the non-image
+ * within the JPEG. For example, it may be convenient to store only the non-image
  * segments when analysing (or serializing) metadata.
  * <p/>
- * Segments are keyed via their {@link JpegSegmentType}.  Where multiple segments use the
+ * Segments are keyed via their {@link JpegSegmentType}. Where multiple segments use the
  * same segment type, they will all be stored and available.
  *
  * @author Drew Noakes http://drewnoakes.com
@@ -41,25 +41,25 @@ import java.util.List;
 public class JpegSegmentData implements Serializable
 {
     private static final long serialVersionUID = 7110175216435025451L;
-    
-    /** A map of byte[], keyed by the JpegSegmentType */
+
     @NotNull
-    private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
+    private final HashMap<Byte, List<byte[]>> _segmentsByType = new HashMap<Byte, List<byte[]>>(10);
 
     /**
      * Adds segment bytes to the collection.
-     * @param segmentType
-     * @param segmentBytes
+     *
+     * @param segmentType the type of the segment being added
+     * @param segmentBytes the byte array holding data for the segment being added
      */
-    @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void addSegment(byte segmentType, @NotNull byte[] segmentBytes)
     {
-        final List<byte[]> segmentList = getOrCreateSegmentList(segmentType);
-        segmentList.add(segmentBytes);
+        getOrCreateSegmentList(segmentType).add(segmentBytes);
     }
 
     /**
      * Gets the first JPEG segment data for the specified type.
+     *
      * @param segmentType the JpegSegmentType for the desired segment
      * @return a byte[] containing segment data or null if no data exists for that segment
      */
@@ -71,11 +71,12 @@ public class JpegSegmentData implements Serializable
 
     /**
      * Gets the first JPEG segment data for the specified type.
+     *
      * @param segmentType the JpegSegmentType for the desired segment
      * @return a byte[] containing segment data or null if no data exists for that segment
      */
     @Nullable
-    public byte[] getSegment(JpegSegmentType segmentType)
+    public byte[] getSegment(@NotNull JpegSegmentType segmentType)
     {
         return getSegment(segmentType.byteValue, 0);
     }
@@ -83,12 +84,13 @@ public class JpegSegmentData implements Serializable
     /**
      * Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
      * of segment data for a given type exists.
+     *
      * @param segmentType identifies the required segment
-     * @param occurrence the zero-based index of the occurrence
+     * @param occurrence  the zero-based index of the occurrence
      * @return the segment data as a byte[], or null if no segment exists for the type & occurrence
      */
     @Nullable
-    public byte[] getSegment(JpegSegmentType segmentType, int occurrence)
+    public byte[] getSegment(@NotNull JpegSegmentType segmentType, int occurrence)
     {
         return getSegment(segmentType.byteValue, occurrence);
     }
@@ -96,8 +98,9 @@ public class JpegSegmentData implements Serializable
     /**
      * Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
      * of segment data for a given type exists.
+     *
      * @param segmentType identifies the required segment
-     * @param occurrence the zero-based index of the occurrence
+     * @param occurrence  the zero-based index of the occurrence
      * @return the segment data as a byte[], or null if no segment exists for the type & occurrence
      */
     @Nullable
@@ -105,10 +108,9 @@ public class JpegSegmentData implements Serializable
     {
         final List<byte[]> segmentList = getSegmentList(segmentType);
 
-        if (segmentList==null || segmentList.size()<=occurrence)
-            return null;
-        else
-            return segmentList.get(occurrence);
+        return segmentList != null && segmentList.size() > occurrence
+                ? segmentList.get(occurrence)
+                : null;
     }
 
     /**
@@ -118,7 +120,7 @@ public class JpegSegmentData implements Serializable
      * @return zero or more byte arrays, each holding the data of a JPEG segment
      */
     @NotNull
-    public Iterable<byte[]> getSegments(JpegSegmentType segmentType)
+    public Iterable<byte[]> getSegments(@NotNull JpegSegmentType segmentType)
     {
         return getSegments(segmentType.byteValue);
     }
@@ -133,13 +135,13 @@ public class JpegSegmentData implements Serializable
     public Iterable<byte[]> getSegments(byte segmentType)
     {
         final List<byte[]> segmentList = getSegmentList(segmentType);
-        return segmentList==null ? new ArrayList<byte[]>() : segmentList;
+        return segmentList == null ? new ArrayList<byte[]>() : segmentList;
     }
 
     @Nullable
     public List<byte[]> getSegmentList(byte segmentType)
     {
-        return _segmentDataMap.get(segmentType);
+        return _segmentsByType.get(segmentType);
     }
 
     @NotNull
@@ -147,27 +149,29 @@ public class JpegSegmentData implements Serializable
     {
 
         List<byte[]> segmentList;
-        if (_segmentDataMap.containsKey(segmentType)) {
-            segmentList = _segmentDataMap.get(segmentType);
+        if (_segmentsByType.containsKey(segmentType)) {
+            segmentList = _segmentsByType.get(segmentType);
         } else {
             segmentList = new ArrayList<byte[]>();
-            _segmentDataMap.put(segmentType, segmentList);
+            _segmentsByType.put(segmentType, segmentList);
         }
         return segmentList;
     }
 
     /**
      * Returns the count of segment data byte arrays stored for a given segment type.
+     *
      * @param segmentType identifies the required segment
      * @return the segment count (zero if no segments exist).
      */
-    public int getSegmentCount(JpegSegmentType segmentType)
+    public int getSegmentCount(@NotNull JpegSegmentType segmentType)
     {
         return getSegmentCount(segmentType.byteValue);
     }
 
     /**
      * Returns the count of segment data byte arrays stored for a given segment type.
+     *
      * @param segmentType identifies the required segment
      * @return the segment count (zero if no segments exist).
      */
@@ -180,11 +184,12 @@ public class JpegSegmentData implements Serializable
     /**
      * Removes a specified instance of a segment's data from the collection.  Use this method when more than one
      * occurrence of segment data exists for a given type exists.
+     *
      * @param segmentType identifies the required segment
-     * @param occurrence the zero-based index of the segment occurrence to remove.
+     * @param occurrence  the zero-based index of the segment occurrence to remove.
      */
-    @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
-    public void removeSegmentOccurrence(JpegSegmentType segmentType, int occurrence)
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
+    public void removeSegmentOccurrence(@NotNull JpegSegmentType segmentType, int occurrence)
     {
         removeSegmentOccurrence(segmentType.byteValue, occurrence);
     }
@@ -192,94 +197,95 @@ public class JpegSegmentData implements Serializable
     /**
      * Removes a specified instance of a segment's data from the collection.  Use this method when more than one
      * occurrence of segment data exists for a given type exists.
+     *
      * @param segmentType identifies the required segment
-     * @param occurrence the zero-based index of the segment occurrence to remove.
+     * @param occurrence  the zero-based index of the segment occurrence to remove.
      */
-    @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void removeSegmentOccurrence(byte segmentType, int occurrence)
     {
-        final List<byte[]> segmentList = _segmentDataMap.get(segmentType);
+        final List<byte[]> segmentList = _segmentsByType.get(segmentType);
         segmentList.remove(occurrence);
     }
 
     /**
      * Removes all segments from the collection having the specified type.
+     *
      * @param segmentType identifies the required segment
      */
-    public void removeSegment(JpegSegmentType segmentType)
+    public void removeSegment(@NotNull JpegSegmentType segmentType)
     {
         removeSegment(segmentType.byteValue);
     }
 
     /**
      * Removes all segments from the collection having the specified type.
+     *
      * @param segmentType identifies the required segment
      */
     public void removeSegment(byte segmentType)
     {
-        _segmentDataMap.remove(segmentType);
+        _segmentsByType.remove(segmentType);
     }
 
     /**
      * Determines whether data is present for a given segment type.
+     *
      * @param segmentType identifies the required segment
      * @return true if data exists, otherwise false
      */
-    public boolean containsSegment(JpegSegmentType segmentType)
+    public boolean containsSegment(@NotNull JpegSegmentType segmentType)
     {
         return containsSegment(segmentType.byteValue);
     }
 
     /**
      * Determines whether data is present for a given segment type.
+     *
      * @param segmentType identifies the required segment
      * @return true if data exists, otherwise false
      */
     public boolean containsSegment(byte segmentType)
     {
-        return _segmentDataMap.containsKey(segmentType);
+        return _segmentsByType.containsKey(segmentType);
     }
 
     /**
-     * Serialises the contents of a JpegSegmentData to a file.
-     * @param file to file to write from
+     * Serialises the contents of a {@link JpegSegmentData} to a {@link File}.
+     *
+     * @param file        to file to write from
      * @param segmentData the data to write
      * @throws IOException if problems occur while writing
      */
     public static void toFile(@NotNull File file, @NotNull JpegSegmentData segmentData) throws IOException
     {
         FileOutputStream fileOutputStream = null;
-        try
-        {
+        try {
             fileOutputStream = new FileOutputStream(file);
             new ObjectOutputStream(fileOutputStream).writeObject(segmentData);
-        }
-        finally
-        {
-            if (fileOutputStream!=null)
+        } finally {
+            if (fileOutputStream != null)
                 fileOutputStream.close();
         }
     }
 
     /**
-     * Deserialises the contents of a JpegSegmentData from a file.
+     * Deserialises the contents of a {@link JpegSegmentData} from a {@link File}.
+     *
      * @param file the file to read from
      * @return the JpegSegmentData as read
-     * @throws IOException if problems occur while reading
+     * @throws IOException            if problems occur while reading
      * @throws ClassNotFoundException if problems occur while deserialising
      */
     @NotNull
     public static JpegSegmentData fromFile(@NotNull File file) throws IOException, ClassNotFoundException
     {
         ObjectInputStream inputStream = null;
-        try
-        {
+        try {
             inputStream = new ObjectInputStream(new FileInputStream(file));
-            return (JpegSegmentData)inputStream.readObject();
-        }
-        finally
-        {
-            if (inputStream!=null)
+            return (JpegSegmentData) inputStream.readObject();
+        } finally {
+            if (inputStream != null)
                 inputStream.close();
         }
     }

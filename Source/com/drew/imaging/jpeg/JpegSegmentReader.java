@@ -32,7 +32,7 @@ import java.io.InputStream;
 /**
  * Performs read functions of JPEG files, returning specific file segments.
  *
- * @author  Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class JpegSegmentReader
 {
@@ -42,12 +42,12 @@ public class JpegSegmentReader
     /**
      * Private, because this segment crashes my algorithm, and searching for it doesn't work (yet).
      */
-    private static final byte SEGMENT_SOS = (byte)0xDA;
+    private static final byte SEGMENT_SOS = (byte) 0xDA;
 
     /**
      * Private, because one wouldn't search for it.
      */
-    private static final byte MARKER_EOI = (byte)0xD9;
+    private static final byte MARKER_EOI = (byte) 0xD9;
 
     public static JpegSegmentData readSegments(String fileName) throws IOException, JpegProcessingException
     {
@@ -55,13 +55,14 @@ public class JpegSegmentReader
     }
 
     /**
-     * Creates a JpegSegmentReader for a specific file.
+     * Creates {@link JpegSegmentData} for a specific file.
+     *
      * @param file the JPEG file to read segments from
      */
-    @SuppressWarnings({ "ConstantConditions" })
+    @SuppressWarnings({"ConstantConditions"})
     public static JpegSegmentData readSegments(@NotNull File file) throws JpegProcessingException, IOException
     {
-        if (file==null)
+        if (file == null)
             throw new NullPointerException();
 
         InputStream inputStream = null;
@@ -75,13 +76,14 @@ public class JpegSegmentReader
     }
 
     /**
-     * Creates a JpegSegmentReader for an InputStream.
+     * Creates {@link JpegSegmentData} for an InputStream.
+     *
      * @param inputStream the InputStream containing JPEG data
      */
-    @SuppressWarnings({ "ConstantConditions" })
+    @SuppressWarnings({"ConstantConditions"})
     public static JpegSegmentData readSegments(@NotNull InputStream inputStream) throws JpegProcessingException
     {
-        if (inputStream==null)
+        if (inputStream == null)
             throw new NullPointerException();
 
         try {
@@ -95,7 +97,7 @@ public class JpegSegmentReader
     public static JpegSegmentData readSegments(@NotNull final SequentialReader reader) throws JpegProcessingException, IOException
     {
         // Must be big-endian
-        assert(reader.isMotorolaByteOrder());
+        assert (reader.isMotorolaByteOrder());
 
         JpegSegmentData segmentData = new JpegSegmentData();
 
@@ -124,7 +126,7 @@ public class JpegSegmentReader
                 throw new JpegProcessingException("JPEG segment size would be less than zero");
 
             byte[] segmentBytes = reader.getBytes(segmentLength);
-            assert(segmentLength == segmentBytes.length);
+            assert (segmentLength == segmentBytes.length);
 
             switch (segmentType) {
                 case SEGMENT_SOS:
