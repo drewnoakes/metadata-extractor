@@ -20,14 +20,17 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.BufferBoundsException;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +40,7 @@ import java.util.Set;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class ExifReader implements MetadataReader
+public class ExifReader implements JpegSegmentMetadataReader
 {
     // TODO extract a reusable TiffReader from this class with hooks for special tag handling and subdir following
     
@@ -82,6 +85,25 @@ public class ExifReader implements MetadataReader
     public static final int TAG_MAKER_NOTE_OFFSET = 0x927C;
 
     public static final int TIFF_HEADER_START_OFFSET = 6;
+
+    @NotNull
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.APP1);
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        return segmentBytes.length > 3 && "EXIF".equalsIgnoreCase(new String(segmentBytes, 0, 4));
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    {
+        extract(new ByteArrayReader(segmentBytes), metadata);
+    }
 
     /**
      * Performs the Exif data extraction, adding found values to the specified

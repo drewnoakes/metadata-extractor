@@ -21,24 +21,24 @@
 package com.drew.imaging.jpeg;
 
 import com.drew.lang.SequentialReader;
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Performs read functions of JPEG files, returning specific file segments.
+ * <p/>
+ * JPEG files are composed of a sequence of JPEG 'segments'. Each is identified by one of a set of byte values,
+ * modelled in the {@link JpegSegmentType} enumeration. Use <code>readSegments</code> to read out the some or all
+ * segments into a {@link JpegSegmentData} object, from which the raw JPEG segment byte arrays may be accessed.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
 public class JpegSegmentReader
 {
-    // TODO allow caller to specify which segments they're interested in, and only return data from that set
-    // TODO add a findAvailableSegments() method that scans input without extracting bytes
-
     /**
      * Private, because this segment crashes my algorithm, and searching for it doesn't work (yet).
      */
@@ -49,62 +49,37 @@ public class JpegSegmentReader
      */
     private static final byte MARKER_EOI = (byte) 0xD9;
 
-    public static JpegSegmentData readSegments(String fileName) throws IOException, JpegProcessingException
-    {
-        return readSegments(new File(fileName));
-    }
-
     /**
-     * Creates {@link JpegSegmentData} for a specific file.
+     * Processes the provided JPEG data, and extracts the specified JPEG segments into a {@link JpegSegmentData} object.
+     * <p/>
+     * Will not return SOS (start of scan) or EOI (end of image) segments.
      *
-     * @param file the JPEG file to read segments from
+     * @param reader a {@link SequentialReader} from which the JPEG data will be read. It must be positioned at the
+     *               beginning of the JPEG data stream.
+     * @param segmentTypes the set of JPEG segments types that are to be returned. If this argument is <code>null</code>
+     *                     then all found segment types are returned.
      */
-    @SuppressWarnings({"ConstantConditions"})
-    public static JpegSegmentData readSegments(@NotNull File file) throws JpegProcessingException, IOException
-    {
-        if (file == null)
-            throw new NullPointerException();
-
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
-            return readSegments(new StreamReader(inputStream));
-        } finally {
-            if (inputStream != null)
-                inputStream.close();
-        }
-    }
-
-    /**
-     * Creates {@link JpegSegmentData} for an InputStream.
-     *
-     * @param inputStream the InputStream containing JPEG data
-     */
-    @SuppressWarnings({"ConstantConditions"})
-    public static JpegSegmentData readSegments(@NotNull InputStream inputStream) throws JpegProcessingException
-    {
-        if (inputStream == null)
-            throw new NullPointerException();
-
-        try {
-            return readSegments(new StreamReader(inputStream));
-        } catch (IOException e) {
-            throw new JpegProcessingException(e);
-        }
-    }
-
     @NotNull
-    public static JpegSegmentData readSegments(@NotNull final SequentialReader reader) throws JpegProcessingException, IOException
+    public static JpegSegmentData readSegments(@NotNull final SequentialReader reader, @Nullable Iterable<JpegSegmentType> segmentTypes) throws JpegProcessingException, IOException
     {
         // Must be big-endian
         assert (reader.isMotorolaByteOrder());
 
-        JpegSegmentData segmentData = new JpegSegmentData();
-
         // first two bytes should be JPEG magic number
         final int magicNumber = reader.getUInt16();
-        if (magicNumber != 0xFFD8)
+        if (magicNumber != 0xFFD8) {
             throw new JpegProcessingException("JPEG data is expected to begin with 0xFFD8 (ÿØ) not 0x" + Integer.toHexString(magicNumber));
+        }
+
+        Set<Byte> segmentTypeBytes = null;
+        if (segmentTypes != null) {
+            segmentTypeBytes = new HashSet<Byte>();
+            for (JpegSegmentType segmentType : segmentTypes) {
+                segmentTypeBytes.add(segmentType.byteValue);
+            }
+        }
+
+        JpegSegmentData segmentData = new JpegSegmentData();
 
         do {
             // next byte is the segment identifier: 0xFF
@@ -116,6 +91,18 @@ public class JpegSegmentReader
             // next byte is the segment type
             byte segmentType = reader.getInt8();
 
+            if (segmentType == SEGMENT_SOS) {
+                // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
+                // have to search for the two bytes: 0xFF 0xD9 (EOI).
+                // It comes last so simply return at this point
+                return segmentData;
+            }
+
+            if (segmentType == MARKER_EOI) {
+                // the 'End-Of-Image' segment -- this should never be found in this fashion
+                return segmentData;
+            }
+
             // next 2-bytes are <segment-size>: [high-byte] [low-byte]
             int segmentLength = reader.getUInt16();
 
@@ -125,20 +112,16 @@ public class JpegSegmentReader
             if (segmentLength < 0)
                 throw new JpegProcessingException("JPEG segment size would be less than zero");
 
-            byte[] segmentBytes = reader.getBytes(segmentLength);
-            assert (segmentLength == segmentBytes.length);
-
-            switch (segmentType) {
-                case SEGMENT_SOS:
-                    // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
-                    // have to search for the two bytes: 0xFF 0xD9 (EOI).
-                    // It comes last so simply return at this point
+            // Check whether we are interested in this segment
+            if (segmentTypeBytes == null || segmentTypeBytes.contains(segmentType)) {
+                byte[] segmentBytes = reader.getBytes(segmentLength);
+                assert (segmentLength == segmentBytes.length);
+                segmentData.addSegment(segmentType, segmentBytes);
+            } else {
+                // Some if the JPEG is truncated, just return what data we've already gathered
+                if (!reader.trySkip(segmentLength)) {
                     return segmentData;
-                case MARKER_EOI:
-                    // the 'End-Of-Image' segment -- this should never be found in this fashion
-                    return segmentData;
-                default:
-                    segmentData.addSegment(segmentType, segmentBytes);
+                }
             }
 
         } while (true);

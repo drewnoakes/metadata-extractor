@@ -43,12 +43,12 @@ public class JpegSegmentData implements Serializable
     private static final long serialVersionUID = 7110175216435025451L;
 
     @NotNull
-    private final HashMap<Byte, List<byte[]>> _segmentsByType = new HashMap<Byte, List<byte[]>>(10);
+    private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
 
     /**
      * Adds segment bytes to the collection.
      *
-     * @param segmentType the type of the segment being added
+     * @param segmentType  the type of the segment being added
      * @param segmentBytes the byte array holding data for the segment being added
      */
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
@@ -141,7 +141,7 @@ public class JpegSegmentData implements Serializable
     @Nullable
     public List<byte[]> getSegmentList(byte segmentType)
     {
-        return _segmentsByType.get(segmentType);
+        return _segmentDataMap.get(segmentType);
     }
 
     @NotNull
@@ -149,11 +149,11 @@ public class JpegSegmentData implements Serializable
     {
 
         List<byte[]> segmentList;
-        if (_segmentsByType.containsKey(segmentType)) {
-            segmentList = _segmentsByType.get(segmentType);
+        if (_segmentDataMap.containsKey(segmentType)) {
+            segmentList = _segmentDataMap.get(segmentType);
         } else {
             segmentList = new ArrayList<byte[]>();
-            _segmentsByType.put(segmentType, segmentList);
+            _segmentDataMap.put(segmentType, segmentList);
         }
         return segmentList;
     }
@@ -204,7 +204,7 @@ public class JpegSegmentData implements Serializable
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void removeSegmentOccurrence(byte segmentType, int occurrence)
     {
-        final List<byte[]> segmentList = _segmentsByType.get(segmentType);
+        final List<byte[]> segmentList = _segmentDataMap.get(segmentType);
         segmentList.remove(occurrence);
     }
 
@@ -225,7 +225,7 @@ public class JpegSegmentData implements Serializable
      */
     public void removeSegment(byte segmentType)
     {
-        _segmentsByType.remove(segmentType);
+        _segmentDataMap.remove(segmentType);
     }
 
     /**
@@ -247,7 +247,7 @@ public class JpegSegmentData implements Serializable
      */
     public boolean containsSegment(byte segmentType)
     {
-        return _segmentsByType.containsKey(segmentType);
+        return _segmentDataMap.containsKey(segmentType);
     }
 
     /**
@@ -283,10 +283,31 @@ public class JpegSegmentData implements Serializable
         ObjectInputStream inputStream = null;
         try {
             inputStream = new ObjectInputStream(new FileInputStream(file));
-            return (JpegSegmentData) inputStream.readObject();
+            return (JpegSegmentData)inputStream.readObject();
         } finally {
             if (inputStream != null)
                 inputStream.close();
+        }
+    }
+
+    /**
+     * Deserialises the contents of a {@link JpegSegmentData} from an {@link InputStream}.
+     *
+     * @param inputStream the input stream to read from
+     * @return the JpegSegmentData as read
+     * @throws IOException            if problems occur while reading
+     * @throws ClassNotFoundException if problems occur while deserialising
+     */
+    @NotNull
+    public static JpegSegmentData fromFile(@NotNull InputStream inputStream) throws IOException, ClassNotFoundException
+    {
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(inputStream);
+            return (JpegSegmentData)ois.readObject();
+        } finally {
+            if (ois != null)
+                ois.close();
         }
     }
 }

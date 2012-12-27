@@ -1,0 +1,103 @@
+/*
+ * Copyright 2002-2012 Drew Noakes
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
+ */
+
+package com.drew.lang;
+
+import com.drew.lang.annotations.NotNull;
+
+import java.io.EOFException;
+import java.io.IOException;
+
+/**
+ *
+ * @author Drew Noakes http://drewnoakes.com
+ */
+public class SequentialByteArrayReader extends SequentialReader
+{
+    @NotNull
+    private final byte[] _bytes;
+    private int _index;
+
+    @SuppressWarnings("ConstantConditions")
+    public SequentialByteArrayReader(@NotNull byte[] bytes)
+    {
+        if (bytes == null)
+            throw new NullPointerException();
+
+        _bytes = bytes;
+        _index = 0;
+    }
+
+    @Override
+    protected byte getByte() throws IOException
+    {
+        if (_index >= _bytes.length) {
+            throw new EOFException("End of data reached.");
+        }
+        return _bytes[_index++];
+    }
+
+    @NotNull
+    @Override
+    public byte[] getBytes(int count) throws IOException
+    {
+        if (_index + count > _bytes.length) {
+            throw new EOFException("End of data reached.");
+        }
+
+        byte[] bytes = new byte[count];
+        System.arraycopy(_bytes, _index, bytes, 0, count);
+        _index += count;
+
+        return bytes;
+    }
+
+    @Override
+    public void skip(long n) throws IOException
+    {
+        if (n < 0) {
+            throw new IllegalArgumentException("n must be zero or greater.");
+        }
+
+        if (_index + n > _bytes.length) {
+            throw new EOFException("End of data reached.");
+        }
+
+        _index += n;
+    }
+
+    @Override
+    public boolean trySkip(long n) throws IOException
+    {
+        if (n < 0) {
+            throw new IllegalArgumentException("n must be zero or greater.");
+        }
+
+        _index += n;
+
+        if (_index > _bytes.length) {
+            _index = _bytes.length;
+            return false;
+        }
+
+        return true;
+    }
+}

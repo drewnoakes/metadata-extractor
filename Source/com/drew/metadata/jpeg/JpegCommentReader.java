@@ -20,11 +20,12 @@
  */
 package com.drew.metadata.jpeg;
 
-import com.drew.lang.BufferBoundsException;
-import com.drew.lang.RandomAccessReader;
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
+
+import java.util.Arrays;
 
 /**
  * Decodes the comment stored within JPEG files, populating a {@link Metadata} object with tag values in a
@@ -32,20 +33,28 @@ import com.drew.metadata.MetadataReader;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegCommentReader implements MetadataReader
+public class JpegCommentReader implements JpegSegmentMetadataReader
 {
-    /**
-     * Performs the JPEG data extraction, adding found values to the specified
-     * instance of {@link Metadata}.
-     */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
+    @NotNull
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.COM);
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        // The entire contents of the byte[] is the comment. There's nothing here to discriminate upon.
+        return true;
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         JpegCommentDirectory directory = metadata.getOrCreateDirectory(JpegCommentDirectory.class);
 
-        try {
-            directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, reader.getString(0, (int)reader.getLength()));
-        } catch (BufferBoundsException e) {
-            directory.addError("Exception reading JPEG comment string");
-        }
+        // The entire contents of the directory are the comment
+        directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, new String(segmentBytes));
     }
 }

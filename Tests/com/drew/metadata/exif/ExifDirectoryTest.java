@@ -23,13 +23,13 @@ package com.drew.metadata.exif;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -68,7 +68,7 @@ public class ExifDirectoryTest
         Assert.assertNotNull(thumbData);
         try {
             // attempt to read the thumbnail -- it should be a legal Jpeg file
-            JpegSegmentReader.readSegments(new ByteArrayInputStream(thumbData));
+            JpegSegmentReader.readSegments(new SequentialByteArrayReader(thumbData), null);
         } catch (JpegProcessingException e) {
             Assert.fail("Unable to construct JpegSegmentReader from thumbnail data");
         }

@@ -31,99 +31,27 @@ import java.io.InputStream;
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class StreamReader implements SequentialReader
+public class StreamReader extends SequentialReader
 {
     @NotNull
     private final InputStream _stream;
-    private boolean _isMotorolaByteOrder;
 
+    @SuppressWarnings("ConstantConditions")
     public StreamReader(@NotNull InputStream stream)
     {
+        if (stream == null)
+            throw new NullPointerException();
+
         _stream = stream;
-        _isMotorolaByteOrder = true;
     }
 
     @Override
-    public void setMotorolaByteOrder(boolean motorolaByteOrder)
-    {
-        _isMotorolaByteOrder = motorolaByteOrder;
-    }
-
-    @Override
-    public boolean isMotorolaByteOrder()
-    {
-        return _isMotorolaByteOrder;
-    }
-
-    @Override
-    public short getUInt8() throws IOException
+    protected byte getByte() throws IOException
     {
         int value = _stream.read();
         if (value == -1)
-            throw new EOFException("End of stream reached.");
-        return (short)(value & 0xFF);
-    }
-
-    @Override
-    public byte getInt8() throws IOException
-    {
-        int value = _stream.read();
-        if (value == -1)
-            throw new EOFException("End of stream reached.");
+            throw new EOFException("End of data reached.");
         return (byte)value;
-    }
-
-    @Override
-    public int getUInt16() throws IOException
-    {
-        byte byte1 = getInt8();
-        byte byte2 = getInt8();
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (byte1 << 8 | byte2 & 0xFF) & 0xFFFF;
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (byte2 << 8 | byte1 & 0xFF) & 0xFFFF;
-        }
-    }
-
-    @Override
-    public short getInt16() throws IOException
-    {
-        byte byte1 = getInt8();
-        byte byte2 = getInt8();
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (short) ((byte1 << 8 | byte2 & 0xFF) & 0xFFFF);
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (short) ((byte2 << 8 | byte1 & 0xFF) & 0xFFFF);
-        }
-    }
-
-    @Override
-    public int getInt32() throws IOException
-    {
-        byte byte1 = getInt8();
-        byte byte2 = getInt8();
-        byte byte3 = getInt8();
-        byte byte4 = getInt8();
-
-        if (_isMotorolaByteOrder) {
-            // Motorola - MSB first (big endian)
-            return (byte1 << 24) |
-                   (byte2 << 16) |
-                   (byte3 << 8 ) |
-                   (byte4      );
-        } else {
-            // Intel ordering - LSB first (little endian)
-            return (byte4      ) |
-                   (byte3 << 8 ) |
-                   (byte2 << 16) |
-                   (byte1 << 24);
-        }
     }
 
     @NotNull
@@ -136,11 +64,51 @@ public class StreamReader implements SequentialReader
         while (totalBytesRead != count) {
             final int bytesRead = _stream.read(bytes, totalBytesRead, count - totalBytesRead);
             if (bytesRead == -1)
-                throw new EOFException("End of stream reached.");
+                throw new EOFException("End of data reached.");
             totalBytesRead += bytesRead;
             assert(totalBytesRead <= count);
         }
 
         return bytes;
+    }
+
+    @Override
+    public void skip(long n) throws IOException
+    {
+        if (n < 0)
+            throw new IllegalArgumentException("n must be zero or greater.");
+
+        long skippedCount = skipInternal(n);
+
+        if (skippedCount != n)
+            throw new EOFException(String.format("Unable to skip. Requested %d bytes but skipped %d.", n, skippedCount));
+    }
+
+    @Override
+    public boolean trySkip(long n) throws IOException
+    {
+        if (n < 0)
+            throw new IllegalArgumentException("n must be zero or greater.");
+
+        return skipInternal(n) == n;
+    }
+
+    private long skipInternal(long n) throws IOException
+    {
+        // It seems that for some streams, such as BufferedInputStream, that skip can return
+        // some smaller number than was requested. So loop until we either skip enough, or
+        // InputStream.skip returns zero.
+        //
+        // See http://stackoverflow.com/questions/14057720/robust-skipping-of-data-in-a-java-io-inputstream-and-its-subtypes
+        //
+        long skippedTotal = 0;
+        while (skippedTotal != n) {
+            long skipped = _stream.skip(n - skippedTotal);
+            assert(skipped >= 0);
+            skippedTotal += skipped;
+            if (skipped == 0)
+                break;
+        }
+        return skippedTotal;
     }
 }

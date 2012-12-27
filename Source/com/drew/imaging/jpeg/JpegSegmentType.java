@@ -27,8 +27,6 @@ package com.drew.imaging.jpeg;
  */
 public enum JpegSegmentType
 {
-    // TODO add a getSegmentDescription() method, returning for example 'App1 application data segment, commonly containing Exif data'
-
     /** APP0 JPEG segment identifier -- JFIF data (also JFXX apparently). */
     APP0((byte)0xE0),
 
@@ -86,8 +84,53 @@ public enum JpegSegmentType
     /** Define Huffman Table segment identifier. */
     DHT((byte)0xC4),
 
-    /** Start-of-Frame Zero segment identifier. */
+    /** Start-of-Frame (0) segment identifier. */
     SOF0((byte)0xC0),
+
+    /** Start-of-Frame (1) segment identifier. */
+    SOF1((byte)0xC1),
+
+    /** Start-of-Frame (2) segment identifier. */
+    SOF2((byte)0xC2),
+
+    /** Start-of-Frame (3) segment identifier. */
+    SOF3((byte)0xC3),
+
+//    /** Start-of-Frame (4) segment identifier. */
+//    SOF4((byte)0xC4),
+
+    /** Start-of-Frame (5) segment identifier. */
+    SOF5((byte)0xC5),
+
+    /** Start-of-Frame (6) segment identifier. */
+    SOF6((byte)0xC6),
+
+    /** Start-of-Frame (7) segment identifier. */
+    SOF7((byte)0xC7),
+
+    /** Start-of-Frame (8) segment identifier. */
+    SOF8((byte)0xC8),
+
+    /** Start-of-Frame (9) segment identifier. */
+    SOF9((byte)0xC9),
+
+    /** Start-of-Frame (10) segment identifier. */
+    SOF10((byte)0xCA),
+
+    /** Start-of-Frame (11) segment identifier. */
+    SOF11((byte)0xCB),
+
+//    /** Start-of-Frame (12) segment identifier. */
+//    SOF12((byte)0xCC),
+
+    /** Start-of-Frame (13) segment identifier. */
+    SOF13((byte)0xCD),
+
+    /** Start-of-Frame (14) segment identifier. */
+    SOF14((byte)0xCE),
+
+    /** Start-of-Frame (15) segment identifier. */
+    SOF15((byte)0xCF),
 
     /** JPEG comment segment identifier. */
     COM((byte)0xFE);

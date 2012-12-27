@@ -22,10 +22,8 @@ package com.drew.metadata;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.imaging.jpeg.*;
-import com.drew.lang.ByteArrayReader;
-import com.drew.metadata.exif.ExifReader;
-import com.drew.metadata.iptc.IptcReader;
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,25 +71,6 @@ public class SampleUsage
             System.err.println("error 2a: " + e);
         } catch (IOException e) {
             System.err.println("error 2b: " + e);
-        }
-
-        // Approach 3
-        // As fast as approach 1 (this is what goes on inside the JpegMetadataReader's readMetadata() method), this code
-        // is handy if you want to look into other Jpeg segments as well.
-        try {
-            JpegSegmentData segmentData = JpegSegmentReader.readSegments(file);
-            byte[] exifSegment = segmentData.getSegment(JpegSegmentType.APP1);
-            byte[] iptcSegment = segmentData.getSegment(JpegSegmentType.APPD);
-            Metadata metadata = new Metadata();
-            if (exifSegment != null)
-                new ExifReader().extract(new ByteArrayReader(exifSegment), metadata);
-            if (iptcSegment != null)
-                new IptcReader().extract(new ByteArrayReader(iptcSegment), metadata);
-            printImageTags(3, metadata);
-        } catch (JpegProcessingException e) {
-            System.err.println("error 3a: " + e);
-        } catch (IOException e) {
-            System.err.println("error 3b: " + e);
         }
     }
 

@@ -21,6 +21,7 @@
 package com.drew.lang;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -71,10 +72,12 @@ public class TestHelper
     }
 
     @NotNull
-    public static Metadata readJpegMetadataFile(String path) throws ClassNotFoundException, IOException
+    public static Metadata readJpegMetadataFile(String path) throws JpegProcessingException, IOException, ClassNotFoundException
     {
-        final File file = new File(path);
-        final JpegSegmentData data = JpegSegmentData.fromFile(file);
-        return JpegMetadataReader.extractMetadataFromJpegSegments(data);
+        final JpegSegmentData data = JpegSegmentData.fromFile(new File(path));
+
+        Metadata metadata = new Metadata();
+        JpegMetadataReader.processJpegSegmentData(metadata, JpegMetadataReader.ALL_READERS, data);
+        return metadata;
     }
 }

@@ -26,12 +26,10 @@ import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-
 /** @author Drew Noakes http://drewnoakes.com */
 public class SonyType6MakernoteTest
 {
-    @Test public void testSonyType6Makernote() throws ClassNotFoundException, IOException
+    @Test public void testSonyType6Makernote() throws Exception
     {
         Metadata metadata = TestHelper.readJpegMetadataFile("Tests/com/drew/metadata/exif/sonyType6.metadata");
 

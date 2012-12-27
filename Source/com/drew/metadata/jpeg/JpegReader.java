@@ -20,58 +20,91 @@
  */
 package com.drew.metadata.jpeg;
 
-import com.drew.lang.BufferBoundsException;
-import com.drew.lang.RandomAccessReader;
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * Decodes JPEG SOF0 data, populating a {@link Metadata} object with tag values in a <code>JpegDirectory</code>.
+ * Decodes JPEG SOFn data, populating a {@link Metadata} object with tag values in a {@link JpegDirectory}.
  *
- * @author Darrell Silver http://www.darrellsilver.com and Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes http://drewnoakes.com
+ * @author Darrell Silver http://www.darrellsilver.com
  */
-public class JpegReader implements MetadataReader
+public class JpegReader implements JpegSegmentMetadataReader
 {
-    /**
-     * Performs the JPEG data extraction, adding found values to the specified
-     * instance of {@link Metadata}.
-     */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
+    @NotNull
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
     {
+        // NOTE that some SOFn values do not exist
+        return Arrays.asList(
+            JpegSegmentType.SOF0,
+            JpegSegmentType.SOF1,
+            JpegSegmentType.SOF2,
+            JpegSegmentType.SOF3,
+//            JpegSegmentType.SOF4,
+            JpegSegmentType.SOF5,
+            JpegSegmentType.SOF6,
+            JpegSegmentType.SOF7,
+            JpegSegmentType.SOF8,
+            JpegSegmentType.SOF9,
+            JpegSegmentType.SOF10,
+            JpegSegmentType.SOF11,
+//            JpegSegmentType.SOF12,
+            JpegSegmentType.SOF13,
+            JpegSegmentType.SOF14,
+            JpegSegmentType.SOF15
+        );
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        return true;
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    {
+        if (metadata.containsDirectory(JpegDirectory.class)) {
+            // If this directory is already present, discontinue this operation.
+            // We only store metadata for the *first* matching SOFn segment.
+            return;
+        }
+
         JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
 
+        // The value of TAG_JPEG_COMPRESSION_TYPE is determined by the segment type found
+        directory.setInt(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);
+
+        SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
+
         try {
-            // data precision
-            int dataPrecision = reader.getUInt8(JpegDirectory.TAG_JPEG_DATA_PRECISION);
-            directory.setInt(JpegDirectory.TAG_JPEG_DATA_PRECISION, dataPrecision);
-
-            // process height
-            int height = reader.getUInt16(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
-            directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, height);
-
-            // process width
-            int width = reader.getUInt16(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
-            directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, width);
-
-            // number of components
-            int numberOfComponents = reader.getUInt8(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS);
-            directory.setInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS, numberOfComponents);
+            directory.setInt(JpegDirectory.TAG_JPEG_DATA_PRECISION, reader.getUInt8());
+            directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, reader.getUInt16());
+            directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, reader.getUInt16());
+            short componentCount = reader.getUInt8();
+            directory.setInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS, componentCount);
 
             // for each component, there are three bytes of data:
             // 1 - Component ID: 1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q
             // 2 - Sampling factors: bit 0-3 vertical, 4-7 horizontal
             // 3 - Quantization table number
-            int offset = 6;
-            for (int i = 0; i < numberOfComponents; i++) {
-                int componentId = reader.getUInt8(offset++);
-                int samplingFactorByte = reader.getUInt8(offset++);
-                int quantizationTableNumber = reader.getUInt8(offset++);
-                JpegComponent component = new JpegComponent(componentId, samplingFactorByte, quantizationTableNumber);
+            for (int i = 0; i < (int)componentCount; i++) {
+                final int componentId = reader.getUInt8();
+                final int samplingFactorByte = reader.getUInt8();
+                final int quantizationTableNumber = reader.getUInt8();
+                final JpegComponent component = new JpegComponent(componentId, samplingFactorByte, quantizationTableNumber);
                 directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1 + i, component);
             }
 
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             directory.addError(ex.getMessage());
         }
     }

@@ -24,35 +24,55 @@ package com.drew.metadata.adobe;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
-import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.InputStream;
+
+import static com.drew.lang.Iterables.toList;
+import static org.junit.Assert.*;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class AdobeJpegReaderTest
 {
     @Test
+    public void testSegmentTypes() throws Exception
+    {
+        AdobeJpegReader reader = new AdobeJpegReader();
+
+        assertEquals(1, toList(reader.getSegmentTypes()).size());
+        assertEquals(JpegSegmentType.APPE, toList(reader.getSegmentTypes()).get(0));
+    }
+
+    @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg");
+        InputStream inputStream = this.getClass().getResourceAsStream("adobeJpeg1.jpg");
+
+        AdobeJpegReader adobeJpegReader = new AdobeJpegReader();
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), adobeJpegReader.getSegmentTypes());
+
+        inputStream.close();
+
         byte[] bytes = segmentData.getSegment(JpegSegmentType.APPE);
 
-        Assert.assertNotNull(bytes);
+        assertNotNull(bytes);
 
-        final Metadata metadata = new Metadata();
-        new AdobeJpegReader().extract(new ByteArrayReader(bytes), metadata);
+        Metadata metadata = new Metadata();
+        adobeJpegReader.extract(new SequentialByteArrayReader(bytes), metadata);
 
-        Assert.assertEquals(1, metadata.getDirectoryCount());
+        assertEquals(1, metadata.getDirectoryCount());
         AdobeJpegDirectory directory = metadata.getDirectory(AdobeJpegDirectory.class);
-        Assert.assertNotNull(directory);
-        Assert.assertFalse(directory.getErrors().toString(), directory.hasErrors());
+        assertNotNull(directory);
+        assertFalse(directory.getErrors().toString(), directory.hasErrors());
 
-        Assert.assertEquals(4, directory.getTagCount());
+        assertEquals(4, directory.getTagCount());
 
-        Assert.assertEquals(1, directory.getInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM));
-        Assert.assertEquals(25600, directory.getInt(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION));
-        Assert.assertEquals(128, directory.getInt(AdobeJpegDirectory.TAG_APP14_FLAGS0));
-        Assert.assertEquals(0, directory.getInt(AdobeJpegDirectory.TAG_APP14_FLAGS1));
+        assertEquals(1, directory.getInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM));
+        assertEquals(25600, directory.getInt(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION));
+        assertEquals(128, directory.getInt(AdobeJpegDirectory.TAG_APP14_FLAGS0));
+        assertEquals(0, directory.getInt(AdobeJpegDirectory.TAG_APP14_FLAGS1));
     }
 }

@@ -24,14 +24,14 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
+import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -43,13 +43,17 @@ public class JpegReaderTest
     @Before
     public void setUp() throws JpegProcessingException, IOException
     {
+        JpegReader reader = new JpegReader();
+
         // use a known testing image
-        final JpegSegmentData segmentData = JpegSegmentReader.readSegments("Tests/com/drew/metadata/jpeg/simple.jpg");
+        final InputStream inputStream = this.getClass().getResourceAsStream("simple.jpg");
+        final JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), reader.getSegmentTypes());
+        inputStream.close();
+
         final byte[] data = segmentData.getSegment(JpegSegmentType.SOF0);
-        MetadataReader reader = new JpegReader();
         Metadata metadata = new Metadata();
         Assert.assertNotNull(data);
-        reader.extract(new ByteArrayReader(data), metadata);
+        reader.extract(data, metadata, JpegSegmentType.SOF0);
         Assert.assertTrue(metadata.containsDirectory(JpegDirectory.class));
         _directory = metadata.getOrCreateDirectory(JpegDirectory.class);
     }

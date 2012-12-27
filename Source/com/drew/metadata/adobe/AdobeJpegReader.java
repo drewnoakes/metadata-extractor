@@ -21,48 +21,60 @@
 
 package com.drew.metadata.adobe;
 
-import com.drew.lang.BufferBoundsException;
-import com.drew.lang.RandomAccessReader;
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Decodes Adobe formatted data stored in JPEG files, normally in the APPE (App14) segment.
  *
  * @author Philip, Drew Noakes http://drewnoakes.com
  */
-public class AdobeJpegReader implements MetadataReader
+public class AdobeJpegReader implements JpegSegmentMetadataReader
 {
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
+    @NotNull
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.APPE);
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        return segmentBytes.length == 12 && "Adobe".equalsIgnoreCase(new String(segmentBytes, 0, 5));
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    {
+        extract(new SequentialByteArrayReader(segmentBytes), metadata);
+    }
+
+    public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata)
     {
         final Directory directory = metadata.getOrCreateDirectory(AdobeJpegDirectory.class);
-
-        try {
-            if (reader.getLength() != 12) {
-                directory.addError(String.format("Adobe JPEG data is expected to be 12 bytes long, not %d.", reader.getLength()));
-                return;
-            }
-        } catch (BufferBoundsException e) {
-            directory.addError("Unable to read Adobe JPEG data: " + e.getMessage());
-            return;
-        }
-
         try {
             reader.setMotorolaByteOrder(false);
 
-            if (!reader.getString(0, 5).equals("Adobe")) {
+            if (!reader.getString(5).equals("Adobe")) {
                 directory.addError("Invalid Adobe JPEG data header.");
                 return;
             }
 
-            directory.setInt(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION, reader.getUInt16(5));
-            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS0, reader.getUInt16(7));
-            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS1, reader.getUInt16(9));
-            directory.setInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM, reader.getInt8(11));
-        } catch (BufferBoundsException ex) {
-            directory.addError("Exif data segment ended prematurely");
+            directory.setInt(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION, reader.getUInt16());
+            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS0, reader.getUInt16());
+            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS1, reader.getUInt16());
+            directory.setInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM, reader.getInt8());
+        } catch (IOException ex) {
+            directory.addError("IO exception processing data: " + ex.getMessage());
         }
     }
 }

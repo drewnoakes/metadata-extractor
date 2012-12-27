@@ -38,7 +38,7 @@ public class JfifReaderTest
         final byte[] jfifData = new byte[] { 74,70,73,70,0, 1,2, 1, 0,108, 0,108, 0,0 };
 
         final Metadata metadata = new Metadata();
-        final MetadataReader reader = new JfifReader();
+        final JfifReader reader = new JfifReader();
         reader.extract(new ByteArrayReader(jfifData), metadata);
 
         Assert.assertEquals(1, metadata.getDirectoryCount());

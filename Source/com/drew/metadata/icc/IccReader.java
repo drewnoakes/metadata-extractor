@@ -20,13 +20,16 @@
  */
 package com.drew.metadata.icc;
 
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.BufferBoundsException;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -38,10 +41,34 @@ import java.util.TimeZone;
  * <li>http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html</li>
  * </ul>
  *
- * @author Yuri Binev, Drew Noakes
+ * @author Yuri Binev
+ * @author Drew Noakes
  */
-public class IccReader implements MetadataReader
+public class IccReader implements JpegSegmentMetadataReader
 {
+    @NotNull
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.APP2);
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        return segmentBytes.length > 10 && "ICC_PROFILE".equalsIgnoreCase(new String(segmentBytes, 0, 11));
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    {
+        // skip the first 14 bytes
+        byte[] iccProfileBytes = new byte[segmentBytes.length - 14];
+        System.arraycopy(segmentBytes, 14, iccProfileBytes, 0, segmentBytes.length - 14);
+
+        extract(new ByteArrayReader(iccProfileBytes), metadata);
+    }
+
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
         final IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
@@ -63,16 +90,17 @@ public class IccReader implements MetadataReader
 
             int temp = reader.getInt32(IccDirectory.TAG_ICC_DEVICE_MODEL);
             if (temp != 0) {
-                if (temp <= 0x20202020)
+                if (temp <= 0x20202020) {
                     directory.setInt(IccDirectory.TAG_ICC_DEVICE_MODEL, temp);
-                else
+                } else {
                     directory.setString(IccDirectory.TAG_ICC_DEVICE_MODEL, getStringFromInt32(temp));
+                }
             }
 
             setInt32(directory, IccDirectory.TAG_ICC_RENDERING_INTENT, reader);
             setInt64(directory, IccDirectory.TAG_ICC_DEVICE_ATTR, reader);
 
-            float[] xyz = new float[] {
+            float[] xyz = new float[]{
                     reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES),
                     reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 4),
                     reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 8)
@@ -84,15 +112,15 @@ public class IccReader implements MetadataReader
             directory.setInt(IccDirectory.TAG_ICC_TAG_COUNT, tagCount);
 
             for (int i = 0; i < tagCount; i++) {
-                int pos = 128 + 4 + i*12;
+                int pos = IccDirectory.TAG_ICC_TAG_COUNT + 4 + i * 12;
                 int tagType = reader.getInt32(pos);
                 int tagPtr = reader.getInt32(pos + 4);
                 int tagLen = reader.getInt32(pos + 8);
                 byte[] b = reader.getBytes(tagPtr, tagLen);
                 directory.setByteArray(tagType, b);
             }
-        } catch (BufferBoundsException e) {
-            directory.addError(String.format("Reading ICC Header %s:%s", e.getClass().getSimpleName(), e.getMessage()));
+        } catch (BufferBoundsException ex) {
+            directory.addError("Exception reading ICC profile: " + ex.getMessage());
         }
     }
 
@@ -110,7 +138,7 @@ public class IccReader implements MetadataReader
             directory.setInt(tagType, i);
     }
 
-    @SuppressWarnings({ "SameParameterValue" })
+    @SuppressWarnings({"SameParameterValue"})
     private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         long l = reader.getInt64(tagType);
@@ -118,7 +146,7 @@ public class IccReader implements MetadataReader
             directory.setLong(tagType, l);
     }
 
-    @SuppressWarnings({ "SameParameterValue" })
+    @SuppressWarnings({"SameParameterValue", "MagicConstant"})
     private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         final int y = reader.getUInt16(tagType);
@@ -140,11 +168,11 @@ public class IccReader implements MetadataReader
     public static String getStringFromInt32(int d)
     {
         // MSB
-        byte[] b = new byte[] {
-                (byte)((d & 0xFF000000) >> 24),
-                (byte)((d & 0x00FF0000) >> 16),
-                (byte)((d & 0x0000FF00) >> 8),
-                (byte)((d & 0x000000FF))
+        byte[] b = new byte[]{
+                (byte) ((d & 0xFF000000) >> 24),
+                (byte) ((d & 0x00FF0000) >> 16),
+                (byte) ((d & 0x0000FF00) >> 8),
+                (byte) ((d & 0x000000FF))
         };
         return new String(b);
     }

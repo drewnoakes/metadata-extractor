@@ -60,10 +60,10 @@ public class ProcessAllImagesInFolderUtility
         if (pathItems == null)
             return;
 
-        int processedCount = 0;
+        int processedFileCount = 0;
         int exceptionCount = 0;
         int errorCount = 0;
-        long byteCount = 0;
+        long processedByteCount = 0;
 
         for (String pathItem : pathItems) {
             String subItem = pathItem.toLowerCase();
@@ -73,9 +73,8 @@ public class ProcessAllImagesInFolderUtility
                 processDirectory(file.getAbsolutePath());
             } else if (_supportedExtensions.contains(getExtension(subItem))) {
                 // process this item
-                processedCount++;
-
-                byteCount += file.length();
+                processedFileCount++;
+                processedByteCount += file.length();
 
                 // Read metadata
                 final Metadata metadata;
@@ -118,8 +117,8 @@ public class ProcessAllImagesInFolderUtility
             }
         }
 
-        if (processedCount > 0)
-            System.out.println(String.format("Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors in %s", processedCount, byteCount, exceptionCount, errorCount, path));
+        if (processedFileCount > 0)
+            System.out.println(String.format("Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors in %s", processedFileCount, processedByteCount, exceptionCount, errorCount, path));
     }
 
     private static String getExtension(String path)

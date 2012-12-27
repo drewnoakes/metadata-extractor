@@ -20,13 +20,17 @@
  */
 package com.drew.metadata.photoshop;
 
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 import com.drew.metadata.iptc.IptcReader;
+
+import java.util.Arrays;
 
 /**
  * Reads metadata created by Photoshop and stored in the APPD segment of JPEG files.
@@ -35,13 +39,32 @@ import com.drew.metadata.iptc.IptcReader;
  *
  * @author Yuri Binev, Drew Noakes http://drewnoakes.com
  */
-public class PhotoshopReader implements MetadataReader
+public class PhotoshopReader implements JpegSegmentMetadataReader
 {
+    @NotNull
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.APPD);
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        return segmentBytes.length > 12 && "Photoshop 3.0".equals(new String(segmentBytes, 0, 13));
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    {
+        extract(new ByteArrayReader(segmentBytes), metadata);
+    }
+
     public void extract(@NotNull final RandomAccessReader reader, final @NotNull Metadata metadata)
     {
         final PhotoshopDirectory directory = metadata.getOrCreateDirectory(PhotoshopDirectory.class);
 
-        int pos = 0;
+        int pos;
         try {
             pos = reader.getString(0, 13).equals("Photoshop 3.0") ? 14 : 0;
         } catch (BufferBoundsException e) {
@@ -93,7 +116,7 @@ public class PhotoshopReader implements MetadataReader
 
                 // TODO allow rebasing the reader with a new zero-point, rather than copying data here
                 if (tagType == PhotoshopDirectory.TAG_PHOTOSHOP_IPTC)
-                    new IptcReader().extract(new ByteArrayReader(tagBytes), metadata);
+                    new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length);
 
                 if (tagType >= 0x0fa0 && tagType <= 0x1387)
                     PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));

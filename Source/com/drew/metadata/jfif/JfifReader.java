@@ -20,11 +20,15 @@
  */
 package com.drew.metadata.jfif;
 
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.BufferBoundsException;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
+
+import java.util.Arrays;
 
 /**
  * Reader for JFIF data, found in the APP0 JPEG segment.
@@ -33,8 +37,27 @@ import com.drew.metadata.MetadataReader;
  *
  * @author Yuri Binev, Drew Noakes, Markus Meyer
  */
-public class JfifReader implements MetadataReader
+public class JfifReader implements JpegSegmentMetadataReader
 {
+    @NotNull
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.APP0);
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        return segmentBytes.length > 3 && "JFIF".equals(new String(segmentBytes, 0, 4));
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    {
+        extract(new ByteArrayReader(segmentBytes), metadata);
+    }
+
     /**
      * Performs the Jfif data extraction, adding found values to the specified
      * instance of {@link Metadata}.
@@ -45,7 +68,7 @@ public class JfifReader implements MetadataReader
 
         try {
             // For JFIF, the tag number is also the offset into the segment
-            
+
             int ver = reader.getUInt16(JfifDirectory.TAG_JFIF_VERSION);
             directory.setInt(JfifDirectory.TAG_JFIF_VERSION, ver);
 

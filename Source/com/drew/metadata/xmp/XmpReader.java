@@ -25,13 +25,16 @@ import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.BufferBoundsException;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 /**
@@ -40,9 +43,10 @@ import java.util.Calendar;
  * The extraction is done with Adobe's XmpCore-Library (XMP-Toolkit)
  * Copyright (c) 1999 - 2007, Adobe Systems Incorporated All rights reserved.
  *
- * @author Torsten Skadell, Drew Noakes http://drewnoakes.com
+ * @author Torsten Skadell
+ * @author Drew Noakes http://drewnoakes.com
  */
-public class XmpReader implements MetadataReader
+public class XmpReader implements JpegSegmentMetadataReader
 {
     private static final int FMT_STRING = 1;
     private static final int FMT_RATIONAL = 2;
@@ -61,15 +65,34 @@ public class XmpReader implements MetadataReader
     private static final String SCHEMA_EXIF_ADDITIONAL_PROPERTIES = "http://ns.adobe.com/exif/1.0/aux/";
     @NotNull
     private static final String SCHEMA_EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
+//    @NotNull
+//    private static final String SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES = "http://purl.org/dc/elements/1.1/";
+
     @NotNull
-    private static final String SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES = "http://purl.org/dc/elements/1.1/";
+    @Override
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.APP1);
+    }
+
+    @Override
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        return segmentBytes.length > 27 && "http://ns.adobe.com/xap/1.0/".equalsIgnoreCase(new String(segmentBytes, 0, 28));
+    }
+
+    @Override
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    {
+        extract(new ByteArrayReader(segmentBytes), metadata);
+    }
 
     /**
      * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
      * <p/>
      * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit).
      */
-    @SuppressWarnings({ "ConstantConditions" })
+    @SuppressWarnings({"ConstantConditions"})
     public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
     {
         if (reader == null)
@@ -167,7 +190,7 @@ public class XmpReader implements MetadataReader
             processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPolicy", XmpDirectory.TAG_ACCRUAL_POLICY, FMT_STRING);
 */
 
-            for (XMPIterator iterator = xmpMeta.iterator(); iterator.hasNext();) {
+            for (XMPIterator iterator = xmpMeta.iterator(); iterator.hasNext(); ) {
                 XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
                 String path = propInfo.getPath();
                 Object value = propInfo.getValue();
@@ -180,7 +203,9 @@ public class XmpReader implements MetadataReader
         }
     }
 
-    /** Reads an property value with given namespace URI and property name. Add property value to directory if exists */
+    /**
+     * Reads an property value with given namespace URI and property name. Add property value to directory if exists
+     */
     private void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType, int formatCode) throws XMPException
     {
         String property = meta.getPropertyString(schemaNS, propName);
@@ -192,7 +217,7 @@ public class XmpReader implements MetadataReader
             case FMT_RATIONAL:
                 String[] rationalParts = property.split("/", 2);
                 if (rationalParts.length == 2) {
-                    try{
+                    try {
                         Rational rational = new Rational((long) Float.parseFloat(rationalParts[0]), (long) Float.parseFloat(rationalParts[1]));
                         directory.setRational(tagType, rational);
                     } catch (NumberFormatException ex) {
@@ -203,14 +228,14 @@ public class XmpReader implements MetadataReader
                 }
                 break;
             case FMT_INT:
-                try{
+                try {
                     directory.setInt(tagType, Integer.valueOf(property));
                 } catch (NumberFormatException ex) {
                     directory.addError(String.format("Unable to parse XMP property %s as an int.", propName));
                 }
                 break;
             case FMT_DOUBLE:
-                try{
+                try {
                     directory.setDouble(tagType, Double.valueOf(property));
                 } catch (NumberFormatException ex) {
                     directory.addError(String.format("Unable to parse XMP property %s as an double.", propName));
@@ -224,14 +249,13 @@ public class XmpReader implements MetadataReader
         }
     }
 
-    @SuppressWarnings({ "SameParameterValue" })
+    @SuppressWarnings({"SameParameterValue"})
     void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
     {
         Calendar cal = meta.getPropertyCalendar(schemaNS, propName);
 
-        if (cal == null)
-            return;
-
-        directory.setDate(tagType, cal.getTime());
+        if (cal != null) {
+            directory.setDate(tagType, cal.getTime());
+        }
     }
 }

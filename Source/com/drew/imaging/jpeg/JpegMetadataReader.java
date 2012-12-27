@@ -20,7 +20,7 @@
  */
 package com.drew.imaging.jpeg;
 
-import com.drew.lang.ByteArrayReader;
+import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.adobe.AdobeJpegReader;
@@ -29,14 +29,17 @@ import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.jfif.JfifReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
-import com.drew.metadata.jpeg.JpegDirectory;
 import com.drew.metadata.jpeg.JpegReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Obtains all available metadata from JPEG formatted files.
@@ -45,94 +48,71 @@ import java.io.InputStream;
  */
 public class JpegMetadataReader
 {
-    // TODO investigate supporting javax.imageio
-//    public static Metadata readMetadata(IIOMetadata metadata) throws JpegProcessingException {}
-//    public static Metadata readMetadata(ImageInputStream in) throws JpegProcessingException{}
-//    public static Metadata readMetadata(IIOImage image) throws JpegProcessingException{}
-//    public static Metadata readMetadata(ImageReader reader) throws JpegProcessingException{}
+    public static final Iterable<JpegSegmentMetadataReader> ALL_READERS = Arrays.asList(
+            new JpegReader(),
+            new JpegCommentReader(),
+            new JfifReader(),
+            new ExifReader(),
+            new XmpReader(),
+            new IccReader(),
+            new PhotoshopReader(),
+            new IptcReader(),
+            new AdobeJpegReader()
+    );
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(inputStream);
-        return extractMetadataFromJpegSegments(segmentData);
+        Metadata metadata = new Metadata();
+        process(metadata, inputStream);
+        return metadata;
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(file);
-        return extractMetadataFromJpegSegments(segmentData);
+        InputStream inputStream = null;
+        try
+        {
+            inputStream = new FileInputStream(file);
+            return readMetadata(inputStream);
+        } finally {
+            if (inputStream != null)
+                inputStream.close();
+        }
     }
 
-    @NotNull
-    public static Metadata extractMetadataFromJpegSegments(@NotNull JpegSegmentData segmentReader)
+    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        final Metadata metadata = new Metadata();
+        process(metadata, inputStream, ALL_READERS);
+    }
 
-        // Loop through looking for all SOFn segments.  When we find one, we know what type of compression
-        // was used for the JPEG, and we can process the JPEG metadata in the segment too.
-        for (byte i = 0; i < 16; i++) {
-            // There are no SOF4 or SOF12 segments, so don't bother
-            if (i == 4 || i == 12)
-                continue;
-            // Should never have more than one SOFn for a given 'n'.
-            byte[] jpegSegment = segmentReader.getSegment((byte)(JpegSegmentType.SOF0.byteValue + i));
-            if (jpegSegment == null)
-                continue;
-            JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
-            directory.setInt(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE, i);
-            new JpegReader().extract(new ByteArrayReader(jpegSegment), metadata);
-            break;
-        }
-
-        // There should never be more than one COM segment.
-        byte[] comSegment = segmentReader.getSegment(JpegSegmentType.COM);
-        if (comSegment != null)
-            new JpegCommentReader().extract(new ByteArrayReader(comSegment), metadata);
-
-        // Loop through all APP0 segments, looking for a JFIF segment.
-        for (byte[] app0Segment : segmentReader.getSegments(JpegSegmentType.APP0)) {
-            if (app0Segment.length > 3 && new String(app0Segment, 0, 4).equals("JFIF"))
-                new JfifReader().extract(new ByteArrayReader(app0Segment), metadata);
-        }
-
-        // Loop through all APP1 segments, checking the leading bytes to identify the format of each.
-        for (byte[] app1Segment : segmentReader.getSegments(JpegSegmentType.APP1)) {
-            if (app1Segment.length > 3 && "EXIF".equalsIgnoreCase(new String(app1Segment, 0, 4)))
-                new ExifReader().extract(new ByteArrayReader(app1Segment), metadata);
-
-            if (app1Segment.length > 27 && "http://ns.adobe.com/xap/1.0/".equalsIgnoreCase(new String(app1Segment, 0, 28)))
-                new XmpReader().extract(new ByteArrayReader(app1Segment), metadata);
-        }
-
-        // Loop through all APP2 segments, looking for something we can process.
-        for (byte[] app2Segment : segmentReader.getSegments(JpegSegmentType.APP2)) {
-            if (app2Segment.length > 10 && new String(app2Segment, 0, 11).equalsIgnoreCase("ICC_PROFILE")) {
-                byte[] icc = new byte[app2Segment.length-14];
-                System.arraycopy(app2Segment, 14, icc, 0, app2Segment.length-14);
-                new IccReader().extract(new ByteArrayReader(icc), metadata);
+    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @NotNull Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
+        for (JpegSegmentMetadataReader reader : readers) {
+            for (JpegSegmentType type : reader.getSegmentTypes()) {
+                segmentTypes.add(type);
             }
         }
 
-        // Loop through all APPD segments, checking the leading bytes to identify the format of each.
-        for (byte[] appdSegment : segmentReader.getSegments(JpegSegmentType.APPD)) {
-            if (appdSegment.length > 12 && "Photoshop 3.0".compareTo(new String(appdSegment, 0, 13))==0) {
-                new PhotoshopReader().extract(new ByteArrayReader(appdSegment), metadata);
-            } else {
-                // TODO might be able to check for a leading 0x1c02 for IPTC data...
-                new IptcReader().extract(new ByteArrayReader(appdSegment), metadata);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), segmentTypes);
+
+        processJpegSegmentData(metadata, readers, segmentData);
+    }
+
+    public static void processJpegSegmentData(Metadata metadata, Iterable<JpegSegmentMetadataReader> readers, JpegSegmentData segmentData)
+    {
+        // Pass the appropriate byte arrays to each reader.
+        for (JpegSegmentMetadataReader reader : readers) {
+            for (JpegSegmentType segmentType : reader.getSegmentTypes()) {
+                for (byte[] segmentBytes : segmentData.getSegments(segmentType)) {
+                    if (reader.canProcess(segmentBytes, segmentType)) {
+                        reader.extract(segmentBytes, metadata, segmentType);
+                    }
+                }
             }
         }
-
-        // Loop through all APPE segments, checking the leading bytes to identify the format of each.
-        for (byte[] appeSegment : segmentReader.getSegments(JpegSegmentType.APPE)) {
-            if (appeSegment.length == 12 && "Adobe".compareTo(new String(appeSegment, 0, 5))==0) {
-                new AdobeJpegReader().extract(new ByteArrayReader(appeSegment), metadata);
-            }
-        }
-
-        return metadata;
     }
 
     private JpegMetadataReader() throws Exception
@@ -140,4 +120,3 @@ public class JpegMetadataReader
         throw new Exception("Not intended for instantiation");
     }
 }
-
