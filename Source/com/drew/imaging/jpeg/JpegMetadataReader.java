@@ -22,6 +22,7 @@ package com.drew.imaging.jpeg;
 
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.adobe.AdobeJpegReader;
 import com.drew.metadata.exif.ExifReader;
@@ -61,34 +62,49 @@ public class JpegMetadataReader
     );
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
         Metadata metadata = new Metadata();
-        process(metadata, inputStream);
+        process(metadata, inputStream, readers);
         return metadata;
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
+    {
+        return readMetadata(inputStream, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
         InputStream inputStream = null;
         try
         {
             inputStream = new FileInputStream(file);
-            return readMetadata(inputStream);
+            return readMetadata(inputStream, readers);
         } finally {
             if (inputStream != null)
                 inputStream.close();
         }
     }
 
-    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
-        process(metadata, inputStream, ALL_READERS);
+        return readMetadata(file, null);
     }
 
-    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @NotNull Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
+        process(metadata, inputStream, null);
+    }
+
+    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        if (readers == null)
+            readers = ALL_READERS;
+
         Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
         for (JpegSegmentMetadataReader reader : readers) {
             for (JpegSegmentType type : reader.getSegmentTypes()) {
