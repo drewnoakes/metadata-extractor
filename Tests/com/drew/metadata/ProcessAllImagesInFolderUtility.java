@@ -27,6 +27,9 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -40,17 +43,21 @@ public class ProcessAllImagesInFolderUtility
             System.exit(1);
         }
 
+        long start = System.nanoTime();
+
         for (String directory : args)
             processDirectory(directory);
 
-        System.out.println("Completed.");
+        System.out.println(String.format("Completed in %d ms", (System.nanoTime() - start) / 1000000));
     }
+
+    private static final Set<String> _supportedExtensions = new HashSet<String>(Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff"));
 
     private static void processDirectory(String pathName)
     {
         File path = new File(pathName);
         String[] pathItems = path.list();
-        if (pathItems==null)
+        if (pathItems == null)
             return;
 
         int processedCount = 0;
@@ -64,7 +71,7 @@ public class ProcessAllImagesInFolderUtility
 
             if (file.isDirectory()) {
                 processDirectory(file.getAbsolutePath());
-            } else if (subItem.endsWith(".jpg") || subItem.endsWith(".jpeg") || subItem.endsWith(".nef") || subItem.endsWith(".crw") || subItem.endsWith(".cr2") || subItem.endsWith(".tif")) {
+            } else if (_supportedExtensions.contains(getExtension(subItem))) {
                 // process this item
                 processedCount++;
 
@@ -113,5 +120,15 @@ public class ProcessAllImagesInFolderUtility
 
         if (processedCount > 0)
             System.out.println(String.format("Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors in %s", processedCount, byteCount, exceptionCount, errorCount, path));
+    }
+
+    private static String getExtension(String path)
+    {
+        int i = path.lastIndexOf('.');
+        if (i == -1)
+            return null;
+        if (i == path.length() - 1)
+            return null;
+        return path.substring(i + 1);
     }
 }
