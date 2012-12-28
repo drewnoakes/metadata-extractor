@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -46,7 +47,7 @@ public class JpegReaderTest
         JpegReader reader = new JpegReader();
 
         // use a known testing image
-        final InputStream inputStream = this.getClass().getResourceAsStream("simple.jpg");
+        final InputStream inputStream = new FileInputStream("Tests/com/drew/metadata/jpeg/simple.jpg");
         final JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), reader.getSegmentTypes());
         inputStream.close();
 

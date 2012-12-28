@@ -29,6 +29,7 @@ import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
 import org.junit.Test;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import static com.drew.lang.Iterables.toList;
@@ -49,7 +50,7 @@ public class AdobeJpegReaderTest
     @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        InputStream inputStream = this.getClass().getResourceAsStream("adobeJpeg1.jpg");
+        InputStream inputStream = new FileInputStream("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg");
 
         AdobeJpegReader adobeJpegReader = new AdobeJpegReader();
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), adobeJpegReader.getSegmentTypes());
