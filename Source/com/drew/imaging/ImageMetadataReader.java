@@ -192,9 +192,9 @@ public class ImageMetadataReader
 
             // iterate over the metadata and print to System.out
             for (Directory directory : metadata.getDirectories()) {
+                String directoryName = directory.getName();
                 for (Tag tag : directory.getTags()) {
                     String tagName = tag.getTagName();
-                    String directoryName = directory.getName();
                     String description = tag.getDescription();
 
                     // truncate the description if it's too long
