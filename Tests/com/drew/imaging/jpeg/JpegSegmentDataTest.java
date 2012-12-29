@@ -20,7 +20,7 @@
  */
 package com.drew.imaging.jpeg;
 
-import com.drew.lang.TestHelper;
+import com.drew.testing.TestHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -22,7 +22,7 @@ package com.drew.metadata.iptc;
 
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.TestHelper;
+import com.drew.testing.TestHelper;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import org.junit.Assert;

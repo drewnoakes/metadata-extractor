@@ -21,7 +21,7 @@
 
 package com.drew.metadata.exif;
 
-import com.drew.lang.TestHelper;
+import com.drew.testing.TestHelper;
 import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Test;

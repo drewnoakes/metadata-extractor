@@ -25,10 +25,10 @@ import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -50,12 +50,8 @@ public class AdobeJpegReaderTest
     @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        InputStream inputStream = new FileInputStream("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg");
-
         AdobeJpegReader adobeJpegReader = new AdobeJpegReader();
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), adobeJpegReader.getSegmentTypes());
-
-        inputStream.close();
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg"), adobeJpegReader.getSegmentTypes());
 
         byte[] bytes = segmentData.getSegment(JpegSegmentType.APPE);
 

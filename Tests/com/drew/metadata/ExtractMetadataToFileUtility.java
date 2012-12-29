@@ -24,10 +24,8 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.StreamReader;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -45,16 +43,7 @@ public class ExtractMetadataToFileUtility
         String filePath = args[0];
         String outputFilePath = filePath + ".metadata";
 
-        JpegSegmentData segmentData;
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(filePath);
-            segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), null);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File(filePath), null);
 
         segmentData.removeSegment(JpegSegmentType.DHT);
         segmentData.removeSegment(JpegSegmentType.DQT);

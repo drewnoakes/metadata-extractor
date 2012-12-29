@@ -21,9 +21,12 @@
 package com.drew.imaging.jpeg;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,6 +51,29 @@ public class JpegSegmentReader
      * Private, because one wouldn't search for it.
      */
     private static final byte MARKER_EOI = (byte) 0xD9;
+
+    /**
+     * Processes the provided JPEG data, and extracts the specified JPEG segments into a {@link JpegSegmentData} object.
+     * <p/>
+     * Will not return SOS (start of scan) or EOI (end of image) segments.
+     *
+     * @param file a {@link File} from which the JPEG data will be read.
+     * @param segmentTypes the set of JPEG segments types that are to be returned. If this argument is <code>null</code>
+     *                     then all found segment types are returned.
+     */
+    @NotNull
+    public static JpegSegmentData readSegments(@NotNull File file, @Nullable Iterable<JpegSegmentType> segmentTypes) throws JpegProcessingException, IOException
+    {
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(file);
+            return JpegSegmentReader.readSegments(new StreamReader(stream), segmentTypes);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
 
     /**
      * Processes the provided JPEG data, and extracts the specified JPEG segments into a {@link JpegSegmentData} object.

@@ -26,13 +26,13 @@ import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -229,9 +229,8 @@ public class ExifReaderTest
     @NotNull
     private static <T extends Directory> T readDirectoryFromJpegFile(String fileName, final Class<T> directoryClass) throws JpegProcessingException, IOException
     {
-        InputStream inputStream = new FileInputStream(fileName);
-        final byte[] segmentBytes = JpegSegmentReader.readSegments(new StreamReader(inputStream), null).getSegment(JpegSegmentType.APP1);
-        inputStream.close();
+        byte[] segmentBytes = JpegSegmentReader.readSegments(new File(fileName), null).getSegment(JpegSegmentType.APP1);
+
         assertNotNull(segmentBytes);
 
         Metadata metadata = new Metadata();

@@ -24,15 +24,13 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -47,11 +45,9 @@ public class JpegReaderTest
         JpegReader reader = new JpegReader();
 
         // use a known testing image
-        final InputStream inputStream = new FileInputStream("Tests/com/drew/metadata/jpeg/simple.jpg");
-        final JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), reader.getSegmentTypes());
-        inputStream.close();
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/com/drew/metadata/jpeg/simple.jpg"), reader.getSegmentTypes());
 
-        final byte[] data = segmentData.getSegment(JpegSegmentType.SOF0);
+        byte[] data = segmentData.getSegment(JpegSegmentType.SOF0);
         Metadata metadata = new Metadata();
         Assert.assertNotNull(data);
         reader.extract(data, metadata, JpegSegmentType.SOF0);

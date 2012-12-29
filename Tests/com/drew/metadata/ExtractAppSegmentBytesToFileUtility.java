@@ -25,7 +25,6 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.StreamReader;
 
 import java.io.*;
 
@@ -48,16 +47,7 @@ public class ExtractAppSegmentBytesToFileUtility
 
         String filePath = args[0];
 
-        JpegSegmentData segmentData;
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(filePath);
-            segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), null);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File(filePath), null);
 
         final int segmentCount = segmentData.getSegmentCount(segment);
         if (segmentCount == 0) {
