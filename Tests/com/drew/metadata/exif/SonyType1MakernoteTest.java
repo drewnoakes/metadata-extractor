@@ -57,6 +57,6 @@ public class SonyType1MakernoteTest
         Assert.assertEquals("Auto", descriptor.getExposureModeDescription());
         Assert.assertEquals("Off", descriptor.getLongExposureNoiseReductionDescription());
         Assert.assertEquals("Off", descriptor.getMacroDescription());
-        Assert.assertEquals("Normal", descriptor.getQualityDescription());
+        Assert.assertEquals("Normal", descriptor.getJpegQualityDescription());
     }
 }

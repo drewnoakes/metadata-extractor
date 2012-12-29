@@ -41,6 +41,8 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
     public String getDescription(int tagType)
     {
         switch (tagType) {
+            case SonyType1MakernoteDirectory.TAG_FLASH_EXPOSURE_COMP:
+                return getFlashExposureCompensationDescription();
             case SonyType1MakernoteDirectory.TAG_COLOR_TEMPERATURE:
                 return getColorTemperatureDescription();
             case SonyType1MakernoteDirectory.TAG_SCENE_MODE:
@@ -61,8 +63,8 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
                 return getMacroDescription();
             case SonyType1MakernoteDirectory.TAG_EXPOSURE_MODE:
                 return getExposureModeDescription();
-            case SonyType1MakernoteDirectory.TAG_QUALITY:
-                return getQualityDescription();
+            case SonyType1MakernoteDirectory.TAG_JPEG_QUALITY:
+                return getJpegQualityDescription();
             case SonyType1MakernoteDirectory.TAG_ANTI_BLUR:
                 return getAntiBlurDescription();
             case SonyType1MakernoteDirectory.TAG_LONG_EXPOSURE_NOISE_REDUCTION:
@@ -70,6 +72,15 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
             default:
                 return super.getDescription(tagType);
         }
+    }
+
+    @Nullable
+    public String getFlashExposureCompensationDescription()
+    {
+        Integer value = _directory.getInteger(SonyType1MakernoteDirectory.TAG_FLASH_EXPOSURE_COMP);
+        if (value==null)
+            return null;
+        return String.format("%d EV", value);
     }
 
     @Nullable
@@ -211,9 +222,9 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
     }
 
     @Nullable
-    public String getQualityDescription()
+    public String getJpegQualityDescription()
     {
-        Integer value = _directory.getInteger(SonyType1MakernoteDirectory.TAG_QUALITY);
+        Integer value = _directory.getInteger(SonyType1MakernoteDirectory.TAG_JPEG_QUALITY);
         if (value==null)
             return null;
         switch (value){
