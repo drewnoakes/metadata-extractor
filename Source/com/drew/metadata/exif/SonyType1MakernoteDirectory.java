@@ -32,7 +32,6 @@ import java.util.HashMap;
  */
 public class SonyType1MakernoteDirectory extends Directory
 {
-    public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
     public static final int TAG_PREVIEW_IMAGE = 0x2001;
     public static final int TAG_COLOR_MODE_SETTING = 0xb020;
     public static final int TAG_COLOR_TEMPERATURE = 0xb021;
@@ -48,6 +47,7 @@ public class SonyType1MakernoteDirectory extends Directory
     public static final int TAG_QUALITY = 0xb047;
     public static final int TAG_ANTI_BLUR = 0xb04B;
     public static final int TAG_LONG_EXPOSURE_NOISE_REDUCTION = 0xb04E;
+    public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
     public static final int TAG_NO_PRINT = 0xFFFF;
 
     @NotNull
@@ -55,7 +55,6 @@ public class SonyType1MakernoteDirectory extends Directory
 
     static
     {
-        _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching Info");
         _tagNameMap.put(TAG_PREVIEW_IMAGE, "Preview Image");
         _tagNameMap.put(TAG_COLOR_MODE_SETTING, "Color Mode Setting");
         _tagNameMap.put(TAG_COLOR_TEMPERATURE, "Color Temperature");
@@ -71,6 +70,7 @@ public class SonyType1MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_QUALITY, "Quality");
         _tagNameMap.put(TAG_ANTI_BLUR, "Anti Blur");
         _tagNameMap.put(TAG_LONG_EXPOSURE_NOISE_REDUCTION, "Long Exposure Noise Reduction");
+        _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching Info");
         _tagNameMap.put(TAG_NO_PRINT, "No Print");
     }
 
