@@ -397,8 +397,6 @@ public class ExifReader implements JpegSegmentMetadataReader
             }
         } else if ("SONY CAM".equals(firstEightChars) || "SONY DSC".equals(firstEightChars)) {
             processDirectory(metadata.getOrCreateDirectory(SonyType1MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 12, tiffHeaderOffset, metadata, reader);
-        } else if ("SIGMA\u0000\u0000\u0000".equals(firstEightChars) || "FOVEON\u0000\u0000".equals(firstEightChars)) {
-            processDirectory(metadata.getOrCreateDirectory(SigmaMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 10, tiffHeaderOffset, metadata, reader);
         } else if ("SEMC MS\u0000\u0000\u0000\u0000\u0000".equals(firstTwelveChars)) {
             // force MM for this directory
             boolean isMotorola = reader.isMotorolaByteOrder();
@@ -406,6 +404,8 @@ public class ExifReader implements JpegSegmentMetadataReader
             // skip 12 byte header + 2 for "MM" + 6
             processDirectory(metadata.getOrCreateDirectory(SonyType6MakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 20, tiffHeaderOffset, metadata, reader);
             reader.setMotorolaByteOrder(isMotorola);
+        } else if ("SIGMA\u0000\u0000\u0000".equals(firstEightChars) || "FOVEON\u0000\u0000".equals(firstEightChars)) {
+            processDirectory(metadata.getOrCreateDirectory(SigmaMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 10, tiffHeaderOffset, metadata, reader);
         } else if ("KDK".equals(firstThreeChars)) {
             processDirectory(metadata.getOrCreateDirectory(KodakMakernoteDirectory.class), processedDirectoryOffsets, subdirOffset + 20, tiffHeaderOffset, metadata, reader);
         } else if ("Canon".equalsIgnoreCase(cameraModel)) {
