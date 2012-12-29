@@ -33,7 +33,7 @@
     <property name="test-src"        value="Tests"/>
     <property name="test-output"     value="Output/Tests"/>
     <property name="sample-src"      value="Samples"/>
-    <property name="javadoc"         value="Javadoc"/>
+    <property name="javadoc"         value="../javadoc/${library-version}"/>
     <property name="test.reports"    value="TestReports"/>
     <property name="lib"             value="Libraries"/>
     <property name="verbose"         value="true"/>
