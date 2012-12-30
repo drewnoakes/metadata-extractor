@@ -36,11 +36,12 @@
     <property name="javadoc"              value="../javadoc/${library-version}"/>
     <property name="sample-images"        value="../sample-images/"/>
     <property name="sample-images-output" value="../sample-images/metadata"/>
-    <property name="test.reports"         value="TestReports"/>
     <property name="lib"                  value="Libraries"/>
     <property name="verbose"              value="true"/>
     <property name="debug"                value="off"/>
-    <property name="classpath"            value="${lib}/junit-4.8.2.jar;${lib}/xmpcore.jar"/>
+    <property name="lib-xmp"              value="${lib}/xmpcore-5.1.2.jar"/>
+    <property name="lib-junit"            value="${lib}/junit-4.11.jar"/>
+    <property name="classpath"            value="${lib-junit};${lib-xmp}"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
         <delete verbose="${verbose}" dir="${output}"/>
@@ -58,30 +59,29 @@
                source="${java-version}"
                target="${java-version}"
                debug="${debug}"
-               verbose="${verbose}"/>
+               verbose="${verbose}"
+               includeantruntime="false"/>
         <javac classpath="${classpath};${output}"
                srcdir="${test-src}"
                destdir="${test-output}"
                source="${java-version}"
                target="${java-version}"
                debug="${debug}"
-               verbose="${verbose}"/>
-        <!--<copyfile src="LICENSE-2.0.txt" dest="${build}" forceoverwrite="true" />-->
+               verbose="${verbose}"
+               includeantruntime="false"/>
     </target>
 
     <target name="test" depends="clean, compile" description="run all junit tests">
-        <delete verbose="${verbose}" dir="${test.reports}"/>
-        <mkdir dir="${test.reports}"/>
-        <junit printsummary="yes" logfailedtests="true" fork="yes" haltonfailure="yes">
+        <junit printsummary="yes" logfailedtests="true" fork="yes" haltonfailure="yes" forkmode="once">
+            <formatter type="plain" usefile="false" />
             <classpath>
                 <pathelement location="${output}"/>
                 <pathelement location="${test-output}"/>
                 <pathelement path="${java.class.path}"/>
-                <pathelement path="${lib}/junit-4.8.2.jar"/>
-                <pathelement path="${lib}/xmpcore.jar"/>
+                <pathelement path="${lib-junit}"/>
+                <pathelement path="${lib-xmp}"/>
             </classpath>
-            <formatter type="plain"/>
-            <batchtest todir="${test.reports}">
+            <batchtest>
 				<fileset dir="${test-src}">
 					<include name="**/*Test.java" />
 				</fileset>
@@ -93,7 +93,7 @@
         <delete verbose="${verbose}" dir="${sample-images-output}"/>
         <mkdir dir="${sample-images-output}"/>
         <java classname="com.drew.tools.ProcessAllImagesInFolderUtility"
-              classpath="${output};${lib}/xmpcore.jar">
+              classpath="${output};${lib-xmp}">
             <arg value="${sample-images}"/>
             <arg value="-write"/>
         </java>
@@ -106,13 +106,16 @@
             <manifest>
                 <attribute name="Main-Class" value="com.drew.imaging.ImageMetadataReader"/>
             </manifest>
-            <fileset dir="${output}" />
+            <fileset dir="${output}">
+                <exclude name="com/drew/tools" />
+                <exclude name="com/drew/tools/*.*" />
+            </fileset>
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </jar>
-        <zip file="${bin-zip}" comment="Metadata Extractor - http://drewnoakes.com/code/exif/">
+        <zip file="${bin-zip}" comment="Metadata Extractor ${library-version} - http://drewnoakes.com/code/exif/">
             <file file="${bin-jar}" />
-            <file file="${lib}/xmpcore.jar" />
+            <file file="${lib-xmp}" />
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </zip>
@@ -121,9 +124,15 @@
 
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
         <jar destfile="${dist}/metadata-extractor-${library-version}-src.jar" update="false">
-            <fileset dir="." includes="${src}/**/*.java, ${test-src}/**/*.java, ${sample-src}/**/*.*, ${test-src}/**/*.jpg, ${test-src}/**/*.psd, ${test-src}/**/*.bytes, ${test-src}/**/*.metadata, ${src}/**/package.html, ${test-src}/**/package.html, ${lib}/junit.jar, build.xml"/>
-            <file file="LICENSE-2.0.txt" />
-            <file file="README.txt" />
+            <fileset dir=".">
+                <include name="${src}/**/*.*" />
+                <include name="${test-src}/**/*.*" />
+                <include name="${sample-src}/**/*.*" />
+                <include name="Resources/**/*.*" />
+                <include name="LICENSE-2.0.txt" />
+                <include name="README.txt" />
+                <include name="build.xml" />
+            </fileset>
         </jar>
     </target>
 
@@ -149,16 +158,22 @@ _uacct = 'UA-936661-1';
 urchinTracker();
 </script>]]></bottom>
 
+            <!-- Only build Java -->
             <packageset dir="${src}" defaultexcludes="yes">
                 <include name="com/**"/>
-                <!--<exclude name="com/**/test"/>-->
             </packageset>
+
+            <classpath>
+                <fileset dir=".">
+                    <include name="${lib-xmp}"/>
+                </fileset>
+            </classpath>
 
         </javadoc>
         <copy file="Resources/javadoc-stylesheet.css" tofile="${javadoc}/stylesheet.css" overwrite="yes" />
     </target>
 
-    <target name="all" depends="dist-source, dist-binaries, javadoc" description="prepare source and binary distributions, and javadoc"/>
+    <target name="all" depends="dist-all, javadoc, process-sample-files" description="prepare source and binary distributions, and javadoc"/>
 
     <target name="dist-all" depends="dist-source, dist-binaries" description="prepare source and binary distributions"/>
 
