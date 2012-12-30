@@ -24,9 +24,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Holds a collection of JPEG data segments.  This need not necessarily be all segments
@@ -40,8 +38,11 @@ import java.util.List;
  */
 public class JpegSegmentData implements Serializable
 {
+    // TODO stop this class being Serializable
+    @Deprecated
     private static final long serialVersionUID = 7110175216435025451L;
 
+    // TODO key this on JpegSegmentType rather than Byte?
     @NotNull
     private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
 
@@ -55,6 +56,22 @@ public class JpegSegmentData implements Serializable
     public void addSegment(byte segmentType, @NotNull byte[] segmentBytes)
     {
         getOrCreateSegmentList(segmentType).add(segmentBytes);
+    }
+
+    /**
+     * Gets the set of JPEG segment type identifiers.
+     */
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
+
+        for (Byte segmentTypeByte : _segmentDataMap.keySet()){
+            JpegSegmentType segmentType = JpegSegmentType.fromByte(segmentTypeByte);
+            assert(segmentType != null);
+            segmentTypes.add(segmentType);
+        }
+
+        return segmentTypes;
     }
 
     /**
@@ -257,6 +274,7 @@ public class JpegSegmentData implements Serializable
      * @param segmentData the data to write
      * @throws IOException if problems occur while writing
      */
+    @Deprecated
     public static void toFile(@NotNull File file, @NotNull JpegSegmentData segmentData) throws IOException
     {
         FileOutputStream fileOutputStream = null;
@@ -278,16 +296,10 @@ public class JpegSegmentData implements Serializable
      * @throws ClassNotFoundException if problems occur while deserialising
      */
     @NotNull
+    @Deprecated
     public static JpegSegmentData fromFile(@NotNull File file) throws IOException, ClassNotFoundException
     {
-        ObjectInputStream inputStream = null;
-        try {
-            inputStream = new ObjectInputStream(new FileInputStream(file));
-            return (JpegSegmentData)inputStream.readObject();
-        } finally {
-            if (inputStream != null)
-                inputStream.close();
-        }
+        return fromFile(new FileInputStream(file));
     }
 
     /**
@@ -299,15 +311,16 @@ public class JpegSegmentData implements Serializable
      * @throws ClassNotFoundException if problems occur while deserialising
      */
     @NotNull
+    @Deprecated
     public static JpegSegmentData fromFile(@NotNull InputStream inputStream) throws IOException, ClassNotFoundException
     {
-        ObjectInputStream ois = null;
+        ObjectInputStream objectInputStream = null;
         try {
-            ois = new ObjectInputStream(inputStream);
-            return (JpegSegmentData)ois.readObject();
+            objectInputStream = new ObjectInputStream(inputStream);
+            return (JpegSegmentData)objectInputStream.readObject();
         } finally {
-            if (ois != null)
-                ois.close();
+            if (objectInputStream != null)
+                objectInputStream.close();
         }
     }
 }

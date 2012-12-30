@@ -20,6 +20,8 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.annotations.Nullable;
+
 /**
  * An enumeration of the known segment types found in JPEG files.
  *
@@ -142,5 +144,15 @@ public enum JpegSegmentType
     {
         this.byteValue = byteValue;
         this.canContainMetadata = canContainMetadata;
+    }
+
+    @Nullable
+    public static JpegSegmentType fromByte(byte segmentTypeByte)
+    {
+        for (JpegSegmentType segmentType : JpegSegmentType.class.getEnumConstants()) {
+            if (segmentType.byteValue == segmentTypeByte)
+                return segmentType;
+        }
+        return null;
     }
 }
