@@ -34,6 +34,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
+ * Utility that extracts metadata found at a given URL.
+ *
  * @author Drew Noakes http://drewnoakes.com
  */
 public class ProcessUrlUtility
@@ -65,10 +67,10 @@ public class ProcessUrlUtility
         } catch (ImageProcessingException e) {
             // this is an error in the Jpeg segment structure.  we're looking for bad handling of
             // metadata segments.  in this case, we didn't even get a segment.
-            System.err.println(e.getClass().getName() + ": " + url + " [Error Extracting Metadata]" + "\n\t" + e.getMessage()); return;
+            System.err.printf("%s: %s [Error Extracting Metadata]\n\t%s%n", e.getClass().getName(), url, e.getMessage()); return;
         } catch (Throwable t) {
             // general, uncaught exception during processing of jpeg segments
-            System.err.println(t.getClass().getName() + ": " + url + " [Error Extracting Metadata]");
+            System.err.printf("%s: %s [Error Extracting Metadata]%n", t.getClass().getName(), url);
             t.printStackTrace(System.err);
             return;
         }
@@ -79,7 +81,7 @@ public class ProcessUrlUtility
                 if (!directory.hasErrors())
                     continue;
                 for (String error : directory.getErrors()) {
-                    System.err.println("\t[" + directory.getName() + "] " + error);
+                    System.err.printf("\t[%s] %s%n", directory.getName(), error);
                 }
             }
         }
