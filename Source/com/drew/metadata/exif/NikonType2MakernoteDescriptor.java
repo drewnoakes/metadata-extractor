@@ -311,35 +311,35 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
         return getEVDescription(values);
     }
 
-    @NotNull
+    @Nullable
     public String getAutoFlashCompensationDescription()
     {
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION);
         return getEVDescription(values);
     }
 
-    @NotNull
+    @Nullable
     public String getFlashExposureCompensationDescription()
     {
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_EXPOSURE_COMPENSATION);
         return getEVDescription(values);
     }
 
-    @NotNull
+    @Nullable
     public String getFlashBracketCompensationDescription()
     {
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_BRACKET_COMPENSATION);
         return getEVDescription(values);
     }
 
-    @NotNull
+    @Nullable
     public String getExposureTuningDescription()
     {
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_EXPOSURE_TUNING);
         return getEVDescription(values);
     }
 
-    @NotNull
+    @Nullable
     public String getLensStopsDescription()
     {
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_LENS_STOPS);
