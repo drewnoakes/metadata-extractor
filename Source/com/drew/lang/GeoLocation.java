@@ -24,6 +24,8 @@ package com.drew.lang;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.text.DecimalFormat;
+
 /**
  * Represents a latitude and longitude pair, giving a position on earth in spherical coordinates.
  * <p/>
@@ -80,7 +82,8 @@ public final class GeoLocation
     public static String decimalToDegreesMinutesSecondsString(double decimal)
     {
         double[] dms = decimalToDegreesMinutesSeconds(decimal);
-        return dms[0] + "° " + dms[1] + "' " + dms[2] + '"';
+        DecimalFormat format = new DecimalFormat("0.##");
+        return String.format("%s° %s' %s\"", format.format(dms[0]), format.format(dms[1]), format.format(dms[2]));
     }
 
     /**
