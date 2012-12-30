@@ -193,9 +193,9 @@ public class XmpReader implements JpegSegmentMetadataReader
             for (XMPIterator iterator = xmpMeta.iterator(); iterator.hasNext(); ) {
                 XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
                 String path = propInfo.getPath();
-                Object value = propInfo.getValue();
+                String value = propInfo.getValue();
                 if (path != null && value != null)
-                    directory.addProperty(path, value.toString());
+                    directory.addProperty(path, value);
             }
 
         } catch (XMPException e) {
