@@ -21,6 +21,7 @@
   ~    http://code.google.com/p/metadata-extractor/
   -->
 
+<!--suppress XmlUnboundNsPrefix -->
 <project name="metadata-extractor" default="test" basedir=".">
 
     <description>metadata-extractor build file</description>
