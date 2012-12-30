@@ -23,7 +23,7 @@ package com.drew.lang;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author  Drew Noakes http://drewnoakes.com

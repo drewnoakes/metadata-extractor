@@ -22,7 +22,7 @@ package com.drew.metadata.exif;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Drew Noakes http://drewnoakes.com

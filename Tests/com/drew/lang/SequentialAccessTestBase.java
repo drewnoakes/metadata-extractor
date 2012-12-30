@@ -26,7 +26,7 @@ import org.junit.Test;
 import java.io.EOFException;
 import java.io.IOException;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 /**
  * Base class for testing implementations of {@link com.drew.lang.SequentialReader}.

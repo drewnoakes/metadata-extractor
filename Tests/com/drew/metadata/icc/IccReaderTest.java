@@ -25,9 +25,10 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.testing.TestHelper;
 import com.drew.tools.FileUtil;
-import junit.framework.TestCase;
 
-public class IccReaderTest extends TestCase
+import static org.junit.Assert.assertNotNull;
+
+public class IccReaderTest
 {
     public void testExtract() throws Exception
     {
