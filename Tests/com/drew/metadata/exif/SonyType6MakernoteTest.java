@@ -29,7 +29,7 @@ public class SonyType6MakernoteTest
 {
     @Test public void testSonyType6Makernote() throws Exception
     {
-        SonyType6MakernoteDirectory directory = ExifReaderTest.processExifBytes("Tests/data/sonyType6.jpg.app1.0", SonyType6MakernoteDirectory.class);
+        SonyType6MakernoteDirectory directory = ExifReaderTest.processBytes("Tests/Data/sonyType6.jpg.app1.0", SonyType6MakernoteDirectory.class);
 
         Assert.assertNotNull(directory);
         Assert.assertFalse(directory.hasErrors());

@@ -41,38 +41,38 @@ public class JpegSegmentReaderTest
     @Test
     public void testReadAllSegments() throws Exception
     {
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/data/withExifAndIptc.jpg"), null);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/Data/withExifAndIptc.jpg"), null);
 
         assertEquals(1, segmentData.getSegmentCount(JpegSegmentType.APP0));
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.app0"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app0"),
                 segmentData.getSegment(JpegSegmentType.APP0));
         assertNull(segmentData.getSegment(JpegSegmentType.APP0, 1));
 
         assertEquals(2, segmentData.getSegmentCount(JpegSegmentType.APP1));
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.app1.0"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app1.0"),
                 segmentData.getSegment(JpegSegmentType.APP1, 0));
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.app1.1"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app1.1"),
                 segmentData.getSegment(JpegSegmentType.APP1, 1));
         assertNull(segmentData.getSegment(JpegSegmentType.APP1, 2));
 
         assertEquals(1, segmentData.getSegmentCount(JpegSegmentType.APP2));
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.app2"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2"),
                 segmentData.getSegment(JpegSegmentType.APP2));
         assertNull(segmentData.getSegment(JpegSegmentType.APP2, 1));
 
         assertEquals(1, segmentData.getSegmentCount(JpegSegmentType.APPD));
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.appd"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.appd"),
                 segmentData.getSegment(JpegSegmentType.APPD));
         assertNull(segmentData.getSegment(JpegSegmentType.APPD, 1));
 
         assertEquals(1, segmentData.getSegmentCount(JpegSegmentType.APPE));
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.appe"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.appe"),
                 segmentData.getSegment(JpegSegmentType.APPE));
         assertNull(segmentData.getSegment(JpegSegmentType.APPE, 1));
 
@@ -99,7 +99,7 @@ public class JpegSegmentReaderTest
     public void testReadSpecificSegments() throws Exception
     {
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(
-                new File("Tests/data/withExifAndIptc.jpg"),
+                new File("Tests/Data/withExifAndIptc.jpg"),
                 Arrays.asList(JpegSegmentType.APP0, JpegSegmentType.APP2));
 
         assertEquals(1, segmentData.getSegmentCount(JpegSegmentType.APP0));
@@ -123,17 +123,17 @@ public class JpegSegmentReaderTest
         assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.SOF0));
 
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.app0"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app0"),
                 segmentData.getSegment(JpegSegmentType.APP0));
         assertArrayEquals(
-                FileUtil.readBytes("Tests/data/withExifAndIptc.jpg.app2"),
+                FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2"),
                 segmentData.getSegment(JpegSegmentType.APP2));
     }
 
     @Test
     public void testLoadJpegWithoutExifDataReturnsNull() throws Exception
     {
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/data/noExif.jpg"), null);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/Data/noExif.jpg"), null);
         assertNull(segmentData.getSegment(JpegSegmentType.APP1));
     }
 

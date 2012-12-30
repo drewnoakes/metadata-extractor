@@ -38,7 +38,7 @@ public class NikonType2MakernoteTest1
     @Before
     public void setUp() throws Exception
     {
-        _nikonDirectory = ExifReaderTest.processExifBytes("Tests/data/nikonMakernoteType2a.jpg.app1", NikonType2MakernoteDirectory.class);
+        _nikonDirectory = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2a.jpg.app1", NikonType2MakernoteDirectory.class);
 
         assertNotNull(_nikonDirectory);
 

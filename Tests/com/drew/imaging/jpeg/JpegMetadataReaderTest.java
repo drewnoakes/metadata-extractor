@@ -37,13 +37,13 @@ public class JpegMetadataReaderTest
     @Test
     public void testExtractMetadata() throws Exception
     {
-        validate(JpegMetadataReader.readMetadata(new File("Tests/data/withExif.jpg")));
+        validate(JpegMetadataReader.readMetadata(new File("Tests/Data/withExif.jpg")));
     }
 
     @Test
     public void testExtractMetadataUsingInputStream() throws Exception
     {
-        validate(JpegMetadataReader.readMetadata(new FileInputStream((new File("Tests/data/withExif.jpg")))));
+        validate(JpegMetadataReader.readMetadata(new FileInputStream((new File("Tests/Data/withExif.jpg")))));
     }
 
     private void validate(Metadata metadata)

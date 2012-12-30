@@ -59,7 +59,7 @@ public class AdobeJpegReaderTest
     @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        AdobeJpegDirectory directory = processBytes("Tests/data/adobeJpeg1.jpg.appe");
+        AdobeJpegDirectory directory = processBytes("Tests/Data/adobeJpeg1.jpg.appe");
 
         assertFalse(directory.getErrors().toString(), directory.hasErrors());
 

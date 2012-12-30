@@ -21,100 +21,105 @@
 package com.drew.metadata.jpeg;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import org.junit.Assert;
+import com.drew.tools.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
 public class JpegReaderTest
 {
+    @NotNull
+    public static JpegDirectory processBytes(String filePath) throws IOException
+    {
+        Metadata metadata = new Metadata();
+        new JpegReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.SOF0);
+
+        JpegDirectory directory = metadata.getDirectory(JpegDirectory.class);
+        assertNotNull(directory);
+        return directory;
+    }
+
     private JpegDirectory _directory;
 
     @Before
     public void setUp() throws JpegProcessingException, IOException
     {
-        JpegReader reader = new JpegReader();
-
-        // use a known testing image
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/com/drew/metadata/jpeg/simple.jpg"), reader.getSegmentTypes());
-
-        byte[] data = segmentData.getSegment(JpegSegmentType.SOF0);
-        Metadata metadata = new Metadata();
-        Assert.assertNotNull(data);
-        reader.extract(data, metadata, JpegSegmentType.SOF0);
-        Assert.assertTrue(metadata.containsDirectory(JpegDirectory.class));
-        _directory = metadata.getOrCreateDirectory(JpegDirectory.class);
+        _directory = processBytes("Tests/Data/simple.jpg.sof0");
     }
 
     @Test
     public void testExtract_Width() throws Exception
     {
-        Assert.assertEquals(800, _directory.getInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH));
+        assertEquals(800, _directory.getInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH));
     }
 
     @Test
     public void testExtract_Height() throws Exception
     {
-        Assert.assertEquals(600, _directory.getInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT));
+        assertEquals(600, _directory.getInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT));
     }
 
     @Test
     public void testExtract_DataPrecision() throws Exception
     {
-        Assert.assertEquals(8, _directory.getInt(JpegDirectory.TAG_JPEG_DATA_PRECISION));
+        assertEquals(8, _directory.getInt(JpegDirectory.TAG_JPEG_DATA_PRECISION));
     }
 
     @Test
     public void testExtract_NumberOfComponents() throws Exception
     {
-        Assert.assertEquals(3, _directory.getInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS));
+        assertEquals(3, _directory.getInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS));
     }
 
     @Test
     public void testComponentData1() throws Exception
     {
         JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1);
-        Assert.assertNotNull(component);
-        Assert.assertEquals("Y", component.getComponentName());
-        Assert.assertEquals(1, component.getComponentId());
-        Assert.assertEquals(0, component.getQuantizationTableNumber());
-        Assert.assertEquals(2, component.getHorizontalSamplingFactor());
-        Assert.assertEquals(2, component.getVerticalSamplingFactor());
+
+        assertNotNull(component);
+        assertEquals("Y", component.getComponentName());
+        assertEquals(1, component.getComponentId());
+        assertEquals(0, component.getQuantizationTableNumber());
+        assertEquals(2, component.getHorizontalSamplingFactor());
+        assertEquals(2, component.getVerticalSamplingFactor());
     }
 
     @Test
     public void testComponentData2() throws Exception
     {
         JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_2);
-        Assert.assertNotNull(component);
-        Assert.assertEquals("Cb", component.getComponentName());
-        Assert.assertEquals(2, component.getComponentId());
-        Assert.assertEquals(1, component.getQuantizationTableNumber());
-        Assert.assertEquals(1, component.getHorizontalSamplingFactor());
-        Assert.assertEquals(1, component.getVerticalSamplingFactor());
-        Assert.assertEquals("Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert", _directory.getDescription(JpegDirectory.TAG_JPEG_COMPONENT_DATA_2));
+
+        assertNotNull(component);
+        assertEquals("Cb", component.getComponentName());
+        assertEquals(2, component.getComponentId());
+        assertEquals(1, component.getQuantizationTableNumber());
+        assertEquals(1, component.getHorizontalSamplingFactor());
+        assertEquals(1, component.getVerticalSamplingFactor());
+        assertEquals("Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert", _directory.getDescription(JpegDirectory.TAG_JPEG_COMPONENT_DATA_2));
     }
 
     @Test
     public void testComponentData3() throws Exception
     {
         JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_3);
-        Assert.assertNotNull(component);
-        Assert.assertEquals("Cr", component.getComponentName());
-        Assert.assertEquals(3, component.getComponentId());
-        Assert.assertEquals(1, component.getQuantizationTableNumber());
-        Assert.assertEquals(1, component.getHorizontalSamplingFactor());
-        Assert.assertEquals(1, component.getVerticalSamplingFactor());
-        Assert.assertEquals("Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert", _directory.getDescription(JpegDirectory.TAG_JPEG_COMPONENT_DATA_3));
+
+        assertNotNull(component);
+        assertEquals("Cr", component.getComponentName());
+        assertEquals(3, component.getComponentId());
+        assertEquals(1, component.getQuantizationTableNumber());
+        assertEquals(1, component.getHorizontalSamplingFactor());
+        assertEquals(1, component.getVerticalSamplingFactor());
+        assertEquals("Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert", _directory.getDescription(JpegDirectory.TAG_JPEG_COMPONENT_DATA_3));
     }
 
 /*

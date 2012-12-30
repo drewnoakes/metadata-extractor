@@ -21,16 +21,12 @@
 
 package com.drew.metadata.exif;
 
-import com.drew.imaging.ImageMetadataReader;
 import com.drew.lang.Rational;
-import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
-
 /**
- * JUnit test case for class ExifIFD0Descriptor.
+ * Unit tests for {@link ExifIFD0Descriptor}.
  *
  * @author  Drew Noakes http://drewnoakes.com
  */
@@ -61,10 +57,7 @@ public class ExifIFD0DescriptorTest
     @Test
     public void testWindowsXpFields() throws Exception
     {
-        String fileName = "Tests/com/drew/metadata/exif/windowsXpFields.jpg";
-        Metadata metadata = ImageMetadataReader.readMetadata(new File(fileName));
-        ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
-        Assert.assertNotNull(directory);
+        ExifIFD0Directory directory = ExifReaderTest.processBytes("Tests/Data/windowsXpFields.jpg.app1", ExifIFD0Directory.class);
 
         Assert.assertEquals("Testing artist\0", directory.getString(ExifIFD0Directory.TAG_WIN_AUTHOR, "UTF-16LE"));
         Assert.assertEquals("Testing comments\0", directory.getString(ExifIFD0Directory.TAG_WIN_COMMENT, "UTF-16LE"));

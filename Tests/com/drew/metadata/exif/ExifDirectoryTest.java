@@ -20,7 +20,6 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.lang.SequentialByteArrayReader;
@@ -36,6 +35,8 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 
 /**
+ * Unit tests for {@link ExifSubIFDDirectory}, {@link ExifIFD0Directory}, {@link ExifThumbnailDirectory}.
+ *
  * @author Drew Noakes http://drewnoakes.com
  */
 public class ExifDirectoryTest
@@ -58,7 +59,7 @@ public class ExifDirectoryTest
     @Test
     public void testGetThumbnailData() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processExifBytes("Tests/data/withExif.jpg.app1", ExifThumbnailDirectory.class);
+        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/withExif.jpg.app1", ExifThumbnailDirectory.class);
 
         byte[] thumbData = directory.getThumbnailData();
         assertNotNull(thumbData);
@@ -73,7 +74,7 @@ public class ExifDirectoryTest
     @Test
     public void testWriteThumbnail() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processExifBytes("Tests/data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
+        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
         assertTrue(directory.hasThumbnailData());
 
@@ -104,8 +105,7 @@ public class ExifDirectoryTest
     @Test
     public void testResolution() throws JpegProcessingException, IOException, MetadataException
     {
-        File file = new File("Tests/com/drew/metadata/exif/withUncompressedRGBThumbnail.jpg");
-        Metadata metadata = JpegMetadataReader.readMetadata(file);
+        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/withUncompressedRGBThumbnail.jpg.app1");
 
         ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
         assertNotNull(thumbnailDirectory);

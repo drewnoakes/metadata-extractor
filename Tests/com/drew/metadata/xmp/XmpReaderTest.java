@@ -43,7 +43,7 @@ public class XmpReaderTest
     public void setUp() throws Exception
     {
         // use a known testing image
-        byte[] data = FileUtil.readBytes("Tests/data/withXmpAndIptc.jpg.app1.1");
+        byte[] data = FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1");
         assertNotNull(data);
 
         Metadata metadata = new Metadata();

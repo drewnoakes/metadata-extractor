@@ -21,15 +21,11 @@
 
 package com.drew.metadata.exif;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.metadata.Age;
 import com.drew.metadata.Face;
-import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 
 /**
  * @author psandhaus, Drew Noakes
@@ -41,9 +37,7 @@ public class PanasonicMakernoteDescriptorTest
     @Before
     public void setUp() throws Exception
     {
-        File file = new File("Tests/com/drew/metadata/exif/withPanasonicFaces.jpg");
-        Metadata metadata = JpegMetadataReader.readMetadata(file);
-        _panasonicDirectory = metadata.getDirectory(PanasonicMakernoteDirectory.class);
+        _panasonicDirectory = ExifReaderTest.processBytes("Tests/Data/withPanasonicFaces.jpg.app1", PanasonicMakernoteDirectory.class);
     }
 
     @Test

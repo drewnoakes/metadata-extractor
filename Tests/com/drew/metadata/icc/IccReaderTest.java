@@ -32,7 +32,7 @@ public class IccReaderTest extends TestCase
 {
     public void testExtract() throws Exception
     {
-        byte[] app2Bytes = FileUtil.readBytes("Tests/com/drew/metadata/icc/iccDataInvalid1.app2bytes");
+        byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
 
         // ICC data starts after a 14-byte preamble
         byte[] icc = TestHelper.skipBytes(app2Bytes, 14);

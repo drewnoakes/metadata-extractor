@@ -20,14 +20,11 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -54,8 +51,8 @@ public class NikonType1MakernoteTest
     @Before
     public void setUp() throws Exception
     {
-        File nikonJpeg = new File("Tests/com/drew/metadata/exif/nikonMakernoteType1.jpg");
-        Metadata metadata = JpegMetadataReader.readMetadata(nikonJpeg);
+        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType1.jpg.app1");
+
         _nikonDirectory = metadata.getDirectory(NikonType1MakernoteDirectory.class);
         _exifSubIFDDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);
         _exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);

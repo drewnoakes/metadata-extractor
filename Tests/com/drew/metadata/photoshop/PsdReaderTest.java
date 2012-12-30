@@ -22,47 +22,55 @@
 package com.drew.metadata.photoshop;
 
 import com.drew.lang.RandomAccessFileReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
 public class PsdReaderTest
 {
-    public PsdHeaderDirectory readPsdHeader(String file) throws Exception
+    @NotNull
+    public static PsdHeaderDirectory processBytes(@NotNull String file) throws Exception
     {
         Metadata metadata = new Metadata();
         RandomAccessFile randomAccessFile = new RandomAccessFile(new File(file), "r");
         new PsdReader().extract(new RandomAccessFileReader(randomAccessFile), metadata);
         randomAccessFile.close();
-        Assert.assertTrue(metadata.containsDirectory(PsdHeaderDirectory.class));
-        return metadata.getOrCreateDirectory(PsdHeaderDirectory.class);
+
+        PsdHeaderDirectory directory = metadata.getDirectory(PsdHeaderDirectory.class);
+        assertNotNull(directory);
+        return directory;
     }
 
     @Test
     public void test8x8x8bitGrayscale() throws Exception
     {
-        PsdHeaderDirectory directory = readPsdHeader("Tests/com/drew/metadata/photoshop/8x4x8bit-Grayscale.psd");
-        Assert.assertEquals(8, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH));
-        Assert.assertEquals(4, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT));
-        Assert.assertEquals(8, directory.getInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL));
-        Assert.assertEquals(1, directory.getInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT));
-        Assert.assertEquals(1, directory.getInt(PsdHeaderDirectory.TAG_COLOR_MODE)); // 1 = grayscale
+        PsdHeaderDirectory directory = processBytes("Tests/Data/8x4x8bit-Grayscale.psd");
+
+        assertEquals(8, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH));
+        assertEquals(4, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT));
+        assertEquals(8, directory.getInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL));
+        assertEquals(1, directory.getInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT));
+        assertEquals(1, directory.getInt(PsdHeaderDirectory.TAG_COLOR_MODE)); // 1 = grayscale
     }
 
     @Test
     public void test10x12x16bitCMYK() throws Exception
     {
-        PsdHeaderDirectory directory = readPsdHeader("Tests/com/drew/metadata/photoshop/10x12x16bit-CMYK.psd");
-        Assert.assertEquals(10, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH));
-        Assert.assertEquals(12, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT));
-        Assert.assertEquals(16, directory.getInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL));
-        Assert.assertEquals(4, directory.getInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT));
-        Assert.assertEquals(4, directory.getInt(PsdHeaderDirectory.TAG_COLOR_MODE)); // 4 = CMYK
+        PsdHeaderDirectory directory = processBytes("Tests/Data/10x12x16bit-CMYK.psd");
+
+        assertEquals(10, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH));
+        assertEquals(12, directory.getInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT));
+        assertEquals(16, directory.getInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL));
+        assertEquals(4, directory.getInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT));
+        assertEquals(4, directory.getInt(PsdHeaderDirectory.TAG_COLOR_MODE)); // 4 = CMYK
     }
 }
