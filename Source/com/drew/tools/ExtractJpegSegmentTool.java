@@ -33,7 +33,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Extracts JPEG segments from .jpg files to binary
+ * Extracts JPEG segments from .jpg files to individual binary files.
+ * <p/>
+ * These files are lightweight and convenient for use in unit tests.
+ *
  * @author Drew Noakes http://drewnoakes.com
  */
 public class ExtractJpegSegmentTool
@@ -65,11 +68,7 @@ public class ExtractJpegSegmentTool
 
         if (segmentTypes.size() == 0) {
             // If none specified, use all that could reasonably contain metadata
-            for (JpegSegmentType segmentType : JpegSegmentType.class.getEnumConstants()) {
-                if (segmentType.canContainMetadata) {
-                    segmentTypes.add(segmentType);
-                }
-            }
+            segmentTypes.addAll(JpegSegmentType.canContainMetadataTypes);
         }
 
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File(filePath), segmentTypes);
@@ -82,7 +81,7 @@ public class ExtractJpegSegmentTool
 
             if (segments.size() > 1) {
                 for (int i = 0; i < segments.size(); i++) {
-                    String outputFilePath = String.format("%s.%d.%s", filePath, i, segmentType.toString().toLowerCase());
+                    String outputFilePath = String.format("%s.%s.%d", filePath, segmentType.toString().toLowerCase(), i);
                     FileUtil.saveBytes(new File(outputFilePath), segments.get(i));
                 }
             } else {

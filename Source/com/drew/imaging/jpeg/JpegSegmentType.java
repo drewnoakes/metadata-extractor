@@ -22,6 +22,10 @@ package com.drew.imaging.jpeg;
 
 import com.drew.lang.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * An enumeration of the known segment types found in JPEG files.
  *
@@ -136,6 +140,18 @@ public enum JpegSegmentType
 
     /** JPEG comment segment identifier. */
     COM((byte)0xFE, true);
+
+    public static Collection<JpegSegmentType> canContainMetadataTypes;
+
+    static {
+        List<JpegSegmentType> segmentTypes = new ArrayList<JpegSegmentType>();
+        for (JpegSegmentType segmentType : JpegSegmentType.class.getEnumConstants()) {
+            if (segmentType.canContainMetadata) {
+                segmentTypes.add(segmentType);
+            }
+        }
+        canContainMetadataTypes = segmentTypes;
+    }
 
     public final byte byteValue;
     public final boolean canContainMetadata;
