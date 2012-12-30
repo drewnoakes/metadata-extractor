@@ -40,19 +40,16 @@ import java.util.Arrays;
 public class AdobeJpegReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APPE);
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         return segmentBytes.length == 12 && "Adobe".equalsIgnoreCase(new String(segmentBytes, 0, 5));
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         extract(new SequentialByteArrayReader(segmentBytes), metadata);

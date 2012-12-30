@@ -42,19 +42,16 @@ import java.util.Arrays;
 public class PhotoshopReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APPD);
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         return segmentBytes.length > 12 && "Photoshop 3.0".equals(new String(segmentBytes, 0, 13));
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         extract(new ByteArrayReader(segmentBytes), metadata);

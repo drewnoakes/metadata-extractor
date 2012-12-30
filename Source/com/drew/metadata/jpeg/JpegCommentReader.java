@@ -36,20 +36,17 @@ import java.util.Arrays;
 public class JpegCommentReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.COM);
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         // The entire contents of the byte[] is the comment. There's nothing here to discriminate upon.
         return true;
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         JpegCommentDirectory directory = metadata.getOrCreateDirectory(JpegCommentDirectory.class);

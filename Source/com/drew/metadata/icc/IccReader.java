@@ -47,19 +47,16 @@ import java.util.TimeZone;
 public class IccReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APP2);
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         return segmentBytes.length > 10 && "ICC_PROFILE".equalsIgnoreCase(new String(segmentBytes, 0, 11));
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         // skip the first 14 bytes

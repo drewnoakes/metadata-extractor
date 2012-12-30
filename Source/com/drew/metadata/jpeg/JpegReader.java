@@ -39,7 +39,6 @@ import java.util.Arrays;
 public class JpegReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         // NOTE that some SOFn values do not exist
@@ -63,13 +62,11 @@ public class JpegReader implements JpegSegmentMetadataReader
         );
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         return true;
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         if (metadata.containsDirectory(JpegDirectory.class)) {

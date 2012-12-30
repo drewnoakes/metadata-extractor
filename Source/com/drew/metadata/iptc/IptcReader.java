@@ -57,20 +57,17 @@ public class IptcReader implements JpegSegmentMetadataReader
 */
 
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APPD);
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         // Check whether the first byte resembles
         return segmentBytes.length != 0 && segmentBytes[0] == 0x1c;
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);

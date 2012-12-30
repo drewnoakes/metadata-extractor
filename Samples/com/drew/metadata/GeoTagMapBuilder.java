@@ -50,11 +50,10 @@ public class GeoTagMapBuilder
         File path = new File(args[0]);
         final String[] acceptedExtensions = new String[] { ".jpg", ".jpeg" };
 
-        // TODO recurse subdirectories?
+        // TODO process subdirectories recursively?
 
         final File[] files = path.listFiles(new FileFilter()
         {
-            @Override
             public boolean accept(final File file)
             {
                 if (file.isDirectory())

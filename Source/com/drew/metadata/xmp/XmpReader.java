@@ -69,19 +69,16 @@ public class XmpReader implements JpegSegmentMetadataReader
 //    private static final String SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES = "http://purl.org/dc/elements/1.1/";
 
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APP1);
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         return segmentBytes.length > 27 && "http://ns.adobe.com/xap/1.0/".equalsIgnoreCase(new String(segmentBytes, 0, 28));
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         extract(new ByteArrayReader(segmentBytes), metadata);

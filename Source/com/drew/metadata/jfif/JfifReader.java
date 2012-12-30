@@ -40,19 +40,16 @@ import java.util.Arrays;
 public class JfifReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APP0);
     }
 
-    @Override
     public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
     {
         return segmentBytes.length > 3 && "JFIF".equals(new String(segmentBytes, 0, 4));
     }
 
-    @Override
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         extract(new ByteArrayReader(segmentBytes), metadata);
