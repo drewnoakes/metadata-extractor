@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -218,24 +219,24 @@ public abstract class RandomAccessTestBase
     public void testGetFloat32() throws BufferBoundsException
     {
         final int nanBits = 0x7fc00000;
-        assertEquals(Float.NaN, Float.intBitsToFloat(nanBits));
+        assertTrue(Float.isNaN(Float.intBitsToFloat(nanBits)));
 
         byte[] buffer = new byte[]{0x7f, (byte)0xc0, 0x00, 0x00};
         RandomAccessReader reader = createReader(buffer);
 
-        assertEquals(Float.NaN, reader.getFloat32(0));
+        assertTrue(Float.isNaN(reader.getFloat32(0)));
     }
 
     @Test
     public void testGetFloat64() throws BufferBoundsException
     {
         final long nanBits = 0xfff0000000000001L;
-        assertEquals(Double.NaN, Double.longBitsToDouble(nanBits));
+        assertTrue(Double.isNaN(Double.longBitsToDouble(nanBits)));
 
         byte[] buffer = new byte[]{(byte)0xff, (byte)0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
         RandomAccessReader reader = createReader(buffer);
 
-        assertEquals(Double.NaN, reader.getDouble64(0));
+        assertTrue(Double.isNaN(reader.getDouble64(0)));
     }
 
     @Test
