@@ -28,7 +28,7 @@ import com.drew.lang.annotations.NotNull;
  * issues.
  * <p/>
  * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
- * {@see setMotorolaByteOrder(boolean)}.
+ * <code>setMotorolaByteOrder(boolean)</code>.
  * 
  * @author Drew Noakes http://drewnoakes.com
  * */
