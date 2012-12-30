@@ -27,10 +27,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import junit.framework.TestCase;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -79,5 +76,41 @@ public class TestHelper
         Metadata metadata = new Metadata();
         JpegMetadataReader.processJpegSegmentData(metadata, JpegMetadataReader.ALL_READERS, data);
         return metadata;
+    }
+
+    public static byte[] readFileBytes(File file) throws IOException
+    {
+        ByteArrayOutputStream ous = null;
+        InputStream ios = null;
+        try {
+            byte[] buffer = new byte[4096];
+            ous = new ByteArrayOutputStream();
+            ios = new FileInputStream(file);
+            int read;
+            while ((read = ios.read(buffer)) != -1)
+                ous.write(buffer, 0, read);
+        } finally {
+            if (ous != null)
+                ous.close();
+            if (ios != null)
+                ios.close();
+        }
+        return ous.toByteArray();
+    }
+
+    public static byte[] readFileBytes(String fileName) throws IOException
+    {
+        return readFileBytes(new File(fileName));
+    }
+
+    public static byte[] skipBytes(byte[] input, int countToSkip)
+    {
+        if (input.length - countToSkip < 0) {
+            throw new IllegalArgumentException("Attempting to skip more bytes than exist in the array.");
+        }
+
+        byte[] output = new byte[input.length - countToSkip];
+        System.arraycopy(input, countToSkip, output, 0, input.length - countToSkip);
+        return output;
     }
 }

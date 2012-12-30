@@ -22,24 +22,31 @@
 package com.drew.metadata.icc;
 
 import com.drew.lang.ByteArrayReader;
-import com.drew.metadata.ExtractAppSegmentBytesToFileUtility;
 import com.drew.metadata.Metadata;
+import com.drew.testing.TestHelper;
 import junit.framework.TestCase;
-
-import java.io.File;
+import org.junit.Assert;
 
 public class IccReaderTest extends TestCase
 {
     public void testExtract() throws Exception
     {
-        String iccSegmentFile = "Tests/com/drew/metadata/icc/iccDataInvalid1.app2bytes";
-        byte[] app2Bytes = ExtractAppSegmentBytesToFileUtility.read(new File(iccSegmentFile));
+        byte[] app2Bytes = TestHelper.readFileBytes("Tests/com/drew/metadata/icc/iccDataInvalid1.app2bytes");
 
-        // skip first 14 bytes
-        byte[] icc = new byte[app2Bytes.length-14];
-        System.arraycopy(app2Bytes, 14, icc, 0, app2Bytes.length-14);
+        // ICC data starts after a 14-byte preamble
+        byte[] icc = TestHelper.skipBytes(app2Bytes, 14);
 
         Metadata metadata = new Metadata();
         new IccReader().extract(new ByteArrayReader(icc), metadata);
+
+        IccDirectory directory = metadata.getDirectory(IccDirectory.class);
+
+        Assert.assertNotNull(directory);
+
+        // TODO validate expected values
+
+//        for (Tag tag : directory.getTags()) {
+//            System.out.println(tag);
+//        }
     }
 }

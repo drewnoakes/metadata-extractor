@@ -25,20 +25,22 @@
 
     <description>metadata-extractor build file</description>
 
-    <property name="library-version" value="2.7.0"/>
-    <property name="java-version"    value="1.6"/>
-    <property name="dist"            location="Releases"/>
-    <property name="src"             value="Source"/>
-    <property name="output"          value="Output/Source"/>
-    <property name="test-src"        value="Tests"/>
-    <property name="test-output"     value="Output/Tests"/>
-    <property name="sample-src"      value="Samples"/>
-    <property name="javadoc"         value="../javadoc/${library-version}"/>
-    <property name="test.reports"    value="TestReports"/>
-    <property name="lib"             value="Libraries"/>
-    <property name="verbose"         value="true"/>
-    <property name="debug"           value="off"/>
-    <property name="classpath"       value="${lib}/junit-4.8.2.jar;${lib}/xmpcore.jar"/>
+    <property name="library-version"      value="2.7.0"/>
+    <property name="java-version"         value="1.6"/>
+    <property name="dist"                 location="Releases"/>
+    <property name="src"                  value="Source"/>
+    <property name="output"               value="Output/Source"/>
+    <property name="test-src"             value="Tests"/>
+    <property name="test-output"          value="Output/Tests"/>
+    <property name="sample-src"           value="Samples"/>
+    <property name="javadoc"              value="../javadoc/${library-version}"/>
+    <property name="sample-images"        value="../sample-images/"/>
+    <property name="sample-images-output" value="../sample-images/metadata"/>
+    <property name="test.reports"         value="TestReports"/>
+    <property name="lib"                  value="Libraries"/>
+    <property name="verbose"              value="true"/>
+    <property name="debug"                value="off"/>
+    <property name="classpath"            value="${lib}/junit-4.8.2.jar;${lib}/xmpcore.jar"/>
 
     <target name="clean" description="deletes and recreates the destination directory">
         <delete verbose="${verbose}" dir="${output}"/>
@@ -85,6 +87,16 @@
 				</fileset>
 			</batchtest>
         </junit>
+    </target>
+
+    <target name="process-sample-files" depends="compile" description="extract metadata from all sample images, and update output text files">
+        <delete verbose="${verbose}" dir="${sample-images-output}"/>
+        <mkdir dir="${sample-images-output}"/>
+        <java classname="com.drew.tools.ProcessAllImagesInFolderUtility"
+              classpath="${output};${lib}/xmpcore.jar">
+            <arg value="${sample-images}"/>
+            <arg value="-write"/>
+        </java>
     </target>
 
     <target name="dist-binaries" depends="clean, compile, test" description="generate binary distribution">
