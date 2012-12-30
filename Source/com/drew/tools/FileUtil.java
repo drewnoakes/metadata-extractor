@@ -1,5 +1,7 @@
 package com.drew.tools;
 
+import com.drew.lang.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,7 +18,7 @@ public class FileUtil
     /**
      * Saves the contents of a <code>byte[]</code> to the specified {@link File}.
      */
-    public static void saveBytes(File file, byte[] bytes) throws IOException
+    public static void saveBytes(@NotNull File file, @NotNull byte[] bytes) throws IOException
     {
         FileOutputStream stream = null;
         try {
@@ -34,7 +36,8 @@ public class FileUtil
      * returning the correct value, which may not be the case when using a network file system. However this method is
      * intended for unit test support, in which case the files should be on the local volume.
      */
-    public static byte[] readBytes(File file) throws IOException
+    @NotNull
+    public static byte[] readBytes(@NotNull File file) throws IOException
     {
         int length = (int)file.length();
         // should only be zero if loading from a network or similar
@@ -66,7 +69,8 @@ public class FileUtil
      * returning the correct value, which may not be the case when using a network file system. However this method is
      * intended for unit test support, in which case the files should be on the local volume.
      */
-    public static byte[] readBytes(String filePath) throws IOException
+    @NotNull
+    public static byte[] readBytes(@NotNull String filePath) throws IOException
     {
         return readBytes(new File(filePath));
     }
