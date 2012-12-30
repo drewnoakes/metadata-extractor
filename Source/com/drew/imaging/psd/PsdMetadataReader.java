@@ -53,7 +53,7 @@ public class PsdMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
         new PsdReader().extract(new RandomAccessStreamReader(inputStream), metadata);

@@ -20,14 +20,16 @@
  */
 package com.drew.imaging.tiff;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessFileReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 /**
  * Obtains all available metadata from TIFF formatted files.  Note that TIFF files include many digital camera RAW
@@ -53,7 +55,7 @@ public class TiffMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
         // InputStream does not support seeking backwards, and so is not a viable option for TIFF processing.

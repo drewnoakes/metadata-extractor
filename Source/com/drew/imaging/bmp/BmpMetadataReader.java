@@ -54,7 +54,7 @@ public class BmpMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
         new BmpReader().extract(new StreamReader(inputStream), metadata);
