@@ -21,8 +21,8 @@
 
 package com.drew.imaging.psd;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessFileReader;
+import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.photoshop.PsdReader;
@@ -56,23 +56,7 @@ public class PsdMetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
         Metadata metadata = new Metadata();
-
-        final int headerLength = 26;
-
-        byte[] bytes = new byte[headerLength];
-        int totalBytesRead = 0;
-        while (totalBytesRead != headerLength)
-        {
-            int bytesRead = inputStream.read(bytes, totalBytesRead, headerLength - totalBytesRead);
-
-            if (bytesRead == -1)
-                throw new EOFException("PSD data ended prematurely.");
-
-            totalBytesRead += bytesRead;
-        }
-
-        new PsdReader().extract(new ByteArrayReader(bytes), metadata);
-
+        new PsdReader().extract(new RandomAccessStreamReader(inputStream), metadata);
         return metadata;
     }
 }
