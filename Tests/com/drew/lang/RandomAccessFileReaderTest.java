@@ -30,6 +30,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import static org.junit.Assert.assertTrue;
+
 /** @author Drew Noakes http://drewnoakes.com */
 public class RandomAccessFileReaderTest extends RandomAccessTestBase
 {
@@ -63,7 +65,7 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
 
         _randomAccessFile.close();
 
-        Assert.assertTrue(
+        assertTrue(
                 "Unable to delete temp file used during unit test: " + _tempFile.getAbsolutePath(),
                 _tempFile.delete());
 

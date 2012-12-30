@@ -96,11 +96,11 @@ public class ExifDirectoryTest
 //    {
 //        ExifSubIFDDirectory exifDirectory = new ExifSubIFDDirectory();
 //
-//        Assert.assertTrue(!exifDirectory.hasThumbnailData());
+//        assertTrue(!exifDirectory.hasThumbnailData());
 //
 //        exifDirectory.setObject(ExifSubIFDDirectory.TAG_THUMBNAIL_DATA, "foo");
 //
-//        Assert.assertTrue(exifDirectory.hasThumbnailData());
+//        assertTrue(exifDirectory.hasThumbnailData());
 //    }
 
     @Test

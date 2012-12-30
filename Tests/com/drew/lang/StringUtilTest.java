@@ -21,11 +21,12 @@
 
 package com.drew.lang;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class StringUtilTest
@@ -37,17 +38,17 @@ public class StringUtilTest
         strings.add("B");
         strings.add("C");
 
-        Assert.assertEquals("A;B;C", StringUtil.join(strings, ";"));
+        assertEquals("A;B;C", StringUtil.join(strings, ";"));
 
-        Assert.assertEquals("", StringUtil.join(new ArrayList<String>(), ";"));
+        assertEquals("", StringUtil.join(new ArrayList<String>(), ";"));
     }
     
     @Test public void testJoinArray()
     {
         String[] strings = new String[]{"A", "B", "C"};
 
-        Assert.assertEquals("A;B;C", StringUtil.join(strings, ";"));
+        assertEquals("A;B;C", StringUtil.join(strings, ";"));
 
-        Assert.assertEquals("", StringUtil.join(new ArrayList<String>(), ";"));
+        assertEquals("", StringUtil.join(new ArrayList<String>(), ";"));
     }
 }

@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.exif;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit test case for class ExifSubIFDDescriptor.
@@ -37,7 +38,7 @@ public class ExifSubIFDDescriptorTest
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("This is a comment", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("This is a comment", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 
     @Test
@@ -47,7 +48,7 @@ public class ExifSubIFDDescriptorTest
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("This is a comment", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("This is a comment", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 
     @Test
@@ -57,7 +58,7 @@ public class ExifSubIFDDescriptorTest
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 
     @Test
@@ -68,7 +69,7 @@ public class ExifSubIFDDescriptorTest
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("ASCII", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("ASCII", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 
     @Test
@@ -79,7 +80,7 @@ public class ExifSubIFDDescriptorTest
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 
     @Test
@@ -89,7 +90,7 @@ public class ExifSubIFDDescriptorTest
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("This marmot is getting close...", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("This marmot is getting close...", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 
     @Test
@@ -99,6 +100,6 @@ public class ExifSubIFDDescriptorTest
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        Assert.assertEquals("I am a comment. Yey.", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("I am a comment. Yey.", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
     }
 }

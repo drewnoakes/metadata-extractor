@@ -21,8 +21,9 @@
 
 package com.drew.metadata.exif;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class SonyType6MakernoteTest
@@ -31,11 +32,11 @@ public class SonyType6MakernoteTest
     {
         SonyType6MakernoteDirectory directory = ExifReaderTest.processBytes("Tests/Data/sonyType6.jpg.app1.0", SonyType6MakernoteDirectory.class);
 
-        Assert.assertNotNull(directory);
-        Assert.assertFalse(directory.hasErrors());
+        assertNotNull(directory);
+        assertFalse(directory.hasErrors());
 
         SonyType6MakernoteDescriptor descriptor = new SonyType6MakernoteDescriptor(directory);
 
-        Assert.assertEquals("2.00", descriptor.getMakerNoteThumbVersionDescription());
+        assertEquals("2.00", descriptor.getMakerNoteThumbVersionDescription());
     }
 }

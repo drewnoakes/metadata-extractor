@@ -23,9 +23,11 @@ package com.drew.metadata.exif;
 
 import com.drew.metadata.Age;
 import com.drew.metadata.Face;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author psandhaus, Drew Noakes
@@ -45,8 +47,8 @@ public class PanasonicMakernoteDescriptorTest
     {
         Face expResult = new Face(142, 120, 76, 76, null, null);
         Face[] result = _panasonicDirectory.getDetectedFaces();
-        Assert.assertNotNull(result);
-        Assert.assertEquals(expResult, result[0]);
+        assertNotNull(result);
+        assertEquals(expResult, result[0]);
     }
 
     @Test
@@ -54,7 +56,7 @@ public class PanasonicMakernoteDescriptorTest
     {
         Face expResult = new Face(142, 120, 76, 76, "NIELS", new Age(31, 7, 15, 0, 0, 0));
         Face[] result = _panasonicDirectory.getRecognizedFaces();
-        Assert.assertNotNull(result);
-        Assert.assertEquals(expResult, result[0]);
+        assertNotNull(result);
+        assertEquals(expResult, result[0]);
     }
 }

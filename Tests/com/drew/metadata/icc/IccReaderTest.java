@@ -26,7 +26,6 @@ import com.drew.metadata.Metadata;
 import com.drew.testing.TestHelper;
 import com.drew.tools.FileUtil;
 import junit.framework.TestCase;
-import org.junit.Assert;
 
 public class IccReaderTest extends TestCase
 {
@@ -42,7 +41,7 @@ public class IccReaderTest extends TestCase
 
         IccDirectory directory = metadata.getDirectory(IccDirectory.class);
 
-        Assert.assertNotNull(directory);
+        assertNotNull(directory);
 
         // TODO validate expected values
 

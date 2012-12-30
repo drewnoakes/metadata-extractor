@@ -33,6 +33,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * JUnit test case for class ExifReader.
@@ -111,7 +112,7 @@ public class ExifReaderTest
         // I've noticed that ACDSee reports a Comment for this image, yet ExifReader doesn't report one.
         ExifSubIFDDirectory directory = ExifReaderTest.processBytes("Tests/Data/crash01.jpg.app1", ExifSubIFDDirectory.class);
 
-        Assert.assertTrue(directory.getTagCount() > 0);
+        assertTrue(directory.getTagCount() > 0);
     }
 
     @Test

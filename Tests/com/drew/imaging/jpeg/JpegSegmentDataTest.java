@@ -20,8 +20,9 @@
  */
 package com.drew.imaging.jpeg;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -38,8 +39,8 @@ public class JpegSegmentDataTest
         byte[] segmentBytes = new byte[] { 1,2,3 };
 
         segmentData.addSegment(segmentMarker, segmentBytes);
-        Assert.assertEquals(1, segmentData.getSegmentCount(segmentMarker));
-        Assert.assertArrayEquals(segmentBytes, segmentData.getSegment(segmentMarker));
+        assertEquals(1, segmentData.getSegmentCount(segmentMarker));
+        assertArrayEquals(segmentBytes, segmentData.getSegment(segmentMarker));
     }
 
     @Test
@@ -50,11 +51,11 @@ public class JpegSegmentDataTest
         byte segmentMarker = (byte)12;
         byte[] segmentBytes = new byte[] { 1,2,3 };
 
-        Assert.assertTrue(!segmentData.containsSegment(segmentMarker));
+        assertTrue(!segmentData.containsSegment(segmentMarker));
 
         segmentData.addSegment(segmentMarker, segmentBytes);
 
-        Assert.assertTrue(segmentData.containsSegment(segmentMarker));
+        assertTrue(segmentData.containsSegment(segmentMarker));
     }
 
     @Test
@@ -69,10 +70,10 @@ public class JpegSegmentDataTest
 
         segmentData.addSegment(segmentMarker1, segmentBytes1);
         segmentData.addSegment(segmentMarker2, segmentBytes2);
-        Assert.assertEquals(1, segmentData.getSegmentCount(segmentMarker1));
-        Assert.assertEquals(1, segmentData.getSegmentCount(segmentMarker2));
-        Assert.assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker1));
-        Assert.assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker2));
+        assertEquals(1, segmentData.getSegmentCount(segmentMarker1));
+        assertEquals(1, segmentData.getSegmentCount(segmentMarker2));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker1));
+        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker2));
     }
 
     @Test
@@ -86,10 +87,10 @@ public class JpegSegmentDataTest
 
         segmentData.addSegment(segmentMarker, segmentBytes1);
         segmentData.addSegment(segmentMarker, segmentBytes2);
-        Assert.assertEquals(2, segmentData.getSegmentCount(segmentMarker));
-        Assert.assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker));
-        Assert.assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
-        Assert.assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker, 1));
+        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
+        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker, 1));
     }
 
     @Test
@@ -104,13 +105,13 @@ public class JpegSegmentDataTest
         segmentData.addSegment(segmentMarker, segmentBytes1);
         segmentData.addSegment(segmentMarker, segmentBytes2);
 
-        Assert.assertEquals(2, segmentData.getSegmentCount(segmentMarker));
+        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
 
-        Assert.assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
 
         segmentData.removeSegmentOccurrence(segmentMarker, 0);
 
-        Assert.assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker, 0));
+        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker, 0));
     }
 
     @Test
@@ -125,14 +126,14 @@ public class JpegSegmentDataTest
         segmentData.addSegment(segmentMarker, segmentBytes1);
         segmentData.addSegment(segmentMarker, segmentBytes2);
 
-        Assert.assertEquals(2, segmentData.getSegmentCount(segmentMarker));
-        Assert.assertTrue(segmentData.containsSegment(segmentMarker));
+        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
+        assertTrue(segmentData.containsSegment(segmentMarker));
 
-        Assert.assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
 
         segmentData.removeSegment(segmentMarker);
 
-        Assert.assertTrue(!segmentData.containsSegment(segmentMarker));
-        Assert.assertEquals(0, segmentData.getSegmentCount(segmentMarker));
+        assertTrue(!segmentData.containsSegment(segmentMarker));
+        assertEquals(0, segmentData.getSegmentCount(segmentMarker));
     }
 }

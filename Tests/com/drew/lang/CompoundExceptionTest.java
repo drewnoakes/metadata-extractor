@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -38,7 +41,7 @@ public class CompoundExceptionTest
         try {
             throw new CompoundException("message");
         } catch (CompoundException e) {
-            Assert.assertEquals("message", e.getMessage());
+            assertEquals("message", e.getMessage());
         }
     }
 
@@ -52,10 +55,10 @@ public class CompoundExceptionTest
                 throw new CompoundException("compound", e);
             }
         } catch (CompoundException e) {
-            Assert.assertEquals("compound", e.getMessage());
+            assertEquals("compound", e.getMessage());
             final Throwable innerException = e.getInnerException();
-            Assert.assertNotNull(innerException);
-            Assert.assertEquals("io", innerException.getMessage());
+            assertNotNull(innerException);
+            assertEquals("io", innerException.getMessage());
         }
     }
 

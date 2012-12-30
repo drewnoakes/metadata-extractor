@@ -20,8 +20,9 @@
  */
 package com.drew.metadata.jpeg;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -34,18 +35,18 @@ public class JpegComponentTest
         JpegComponent component;
 
         component = new JpegComponent(1,2,3);
-        Assert.assertEquals("Y", component.getComponentName());
+        assertEquals("Y", component.getComponentName());
 
         component = new JpegComponent(2,2,3);
-        Assert.assertEquals("Cb", component.getComponentName());
+        assertEquals("Cb", component.getComponentName());
 
         component = new JpegComponent(3,2,3);
-        Assert.assertEquals("Cr", component.getComponentName());
+        assertEquals("Cr", component.getComponentName());
 
         component = new JpegComponent(4,2,3);
-        Assert.assertEquals("I", component.getComponentName());
+        assertEquals("I", component.getComponentName());
 
         component = new JpegComponent(5,2,3);
-        Assert.assertEquals("Q", component.getComponentName());
+        assertEquals("Q", component.getComponentName());
     }
 }

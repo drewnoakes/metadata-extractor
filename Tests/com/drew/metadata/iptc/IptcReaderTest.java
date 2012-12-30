@@ -25,7 +25,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.tools.FileUtil;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class IptcReaderTest
         assertEquals(16, tags.length);
 
         assertEquals(IptcDirectory.TAG_CATEGORY, tags[0].getTagType());
-        Assert.assertArrayEquals(new String[] { "Supl. Category2", "Supl. Category1", "Cat" }, directory.getStringArray(tags[0].getTagType()));
+        assertArrayEquals(new String[] { "Supl. Category2", "Supl. Category1", "Cat" }, directory.getStringArray(tags[0].getTagType()));
 
         assertEquals(IptcDirectory.TAG_COPYRIGHT_NOTICE, tags[1].getTagType());
         assertEquals("Copyright", directory.getObject(tags[1].getTagType()));
@@ -165,7 +164,7 @@ public class IptcReaderTest
         assertEquals("Cat", directory.getObject(tags[14].getTagType()));
 
         assertEquals(IptcDirectory.TAG_SUPPLEMENTAL_CATEGORIES, tags[15].getTagType());
-        Assert.assertArrayEquals(new String[] { "Supl. Category1", "Supl. Category2" }, directory.getStringArray(tags[15].getTagType()));
+        assertArrayEquals(new String[] { "Supl. Category1", "Supl. Category2" }, directory.getStringArray(tags[15].getTagType()));
 
         assertEquals(IptcDirectory.TAG_COPYRIGHT_NOTICE, tags[16].getTagType());
         assertEquals("Copyright", directory.getObject(tags[16].getTagType()));

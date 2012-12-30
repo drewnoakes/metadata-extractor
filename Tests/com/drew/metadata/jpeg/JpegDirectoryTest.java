@@ -20,9 +20,10 @@
  */
 package com.drew.metadata.jpeg;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -41,13 +42,13 @@ public class JpegDirectoryTest
     public void testSetAndGetValue() throws Exception
     {
         _directory.setInt(123, 8);
-        Assert.assertEquals(8, _directory.getInt(123));
+        assertEquals(8, _directory.getInt(123));
     }
 
     @Test
     public void testGetComponent_NotAdded()
     {
-        Assert.assertNull(_directory.getComponent(1));
+        assertNull(_directory.getComponent(1));
     }
 
     // NOTE tests for individual tag values exist in JpegReaderTest.java
@@ -56,14 +57,14 @@ public class JpegDirectoryTest
     public void testGetImageWidth() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, 123);
-        Assert.assertEquals(123, _directory.getImageWidth());
+        assertEquals(123, _directory.getImageWidth());
     }
 
     @Test
     public void testGetImageHeight() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, 123);
-        Assert.assertEquals(123, _directory.getImageHeight());
+        assertEquals(123, _directory.getImageHeight());
     }
 
 
@@ -71,8 +72,8 @@ public class JpegDirectoryTest
     public void testGetNumberOfComponents() throws Exception
     {
         _directory.setInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS, 3);
-        Assert.assertEquals(3, _directory.getNumberOfComponents());
-        Assert.assertEquals("3", _directory.getDescription(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS));
+        assertEquals(3, _directory.getNumberOfComponents());
+        assertEquals("3", _directory.getDescription(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS));
     }
 
     @Test
@@ -89,9 +90,9 @@ public class JpegDirectoryTest
         _directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_4, component4);
 
         // component numbers are zero-indexed for this method
-        Assert.assertSame(component1, _directory.getComponent(0));
-        Assert.assertSame(component2, _directory.getComponent(1));
-        Assert.assertSame(component3, _directory.getComponent(2));
-        Assert.assertSame(component4, _directory.getComponent(3));
+        assertSame(component1, _directory.getComponent(0));
+        assertSame(component2, _directory.getComponent(1));
+        assertSame(component3, _directory.getComponent(2));
+        assertSame(component4, _directory.getComponent(3));
     }
 }

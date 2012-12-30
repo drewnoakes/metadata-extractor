@@ -22,11 +22,12 @@ package com.drew.metadata;
 
 import com.drew.lang.Rational;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.GregorianCalendar;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -46,15 +47,15 @@ public class DirectoryTest
     {
         _directory.setString(ExifSubIFDDirectory.TAG_APERTURE, "TAG_APERTURE");
         _directory.setString(ExifSubIFDDirectory.TAG_BATTERY_LEVEL, "TAG_BATTERY_LEVEL");
-        Assert.assertEquals("TAG_APERTURE", _directory.getString(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertEquals("TAG_BATTERY_LEVEL", _directory.getString(ExifSubIFDDirectory.TAG_BATTERY_LEVEL));
+        assertEquals("TAG_APERTURE", _directory.getString(ExifSubIFDDirectory.TAG_APERTURE));
+        assertEquals("TAG_BATTERY_LEVEL", _directory.getString(ExifSubIFDDirectory.TAG_BATTERY_LEVEL));
     }
 
     @Test public void testSetSameTagMultipleTimesOverwritesValue() throws Exception
     {
         _directory.setInt(ExifSubIFDDirectory.TAG_APERTURE, 1);
         _directory.setInt(ExifSubIFDDirectory.TAG_APERTURE, 2);
-        Assert.assertEquals(2, _directory.getInt(ExifSubIFDDirectory.TAG_APERTURE));
+        assertEquals(2, _directory.getInt(ExifSubIFDDirectory.TAG_APERTURE));
     }
 
     @Test
@@ -64,15 +65,15 @@ public class DirectoryTest
         int tagType = 321;
         _directory.setInt(tagType, value);
 
-        Assert.assertEquals(value, _directory.getInt(tagType));
-        Assert.assertEquals(Integer.valueOf(value), _directory.getInteger(tagType));
-        Assert.assertEquals((float)value, _directory.getFloat(tagType), 0.00001);
-        Assert.assertEquals((double)value, _directory.getDouble(tagType), 0.00001);
-        Assert.assertEquals((long)value, _directory.getLong(tagType));
-        Assert.assertEquals(Integer.toString(value), _directory.getString(tagType));
-        Assert.assertEquals(new Rational(value, 1), _directory.getRational(tagType));
-        Assert.assertArrayEquals(new int[] { value }, _directory.getIntArray(tagType));
-        Assert.assertArrayEquals(new byte[] { (byte)value }, _directory.getByteArray(tagType));
+        assertEquals(value, _directory.getInt(tagType));
+        assertEquals(Integer.valueOf(value), _directory.getInteger(tagType));
+        assertEquals((float)value, _directory.getFloat(tagType), 0.00001);
+        assertEquals((double)value, _directory.getDouble(tagType), 0.00001);
+        assertEquals((long)value, _directory.getLong(tagType));
+        assertEquals(Integer.toString(value), _directory.getString(tagType));
+        assertEquals(new Rational(value, 1), _directory.getRational(tagType));
+        assertArrayEquals(new int[]{value}, _directory.getIntArray(tagType));
+        assertArrayEquals(new byte[]{(byte)value}, _directory.getByteArray(tagType));
     }
 
     @Test public void testSetAndGetIntArray() throws Exception
@@ -81,14 +82,14 @@ public class DirectoryTest
         int tagType = 123;
         _directory.setIntArray(tagType, inputValues);
         int[] outputValues = _directory.getIntArray(tagType);
-        Assert.assertNotNull(outputValues);
-        Assert.assertEquals(inputValues.length, outputValues.length);
+        assertNotNull(outputValues);
+        assertEquals(inputValues.length, outputValues.length);
         for (int i = 0; i < inputValues.length; i++) {
             int inputValue = inputValues[i];
             int outputValue = outputValues[i];
-            Assert.assertEquals(inputValue, outputValue);
+            assertEquals(inputValue, outputValue);
         }
-        Assert.assertEquals(inputValues, _directory.getIntArray(tagType));
+        assertEquals(inputValues, _directory.getIntArray(tagType));
         StringBuilder outputString = new StringBuilder();
         for (int i = 0; i < inputValues.length; i++) {
             int inputValue = inputValues[i];
@@ -97,7 +98,7 @@ public class DirectoryTest
             }
             outputString.append(inputValue);
         }
-        Assert.assertEquals(outputString.toString(), _directory.getString(tagType));
+        assertEquals(outputString.toString(), _directory.getString(tagType));
     }
 
     @Test
@@ -111,11 +112,11 @@ public class DirectoryTest
         _directory.setString(2, date2);
         _directory.setString(3, date3);
         _directory.setString(4, date4);
-        Assert.assertEquals(date1, _directory.getString(1));
-        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), _directory.getDate(1));
-        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), _directory.getDate(2));
-        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), _directory.getDate(3));
-        Assert.assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), _directory.getDate(4));
+        assertEquals(date1, _directory.getString(1));
+        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), _directory.getDate(1));
+        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), _directory.getDate(2));
+        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), _directory.getDate(3));
+        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), _directory.getDate(4));
     }
 
     @Test
@@ -125,9 +126,9 @@ public class DirectoryTest
         _directory.setIntArray(1, ints);
 
         byte[] bytes = _directory.getByteArray(1);
-        Assert.assertNotNull(bytes);
-        Assert.assertEquals(ints.length, bytes.length);
-        Assert.assertEquals(1, bytes[0]);
+        assertNotNull(bytes);
+        assertEquals(ints.length, bytes.length);
+        assertEquals(1, bytes[0]);
     }
 
     @Test
@@ -135,31 +136,31 @@ public class DirectoryTest
     {
         byte[] bytes = { 0x01, 0x02, 0x03 };
         _directory.setString(1, new String(bytes));
-        Assert.assertEquals(0x010203, _directory.getInt(1));
+        assertEquals(0x010203, _directory.getInt(1));
     }
 
     @Test
     public void testContainsTag() throws Exception
     {
-        Assert.assertFalse(_directory.containsTag(ExifSubIFDDirectory.TAG_APERTURE));
+        assertFalse(_directory.containsTag(ExifSubIFDDirectory.TAG_APERTURE));
         _directory.setString(ExifSubIFDDirectory.TAG_APERTURE, "Tag Value");
-        Assert.assertTrue(_directory.containsTag(ExifSubIFDDirectory.TAG_APERTURE));
+        assertTrue(_directory.containsTag(ExifSubIFDDirectory.TAG_APERTURE));
     }
 
     @Test
     public void testGetNonExistentTagIsNullForAllTypes() throws Exception
     {
-        Assert.assertNull(_directory.getString(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getInteger(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getDoubleObject(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getFloatObject(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getByteArray(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getDate(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getIntArray(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getLongObject(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getObject(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getRational(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getRationalArray(ExifSubIFDDirectory.TAG_APERTURE));
-        Assert.assertNull(_directory.getStringArray(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getString(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getInteger(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getDoubleObject(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getFloatObject(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getByteArray(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getDate(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getIntArray(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getLongObject(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getObject(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getRational(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getRationalArray(ExifSubIFDDirectory.TAG_APERTURE));
+        assertNull(_directory.getStringArray(ExifSubIFDDirectory.TAG_APERTURE));
     }
 }

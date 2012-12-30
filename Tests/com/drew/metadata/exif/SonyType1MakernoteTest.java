@@ -21,8 +21,9 @@
 
 package com.drew.metadata.exif;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class SonyType1MakernoteTest
@@ -31,28 +32,28 @@ public class SonyType1MakernoteTest
     {
         SonyType1MakernoteDirectory directory = ExifReaderTest.processBytes("Tests/Data/sonyType1.jpg.app1", SonyType1MakernoteDirectory.class);
 
-        Assert.assertNotNull(directory);
-        Assert.assertFalse(directory.hasErrors());
+        assertNotNull(directory);
+        assertFalse(directory.hasErrors());
 
         SonyType1MakernoteDescriptor descriptor = new SonyType1MakernoteDescriptor(directory);
 
-        Assert.assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_COLOR_TEMPERATURE));
-        Assert.assertNull(descriptor.getColorTemperatureDescription());
-        Assert.assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_SCENE_MODE));
-        Assert.assertNull(descriptor.getSceneModeDescription());
-        Assert.assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_ZONE_MATCHING));
-        Assert.assertNull(descriptor.getZoneMatchingDescription());
-        Assert.assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_DYNAMIC_RANGE_OPTIMISER));
-        Assert.assertNull(descriptor.getDynamicRangeOptimizerDescription());
-        Assert.assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_IMAGE_STABILISATION));
-        Assert.assertNull(descriptor.getImageStabilizationDescription());
-        Assert.assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_COLOR_MODE));
-        Assert.assertNull(descriptor.getColorModeDescription());
+        assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_COLOR_TEMPERATURE));
+        assertNull(descriptor.getColorTemperatureDescription());
+        assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_SCENE_MODE));
+        assertNull(descriptor.getSceneModeDescription());
+        assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_ZONE_MATCHING));
+        assertNull(descriptor.getZoneMatchingDescription());
+        assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_DYNAMIC_RANGE_OPTIMISER));
+        assertNull(descriptor.getDynamicRangeOptimizerDescription());
+        assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_IMAGE_STABILISATION));
+        assertNull(descriptor.getImageStabilizationDescription());
+        assertNull(directory.getObject(SonyType1MakernoteDirectory.TAG_COLOR_MODE));
+        assertNull(descriptor.getColorModeDescription());
 
-        Assert.assertEquals("On (Shooting)", descriptor.getAntiBlurDescription());
-        Assert.assertEquals("Auto", descriptor.getExposureModeDescription());
-        Assert.assertEquals("Off", descriptor.getLongExposureNoiseReductionDescription());
-        Assert.assertEquals("Off", descriptor.getMacroDescription());
-        Assert.assertEquals("Normal", descriptor.getJpegQualityDescription());
+        assertEquals("On (Shooting)", descriptor.getAntiBlurDescription());
+        assertEquals("Auto", descriptor.getExposureModeDescription());
+        assertEquals("Off", descriptor.getLongExposureNoiseReductionDescription());
+        assertEquals("Off", descriptor.getMacroDescription());
+        assertEquals("Normal", descriptor.getJpegQualityDescription());
     }
 }

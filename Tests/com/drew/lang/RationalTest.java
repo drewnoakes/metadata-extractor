@@ -20,8 +20,10 @@
  */
 package com.drew.lang;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author  Drew Noakes http://drewnoakes.com
@@ -32,16 +34,16 @@ public class RationalTest
     public void testCreateRational() throws Exception
     {
         Rational rational = new Rational(1, 3);
-        Assert.assertEquals(1, rational.getNumerator());
-        Assert.assertEquals(3, rational.getDenominator());
-        Assert.assertEquals(1d / 3d, rational.doubleValue(), 0.0001);
+        assertEquals(1, rational.getNumerator());
+        assertEquals(3, rational.getDenominator());
+        assertEquals(1d / 3d, rational.doubleValue(), 0.0001);
     }
 
     @Test
     public void testToString() throws Exception
     {
         Rational rational = new Rational(1, 3);
-        Assert.assertEquals("1/3", rational.toString());
+        assertEquals("1/3", rational.toString());
     }
 
     @Test
@@ -49,34 +51,34 @@ public class RationalTest
     {
         Rational third1 = new Rational(1, 3);
         Rational third2 = new Rational(2, 6);
-        Assert.assertEquals("1/3", third1.toSimpleString(true));
-        Assert.assertEquals("1/3", third2.toSimpleString(true));
-        Assert.assertEquals(third1, third2);
+        assertEquals("1/3", third1.toSimpleString(true));
+        assertEquals("1/3", third2.toSimpleString(true));
+        assertEquals(third1, third2);
 
         Rational twoThirds = new Rational(10, 15);
-        Assert.assertEquals("2/3", twoThirds.toSimpleString(true));
+        assertEquals("2/3", twoThirds.toSimpleString(true));
 
         Rational two = new Rational(10, 5);
-        Assert.assertTrue(two.isInteger());
-        Assert.assertEquals("2", two.toSimpleString(true));
-        Assert.assertEquals("2", two.toSimpleString(false));
+        assertTrue(two.isInteger());
+        assertEquals("2", two.toSimpleString(true));
+        assertEquals("2", two.toSimpleString(false));
 
         Rational twoFifths = new Rational(4, 10);
-        Assert.assertEquals("0.4", twoFifths.toSimpleString(true));
-        Assert.assertEquals("2/5", twoFifths.toSimpleString(false));
+        assertEquals("0.4", twoFifths.toSimpleString(true));
+        assertEquals("2/5", twoFifths.toSimpleString(false));
 
         Rational threeEigths = new Rational(3, 8);
-        Assert.assertEquals("3/8", threeEigths.toSimpleString(true));
+        assertEquals("3/8", threeEigths.toSimpleString(true));
 
         Rational zero = new Rational(0, 8);
-        Assert.assertTrue(zero.isInteger());
-        Assert.assertEquals("0", zero.toSimpleString(true));
-        Assert.assertEquals("0", zero.toSimpleString(false));
+        assertTrue(zero.isInteger());
+        assertEquals("0", zero.toSimpleString(true));
+        assertEquals("0", zero.toSimpleString(false));
 
         zero = new Rational(0, 0);
-        Assert.assertTrue(zero.isInteger());
-        Assert.assertEquals("0", zero.toSimpleString(true));
-        Assert.assertEquals("0", zero.toSimpleString(false));
+        assertTrue(zero.isInteger());
+        assertEquals("0", zero.toSimpleString(true));
+        assertEquals("0", zero.toSimpleString(false));
 
         // not sure this is a nice presentation of rationals.  won't implement it for now.
 //        Rational twoAndAHalf = new Rational(10,4);
@@ -88,7 +90,7 @@ public class RationalTest
     {
         Rational rational = new Rational(1, 3);
         Rational reciprocal = rational.getReciprocal();
-        Assert.assertEquals("new rational should be reciprocal", new Rational(3, 1), reciprocal);
-        Assert.assertEquals("original reciprocal should remain unchanged", new Rational(1, 3), rational);
+        assertEquals("new rational should be reciprocal", new Rational(3, 1), reciprocal);
+        assertEquals("original reciprocal should remain unchanged", new Rational(1, 3), rational);
     }
 }

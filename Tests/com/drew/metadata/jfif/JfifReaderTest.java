@@ -23,10 +23,10 @@ package com.drew.metadata.jfif;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 import com.drew.metadata.Tag;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -35,30 +35,37 @@ public class JfifReaderTest
 {
     @Test public void testRead() throws Exception
     {
-        final byte[] jfifData = new byte[] { 74,70,73,70,0, 1,2, 1, 0,108, 0,108, 0,0 };
+        final byte[] jfifData = new byte[] {
+            74,70,73,70,0,
+            1,2,
+            1,
+            0,108,
+            0,108,
+            0,0
+        };
 
         final Metadata metadata = new Metadata();
         final JfifReader reader = new JfifReader();
         reader.extract(new ByteArrayReader(jfifData), metadata);
 
-        Assert.assertEquals(1, metadata.getDirectoryCount());
+        assertEquals(1, metadata.getDirectoryCount());
         JfifDirectory directory = metadata.getDirectory(JfifDirectory.class);
-        Assert.assertNotNull(directory);
-        Assert.assertFalse(directory.getErrors().toString(), directory.hasErrors());
+        assertNotNull(directory);
+        assertFalse(directory.getErrors().toString(), directory.hasErrors());
 
         Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
-        Assert.assertEquals(4, tags.length);
+        assertEquals(4, tags.length);
 
-        Assert.assertEquals(JfifDirectory.TAG_JFIF_VERSION, tags[0].getTagType());
-        Assert.assertEquals(0x0102, directory.getInt(tags[0].getTagType()));
+        assertEquals(JfifDirectory.TAG_JFIF_VERSION, tags[0].getTagType());
+        assertEquals(0x0102, directory.getInt(tags[0].getTagType()));
 
-        Assert.assertEquals(JfifDirectory.TAG_JFIF_UNITS, tags[1].getTagType());
-        Assert.assertEquals(1, directory.getInt(tags[1].getTagType()));
+        assertEquals(JfifDirectory.TAG_JFIF_UNITS, tags[1].getTagType());
+        assertEquals(1, directory.getInt(tags[1].getTagType()));
 
-        Assert.assertEquals(JfifDirectory.TAG_JFIF_RESX, tags[2].getTagType());
-        Assert.assertEquals(108, directory.getInt(tags[2].getTagType()));
+        assertEquals(JfifDirectory.TAG_JFIF_RESX, tags[2].getTagType());
+        assertEquals(108, directory.getInt(tags[2].getTagType()));
 
-        Assert.assertEquals(JfifDirectory.TAG_JFIF_RESY, tags[3].getTagType());
-        Assert.assertEquals(108, directory.getInt(tags[3].getTagType()));
+        assertEquals(JfifDirectory.TAG_JFIF_RESY, tags[3].getTagType());
+        assertEquals(108, directory.getInt(tags[3].getTagType()));
     }
 }
