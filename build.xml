@@ -145,7 +145,7 @@
             version="true"
             use="true"
             access="protected"
-            windowtitle="Metadata-Extractor - JavaDoc - An Open Source Java Library for Image File Metadata"
+            windowtitle="Metadata-Extractor - Javadoc - An Open Source Java Library for Image File Metadata"
             failonerror="true">
             <arg value="-notimestamp" />
             <!-- be sure to only use single quotes in the CDATA sections below -->
