@@ -20,6 +20,7 @@
  */
 package com.drew.imaging;
 
+import com.drew.imaging.bmp.BmpMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
@@ -55,6 +56,7 @@ public class ImageMetadataReader
     private static final int MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
     private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;     // "II"
     private static final int PSD_MAGIC_NUMBER = 0x3842;            // "8B" note that the full magic number is 8BPS
+    private static final int BMP_MAGIC_NUMBER = 0x424D;            // "BM" // TODO technically there are other very rare magic numbers for OS/2 BMP files...
 
     /**
      * Reads metadata from an {@link InputStream}. The file type is determined by inspecting the leading bytes of the
@@ -70,7 +72,9 @@ public class ImageMetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws ImageProcessingException, IOException
     {
         InputStream bufferedInputStream = new BufferedInputStream(inputStream);
-        int magicNumber = readMagicNumber(bufferedInputStream);
+
+        int magicNumber = peekMagicNumber(bufferedInputStream);
+
         if (magicNumber == -1)
             throw new ImageProcessingException("Could not determine file's magic number.");
 
@@ -88,6 +92,11 @@ public class ImageMetadataReader
         // TODO we should really check all 4 bytes of the PSD magic number
         if (magicNumber == PSD_MAGIC_NUMBER) {
             return PsdMetadataReader.readMetadata(bufferedInputStream);
+        }
+
+        // This covers PSD files
+        if (magicNumber == BMP_MAGIC_NUMBER) {
+            return BmpMetadataReader.readMetadata(bufferedInputStream);
         }
 
         throw new ImageProcessingException("File format is not supported");
@@ -117,7 +126,7 @@ public class ImageMetadataReader
      * Reads the first two bytes from the input stream, then rewinds.
      * @throws IOException
      */
-    private static int readMagicNumber(@NotNull InputStream inputStream) throws IOException
+    private static int peekMagicNumber(@NotNull InputStream inputStream) throws IOException
     {
         inputStream.mark(2);
         final int byte1 = inputStream.read();
