@@ -21,16 +21,14 @@
 
 package com.drew.metadata.adobe;
 
-import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.tools.FileUtil;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 
 import static com.drew.lang.Iterables.toList;
 import static org.junit.Assert.*;
@@ -38,6 +36,17 @@ import static org.junit.Assert.*;
 /** @author Drew Noakes http://drewnoakes.com */
 public class AdobeJpegReaderTest
 {
+    @NotNull
+    public static AdobeJpegDirectory processBytes(@NotNull String filePath) throws IOException
+    {
+        Metadata metadata = new Metadata();
+        new AdobeJpegReader().extract(new SequentialByteArrayReader(FileUtil.readBytes(filePath)), metadata);
+
+        AdobeJpegDirectory directory = metadata.getDirectory(AdobeJpegDirectory.class);
+        assertNotNull(directory);
+        return directory;
+    }
+
     @Test
     public void testSegmentTypes() throws Exception
     {
@@ -50,19 +59,8 @@ public class AdobeJpegReaderTest
     @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        AdobeJpegReader adobeJpegReader = new AdobeJpegReader();
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/com/drew/metadata/adobe/adobeJpeg1.jpg"), adobeJpegReader.getSegmentTypes());
+        AdobeJpegDirectory directory = processBytes("Tests/data/adobeJpeg1.jpg.appe");
 
-        byte[] bytes = segmentData.getSegment(JpegSegmentType.APPE);
-
-        assertNotNull(bytes);
-
-        Metadata metadata = new Metadata();
-        adobeJpegReader.extract(new SequentialByteArrayReader(bytes), metadata);
-
-        assertEquals(1, metadata.getDirectoryCount());
-        AdobeJpegDirectory directory = metadata.getDirectory(AdobeJpegDirectory.class);
-        assertNotNull(directory);
         assertFalse(directory.getErrors().toString(), directory.hasErrors());
 
         assertEquals(4, directory.getTagCount());
