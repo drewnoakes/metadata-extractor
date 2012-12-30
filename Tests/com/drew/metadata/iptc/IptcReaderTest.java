@@ -22,9 +22,9 @@ package com.drew.metadata.iptc;
 
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
-import com.drew.testing.TestHelper;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import com.drew.tools.FileUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class IptcReaderTest
 {
     @Test public void testIptc1BytesFromFile() throws Exception
     {
-        final byte[] bytes = TestHelper.loadFileBytes(new File("Tests/com/drew/metadata/iptc/iptc1.bytes"));
+        final byte[] bytes = FileUtil.readBytes(new File("Tests/com/drew/metadata/iptc/iptc1.bytes"));
 
         Metadata metadata = new Metadata();
         IptcReader reader = new IptcReader();
@@ -102,7 +102,7 @@ public class IptcReaderTest
 
     @Test public void testIptc2Photoshop6BytesFromFile() throws Exception
     {
-        final byte[] bytes = TestHelper.loadFileBytes(new File("Tests/com/drew/metadata/iptc/iptc2-photoshop6.bytes"));
+        final byte[] bytes = FileUtil.readBytes(new File("Tests/com/drew/metadata/iptc/iptc2-photoshop6.bytes"));
 
         Metadata metadata = new Metadata();
         new IptcReader().extract(new SequentialByteArrayReader(bytes), metadata, bytes.length);

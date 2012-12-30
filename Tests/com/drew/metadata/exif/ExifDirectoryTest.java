@@ -33,6 +33,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -46,26 +48,20 @@ public class ExifDirectoryTest
         Directory ifd0Directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
         Directory thumbDirectory = metadata.getOrCreateDirectory(ExifThumbnailDirectory.class);
 
-        Assert.assertFalse(subIFDDirectory.hasErrors());
+        assertFalse(subIFDDirectory.hasErrors());
 
-        Assert.assertEquals("Exif IFD0", ifd0Directory.getName());
-        Assert.assertEquals("Exif SubIFD", subIFDDirectory.getName());
-        Assert.assertEquals("Exif Thumbnail", thumbDirectory.getName());
+        assertEquals("Exif IFD0", ifd0Directory.getName());
+        assertEquals("Exif SubIFD", subIFDDirectory.getName());
+        assertEquals("Exif Thumbnail", thumbDirectory.getName());
     }
 
     @Test
     public void testGetThumbnailData() throws Exception
     {
-        File file = new File("Tests/com/drew/metadata/exif/withExif.jpg");
-        Metadata metadata = JpegMetadataReader.readMetadata(file);
-        Assert.assertFalse(metadata.hasErrors());
+        ExifThumbnailDirectory directory = ExifReaderTest.processExifBytes("Tests/data/withExif.jpg.app1", ExifThumbnailDirectory.class);
 
-        ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
-        Assert.assertNotNull(directory);
-        Assert.assertTrue(directory.hasThumbnailData());
-        
         byte[] thumbData = directory.getThumbnailData();
-        Assert.assertNotNull(thumbData);
+        assertNotNull(thumbData);
         try {
             // attempt to read the thumbnail -- it should be a legal Jpeg file
             JpegSegmentReader.readSegments(new SequentialByteArrayReader(thumbData), null);
@@ -77,18 +73,16 @@ public class ExifDirectoryTest
     @Test
     public void testWriteThumbnail() throws Exception
     {
-        File file = new File("Tests/com/drew/metadata/exif/manuallyAddedThumbnail.jpg");
-        Metadata metadata = JpegMetadataReader.readMetadata(file);
-        Assert.assertFalse(metadata.hasErrors());
+        ExifThumbnailDirectory directory = ExifReaderTest.processExifBytes("Tests/data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
-        ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
-        Assert.assertNotNull(directory);
-        Assert.assertTrue(directory.hasThumbnailData());
+        assertTrue(directory.hasThumbnailData());
 
         File thumbnailFile = File.createTempFile("thumbnail", ".jpg");
         try {
             directory.writeThumbnail(thumbnailFile.getAbsolutePath());
-            Assert.assertTrue(new File(thumbnailFile.getAbsolutePath()).exists());
+            File file = new File(thumbnailFile.getAbsolutePath());
+            assertEquals(2970, file.length());
+            assertTrue(file.exists());
         } finally {
             if (!thumbnailFile.delete())
                 Assert.fail("Unable to delete temp thumbnail file.");
@@ -114,11 +108,11 @@ public class ExifDirectoryTest
         Metadata metadata = JpegMetadataReader.readMetadata(file);
 
         ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
-        Assert.assertNotNull(thumbnailDirectory);
-        Assert.assertEquals(72, thumbnailDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
+        assertNotNull(thumbnailDirectory);
+        assertEquals(72, thumbnailDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
         
         ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-        Assert.assertNotNull(exifIFD0Directory);
-        Assert.assertEquals(216, exifIFD0Directory.getInt(ExifIFD0Directory.TAG_X_RESOLUTION));
+        assertNotNull(exifIFD0Directory);
+        assertEquals(216, exifIFD0Directory.getInt(ExifIFD0Directory.TAG_X_RESOLUTION));
     }
 }

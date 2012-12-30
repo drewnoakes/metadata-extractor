@@ -20,16 +20,12 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
-import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -42,13 +38,10 @@ public class NikonType2MakernoteTest1
     @Before
     public void setUp() throws Exception
     {
-        File metadataFile = new File("Tests/com/drew/metadata/exif/nikonMakernoteType2a.metadata");
-        Metadata metadata = new Metadata();
-        final byte[] data = JpegSegmentData.fromFile(metadataFile).getSegment(JpegSegmentType.APP1);
-        Assert.assertNotNull(data);
-        new ExifReader().extract(new ByteArrayReader(data), metadata);
+        _nikonDirectory = ExifReaderTest.processExifBytes("Tests/data/nikonMakernoteType2a.jpg.app1", NikonType2MakernoteDirectory.class);
 
-        _nikonDirectory = metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class);
+        assertNotNull(_nikonDirectory);
+
         _descriptor = new NikonType2MakernoteDescriptor(_nikonDirectory);
     }
 

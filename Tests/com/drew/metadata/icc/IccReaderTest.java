@@ -24,6 +24,7 @@ package com.drew.metadata.icc;
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.testing.TestHelper;
+import com.drew.tools.FileUtil;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
@@ -31,7 +32,7 @@ public class IccReaderTest extends TestCase
 {
     public void testExtract() throws Exception
     {
-        byte[] app2Bytes = TestHelper.readFileBytes("Tests/com/drew/metadata/icc/iccDataInvalid1.app2bytes");
+        byte[] app2Bytes = FileUtil.readBytes("Tests/com/drew/metadata/icc/iccDataInvalid1.app2bytes");
 
         // ICC data starts after a 14-byte preamble
         byte[] icc = TestHelper.skipBytes(app2Bytes, 14);

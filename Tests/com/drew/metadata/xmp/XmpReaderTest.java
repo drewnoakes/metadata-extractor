@@ -20,18 +20,17 @@
  */
 package com.drew.metadata.xmp;
 
-import com.drew.imaging.jpeg.JpegSegmentData;
-import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
-import org.junit.Assert;
+import com.drew.tools.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -44,13 +43,13 @@ public class XmpReaderTest
     public void setUp() throws Exception
     {
         // use a known testing image
-        File metadataFile = new File("Tests/com/drew/metadata/xmp/withXmpAndIptc.metadata");
-        JpegSegmentData jpegSegmentData = JpegSegmentData.fromFile(metadataFile);
+        byte[] data = FileUtil.readBytes("Tests/data/withXmpAndIptc.jpg.app1.1");
+        assertNotNull(data);
+
         Metadata metadata = new Metadata();
-        final byte[] data = jpegSegmentData.getSegment(JpegSegmentType.APP1, 1);
-        Assert.assertNotNull(data);
         new XmpReader().extract(new ByteArrayReader(data), metadata);
-        Assert.assertTrue(metadata.containsDirectory(XmpDirectory.class));
+
+        assertTrue(metadata.containsDirectory(XmpDirectory.class));
         _directory = metadata.getOrCreateDirectory(XmpDirectory.class);
     }
 
@@ -75,25 +74,25 @@ public class XmpReaderTest
     public void testExtract_LensInformation() throws Exception
     {
         // Note that this tag really holds a rational array, but XmpReader doesn't parse arrays
-        Assert.assertEquals("24/1 70/1 0/0 0/0", _directory.getString(XmpDirectory.TAG_LENS_INFO));
+        assertEquals("24/1 70/1 0/0 0/0", _directory.getString(XmpDirectory.TAG_LENS_INFO));
 
 //        Rational[] info = _directory.getRationalArray(XmpDirectory.TAG_LENS_INFO);
-//        Assert.assertEquals(new Rational(24, 1), info[0]);
-//        Assert.assertEquals(new Rational(70, 1), info[1]);
-//        Assert.assertEquals(new Rational(0, 0), info[2]);
-//        Assert.assertEquals(new Rational(0, 0), info[3]);
+//        assertEquals(new Rational(24, 1), info[0]);
+//        assertEquals(new Rational(70, 1), info[1]);
+//        assertEquals(new Rational(0, 0), info[2]);
+//        assertEquals(new Rational(0, 0), info[3]);
     }
 
     @Test
     public void testExtract_HasXMPMeta() throws Exception
     {
-        Assert.assertNotNull(_directory.getXMPMeta());
+        assertNotNull(_directory.getXMPMeta());
     }
 
     @Test
     public void testExtract_Lens() throws Exception
     {
-        Assert.assertEquals("EF24-70mm f/2.8L USM", _directory.getString(XmpDirectory.TAG_LENS));
+        assertEquals("EF24-70mm f/2.8L USM", _directory.getString(XmpDirectory.TAG_LENS));
     }
 
 /*
@@ -102,82 +101,82 @@ public class XmpReaderTest
     @Test
     public void testExtract_Format() throws Exception
     {
-        Assert.assertEquals("image/tiff", _directory.getString(XmpDirectory.TAG_FORMAT));
+        assertEquals("image/tiff", _directory.getString(XmpDirectory.TAG_FORMAT));
     }
 
     @Test
     public void testExtract_Creator() throws Exception
     {
-        Assert.assertEquals("", _directory.getString(XmpDirectory.TAG_CREATOR));
+        assertEquals("", _directory.getString(XmpDirectory.TAG_CREATOR));
     }
 
     @Test
     public void testExtract_Rights() throws Exception
     {
-        Assert.assertEquals("", _directory.getString(XmpDirectory.TAG_RIGHTS));
+        assertEquals("", _directory.getString(XmpDirectory.TAG_RIGHTS));
     }
 
     @Test
     public void testExtract_Description() throws Exception
     {
-        Assert.assertEquals("", _directory.getString(XmpDirectory.TAG_DESCRIPTION));
+        assertEquals("", _directory.getString(XmpDirectory.TAG_DESCRIPTION));
     }
 */
 
     @Test
     public void testExtract_SerialNumber() throws Exception
     {
-        Assert.assertEquals("380319450", _directory.getString(XmpDirectory.TAG_CAMERA_SERIAL_NUMBER));
+        assertEquals("380319450", _directory.getString(XmpDirectory.TAG_CAMERA_SERIAL_NUMBER));
     }
 
     @Test
     public void testExtract_Firmware() throws Exception
     {
-        Assert.assertEquals("1.2.1", _directory.getString(XmpDirectory.TAG_FIRMWARE));
+        assertEquals("1.2.1", _directory.getString(XmpDirectory.TAG_FIRMWARE));
     }
 
     @Test
     public void testExtract_Maker() throws Exception
     {
-        Assert.assertEquals("Canon", _directory.getString(XmpDirectory.TAG_MAKE));
+        assertEquals("Canon", _directory.getString(XmpDirectory.TAG_MAKE));
     }
 
     @Test
     public void testExtract_Model() throws Exception
     {
-        Assert.assertEquals("Canon EOS 7D", _directory.getString(XmpDirectory.TAG_MODEL));
+        assertEquals("Canon EOS 7D", _directory.getString(XmpDirectory.TAG_MODEL));
     }
 
     @Test
     public void testExtract_ExposureTime() throws Exception
     {
         // Note XmpReader doesn't parse this as a rational even though it appears to be... need more examples
-        Assert.assertEquals("1/125", _directory.getString(XmpDirectory.TAG_EXPOSURE_TIME));
-//        Assert.assertEquals(new Rational(1, 125), _directory.getRational(XmpDirectory.TAG_EXPOSURE_TIME));
+        assertEquals("1/125", _directory.getString(XmpDirectory.TAG_EXPOSURE_TIME));
+//        assertEquals(new Rational(1, 125), _directory.getRational(XmpDirectory.TAG_EXPOSURE_TIME));
     }
 
     @Test
     public void testExtract_ExposureProgram() throws Exception
     {
-        Assert.assertEquals(1, _directory.getInt(XmpDirectory.TAG_EXPOSURE_PROGRAM));
+        assertEquals(1, _directory.getInt(XmpDirectory.TAG_EXPOSURE_PROGRAM));
     }
 
     @Test
     public void testExtract_FNumber() throws Exception
     {
-        Assert.assertEquals(new Rational(11, 1), _directory.getRational(XmpDirectory.TAG_F_NUMBER));
+        assertEquals(new Rational(11, 1), _directory.getRational(XmpDirectory.TAG_F_NUMBER));
     }
 
     @Test
     public void testExtract_FocalLength() throws Exception
     {
-        Assert.assertEquals(new Rational(57, 1), _directory.getRational(XmpDirectory.TAG_FOCAL_LENGTH));
+        assertEquals(new Rational(57, 1), _directory.getRational(XmpDirectory.TAG_FOCAL_LENGTH));
     }
 
     @Test
     public void testExtract_ShutterSpeed() throws Exception
     {
-        Assert.assertEquals(new Rational(6965784, 1000000), _directory.getRational(XmpDirectory.TAG_SHUTTER_SPEED));
+        assertEquals(new Rational(6965784, 1000000), _directory.getRational(XmpDirectory.TAG_SHUTTER_SPEED));
     }
 
     @Test
@@ -187,12 +186,12 @@ public class XmpReaderTest
 
         // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
 
-        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
-//        Assert.assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
+        assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
+//        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
 
         Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Assert.assertEquals(calendar.getTime(), actual);
+        assertEquals(calendar.getTime(), actual);
     }
 
     @Test
@@ -202,12 +201,12 @@ public class XmpReaderTest
 
         // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
 
-        Assert.assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
-//        Assert.assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
+        assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
+//        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
 
         Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Assert.assertEquals(calendar.getTime(), actual);
+        assertEquals(calendar.getTime(), actual);
     }
 
     @Test
@@ -215,12 +214,12 @@ public class XmpReaderTest
     {
         Map<String,String> propertyMap = _directory.getXmpProperties();
 
-        Assert.assertEquals(179, propertyMap.size());
+        assertEquals(179, propertyMap.size());
 
-        Assert.assertTrue(propertyMap.containsKey("photoshop:Country"));
-        Assert.assertEquals("Deutschland", propertyMap.get("photoshop:Country"));
+        assertTrue(propertyMap.containsKey("photoshop:Country"));
+        assertEquals("Deutschland", propertyMap.get("photoshop:Country"));
 
-        Assert.assertTrue(propertyMap.containsKey("tiff:ImageLength"));
-        Assert.assertEquals("900", propertyMap.get("tiff:ImageLength"));
+        assertTrue(propertyMap.containsKey("tiff:ImageLength"));
+        assertEquals("900", propertyMap.get("tiff:ImageLength"));
     }
 }

@@ -25,6 +25,7 @@ import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Iterables;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,11 @@ public class ExtractJpegSegmentTool
 
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File(filePath), segmentTypes);
 
+        saveSegmentFiles(filePath, segmentData);
+    }
+
+    public static void saveSegmentFiles(@NotNull String jpegFilePath, @NotNull JpegSegmentData segmentData) throws IOException
+    {
         for (JpegSegmentType segmentType : segmentData.getSegmentTypes()) {
             List<byte[]> segments = Iterables.toList(segmentData.getSegments(segmentType));
             if (segments.size() == 0) {
@@ -81,11 +87,11 @@ public class ExtractJpegSegmentTool
 
             if (segments.size() > 1) {
                 for (int i = 0; i < segments.size(); i++) {
-                    String outputFilePath = String.format("%s.%s.%d", filePath, segmentType.toString().toLowerCase(), i);
+                    String outputFilePath = String.format("%s.%s.%d", jpegFilePath, segmentType.toString().toLowerCase(), i);
                     FileUtil.saveBytes(new File(outputFilePath), segments.get(i));
                 }
             } else {
-                String outputFilePath = String.format("%s.%s", filePath, segmentType.toString().toLowerCase());
+                String outputFilePath = String.format("%s.%s", jpegFilePath, segmentType.toString().toLowerCase());
                 FileUtil.saveBytes(new File(outputFilePath), segments.get(0));
             }
         }

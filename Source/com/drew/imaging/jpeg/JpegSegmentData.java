@@ -23,26 +23,25 @@ package com.drew.imaging.jpeg;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.*;
 import java.util.*;
 
 /**
  * Holds a collection of JPEG data segments.  This need not necessarily be all segments
  * within the JPEG. For example, it may be convenient to store only the non-image
- * segments when analysing (or serializing) metadata.
+ * segments when analysing metadata.
  * <p/>
  * Segments are keyed via their {@link JpegSegmentType}. Where multiple segments use the
  * same segment type, they will all be stored and available.
+ * <p/>
+ * Each segment type may contain multiple entries. Conceptually the model is:
+ * <code>Map&lt;JpegSegmentType, Collection&lt;byte[]&gt;&gt;</code>. This class provides
+ * convenience methods around that structure.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegSegmentData implements Serializable
+public class JpegSegmentData
 {
-    // TODO stop this class being Serializable
-    @Deprecated
-    private static final long serialVersionUID = 7110175216435025451L;
-
-    // TODO key this on JpegSegmentType rather than Byte?
+    // TODO key this on JpegSegmentType rather than Byte, and hopefully lose much of the use of 'byte' with this class
     @NotNull
     private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
 
@@ -65,9 +64,12 @@ public class JpegSegmentData implements Serializable
     {
         Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
 
-        for (Byte segmentTypeByte : _segmentDataMap.keySet()){
+        for (Byte segmentTypeByte : _segmentDataMap.keySet())
+        {
             JpegSegmentType segmentType = JpegSegmentType.fromByte(segmentTypeByte);
-            assert(segmentType != null);
+            if (segmentType == null) {
+                throw new IllegalStateException("Should not have a segmentTypeByte that is not in the enum: " + Integer.toHexString(segmentTypeByte));
+            }
             segmentTypes.add(segmentType);
         }
 
@@ -265,62 +267,5 @@ public class JpegSegmentData implements Serializable
     public boolean containsSegment(byte segmentType)
     {
         return _segmentDataMap.containsKey(segmentType);
-    }
-
-    /**
-     * Serialises the contents of a {@link JpegSegmentData} to a {@link File}.
-     *
-     * @param file        to file to write from
-     * @param segmentData the data to write
-     * @throws IOException if problems occur while writing
-     */
-    @Deprecated
-    public static void toFile(@NotNull File file, @NotNull JpegSegmentData segmentData) throws IOException
-    {
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(file);
-            new ObjectOutputStream(fileOutputStream).writeObject(segmentData);
-        } finally {
-            if (fileOutputStream != null)
-                fileOutputStream.close();
-        }
-    }
-
-    /**
-     * Deserialises the contents of a {@link JpegSegmentData} from a {@link File}.
-     *
-     * @param file the file to read from
-     * @return the JpegSegmentData as read
-     * @throws IOException            if problems occur while reading
-     * @throws ClassNotFoundException if problems occur while deserialising
-     */
-    @NotNull
-    @Deprecated
-    public static JpegSegmentData fromFile(@NotNull File file) throws IOException, ClassNotFoundException
-    {
-        return fromFile(new FileInputStream(file));
-    }
-
-    /**
-     * Deserialises the contents of a {@link JpegSegmentData} from an {@link InputStream}.
-     *
-     * @param inputStream the input stream to read from
-     * @return the JpegSegmentData as read
-     * @throws IOException            if problems occur while reading
-     * @throws ClassNotFoundException if problems occur while deserialising
-     */
-    @NotNull
-    @Deprecated
-    public static JpegSegmentData fromFile(@NotNull InputStream inputStream) throws IOException, ClassNotFoundException
-    {
-        ObjectInputStream objectInputStream = null;
-        try {
-            objectInputStream = new ObjectInputStream(inputStream);
-            return (JpegSegmentData)objectInputStream.readObject();
-        } finally {
-            if (objectInputStream != null)
-                objectInputStream.close();
-        }
     }
 }

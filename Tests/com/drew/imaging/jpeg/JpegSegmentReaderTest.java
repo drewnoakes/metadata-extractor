@@ -133,8 +133,8 @@ public class JpegSegmentReaderTest
     @Test
     public void testLoadJpegWithoutExifDataReturnsNull() throws Exception
     {
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/com/drew/metadata/exif/noExif.jpg"), null);
-        Assert.assertNull(segmentData.getSegment(JpegSegmentType.APP1));
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File("Tests/data/noExif.jpg"), null);
+        assertNull(segmentData.getSegment(JpegSegmentType.APP1));
     }
 
     @Test

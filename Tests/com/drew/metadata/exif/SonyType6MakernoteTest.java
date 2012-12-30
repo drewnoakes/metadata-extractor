@@ -21,8 +21,6 @@
 
 package com.drew.metadata.exif;
 
-import com.drew.testing.TestHelper;
-import com.drew.metadata.Metadata;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,9 +29,7 @@ public class SonyType6MakernoteTest
 {
     @Test public void testSonyType6Makernote() throws Exception
     {
-        Metadata metadata = TestHelper.readJpegMetadataFile("Tests/com/drew/metadata/exif/sonyType6.metadata");
-
-        SonyType6MakernoteDirectory directory = metadata.getDirectory(SonyType6MakernoteDirectory.class);
+        SonyType6MakernoteDirectory directory = ExifReaderTest.processExifBytes("Tests/data/sonyType6.jpg.app1.0", SonyType6MakernoteDirectory.class);
 
         Assert.assertNotNull(directory);
         Assert.assertFalse(directory.hasErrors());
