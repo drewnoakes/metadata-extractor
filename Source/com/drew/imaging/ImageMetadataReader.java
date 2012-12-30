@@ -103,12 +103,12 @@ public class ImageMetadataReader
     }
 
     /**
-     * Reads metadata from a file.  The file type is determined by inspecting the leading bytes of the
-     * stream, and parsing of the file is delegated to either {@link JpegMetadataReader}, {@link TiffMetadataReader} or
-     * {@link PsdMetadataReader}.
+     * Reads {@link Metadata} from a file.  The file type is determined by inspecting the leading bytes of the
+     * stream, and parsing of the file is delegated to either {@link JpegMetadataReader}, {@link TiffMetadataReader},
+     * {@link PsdMetadataReader} or {@link BmpMetadataReader}.
      *
      * @param file a file from which the image data may be read.
-     * @return a populated Metadata object containing directories of tags with values and any processing errors.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException for general processing errors.
      */
     @NotNull
@@ -123,8 +123,7 @@ public class ImageMetadataReader
     }
 
     /**
-     * Reads the first two bytes from the input stream, then rewinds.
-     * @throws IOException
+     * Reads the first two bytes from <code>inputStream</code>, then rewinds.
      */
     private static int peekMagicNumber(@NotNull InputStream inputStream) throws IOException
     {
@@ -146,8 +145,12 @@ public class ImageMetadataReader
 
     /**
      * An application entry point.  Takes the name of one or more files as arguments and prints the contents of all
-     * metadata directories to System.out.  If <code>/thumb</code> is passed, then any thumbnail data will be
-     * written to a file with name of the input file having '.thumb.jpg' appended.
+     * metadata directories to <code>System.out</code>.
+     * <p/>
+     * If <code>/thumb</code> is passed, then any thumbnail data will be written to a file with name of the
+     * input file having <code>.thumb.jpg</code> appended.
+     * <p/>
+     * If <code>/wiki</code> is passed, then output will be in a format suitable for Google Code's wiki.
      *
      * @param args the command line arguments
      */
@@ -191,8 +194,8 @@ public class ImageMetadataReader
                 System.out.println();
                 System.out.printf("= %s - %s =%n", make, model);
                 System.out.println();
-                System.out.printf("<a href=\"http://metadata-extractor.googlecode.com/svn/sample-images/%s\">%n", urlName);
-                System.out.printf("<img src=\"http://metadata-extractor.googlecode.com/svn/sample-images/%s\" width=\"300\"/><br/>%n", urlName);
+                System.out.printf("<a href=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\">%n", urlName);
+                System.out.printf("<img src=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\" width=\"300\"/><br/>%n", urlName);
                 System.out.println(fileName);
                 System.out.println("</a>");
                 System.out.println();
