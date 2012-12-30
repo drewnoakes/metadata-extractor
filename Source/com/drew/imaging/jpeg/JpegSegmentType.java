@@ -28,117 +28,119 @@ package com.drew.imaging.jpeg;
 public enum JpegSegmentType
 {
     /** APP0 JPEG segment identifier -- JFIF data (also JFXX apparently). */
-    APP0((byte)0xE0),
+    APP0((byte)0xE0, true),
 
     /** APP1 JPEG segment identifier -- where Exif data is kept.  XMP data is also kept in here, though usually in a second instance. */
-    APP1((byte)0xE1),
+    APP1((byte)0xE1, true),
 
     /** APP2 JPEG segment identifier. */
-    APP2((byte)0xE2),
+    APP2((byte)0xE2, true),
 
     /** APP3 JPEG segment identifier. */
-    APP3((byte)0xE3),
+    APP3((byte)0xE3, true),
 
     /** APP4 JPEG segment identifier. */
-    APP4((byte)0xE4),
+    APP4((byte)0xE4, true),
 
     /** APP5 JPEG segment identifier. */
-    APP5((byte)0xE5),
+    APP5((byte)0xE5, true),
 
     /** APP6 JPEG segment identifier. */
-    APP6((byte)0xE6),
+    APP6((byte)0xE6, true),
 
     /** APP7 JPEG segment identifier. */
-    APP7((byte)0xE7),
+    APP7((byte)0xE7, true),
 
     /** APP8 JPEG segment identifier. */
-    APP8((byte)0xE8),
+    APP8((byte)0xE8, true),
 
     /** APP9 JPEG segment identifier. */
-    APP9((byte)0xE9),
+    APP9((byte)0xE9, true),
 
     /** APPA (App10) JPEG segment identifier -- can hold Unicode comments. */
-    APPA((byte)0xEA),
+    APPA((byte)0xEA, true),
 
     /** APPB (App11) JPEG segment identifier. */
-    APPB((byte)0xEB),
+    APPB((byte)0xEB, true),
 
     /** APPC (App12) JPEG segment identifier. */
-    APPC((byte)0xEC),
+    APPC((byte)0xEC, true),
 
     /** APPD (App13) JPEG segment identifier -- IPTC data in here. */
-    APPD((byte)0xED),
+    APPD((byte)0xED, true),
 
     /** APPE (App14) JPEG segment identifier. */
-    APPE((byte)0xEE),
+    APPE((byte)0xEE, true),
 
     /** APPF (App15) JPEG segment identifier. */
-    APPF((byte)0xEF),
+    APPF((byte)0xEF, true),
 
     /** Start Of Image segment identifier. */
-    SOI((byte)0xD8),
+    SOI((byte)0xD8, false),
 
     /** Define Quantization Table segment identifier. */
-    DQT((byte)0xDB),
+    DQT((byte)0xDB, false),
 
     /** Define Huffman Table segment identifier. */
-    DHT((byte)0xC4),
+    DHT((byte)0xC4, false),
 
     /** Start-of-Frame (0) segment identifier. */
-    SOF0((byte)0xC0),
+    SOF0((byte)0xC0, false),
 
     /** Start-of-Frame (1) segment identifier. */
-    SOF1((byte)0xC1),
+    SOF1((byte)0xC1, false),
 
     /** Start-of-Frame (2) segment identifier. */
-    SOF2((byte)0xC2),
+    SOF2((byte)0xC2, false),
 
     /** Start-of-Frame (3) segment identifier. */
-    SOF3((byte)0xC3),
+    SOF3((byte)0xC3, false),
 
 //    /** Start-of-Frame (4) segment identifier. */
-//    SOF4((byte)0xC4),
+//    SOF4((byte)0xC4, false),
 
     /** Start-of-Frame (5) segment identifier. */
-    SOF5((byte)0xC5),
+    SOF5((byte)0xC5, false),
 
     /** Start-of-Frame (6) segment identifier. */
-    SOF6((byte)0xC6),
+    SOF6((byte)0xC6, false),
 
     /** Start-of-Frame (7) segment identifier. */
-    SOF7((byte)0xC7),
+    SOF7((byte)0xC7, false),
 
     /** Start-of-Frame (8) segment identifier. */
-    SOF8((byte)0xC8),
+    SOF8((byte)0xC8, false),
 
     /** Start-of-Frame (9) segment identifier. */
-    SOF9((byte)0xC9),
+    SOF9((byte)0xC9, false),
 
     /** Start-of-Frame (10) segment identifier. */
-    SOF10((byte)0xCA),
+    SOF10((byte)0xCA, false),
 
     /** Start-of-Frame (11) segment identifier. */
-    SOF11((byte)0xCB),
+    SOF11((byte)0xCB, false),
 
 //    /** Start-of-Frame (12) segment identifier. */
-//    SOF12((byte)0xCC),
+//    SOF12((byte)0xCC, false),
 
     /** Start-of-Frame (13) segment identifier. */
-    SOF13((byte)0xCD),
+    SOF13((byte)0xCD, false),
 
     /** Start-of-Frame (14) segment identifier. */
-    SOF14((byte)0xCE),
+    SOF14((byte)0xCE, false),
 
     /** Start-of-Frame (15) segment identifier. */
-    SOF15((byte)0xCF),
+    SOF15((byte)0xCF, false),
 
     /** JPEG comment segment identifier. */
-    COM((byte)0xFE);
+    COM((byte)0xFE, true);
 
     public final byte byteValue;
+    public final boolean canContainMetadata;
 
-    JpegSegmentType(byte b)
+    JpegSegmentType(byte byteValue, boolean canContainMetadata)
     {
-        byteValue = b;
+        this.byteValue = byteValue;
+        this.canContainMetadata = canContainMetadata;
     }
 }
