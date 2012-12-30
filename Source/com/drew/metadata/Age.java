@@ -33,16 +33,17 @@ import com.drew.lang.annotations.Nullable;
  */
 public class Age
 {
-    private int _years;
-    private int _months;
-    private int _days;
-    private int _hours;
-    private int _minutes;
-    private int _seconds;
+    private final int _years;
+    private final int _months;
+    private final int _days;
+    private final int _hours;
+    private final int _minutes;
+    private final int _seconds;
 
     /**
      * Parses an age object from the string format used by Panasonic cameras:
      * <code>0031:07:15 00:00:00</code>
+     *
      * @param s The String in format <code>0031:07:15 00:00:00</code>.
      * @return The parsed Age object, or null if the value could not be parsed
      */

@@ -141,7 +141,7 @@ public enum JpegSegmentType
     /** JPEG comment segment identifier. */
     COM((byte)0xFE, true);
 
-    public static Collection<JpegSegmentType> canContainMetadataTypes;
+    public static final Collection<JpegSegmentType> canContainMetadataTypes;
 
     static {
         List<JpegSegmentType> segmentTypes = new ArrayList<JpegSegmentType>();
