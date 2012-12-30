@@ -213,7 +213,7 @@ public class IptcDirectory extends Directory
     @NotNull
     public String getName()
     {
-        return "Iptc";
+        return "IPTC";
     }
 
     @NotNull

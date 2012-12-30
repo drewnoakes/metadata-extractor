@@ -58,7 +58,7 @@ public class JfifDirectory extends Directory
     @NotNull
     public String getName()
     {
-        return "Jfif";
+        return "JFIF";
     }
 
     @NotNull
