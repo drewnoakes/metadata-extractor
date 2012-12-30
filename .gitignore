@@ -1,13 +1,5 @@
-
-# /
 /Releases
 /.idea
 /Output
 /out
 /TestReports
-
-# /Libraries/XMPCore/
-/Libraries/XMPCore/bin
-/Libraries/XMPCore/docs
-/Libraries/XMPCore/intermediate
-/Libraries/XMPCore/target
