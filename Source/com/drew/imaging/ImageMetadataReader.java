@@ -170,7 +170,7 @@ public class ImageMetadataReader
             File file = new File(filePath);
 
             if (!wikiFormat && argList.size()>1)
-                System.out.println("***** PROCESSING: " + filePath);
+                System.out.printf("\n***** PROCESSING: %s\n%n", filePath);
 
             Metadata metadata = null;
             try {
@@ -181,7 +181,7 @@ public class ImageMetadataReader
             }
             long took = System.nanoTime() - startTime;
             if (!wikiFormat)
-                System.out.println("Processed " + (file.length()/(1024d*1024)) + "MB file in " + (took / 1000000d) + "ms");
+                System.out.printf("Processed %.3f MB file in %.2f ms%n%n", file.length() / (1024d * 1024), took / 1000000d);
 
             if (wikiFormat) {
                 String fileName = file.getName();
@@ -196,10 +196,10 @@ public class ImageMetadataReader
                 System.out.println();
                 System.out.printf("<a href=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\">%n", urlName);
                 System.out.printf("<img src=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\" width=\"300\"/><br/>%n", urlName);
-                System.out.println(fileName);
+                System.out.println(escapeForWiki(fileName));
                 System.out.println("</a>");
                 System.out.println();
-                System.out.println("|| *Directory* || *Tag Id* || *Tag Name* || *Tag Description* ||");
+                System.out.println("|| *Directory* || *Tag Id* || *Tag Name* || *Extracted Value* ||");
             }
 
             // iterate over the metadata and print to System.out
