@@ -52,7 +52,6 @@
     </target>
 
     <target name="compile" description="compile the source">
-        <!-- TODO somehow exclude file "${src}/com/drew/metadata/test/SampleUsage.java" to get rid of warnings -->
         <javac classpath="${classpath}"
                srcdir="${src}"
                destdir="${output}"
