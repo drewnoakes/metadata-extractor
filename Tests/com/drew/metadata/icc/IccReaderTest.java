@@ -25,11 +25,13 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.testing.TestHelper;
 import com.drew.tools.FileUtil;
+import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
 public class IccReaderTest
 {
+    @Test
     public void testExtract() throws Exception
     {
         byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
