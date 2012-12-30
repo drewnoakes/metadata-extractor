@@ -23,11 +23,13 @@ package com.drew.imaging.jpeg;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -48,8 +50,8 @@ public class JpegMetadataReaderTest
 
     private void validate(Metadata metadata)
     {
-        Assert.assertTrue(metadata.containsDirectory(ExifSubIFDDirectory.class));
-        Directory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
-        Assert.assertEquals("80", directory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
+        Directory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+        assertNotNull(directory);
+        assertEquals("80", directory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
     }
 }

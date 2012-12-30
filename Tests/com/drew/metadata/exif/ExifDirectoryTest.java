@@ -44,12 +44,13 @@ public class ExifDirectoryTest
     @Test
     public void testGetDirectoryName() throws Exception
     {
-        Metadata metadata = new Metadata();
-        Directory subIFDDirectory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
-        Directory ifd0Directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
-        Directory thumbDirectory = metadata.getOrCreateDirectory(ExifThumbnailDirectory.class);
+        Directory subIFDDirectory = new ExifSubIFDDirectory();
+        Directory ifd0Directory = new ExifIFD0Directory();
+        Directory thumbDirectory = new ExifThumbnailDirectory();
 
         assertFalse(subIFDDirectory.hasErrors());
+        assertFalse(ifd0Directory.hasErrors());
+        assertFalse(thumbDirectory.hasErrors());
 
         assertEquals("Exif IFD0", ifd0Directory.getName());
         assertEquals("Exif SubIFD", subIFDDirectory.getName());

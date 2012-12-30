@@ -27,6 +27,7 @@ import com.drew.tools.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -37,20 +38,21 @@ import static org.junit.Assert.*;
  */
 public class XmpReaderTest
 {
+    public static XmpDirectory processBytes(String filePath) throws IOException
+    {
+        Metadata metadata = new Metadata();
+        new XmpReader().extract(new ByteArrayReader(FileUtil.readBytes(filePath)), metadata);
+        XmpDirectory directory = metadata.getDirectory(XmpDirectory.class);
+        assertNotNull(directory);
+        return directory;
+    }
+
     private XmpDirectory _directory;
 
     @Before
     public void setUp() throws Exception
     {
-        // use a known testing image
-        byte[] data = FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1");
-        assertNotNull(data);
-
-        Metadata metadata = new Metadata();
-        new XmpReader().extract(new ByteArrayReader(data), metadata);
-
-        assertTrue(metadata.containsDirectory(XmpDirectory.class));
-        _directory = metadata.getOrCreateDirectory(XmpDirectory.class);
+        _directory = processBytes("Tests/Data/withXmpAndIptc.jpg.app1.1");
     }
 
     /*

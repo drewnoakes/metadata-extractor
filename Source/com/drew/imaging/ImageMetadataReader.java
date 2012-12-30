@@ -174,9 +174,9 @@ public class ImageMetadataReader
             if (wikiFormat) {
                 String fileName = file.getName();
                 String urlName = fileName.replace(" ", "%20"); // How to do this using framework?
-                ExifIFD0Directory exifIFD0Directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
-                String make = escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
-                String model = escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
+                ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+                String make = exifIFD0Directory == null ? "" : escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
+                String model = exifIFD0Directory == null ? "" : escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
                 System.out.println();
                 System.out.println("-----");
                 System.out.println();
