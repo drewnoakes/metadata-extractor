@@ -124,14 +124,14 @@
 
     <target name="dist-source" depends="clean, compile, test" description="generate source distribution">
         <jar destfile="${dist}/metadata-extractor-${library-version}-src.jar" update="false">
+            <fileset dir="${src}">
+                <include name="**/*.*" />
+                <exclude name="com/drew/tools" />
+                <exclude name="com/drew/tools/*.*" />
+            </fileset>
             <fileset dir=".">
-                <include name="${src}/**/*.*" />
-                <include name="${test-src}/**/*.*" />
-                <include name="${sample-src}/**/*.*" />
-                <include name="Resources/**/*.*" />
                 <include name="LICENSE-2.0.txt" />
                 <include name="README.txt" />
-                <include name="build.xml" />
             </fileset>
         </jar>
     </target>
