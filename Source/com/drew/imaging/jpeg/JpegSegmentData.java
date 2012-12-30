@@ -139,7 +139,7 @@ public class JpegSegmentData implements Serializable
     }
 
     @Nullable
-    public List<byte[]> getSegmentList(byte segmentType)
+    private List<byte[]> getSegmentList(byte segmentType)
     {
         return _segmentDataMap.get(segmentType);
     }
