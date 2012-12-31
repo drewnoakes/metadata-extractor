@@ -38,19 +38,15 @@ public class BmpMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
-        Metadata metadata = new Metadata();
-
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(file);
-            new BmpReader().extract(new StreamReader(stream), metadata);
+            return readMetadata(stream);
         } finally {
             if (stream != null) {
                 stream.close();
             }
         }
-
-        return metadata;
     }
 
     @NotNull
