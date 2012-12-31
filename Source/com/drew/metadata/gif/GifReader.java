@@ -78,7 +78,7 @@ public class GifReader
 
             int aspectRatioByte = reader.getUInt8();
             if (aspectRatioByte != 0) {
-                float pixelAspectRatio = (aspectRatioByte + 15f) / 64f;
+                float pixelAspectRatio = (float)((aspectRatioByte + 15d) / 64d);
                 directory.setFloat(GifHeaderDirectory.TAG_PIXEL_ASPECT_RATIO, pixelAspectRatio);
             }
 
