@@ -34,6 +34,20 @@ public class PngChunkType
      * </ul>
      */
     public static final PngChunkType IHDR = new PngChunkType("IHDR");
+
+    /**
+     * Denotes a critical {@link PngChunk} that contains palette entries.
+     * This chunk should only appear for a {@link PngColorType} of <code>IndexedColor</code>,
+     * and may only occur once in the PNG data sequence.
+     * <p/>
+     * The chunk contains between one and 256 entries, each of three bytes:
+     * <ul>
+     *     <li><b>red</b> 1 byte</li>
+     *     <li><b>green</b> 1 byte</li>
+     *     <li><b>blue</b> 1 byte</li>
+     * </ul>
+     * The number of entries is determined by the chunk length. A chunk length indivisible by three is an error.
+     */
     public static final PngChunkType PLTE = new PngChunkType("PLTE");
     public static final PngChunkType IDAT = new PngChunkType("IDAT", true);
     public static final PngChunkType IEND = new PngChunkType("IEND");
