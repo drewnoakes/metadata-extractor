@@ -47,7 +47,7 @@ public abstract class TagDescriptor<T extends Directory>
      * Where possible, known values will be substituted here in place of the raw
      * tokens actually kept in the metadata segment.  If no substitution is
      * available, the value provided by <code>getString(tagType)</code> will be returned.
-     * 
+     *
      * @param tagType the tag to find a description for
      * @return a description of the image's value for the specified tag, or
      *         <code>null</code> if the tag hasn't been defined.
@@ -57,7 +57,7 @@ public abstract class TagDescriptor<T extends Directory>
     {
         Object object = _directory.getObject(tagType);
 
-        if (object==null)
+        if (object == null)
             return null;
 
         // special presentation for long arrays
@@ -65,7 +65,7 @@ public abstract class TagDescriptor<T extends Directory>
             final int length = Array.getLength(object);
             if (length > 16) {
                 final String componentTypeName = object.getClass().getComponentType().getName();
-                return String.format("[%d %s%s]", length, componentTypeName, length==1 ? "" : "s");
+                return String.format("[%d %s%s]", length, componentTypeName, length == 1 ? "" : "s");
             }
         }
 
@@ -79,17 +79,18 @@ public abstract class TagDescriptor<T extends Directory>
      * <p/>
      * Two different formats are processed:
      * <ul>
-     *     <li>[30 32 31 30] -&gt; 2.10</li>
-     *     <li>[0 1 0 0] -&gt; 1.00</li>
+     * <li>[30 32 31 30] -&gt; 2.10</li>
+     * <li>[0 1 0 0] -&gt; 1.00</li>
      * </ul>
-     * @param components the four version values
-     * @param majorDigits the number of components to be 
+     *
+     * @param components  the four version values
+     * @param majorDigits the number of components to be
      * @return the version as a string of form "2.10" or null if the argument cannot be converted
      */
     @Nullable
     public static String convertBytesToVersionString(@Nullable int[] components, final int majorDigits)
     {
-        if (components==null)
+        if (components == null)
             return null;
         StringBuilder version = new StringBuilder();
         for (int i = 0; i < 4 && i < components.length; i++) {
@@ -98,7 +99,7 @@ public abstract class TagDescriptor<T extends Directory>
             char c = (char)components[i];
             if (c < '0')
                 c += '0';
-            if (i == 0 && c=='0')
+            if (i == 0 && c == '0')
                 continue;
             version.append(c);
         }
