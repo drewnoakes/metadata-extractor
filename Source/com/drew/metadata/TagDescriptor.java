@@ -104,4 +104,18 @@ public abstract class TagDescriptor<T extends Directory>
         }
         return version.toString();
     }
+
+    @Nullable
+    protected String getIndexedDescription(final int tagType, @NotNull String... descriptions)
+    {
+        final Integer index = _directory.getInteger(tagType);
+        if (index == null)
+            return null;
+        if (index >= 0 && index < descriptions.length) {
+            String description = descriptions[index];
+            if (description != null)
+                return description;
+        }
+        return "Unknown (" + index + ")";
+    }
 }

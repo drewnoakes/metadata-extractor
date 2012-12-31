@@ -110,8 +110,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
 //                return getAutoFocusAssistLightDescription();
 //            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE:
 //                return getShutterSpeedInAvModeDescription();
-//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETTING:
-//                return getAutoExposureBrackettingSequenceAndAutoCancellationDescription();
+//            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETING:
+//                return getAutoExposureBracketingSequenceAndAutoCancellationDescription();
 //            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC:
 //                return getShutterCurtainSyncDescription();
 //            case CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_AF_STOP:
@@ -220,9 +220,9 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     }
 
     @Nullable
-    public String getAutoExposureBrackettingSequenceAndAutoCancellationDescription()
+    public String getAutoExposureBracketingSequenceAndAutoCancellationDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETTING);
+        Integer value = _directory.getInteger(CanonMakernoteDirectory.TAG_CANON_CUSTOM_FUNCTION_BRACKETING);
         if (value==null)
             return null;
         switch (value) {

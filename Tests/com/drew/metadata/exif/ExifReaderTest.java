@@ -81,7 +81,7 @@ public class ExifReaderTest
     }
 
     @Test
-    public void testLoadFujiFilmJpeg() throws Exception
+    public void testLoadFujifilmJpeg() throws Exception
     {
         ExifSubIFDDirectory directory = ExifReaderTest.processBytes("Tests/Data/withExif.jpg.app1", ExifSubIFDDirectory.class);
 

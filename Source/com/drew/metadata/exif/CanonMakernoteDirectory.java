@@ -416,13 +416,13 @@ public class CanonMakernoteDirectory extends Directory
 //    public static final int TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE = 0xC306;
 //
 //    /**
-//     * Auto-Exposure Bracketting sequence/auto cancellation
+//     * Auto-Exposure Bracketing sequence/auto cancellation
 //     * 0 = 0,-,+ / Enabled
 //     * 1 = 0,-,+ / Disabled
 //     * 2 = -,0,+ / Enabled
 //     * 3 = -,0,+ / Disabled
 //     */
-//    public static final int TAG_CANON_CUSTOM_FUNCTION_BRACKETTING = 0xC307;
+//    public static final int TAG_CANON_CUSTOM_FUNCTION_BRACKETING = 0xC307;
 //
 //    /**
 //     * Shutter Curtain Sync
@@ -581,7 +581,7 @@ public class CanonMakernoteDirectory extends Directory
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_TV_AV_AND_EXPOSURE_LEVEL, "Tv/Av And Exposure Level");
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_AF_ASSIST_LIGHT, "AF-Assist Light");
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_SPEED_IN_AV_MODE, "Shutter Speed in Av Mode");
-//        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_BRACKETTING, "Auto-Exposure Bracketting Sequence/Auto Cancellation");
+//        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_BRACKETING, "Auto-Exposure Bracketing Sequence/Auto Cancellation");
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_CURTAIN_SYNC, "Shutter Curtain Sync");
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_AF_STOP, "Lens Auto-Focus Stop Button Function Switch");
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_FILL_FLASH_REDUCTION, "Auto Reduction of Fill Flash");

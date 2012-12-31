@@ -272,7 +272,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             final int tagValueOffset;
             if (byteCount > 4) {
                 // If it's bigger than 4 bytes, the dir entry contains an offset.
-                // dirEntryOffset must be passed, as some makernote implementations (e.g. FujiFilm) incorrectly use an
+                // dirEntryOffset must be passed, as some makernote implementations (e.g. Fujifilm) incorrectly use an
                 // offset relative to the start of the makernote itself, not the TIFF segment.
                 final int offsetVal = reader.getInt32(tagOffset + 8);
                 if (offsetVal + byteCount > reader.getLength()) {
