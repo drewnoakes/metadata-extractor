@@ -1,4 +1,4 @@
-package com.drew.metadata.png;
+package com.drew.imaging.png;
 
 import org.junit.Test;
 
@@ -90,5 +90,17 @@ public class PngChunkTypeTest
         assertFalse(new PngChunkType("ABCD").areMultipleAllowed());
         assertFalse(new PngChunkType("ABCD", false).areMultipleAllowed());
         assertTrue(new PngChunkType("ABCD", true).areMultipleAllowed());
+    }
+
+    @Test
+    public void testEquality() throws Exception
+    {
+        assertEquals(new PngChunkType("ABCD"), new PngChunkType("ABCD"));
+        assertEquals(new PngChunkType("ABCD", true), new PngChunkType("ABCD", true));
+        assertEquals(new PngChunkType("ABCD", false), new PngChunkType("ABCD", false));
+        // NOTE we don't consider the 'allowMultiples' value in the equality test (or hash code)
+        assertEquals(new PngChunkType("ABCD", true), new PngChunkType("ABCD", false));
+
+        assertNotEquals(new PngChunkType("ABCD"), new PngChunkType("abcd"));
     }
 }
