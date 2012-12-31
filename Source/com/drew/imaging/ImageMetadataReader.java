@@ -21,6 +21,7 @@
 package com.drew.imaging;
 
 import com.drew.imaging.bmp.BmpMetadataReader;
+import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
@@ -39,14 +40,18 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Obtains metadata from all supported file formats, including JPEG, RAW (NEF/CRW/CR2/ORF/RW2), TIFF and PSD.
+ * Obtains {@link Metadata} from all supported file formats.
  * <p/>
- * If the caller knows their file to be of a particular type, they may prefer to use the dedicated MetadataReader
- * directly ({@link JpegMetadataReader} for JPEG files, {@link TiffMetadataReader} for TIFF and RAW files, and
- * {@link PsdMetadataReader} for Photoshop files).
- * <p/>
- * The dedicated readers offer a very slight performance improvement, though for most scenarios it is simpler,
- * more convenient and more robust to use this class.
+ * This class a lightweight wrapper around specific file type processors:
+ * <ul>
+ *     <li>{@link JpegMetadataReader} for JPEG files</li>
+ *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
+ *     <li>{@link PsdMetadataReader} for Photoshop files</li>
+ *     <li>{@link BmpMetadataReader} for BMP files</li>
+ *     <li>{@link GifMetadataReader} for GIF files</li>
+ * </ul>
+ * If you know the file type you're working with, you may use one of the above processors directly.
+ * For most scenarios it is simpler, more convenient and more robust to use this class.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -55,16 +60,25 @@ public class ImageMetadataReader
     private static final int JPEG_FILE_MAGIC_NUMBER = 0xFFD8;
     private static final int MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
     private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;     // "II"
-    private static final int PSD_MAGIC_NUMBER = 0x3842;            // "8B" note that the full magic number is 8BPS
+    private static final int PSD_MAGIC_NUMBER = 0x3842;            // "8B" // TODO the full magic number is 8BPS
     private static final int BMP_MAGIC_NUMBER = 0x424D;            // "BM" // TODO technically there are other very rare magic numbers for OS/2 BMP files...
+    private static final int GIF_MAGIC_NUMBER = 0x4749;            // "GI" // TODO the full magic number is GIF or possibly GIF89a/GIF87a
 
     /**
-     * Reads metadata from an {@link InputStream}. The file type is determined by inspecting the leading bytes of the
-     * stream, and parsing of the file is delegated to either {@link JpegMetadataReader}, {@link TiffMetadataReader} or
-     * {@link PsdMetadataReader}.
+     * Reads metadata from an {@link InputStream}.
+     * <p/>
+     * The file type is determined by inspecting the leading bytes of the stream, and parsing of the file
+     * is delegated to one of:
+     * <ul>
+     *     <li>{@link JpegMetadataReader} for JPEG files</li>
+     *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
+     *     <li>{@link PsdMetadataReader} for Photoshop files</li>
+     *     <li>{@link BmpMetadataReader} for BMP files</li>
+     *     <li>{@link GifMetadataReader} for GIF files</li>
+     * </ul>
      *
-     * @param inputStream a stream from which the image data may be read.  The stream must be positioned at the
-     *                    beginning of the image data.
+     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     *                    beginning of the file's data.
      * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
      */
@@ -94,18 +108,31 @@ public class ImageMetadataReader
             return PsdMetadataReader.readMetadata(bufferedInputStream);
         }
 
-        // This covers PSD files
+        // This covers BMP files
         if (magicNumber == BMP_MAGIC_NUMBER) {
             return BmpMetadataReader.readMetadata(bufferedInputStream);
+        }
+
+        // This covers GIF files
+        if (magicNumber == GIF_MAGIC_NUMBER) {
+            return GifMetadataReader.readMetadata(bufferedInputStream);
         }
 
         throw new ImageProcessingException("File format is not supported");
     }
 
     /**
-     * Reads {@link Metadata} from a file.  The file type is determined by inspecting the leading bytes of the
-     * stream, and parsing of the file is delegated to either {@link JpegMetadataReader}, {@link TiffMetadataReader},
-     * {@link PsdMetadataReader} or {@link BmpMetadataReader}.
+     * Reads {@link Metadata} from a {@link File} object.
+     * <p/>
+     * The file type is determined by inspecting the leading bytes of the stream, and parsing of the file
+     * is delegated to one of:
+     * <ul>
+     *     <li>{@link JpegMetadataReader} for JPEG files</li>
+     *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
+     *     <li>{@link PsdMetadataReader} for Photoshop files</li>
+     *     <li>{@link BmpMetadataReader} for BMP files</li>
+     *     <li>{@link GifMetadataReader} for GIF files</li>
+     * </ul>
      *
      * @param file a file from which the image data may be read.
      * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.

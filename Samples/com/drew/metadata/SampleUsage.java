@@ -56,8 +56,8 @@ public class SampleUsage
         // SCENARIO 1: UNKNOWN FILE TYPE
         //
         // This is the most generic approach.  It will transparently determine the file type and invoke the appropriate
-        // readers.  In most cases, this is the most appropriate usage.  This will handle JPEG, TIFF, RAW
-        // (CRW/CR2/NEF/RW2/ORF) and BMP files and extract whatever metadata is available and understood.
+        // readers.  In most cases, this is the most appropriate usage.  This will handle JPEG, TIFF, GIF, BMP and RAW
+        // (CRW/CR2/NEF/RW2/ORF) files and extract whatever metadata is available and understood.
         //
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(file);
@@ -74,7 +74,7 @@ public class SampleUsage
         //
         // If you know the file to be a JPEG, you may invoke the JpegMetadataReader, rather than the generic reader
         // used in approach 1.  Similarly, if you knew the file to be a TIFF/RAW image you might use TiffMetadataReader,
-        // or BmpMetadataReader for BMP files.
+        // BmpMetadataReader for BMP files, or GifMetadataReader for GIF files.
         //
         // Using the specific reader offers a very, very slight performance improvement.
         //
