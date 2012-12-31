@@ -82,7 +82,7 @@ public class BmpReader
             if (headerSize == 40) {
                 // BITMAPINFOHEADER
                 directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt32());
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getInt32());
                 directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_COMPRESSION, reader.getInt32());
@@ -94,7 +94,7 @@ public class BmpReader
                 directory.setInt(BmpHeaderDirectory.TAG_IMPORTANT_COLOUR_COUNT, reader.getInt32());
             } else if (headerSize == 12) {
                 directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt16());
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getInt16());
             } else {
