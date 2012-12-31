@@ -99,11 +99,11 @@ public abstract class RandomAccessReader
     /**
      * Sets the endianness of this reader.
      * <ul>
-     * <li><code>true</code> for Motorola (or big) endianness</li>
-     * <li><code>false</code> for Intel (or little) endianness</li>
+     * <li><code>true</code> for Motorola (or big) endianness (also known as network byte order), with MSB before LSB.</li>
+     * <li><code>false</code> for Intel (or little) endianness, with LSB before MSB.</li>
      * </ul>
      *
-     * @param motorolaByteOrder <code>true</code> for motorola/big endian, <code>false</code> for intel/little endian
+     * @param motorolaByteOrder <code>true</code> for Motorola/big endian, <code>false</code> for Intel/little endian
      */
     public void setMotorolaByteOrder(boolean motorolaByteOrder)
     {
@@ -113,8 +113,8 @@ public abstract class RandomAccessReader
     /**
      * Gets the endianness of this reader.
      * <ul>
-     * <li><code>true</code> for Motorola (or big) endianness</li>
-     * <li><code>false</code> for Intel (or little) endianness</li>
+     * <li><code>true</code> for Motorola (or big) endianness (also known as network byte order), with MSB before LSB.</li>
+     * <li><code>false</code> for Intel (or little) endianness, with LSB before MSB.</li>
      * </ul>
      */
     public boolean isMotorolaByteOrder()
