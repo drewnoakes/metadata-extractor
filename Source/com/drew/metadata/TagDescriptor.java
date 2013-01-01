@@ -26,13 +26,13 @@ import com.drew.lang.annotations.Nullable;
 import java.lang.reflect.Array;
 
 /**
- * Abstract base class for all tag descriptor classes.  Implementations are responsible for
+ * Base class for all tag descriptor classes.  Implementations are responsible for
  * providing the human-readable string representation of tag values stored in a directory.
  * The directory is provided to the tag descriptor via its constructor.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public abstract class TagDescriptor<T extends Directory>
+public class TagDescriptor<T extends Directory>
 {
     @NotNull
     protected final T _directory;
