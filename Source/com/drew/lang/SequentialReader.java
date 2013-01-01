@@ -284,7 +284,7 @@ public abstract class SequentialReader
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    String getNullTerminatedString(int maxLengthBytes) throws IOException
+    public String getNullTerminatedString(int maxLengthBytes) throws IOException
     {
         // NOTE currently only really suited to single-byte character strings
 
