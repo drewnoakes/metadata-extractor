@@ -403,11 +403,8 @@ public class PanasonicMakernoteDirectory extends Directory
     
     /**
 	  * Info at http://www.ozhiker.com/electronics/pjmt/jpeg_info/pim.html
-	  * 
      */
 	public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
-
-
 
     /**                                                                                    
      * Byte Indexes:                                                                       <br>

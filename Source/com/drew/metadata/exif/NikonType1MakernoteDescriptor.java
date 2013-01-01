@@ -76,17 +76,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getConverterDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_CONVERTER);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "None";
-            case 1:
-                return "Fisheye converter";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType1MakernoteDirectory.TAG_CONVERTER, "None", "Fisheye converter");
     }
 
     @Nullable
@@ -116,108 +106,63 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_WHITE_BALANCE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Auto";
-            case 1:
-                return "Preset";
-            case 2:
-                return "Daylight";
-            case 3:
-                return "Incandescence";
-            case 4:
-                return "Florescence";
-            case 5:
-                return "Cloudy";
-            case 6:
-                return "SpeedLight";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType1MakernoteDirectory.TAG_WHITE_BALANCE,
+            "Auto",
+            "Preset",
+            "Daylight",
+            "Incandescence",
+            "Florescence",
+            "Cloudy",
+            "SpeedLight"
+        );
     }
 
     @Nullable
     public String getCcdSensitivityDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_CCD_SENSITIVITY);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "ISO80";
-            case 2:
-                return "ISO160";
-            case 4:
-                return "ISO320";
-            case 5:
-                return "ISO100";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType1MakernoteDirectory.TAG_CCD_SENSITIVITY,
+            "ISO80",
+            null,
+            "ISO160",
+            null,
+            "ISO320",
+            "ISO100"
+        );
     }
 
     @Nullable
     public String getImageAdjustmentDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_IMAGE_ADJUSTMENT);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Normal";
-            case 1:
-                return "Bright +";
-            case 2:
-                return "Bright -";
-            case 3:
-                return "Contrast +";
-            case 4:
-                return "Contrast -";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType1MakernoteDirectory.TAG_IMAGE_ADJUSTMENT,
+            "Normal",
+            "Bright +",
+            "Bright -",
+            "Contrast +",
+            "Contrast -"
+        );
     }
 
     @Nullable
     public String getColorModeDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_COLOR_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Color";
-            case 2:
-                return "Monochrome";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType1MakernoteDirectory.TAG_COLOR_MODE,
+            1,
+            "Color",
+            "Monochrome"
+        );
     }
 
     @Nullable
     public String getQualityDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_QUALITY);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "VGA Basic";
-            case 2:
-                return "VGA Normal";
-            case 3:
-                return "VGA Fine";
-            case 4:
-                return "SXGA Basic";
-            case 5:
-                return "SXGA Normal";
-            case 6:
-                return "SXGA Fine";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType1MakernoteDirectory.TAG_QUALITY,
+            1,
+            "VGA Basic",
+            "VGA Normal",
+            "VGA Fine",
+            "SXGA Basic",
+            "SXGA Normal",
+            "SXGA Fine"
+        );
     }
 }
