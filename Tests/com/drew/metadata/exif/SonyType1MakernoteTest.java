@@ -51,7 +51,7 @@ public class SonyType1MakernoteTest
         assertNull(descriptor.getColorModeDescription());
 
         assertEquals("On (Shooting)", descriptor.getAntiBlurDescription());
-        assertEquals("Auto", descriptor.getExposureModeDescription());
+        assertEquals("Program", descriptor.getExposureModeDescription());
         assertEquals("Off", descriptor.getLongExposureNoiseReductionDescription());
         assertEquals("Off", descriptor.getMacroDescription());
         assertEquals("Normal", descriptor.getJpegQualityDescription());
