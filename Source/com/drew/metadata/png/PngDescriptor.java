@@ -1,9 +1,12 @@
 package com.drew.metadata.png;
 
 import com.drew.imaging.png.PngColorType;
+import com.drew.lang.KeyValuePair;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
+
+import java.util.List;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -20,10 +23,6 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-//            case PngDirectory.TAG_IMAGE_WIDTH:
-//            case PngDirectory.TAG_IMAGE_HEIGHT:
-//            case PngDirectory.TAG_BITS_PER_SAMPLE:
-//                return getBitsPerSampleDescription();
             case PngDirectory.TAG_COLOR_TYPE:
                 return getColorTypeDescription();
             case PngDirectory.TAG_COMPRESSION_TYPE:
@@ -36,6 +35,8 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
                 return getPaletteHasTransparencyDescription();
             case PngDirectory.TAG_SRGB_RENDERING_INTENT:
                 return getIsSrgbColorSpaceDescription();
+            case PngDirectory.TAG_TEXTUAL_DATA:
+                return getTextualDataDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -87,5 +88,19 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
             "Saturation",
             "Absolute Colorimetric"
         );
+    }
+
+    @Nullable
+    public String getTextualDataDescription()
+    {
+        Object object = _directory.getObject(PngDirectory.TAG_TEXTUAL_DATA);
+        if (object == null)
+            return null;
+        List<KeyValuePair> keyValues = (List<KeyValuePair>)object;
+        StringBuilder sb = new StringBuilder();
+        for (KeyValuePair keyValue : keyValues) {
+            sb.append(String.format("%s: %s\n", keyValue.getKey(), keyValue.getValue()));
+        }
+        return sb.toString();
     }
 }

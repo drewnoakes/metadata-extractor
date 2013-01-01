@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.xmp;
 
-import com.drew.lang.ByteArrayReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import com.drew.tools.FileUtil;
@@ -38,10 +38,10 @@ import static org.junit.Assert.*;
  */
 public class XmpReaderTest
 {
-    public static XmpDirectory processBytes(String filePath) throws IOException
+    public static XmpDirectory processApp1Bytes(String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
-        new XmpReader().extract(new ByteArrayReader(FileUtil.readBytes(filePath)), metadata);
+        new XmpReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.APP1);
         XmpDirectory directory = metadata.getDirectory(XmpDirectory.class);
         assertNotNull(directory);
         return directory;
@@ -52,7 +52,7 @@ public class XmpReaderTest
     @Before
     public void setUp() throws Exception
     {
-        _directory = processBytes("Tests/Data/withXmpAndIptc.jpg.app1.1");
+        _directory = processApp1Bytes("Tests/Data/withXmpAndIptc.jpg.app1.1");
     }
 
     /*

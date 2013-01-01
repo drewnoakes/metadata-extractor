@@ -27,9 +27,7 @@ import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -79,88 +77,100 @@ public class XmpReader implements JpegSegmentMetadataReader
         return segmentBytes.length > 27 && "http://ns.adobe.com/xap/1.0/".equalsIgnoreCase(new String(segmentBytes, 0, 28));
     }
 
+    /**
+     * Version specifically for dealing with XMP found in JPEG segments. This form of XMP has a peculiar preamble, which
+     * must be removed before parsing the XML.
+     *
+     * @param segmentBytes The byte array from which the metadata should be extracted.
+     * @param metadata The {@link Metadata} object into which extracted values should be merged.
+     * @param segmentType The {@link JpegSegmentType} being read.
+     */
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        extract(new ByteArrayReader(segmentBytes), metadata);
+        XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
+
+        // XMP in a JPEG file has a 29 byte preamble which is not valid XML.
+        final int preambleLength = 29;
+
+        // check for the header length
+        if (segmentBytes.length <= preambleLength + 1) {
+            directory.addError(String.format("Xmp data segment must contain at least %d bytes", preambleLength + 1));
+            return;
+        }
+
+        ByteArrayReader reader = new ByteArrayReader(segmentBytes);
+
+        String preamble = new String(segmentBytes, 0, preambleLength);
+        if (!"http://ns.adobe.com/xap/1.0/\0".equals(preamble)) {
+            directory.addError("XMP data segment doesn't begin with 'http://ns.adobe.com/xap/1.0/'");
+            return;
+        }
+
+        byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
+        System.arraycopy(segmentBytes, 29, xmlBytes, 0, xmlBytes.length);
+        extract(xmlBytes, metadata);
     }
 
     /**
      * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
      * <p/>
-     * The extraction is done with Adobe's XmpCore-Lib (XMP-Toolkit).
+     * The extraction is done with Adobe's XMPCore library.
      */
-    @SuppressWarnings({"ConstantConditions"})
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull Metadata metadata)
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
-        if (reader == null)
-            throw new NullPointerException("reader");
-        if (metadata == null)
-            throw new NullPointerException("metadata");
-
-        // once we know there's some data, create the directory and start working on it
         XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
 
-        // check for the header length
         try {
-            if (reader.getLength() <= 30) {
-                directory.addError("Xmp data segment must contain at least 30 bytes");
-                return;
-            }
-        } catch (BufferBoundsException e) {
-            directory.addError("Unable to read XMP data: " + e.getMessage());
-            return;
+            XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBytes);
+            processXmpTags(directory, xmpMeta);
+        } catch (XMPException e) {
+            directory.addError("Error processing XMP data: " + e.getMessage());
         }
+    }
 
-        // check for the header preamble
-        String preamble;
-        try {
-            preamble = reader.getString(0, 29);
-        } catch (BufferBoundsException e) {
-            directory.addError("Unable to read XMP preamble");
-            return;
-        }
-        if (!"http://ns.adobe.com/xap/1.0/\0".equals(preamble)) {
-            directory.addError("Xmp data segment doesn't begin with 'http://ns.adobe.com/xap/1.0/'");
-            return;
-        }
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p/>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)
+    {
+        XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
 
         try {
-            // the parser starts at offset of 29 Bytes
-            byte[] xmpBuffer;
-            try {
-                xmpBuffer = reader.getBytes(29, (int) (reader.getLength() - 29));
-            } catch (BufferBoundsException e) {
-                directory.addError("Unable to read XMP data");
-                return;
-            }
+            XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmpString);
+            processXmpTags(directory, xmpMeta);
+        } catch (XMPException e) {
+            directory.addError("Error processing XMP data: " + e.getMessage());
+        }
+    }
 
-            // use XMPMetaFactory to create a XMPMeta instance based on the parsed data buffer
-            XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBuffer);
+    private void processXmpTags(XmpDirectory directory, XMPMeta xmpMeta) throws XMPException
+    {
+        // store the XMPMeta object on the directory in case others wish to use it
+        directory.setXMPMeta(xmpMeta);
 
-            // store the XMPMeta object on the directory in case others wish to use it
-            directory.setXMPMeta(xmpMeta);
+        // read all the tags and send them to the directory
+        // I've added some popular tags, feel free to add more tags
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:LensInfo", XmpDirectory.TAG_LENS_INFO, FMT_STRING);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:Lens", XmpDirectory.TAG_LENS, FMT_STRING);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:SerialNumber", XmpDirectory.TAG_CAMERA_SERIAL_NUMBER, FMT_STRING);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:Firmware", XmpDirectory.TAG_FIRMWARE, FMT_STRING);
 
-            // read all the tags and send them to the directory
-            // I've added some popular tags, feel free to add more tags
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:LensInfo", XmpDirectory.TAG_LENS_INFO, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:Lens", XmpDirectory.TAG_LENS, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:SerialNumber", XmpDirectory.TAG_CAMERA_SERIAL_NUMBER, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:Firmware", XmpDirectory.TAG_FIRMWARE, FMT_STRING);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_TIFF_PROPERTIES, "tiff:Make", XmpDirectory.TAG_MAKE, FMT_STRING);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_TIFF_PROPERTIES, "tiff:Model", XmpDirectory.TAG_MODEL, FMT_STRING);
 
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_TIFF_PROPERTIES, "tiff:Make", XmpDirectory.TAG_MAKE, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_TIFF_PROPERTIES, "tiff:Model", XmpDirectory.TAG_MODEL, FMT_STRING);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ExposureTime", XmpDirectory.TAG_EXPOSURE_TIME, FMT_STRING);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ExposureProgram", XmpDirectory.TAG_EXPOSURE_PROGRAM, FMT_INT);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ApertureValue", XmpDirectory.TAG_APERTURE_VALUE, FMT_RATIONAL);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:FNumber", XmpDirectory.TAG_F_NUMBER, FMT_RATIONAL);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:FocalLength", XmpDirectory.TAG_FOCAL_LENGTH, FMT_RATIONAL);
+        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ShutterSpeedValue", XmpDirectory.TAG_SHUTTER_SPEED, FMT_RATIONAL);
 
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ExposureTime", XmpDirectory.TAG_EXPOSURE_TIME, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ExposureProgram", XmpDirectory.TAG_EXPOSURE_PROGRAM, FMT_INT);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ApertureValue", XmpDirectory.TAG_APERTURE_VALUE, FMT_RATIONAL);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:FNumber", XmpDirectory.TAG_F_NUMBER, FMT_RATIONAL);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:FocalLength", XmpDirectory.TAG_FOCAL_LENGTH, FMT_RATIONAL);
-            processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ShutterSpeedValue", XmpDirectory.TAG_SHUTTER_SPEED, FMT_RATIONAL);
+        processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeOriginal", XmpDirectory.TAG_DATETIME_ORIGINAL);
+        processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeDigitized", XmpDirectory.TAG_DATETIME_DIGITIZED);
 
-            processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeOriginal", XmpDirectory.TAG_DATETIME_ORIGINAL);
-            processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeDigitized", XmpDirectory.TAG_DATETIME_DIGITIZED);
-
-            processXmpTag(xmpMeta, directory, SCHEMA_XMP_PROPERTIES, "xmp:Rating", XmpDirectory.TAG_RATING, FMT_DOUBLE);
+        processXmpTag(xmpMeta, directory, SCHEMA_XMP_PROPERTIES, "xmp:Rating", XmpDirectory.TAG_RATING, FMT_DOUBLE);
 
 /*
             // this requires further research
@@ -187,16 +197,12 @@ public class XmpReader implements JpegSegmentMetadataReader
             processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPolicy", XmpDirectory.TAG_ACCRUAL_POLICY, FMT_STRING);
 */
 
-            for (XMPIterator iterator = xmpMeta.iterator(); iterator.hasNext(); ) {
-                XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
-                String path = propInfo.getPath();
-                String value = propInfo.getValue();
-                if (path != null && value != null)
-                    directory.addProperty(path, value);
-            }
-
-        } catch (XMPException e) {
-            directory.addError("Error parsing XMP segment: " + e.getMessage());
+        for (XMPIterator iterator = xmpMeta.iterator(); iterator.hasNext(); ) {
+            XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
+            String path = propInfo.getPath();
+            String value = propInfo.getValue();
+            if (path != null && value != null)
+                directory.addProperty(path, value);
         }
     }
 
@@ -247,7 +253,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
+    private void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
     {
         Calendar cal = meta.getPropertyCalendar(schemaNS, propName);
 

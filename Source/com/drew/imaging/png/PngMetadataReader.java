@@ -1,17 +1,17 @@
 package com.drew.imaging.png;
 
-import com.drew.lang.RandomAccessStreamReader;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
-import com.drew.lang.StreamReader;
+import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
 import com.drew.metadata.png.PngDirectory;
+import com.drew.metadata.xmp.XmpReader;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.InflaterInputStream;
 
@@ -44,10 +44,13 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.sRGB);
         desiredChunkTypes.add(PngChunkType.gAMA);
         desiredChunkTypes.add(PngChunkType.iCCP);
+        desiredChunkTypes.add(PngChunkType.tEXt);
+        desiredChunkTypes.add(PngChunkType.iTXt);
 
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), desiredChunkTypes);
 
         Metadata metadata = new Metadata();
+        List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
 
         for (PngChunk chunk : chunks) {
             PngChunkType chunkType = chunk.getType();
@@ -103,7 +106,47 @@ public class PngMetadataReader
                     new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata);
                     inflateStream.close();
                 }
+            } else if (chunkType.equals(PngChunkType.tEXt)) {
+                SequentialReader reader = new SequentialByteArrayReader(bytes);
+                String keyword = reader.getNullTerminatedString(79);
+                int bytesLeft = bytes.length - keyword.length() - 1;
+                String value = reader.getNullTerminatedString(bytesLeft);
+                textPairs.add(new KeyValuePair(keyword, value));
+            } else if (chunkType.equals(PngChunkType.iTXt)) {
+                SequentialReader reader = new SequentialByteArrayReader(bytes);
+                String keyword = reader.getNullTerminatedString(79);
+                byte compressionFlag = reader.getInt8();
+                byte compressionMethod = reader.getInt8();
+                String languageTag = reader.getNullTerminatedString(bytes.length);
+                String translatedKeyword = reader.getNullTerminatedString(bytes.length);
+                int bytesLeft = bytes.length - keyword.length() - 1 - 1 - 1 - languageTag.length() - 1 - translatedKeyword.length() - 1;
+                String text = null;
+                if (compressionFlag == 0) {
+                    text = reader.getNullTerminatedString(bytesLeft);
+                } else if (compressionFlag == 1) {
+                    if (compressionMethod == 0) {
+                        text = StringUtil.fromStream(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    } else {
+                        metadata.getOrCreateDirectory(PngDirectory.class).addError("Invalid compression method value");
+                    }
+                } else {
+                    metadata.getOrCreateDirectory(PngDirectory.class).addError("Invalid compression flag value");
+                }
+
+                if (text != null) {
+                    if (keyword.equals("XML:com.adobe.xmp")) {
+                        // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
+                        new XmpReader().extract(text, metadata);
+                    } else {
+                        textPairs.add(new KeyValuePair(keyword, text));
+                    }
+                }
             }
+        }
+
+        if (textPairs.size() != 0) {
+            PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+            directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
         }
 
         return metadata;

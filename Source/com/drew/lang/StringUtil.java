@@ -23,6 +23,10 @@ package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
 /** @author Drew Noakes http://drewnoakes.com */
@@ -67,5 +71,17 @@ public class StringUtil
             buffer.append(value);
         }
         return buffer.toString();
+    }
+
+    @NotNull
+    public static String fromStream(@NotNull InputStream stream) throws IOException
+    {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        return sb.toString();
     }
 }
