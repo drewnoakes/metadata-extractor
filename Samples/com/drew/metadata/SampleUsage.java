@@ -74,7 +74,7 @@ public class SampleUsage
         //
         // If you know the file to be a JPEG, you may invoke the JpegMetadataReader, rather than the generic reader
         // used in approach 1.  Similarly, if you knew the file to be a TIFF/RAW image you might use TiffMetadataReader,
-        // BmpMetadataReader for BMP files, or GifMetadataReader for GIF files.
+        // PngMetadataReader for PNG files, BmpMetadataReader for BMP files, or GifMetadataReader for GIF files.
         //
         // Using the specific reader offers a very, very slight performance improvement.
         //

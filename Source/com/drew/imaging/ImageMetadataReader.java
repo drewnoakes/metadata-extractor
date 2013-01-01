@@ -23,6 +23,7 @@ package com.drew.imaging;
 import com.drew.imaging.bmp.BmpMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.png.PngMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.lang.annotations.NotNull;
@@ -47,6 +48,7 @@ import java.util.Collection;
  *     <li>{@link JpegMetadataReader} for JPEG files</li>
  *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
  *     <li>{@link PsdMetadataReader} for Photoshop files</li>
+ *     <li>{@link PngMetadataReader} for BMP files</li>
  *     <li>{@link BmpMetadataReader} for BMP files</li>
  *     <li>{@link GifMetadataReader} for GIF files</li>
  * </ul>
@@ -61,6 +63,7 @@ public class ImageMetadataReader
     private static final int MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
     private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;     // "II"
     private static final int PSD_MAGIC_NUMBER = 0x3842;            // "8B" // TODO the full magic number is 8BPS
+    private static final int PNG_MAGIC_NUMBER = 0x8950;            // "?P" // TODO the full magic number is six bytes long
     private static final int BMP_MAGIC_NUMBER = 0x424D;            // "BM" // TODO technically there are other very rare magic numbers for OS/2 BMP files...
     private static final int GIF_MAGIC_NUMBER = 0x4749;            // "GI" // TODO the full magic number is GIF or possibly GIF89a/GIF87a
 
@@ -73,6 +76,7 @@ public class ImageMetadataReader
      *     <li>{@link JpegMetadataReader} for JPEG files</li>
      *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
      *     <li>{@link PsdMetadataReader} for Photoshop files</li>
+     *     <li>{@link PngMetadataReader} for PNG files</li>
      *     <li>{@link BmpMetadataReader} for BMP files</li>
      *     <li>{@link GifMetadataReader} for GIF files</li>
      * </ul>
@@ -109,6 +113,11 @@ public class ImageMetadataReader
         }
 
         // This covers BMP files
+        if (magicNumber == PNG_MAGIC_NUMBER) {
+            return PngMetadataReader.readMetadata(bufferedInputStream);
+        }
+
+        // This covers BMP files
         if (magicNumber == BMP_MAGIC_NUMBER) {
             return BmpMetadataReader.readMetadata(bufferedInputStream);
         }
@@ -130,6 +139,7 @@ public class ImageMetadataReader
      *     <li>{@link JpegMetadataReader} for JPEG files</li>
      *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
      *     <li>{@link PsdMetadataReader} for Photoshop files</li>
+     *     <li>{@link PngMetadataReader} for PNG files</li>
      *     <li>{@link BmpMetadataReader} for BMP files</li>
      *     <li>{@link GifMetadataReader} for GIF files</li>
      * </ul>
