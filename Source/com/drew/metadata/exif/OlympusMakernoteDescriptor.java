@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>OlympusMakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link OlympusMakernoteDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */

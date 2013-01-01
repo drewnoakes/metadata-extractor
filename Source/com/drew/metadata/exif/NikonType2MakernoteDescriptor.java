@@ -28,7 +28,7 @@ import com.drew.metadata.TagDescriptor;
 import java.text.DecimalFormat;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>NikonType2MakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link NikonType2MakernoteDirectory}.
  *
  * Type-2 applies to the E990 and D-series cameras such as the D1, D70 and D100.
  *

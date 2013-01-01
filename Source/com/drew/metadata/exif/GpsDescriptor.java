@@ -29,7 +29,7 @@ import com.drew.metadata.TagDescriptor;
 import java.text.DecimalFormat;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>GpsDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link GpsDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */

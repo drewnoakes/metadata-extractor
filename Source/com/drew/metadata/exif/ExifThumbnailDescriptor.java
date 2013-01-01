@@ -27,7 +27,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>ExifThumbnailDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link ExifThumbnailDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */

@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>ExifSubIFDDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link ExifSubIFDDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */

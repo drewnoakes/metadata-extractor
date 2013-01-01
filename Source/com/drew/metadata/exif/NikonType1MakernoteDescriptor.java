@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>NikonType1MakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link NikonType1MakernoteDirectory}.
  * <p/>
  * Type-1 is for E-Series cameras prior to (not including) E990.  For example: E700, E800, E900,
  * E900S, E910, E950.
