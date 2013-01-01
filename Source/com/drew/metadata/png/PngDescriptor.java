@@ -34,7 +34,7 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
                 return getInterlaceMethodDescription();
             case PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY:
                 return getPaletteHasTransparencyDescription();
-            case PngDirectory.TAG_IS_SRGB_COLOR_SPACE:
+            case PngDirectory.TAG_SRGB_RENDERING_INTENT:
                 return getIsSrgbColorSpaceDescription();
             default:
                 return super.getDescription(tagType);
@@ -80,6 +80,12 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     @Nullable
     public String getIsSrgbColorSpaceDescription()
     {
-        return getIndexedDescription(PngDirectory.TAG_IS_SRGB_COLOR_SPACE, null, "Yes");
+        return getIndexedDescription(
+            PngDirectory.TAG_SRGB_RENDERING_INTENT,
+            "Perceptual",
+            "Relative Colorimetric",
+            "Saturation",
+            "Absolute Colorimetric"
+        );
     }
 }

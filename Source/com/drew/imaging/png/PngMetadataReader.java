@@ -51,9 +51,10 @@ public class PngMetadataReader
 
         for (PngChunk chunk : chunks) {
             PngChunkType chunkType = chunk.getType();
+            byte[] bytes = chunk.getBytes();
 
             if (chunkType.equals(PngChunkType.IHDR)) {
-                PngHeader header = new PngHeader(chunk.getBytes());
+                PngHeader header = new PngHeader(bytes);
                 PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
                 directory.setInt(PngDirectory.TAG_IMAGE_WIDTH, header.getImageWidth());
                 directory.setInt(PngDirectory.TAG_IMAGE_HEIGHT, header.getImageHeight());
@@ -64,15 +65,16 @@ public class PngMetadataReader
                 directory.setInt(PngDirectory.TAG_INTERLACE_METHOD, header.getInterlaceMethod());
             } else if (chunkType.equals(PngChunkType.PLTE)) {
                 PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
-                directory.setInt(PngDirectory.TAG_PALETTE_SIZE, chunk.getBytes().length / 3);
+                directory.setInt(PngDirectory.TAG_PALETTE_SIZE, bytes.length / 3);
             } else if (chunkType.equals(PngChunkType.tRNS)) {
                 PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
                 directory.setInt(PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY, 1);
             } else if (chunkType.equals(PngChunkType.sRGB)) {
+                int srgbRenderingIntent = new SequentialByteArrayReader(bytes).getInt8();
                 PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
-                directory.setInt(PngDirectory.TAG_IS_SRGB_COLOR_SPACE, 1);
+                directory.setInt(PngDirectory.TAG_SRGB_RENDERING_INTENT, srgbRenderingIntent);
             } else if (chunkType.equals(PngChunkType.cHRM)) {
-                PngChromaticities chromaticities = new PngChromaticities(chunk.getBytes());
+                PngChromaticities chromaticities = new PngChromaticities(bytes);
                 PngChromaticitiesDirectory directory = metadata.getOrCreateDirectory(PngChromaticitiesDirectory.class);
                 directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
                 directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
@@ -83,12 +85,10 @@ public class PngMetadataReader
                 directory.setInt(PngChromaticitiesDirectory.TAG_BLUE_X, chromaticities.getBlueX());
                 directory.setInt(PngChromaticitiesDirectory.TAG_BLUE_Y, chromaticities.getBlueY());
             } else if (chunkType.equals(PngChunkType.gAMA)) {
-                SequentialReader reader = new SequentialByteArrayReader(chunk.getBytes());
-                int gammaInt = reader.getInt32();
+                int gammaInt = new SequentialByteArrayReader(bytes).getInt32();
                 PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
                 directory.setDouble(PngDirectory.TAG_GAMMA, gammaInt / 100000.0);
             } else if (chunkType.equals(PngChunkType.iCCP)) {
-                byte[] bytes = chunk.getBytes();
                 SequentialReader reader = new SequentialByteArrayReader(bytes);
                 String profileName = reader.getNullTerminatedString(79);
                 PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);

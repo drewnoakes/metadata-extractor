@@ -19,7 +19,7 @@ public class PngDirectory extends Directory
     public static final int TAG_INTERLACE_METHOD = 7;
     public static final int TAG_PALETTE_SIZE = 8;
     public static final int TAG_PALETTE_HAS_TRANSPARENCY = 9;
-    public static final int TAG_IS_SRGB_COLOR_SPACE = 10;
+    public static final int TAG_SRGB_RENDERING_INTENT = 10;
     public static final int TAG_GAMMA = 11;
     public static final int TAG_ICC_PROFILE_NAME = 12;
 
@@ -36,7 +36,7 @@ public class PngDirectory extends Directory
         _tagNameMap.put(TAG_INTERLACE_METHOD, "Interlace Method");
         _tagNameMap.put(TAG_PALETTE_SIZE, "Palette Size");
         _tagNameMap.put(TAG_PALETTE_HAS_TRANSPARENCY, "Palette Has Transparency");
-        _tagNameMap.put(TAG_IS_SRGB_COLOR_SPACE, "sRGB Color Space");
+        _tagNameMap.put(TAG_SRGB_RENDERING_INTENT, "sRGB Rendering Intent");
         _tagNameMap.put(TAG_GAMMA, "Image Gamma");
         _tagNameMap.put(TAG_ICC_PROFILE_NAME, "ICC Profile Name");
     }
