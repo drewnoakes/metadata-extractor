@@ -92,17 +92,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getDigiZoomRatioDescription()
     {
-        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_DIGI_ZOOM_RATIO);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Normal";
-            case 2:
-                return "Digital 2x Zoom";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_DIGI_ZOOM_RATIO, "Normal", null, "Digital 2x Zoom");
     }
 
     @Nullable
@@ -117,17 +107,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getMacroModeDescription()
     {
-        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_MACRO_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Normal (no macro)";
-            case 1:
-                return "Macro";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_MACRO_MODE, "Normal (no macro)", "Macro");
     }
 
     @Nullable
@@ -139,19 +119,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getJpegQualityDescription()
     {
-        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_JPEG_QUALITY);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1:
-                return "SQ";
-            case 2:
-                return "HQ";
-            case 3:
-                return "SHQ";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_JPEG_QUALITY, "SQ", "HQ", "SHQ");
     }
 
     @Nullable
