@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>KyoceraMakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link KyoceraMakernoteDirectory}.
  * <p/>
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/kyocera_mn.html
@@ -59,18 +59,12 @@ public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDi
     @Nullable
     public String getPrintImageMatchingInfoDescription()
     {
-        byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO);
-        if (bytes==null)
-            return null;
-        return "(" + bytes.length + " bytes)";
+        return getByteLengthDescription(KyoceraMakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO);
     }
 
     @Nullable
     public String getProprietaryThumbnailDataDescription()
     {
-        byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_PROPRIETARY_THUMBNAIL);
-        if (bytes==null)
-            return null;
-        return "(" + bytes.length + " bytes)";
+        return getByteLengthDescription(KyoceraMakernoteDirectory.TAG_PROPRIETARY_THUMBNAIL);
     }
 }

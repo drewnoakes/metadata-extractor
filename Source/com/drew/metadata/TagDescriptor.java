@@ -126,4 +126,12 @@ public class TagDescriptor<T extends Directory>
         }
         return "Unknown (" + index + ")";
     }
+
+    protected String getByteLengthDescription(int tagType)
+    {
+        byte[] bytes = _directory.getByteArray(tagType);
+        if (bytes == null)
+            return null;
+        return String.format("(%d byte%s)", bytes.length, bytes.length == 1 ? "" : "s");
+    }
 }
