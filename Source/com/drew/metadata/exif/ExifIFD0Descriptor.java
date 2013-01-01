@@ -29,7 +29,7 @@ import com.drew.metadata.TagDescriptor;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>ExifIFD0Directory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link ExifIFD0Directory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -106,8 +106,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
         int whiteG = ints[3];
         int blackB = ints[4];
         int whiteB = ints[5];
-        return "[" + blackR + "," + blackG + "," + blackB + "] " +
-               "[" + whiteR + "," + whiteG + "," + whiteB + "]";
+        return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
     }
 
     @Nullable
@@ -117,9 +116,9 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
         if (value==null)
             return null;
         final String unit = getResolutionDescription();
-        return value.toSimpleString(_allowDecimalRepresentationOfRationals) +
-                " dots per " +
-                (unit==null ? "unit" : unit.toLowerCase());
+        return String.format("%s dots per %s",
+            value.toSimpleString(_allowDecimalRepresentationOfRationals),
+            unit == null ? "unit" : unit.toLowerCase());
     }
 
     @Nullable
@@ -129,75 +128,51 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
         if (value==null)
             return null;
         final String unit = getResolutionDescription();
-        return value.toSimpleString(_allowDecimalRepresentationOfRationals) +
-                " dots per " +
-                (unit==null ? "unit" : unit.toLowerCase());
+        return String.format("%s dots per %s",
+            value.toSimpleString(_allowDecimalRepresentationOfRationals),
+            unit == null ? "unit" : unit.toLowerCase());
     }
 
     @Nullable
     public String getYCbCrPositioningDescription()
     {
-        Integer value = _directory.getInteger(ExifIFD0Directory.TAG_YCBCR_POSITIONING);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "Center of pixel array";
-            case 2: return "Datum point";
-            default:
-                return String.valueOf(value);
-        }
+        return getIndexedDescription(ExifIFD0Directory.TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
     }
 
     @Nullable
     public String getOrientationDescription()
     {
-        Integer value = _directory.getInteger(ExifIFD0Directory.TAG_ORIENTATION);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "Top, left side (Horizontal / normal)";
-            case 2: return "Top, right side (Mirror horizontal)";
-            case 3: return "Bottom, right side (Rotate 180)";
-            case 4: return "Bottom, left side (Mirror vertical)";
-            case 5: return "Left side, top (Mirror horizontal and rotate 270 CW)";
-            case 6: return "Right side, top (Rotate 90 CW)";
-            case 7: return "Right side, bottom (Mirror horizontal and rotate 90 CW)";
-            case 8: return "Left side, bottom (Rotate 270 CW)";
-            default:
-                return String.valueOf(value);
-        }
+        return getIndexedDescription(ExifIFD0Directory.TAG_ORIENTATION, 1,
+            "Top, left side (Horizontal / normal)",
+            "Top, right side (Mirror horizontal)",
+            "Bottom, right side (Rotate 180)",
+            "Bottom, left side (Mirror vertical)",
+            "Left side, top (Mirror horizontal and rotate 270 CW)",
+            "Right side, top (Rotate 90 CW)",
+            "Right side, bottom (Mirror horizontal and rotate 90 CW)",
+            "Left side, bottom (Rotate 270 CW)");
     }
 
     @Nullable
     public String getResolutionDescription()
     {
         // '1' means no-unit, '2' means inch, '3' means centimeter. Default value is '2'(inch)
-        Integer value = _directory.getInteger(ExifIFD0Directory.TAG_RESOLUTION_UNIT);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "(No unit)";
-            case 2: return "Inch";
-            case 3: return "cm";
-            default:
-                return "";
-        }
+        return getIndexedDescription(ExifIFD0Directory.TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
     }
 
     /** The Windows specific tags uses plain Unicode. */
     @Nullable
     private String getUnicodeDescription(int tag)
     {
-         byte[] commentBytes = _directory.getByteArray(tag);
-        if (commentBytes==null)
+        byte[] commentBytes = _directory.getByteArray(tag);
+        if (commentBytes == null)
             return null;
-         try {
-             // Decode the unicode string and trim the unicode zero "\0" from the end.
+        try {
+            // Decode the unicode string and trim the unicode zero "\0" from the end.
             return new String(commentBytes, "UTF-16LE").trim();
-         }
-         catch (UnsupportedEncodingException ex) {
+        } catch (UnsupportedEncodingException ex) {
             return null;
-         }
+        }
     }
 
     @Nullable
