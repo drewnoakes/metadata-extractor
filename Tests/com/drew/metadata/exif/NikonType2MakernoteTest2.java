@@ -22,6 +22,7 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
 import org.junit.Before;
 import org.junit.Test;
 

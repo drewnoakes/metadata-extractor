@@ -21,6 +21,8 @@
 
 package com.drew.metadata.exif;
 
+import com.drew.metadata.exif.makernotes.SonyType6MakernoteDescriptor;
+import com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

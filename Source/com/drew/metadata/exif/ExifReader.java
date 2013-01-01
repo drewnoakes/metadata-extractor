@@ -29,6 +29,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.makernotes.*;
 
 import java.util.Arrays;
 import java.util.HashSet;

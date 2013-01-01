@@ -23,6 +23,7 @@ package com.drew.metadata.exif;
 
 import com.drew.metadata.Age;
 import com.drew.metadata.Face;
+import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 import org.junit.Before;
 import org.junit.Test;
 

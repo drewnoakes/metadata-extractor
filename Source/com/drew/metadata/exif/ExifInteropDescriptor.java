@@ -24,6 +24,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.exif.ExifInteropDirectory.*;
+
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifInteropDirectory}.
  *
@@ -40,9 +42,9 @@ public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case ExifInteropDirectory.TAG_INTEROP_INDEX:
+            case TAG_INTEROP_INDEX:
                 return getInteropIndexDescription();
-            case ExifInteropDirectory.TAG_INTEROP_VERSION:
+            case TAG_INTEROP_VERSION:
                 return getInteropVersionDescription();
             default:
                 return super.getDescription(tagType);
@@ -52,13 +54,13 @@ public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
     @Nullable
     public String getInteropVersionDescription()
     {
-        return getVersionBytesDescription(ExifInteropDirectory.TAG_INTEROP_VERSION, 2);
+        return getVersionBytesDescription(TAG_INTEROP_VERSION, 2);
     }
 
     @Nullable
     public String getInteropIndexDescription()
     {
-        String value = _directory.getString(ExifInteropDirectory.TAG_INTEROP_INDEX);
+        String value = _directory.getString(TAG_INTEROP_INDEX);
 
         if (value == null)
             return null;

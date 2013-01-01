@@ -28,6 +28,8 @@ import com.drew.metadata.TagDescriptor;
 
 import java.io.UnsupportedEncodingException;
 
+import static com.drew.metadata.exif.ExifIFD0Directory.*;
+
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifIFD0Directory}.
  *
@@ -65,28 +67,28 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case ExifIFD0Directory.TAG_RESOLUTION_UNIT:
+            case TAG_RESOLUTION_UNIT:
                 return getResolutionDescription();
-            case ExifIFD0Directory.TAG_YCBCR_POSITIONING:
+            case TAG_YCBCR_POSITIONING:
                 return getYCbCrPositioningDescription();
-            case ExifIFD0Directory.TAG_X_RESOLUTION:
+            case TAG_X_RESOLUTION:
                 return getXResolutionDescription();
-            case ExifIFD0Directory.TAG_Y_RESOLUTION:
+            case TAG_Y_RESOLUTION:
                 return getYResolutionDescription();
-            case ExifIFD0Directory.TAG_REFERENCE_BLACK_WHITE:
+            case TAG_REFERENCE_BLACK_WHITE:
                 return getReferenceBlackWhiteDescription();
-            case ExifIFD0Directory.TAG_ORIENTATION:
+            case TAG_ORIENTATION:
                 return getOrientationDescription();
 
-            case ExifIFD0Directory.TAG_WIN_AUTHOR:
+            case TAG_WIN_AUTHOR:
                return getWindowsAuthorDescription();
-            case ExifIFD0Directory.TAG_WIN_COMMENT:
+            case TAG_WIN_COMMENT:
                return getWindowsCommentDescription();
-            case ExifIFD0Directory.TAG_WIN_KEYWORDS:
+            case TAG_WIN_KEYWORDS:
                return getWindowsKeywordsDescription();
-            case ExifIFD0Directory.TAG_WIN_SUBJECT:
+            case TAG_WIN_SUBJECT:
                return getWindowsSubjectDescription();
-            case ExifIFD0Directory.TAG_WIN_TITLE:
+            case TAG_WIN_TITLE:
                return getWindowsTitleDescription();
 
             default:
@@ -97,7 +99,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getReferenceBlackWhiteDescription()
     {
-        int[] ints = _directory.getIntArray(ExifIFD0Directory.TAG_REFERENCE_BLACK_WHITE);
+        int[] ints = _directory.getIntArray(TAG_REFERENCE_BLACK_WHITE);
         if (ints==null || ints.length < 6)
             return null;
         int blackR = ints[0];
@@ -112,7 +114,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getYResolutionDescription()
     {
-        Rational value = _directory.getRational(ExifIFD0Directory.TAG_Y_RESOLUTION);
+        Rational value = _directory.getRational(TAG_Y_RESOLUTION);
         if (value==null)
             return null;
         final String unit = getResolutionDescription();
@@ -124,7 +126,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getXResolutionDescription()
     {
-        Rational value = _directory.getRational(ExifIFD0Directory.TAG_X_RESOLUTION);
+        Rational value = _directory.getRational(TAG_X_RESOLUTION);
         if (value==null)
             return null;
         final String unit = getResolutionDescription();
@@ -136,13 +138,13 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getYCbCrPositioningDescription()
     {
-        return getIndexedDescription(ExifIFD0Directory.TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
+        return getIndexedDescription(TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
     }
 
     @Nullable
     public String getOrientationDescription()
     {
-        return getIndexedDescription(ExifIFD0Directory.TAG_ORIENTATION, 1,
+        return getIndexedDescription(TAG_ORIENTATION, 1,
             "Top, left side (Horizontal / normal)",
             "Top, right side (Mirror horizontal)",
             "Bottom, right side (Rotate 180)",
@@ -157,7 +159,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     public String getResolutionDescription()
     {
         // '1' means no-unit, '2' means inch, '3' means centimeter. Default value is '2'(inch)
-        return getIndexedDescription(ExifIFD0Directory.TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
+        return getIndexedDescription(TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
     }
 
     /** The Windows specific tags uses plain Unicode. */
@@ -178,30 +180,30 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getWindowsAuthorDescription()
     {
-       return getUnicodeDescription(ExifIFD0Directory.TAG_WIN_AUTHOR);
+       return getUnicodeDescription(TAG_WIN_AUTHOR);
     }
 
     @Nullable
     public String getWindowsCommentDescription()
     {
-       return getUnicodeDescription(ExifIFD0Directory.TAG_WIN_COMMENT);
+       return getUnicodeDescription(TAG_WIN_COMMENT);
     }
 
     @Nullable
     public String getWindowsKeywordsDescription()
     {
-       return getUnicodeDescription(ExifIFD0Directory.TAG_WIN_KEYWORDS);
+       return getUnicodeDescription(TAG_WIN_KEYWORDS);
     }
 
     @Nullable
     public String getWindowsTitleDescription()
     {
-       return getUnicodeDescription(ExifIFD0Directory.TAG_WIN_TITLE);
+       return getUnicodeDescription(TAG_WIN_TITLE);
     }
 
     @Nullable
     public String getWindowsSubjectDescription()
     {
-       return getUnicodeDescription(ExifIFD0Directory.TAG_WIN_SUBJECT);
+       return getUnicodeDescription(TAG_WIN_SUBJECT);
     }
 }

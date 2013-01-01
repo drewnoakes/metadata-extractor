@@ -20,6 +20,8 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.metadata.exif.makernotes.CanonMakernoteDescriptor;
+import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

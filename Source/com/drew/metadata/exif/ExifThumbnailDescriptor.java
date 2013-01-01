@@ -26,6 +26,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.exif.ExifThumbnailDirectory.*;
+
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifThumbnailDirectory}.
  *
@@ -55,6 +57,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
      * Where possible, known values will be substituted here in place of the raw
      * tokens actually kept in the Exif segment.  If no substitution is
      * available, the value provided by getString(int) will be returned.
+     *
      * @param tagType the tag to find a description for
      * @return a description of the image's value for the specified tag, or
      *         <code>null</code> if the tag hasn't been defined.
@@ -63,41 +66,41 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case ExifThumbnailDirectory.TAG_ORIENTATION:
+            case TAG_ORIENTATION:
                 return getOrientationDescription();
-            case ExifThumbnailDirectory.TAG_RESOLUTION_UNIT:
+            case TAG_RESOLUTION_UNIT:
                 return getResolutionDescription();
-            case ExifThumbnailDirectory.TAG_YCBCR_POSITIONING:
+            case TAG_YCBCR_POSITIONING:
                 return getYCbCrPositioningDescription();
-            case ExifThumbnailDirectory.TAG_X_RESOLUTION:
+            case TAG_X_RESOLUTION:
                 return getXResolutionDescription();
-            case ExifThumbnailDirectory.TAG_Y_RESOLUTION:
+            case TAG_Y_RESOLUTION:
                 return getYResolutionDescription();
-            case ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET:
+            case TAG_THUMBNAIL_OFFSET:
                 return getThumbnailOffsetDescription();
-            case ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH:
+            case TAG_THUMBNAIL_LENGTH:
                 return getThumbnailLengthDescription();
-            case ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH:
+            case TAG_THUMBNAIL_IMAGE_WIDTH:
                 return getThumbnailImageWidthDescription();
-            case ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT:
+            case TAG_THUMBNAIL_IMAGE_HEIGHT:
                 return getThumbnailImageHeightDescription();
-            case ExifThumbnailDirectory.TAG_BITS_PER_SAMPLE:
+            case TAG_BITS_PER_SAMPLE:
                 return getBitsPerSampleDescription();
-            case ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION:
+            case TAG_THUMBNAIL_COMPRESSION:
                 return getCompressionDescription();
-            case ExifThumbnailDirectory.TAG_PHOTOMETRIC_INTERPRETATION:
+            case TAG_PHOTOMETRIC_INTERPRETATION:
                 return getPhotometricInterpretationDescription();
-            case ExifThumbnailDirectory.TAG_ROWS_PER_STRIP:
+            case TAG_ROWS_PER_STRIP:
                 return getRowsPerStripDescription();
-            case ExifThumbnailDirectory.TAG_STRIP_BYTE_COUNTS:
+            case TAG_STRIP_BYTE_COUNTS:
                 return getStripByteCountsDescription();
-            case ExifThumbnailDirectory.TAG_SAMPLES_PER_PIXEL:
+            case TAG_SAMPLES_PER_PIXEL:
                 return getSamplesPerPixelDescription();
-            case ExifThumbnailDirectory.TAG_PLANAR_CONFIGURATION:
+            case TAG_PLANAR_CONFIGURATION:
                 return getPlanarConfigurationDescription();
-            case ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING:
+            case TAG_YCBCR_SUBSAMPLING:
                 return getYCbCrSubsamplingDescription();
-            case ExifThumbnailDirectory.TAG_REFERENCE_BLACK_WHITE:
+            case TAG_REFERENCE_BLACK_WHITE:
                 return getReferenceBlackWhiteDescription();
             default:
                 return super.getDescription(tagType);
@@ -107,7 +110,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     @Nullable
     public String getReferenceBlackWhiteDescription()
     {
-        int[] ints = _directory.getIntArray(ExifThumbnailDirectory.TAG_REFERENCE_BLACK_WHITE);
+        int[] ints = _directory.getIntArray(TAG_REFERENCE_BLACK_WHITE);
         if (ints == null || ints.length < 6)
             return null;
         int blackR = ints[0];
@@ -122,7 +125,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     @Nullable
     public String getYCbCrSubsamplingDescription()
     {
-        int[] positions = _directory.getIntArray(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING);
+        int[] positions = _directory.getIntArray(TAG_YCBCR_SUBSAMPLING);
         if (positions == null || positions.length < 2)
             return null;
         if (positions[0] == 2 && positions[1] == 1) {
@@ -141,7 +144,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
         // data. If value is '1', Y/Cb/Cr value is chunky format, contiguous for each subsampling
         // pixel. If value is '2', Y/Cb/Cr value is separated and stored to Y plane/Cb plane/Cr
         // plane format.
-        return getIndexedDescription(ExifThumbnailDirectory.TAG_PLANAR_CONFIGURATION,
+        return getIndexedDescription(TAG_PLANAR_CONFIGURATION,
             1,
             "Chunky (contiguous for each subsampling pixel)",
             "Separate (Y-plane/Cb-plane/Cr-plane format)"
@@ -151,30 +154,30 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     @Nullable
     public String getSamplesPerPixelDescription()
     {
-        String value = _directory.getString(ExifThumbnailDirectory.TAG_SAMPLES_PER_PIXEL);
-        return value==null ? null : value + " samples/pixel";
+        String value = _directory.getString(TAG_SAMPLES_PER_PIXEL);
+        return value == null ? null : value + " samples/pixel";
     }
 
     @Nullable
     public String getRowsPerStripDescription()
     {
-        final String value = _directory.getString(ExifThumbnailDirectory.TAG_ROWS_PER_STRIP);
-        return value==null ? null : value + " rows/strip";
+        final String value = _directory.getString(TAG_ROWS_PER_STRIP);
+        return value == null ? null : value + " rows/strip";
     }
 
     @Nullable
     public String getStripByteCountsDescription()
     {
-        final String value = _directory.getString(ExifThumbnailDirectory.TAG_STRIP_BYTE_COUNTS);
-        return value==null ? null : value + " bytes";
+        final String value = _directory.getString(TAG_STRIP_BYTE_COUNTS);
+        return value == null ? null : value + " bytes";
     }
 
     @Nullable
     public String getPhotometricInterpretationDescription()
     {
         // Shows the color space of the image data components
-        Integer value = _directory.getInteger(ExifThumbnailDirectory.TAG_PHOTOMETRIC_INTERPRETATION);
-        if (value==null)
+        Integer value = _directory.getInteger(TAG_PHOTOMETRIC_INTERPRETATION);
+        if (value == null)
             return null;
         switch (value) {
             case 0: return "WhiteIsZero";
@@ -199,8 +202,8 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     @Nullable
     public String getCompressionDescription()
     {
-        Integer value = _directory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION);
-        if (value==null)
+        Integer value = _directory.getInteger(TAG_THUMBNAIL_COMPRESSION);
+        if (value == null)
             return null;
         switch (value) {
             case 1: return "Uncompressed";
@@ -238,72 +241,72 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     @Nullable
     public String getBitsPerSampleDescription()
     {
-        String value = _directory.getString(ExifThumbnailDirectory.TAG_BITS_PER_SAMPLE);
-        return value==null ? null : value + " bits/component/pixel";
+        String value = _directory.getString(TAG_BITS_PER_SAMPLE);
+        return value == null ? null : value + " bits/component/pixel";
     }
 
     @Nullable
     public String getThumbnailImageWidthDescription()
     {
-        String value = _directory.getString(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-        return value==null ? null : value + " pixels";
+        String value = _directory.getString(TAG_THUMBNAIL_IMAGE_WIDTH);
+        return value == null ? null : value + " pixels";
     }
 
     @Nullable
     public String getThumbnailImageHeightDescription()
     {
-        String value = _directory.getString(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
-        return value==null ? null : value + " pixels";
+        String value = _directory.getString(TAG_THUMBNAIL_IMAGE_HEIGHT);
+        return value == null ? null : value + " pixels";
     }
 
     @Nullable
     public String getThumbnailLengthDescription()
     {
-        String value = _directory.getString(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
-        return value==null ? null : value + " bytes";
+        String value = _directory.getString(TAG_THUMBNAIL_LENGTH);
+        return value == null ? null : value + " bytes";
     }
 
     @Nullable
     public String getThumbnailOffsetDescription()
     {
-        String value = _directory.getString(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
-        return value==null ? null : value + " bytes";
+        String value = _directory.getString(TAG_THUMBNAIL_OFFSET);
+        return value == null ? null : value + " bytes";
     }
 
     @Nullable
     public String getYResolutionDescription()
     {
-        Rational value = _directory.getRational(ExifThumbnailDirectory.TAG_Y_RESOLUTION);
-        if (value==null)
+        Rational value = _directory.getRational(TAG_Y_RESOLUTION);
+        if (value == null)
             return null;
         final String unit = getResolutionDescription();
         return value.toSimpleString(_allowDecimalRepresentationOfRationals) +
-                " dots per " +
-                (unit==null ? "unit" : unit.toLowerCase());
+            " dots per " +
+            (unit == null ? "unit" : unit.toLowerCase());
     }
 
     @Nullable
     public String getXResolutionDescription()
     {
-        Rational value = _directory.getRational(ExifThumbnailDirectory.TAG_X_RESOLUTION);
-        if (value==null)
+        Rational value = _directory.getRational(TAG_X_RESOLUTION);
+        if (value == null)
             return null;
         final String unit = getResolutionDescription();
         return value.toSimpleString(_allowDecimalRepresentationOfRationals) +
-                " dots per " +
-                (unit==null ? "unit" : unit.toLowerCase());
+            " dots per " +
+            (unit == null ? "unit" : unit.toLowerCase());
     }
 
     @Nullable
     public String getYCbCrPositioningDescription()
     {
-        return getIndexedDescription(ExifThumbnailDirectory.TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
+        return getIndexedDescription(TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
     }
 
     @Nullable
     public String getOrientationDescription()
     {
-        return getIndexedDescription(ExifThumbnailDirectory.TAG_ORIENTATION, 1,
+        return getIndexedDescription(TAG_ORIENTATION, 1,
             "Top, left side (Horizontal / normal)",
             "Top, right side (Mirror horizontal)",
             "Bottom, right side (Rotate 180)",
@@ -318,6 +321,6 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     public String getResolutionDescription()
     {
         // '1' means no-unit, '2' means inch, '3' means centimeter. Default value is '2'(inch)
-        return getIndexedDescription(ExifThumbnailDirectory.TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
+        return getIndexedDescription(TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
     }
 }
