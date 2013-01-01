@@ -98,7 +98,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     public String getReferenceBlackWhiteDescription()
     {
         int[] ints = _directory.getIntArray(ExifIFD0Directory.TAG_REFERENCE_BLACK_WHITE);
-        if (ints==null)
+        if (ints==null || ints.length < 6)
             return null;
         int blackR = ints[0];
         int whiteR = ints[1];
