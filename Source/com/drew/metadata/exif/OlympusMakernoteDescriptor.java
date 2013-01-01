@@ -119,7 +119,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getJpegQualityDescription()
     {
-        return getIndexedDescription(OlympusMakernoteDirectory.TAG_JPEG_QUALITY, "SQ", "HQ", "SHQ");
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_JPEG_QUALITY, null, "SQ", "HQ", "SHQ");
     }
 
     @Nullable
