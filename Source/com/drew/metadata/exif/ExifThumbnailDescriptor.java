@@ -108,7 +108,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     public String getReferenceBlackWhiteDescription()
     {
         int[] ints = _directory.getIntArray(ExifThumbnailDirectory.TAG_REFERENCE_BLACK_WHITE);
-        if (ints==null)
+        if (ints == null || ints.length < 6)
             return null;
         int blackR = ints[0];
         int whiteR = ints[1];
@@ -116,15 +116,14 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
         int whiteG = ints[3];
         int blackB = ints[4];
         int whiteB = ints[5];
-        return "[" + blackR + "," + blackG + "," + blackB + "] " +
-               "[" + whiteR + "," + whiteG + "," + whiteB + "]";
+        return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
     }
 
     @Nullable
     public String getYCbCrSubsamplingDescription()
     {
         int[] positions = _directory.getIntArray(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING);
-        if (positions==null || positions.length < 2)
+        if (positions == null || positions.length < 2)
             return null;
         if (positions[0] == 2 && positions[1] == 1) {
             return "YCbCr4:2:2";
@@ -142,15 +141,11 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
         // data. If value is '1', Y/Cb/Cr value is chunky format, contiguous for each subsampling
         // pixel. If value is '2', Y/Cb/Cr value is separated and stored to Y plane/Cb plane/Cr
         // plane format.
-        Integer value = _directory.getInteger(ExifThumbnailDirectory.TAG_PLANAR_CONFIGURATION);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "Chunky (contiguous for each subsampling pixel)";
-            case 2: return "Separate (Y-plane/Cb-plane/Cr-plane format)";
-            default:
-                return "Unknown configuration";
-        }
+        return getIndexedDescription(ExifThumbnailDirectory.TAG_PLANAR_CONFIGURATION,
+            1,
+            "Chunky (contiguous for each subsampling pixel)",
+            "Separate (Y-plane/Cb-plane/Cr-plane format)"
+        );
     }
 
     @Nullable
@@ -302,50 +297,27 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     @Nullable
     public String getYCbCrPositioningDescription()
     {
-        Integer value = _directory.getInteger(ExifThumbnailDirectory.TAG_YCBCR_POSITIONING);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "Center of pixel array";
-            case 2: return "Datum point";
-            default:
-                return String.valueOf(value);
-        }
+        return getIndexedDescription(ExifThumbnailDirectory.TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
     }
 
     @Nullable
     public String getOrientationDescription()
     {
-        Integer value = _directory.getInteger(ExifThumbnailDirectory.TAG_ORIENTATION);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "Top, left side (Horizontal / normal)";
-            case 2: return "Top, right side (Mirror horizontal)";
-            case 3: return "Bottom, right side (Rotate 180)";
-            case 4: return "Bottom, left side (Mirror vertical)";
-            case 5: return "Left side, top (Mirror horizontal and rotate 270 CW)";
-            case 6: return "Right side, top (Rotate 90 CW)";
-            case 7: return "Right side, bottom (Mirror horizontal and rotate 90 CW)";
-            case 8: return "Left side, bottom (Rotate 270 CW)";
-            default:
-                return String.valueOf(value);
-        }
+        return getIndexedDescription(ExifThumbnailDirectory.TAG_ORIENTATION, 1,
+            "Top, left side (Horizontal / normal)",
+            "Top, right side (Mirror horizontal)",
+            "Bottom, right side (Rotate 180)",
+            "Bottom, left side (Mirror vertical)",
+            "Left side, top (Mirror horizontal and rotate 270 CW)",
+            "Right side, top (Rotate 90 CW)",
+            "Right side, bottom (Mirror horizontal and rotate 90 CW)",
+            "Left side, bottom (Rotate 270 CW)");
     }
 
     @Nullable
     public String getResolutionDescription()
     {
         // '1' means no-unit, '2' means inch, '3' means centimeter. Default value is '2'(inch)
-        Integer value = _directory.getInteger(ExifThumbnailDirectory.TAG_RESOLUTION_UNIT);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "(No unit)";
-            case 2: return "Inch";
-            case 3: return "cm";
-            default:
-                return "";
-        }
+        return getIndexedDescription(ExifThumbnailDirectory.TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
     }
 }
