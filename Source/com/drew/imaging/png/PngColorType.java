@@ -26,7 +26,7 @@ public enum PngColorType
     /**
      * Each pixel is a greyscale sample followed by an alpha sample.
      */
-    GreyscaleWithAlpha(5, "Greyscale with Alpha", 8,16),
+    GreyscaleWithAlpha(4, "Greyscale with Alpha", 8,16),
 
     /**
      * Each pixel is an R,G,B triple followed by an alpha sample.
