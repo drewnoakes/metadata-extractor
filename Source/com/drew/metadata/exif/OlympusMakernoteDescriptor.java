@@ -46,11 +46,47 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
                 return getJpegQualityDescription();
             case OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE:
                 return getMacroModeDescription();
+            case OlympusMakernoteDirectory.TAG_OLYMPUS_BW_MODE:
+                return getBWModeDescription();
             case OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO:
                 return getDigiZoomRatioDescription();
+            case OlympusMakernoteDirectory.TAG_OLYMPUS_CAMERA_ID:
+                return getCameraIdDescription();
+            case OlympusMakernoteDirectory.TAG_OLYMPUS_FLASH_MODE:
+                return getFlashModeDescription();
+            case OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_RANGE:
+                return getFocusRangeDescription();
+            case OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_MODE:
+                return getFocusModeDescription();
+            case OlympusMakernoteDirectory.TAG_OLYMPUS_SHARPNESS:
+                return getSharpnessDescription();
             default:
                 return super.getDescription(tagType);
         }
+    }
+
+    @Nullable
+    public String getSharpnessDescription()
+    {
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_SHARPNESS, "Normal", "Hard", "Soft");
+    }
+
+    @Nullable
+    public String getFocusModeDescription()
+    {
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_MODE, "Auto", "Manual");
+    }
+
+    @Nullable
+    public String getFocusRangeDescription()
+    {
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_RANGE, "Normal", "Macro");
+    }
+
+    @Nullable
+    public String getFlashModeDescription()
+    {
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_FLASH_MODE, null, null, "On", "Off");
     }
 
     @Nullable
@@ -70,6 +106,15 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
+    public String getCameraIdDescription()
+    {
+        byte[] bytes = _directory.getByteArray(OlympusMakernoteDirectory.TAG_OLYMPUS_CAMERA_ID);
+        if (bytes == null)
+            return null;
+        return new String(bytes);
+    }
+
+    @Nullable
     public String getMacroModeDescription()
     {
         Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
@@ -83,6 +128,12 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             default:
                 return "Unknown (" + value + ")";
         }
+    }
+
+    @Nullable
+    public String getBWModeDescription()
+    {
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_BW_MODE, "Off", "On");
     }
 
     @Nullable

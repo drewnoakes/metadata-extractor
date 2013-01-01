@@ -105,12 +105,15 @@ public class OlympusMakernoteDirectory extends Directory
      */
     public static final int TAG_OLYMPUS_MACRO_MODE = 0x0202;
 
-    public static final int TAG_OLYMPUS_UNKNOWN_1 = 0x0203;
+    /**
+     * 0 = Off, 1 = On
+     */
+    public static final int TAG_OLYMPUS_BW_MODE = 0x0203;
 
     /** Zoom Factor (0 or 1 = normal) */
     public static final int TAG_OLYMPUS_DIGI_ZOOM_RATIO = 0x0204;
-    public static final int TAG_OLYMPUS_UNKNOWN_2 = 0x0205;
-    public static final int TAG_OLYMPUS_UNKNOWN_3 = 0x0206;
+    public static final int TAG_OLYMPUS_FOCAL_PLANE_DIAGONAL = 0x0205;
+    public static final int TAG_OLYMPUS_LENS_DISTORTION_PARAMETERS = 0x0206;
     public static final int TAG_OLYMPUS_FIRMWARE_VERSION = 0x0207;
     public static final int TAG_OLYMPUS_PICT_INFO = 0x0208;
     public static final int TAG_OLYMPUS_CAMERA_ID = 0x0209;
@@ -137,8 +140,14 @@ public class OlympusMakernoteDirectory extends Directory
     public static final int TAG_OLYMPUS_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
     public static final int TAG_OLYMPUS_DATA_DUMP = 0x0F00;
+
+    public static final int TAG_OLYMPUS_SHUTTER_SPEED_VALUE = 0x1000;
+    public static final int TAG_OLYMPUS_ISO_VALUE = 0x1001;
+    public static final int TAG_OLYMPUS_APERTURE_VALUE = 0x1002;
+    public static final int TAG_OLYMPUS_BRIGHTNESS_VALUE = 0x1003;
     public static final int TAG_OLYMPUS_FLASH_MODE = 0x1004;
     public static final int TAG_OLYMPUS_BRACKET = 0x1006;
+    public static final int TAG_OLYMPUS_FOCUS_RANGE = 0x100A;
     public static final int TAG_OLYMPUS_FOCUS_MODE = 0x100B;
     public static final int TAG_OLYMPUS_FOCUS_DISTANCE = 0x100C;
     public static final int TAG_OLYMPUS_ZOOM = 0x100D;
@@ -167,10 +176,10 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_OLYMPUS_SPECIAL_MODE, "Special Mode");
         _tagNameMap.put(TAG_OLYMPUS_JPEG_QUALITY, "JPEG Quality");
         _tagNameMap.put(TAG_OLYMPUS_MACRO_MODE, "Macro");
-        _tagNameMap.put(TAG_OLYMPUS_UNKNOWN_1, "Makernote Unknown 1");
+        _tagNameMap.put(TAG_OLYMPUS_BW_MODE, "BW Mode");
         _tagNameMap.put(TAG_OLYMPUS_DIGI_ZOOM_RATIO, "DigiZoom Ratio");
-        _tagNameMap.put(TAG_OLYMPUS_UNKNOWN_2, "Makernote Unknown 2");
-        _tagNameMap.put(TAG_OLYMPUS_UNKNOWN_3, "Makernote Unknown 3");
+        _tagNameMap.put(TAG_OLYMPUS_FOCAL_PLANE_DIAGONAL, "Focal Plane Diagonal");
+        _tagNameMap.put(TAG_OLYMPUS_LENS_DISTORTION_PARAMETERS, "Lens Distortion Parameters");
         _tagNameMap.put(TAG_OLYMPUS_FIRMWARE_VERSION, "Firmware Version");
         _tagNameMap.put(TAG_OLYMPUS_PICT_INFO, "Pict Info");
         _tagNameMap.put(TAG_OLYMPUS_CAMERA_ID, "Camera Id");
@@ -189,8 +198,14 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_OLYMPUS_IMAGE_WIDTH, "Image Width");
         _tagNameMap.put(TAG_OLYMPUS_ORIGINAL_MANUFACTURER_MODEL, "Original Manufacturer Model");
         _tagNameMap.put(TAG_OLYMPUS_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
+
+        _tagNameMap.put(TAG_OLYMPUS_SHUTTER_SPEED_VALUE, "Shutter Speed Value");
+        _tagNameMap.put(TAG_OLYMPUS_ISO_VALUE, "ISO Value");
+        _tagNameMap.put(TAG_OLYMPUS_APERTURE_VALUE, "Aperture Value");
+        _tagNameMap.put(TAG_OLYMPUS_BRIGHTNESS_VALUE, "Brightness Value");
         _tagNameMap.put(TAG_OLYMPUS_FLASH_MODE, "Flash Mode");
         _tagNameMap.put(TAG_OLYMPUS_BRACKET, "Bracket");
+        _tagNameMap.put(TAG_OLYMPUS_FOCUS_RANGE, "Focus Range");
         _tagNameMap.put(TAG_OLYMPUS_FOCUS_MODE, "Focus Mode");
         _tagNameMap.put(TAG_OLYMPUS_FOCUS_DISTANCE, "Focus Distance");
         _tagNameMap.put(TAG_OLYMPUS_ZOOM, "Zoom");
