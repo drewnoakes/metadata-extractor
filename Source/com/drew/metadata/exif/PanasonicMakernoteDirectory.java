@@ -48,7 +48,7 @@ public class PanasonicMakernoteDirectory extends Directory
      * 9 = Motion Picture  <br>
      */
     public static final int TAG_QUALITY_MODE = 0x0001;
-    public static final int TAG_VERSION = 0x0002;
+    public static final int TAG_FIRMWARE_VERSION = 0x0002;
     
     /**                    
      * <br>
@@ -171,7 +171,8 @@ public class PanasonicMakernoteDirectory extends Directory
      * No idea, what this is
      */
     public static final int TAG_UNKNOWN_DATA_DUMP = 0x0021;
-    
+
+    public static final int TAG_EASY_MODE = 0x0022;
     public static final int TAG_WHITE_BALANCE_BIAS = 0x0023;
     public static final int TAG_FLASH_BIAS = 0x0024;
     
@@ -474,7 +475,7 @@ public class PanasonicMakernoteDirectory extends Directory
     static
     {
         _tagNameMap.put(TAG_QUALITY_MODE, "Quality Mode");
-        _tagNameMap.put(TAG_VERSION, "Version");
+        _tagNameMap.put(TAG_FIRMWARE_VERSION, "Version");
         _tagNameMap.put(TAG_WHITE_BALANCE, "White Balance");
         _tagNameMap.put(TAG_FOCUS_MODE, "Focus Mode");
         _tagNameMap.put(TAG_AF_AREA_MODE, "AF Area Mode");
@@ -484,6 +485,7 @@ public class PanasonicMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_AUDIO, "Audio");
         _tagNameMap.put(TAG_INTERNAL_SERIAL_NUMBER, "Internal Serial Number");
         _tagNameMap.put(TAG_UNKNOWN_DATA_DUMP, "Unknown Data Dump");
+        _tagNameMap.put(TAG_EASY_MODE, "Easy Mode");
         _tagNameMap.put(TAG_WHITE_BALANCE_BIAS, "White Balance Bias");
         _tagNameMap.put(TAG_FLASH_BIAS, "Flash Bias");
         _tagNameMap.put(TAG_EXIF_VERSION, "Exif Version");

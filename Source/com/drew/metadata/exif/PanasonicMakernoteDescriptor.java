@@ -55,7 +55,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         switch (tagType) {
             case PanasonicMakernoteDirectory.TAG_QUALITY_MODE:
                 return getQualityModeDescription();
-            case PanasonicMakernoteDirectory.TAG_VERSION:
+            case PanasonicMakernoteDirectory.TAG_FIRMWARE_VERSION:
                 return getVersionDescription();
             case PanasonicMakernoteDirectory.TAG_WHITE_BALANCE:
                 return getWhiteBalanceDescription();
@@ -989,7 +989,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getVersionDescription()
     {
-        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_VERSION), 2);
+        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_FIRMWARE_VERSION), 2);
     }
 
     @Nullable

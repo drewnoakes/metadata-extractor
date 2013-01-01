@@ -435,7 +435,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                 processIFD(metadata.getOrCreateDirectory(CasioType1MakernoteDirectory.class), processedIfdOffsets, tagValueOffset, tiffHeaderOffset, metadata, reader);
             }
         } else if ("FUJIFILM".equals(firstEightChars) || "Fujifilm".equalsIgnoreCase(cameraModel)) {
-            // bug in fujifilm makernote ifd means we temporarily use Intel byte ordering
+            // Note that this also applies to certain Leica cameras, such as the Digilux-4.3
             reader.setMotorolaByteOrder(false);
             // the 4 bytes after "FUJIFILM" in the makernote point to the start of the makernote
             // IFD, though the offset is relative to the start of the makernote, not the TIFF
@@ -449,6 +449,14 @@ public class ExifReader implements JpegSegmentMetadataReader
         } else if ("KYOCERA".equals(firstSevenChars)) {
             // http://www.ozhiker.com/electronics/pjmt/jpeg_info/kyocera_mn.html
             processIFD(metadata.getOrCreateDirectory(KyoceraMakernoteDirectory.class), processedIfdOffsets, tagValueOffset + 22, tiffHeaderOffset, metadata, reader);
+        } else if ("LEICA".equals(firstFiveChars)) {
+            reader.setMotorolaByteOrder(false);
+            if ("Leica Camera AG".equals(cameraModel)) {
+                processIFD(metadata.getOrCreateDirectory(LeicaMakernoteDirectory.class), processedIfdOffsets, tagValueOffset + 8, tiffHeaderOffset, metadata, reader);
+            } else if ("LEICA".equals(cameraModel)) {
+                // Some Leica cameras use Panasonic makernote tags
+                processIFD(metadata.getOrCreateDirectory(PanasonicMakernoteDirectory.class), processedIfdOffsets, tagValueOffset + 8, tiffHeaderOffset, metadata, reader);
+            }
         } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(tagValueOffset, 12))) {
             // NON-Standard TIFF IFD Data using Panasonic Tags. There is no Next-IFD pointer after the IFD
             // Offsets are relative to the start of the TIFF header at the beginning of the EXIF segment

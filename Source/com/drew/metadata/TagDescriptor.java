@@ -20,6 +20,7 @@
  */
 package com.drew.metadata;
 
+import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
@@ -127,11 +128,30 @@ public class TagDescriptor<T extends Directory>
         return "Unknown (" + index + ")";
     }
 
+    @Nullable
     protected String getByteLengthDescription(int tagType)
     {
         byte[] bytes = _directory.getByteArray(tagType);
         if (bytes == null)
             return null;
         return String.format("(%d byte%s)", bytes.length, bytes.length == 1 ? "" : "s");
+    }
+
+    @Nullable
+    protected String getSimplifiedRational(int tagType)
+    {
+        Rational value = _directory.getRational(tagType);
+        if (value == null)
+            return null;
+        return value.toSimpleString(true);
+    }
+
+    @Nullable
+    protected String getFormattedInt(int tagType, String format)
+    {
+        Integer value = _directory.getInteger(tagType);
+        if (value == null)
+            return null;
+        return String.format(format, value);
     }
 }
