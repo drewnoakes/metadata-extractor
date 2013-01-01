@@ -44,27 +44,27 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     {
         switch (tagType) 
         {
-            case PentaxMakernoteDirectory.TAG_PENTAX_CAPTURE_MODE:
+            case PentaxMakernoteDirectory.TAG_CAPTURE_MODE:
                 return getCaptureModeDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_QUALITY_LEVEL:
+            case PentaxMakernoteDirectory.TAG_QUALITY_LEVEL:
                 return getQualityLevelDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_FOCUS_MODE:
+            case PentaxMakernoteDirectory.TAG_FOCUS_MODE:
                 return getFocusModeDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_FLASH_MODE:
+            case PentaxMakernoteDirectory.TAG_FLASH_MODE:
                 return getFlashModeDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_WHITE_BALANCE:
+            case PentaxMakernoteDirectory.TAG_WHITE_BALANCE:
                 return getWhiteBalanceDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_DIGITAL_ZOOM:
+            case PentaxMakernoteDirectory.TAG_DIGITAL_ZOOM:
                 return getDigitalZoomDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_SHARPNESS:
+            case PentaxMakernoteDirectory.TAG_SHARPNESS:
                 return getSharpnessDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_CONTRAST:
+            case PentaxMakernoteDirectory.TAG_CONTRAST:
                 return getContrastDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_SATURATION:
+            case PentaxMakernoteDirectory.TAG_SATURATION:
                 return getSaturationDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_ISO_SPEED:
+            case PentaxMakernoteDirectory.TAG_ISO_SPEED:
                 return getIsoSpeedDescription();
-            case PentaxMakernoteDirectory.TAG_PENTAX_COLOUR:
+            case PentaxMakernoteDirectory.TAG_COLOUR:
                 return getColourDescription();
             default:
                 return super.getDescription(tagType);
@@ -74,7 +74,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getColourDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_COLOUR);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_COLOUR);
         if (value==null)
             return null;
         switch (value)
@@ -89,7 +89,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getIsoSpeedDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_ISO_SPEED);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_ISO_SPEED);
         if (value==null)
             return null;
         switch (value)
@@ -106,7 +106,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getSaturationDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_SATURATION);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_SATURATION);
         if (value==null)
             return null;
         switch (value)
@@ -121,7 +121,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getContrastDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_CONTRAST);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_CONTRAST);
         if (value==null)
             return null;
         switch (value)
@@ -136,7 +136,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getSharpnessDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_SHARPNESS);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_SHARPNESS);
         if (value==null)
             return null;
         switch (value)
@@ -151,7 +151,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getDigitalZoomDescription()
     {
-        Float value = _directory.getFloatObject(PentaxMakernoteDirectory.TAG_PENTAX_DIGITAL_ZOOM);
+        Float value = _directory.getFloatObject(PentaxMakernoteDirectory.TAG_DIGITAL_ZOOM);
         if (value==null)
             return null;
         if (value==0)
@@ -162,7 +162,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_WHITE_BALANCE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_WHITE_BALANCE);
         if (value==null)
             return null;
         switch (value)
@@ -180,7 +180,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getFlashModeDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_FLASH_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_FLASH_MODE);
         if (value==null)
             return null;
         switch (value)
@@ -196,7 +196,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getFocusModeDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_FOCUS_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_FOCUS_MODE);
         if (value==null)
             return null;
         switch (value)
@@ -210,7 +210,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getQualityLevelDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_QUALITY_LEVEL);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_QUALITY_LEVEL);
         if (value==null)
             return null;
         switch (value)
@@ -225,7 +225,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getCaptureModeDescription()
     {
-        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_CAPTURE_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_CAPTURE_MODE);
         if (value==null)
             return null;
         switch (value)

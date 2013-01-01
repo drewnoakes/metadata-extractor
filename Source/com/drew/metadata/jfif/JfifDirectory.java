@@ -33,21 +33,21 @@ import java.util.HashMap;
  */
 public class JfifDirectory extends Directory
 {
-    public static final int TAG_JFIF_VERSION = 5;
+    public static final int TAG_VERSION = 5;
     /** Units for pixel density fields.  One of None, Pixels per Inch, Pixels per Centimetre. */
-    public static final int TAG_JFIF_UNITS = 7;
-    public static final int TAG_JFIF_RESX = 8;
-    public static final int TAG_JFIF_RESY = 10;
+    public static final int TAG_UNITS = 7;
+    public static final int TAG_RESX = 8;
+    public static final int TAG_RESY = 10;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TAG_JFIF_VERSION, "Version");
-        _tagNameMap.put(TAG_JFIF_UNITS, "Resolution Units");
-        _tagNameMap.put(TAG_JFIF_RESY, "Y Resolution");
-        _tagNameMap.put(TAG_JFIF_RESX, "X Resolution");
+        _tagNameMap.put(TAG_VERSION, "Version");
+        _tagNameMap.put(TAG_UNITS, "Resolution Units");
+        _tagNameMap.put(TAG_RESY, "Y Resolution");
+        _tagNameMap.put(TAG_RESX, "X Resolution");
     }
 
     public JfifDirectory()
@@ -69,22 +69,22 @@ public class JfifDirectory extends Directory
 
     public int getVersion() throws MetadataException
     {
-        return getInt(JfifDirectory.TAG_JFIF_VERSION);
+        return getInt(JfifDirectory.TAG_VERSION);
     }
 
     public int getResUnits() throws MetadataException
     {
-        return getInt(JfifDirectory.TAG_JFIF_UNITS);
+        return getInt(JfifDirectory.TAG_UNITS);
     }
 
     public int getImageWidth() throws MetadataException
     {
-        return getInt(JfifDirectory.TAG_JFIF_RESY);
+        return getInt(JfifDirectory.TAG_RESY);
     }
 
     public int getImageHeight() throws MetadataException
     {
-        return getInt(JfifDirectory.TAG_JFIF_RESX);
+        return getInt(JfifDirectory.TAG_RESX);
     }
 
 }

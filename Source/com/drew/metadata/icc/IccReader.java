@@ -73,45 +73,45 @@ public class IccReader implements JpegSegmentMetadataReader
         final IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
 
         try {
-            directory.setInt(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT, reader.getInt32(IccDirectory.TAG_ICC_PROFILE_BYTE_COUNT));
+            directory.setInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT));
 
             // For these tags, the int value of the tag is in fact it's offset within the buffer.
-            set4ByteString(directory, IccDirectory.TAG_ICC_CMM_TYPE, reader);
-            setInt32(directory, IccDirectory.TAG_ICC_PROFILE_VERSION, reader);
-            set4ByteString(directory, IccDirectory.TAG_ICC_PROFILE_CLASS, reader);
-            set4ByteString(directory, IccDirectory.TAG_ICC_COLOR_SPACE, reader);
-            set4ByteString(directory, IccDirectory.TAG_ICC_PROFILE_CONNECTION_SPACE, reader);
-            setDate(directory, IccDirectory.TAG_ICC_PROFILE_DATETIME, reader);
-            set4ByteString(directory, IccDirectory.TAG_ICC_SIGNATURE, reader);
-            set4ByteString(directory, IccDirectory.TAG_ICC_PLATFORM, reader);
-            setInt32(directory, IccDirectory.TAG_ICC_CMM_FLAGS, reader);
-            set4ByteString(directory, IccDirectory.TAG_ICC_DEVICE_MAKE, reader);
+            set4ByteString(directory, IccDirectory.TAG_CMM_TYPE, reader);
+            setInt32(directory, IccDirectory.TAG_PROFILE_VERSION, reader);
+            set4ByteString(directory, IccDirectory.TAG_PROFILE_CLASS, reader);
+            set4ByteString(directory, IccDirectory.TAG_COLOR_SPACE, reader);
+            set4ByteString(directory, IccDirectory.TAG_PROFILE_CONNECTION_SPACE, reader);
+            setDate(directory, IccDirectory.TAG_PROFILE_DATETIME, reader);
+            set4ByteString(directory, IccDirectory.TAG_SIGNATURE, reader);
+            set4ByteString(directory, IccDirectory.TAG_PLATFORM, reader);
+            setInt32(directory, IccDirectory.TAG_CMM_FLAGS, reader);
+            set4ByteString(directory, IccDirectory.TAG_DEVICE_MAKE, reader);
 
-            int temp = reader.getInt32(IccDirectory.TAG_ICC_DEVICE_MODEL);
+            int temp = reader.getInt32(IccDirectory.TAG_DEVICE_MODEL);
             if (temp != 0) {
                 if (temp <= 0x20202020) {
-                    directory.setInt(IccDirectory.TAG_ICC_DEVICE_MODEL, temp);
+                    directory.setInt(IccDirectory.TAG_DEVICE_MODEL, temp);
                 } else {
-                    directory.setString(IccDirectory.TAG_ICC_DEVICE_MODEL, getStringFromInt32(temp));
+                    directory.setString(IccDirectory.TAG_DEVICE_MODEL, getStringFromInt32(temp));
                 }
             }
 
-            setInt32(directory, IccDirectory.TAG_ICC_RENDERING_INTENT, reader);
-            setInt64(directory, IccDirectory.TAG_ICC_DEVICE_ATTR, reader);
+            setInt32(directory, IccDirectory.TAG_RENDERING_INTENT, reader);
+            setInt64(directory, IccDirectory.TAG_DEVICE_ATTR, reader);
 
             float[] xyz = new float[]{
-                    reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES),
-                    reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 4),
-                    reader.getS15Fixed16(IccDirectory.TAG_ICC_XYZ_VALUES + 8)
+                    reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES),
+                    reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES + 4),
+                    reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES + 8)
             };
-            directory.setObject(IccDirectory.TAG_ICC_XYZ_VALUES, xyz);
+            directory.setObject(IccDirectory.TAG_XYZ_VALUES, xyz);
 
             // Process 'ICC tags'
-            int tagCount = reader.getInt32(IccDirectory.TAG_ICC_TAG_COUNT);
-            directory.setInt(IccDirectory.TAG_ICC_TAG_COUNT, tagCount);
+            int tagCount = reader.getInt32(IccDirectory.TAG_TAG_COUNT);
+            directory.setInt(IccDirectory.TAG_TAG_COUNT, tagCount);
 
             for (int i = 0; i < tagCount; i++) {
-                int pos = IccDirectory.TAG_ICC_TAG_COUNT + 4 + i * 12;
+                int pos = IccDirectory.TAG_TAG_COUNT + 4 + i * 12;
                 int tagType = reader.getInt32(pos);
                 int tagPtr = reader.getInt32(pos + 4);
                 int tagLen = reader.getInt32(pos + 8);

@@ -32,16 +32,16 @@ import java.util.HashMap;
  */
 public class KyoceraMakernoteDirectory extends Directory
 {
-    public static final int TAG_KYOCERA_PROPRIETARY_THUMBNAIL = 0x0001;
-    public static final int TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
+    public static final int TAG_PROPRIETARY_THUMBNAIL = 0x0001;
+    public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TAG_KYOCERA_PROPRIETARY_THUMBNAIL, "Proprietary Thumbnail Format Data");
-        _tagNameMap.put(TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
+        _tagNameMap.put(TAG_PROPRIETARY_THUMBNAIL, "Proprietary Thumbnail Format Data");
+        _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
     }
 
     public KyoceraMakernoteDirectory()

@@ -42,21 +42,21 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     {
         switch (tagType)
         {
-            case JpegDirectory.TAG_JPEG_COMPRESSION_TYPE:
+            case JpegDirectory.TAG_COMPRESSION_TYPE:
                 return getImageCompressionTypeDescription();
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_1:
+            case JpegDirectory.TAG_COMPONENT_DATA_1:
                 return getComponentDataDescription(0);
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_2:
+            case JpegDirectory.TAG_COMPONENT_DATA_2:
                 return getComponentDataDescription(1);
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_3:
+            case JpegDirectory.TAG_COMPONENT_DATA_3:
                 return getComponentDataDescription(2);
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_4:
+            case JpegDirectory.TAG_COMPONENT_DATA_4:
                 return getComponentDataDescription(3);
-            case JpegDirectory.TAG_JPEG_DATA_PRECISION:
+            case JpegDirectory.TAG_DATA_PRECISION:
                 return getDataPrecisionDescription();
-            case JpegDirectory.TAG_JPEG_IMAGE_HEIGHT:
+            case JpegDirectory.TAG_IMAGE_HEIGHT:
                 return getImageHeightDescription();
-            case JpegDirectory.TAG_JPEG_IMAGE_WIDTH:
+            case JpegDirectory.TAG_IMAGE_WIDTH:
                 return getImageWidthDescription();
             default:
                 return super.getDescription(tagType);
@@ -66,7 +66,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageCompressionTypeDescription()
     {
-        Integer value = _directory.getInteger(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE);
+        Integer value = _directory.getInteger(JpegDirectory.TAG_COMPRESSION_TYPE);
         if (value==null)
             return null;
         // Note there is no 2 or 12
@@ -92,7 +92,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageWidthDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
+        final String value = _directory.getString(JpegDirectory.TAG_IMAGE_WIDTH);
         if (value==null)
             return null;
         return value + " pixels";
@@ -101,7 +101,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageHeightDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
+        final String value = _directory.getString(JpegDirectory.TAG_IMAGE_HEIGHT);
         if (value==null)
             return null;
         return value + " pixels";
@@ -110,7 +110,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getDataPrecisionDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_JPEG_DATA_PRECISION);
+        final String value = _directory.getString(JpegDirectory.TAG_DATA_PRECISION);
         if (value==null)
             return null;
         return value + " bits";

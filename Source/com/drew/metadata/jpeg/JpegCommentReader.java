@@ -52,6 +52,6 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
         JpegCommentDirectory directory = metadata.getOrCreateDirectory(JpegCommentDirectory.class);
 
         // The entire contents of the directory are the comment
-        directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, new String(segmentBytes));
+        directory.setString(JpegCommentDirectory.TAG_COMMENT, new String(segmentBytes));
     }
 }

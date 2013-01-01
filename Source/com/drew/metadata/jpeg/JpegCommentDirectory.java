@@ -36,13 +36,13 @@ public class JpegCommentDirectory extends Directory
      * This value does not apply to a particular standard. Rather, this value has been fabricated to maintain
      * consistency with other directory types.
      */
-    public static final int TAG_JPEG_COMMENT = 0;
+    public static final int TAG_COMMENT = 0;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-        _tagNameMap.put(TAG_JPEG_COMMENT, "JPEG Comment");
+        _tagNameMap.put(TAG_COMMENT, "JPEG Comment");
     }
 
     public JpegCommentDirectory()

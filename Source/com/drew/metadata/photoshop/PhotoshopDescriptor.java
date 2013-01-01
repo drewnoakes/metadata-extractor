@@ -38,32 +38,32 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case PhotoshopDirectory.TAG_PHOTOSHOP_THUMBNAIL:
-            case PhotoshopDirectory.TAG_PHOTOSHOP_THUMBNAIL_OLD:
+            case PhotoshopDirectory.TAG_THUMBNAIL:
+            case PhotoshopDirectory.TAG_THUMBNAIL_OLD:
                 return getThumbnailDescription(tagType);
-            case PhotoshopDirectory.TAG_PHOTOSHOP_URL:
-            case PhotoshopDirectory.TAG_PHOTOSHOP_XML:
+            case PhotoshopDirectory.TAG_URL:
+            case PhotoshopDirectory.TAG_XML:
                 return getSimpleString(tagType);
-            case PhotoshopDirectory.TAG_PHOTOSHOP_IPTC:
+            case PhotoshopDirectory.TAG_IPTC:
                 return getBinaryDataString(tagType);
-            case PhotoshopDirectory.TAG_PHOTOSHOP_SLICES:
+            case PhotoshopDirectory.TAG_SLICES:
                 return getSlicesDescription();
-            case PhotoshopDirectory.TAG_PHOTOSHOP_VERSION:
+            case PhotoshopDirectory.TAG_VERSION:
                 return getVersionDescription();
-            case PhotoshopDirectory.TAG_PHOTOSHOP_COPYRIGHT:
+            case PhotoshopDirectory.TAG_COPYRIGHT:
                 return getBooleanString(tagType);
-            case PhotoshopDirectory.TAG_PHOTOSHOP_RESOLUTION_INFO:
+            case PhotoshopDirectory.TAG_RESOLUTION_INFO:
                 return getResolutionInfoDescription();
-            case PhotoshopDirectory.TAG_PHOTOSHOP_GLOBAL_ANGLE:
-            case PhotoshopDirectory.TAG_PHOTOSHOP_GLOBAL_ALTITUDE:
-            case PhotoshopDirectory.TAG_PHOTOSHOP_URL_LIST:
-            case PhotoshopDirectory.TAG_PHOTOSHOP_SEED_NUMBER:
+            case PhotoshopDirectory.TAG_GLOBAL_ANGLE:
+            case PhotoshopDirectory.TAG_GLOBAL_ALTITUDE:
+            case PhotoshopDirectory.TAG_URL_LIST:
+            case PhotoshopDirectory.TAG_SEED_NUMBER:
                 return get32BitNumberString(tagType);
-            case PhotoshopDirectory.TAG_PHOTOSHOP_JPEG_QUALITY:
+            case PhotoshopDirectory.TAG_JPEG_QUALITY:
                 return getJpegQualityString();
-            case PhotoshopDirectory.TAG_PHOTOSHOP_PRINT_SCALE:
+            case PhotoshopDirectory.TAG_PRINT_SCALE:
                 return getPrintScaleDescription();
-            case PhotoshopDirectory.TAG_PHOTOSHOP_PIXEL_ASPECT_RATIO:
+            case PhotoshopDirectory.TAG_PIXEL_ASPECT_RATIO:
                 return getPixelAspectRatioString();
             default:
                 return super.getDescription(tagType);
@@ -74,7 +74,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     public String getJpegQualityString()
     {
         try {
-            byte[] b = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_JPEG_QUALITY);
+            byte[] b = _directory.getByteArray(PhotoshopDirectory.TAG_JPEG_QUALITY);
             RandomAccessReader reader = new ByteArrayReader(b);
             int q = reader.getUInt16(0); // & 0xFFFF;
             int f = reader.getUInt16(2); // & 0xFFFF;
@@ -140,7 +140,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     public String getPixelAspectRatioString()
     {
         try {
-            byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_PIXEL_ASPECT_RATIO);
+            byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_PIXEL_ASPECT_RATIO);
             if (bytes == null)
                 return null;
             RandomAccessReader reader = new ByteArrayReader(bytes);
@@ -155,7 +155,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     public String getPrintScaleDescription()
     {
         try {
-            byte bytes[] = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_PRINT_SCALE);
+            byte bytes[] = _directory.getByteArray(PhotoshopDirectory.TAG_PRINT_SCALE);
             if (bytes == null)
                 return null;
             RandomAccessReader reader = new ByteArrayReader(bytes);
@@ -182,7 +182,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     public String getResolutionInfoDescription()
     {
         try {
-            byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_RESOLUTION_INFO);
+            byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_RESOLUTION_INFO);
             if (bytes == null)
                 return null;
             RandomAccessReader reader = new ByteArrayReader(bytes);
@@ -198,7 +198,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     public String getVersionDescription()
     {
         try {
-            final byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_VERSION);
+            final byte[] bytes = _directory.getByteArray(PhotoshopDirectory.TAG_VERSION);
             if (bytes == null)
                 return null;
             RandomAccessReader reader = new ByteArrayReader(bytes);
@@ -225,7 +225,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     public String getSlicesDescription()
     {
         try {
-            final byte bytes[] = _directory.getByteArray(PhotoshopDirectory.TAG_PHOTOSHOP_SLICES);
+            final byte bytes[] = _directory.getByteArray(PhotoshopDirectory.TAG_SLICES);
             if (bytes == null)
                 return null;
             RandomAccessReader reader = new ByteArrayReader(bytes);

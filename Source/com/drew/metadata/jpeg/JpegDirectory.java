@@ -34,13 +34,13 @@ import java.util.HashMap;
  */
 public class JpegDirectory extends Directory
 {
-    public static final int TAG_JPEG_COMPRESSION_TYPE = -3;
+    public static final int TAG_COMPRESSION_TYPE = -3;
     /** This is in bits/sample, usually 8 (12 and 16 not supported by most software). */
-    public static final int TAG_JPEG_DATA_PRECISION = 0;
+    public static final int TAG_DATA_PRECISION = 0;
     /** The image's height.  Necessary for decoding the image, so it should always be there. */
-    public static final int TAG_JPEG_IMAGE_HEIGHT = 1;
+    public static final int TAG_IMAGE_HEIGHT = 1;
     /** The image's width.  Necessary for decoding the image, so it should always be there. */
-    public static final int TAG_JPEG_IMAGE_WIDTH = 3;
+    public static final int TAG_IMAGE_WIDTH = 3;
     /**
      * Usually 1 = grey scaled, 3 = color YcbCr or YIQ, 4 = color CMYK
      * Each component TAG_COMPONENT_DATA_[1-4], has the following meaning:
@@ -50,32 +50,32 @@ public class JpegDirectory extends Directory
      * <p/>
      * This info is from http://www.funducode.com/freec/Fileformats/format3/format3b.htm
      */
-    public static final int TAG_JPEG_NUMBER_OF_COMPONENTS = 5;
+    public static final int TAG_NUMBER_OF_COMPONENTS = 5;
 
     // NOTE!  Component tag type int values must increment in steps of 1
 
-    /** the first of a possible 4 color components.  Number of components specified in TAG_JPEG_NUMBER_OF_COMPONENTS. */
-    public static final int TAG_JPEG_COMPONENT_DATA_1 = 6;
-    /** the second of a possible 4 color components.  Number of components specified in TAG_JPEG_NUMBER_OF_COMPONENTS. */
-    public static final int TAG_JPEG_COMPONENT_DATA_2 = 7;
-    /** the third of a possible 4 color components.  Number of components specified in TAG_JPEG_NUMBER_OF_COMPONENTS. */
-    public static final int TAG_JPEG_COMPONENT_DATA_3 = 8;
-    /** the fourth of a possible 4 color components.  Number of components specified in TAG_JPEG_NUMBER_OF_COMPONENTS. */
-    public static final int TAG_JPEG_COMPONENT_DATA_4 = 9;
+    /** the first of a possible 4 color components.  Number of components specified in TAG_NUMBER_OF_COMPONENTS. */
+    public static final int TAG_COMPONENT_DATA_1 = 6;
+    /** the second of a possible 4 color components.  Number of components specified in TAG_NUMBER_OF_COMPONENTS. */
+    public static final int TAG_COMPONENT_DATA_2 = 7;
+    /** the third of a possible 4 color components.  Number of components specified in TAG_NUMBER_OF_COMPONENTS. */
+    public static final int TAG_COMPONENT_DATA_3 = 8;
+    /** the fourth of a possible 4 color components.  Number of components specified in TAG_NUMBER_OF_COMPONENTS. */
+    public static final int TAG_COMPONENT_DATA_4 = 9;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-        _tagNameMap.put(TAG_JPEG_COMPRESSION_TYPE, "Compression Type");
-        _tagNameMap.put(TAG_JPEG_DATA_PRECISION, "Data Precision");
-        _tagNameMap.put(TAG_JPEG_IMAGE_WIDTH, "Image Width");
-        _tagNameMap.put(TAG_JPEG_IMAGE_HEIGHT, "Image Height");
-        _tagNameMap.put(TAG_JPEG_NUMBER_OF_COMPONENTS, "Number of Components");
-        _tagNameMap.put(TAG_JPEG_COMPONENT_DATA_1, "Component 1");
-        _tagNameMap.put(TAG_JPEG_COMPONENT_DATA_2, "Component 2");
-        _tagNameMap.put(TAG_JPEG_COMPONENT_DATA_3, "Component 3");
-        _tagNameMap.put(TAG_JPEG_COMPONENT_DATA_4, "Component 4");
+        _tagNameMap.put(TAG_COMPRESSION_TYPE, "Compression Type");
+        _tagNameMap.put(TAG_DATA_PRECISION, "Data Precision");
+        _tagNameMap.put(TAG_IMAGE_WIDTH, "Image Width");
+        _tagNameMap.put(TAG_IMAGE_HEIGHT, "Image Height");
+        _tagNameMap.put(TAG_NUMBER_OF_COMPONENTS, "Number of Components");
+        _tagNameMap.put(TAG_COMPONENT_DATA_1, "Component 1");
+        _tagNameMap.put(TAG_COMPONENT_DATA_2, "Component 2");
+        _tagNameMap.put(TAG_COMPONENT_DATA_3, "Component 3");
+        _tagNameMap.put(TAG_COMPONENT_DATA_4, "Component 4");
     }
 
     public JpegDirectory()
@@ -103,22 +103,22 @@ public class JpegDirectory extends Directory
     @Nullable
     public JpegComponent getComponent(int componentNumber)
     {
-        int tagType = JpegDirectory.TAG_JPEG_COMPONENT_DATA_1 + componentNumber;
+        int tagType = JpegDirectory.TAG_COMPONENT_DATA_1 + componentNumber;
         return (JpegComponent)getObject(tagType);
     }
 
     public int getImageWidth() throws MetadataException
     {
-        return getInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
+        return getInt(JpegDirectory.TAG_IMAGE_WIDTH);
     }
 
     public int getImageHeight() throws MetadataException
     {
-        return getInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
+        return getInt(JpegDirectory.TAG_IMAGE_HEIGHT);
     }
 
     public int getNumberOfComponents() throws MetadataException
     {
-        return getInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS);
+        return getInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS);
     }
 }

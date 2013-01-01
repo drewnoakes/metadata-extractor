@@ -78,21 +78,21 @@ public class NikonType2MakernoteTest2
     @Test
     public void testNikonMakernote_MatchesKnownValues() throws Exception
     {
-        assertEquals("0 1 0 0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FIRMWARE_VERSION));
-        assertEquals("0 0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_1));
-        assertEquals("COLOR", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_COLOR_MODE));
-        assertEquals("NORMAL ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_QUALITY_AND_FILE_FORMAT));
-        assertEquals("AUTO        ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_WHITE_BALANCE));
-        assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_CAMERA_SHARPENING));
-        assertEquals("AF-C  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_AF_TYPE));
-        assertEquals("NORMAL      ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_FLASH_SYNC_MODE));
-//        assertEquals(new Rational(4416,500), _nikonDirectory.getRational(NikonType3MakernoteDirectory.TAG_NIKON_TYPE2_UNKNOWN_2));
-        assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ISO_MODE));
+        assertEquals("0 1 0 0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_FIRMWARE_VERSION));
+        assertEquals("0 0", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_ISO_1));
+        assertEquals("COLOR", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_COLOR_MODE));
+        assertEquals("NORMAL ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_QUALITY_AND_FILE_FORMAT));
+        assertEquals("AUTO        ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_CAMERA_WHITE_BALANCE));
+        assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_CAMERA_SHARPENING));
+        assertEquals("AF-C  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_AF_TYPE));
+        assertEquals("NORMAL      ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_FLASH_SYNC_MODE));
+//        assertEquals(new Rational(4416,500), _nikonDirectory.getRational(NikonType3MakernoteDirectory.TAG_UNKNOWN_2));
+        assertEquals("AUTO  ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_ISO_MODE));
         assertEquals(1300, _nikonDirectory.getInt(0x0011));
-        assertEquals("AUTO         ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_IMAGE_ADJUSTMENT));
-        assertEquals("OFF         ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_ADAPTER));
-        assertEquals(0, _nikonDirectory.getInt(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_MANUAL_FOCUS_DISTANCE));
-        assertEquals(1, _nikonDirectory.getInt(NikonType2MakernoteDirectory.TAG_NIKON_TYPE2_DIGITAL_ZOOM));
+        assertEquals("AUTO         ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_IMAGE_ADJUSTMENT));
+        assertEquals("OFF         ", _nikonDirectory.getString(NikonType2MakernoteDirectory.TAG_ADAPTER));
+        assertEquals(0, _nikonDirectory.getInt(NikonType2MakernoteDirectory.TAG_MANUAL_FOCUS_DISTANCE));
+        assertEquals(1, _nikonDirectory.getInt(NikonType2MakernoteDirectory.TAG_DIGITAL_ZOOM));
         assertEquals("                ", _nikonDirectory.getString(0x008f));
         assertEquals(0, _nikonDirectory.getInt(0x0094));
         assertEquals("FPNR", _nikonDirectory.getString(0x0095));

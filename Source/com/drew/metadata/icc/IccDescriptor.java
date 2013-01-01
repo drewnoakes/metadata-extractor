@@ -41,13 +41,13 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case IccDirectory.TAG_ICC_PROFILE_VERSION:
+            case IccDirectory.TAG_PROFILE_VERSION:
                 return getProfileVersionDescription();
-            case IccDirectory.TAG_ICC_PROFILE_CLASS:
+            case IccDirectory.TAG_PROFILE_CLASS:
                 return getProfileClassDescription();
-            case IccDirectory.TAG_ICC_PLATFORM:
+            case IccDirectory.TAG_PLATFORM:
                 return getPlatformDescription();
-            case IccDirectory.TAG_ICC_RENDERING_INTENT:
+            case IccDirectory.TAG_RENDERING_INTENT:
                 return getRenderingIntentDescription();
         }
 
@@ -236,7 +236,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getRenderingIntentDescription()
     {
-        Integer value = _directory.getInteger(IccDirectory.TAG_ICC_RENDERING_INTENT);
+        Integer value = _directory.getInteger(IccDirectory.TAG_RENDERING_INTENT);
 
         if (value == null)
             return null;
@@ -258,7 +258,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getPlatformDescription()
     {
-        String str = _directory.getString(IccDirectory.TAG_ICC_PLATFORM);
+        String str = _directory.getString(IccDirectory.TAG_PLATFORM);
         if (str==null)
             return null;
         // Because Java doesn't allow switching on string values, create an integer from the first four chars
@@ -288,7 +288,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getProfileClassDescription()
     {
-        String str = _directory.getString(IccDirectory.TAG_ICC_PROFILE_CLASS);
+        String str = _directory.getString(IccDirectory.TAG_PROFILE_CLASS);
         if (str==null)
             return null;
         // Because Java doesn't allow switching on string values, create an integer from the first four chars
@@ -322,7 +322,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getProfileVersionDescription()
     {
-        Integer value = _directory.getInteger(IccDirectory.TAG_ICC_PROFILE_VERSION);
+        Integer value = _directory.getInteger(IccDirectory.TAG_PROFILE_VERSION);
 
         if (value == null)
             return null;

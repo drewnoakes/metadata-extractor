@@ -56,14 +56,14 @@ public class JpegDirectoryTest
     @Test
     public void testGetImageWidth() throws Exception
     {
-        _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, 123);
+        _directory.setInt(JpegDirectory.TAG_IMAGE_WIDTH, 123);
         assertEquals(123, _directory.getImageWidth());
     }
 
     @Test
     public void testGetImageHeight() throws Exception
     {
-        _directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, 123);
+        _directory.setInt(JpegDirectory.TAG_IMAGE_HEIGHT, 123);
         assertEquals(123, _directory.getImageHeight());
     }
 
@@ -71,9 +71,9 @@ public class JpegDirectoryTest
     @Test
     public void testGetNumberOfComponents() throws Exception
     {
-        _directory.setInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS, 3);
+        _directory.setInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS, 3);
         assertEquals(3, _directory.getNumberOfComponents());
-        assertEquals("3", _directory.getDescription(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS));
+        assertEquals("3", _directory.getDescription(JpegDirectory.TAG_NUMBER_OF_COMPONENTS));
     }
 
     @Test
@@ -84,10 +84,10 @@ public class JpegDirectoryTest
         JpegComponent component3 = new JpegComponent(1, 2, 3);
         JpegComponent component4 = new JpegComponent(1, 2, 3);
 
-        _directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1, component1);
-        _directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_2, component2);
-        _directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_3, component3);
-        _directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_4, component4);
+        _directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_1, component1);
+        _directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_2, component2);
+        _directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_3, component3);
+        _directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_4, component4);
 
         // component numbers are zero-indexed for this method
         assertSame(component1, _directory.getComponent(0));

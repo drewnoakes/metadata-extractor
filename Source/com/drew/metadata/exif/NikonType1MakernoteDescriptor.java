@@ -52,21 +52,21 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY:
+            case NikonType1MakernoteDirectory.TAG_QUALITY:
                 return getQualityDescription();
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE:
+            case NikonType1MakernoteDirectory.TAG_COLOR_MODE:
                 return getColorModeDescription();
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT:
+            case NikonType1MakernoteDirectory.TAG_IMAGE_ADJUSTMENT:
                 return getImageAdjustmentDescription();
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY:
+            case NikonType1MakernoteDirectory.TAG_CCD_SENSITIVITY:
                 return getCcdSensitivityDescription();
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE:
+            case NikonType1MakernoteDirectory.TAG_WHITE_BALANCE:
                 return getWhiteBalanceDescription();
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS:
+            case NikonType1MakernoteDirectory.TAG_FOCUS:
                 return getFocusDescription();
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM:
+            case NikonType1MakernoteDirectory.TAG_DIGITAL_ZOOM:
                 return getDigitalZoomDescription();
-            case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER:
+            case NikonType1MakernoteDirectory.TAG_CONVERTER:
                 return getConverterDescription();
             default:
                 return super.getDescription(tagType);
@@ -76,7 +76,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getConverterDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_CONVERTER);
         if (value == null)
             return null;
         switch (value) {
@@ -92,7 +92,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getDigitalZoomDescription()
     {
-        Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM);
+        Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_DIGITAL_ZOOM);
         if (value == null)
             return null;
         if (value.getNumerator() == 0) {
@@ -104,7 +104,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getFocusDescription()
     {
-        Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS);
+        Rational value = _directory.getRational(NikonType1MakernoteDirectory.TAG_FOCUS);
         if (value == null)
             return null;
         if (value.getNumerator() == 1 && value.getDenominator() == 0) {
@@ -116,7 +116,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_WHITE_BALANCE);
         if (value == null)
             return null;
         switch (value) {
@@ -142,7 +142,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getCcdSensitivityDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_CCD_SENSITIVITY);
         if (value == null)
             return null;
         switch (value) {
@@ -162,7 +162,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getImageAdjustmentDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_IMAGE_ADJUSTMENT);
         if (value == null)
             return null;
         switch (value) {
@@ -184,7 +184,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getColorModeDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_COLOR_MODE);
         if (value == null)
             return null;
         switch (value) {
@@ -200,7 +200,7 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
     @Nullable
     public String getQualityDescription()
     {
-        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY);
+        Integer value = _directory.getInteger(NikonType1MakernoteDirectory.TAG_QUALITY);
         if (value == null)
             return null;
         switch (value) {

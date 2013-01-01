@@ -66,17 +66,17 @@ public class JfifReader implements JpegSegmentMetadataReader
         try {
             // For JFIF, the tag number is also the offset into the segment
 
-            int ver = reader.getUInt16(JfifDirectory.TAG_JFIF_VERSION);
-            directory.setInt(JfifDirectory.TAG_JFIF_VERSION, ver);
+            int ver = reader.getUInt16(JfifDirectory.TAG_VERSION);
+            directory.setInt(JfifDirectory.TAG_VERSION, ver);
 
-            int units = reader.getUInt8(JfifDirectory.TAG_JFIF_UNITS);
-            directory.setInt(JfifDirectory.TAG_JFIF_UNITS, units);
+            int units = reader.getUInt8(JfifDirectory.TAG_UNITS);
+            directory.setInt(JfifDirectory.TAG_UNITS, units);
 
-            int height = reader.getUInt16(JfifDirectory.TAG_JFIF_RESX);
-            directory.setInt(JfifDirectory.TAG_JFIF_RESX, height);
+            int height = reader.getUInt16(JfifDirectory.TAG_RESX);
+            directory.setInt(JfifDirectory.TAG_RESX, height);
 
-            int width = reader.getUInt16(JfifDirectory.TAG_JFIF_RESY);
-            directory.setInt(JfifDirectory.TAG_JFIF_RESY, width);
+            int width = reader.getUInt16(JfifDirectory.TAG_RESY);
+            directory.setInt(JfifDirectory.TAG_RESY, width);
 
         } catch (BufferBoundsException me) {
             directory.addError(me.getMessage());

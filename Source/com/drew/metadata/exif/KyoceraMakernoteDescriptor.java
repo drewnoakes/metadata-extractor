@@ -47,9 +47,9 @@ public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDi
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case KyoceraMakernoteDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO:
+            case KyoceraMakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO:
                 return getPrintImageMatchingInfoDescription();
-            case KyoceraMakernoteDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL:
+            case KyoceraMakernoteDirectory.TAG_PROPRIETARY_THUMBNAIL:
                 return getProprietaryThumbnailDataDescription();
             default:
                 return super.getDescription(tagType);
@@ -59,7 +59,7 @@ public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDi
     @Nullable
     public String getPrintImageMatchingInfoDescription()
     {
-        byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO);
+        byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO);
         if (bytes==null)
             return null;
         return "(" + bytes.length + " bytes)";
@@ -68,7 +68,7 @@ public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDi
     @Nullable
     public String getProprietaryThumbnailDataDescription()
     {
-        byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL);
+        byte[] bytes = _directory.getByteArray(KyoceraMakernoteDirectory.TAG_PROPRIETARY_THUMBNAIL);
         if (bytes==null)
             return null;
         return "(" + bytes.length + " bytes)";

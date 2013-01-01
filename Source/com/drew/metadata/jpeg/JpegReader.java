@@ -77,17 +77,17 @@ public class JpegReader implements JpegSegmentMetadataReader
 
         JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
 
-        // The value of TAG_JPEG_COMPRESSION_TYPE is determined by the segment type found
-        directory.setInt(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);
+        // The value of TAG_COMPRESSION_TYPE is determined by the segment type found
+        directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);
 
         SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
 
         try {
-            directory.setInt(JpegDirectory.TAG_JPEG_DATA_PRECISION, reader.getUInt8());
-            directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, reader.getUInt16());
-            directory.setInt(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, reader.getUInt16());
+            directory.setInt(JpegDirectory.TAG_DATA_PRECISION, reader.getUInt8());
+            directory.setInt(JpegDirectory.TAG_IMAGE_HEIGHT, reader.getUInt16());
+            directory.setInt(JpegDirectory.TAG_IMAGE_WIDTH, reader.getUInt16());
             short componentCount = reader.getUInt8();
-            directory.setInt(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS, componentCount);
+            directory.setInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS, componentCount);
 
             // for each component, there are three bytes of data:
             // 1 - Component ID: 1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q
@@ -98,7 +98,7 @@ public class JpegReader implements JpegSegmentMetadataReader
                 final int samplingFactorByte = reader.getUInt8();
                 final int quantizationTableNumber = reader.getUInt8();
                 final JpegComponent component = new JpegComponent(componentId, samplingFactorByte, quantizationTableNumber);
-                directory.setObject(JpegDirectory.TAG_JPEG_COMPONENT_DATA_1 + i, component);
+                directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_1 + i, component);
             }
 
         } catch (IOException ex) {

@@ -112,7 +112,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                 directory.setByteArray(tagType, tagBytes);
 
                 // TODO allow rebasing the reader with a new zero-point, rather than copying data here
-                if (tagType == PhotoshopDirectory.TAG_PHOTOSHOP_IPTC)
+                if (tagType == PhotoshopDirectory.TAG_IPTC)
                     new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length);
 
                 if (tagType >= 0x0fa0 && tagType <= 0x1387)
