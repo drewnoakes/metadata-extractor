@@ -18,7 +18,7 @@
  *    http://drewnoakes.com/code/exif/
  *    http://code.google.com/p/metadata-extractor/
  */
-package com.drew.metadata.tiff;
+package com.drew.imaging.tiff;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.MetadataException;
@@ -43,29 +43,29 @@ public class DataFormat
     @NotNull public static final DataFormat SINGLE = new DataFormat("SINGLE", 11);
     @NotNull public static final DataFormat DOUBLE = new DataFormat("DOUBLE", 12);
 
-    @NotNull private final String _name;
+    @NotNull
+    private final String _name;
     private final int _value;
 
     @NotNull
     public static DataFormat fromValue(int value) throws MetadataException
     {
-        switch (value)
-        {
-            case 1:  return BYTE;
-            case 2:  return STRING;
-            case 3:  return USHORT;
-            case 4:  return ULONG;
-            case 5:  return URATIONAL;
-            case 6:  return SBYTE;
-            case 7:  return UNDEFINED;
-            case 8:  return SSHORT;
-            case 9:  return SLONG;
+        switch (value) {
+            case 1: return BYTE;
+            case 2: return STRING;
+            case 3: return USHORT;
+            case 4: return ULONG;
+            case 5: return URATIONAL;
+            case 6: return SBYTE;
+            case 7: return UNDEFINED;
+            case 8: return SSHORT;
+            case 9: return SLONG;
             case 10: return SRATIONAL;
             case 11: return SINGLE;
             case 12: return DOUBLE;
         }
 
-        throw new MetadataException("value '"+value+"' does not represent a known data format.");
+        throw new MetadataException("value '" + value + "' does not represent a known data format.");
     }
 
     private DataFormat(@NotNull String name, int value)
