@@ -47,9 +47,9 @@ public enum PngColorType
 
     private final int _numericValue;
     @NotNull private final String _description;
-    private final int[] _allowedBitDepths;
+    @NotNull private final int[] _allowedBitDepths;
 
-    private PngColorType(int numericValue, @NotNull String description, int... allowedBitDepths)
+    private PngColorType(int numericValue, @NotNull String description, @NotNull int... allowedBitDepths)
     {
         _numericValue = numericValue;
         _description = description;
@@ -67,6 +67,7 @@ public enum PngColorType
         return _description;
     }
 
+    @NotNull
     public int[] getAllowedBitDepths()
     {
         return _allowedBitDepths;
