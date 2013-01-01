@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>FujifilmMakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link FujifilmMakernoteDirectory}.
  * <p/>
  * Fujifilm's digicam added the MakerNote tag from the Year2000's model (e.g.Finepix1400,
  * Finepix4700). It uses IFD format and start from ASCII character 'FUJIFILM', and next 4
@@ -121,27 +121,18 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getSharpnessDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_SHARPNESS);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
-            case 1:
-                return "Softest";
-            case 2:
-                return "Soft";
-            case 3:
-                return "Normal";
-            case 4:
-                return "Hard";
-            case 5:
-                return "Hardest";
-            case 0x82:
-                return "Medium Soft";
-            case 0x84:
-                return "Medium Hard";
-            case 0x8000:
-                return "Film Simulation";
-            case 0xFFFF:
-                return "N/A";
+            case 1: return "Softest";
+            case 2: return "Soft";
+            case 3: return "Normal";
+            case 4: return "Hard";
+            case 5: return "Hardest";
+            case 0x82: return "Medium Soft";
+            case 0x84: return "Medium Hard";
+            case 0x8000: return "Film Simulation";
+            case 0xFFFF: return "N/A";
             default:
                 return "Unknown (" + value + ")";
         }
@@ -151,7 +142,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getWhiteBalanceDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_WHITE_BALANCE);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "Auto";
@@ -267,11 +258,11 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     {
         return getIndexedDescription(
             FujifilmMakernoteDirectory.TAG_FLASH_MODE,
-            "Auto", // 0
+            "Auto",
             "On",
             "Off",
             "Red-eye Reduction",
-            "External" // 4
+            "External"
         );
     }
 
@@ -279,9 +270,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getFlashExposureValueDescription()
     {
         Rational value = _directory.getRational(FujifilmMakernoteDirectory.TAG_FLASH_EV);
-        if (value==null)
-            return null;
-        return value.toSimpleString(false) + " EV (Apex)";
+        return value == null ? null : value.toSimpleString(false) + " EV (Apex)";
     }
 
     @Nullable
@@ -306,7 +295,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getPictureModeDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_PICTURE_MODE);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "Auto";
@@ -428,9 +417,10 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     {
         return getIndexedDescription(
             FujifilmMakernoteDirectory.TAG_DYNAMIC_RANGE,
-            "Standard", // 1
+            1,
+            "Standard",
             null,
-            "Wide" // 3
+            "Wide"
         );
     }
 
