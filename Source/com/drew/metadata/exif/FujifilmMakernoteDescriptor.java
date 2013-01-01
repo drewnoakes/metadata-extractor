@@ -28,22 +28,21 @@ import com.drew.metadata.TagDescriptor;
 /**
  * Provides human-readable string representations of tag values stored in a {@link FujifilmMakernoteDirectory}.
  * <p/>
- * Fujifilm's digicam added the MakerNote tag from the Year2000's model (e.g.Finepix1400,
+ * Fujifilm added their MakerNote tag from the Year 2000's models (e.g.Finepix1400,
  * Finepix4700). It uses IFD format and start from ASCII character 'FUJIFILM', and next 4
- * bytes(value 0x000c) points the offset to first IFD entry. Example of actual data
- * structure is shown below.
- * <p/>
+ * bytes (value 0x000c) points the offset to first IFD entry.
  * <pre><code>
  * :0000: 46 55 4A 49 46 49 4C 4D-0C 00 00 00 0F 00 00 00 :0000: FUJIFILM........
  * :0010: 07 00 04 00 00 00 30 31-33 30 00 10 02 00 08 00 :0010: ......0130......
  * </code></pre>
- * <p/>
  * There are two big differences to the other manufacturers.
- * - Fujifilm's Exif data uses Motorola align, but MakerNote ignores it and uses Intel
- *   align.
- * - The other manufacturer's MakerNote counts the "offset to data" from the first byte
- *   of TIFF header (same as the other IFD), but Fujifilm counts it from the first byte
- *   of MakerNote itself.
+ * <ul>
+ *     <li>Fujifilm's Exif data uses Motorola align, but MakerNote ignores it and uses Intel align.</li>
+ *     <li>
+ *         The other manufacturer's MakerNote counts the "offset to data" from the first byte of TIFF header
+ *         (same as the other IFD), but Fujifilm counts it from the first byte of MakerNote itself.
+ *     </li>
+ * </ul>
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -170,7 +169,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getColorSaturationDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_COLOR_SATURATION);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "Normal";
@@ -193,7 +192,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getToneDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_TONE);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "Normal";
@@ -212,7 +211,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getContrastDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_CONTRAST);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "Normal";
@@ -227,7 +226,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getNoiseReductionDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_NOISE_REDUCTION);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x040: return "Low";
@@ -242,7 +241,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getHighIsoNoiseReductionDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_HIGH_ISO_NOISE_REDUCTION);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "Normal";
@@ -345,7 +344,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getExrModeDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_EXR_MODE);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x100: return "HR (High Resolution)";
@@ -371,7 +370,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getFinePixColorDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FINE_PIX_COLOR);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x00: return "Standard";
@@ -428,7 +427,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getFilmModeDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_FILM_MODE);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "F0/Standard (Provia) ";
@@ -450,7 +449,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     public String getDynamicRangeSettingDescription()
     {
         final Integer value = _directory.getInteger(FujifilmMakernoteDirectory.TAG_DYNAMIC_RANGE_SETTING);
-        if (value==null)
+        if (value == null)
             return null;
         switch (value) {
             case 0x000: return "Auto (100-400%)";
