@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>ExifInteropDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link ExifInteropDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -52,8 +52,7 @@ public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
     @Nullable
     public String getInteropVersionDescription()
     {
-        int[] ints = _directory.getIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION);
-        return convertBytesToVersionString(ints, 2);
+        return getVersionBytesDescription(ExifInteropDirectory.TAG_INTEROP_VERSION, 2);
     }
 
     @Nullable
@@ -61,7 +60,7 @@ public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
     {
         String value = _directory.getString(ExifInteropDirectory.TAG_INTEROP_INDEX);
 
-        if (value==null)
+        if (value == null)
             return null;
 
         return "R98".equalsIgnoreCase(value.trim())

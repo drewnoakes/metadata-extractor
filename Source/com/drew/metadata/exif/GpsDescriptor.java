@@ -84,7 +84,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     private String getGpsVersionIdDescription()
     {
-        return convertBytesToVersionString(_directory.getIntArray(GpsDirectory.TAG_VERSION_ID), 1);
+        return getVersionBytesDescription(GpsDirectory.TAG_VERSION_ID, 1);
     }
 
     @Nullable

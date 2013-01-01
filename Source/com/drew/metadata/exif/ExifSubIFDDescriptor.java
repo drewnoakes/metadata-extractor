@@ -386,19 +386,13 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getExifVersionDescription()
     {
-        int[] ints = _directory.getIntArray(ExifSubIFDDirectory.TAG_EXIF_VERSION);
-        return ints == null
-            ? null
-            : ExifSubIFDDescriptor.convertBytesToVersionString(ints, 2);
+        return getVersionBytesDescription(ExifSubIFDDirectory.TAG_EXIF_VERSION, 2);
     }
 
     @Nullable
     public String getFlashPixVersionDescription()
     {
-        int[] ints = _directory.getIntArray(ExifSubIFDDirectory.TAG_FLASHPIX_VERSION);
-        return ints == null 
-            ? null 
-            : ExifSubIFDDescriptor.convertBytesToVersionString(ints, 2);
+        return getVersionBytesDescription(ExifSubIFDDirectory.TAG_FLASHPIX_VERSION, 2);
     }
 
     @Nullable

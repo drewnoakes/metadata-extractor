@@ -21,15 +21,11 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
-import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 
 /**
  * Provides human-readable string representations of tag values stored in a <code>NikonType2MakernoteDirectory</code>.
@@ -104,129 +100,92 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getPowerUpTimeDescription()
     {
-        Long value = _directory.getLongObject(NikonType2MakernoteDirectory.TAG_POWER_UP_TIME);
-        if (value==null)
-            return null; // TODO have observed a byte[8] here which is likely some kind of date (ticks as long?)
-        return new Date(value).toString();
+        return getEpochTimeDescription(NikonType2MakernoteDirectory.TAG_POWER_UP_TIME);
     }
 
     @Nullable
     public String getHighISONoiseReductionDescription()
     {
-        Integer value = _directory.getInteger(NikonType2MakernoteDirectory.TAG_HIGH_ISO_NOISE_REDUCTION);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0: return "Off";
-            case 1: return "Minimal";
-            case 2: return "Low";
-            case 4: return "Normal";
-            case 6: return "High";
-            default: return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType2MakernoteDirectory.TAG_HIGH_ISO_NOISE_REDUCTION,
+            "Off",
+            "Minimal",
+            "Low",
+            null,
+            "Normal",
+            null,
+            "High"
+        );
     }
 
     @Nullable
     public String getFlashUsedDescription()
     {
-        Integer value = _directory.getInteger(NikonType2MakernoteDirectory.TAG_FLASH_USED);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0: return "Flash Not Used";
-            case 1: return "Manual Flash";
-            case 3: return "Flash Not Ready";
-            case 7: return "External Flash";
-            case 8: return "Fired, Commander Mode";
-            case 9: return "Fired, TTL Mode";
-            default: return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType2MakernoteDirectory.TAG_FLASH_USED,
+            "Flash Not Used",
+            "Manual Flash",
+            null,
+            "Flash Not Ready",
+            null,
+            null,
+            null,
+            "External Flash",
+            "Fired, Commander Mode",
+            "Fired, TTL Mode"
+        );
     }
 
     @Nullable
     public String getNEFCompressionDescription()
     {
-        Integer value = _directory.getInteger(NikonType2MakernoteDirectory.TAG_NEF_COMPRESSION);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "Lossy (Type 1)";
-            case 3: return "Uncompressed";
-            case 7: return "Lossless";
-            case 8: return "Lossy (Type 2)";
-            default: return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType2MakernoteDirectory.TAG_NEF_COMPRESSION,
+            1,
+            "Lossy (Type 1)",
+            null,
+            "Uncompressed",
+            null,
+            null,
+            null,
+            "Lossless",
+            "Lossy (Type 2)"
+        );
     }
 
     @Nullable
     public String getShootingModeDescription()
     {
-        Integer value = _directory.getInteger(NikonType2MakernoteDirectory.TAG_SHOOTING_MODE);
-        if (value==null)
-            return null;
-        Collection<String> bits = new ArrayList<String>();
-
-        if ((value&1)==1)
-            bits.add("Continuous");
-        else
-            bits.add("Single Frame");
-
-        if ((value&2)==2)
-            bits.add("Delay");
-        // Don't know about 3
-        if ((value&8)==8)
-            bits.add("PC Control");
-        if ((value&16)==16)
-            bits.add("Exposure Bracketing");
-        if ((value&32)==32)
-            bits.add("Auto ISO");
-        if ((value&64)==64)
-            bits.add("White-Balance Bracketing");
-        if ((value&128)==128)
-            bits.add("IR Control");
-
-        return StringUtil.join(bits, ", ");
+        return getBitFlagDescription(NikonType2MakernoteDirectory.TAG_SHOOTING_MODE,
+            // LSB [low label, high label]
+            new String[]{"Single Frame", "Continuous"},
+            "Delay",
+            null,
+            "PC Control",
+            "Exposure Bracketing",
+            "Auto ISO",
+            "White-Balance Bracketing",
+            "IR Control"
+        );
     }
 
     @Nullable
     public String getLensTypeDescription()
     {
-        Integer value = _directory.getInteger(NikonType2MakernoteDirectory.TAG_LENS_TYPE);
-        if (value==null)
-            return null;
-
-        Collection<String> bits = new ArrayList<String>();
-
-        // TODO validate these values, as 14 is labelled as AF-C elsewhere but appears here as AF-D-G-VR
-
-        if ((value&1)==1)
-            bits.add("MF");
-        else
-            bits.add("AF");
-
-        if ((value&2)==2)
-            bits.add("D");
-
-        if ((value&4)==4)
-            bits.add("G");
-
-        if ((value&8)==8)
-            bits.add("VR");
-
-        return StringUtil.join(bits, ", ");
+        return getBitFlagDescription(NikonType2MakernoteDirectory.TAG_LENS_TYPE,
+            // LSB [low label, high label]
+            new String[]{"AF", "MF"},
+            "D",
+            "G",
+            "VR"
+        );
     }
 
     @Nullable
     public String getColorSpaceDescription()
     {
-        Integer value = _directory.getInteger(NikonType2MakernoteDirectory.TAG_COLOR_SPACE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1: return "sRGB";
-            case 2: return "Adobe RGB";
-            default: return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(NikonType2MakernoteDirectory.TAG_COLOR_SPACE,
+            1,
+            "sRGB",
+            "Adobe RGB"
+        );
     }
 
     @Nullable
@@ -300,58 +259,52 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getProgramShiftDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_PROGRAM_SHIFT);
-        return getEVDescription(values);
+        return getEVDescription(NikonType2MakernoteDirectory.TAG_PROGRAM_SHIFT);
     }
 
     @Nullable
     public String getExposureDifferenceDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_EXPOSURE_DIFFERENCE);
-        return getEVDescription(values);
+        return getEVDescription(NikonType2MakernoteDirectory.TAG_EXPOSURE_DIFFERENCE);
     }
 
     @Nullable
     public String getAutoFlashCompensationDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_AUTO_FLASH_COMPENSATION);
-        return getEVDescription(values);
+        return getEVDescription(NikonType2MakernoteDirectory.TAG_AUTO_FLASH_COMPENSATION);
     }
 
     @Nullable
     public String getFlashExposureCompensationDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_FLASH_EXPOSURE_COMPENSATION);
-        return getEVDescription(values);
+        return getEVDescription(NikonType2MakernoteDirectory.TAG_FLASH_EXPOSURE_COMPENSATION);
     }
 
     @Nullable
     public String getFlashBracketCompensationDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_FLASH_BRACKET_COMPENSATION);
-        return getEVDescription(values);
+        return getEVDescription(NikonType2MakernoteDirectory.TAG_FLASH_BRACKET_COMPENSATION);
     }
 
     @Nullable
     public String getExposureTuningDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_EXPOSURE_TUNING);
-        return getEVDescription(values);
+        return getEVDescription(NikonType2MakernoteDirectory.TAG_EXPOSURE_TUNING);
     }
 
     @Nullable
     public String getLensStopsDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_LENS_STOPS);
-        return getEVDescription(values);
+        return getEVDescription(NikonType2MakernoteDirectory.TAG_LENS_STOPS);
     }
 
     @Nullable
-    private static String getEVDescription(@Nullable int[] values)
+    private String getEVDescription(int tagType)
     {
-        if (values==null)
+        int[] values = _directory.getIntArray(tagType);
+        if (values == null)
             return null;
-        if (values.length<3 || values[2]==0)
+        if (values.length < 3 || values[2] == 0)
             return null;
         final DecimalFormat decimalFormat = new DecimalFormat("0.##");
         double ev = values[0] * values[1] / (double)values[2];
@@ -362,7 +315,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     public String getIsoSettingDescription()
     {
         int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_ISO_1);
-        if (values==null)
+        if (values == null)
             return null;
         if (values[0] != 0 || values[1] == 0)
             return "Unknown (" + _directory.getString(NikonType2MakernoteDirectory.TAG_ISO_1) + ")";
@@ -374,50 +327,30 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     {
         Rational[] values = _directory.getRationalArray(NikonType2MakernoteDirectory.TAG_LENS);
 
-        if (values==null)
-            return null;
+        return values == null
+            ? null
+            : values.length < 4
+                ? _directory.getString(NikonType2MakernoteDirectory.TAG_LENS)
+                : String.format("%d-%dmm f/%.1f-%.1f", values[0].intValue(), values[1].intValue(), values[2].floatValue(), values[3].floatValue());
 
-        if (values.length<4)
-            return _directory.getString(NikonType2MakernoteDirectory.TAG_LENS);
-
-        StringBuilder description = new StringBuilder();
-        description.append(values[0].intValue());
-        description.append('-');
-        description.append(values[1].intValue());
-        description.append("mm f/");
-        description.append(values[2].floatValue());
-        description.append('-');
-        description.append(values[3].floatValue());
-
-        return description.toString();
     }
 
     @Nullable
     public String getHueAdjustmentDescription()
     {
-        final String value = _directory.getString(NikonType2MakernoteDirectory.TAG_CAMERA_HUE_ADJUSTMENT);
-        if (value==null)
-            return null;
-        return value + " degrees";
+        return getFormattedString(NikonType2MakernoteDirectory.TAG_CAMERA_HUE_ADJUSTMENT, "%s degrees");
     }
 
     @Nullable
     public String getColorModeDescription()
     {
         String value = _directory.getString(NikonType2MakernoteDirectory.TAG_CAMERA_COLOR_MODE);
-        if (value==null)
-            return null;
-        if (value.startsWith("MODE1"))
-            return "Mode I (sRGB)";
-        return value;
+        return value == null ? null : value.startsWith("MODE1") ? "Mode I (sRGB)" : value;
     }
 
     @Nullable
     public String getFirmwareVersionDescription()
     {
-        int[] values = _directory.getIntArray(NikonType2MakernoteDirectory.TAG_FIRMWARE_VERSION);
-        if (values==null)
-            return null;
-        return ExifSubIFDDescriptor.convertBytesToVersionString(values, 2);
+        return getVersionBytesDescription(NikonType2MakernoteDirectory.TAG_FIRMWARE_VERSION, 2);
     }
 }

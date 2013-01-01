@@ -113,7 +113,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     @Nullable
     private String getMakernoteVersionDescription()
     {
-        return convertBytesToVersionString(_directory.getIntArray(FujifilmMakernoteDirectory.TAG_MAKERNOTE_VERSION), 2);
+        return getVersionBytesDescription(FujifilmMakernoteDirectory.TAG_MAKERNOTE_VERSION, 2);
     }
 
     @Nullable

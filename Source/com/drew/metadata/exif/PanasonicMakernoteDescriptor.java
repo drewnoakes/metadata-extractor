@@ -989,19 +989,19 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getVersionDescription()
     {
-        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_FIRMWARE_VERSION), 2);
+        return getVersionBytesDescription(PanasonicMakernoteDirectory.TAG_FIRMWARE_VERSION, 2);
     }
 
     @Nullable
     public String getMakernoteVersionDescription()
     {
-        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_MAKERNOTE_VERSION), 2);
+        return getVersionBytesDescription(PanasonicMakernoteDirectory.TAG_MAKERNOTE_VERSION, 2);
     }
 
     @Nullable
     public String getExifVersionDescription()
     {
-        return convertBytesToVersionString(_directory.getIntArray(PanasonicMakernoteDirectory.TAG_EXIF_VERSION), 2);
+        return getVersionBytesDescription(PanasonicMakernoteDirectory.TAG_EXIF_VERSION, 2);
     }
 
     @Nullable

@@ -21,10 +21,14 @@
 package com.drew.metadata;
 
 import com.drew.lang.Rational;
+import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Base class for all tag descriptor classes.  Implementations are responsible for
@@ -108,6 +112,13 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
+    protected String getVersionBytesDescription(final int tagType, int majorDigits)
+    {
+        int[] values = _directory.getIntArray(tagType);
+        return values == null ? null : convertBytesToVersionString(values, majorDigits);
+    }
+
+    @Nullable
     protected String getIndexedDescription(final int tagType, @NotNull String... descriptions)
     {
         return getIndexedDescription(tagType, 0, descriptions);
@@ -129,7 +140,7 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getByteLengthDescription(int tagType)
+    protected String getByteLengthDescription(final int tagType)
     {
         byte[] bytes = _directory.getByteArray(tagType);
         if (bytes == null)
@@ -138,7 +149,7 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getSimplifiedRational(int tagType)
+    protected String getSimplifiedRational(final int tagType)
     {
         Rational value = _directory.getRational(tagType);
         if (value == null)
@@ -147,11 +158,72 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getFormattedInt(int tagType, String format)
+    protected String getFormattedInt(final int tagType, @NotNull final String format)
     {
         Integer value = _directory.getInteger(tagType);
         if (value == null)
             return null;
         return String.format(format, value);
+    }
+
+    @Nullable
+    protected String getFormattedFloat(final int tagType, @NotNull final String format)
+    {
+        Float value = _directory.getFloatObject(tagType);
+        if (value == null)
+            return null;
+        return String.format(format, value);
+    }
+
+    @Nullable
+    protected String getFormattedString(final int tagType, @NotNull final String format)
+    {
+        String value = _directory.getString(tagType);
+        if (value == null)
+            return null;
+        return String.format(format, value);
+    }
+
+    @Nullable
+    protected String getEpochTimeDescription(final int tagType)
+    {
+        // TODO have observed a byte[8] here which is likely some kind of date (ticks as long?)
+        Long value = _directory.getLongObject(tagType);
+        if (value==null)
+            return null;
+        return new Date(value).toString();
+    }
+
+    /**
+     * LSB first. Labels may be null, a String, or a String[2] with (low label,high label) values.
+     */
+    @Nullable
+    protected String getBitFlagDescription(final int tagType, @NotNull final Object... labels)
+    {
+        Integer value = _directory.getInteger(tagType);
+
+        if (value == null)
+            return null;
+
+        List<String> parts = new ArrayList<String>();
+
+        int bitIndex = 0;
+        while (labels.length > bitIndex) {
+            Object labelObj = labels[bitIndex];
+            if (labelObj != null) {
+                boolean isBitSet = (value & 1) == 1;
+                if (labelObj instanceof String[]) {
+                    String[] labelPair = (String[])labelObj;
+                    assert(labelPair.length == 2);
+                    parts.add(labelPair[isBitSet ? 1 : 0]);
+                } else if (isBitSet && labelObj instanceof String) {
+                    parts.add((String)labelObj);
+                }
+            }
+            value >>= 1;
+            bitIndex++;
+        }
+
+        return StringUtil.join(parts, ", ");
     }
 }

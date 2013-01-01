@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>SonyType6MakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link SonyType6MakernoteDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -51,7 +51,6 @@ public class SonyType6MakernoteDescriptor extends TagDescriptor<SonyType6Makerno
     @Nullable
     public String getMakerNoteThumbVersionDescription()
     {
-        int[] values = _directory.getIntArray(SonyType6MakernoteDirectory.TAG_MAKER_NOTE_THUMB_VERSION);
-        return convertBytesToVersionString(values, 2);
+        return getVersionBytesDescription(SonyType6MakernoteDirectory.TAG_MAKER_NOTE_THUMB_VERSION, 2);
     }
 }
