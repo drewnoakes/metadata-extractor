@@ -40,25 +40,25 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE:
+            case OlympusMakernoteDirectory.TAG_SPECIAL_MODE:
                 return getSpecialModeDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY:
+            case OlympusMakernoteDirectory.TAG_JPEG_QUALITY:
                 return getJpegQualityDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE:
+            case OlympusMakernoteDirectory.TAG_MACRO_MODE:
                 return getMacroModeDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_BW_MODE:
+            case OlympusMakernoteDirectory.TAG_BW_MODE:
                 return getBWModeDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO:
+            case OlympusMakernoteDirectory.TAG_DIGI_ZOOM_RATIO:
                 return getDigiZoomRatioDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_CAMERA_ID:
+            case OlympusMakernoteDirectory.TAG_CAMERA_ID:
                 return getCameraIdDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_FLASH_MODE:
+            case OlympusMakernoteDirectory.TAG_FLASH_MODE:
                 return getFlashModeDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_RANGE:
+            case OlympusMakernoteDirectory.TAG_FOCUS_RANGE:
                 return getFocusRangeDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_MODE:
+            case OlympusMakernoteDirectory.TAG_FOCUS_MODE:
                 return getFocusModeDescription();
-            case OlympusMakernoteDirectory.TAG_OLYMPUS_SHARPNESS:
+            case OlympusMakernoteDirectory.TAG_SHARPNESS:
                 return getSharpnessDescription();
             default:
                 return super.getDescription(tagType);
@@ -68,31 +68,31 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getSharpnessDescription()
     {
-        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_SHARPNESS, "Normal", "Hard", "Soft");
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_SHARPNESS, "Normal", "Hard", "Soft");
     }
 
     @Nullable
     public String getFocusModeDescription()
     {
-        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_MODE, "Auto", "Manual");
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_FOCUS_MODE, "Auto", "Manual");
     }
 
     @Nullable
     public String getFocusRangeDescription()
     {
-        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_FOCUS_RANGE, "Normal", "Macro");
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_FOCUS_RANGE, "Normal", "Macro");
     }
 
     @Nullable
     public String getFlashModeDescription()
     {
-        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_FLASH_MODE, null, null, "On", "Off");
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_FLASH_MODE, null, null, "On", "Off");
     }
 
     @Nullable
     public String getDigiZoomRatioDescription()
     {
-        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_DIGI_ZOOM_RATIO);
         if (value==null)
             return null;
         switch (value) {
@@ -108,7 +108,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getCameraIdDescription()
     {
-        byte[] bytes = _directory.getByteArray(OlympusMakernoteDirectory.TAG_OLYMPUS_CAMERA_ID);
+        byte[] bytes = _directory.getByteArray(OlympusMakernoteDirectory.TAG_CAMERA_ID);
         if (bytes == null)
             return null;
         return new String(bytes);
@@ -117,7 +117,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getMacroModeDescription()
     {
-        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_MACRO_MODE);
         if (value==null)
             return null;
         switch (value) {
@@ -133,13 +133,13 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getBWModeDescription()
     {
-        return getIndexedDescription(OlympusMakernoteDirectory.TAG_OLYMPUS_BW_MODE, "Off", "On");
+        return getIndexedDescription(OlympusMakernoteDirectory.TAG_BW_MODE, "Off", "On");
     }
 
     @Nullable
     public String getJpegQualityDescription()
     {
-        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_JPEG_QUALITY);
         if (value==null)
             return null;
         switch (value) {
@@ -157,7 +157,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getSpecialModeDescription()
     {
-        int[] values = _directory.getIntArray(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE);
+        int[] values = _directory.getIntArray(OlympusMakernoteDirectory.TAG_SPECIAL_MODE);
         if (values==null)
             return null;
         if (values.length < 1)
