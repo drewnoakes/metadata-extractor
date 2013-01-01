@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>CasioType1MakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link CasioType1MakernoteDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -100,61 +100,19 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getSaturationDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_SATURATION);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 0:
-                return "Normal";
-            case 1:
-                return "Low";
-            case 2:
-                return "High";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_SATURATION, "Normal", "Low", "High");
     }
 
     @Nullable
     public String getContrastDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_CONTRAST);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 0:
-                return "Normal";
-            case 1:
-                return "Low";
-            case 2:
-                return "High";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_CONTRAST, "Normal", "Low", "High");
     }
 
     @Nullable
     public String getSharpnessDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_SHARPNESS);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 0:
-                return "Normal";
-            case 1:
-                return "Soft";
-            case 2:
-                return "Hard";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_SHARPNESS, "Normal", "Soft", "Hard");
     }
 
     @Nullable
@@ -239,90 +197,24 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getFlashModeDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_FLASH_MODE);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 1:
-                return "Auto";
-            case 2:
-                return "On";
-            case 3:
-                return "Off";
-            case 4:
-                // this documented as additional value for off here:
-                // http://www.ozhiker.com/electronics/pjmt/jpeg_info/casio_mn.html
-                return "Red eye reduction";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_FLASH_MODE, 1, "Auto", "On", "Off", "Red eye reduction");
     }
 
     @Nullable
     public String getFocusingModeDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_FOCUSING_MODE);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 2:
-                return "Macro";
-            case 3:
-                return "Auto focus";
-            case 4:
-                return "Manual focus";
-            case 5:
-                return "Infinity";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_FOCUSING_MODE, 2, "Macro", "Auto focus", "Manual focus", "Infinity");
     }
 
     @Nullable
     public String getQualityDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_QUALITY);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 1:
-                return "Economy";
-            case 2:
-                return "Normal";
-            case 3:
-                return "Fine";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_QUALITY, 1, "Economy", "Normal", "Fine");
     }
 
     @Nullable
     public String getRecordingModeDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_RECORDING_MODE);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 1:
-                return "Single shutter";
-            case 2:
-                return "Panorama";
-            case 3:
-                return "Night scene";
-            case 4:
-                return "Portrait";
-            case 5:
-                return "Landscape";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_RECORDING_MODE, 1, "Single shutter", "Panorama", "Night scene", "Portrait", "Landscape");
     }
 }
