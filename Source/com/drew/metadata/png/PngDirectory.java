@@ -23,6 +23,8 @@ public class PngDirectory extends Directory
     public static final int TAG_GAMMA = 11;
     public static final int TAG_ICC_PROFILE_NAME = 12;
     public static final int TAG_TEXTUAL_DATA = 13;
+    public static final int TAG_LAST_MODIFICATION_TIME = 14;
+    public static final int TAG_BACKGROUND_COLOR = 15;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -41,6 +43,8 @@ public class PngDirectory extends Directory
         _tagNameMap.put(TAG_GAMMA, "Image Gamma");
         _tagNameMap.put(TAG_ICC_PROFILE_NAME, "ICC Profile Name");
         _tagNameMap.put(TAG_TEXTUAL_DATA, "Textual Data");
+        _tagNameMap.put(TAG_LAST_MODIFICATION_TIME, "Last Modification Time");
+        _tagNameMap.put(TAG_BACKGROUND_COLOR, "Background Color");
     }
 
     public PngDirectory()

@@ -9,10 +9,7 @@ import com.drew.metadata.png.PngDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -36,6 +33,7 @@ public class PngMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws PngProcessingException, IOException
     {
+        // TODO keep a single static hash of these
         Set<PngChunkType> desiredChunkTypes = new HashSet<PngChunkType>();
         desiredChunkTypes.add(PngChunkType.IHDR);
         desiredChunkTypes.add(PngChunkType.PLTE);
@@ -44,8 +42,10 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.sRGB);
         desiredChunkTypes.add(PngChunkType.gAMA);
         desiredChunkTypes.add(PngChunkType.iCCP);
+        desiredChunkTypes.add(PngChunkType.bKGD);
         desiredChunkTypes.add(PngChunkType.tEXt);
         desiredChunkTypes.add(PngChunkType.iTXt);
+        desiredChunkTypes.add(PngChunkType.tIME);
 
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), desiredChunkTypes);
 
@@ -106,6 +106,9 @@ public class PngMetadataReader
                     new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata);
                     inflateStream.close();
                 }
+            } else if (chunkType.equals(PngChunkType.bKGD)) {
+                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                directory.setByteArray(PngDirectory.TAG_BACKGROUND_COLOR, bytes);
             } else if (chunkType.equals(PngChunkType.tEXt)) {
                 SequentialReader reader = new SequentialByteArrayReader(bytes);
                 String keyword = reader.getNullTerminatedString(79);
@@ -141,6 +144,19 @@ public class PngMetadataReader
                         textPairs.add(new KeyValuePair(keyword, text));
                     }
                 }
+            } else if (chunkType.equals(PngChunkType.tIME)) {
+                SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
+                int year = reader.getUInt16();
+                int month = reader.getUInt8() - 1;
+                int day = reader.getUInt8();
+                int hour = reader.getUInt8();
+                int minute = reader.getUInt8();
+                int second = reader.getUInt8();
+                Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                //noinspection MagicConstant
+                calendar.set(year, month, day, hour, minute, second);
+                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                directory.setDate(PngDirectory.TAG_LAST_MODIFICATION_TIME, calendar.getTime());
             }
         }
 
