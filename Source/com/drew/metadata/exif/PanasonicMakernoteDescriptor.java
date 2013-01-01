@@ -29,10 +29,8 @@ import com.drew.metadata.Age;
 import com.drew.metadata.Face;
 import com.drew.metadata.TagDescriptor;
 
-import java.io.UnsupportedEncodingException;
-
 /**
- * Provides human-readable string representations of tag values stored in a <code>PanasonicMakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link PanasonicMakernoteDirectory}.
  * <p/>
  * Some information about this makernote taken from here:
  * <ul>
@@ -40,7 +38,8 @@ import java.io.UnsupportedEncodingException;
  * <li><a href="http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.html">http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.html</a></li>
  * </ul>
  *
- * @author Drew Noakes http://drewnoakes.com, Philipp Sandhaus
+ * @author Drew Noakes http://drewnoakes.com
+ * @author Philipp Sandhaus
  */
 public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakernoteDirectory>
 {
@@ -161,70 +160,60 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getPrintImageMatchingInfoDescription()
     {
-        byte[] values = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO);
-        if (values == null)
-            return null;
-        return "(" + values.length + " bytes)";
+        return getByteLengthDescription(PanasonicMakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO);
     }
 
     @Nullable
     public String getTextStampDescription()
     {
-        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP);
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP, 1, "Off", "On");
     }
 
 	@Nullable
     public String getTextStamp1Description()
     {
-        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_1);
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_1, 1, "Off", "On");
     }
 
 	@Nullable
     public String getTextStamp2Description()
     {
-        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_2);
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_2, 1, "Off", "On");
     }
 
 	@Nullable
     public String getTextStamp3Description()
     {
-        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_3);
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_TEXT_STAMP_3, 1, "Off", "On");
     }
 
 	@Nullable
     public String getMacroModeDescription()
     {
-        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_MACRO_MODE);
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_MACRO_MODE, 1, "Off", "On");
     }
 
     @Nullable
     public String getFlashFiredDescription()
     {
-        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_FLASH_FIRED);
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_FLASH_FIRED, 1, "Off", "On");
     }
 
     @Nullable
     public String getImageStabilizationDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_IMAGE_STABILIZATION);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 2:
-                return "On, Mode 1";
-            case 3:
-                return "Off";
-            case 4:
-                return "On, Mode 2";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_IMAGE_STABILIZATION,
+            2,
+            "On, Mode 1",
+            "Off",
+            "On, Mode 2"
+        );
     }
 
     @Nullable
     public String getAudioDescription()
     {
-        return getOnOffDescription(PanasonicMakernoteDirectory.TAG_AUDIO);
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_AUDIO, 1, "Off", "On");
     }
 
     @Nullable
@@ -266,202 +255,120 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
 
             return "Unknown (" + val1 + " " + val2 + ")";
         } catch (BufferBoundsException e) {
-            return null   ;
+            return null;
         }
     }
 
     @Nullable
     public String getIntelligentExposureDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_INTELLIGENT_EXPOSURE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Off";
-            case 1:
-                return "Low";
-            case 2:
-                return "Standard";
-            case 3:
-                return "High";
-
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_INTELLIGENT_EXPOSURE,
+            "Off", "Low", "Standard", "High");
     }
 
     @Nullable
     public String getFlashWarningDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_FLASH_WARNING);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "No";
-            case 1:
-                return "Yes (Flash required but disabled)";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_FLASH_WARNING,
+            "No", "Yes (Flash required but disabled)");
     }
 	
     @Nullable
     public String getCountryDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_COUNTRY);
+        return getAsciiStringFromBytes(PanasonicMakernoteDirectory.TAG_COUNTRY);
     }
 
     @Nullable
     public String getStateDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_STATE);
+        return getAsciiStringFromBytes(PanasonicMakernoteDirectory.TAG_STATE);
     }
 
     @Nullable
     public String getCityDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_CITY);
+        return getAsciiStringFromBytes(PanasonicMakernoteDirectory.TAG_CITY);
     }
 
     @Nullable
     public String getLandmarkDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_LANDMARK);
+        return getAsciiStringFromBytes(PanasonicMakernoteDirectory.TAG_LANDMARK);
     }
 
 	@Nullable
     public String getTitleDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_TITLE);
+        return getAsciiStringFromBytes(PanasonicMakernoteDirectory.TAG_TITLE);
     }
 
 	@Nullable
     public String getBabyNameDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_BABY_NAME);
+        return getAsciiStringFromBytes(PanasonicMakernoteDirectory.TAG_BABY_NAME);
     }
 
 	@Nullable
     public String getLocationDescription()
     {
-        return getTextDescription(PanasonicMakernoteDirectory.TAG_LOCATION);
+        return getAsciiStringFromBytes(PanasonicMakernoteDirectory.TAG_LOCATION);
     }
 
     @Nullable
     public String getIntelligentResolutionDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_INTELLIGENT_RESOLUTION);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Off";
-            case 2:
-                return "Auto";
-            case 3:
-                return "On";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_INTELLIGENT_RESOLUTION,
+            "Off", null, "Auto", "On");
     }
 
     @Nullable
     public String getContrastDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_CONTRAST);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Normal";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_CONTRAST, "Normal");
     }
 
     @Nullable
     public String getWorldTimeLocationDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_WORLD_TIME_LOCATION);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Home";
-            case 2:
-                return "Destination";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_WORLD_TIME_LOCATION,
+            1, "Home", "Destination");
     }
 
     @Nullable
     public String getAdvancedSceneModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_ADVANCED_SCENE_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Normal";
-            case 2:
-                return "Outdoor/Illuminations/Flower/HDR Art";
-            case 3:
-                return "Indoor/Architecture/Objects/HDR B&W";
-            case 4:
-                return "Creative";
-            case 5:
-                return "Auto";
-            case 7:
-                return "Expressive";
-            case 8:
-                return "Retro";
-            case 9:
-                return "Pure";
-            case 10:
-                return "Elegant";
-            case 12:
-                return "Monochrome";
-            case 13:
-                return "Dynamic Art";
-            case 14:
-                return "Silhouette";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_ADVANCED_SCENE_MODE,
+            1,
+            "Normal",
+            "Outdoor/Illuminations/Flower/HDR Art",
+            "Indoor/Architecture/Objects/HDR B&W",
+            "Creative",
+            "Auto",
+            null,
+            "Expressive",
+            "Retro",
+            "Pure",
+            "Elegant",
+            null,
+            "Monochrome",
+            "Dynamic Art",
+            "Silhouette"
+        );
     }
 
     @Nullable
     public String getUnknownDataDumpDescription()
     {
-        byte[] value = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_UNKNOWN_DATA_DUMP);
-        if (value == null)
-            return null;
-        return "[" + value.length + " bytes]";
+        return getByteLengthDescription(PanasonicMakernoteDirectory.TAG_UNKNOWN_DATA_DUMP);
     }
 
     @Nullable
     public String getColorEffectDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_COLOR_EFFECT);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Off";
-            case 2:
-                return "Warm";
-            case 3:
-                return "Cool";
-            case 4:
-                return "Black & White";
-            case 5:
-                return "Sepia";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_COLOR_EFFECT,
+            1, "Off", "Warm", "Cool", "Black & White", "Sepia"
+        );
     }
 
     @Nullable
@@ -476,21 +383,9 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getBurstModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_BURST_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Off";
-            case 1:
-                return "On";
-            case 2:
-                return "Infinite";
-            case 4:
-                return "Unlimited";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_BURST_MODE,
+            "Off", null, "On", "Indefinite", "Unlimited"
+        );
     }
 
     @Nullable
@@ -500,23 +395,14 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         if (value == null)
             return null;
         switch (value) {
-            case 0x0:
-                return "Normal";
-            case 0x1:
-                return "Low";
-            case 0x2:
-                return "High";
-            case 0x6:
-                return "Medium Low";
-            case 0x7:
-                return "Medium High";
-            case 0x100:
-                return "Low";
-            case 0x110:
-                return "Normal";
-            case 0x120:
-                return "High";
-
+            case 0x0: return "Normal";
+            case 0x1: return "Low";
+            case 0x2: return "High";
+            case 0x6: return "Medium Low";
+            case 0x7: return "Medium High";
+            case 0x100: return "Low";
+            case 0x110: return "Normal";
+            case 0x120: return "High";
             default:
                 return "Unknown (" + value + ")";
         }
@@ -525,42 +411,17 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getNoiseReductionDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_NOISE_REDUCTION);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Standard (0)";
-            case 1:
-                return "Low (-1)";
-            case 2:
-                return "High (+1)";
-            case 3:
-                return "Lowest (-2)";
-            case 4:
-                return "Highest (+2)";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_NOISE_REDUCTION,
+            "Standard (0)", "Low (-1)", "High (+1)", "Lowest (-2)", "Highest (+2)"
+        );
     }
-
 
     @Nullable
     public String getSelfTimerDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_SELF_TIMER);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Off";
-            case 2:
-                return "10 s";
-            case 3:
-                return "2 s";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_SELF_TIMER,
+            1, "Off", "10 s", "2 s"
+        );
     }
 
     @Nullable
@@ -570,14 +431,10 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         if (value == null)
             return null;
         switch (value) {
-            case 1:
-                return "Horizontal";
-            case 3:
-                return "Rotate 180";
-            case 6:
-                return "Rotate 90 CW";
-            case 8:
-                return "Rotate 270 CW";
+            case 1: return "Horizontal";
+            case 3: return "Rotate 180";
+            case 6: return "Rotate 90 CW";
+            case 8: return "Rotate 270 CW";
             default:
                 return "Unknown (" + value + ")";
         }
@@ -586,75 +443,33 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getAfAssistLampDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_AF_ASSIST_LAMP);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Fired";
-            case 2:
-                return "Enabled but not used";
-            case 3:
-                return "Disabled but required";
-            case 4:
-                return "Disabled and not required";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_AF_ASSIST_LAMP,
+            1, "Fired", "Enabled but not used", "Disabled but required", "Disabled and not required"
+        );
     }
 
     @Nullable
     public String getColorModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_COLOR_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Normal";
-            case 1:
-                return "Natural";
-            case 2:
-                return "Vivid";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_COLOR_MODE,
+            "Normal", "Natural", "Vivid"
+        );
     }
 
     @Nullable
     public String getOpticalZoomModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_OPTICAL_ZOOM_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Standard";
-            case 2:
-                return "Extended";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_OPTICAL_ZOOM_MODE,
+            1, "Standard", "Extended"
+        );
     }
 
     @Nullable
     public String getConversionLensDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_CONVERSION_LENS);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Off";
-            case 2:
-                return "Wide";
-            case 3:
-                return "Telephoto";
-            case 4:
-                return "Macro";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_CONVERSION_LENS,
+            1, "Off", "Wide", "Telephoto", "Macro"
+        );
     }
 
     @Nullable
@@ -686,228 +501,77 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         return null;
     }
 
+    private static final String[] _sceneModes = new String[] {
+        "Normal", // 1
+        "Portrait",
+        "Scenery",
+        "Sports",
+        "Night Portrait",
+        "Program",
+        "Aperture Priority",
+        "Shutter Priority",
+        "Macro",
+        "Spot", // 10
+        "Manual",
+        "Movie Preview",
+        "Panning",
+        "Simple",
+        "Color Effects",
+        "Self Portrait",
+        "Economy",
+        "Fireworks",
+        "Party",
+        "Snow", // 20
+        "Night Scenery",
+        "Food",
+        "Baby",
+        "Soft Skin",
+        "Candlelight",
+        "Starry Night",
+        "High Sensitivity",
+        "Panorama Assist",
+        "Underwater",
+        "Beach", // 30
+        "Aerial Photo",
+        "Sunset",
+        "Pet",
+        "Intelligent ISO",
+        "Clipboard",
+        "High Speed Continuous Shooting",
+        "Intelligent Auto",
+        null,
+        "Multi-aspect",
+        null, // 40
+        "Transform",
+        "Flash Burst",
+        "Pin Hole",
+        "Film Grain",
+        "My Color",
+        "Photo Frame",
+        null,
+        null,
+        null,
+        null, // 50
+        "HDR"
+    };
+
     @Nullable
     public String getRecordModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_RECORD_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Normal";
-            case 2:
-                return "Portrait";
-            case 3:
-                return "Scenery";
-            case 4:
-                return "Sports";
-            case 5:
-                return "Night Portrait";
-            case 6:
-                return "Program";
-            case 7:
-                return "Aperture Priority";
-            case 8:
-                return "Shutter Priority";
-            case 9:
-                return "Macro";
-            case 10:
-                return "Spot";
-            case 11:
-                return "Manual";
-            case 12:
-                return "Movie Preview";
-            case 13:
-                return "Panning";
-            case 14:
-                return "Simple";
-            case 15:
-                return "Color Effects";
-            case 16:
-                return "Self Portrait";
-            case 17:
-                return "Economy";
-            case 18:
-                return "Fireworks";
-            case 19:
-                return "Party";
-            case 20:
-                return "Snow";
-            case 21:
-                return "Night Scenery";
-            case 22:
-                return "Food";
-            case 23:
-                return "Baby";
-            case 24:
-                return "Soft Skin";
-            case 25:
-                return "Candlelight";
-            case 26:
-                return "Starry Night";
-            case 27:
-                return "High Sensitivity";
-            case 28:
-                return "Panorama Assist";
-            case 29:
-                return "Underwater";
-            case 30:
-                return "Beach";
-            case 31:
-                return "Aerial Photo";
-            case 32:
-                return "Sunset";
-            case 33:
-                return "Pet";
-            case 34:
-                return "Intelligent ISO";
-            case 35:
-                return "Clipboard";
-            case 36:
-                return "High Speed Continuous Shooting";
-            case 37:
-                return "Intelligent Auto";
-            case 39:
-                return "Multi-aspect";
-            case 41:
-                return "Transform";
-            case 42:
-                return "Flash Burst";
-            case 43:
-                return "Pin Hole";
-            case 44:
-                return "Film Grain";
-            case 45:
-                return "My Color";
-            case 46:
-                return "Photo Frame";
-            case 51:
-                return "HDR";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_RECORD_MODE, 1, _sceneModes);
     }
 
     @Nullable
     public String getSceneModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_SCENE_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Normal";
-            case 2:
-                return "Portrait";
-            case 3:
-                return "Scenery";
-            case 4:
-                return "Sports";
-            case 5:
-                return "Night Portrait";
-            case 6:
-                return "Program";
-            case 7:
-                return "Aperture Priority";
-            case 8:
-                return "Shutter Priority";
-            case 9:
-                return "Macro";
-            case 10:
-                return "Spot";
-            case 11:
-                return "Manual";
-            case 12:
-                return "Movie Preview";
-            case 13:
-                return "Panning";
-            case 14:
-                return "Simple";
-            case 15:
-                return "Color Effects";
-            case 16:
-                return "Self Portrait";
-            case 17:
-                return "Economy";
-            case 18:
-                return "Fireworks";
-            case 19:
-                return "Party";
-            case 20:
-                return "Snow";
-            case 21:
-                return "Night Scenery";
-            case 22:
-                return "Food";
-            case 23:
-                return "Baby";
-            case 24:
-                return "Soft Skin";
-            case 25:
-                return "Candlelight";
-            case 26:
-                return "Starry Night";
-            case 27:
-                return "High Sensitivity";
-            case 28:
-                return "Panorama Assist";
-            case 29:
-                return "Underwater";
-            case 30:
-                return "Beach";
-            case 31:
-                return "Aerial Photo";
-            case 32:
-                return "Sunset";
-            case 33:
-                return "Pet";
-            case 34:
-                return "Intelligent ISO";
-            case 35:
-                return "Clipboard";
-            case 36:
-                return "High Speed Continuous Shooting";
-            case 37:
-                return "Intelligent Auto";
-            case 39:
-                return "Multi-aspect";
-            case 41:
-                return "Transform";
-            case 42:
-                return "Flash Burst";
-            case 43:
-                return "Pin Hole";
-            case 44:
-                return "Film Grain";
-            case 45:
-                return "My Color";
-            case 46:
-                return "Photo Frame";
-            case 51:
-                return "HDR";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_SCENE_MODE, 1, _sceneModes);
     }
 
     @Nullable
     public String getFocusModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_FOCUS_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Auto";
-            case 2:
-                return "Manual";
-            case 4:
-                return "Auto, Focus Button";
-            case 5:
-                return "Auto, Continuous";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_FOCUS_MODE, 1,
+            "Auto", "Manual", null, "Auto, Focus Button", "Auto, Continuous");
     }
 
     @Nullable
@@ -967,23 +631,17 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getQualityModeDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_QUALITY_MODE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 2:
-                return "High";
-            case 3:
-                return "Normal";
-            case 6:
-                return "Very High";
-            case 7:
-                return "Raw";
-            case 9:
-                return "Motion Picture";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_QUALITY_MODE,
+            2,
+            "High", // 2
+            "Normal",
+            null,
+            null,
+            "Very High",
+            "Raw",
+            null,
+            "Motion Picture" // 9
+        );
     }
 
     @Nullable
@@ -1007,58 +665,34 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getInternalSerialNumberDescription()
     {
-        final byte[] bytes = _directory.getByteArray(PanasonicMakernoteDirectory.TAG_INTERNAL_SERIAL_NUMBER);
-
-        if (bytes==null)
-            return null;
-
-        int length = bytes.length;
-        for (int index = 0; index < bytes.length; index++) {
-            int i = bytes[index] & 0xFF;
-            if (i == 0 || i > 0x7F) {
-                length = index;
-                break;
-            }
-        }
-
-        return new String(bytes, 0, length);
+        return get7BitStringFromBytes(PanasonicMakernoteDirectory.TAG_INTERNAL_SERIAL_NUMBER);
     }
 
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        Integer value = _directory.getInteger(PanasonicMakernoteDirectory.TAG_WHITE_BALANCE);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Auto";
-            case 2:
-                return "Daylight";
-            case 3:
-                return "Cloudy";
-            case 4:
-                return "Incandescent";
-            case 5:
-                return "Manual";
-            case 8:
-                return "Flash";
-            case 10:
-                return "Black & White";
-            case 11:
-                return "Manual";
-            case 12:
-                return "Shade";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(PanasonicMakernoteDirectory.TAG_WHITE_BALANCE,
+            1,
+            "Auto", // 1
+            "Daylight",
+            "Cloudy",
+            "Incandescent",
+            "Manual",
+            null,
+            null,
+            "Flash",
+            null,
+            "Black & White", // 10
+            "Manual",
+            "Shade" // 12
+        );
     }
 
 	@Nullable
 	public String getBabyAgeDescription()
     {
         final Age age = _directory.getAge(PanasonicMakernoteDirectory.TAG_BABY_AGE);
-        if (age==null)
+        if (age == null)
             return null;
         return age.toFriendlyString();
 	}
@@ -1071,33 +705,4 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
             return null;
         return age.toFriendlyString();
 	}
-
-	@Nullable
-	private String getTextDescription(int tag)
-    {
-		byte[] values = _directory.getByteArray(tag);
-        if (values == null)
-            return null;
-        try {
-            return new String(values, "ASCII").trim();
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
-	}
-
-    @Nullable
-    private String getOnOffDescription(int tag)
-    {
-        Integer value = _directory.getInteger(tag);
-        if (value == null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Off";
-            case 2:
-                return "On";
-            default:
-                return "Unknown (" + value + ")";
-        }
-    }
 }

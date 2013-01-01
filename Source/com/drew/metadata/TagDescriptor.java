@@ -25,6 +25,7 @@ import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
@@ -225,5 +226,38 @@ public class TagDescriptor<T extends Directory>
         }
 
         return StringUtil.join(parts, ", ");
+    }
+
+    @Nullable
+    protected String get7BitStringFromBytes(final int tagType)
+    {
+        final byte[] bytes = _directory.getByteArray(tagType);
+
+        if (bytes == null)
+            return null;
+
+        int length = bytes.length;
+        for (int index = 0; index < bytes.length; index++) {
+            int i = bytes[index] & 0xFF;
+            if (i == 0 || i > 0x7F) {
+                length = index;
+                break;
+            }
+        }
+
+        return new String(bytes, 0, length);
+    }
+
+    @Nullable
+    protected String getAsciiStringFromBytes(int tag)
+{
+        byte[] values = _directory.getByteArray(tag);
+if (values == null)
+return null;
+try {
+return new String(values, "ASCII").trim();
+} catch (UnsupportedEncodingException e) {
+return null;
+}
     }
 }
