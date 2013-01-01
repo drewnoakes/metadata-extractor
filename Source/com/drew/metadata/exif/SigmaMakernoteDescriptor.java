@@ -22,10 +22,11 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>SigmaMakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link SigmaMakernoteDirectory}.
  * 
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -34,5 +35,48 @@ public class SigmaMakernoteDescriptor extends TagDescriptor<SigmaMakernoteDirect
     public SigmaMakernoteDescriptor(@NotNull SigmaMakernoteDirectory directory)
     {
         super(directory);
+    }
+
+    @Override
+    public String getDescription(int tagType)
+    {
+        switch (tagType) {
+            case SigmaMakernoteDirectory.TAG_EXPOSURE_MODE:
+                return getExposureModeDescription();
+            case SigmaMakernoteDirectory.TAG_METERING_MODE:
+                return getMeteringModeDescription();
+        }
+        return super.getDescription(tagType);
+    }
+
+    @Nullable
+    private String getMeteringModeDescription()
+    {
+        String value = _directory.getString(SigmaMakernoteDirectory.TAG_METERING_MODE);
+        if (value == null || value.length() == 0)
+            return null;
+        switch (value.charAt(0)) {
+            case '8': return "Multi Segment";
+            case 'A': return "Average";
+            case 'C': return "Center Weighted Average";
+            default:
+                return value;
+        }
+    }
+
+    @Nullable
+    private String getExposureModeDescription()
+    {
+        String value = _directory.getString(SigmaMakernoteDirectory.TAG_EXPOSURE_MODE);
+        if (value == null || value.length() == 0)
+            return null;
+        switch (value.charAt(0)) {
+            case 'A': return "Aperture Priority AE";
+            case 'M': return "Manual";
+            case 'P': return "Program AE";
+            case 'S': return "Shutter Speed Priority AE";
+            default:
+                return value;
+        }
     }
 }

@@ -33,29 +33,29 @@ import java.util.HashMap;
  */
 public class SigmaMakernoteDirectory extends Directory
 {
-    public static final int TAG_SERIAL_NUMBER = 2;
-    public static final int TAG_DRIVE_MODE = 3;
-    public static final int TAG_RESOLUTION_MODE = 4;
-    public static final int TAG_AUTO_FOCUS_MODE = 5;
-    public static final int TAG_FOCUS_SETTING = 6;
-    public static final int TAG_WHITE_BALANCE = 7;
-    public static final int TAG_EXPOSURE_MODE = 8;
-    public static final int TAG_METERING_MODE = 9;
-    public static final int TAG_LENS_RANGE = 10;
-    public static final int TAG_COLOR_SPACE = 11;
-    public static final int TAG_EXPOSURE = 12;
-    public static final int TAG_CONTRAST = 13;
-    public static final int TAG_SHADOW = 14;
-    public static final int TAG_HIGHLIGHT = 15;
-    public static final int TAG_SATURATION = 16;
-    public static final int TAG_SHARPNESS = 17;
-    public static final int TAG_FILL_LIGHT = 18;
-    public static final int TAG_COLOR_ADJUSTMENT = 20;
-    public static final int TAG_ADJUSTMENT_MODE = 21;
-    public static final int TAG_QUALITY = 22;
-    public static final int TAG_FIRMWARE = 23;
-    public static final int TAG_SOFTWARE = 24;
-    public static final int TAG_AUTO_BRACKET = 25;
+    public static final int TAG_SERIAL_NUMBER = 0x2;
+    public static final int TAG_DRIVE_MODE = 0x3;
+    public static final int TAG_RESOLUTION_MODE = 0x4;
+    public static final int TAG_AUTO_FOCUS_MODE = 0x5;
+    public static final int TAG_FOCUS_SETTING = 0x6;
+    public static final int TAG_WHITE_BALANCE = 0x7;
+    public static final int TAG_EXPOSURE_MODE = 0x8;
+    public static final int TAG_METERING_MODE = 0x9;
+    public static final int TAG_LENS_RANGE = 0xa;
+    public static final int TAG_COLOR_SPACE = 0xb;
+    public static final int TAG_EXPOSURE = 0xc;
+    public static final int TAG_CONTRAST = 0xd;
+    public static final int TAG_SHADOW = 0xe;
+    public static final int TAG_HIGHLIGHT = 0xf;
+    public static final int TAG_SATURATION = 0x10;
+    public static final int TAG_SHARPNESS = 0x11;
+    public static final int TAG_FILL_LIGHT = 0x12;
+    public static final int TAG_COLOR_ADJUSTMENT = 0x14;
+    public static final int TAG_ADJUSTMENT_MODE = 0x15;
+    public static final int TAG_QUALITY = 0x16;
+    public static final int TAG_FIRMWARE = 0x17;
+    public static final int TAG_SOFTWARE = 0x18;
+    public static final int TAG_AUTO_BRACKET = 0x19;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
