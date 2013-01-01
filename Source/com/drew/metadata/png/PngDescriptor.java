@@ -32,6 +32,10 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
                 return getFilterMethodDescription();
             case PngDirectory.TAG_INTERLACE_METHOD:
                 return getInterlaceMethodDescription();
+            case PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY:
+                return getPaletteHasTransparencyDescription();
+            case PngDirectory.TAG_IS_SRGB_COLOR_SPACE:
+                return getIsSrgbColorSpaceDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -65,5 +69,17 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     public String getInterlaceMethodDescription()
     {
         return getIndexedDescription(PngDirectory.TAG_INTERLACE_METHOD, "No Interlace", "Adam7 Interlace");
+    }
+
+    @Nullable
+    public String getPaletteHasTransparencyDescription()
+    {
+        return getIndexedDescription(PngDirectory.TAG_INTERLACE_METHOD, null, "Yes");
+    }
+
+    @Nullable
+    public String getIsSrgbColorSpaceDescription()
+    {
+        return getIndexedDescription(PngDirectory.TAG_IS_SRGB_COLOR_SPACE, null, "Yes");
     }
 }

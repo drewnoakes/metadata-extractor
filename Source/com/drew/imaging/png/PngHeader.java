@@ -19,9 +19,8 @@ public class PngHeader
     private byte _filterMethod;
     private byte _interlaceMethod;
 
-    public PngHeader(@NotNull PngChunk chunk) throws PngProcessingException
+    public PngHeader(@NotNull byte[] bytes) throws PngProcessingException
     {
-        byte[] bytes = chunk.getBytes();
         if (bytes.length != 13) {
             throw new PngProcessingException("PNG header chunk must have 13 data bytes");
         }
