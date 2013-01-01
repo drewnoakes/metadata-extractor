@@ -163,7 +163,7 @@ public class ProcessAllImagesInFolderUtility
                     if (writer != null) {
                         String tagName = tag.getTagName();
                         String description = tag.getDescription();
-                        writer.write(String.format("[%s] %s = %s%n", directoryName, tagName, description));
+                        writer.write(String.format("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description));
                     } else {
                         // Call the code that would obtain the value, just to flush out any potential exceptions.
                         tag.getTagName();
