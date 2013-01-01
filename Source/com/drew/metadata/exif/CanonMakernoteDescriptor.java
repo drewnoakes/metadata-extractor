@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>CanonMakernoteDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link CanonMakernoteDirectory}.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -361,43 +361,22 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Auto";
-            case 1:
-                return "Sunny";
-            case 2:
-                return "Cloudy";
-            case 3:
-                return "Tungsten";
-            case 4:
-                return "Florescent";
-            case 5:
-                return "Flash";
-            case 6:
-                return "Custom";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(
+            CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE,
+            "Auto",
+            "Sunny",
+            "Cloudy",
+            "Tungsten",
+            "Florescent",
+            "Flash",
+            "Custom"
+        );
     }
 
     @Nullable
     public String getFocusMode2Description()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_2);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Single";
-            case 1:
-                return "Continuous";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_2, "Single", "Continuous");
     }
 
     @Nullable
@@ -457,65 +436,41 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getExposureModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_EXPOSURE_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Easy shooting";
-            case 1:
-                return "Program";
-            case 2:
-                return "Tv-priority";
-            case 3:
-                return "Av-priority";
-            case 4:
-                return "Manual";
-            case 5:
-                return "A-DEP";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(
+            CanonMakernoteDirectory.CameraSettings.TAG_EXPOSURE_MODE,
+            "Easy shooting",
+            "Program",
+            "Tv-priority",
+            "Av-priority",
+            "Manual",
+            "A-DEP"
+        );
     }
 
     @Nullable
     public String getAfPointSelectedDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_AF_POINT_SELECTED);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0x3000:
-                return "None (MF)";
-            case 0x3001:
-                return "Auto selected";
-            case 0x3002:
-                return "Right";
-            case 0x3003:
-                return "Centre";
-            case 0x3004:
-                return "Left";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(
+            CanonMakernoteDirectory.CameraSettings.TAG_AF_POINT_SELECTED,
+            0x3000,
+            "None (MF)",
+            "Auto selected",
+            "Right",
+            "Centre",
+            "Left"
+        );
     }
 
     @Nullable
     public String getMeteringModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_METERING_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 3:
-                return "Evaluative";
-            case 4:
-                return "Partial";
-            case 5:
-                return "Centre weighted";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(
+            CanonMakernoteDirectory.CameraSettings.TAG_METERING_MODE,
+            3,
+            "Evaluative",
+            "Partial",
+            "Centre weighted"
+        );
     }
 
     @Nullable
@@ -605,82 +560,48 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getEasyShootingModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_EASY_SHOOTING_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Full auto";
-            case 1:
-                return "Manual";
-            case 2:
-                return "Landscape";
-            case 3:
-                return "Fast shutter";
-            case 4:
-                return "Slow shutter";
-            case 5:
-                return "Night";
-            case 6:
-                return "B&W";
-            case 7:
-                return "Sepia";
-            case 8:
-                return "Portrait";
-            case 9:
-                return "Sports";
-            case 10:
-                return "Macro / Closeup";
-            case 11:
-                return "Pan focus";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(
+            CanonMakernoteDirectory.CameraSettings.TAG_EASY_SHOOTING_MODE,
+            "Full auto",
+            "Manual",
+            "Landscape",
+            "Fast shutter",
+            "Slow shutter",
+            "Night",
+            "B&W",
+            "Sepia",
+            "Portrait",
+            "Sports",
+            "Macro / Closeup",
+            "Pan focus"
+        );
     }
 
     @Nullable
     public String getImageSizeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_IMAGE_SIZE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Large";
-            case 1:
-                return "Medium";
-            case 2:
-                return "Small";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(
+            CanonMakernoteDirectory.CameraSettings.TAG_IMAGE_SIZE,
+            "Large",
+            "Medium",
+            "Small"
+        );
     }
 
     @Nullable
     public String getFocusMode1Description()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_1);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "One-shot";
-            case 1:
-                return "AI Servo";
-            case 2:
-                return "AI Focus";
-            case 3:
-                return "Manual Focus";
-            case 4:
-                // TODO should check field 32 here (FOCUS_MODE_2)
-                return "Single";
-            case 5:
-                return "Continuous";
-            case 6:
-                return "Manual Focus";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(
+            CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_MODE_1,
+            "One-shot",
+            "AI Servo",
+            "AI Focus",
+            "Manual Focus",
+            // TODO should check field 32 here (FOCUS_MODE_2)
+            "Single",
+            "Continuous",
+            "Manual Focus"
+        );
     }
 
     @Nullable
@@ -746,53 +667,19 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getMacroModeDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_MACRO_MODE);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Macro";
-            case 2:
-                return "Normal";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_MACRO_MODE, 1, "Macro", "Normal");
     }
 
     @Nullable
     public String getQualityDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_QUALITY);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 2:
-                return "Normal";
-            case 3:
-                return "Fine";
-            case 5:
-                return "Superfine";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_QUALITY, 2, "Normal", "Fine", null, "Superfine");
     }
 
     @Nullable
     public String getDigitalZoomDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_DIGITAL_ZOOM);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "No digital zoom";
-            case 1:
-                return "2x";
-            case 2:
-                return "4x";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_DIGITAL_ZOOM, "No digital zoom", "2x", "4x");
     }
 
     @Nullable
@@ -818,16 +705,6 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getFlashActivityDescription()
     {
-        Integer value = _directory.getInteger(CanonMakernoteDirectory.CameraSettings.TAG_FLASH_ACTIVITY);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0:
-                return "Flash did not fire";
-            case 1:
-                return "Flash fired";
-            default:
-                return "Unknown (" + value + ")";
-        }
+        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_FLASH_ACTIVITY, "Flash did not fire", "Flash fired");
     }
 }

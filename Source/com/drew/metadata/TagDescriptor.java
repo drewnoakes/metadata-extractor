@@ -109,11 +109,18 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected String getIndexedDescription(final int tagType, @NotNull String... descriptions)
     {
+        return getIndexedDescription(tagType, 0, descriptions);
+    }
+
+    @Nullable
+    protected String getIndexedDescription(final int tagType, final int baseIndex, @NotNull String... descriptions)
+    {
         final Integer index = _directory.getInteger(tagType);
         if (index == null)
             return null;
-        if (index >= 0 && index < descriptions.length) {
-            String description = descriptions[index];
+        final int arrayIndex = index - baseIndex;
+        if (arrayIndex >= 0 && arrayIndex < descriptions.length) {
+            String description = descriptions[arrayIndex];
             if (description != null)
                 return description;
         }
