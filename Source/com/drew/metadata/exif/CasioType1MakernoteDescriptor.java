@@ -40,29 +40,29 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case CasioType1MakernoteDirectory.TAG_CASIO_RECORDING_MODE:
+            case CasioType1MakernoteDirectory.TAG_RECORDING_MODE:
                 return getRecordingModeDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_QUALITY:
+            case CasioType1MakernoteDirectory.TAG_QUALITY:
                 return getQualityDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_FOCUSING_MODE:
+            case CasioType1MakernoteDirectory.TAG_FOCUSING_MODE:
                 return getFocusingModeDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_FLASH_MODE:
+            case CasioType1MakernoteDirectory.TAG_FLASH_MODE:
                 return getFlashModeDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_FLASH_INTENSITY:
+            case CasioType1MakernoteDirectory.TAG_FLASH_INTENSITY:
                 return getFlashIntensityDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_OBJECT_DISTANCE:
+            case CasioType1MakernoteDirectory.TAG_OBJECT_DISTANCE:
                 return getObjectDistanceDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_WHITE_BALANCE:
+            case CasioType1MakernoteDirectory.TAG_WHITE_BALANCE:
                 return getWhiteBalanceDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_DIGITAL_ZOOM:
+            case CasioType1MakernoteDirectory.TAG_DIGITAL_ZOOM:
                 return getDigitalZoomDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_SHARPNESS:
+            case CasioType1MakernoteDirectory.TAG_SHARPNESS:
                 return getSharpnessDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_CONTRAST:
+            case CasioType1MakernoteDirectory.TAG_CONTRAST:
                 return getContrastDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_SATURATION:
+            case CasioType1MakernoteDirectory.TAG_SATURATION:
                 return getSaturationDescription();
-            case CasioType1MakernoteDirectory.TAG_CASIO_CCD_SENSITIVITY:
+            case CasioType1MakernoteDirectory.TAG_CCD_SENSITIVITY:
                 return getCcdSensitivityDescription();
             default:
                 return super.getDescription(tagType);
@@ -72,7 +72,7 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getCcdSensitivityDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_CCD_SENSITIVITY);
+        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CCD_SENSITIVITY);
 
         if (value == null)
             return null;
@@ -100,25 +100,25 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getSaturationDescription()
     {
-        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_SATURATION, "Normal", "Low", "High");
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_SATURATION, "Normal", "Low", "High");
     }
 
     @Nullable
     public String getContrastDescription()
     {
-        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_CONTRAST, "Normal", "Low", "High");
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CONTRAST, "Normal", "Low", "High");
     }
 
     @Nullable
     public String getSharpnessDescription()
     {
-        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_SHARPNESS, "Normal", "Soft", "Hard");
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_SHARPNESS, "Normal", "Soft", "Hard");
     }
 
     @Nullable
     public String getDigitalZoomDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_DIGITAL_ZOOM);
+        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_DIGITAL_ZOOM);
 
         if (value == null)
             return null;
@@ -140,7 +140,7 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_WHITE_BALANCE);
+        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_WHITE_BALANCE);
 
         if (value == null)
             return null;
@@ -166,7 +166,7 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getObjectDistanceDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_OBJECT_DISTANCE);
+        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_OBJECT_DISTANCE);
 
         if (value == null)
             return null;
@@ -177,7 +177,7 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getFlashIntensityDescription()
     {
-        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_CASIO_FLASH_INTENSITY);
+        Integer value = _directory.getInteger(CasioType1MakernoteDirectory.TAG_FLASH_INTENSITY);
 
         if (value == null)
             return null;
@@ -197,24 +197,24 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     @Nullable
     public String getFlashModeDescription()
     {
-        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_FLASH_MODE, 1, "Auto", "On", "Off", "Red eye reduction");
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_FLASH_MODE, 1, "Auto", "On", "Off", "Red eye reduction");
     }
 
     @Nullable
     public String getFocusingModeDescription()
     {
-        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_FOCUSING_MODE, 2, "Macro", "Auto focus", "Manual focus", "Infinity");
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_FOCUSING_MODE, 2, "Macro", "Auto focus", "Manual focus", "Infinity");
     }
 
     @Nullable
     public String getQualityDescription()
     {
-        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_QUALITY, 1, "Economy", "Normal", "Fine");
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_QUALITY, 1, "Economy", "Normal", "Fine");
     }
 
     @Nullable
     public String getRecordingModeDescription()
     {
-        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_CASIO_RECORDING_MODE, 1, "Single shutter", "Panorama", "Night scene", "Portrait", "Landscape");
+        return getIndexedDescription(CasioType1MakernoteDirectory.TAG_RECORDING_MODE, 1, "Single shutter", "Panorama", "Night scene", "Portrait", "Landscape");
     }
 }

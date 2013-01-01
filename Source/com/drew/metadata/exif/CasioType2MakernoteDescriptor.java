@@ -40,59 +40,59 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_THUMBNAIL_DIMENSIONS:
+            case CasioType2MakernoteDirectory.TAG_THUMBNAIL_DIMENSIONS:
                 return getThumbnailDimensionsDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_THUMBNAIL_SIZE:
+            case CasioType2MakernoteDirectory.TAG_THUMBNAIL_SIZE:
                 return getThumbnailSizeDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_THUMBNAIL_OFFSET:
+            case CasioType2MakernoteDirectory.TAG_THUMBNAIL_OFFSET:
                 return getThumbnailOffsetDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_QUALITY_MODE:
+            case CasioType2MakernoteDirectory.TAG_QUALITY_MODE:
                 return getQualityModeDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_IMAGE_SIZE:
+            case CasioType2MakernoteDirectory.TAG_IMAGE_SIZE:
                 return getImageSizeDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FOCUS_MODE_1:
+            case CasioType2MakernoteDirectory.TAG_FOCUS_MODE_1:
                 return getFocusMode1Description();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_ISO_SENSITIVITY:
+            case CasioType2MakernoteDirectory.TAG_ISO_SENSITIVITY:
                 return getIsoSensitivityDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_WHITE_BALANCE_1:
+            case CasioType2MakernoteDirectory.TAG_WHITE_BALANCE_1:
                 return getWhiteBalance1Description();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FOCAL_LENGTH:
+            case CasioType2MakernoteDirectory.TAG_FOCAL_LENGTH:
                 return getFocalLengthDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_SATURATION:
+            case CasioType2MakernoteDirectory.TAG_SATURATION:
                 return getSaturationDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_CONTRAST:
+            case CasioType2MakernoteDirectory.TAG_CONTRAST:
                 return getContrastDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_SHARPNESS:
+            case CasioType2MakernoteDirectory.TAG_SHARPNESS:
                 return getSharpnessDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_PRINT_IMAGE_MATCHING_INFO:
+            case CasioType2MakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO:
                 return getPrintImageMatchingInfoDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_CASIO_PREVIEW_THUMBNAIL:
+            case CasioType2MakernoteDirectory.TAG_PREVIEW_THUMBNAIL:
                 return getCasioPreviewThumbnailDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_WHITE_BALANCE_BIAS:
+            case CasioType2MakernoteDirectory.TAG_WHITE_BALANCE_BIAS:
                 return getWhiteBalanceBiasDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_WHITE_BALANCE_2:
+            case CasioType2MakernoteDirectory.TAG_WHITE_BALANCE_2:
                 return getWhiteBalance2Description();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_OBJECT_DISTANCE:
+            case CasioType2MakernoteDirectory.TAG_OBJECT_DISTANCE:
                 return getObjectDistanceDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FLASH_DISTANCE:
+            case CasioType2MakernoteDirectory.TAG_FLASH_DISTANCE:
                 return getFlashDistanceDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_RECORD_MODE:
+            case CasioType2MakernoteDirectory.TAG_RECORD_MODE:
                 return getRecordModeDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_SELF_TIMER:
+            case CasioType2MakernoteDirectory.TAG_SELF_TIMER:
                 return getSelfTimerDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_QUALITY:
+            case CasioType2MakernoteDirectory.TAG_QUALITY:
                 return getQualityDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FOCUS_MODE_2:
+            case CasioType2MakernoteDirectory.TAG_FOCUS_MODE_2:
                 return getFocusMode2Description();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_TIME_ZONE:
+            case CasioType2MakernoteDirectory.TAG_TIME_ZONE:
                 return getTimeZoneDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_CCD_ISO_SENSITIVITY:
+            case CasioType2MakernoteDirectory.TAG_CCD_ISO_SENSITIVITY:
                 return getCcdIsoSensitivityDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_COLOUR_MODE:
+            case CasioType2MakernoteDirectory.TAG_COLOUR_MODE:
                 return getColourModeDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_ENHANCEMENT:
+            case CasioType2MakernoteDirectory.TAG_ENHANCEMENT:
                 return getEnhancementDescription();
-            case CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FILTER:
+            case CasioType2MakernoteDirectory.TAG_FILTER:
                 return getFilterDescription();
             default:
                 return super.getDescription(tagType);
@@ -102,37 +102,37 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getFilterDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FILTER, "Off");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_FILTER, "Off");
     }
 
     @Nullable
     public String getEnhancementDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_ENHANCEMENT, "Off");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_ENHANCEMENT, "Off");
     }
 
     @Nullable
     public String getColourModeDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_COLOUR_MODE, "Off");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_COLOUR_MODE, "Off");
     }
 
     @Nullable
     public String getCcdIsoSensitivityDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_CCD_ISO_SENSITIVITY, "Off", "On");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CCD_ISO_SENSITIVITY, "Off", "On");
     }
 
     @Nullable
     public String getTimeZoneDescription()
     {
-        return _directory.getString(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_TIME_ZONE);
+        return _directory.getString(CasioType2MakernoteDirectory.TAG_TIME_ZONE);
     }
 
     @Nullable
     public String getFocusMode2Description()
     {
-        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FOCUS_MODE_2);
+        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_FOCUS_MODE_2);
         if (value==null)
             return null;
         switch (value) {
@@ -148,31 +148,31 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getQualityDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_QUALITY, 3, "Fine");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_QUALITY, 3, "Fine");
     }
 
     @Nullable
     public String getSelfTimerDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_SELF_TIMER, 1, "Off");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_SELF_TIMER, 1, "Off");
     }
 
     @Nullable
     public String getRecordModeDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_RECORD_MODE, 2, "Normal");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_RECORD_MODE, 2, "Normal");
     }
 
     @Nullable
     public String getFlashDistanceDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FLASH_DISTANCE, "Off");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_FLASH_DISTANCE, "Off");
     }
 
     @Nullable
     public String getObjectDistanceDescription()
     {
-        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_OBJECT_DISTANCE);
+        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_OBJECT_DISTANCE);
         if (value==null)
             return null;
         return Integer.toString(value) + " mm";
@@ -181,7 +181,7 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getWhiteBalance2Description()
     {
-        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_WHITE_BALANCE_2);
+        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_WHITE_BALANCE_2);
         if (value==null)
             return null;
         switch (value) {
@@ -201,13 +201,13 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getWhiteBalanceBiasDescription()
     {
-        return _directory.getString(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_WHITE_BALANCE_BIAS);
+        return _directory.getString(CasioType2MakernoteDirectory.TAG_WHITE_BALANCE_BIAS);
     }
 
     @Nullable
     public String getCasioPreviewThumbnailDescription()
     {
-        final byte[] bytes = _directory.getByteArray(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_CASIO_PREVIEW_THUMBNAIL);
+        final byte[] bytes = _directory.getByteArray(CasioType2MakernoteDirectory.TAG_PREVIEW_THUMBNAIL);
         if (bytes==null)
             return null;
         return "<" + bytes.length + " bytes of image data>";
@@ -217,31 +217,31 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     public String getPrintImageMatchingInfoDescription()
     {
         // TODO research PIM specification http://www.ozhiker.com/electronics/pjmt/jpeg_info/pim.html
-        return _directory.getString(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_PRINT_IMAGE_MATCHING_INFO);
+        return _directory.getString(CasioType2MakernoteDirectory.TAG_PRINT_IMAGE_MATCHING_INFO);
     }
 
     @Nullable
     public String getSharpnessDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_SHARPNESS, "-1", "Normal", "+1");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_SHARPNESS, "-1", "Normal", "+1");
     }
 
     @Nullable
     public String getContrastDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_CONTRAST, "-1", "Normal", "+1");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CONTRAST, "-1", "Normal", "+1");
     }
 
     @Nullable
     public String getSaturationDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_SATURATION, "-1", "Normal", "+1");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_SATURATION, "-1", "Normal", "+1");
     }
 
     @Nullable
     public String getFocalLengthDescription()
     {
-        Double value = _directory.getDoubleObject(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FOCAL_LENGTH);
+        Double value = _directory.getDoubleObject(CasioType2MakernoteDirectory.TAG_FOCAL_LENGTH);
         if (value==null)
             return null;
         return Double.toString(value / 10d) + " mm";
@@ -251,7 +251,7 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     public String getWhiteBalance1Description()
     {
         return getIndexedDescription(
-            CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_WHITE_BALANCE_1,
+            CasioType2MakernoteDirectory.TAG_WHITE_BALANCE_1,
             "Auto",
             "Daylight",
             "Shade",
@@ -264,7 +264,7 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getIsoSensitivityDescription()
     {
-        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_ISO_SENSITIVITY);
+        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_ISO_SENSITIVITY);
         if (value==null)
             return null;
         switch (value) {
@@ -284,13 +284,13 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getFocusMode1Description()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_FOCUS_MODE_1, "Normal", "Macro");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_FOCUS_MODE_1, "Normal", "Macro");
     }
 
     @Nullable
     public String getImageSizeDescription()
     {
-        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_IMAGE_SIZE);
+        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_IMAGE_SIZE);
         if (value==null)
             return null;
         switch (value) {
@@ -308,19 +308,19 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getQualityModeDescription()
     {
-        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_QUALITY_MODE, 1, "Fine", "Super Fine");
+        return getIndexedDescription(CasioType2MakernoteDirectory.TAG_QUALITY_MODE, 1, "Fine", "Super Fine");
     }
 
     @Nullable
     public String getThumbnailOffsetDescription()
     {
-        return _directory.getString(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_THUMBNAIL_OFFSET);
+        return _directory.getString(CasioType2MakernoteDirectory.TAG_THUMBNAIL_OFFSET);
     }
 
     @Nullable
     public String getThumbnailSizeDescription()
     {
-        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_THUMBNAIL_SIZE);
+        Integer value = _directory.getInteger(CasioType2MakernoteDirectory.TAG_THUMBNAIL_SIZE);
         if (value==null)
             return null;
         return Integer.toString(value) + " bytes";
@@ -329,9 +329,9 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     @Nullable
     public String getThumbnailDimensionsDescription()
     {
-        int[] dimensions = _directory.getIntArray(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_THUMBNAIL_DIMENSIONS);
+        int[] dimensions = _directory.getIntArray(CasioType2MakernoteDirectory.TAG_THUMBNAIL_DIMENSIONS);
         if (dimensions==null || dimensions.length!=2)
-            return _directory.getString(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_THUMBNAIL_DIMENSIONS);
+            return _directory.getString(CasioType2MakernoteDirectory.TAG_THUMBNAIL_DIMENSIONS);
         return dimensions[0] + " x " + dimensions[1] + " pixels";
     }
 }

@@ -35,52 +35,52 @@ import java.util.HashMap;
  */
 public class CasioType1MakernoteDirectory extends Directory
 {
-    public static final int TAG_CASIO_RECORDING_MODE = 0x0001;
-    public static final int TAG_CASIO_QUALITY = 0x0002;
-    public static final int TAG_CASIO_FOCUSING_MODE = 0x0003;
-    public static final int TAG_CASIO_FLASH_MODE = 0x0004;
-    public static final int TAG_CASIO_FLASH_INTENSITY = 0x0005;
-    public static final int TAG_CASIO_OBJECT_DISTANCE = 0x0006;
-    public static final int TAG_CASIO_WHITE_BALANCE = 0x0007;
-    public static final int TAG_CASIO_UNKNOWN_1 = 0x0008;
-    public static final int TAG_CASIO_UNKNOWN_2 = 0x0009;
-    public static final int TAG_CASIO_DIGITAL_ZOOM = 0x000A;
-    public static final int TAG_CASIO_SHARPNESS = 0x000B;
-    public static final int TAG_CASIO_CONTRAST = 0x000C;
-    public static final int TAG_CASIO_SATURATION = 0x000D;
-    public static final int TAG_CASIO_UNKNOWN_3 = 0x000E;
-    public static final int TAG_CASIO_UNKNOWN_4 = 0x000F;
-    public static final int TAG_CASIO_UNKNOWN_5 = 0x0010;
-    public static final int TAG_CASIO_UNKNOWN_6 = 0x0011;
-    public static final int TAG_CASIO_UNKNOWN_7 = 0x0012;
-    public static final int TAG_CASIO_UNKNOWN_8 = 0x0013;
-    public static final int TAG_CASIO_CCD_SENSITIVITY = 0x0014;
+    public static final int TAG_RECORDING_MODE = 0x0001;
+    public static final int TAG_QUALITY = 0x0002;
+    public static final int TAG_FOCUSING_MODE = 0x0003;
+    public static final int TAG_FLASH_MODE = 0x0004;
+    public static final int TAG_FLASH_INTENSITY = 0x0005;
+    public static final int TAG_OBJECT_DISTANCE = 0x0006;
+    public static final int TAG_WHITE_BALANCE = 0x0007;
+    public static final int TAG_UNKNOWN_1 = 0x0008;
+    public static final int TAG_UNKNOWN_2 = 0x0009;
+    public static final int TAG_DIGITAL_ZOOM = 0x000A;
+    public static final int TAG_SHARPNESS = 0x000B;
+    public static final int TAG_CONTRAST = 0x000C;
+    public static final int TAG_SATURATION = 0x000D;
+    public static final int TAG_UNKNOWN_3 = 0x000E;
+    public static final int TAG_UNKNOWN_4 = 0x000F;
+    public static final int TAG_UNKNOWN_5 = 0x0010;
+    public static final int TAG_UNKNOWN_6 = 0x0011;
+    public static final int TAG_UNKNOWN_7 = 0x0012;
+    public static final int TAG_UNKNOWN_8 = 0x0013;
+    public static final int TAG_CCD_SENSITIVITY = 0x0014;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TAG_CASIO_CCD_SENSITIVITY, "CCD Sensitivity");
-        _tagNameMap.put(TAG_CASIO_CONTRAST, "Contrast");
-        _tagNameMap.put(TAG_CASIO_DIGITAL_ZOOM, "Digital Zoom");
-        _tagNameMap.put(TAG_CASIO_FLASH_INTENSITY, "Flash Intensity");
-        _tagNameMap.put(TAG_CASIO_FLASH_MODE, "Flash Mode");
-        _tagNameMap.put(TAG_CASIO_FOCUSING_MODE, "Focusing Mode");
-        _tagNameMap.put(TAG_CASIO_OBJECT_DISTANCE, "Object Distance");
-        _tagNameMap.put(TAG_CASIO_QUALITY, "Quality");
-        _tagNameMap.put(TAG_CASIO_RECORDING_MODE, "Recording Mode");
-        _tagNameMap.put(TAG_CASIO_SATURATION, "Saturation");
-        _tagNameMap.put(TAG_CASIO_SHARPNESS, "Sharpness");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_1, "Makernote Unknown 1");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_2, "Makernote Unknown 2");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_3, "Makernote Unknown 3");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_4, "Makernote Unknown 4");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_5, "Makernote Unknown 5");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_6, "Makernote Unknown 6");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_7, "Makernote Unknown 7");
-        _tagNameMap.put(TAG_CASIO_UNKNOWN_8, "Makernote Unknown 8");
-        _tagNameMap.put(TAG_CASIO_WHITE_BALANCE, "White Balance");
+        _tagNameMap.put(TAG_CCD_SENSITIVITY, "CCD Sensitivity");
+        _tagNameMap.put(TAG_CONTRAST, "Contrast");
+        _tagNameMap.put(TAG_DIGITAL_ZOOM, "Digital Zoom");
+        _tagNameMap.put(TAG_FLASH_INTENSITY, "Flash Intensity");
+        _tagNameMap.put(TAG_FLASH_MODE, "Flash Mode");
+        _tagNameMap.put(TAG_FOCUSING_MODE, "Focusing Mode");
+        _tagNameMap.put(TAG_OBJECT_DISTANCE, "Object Distance");
+        _tagNameMap.put(TAG_QUALITY, "Quality");
+        _tagNameMap.put(TAG_RECORDING_MODE, "Recording Mode");
+        _tagNameMap.put(TAG_SATURATION, "Saturation");
+        _tagNameMap.put(TAG_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_UNKNOWN_1, "Makernote Unknown 1");
+        _tagNameMap.put(TAG_UNKNOWN_2, "Makernote Unknown 2");
+        _tagNameMap.put(TAG_UNKNOWN_3, "Makernote Unknown 3");
+        _tagNameMap.put(TAG_UNKNOWN_4, "Makernote Unknown 4");
+        _tagNameMap.put(TAG_UNKNOWN_5, "Makernote Unknown 5");
+        _tagNameMap.put(TAG_UNKNOWN_6, "Makernote Unknown 6");
+        _tagNameMap.put(TAG_UNKNOWN_7, "Makernote Unknown 7");
+        _tagNameMap.put(TAG_UNKNOWN_8, "Makernote Unknown 8");
+        _tagNameMap.put(TAG_WHITE_BALANCE, "White Balance");
     }
 
     public CasioType1MakernoteDirectory()
