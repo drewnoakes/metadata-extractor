@@ -420,7 +420,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             // IFD, though the offset is relative to the start of the makernote, not the TIFF
             // header (like everywhere else)
             int ifdStart = subdirOffset + reader.getInt32(subdirOffset + 8);
-            processDirectory(metadata.getOrCreateDirectory(FujifilmMakernoteDirectory.class), processedDirectoryOffsets, ifdStart, tiffHeaderOffset, metadata, reader);
+            processDirectory(metadata.getOrCreateDirectory(FujifilmMakernoteDirectory.class), processedDirectoryOffsets, ifdStart, subdirOffset, metadata, reader);
             reader.setMotorolaByteOrder(byteOrderBefore);
         } else if (cameraModel != null && cameraModel.toUpperCase().startsWith("MINOLTA")) {
             // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
