@@ -80,7 +80,7 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     @Nullable
     public String getPaletteHasTransparencyDescription()
     {
-        return getIndexedDescription(PngDirectory.TAG_INTERLACE_METHOD, null, "Yes");
+        return getIndexedDescription(PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY, null, "Yes");
     }
 
     @Nullable
