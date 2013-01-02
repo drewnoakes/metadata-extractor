@@ -44,7 +44,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetInt8() throws BufferBoundsException
+    public void testGetInt8() throws Exception
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
         RandomAccessReader reader = createReader(buffer);
@@ -56,7 +56,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetUInt8() throws BufferBoundsException
+    public void testGetUInt8() throws Exception
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
         RandomAccessReader reader = createReader(buffer);
@@ -80,7 +80,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetInt16() throws BufferBoundsException
+    public void testGetInt16() throws Exception
     {
         assertEquals(-1, createReader(new byte[]{(byte)0xff, (byte)0xff}).getInt16(0));
 
@@ -99,7 +99,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetUInt16() throws BufferBoundsException
+    public void testGetUInt16() throws Exception
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
         RandomAccessReader reader = createReader(buffer);
@@ -128,7 +128,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetInt32() throws BufferBoundsException
+    public void testGetInt32() throws Exception
     {
         assertEquals(-1, createReader(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff}).getInt32(0));
 
@@ -149,7 +149,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetUInt32() throws BufferBoundsException
+    public void testGetUInt32() throws Exception
     {
         assertEquals(4294967295L, createReader(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff}).getUInt32(0));
 
@@ -197,7 +197,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetInt64_OutOfBounds()
+    public void testGetInt64_OutOfBounds() throws Exception
     {
         try {
             RandomAccessReader reader = createReader(new byte[7]);
@@ -216,7 +216,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetFloat32() throws BufferBoundsException
+    public void testGetFloat32() throws Exception
     {
         final int nanBits = 0x7fc00000;
         assertTrue(Float.isNaN(Float.intBitsToFloat(nanBits)));
@@ -228,7 +228,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetFloat64() throws BufferBoundsException
+    public void testGetFloat64() throws Exception
     {
         final long nanBits = 0xfff0000000000001L;
         assertTrue(Double.isNaN(Double.longBitsToDouble(nanBits)));
@@ -240,7 +240,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetNullTerminatedString() throws BufferBoundsException
+    public void testGetNullTerminatedString() throws Exception
     {
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47};
         RandomAccessReader reader = createReader(bytes);
@@ -261,7 +261,7 @@ public abstract class RandomAccessTestBase
     }
 
     @Test
-    public void testGetString() throws BufferBoundsException
+    public void testGetString() throws Exception
     {
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47};
         RandomAccessReader reader = createReader(bytes);
