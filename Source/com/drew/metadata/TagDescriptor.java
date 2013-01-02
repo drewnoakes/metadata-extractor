@@ -150,12 +150,21 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getSimplifiedRational(final int tagType)
+    protected String getSimpleRational(final int tagType)
     {
         Rational value = _directory.getRational(tagType);
         if (value == null)
             return null;
         return value.toSimpleString(true);
+    }
+
+    @Nullable
+    protected String getDecimalRational(final int tagType, final int decimalPlaces)
+    {
+        Rational value = _directory.getRational(tagType);
+        if (value == null)
+            return null;
+        return String.format("%." + decimalPlaces + "f", value.doubleValue());
     }
 
     @Nullable

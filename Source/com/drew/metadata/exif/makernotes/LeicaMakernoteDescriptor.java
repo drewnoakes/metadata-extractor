@@ -63,7 +63,7 @@ public class LeicaMakernoteDescriptor extends TagDescriptor<LeicaMakernoteDirect
             case TAG_WB_RED_LEVEL:
             case TAG_WB_BLUE_LEVEL:
             case TAG_WB_GREEN_LEVEL:
-                return getSimplifiedRational(tagType);
+                return getSimpleRational(tagType);
             default:
                 return super.getDescription(tagType);
         }
@@ -78,19 +78,19 @@ public class LeicaMakernoteDescriptor extends TagDescriptor<LeicaMakernoteDirect
     @Nullable
     private String getApproximateFNumberDescription()
     {
-        return getSimplifiedRational(TAG_APPROXIMATE_F_NUMBER);
+        return getSimpleRational(TAG_APPROXIMATE_F_NUMBER);
     }
 
     @Nullable
     private String getMeasuredLvDescription()
     {
-        return getSimplifiedRational(TAG_MEASURED_LV);
+        return getSimpleRational(TAG_MEASURED_LV);
     }
 
     @Nullable
     private String getExternalSensorBrightnessValueDescription()
     {
-        return getSimplifiedRational(TAG_EXTERNAL_SENSOR_BRIGHTNESS_VALUE);
+        return getSimpleRational(TAG_EXTERNAL_SENSOR_BRIGHTNESS_VALUE);
     }
 
     @Nullable
