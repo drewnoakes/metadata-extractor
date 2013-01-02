@@ -33,7 +33,7 @@ import static com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory.*;
  * Type-1 is for E-Series cameras prior to (not including) E990.  For example: E700, E800, E900,
  * E900S, E910, E950.
  * <p/>
- * MakerNote starts from ASCII string "Nikon". Data format is the same as IFD, but it starts from
+ * Makernote starts from ASCII string "Nikon". Data format is the same as IFD, but it starts from
  * offset 0x08. This is the same as Olympus except start string. Example of actual data
  * structure is shown below.
  * <pre><code>

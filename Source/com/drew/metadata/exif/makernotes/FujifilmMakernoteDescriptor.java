@@ -30,7 +30,7 @@ import static com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link FujifilmMakernoteDirectory}.
  * <p/>
- * Fujifilm added their MakerNote tag from the Year 2000's models (e.g.Finepix1400,
+ * Fujifilm added their Makernote tag from the Year 2000's models (e.g.Finepix1400,
  * Finepix4700). It uses IFD format and start from ASCII character 'FUJIFILM', and next 4
  * bytes (value 0x000c) points the offset to first IFD entry.
  * <pre><code>
@@ -39,10 +39,10 @@ import static com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory.*;
  * </code></pre>
  * There are two big differences to the other manufacturers.
  * <ul>
- * <li>Fujifilm's Exif data uses Motorola align, but MakerNote ignores it and uses Intel align.</li>
+ * <li>Fujifilm's Exif data uses Motorola align, but Makernote ignores it and uses Intel align.</li>
  * <li>
- * The other manufacturer's MakerNote counts the "offset to data" from the first byte of TIFF header
- * (same as the other IFD), but Fujifilm counts it from the first byte of MakerNote itself.
+ * The other manufacturer's Makernote counts the "offset to data" from the first byte of TIFF header
+ * (same as the other IFD), but Fujifilm counts it from the first byte of Makernote itself.
  * </li>
  * </ul>
  *

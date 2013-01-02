@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Nikon (type 1) cameras.  Type-1 is for E-Series cameras prior to (not including) E990.
  *
- * There are 3 formats of Nikon's MakerNote. MakerNote of E700/E800/E900/E900S/E910/E950
+ * There are 3 formats of Nikon's Makernote. Makernote of E700/E800/E900/E900S/E910/E950
  * starts from ASCII string "Nikon". Data format is the same as IFD, but it starts from
  * offset 0x08. This is the same as Olympus except start string. Example of actual data
  * structure is shown below.
