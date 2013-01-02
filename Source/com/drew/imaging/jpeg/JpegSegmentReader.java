@@ -34,9 +34,9 @@ import java.util.Set;
 /**
  * Performs read functions of JPEG files, returning specific file segments.
  * <p/>
- * JPEG files are composed of a sequence of JPEG 'segments'. Each is identified by one of a set of byte values,
- * modelled in the {@link JpegSegmentType} enumeration. Use <code>readSegments</code> to read out the some or all
- * segments into a {@link JpegSegmentData} object, from which the raw JPEG segment byte arrays may be accessed.
+ * JPEG files are composed of a sequence of consecutive JPEG 'segments'. Each is identified by one of a set of byte
+ * values, modelled in the {@link JpegSegmentType} enumeration. Use <code>readSegments</code> to read out the some
+ * or all segments into a {@link JpegSegmentData} object, from which the raw JPEG segment byte arrays may be accessed.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
