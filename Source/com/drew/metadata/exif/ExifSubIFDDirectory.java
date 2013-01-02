@@ -259,10 +259,22 @@ public class ExifSubIFDDirectory extends Directory
      * Nice digital cameras actually save the focal length as a function of how far they are zoomed in.
      */
     public static final int TAG_FOCAL_LENGTH = 0x920A;
+
+    /**
+     * This tag holds the Exif Makernote. Makernotes are free to be in any format, though they are often IFDs.
+     * To determine the format, we consider the starting bytes of the makernote itself and sometimes the
+     * camera model and make.
+     * <p/>
+     * The component count for this tag includes all of the bytes needed for the makernote.
+     */
+    public static final int TAG_MAKERNOTE = 0x927C;
+
     public static final int TAG_USER_COMMENT = 0x9286;
+
     public static final int TAG_SUBSECOND_TIME = 0x9290;
     public static final int TAG_SUBSECOND_TIME_ORIGINAL = 0x9291;
     public static final int TAG_SUBSECOND_TIME_DIGITIZED = 0x9292;
+
     public static final int TAG_FLASHPIX_VERSION = 0xA000;
     /**
      * Defines Color Space. DCF image must use sRGB color space so value is
@@ -273,6 +285,10 @@ public class ExifSubIFDDirectory extends Directory
     public static final int TAG_EXIF_IMAGE_WIDTH = 0xA002;
     public static final int TAG_EXIF_IMAGE_HEIGHT = 0xA003;
     public static final int TAG_RELATED_SOUND_FILE = 0xA004;
+
+    /** This tag is a pointer to the Exif Interop IFD. */
+    public static final int TAG_INTEROP_OFFSET = 0xA005;
+
     public static final int TAG_FOCAL_PLANE_X_RES = 0xA20E;
     public static final int TAG_FOCAL_PLANE_Y_RES = 0xA20F;
     /**

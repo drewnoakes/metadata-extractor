@@ -76,15 +76,6 @@ public class ExifReader implements JpegSegmentMetadataReader
     /** A 64-bit floating point number. */
     private static final int FMT_DOUBLE = 12;
 
-    /** This tag is a pointer to the Exif SubIFD. */
-    public static final int TAG_EXIF_SUB_IFD_OFFSET = 0x8769;
-    /** This tag is a pointer to the Exif Interop IFD. */
-    public static final int TAG_INTEROP_OFFSET = 0xA005;
-    /** This tag is a pointer to the Exif GPS IFD. */
-    public static final int TAG_GPS_INFO_OFFSET = 0x8825;
-    /** This tag is a pointer to the Exif Makernote IFD. */
-    public static final int TAG_MAKER_NOTE_OFFSET = 0x927C;
-
     public static final int TIFF_HEADER_START_OFFSET = 6;
 
     @NotNull
@@ -132,7 +123,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            extractTiff(metadata, metadata.getOrCreateDirectory(ExifIFD0Directory.class), TIFF_HEADER_START_OFFSET, reader);
+            extractTiff(reader, metadata, metadata.getOrCreateDirectory(ExifIFD0Directory.class), TIFF_HEADER_START_OFFSET);
         } catch (BufferBoundsException e) {
             directory.addError("Exif data segment ended prematurely");
         }
@@ -150,16 +141,16 @@ public class ExifReader implements JpegSegmentMetadataReader
         final ExifIFD0Directory directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
 
         try {
-            extractTiff(metadata, directory, 0, reader);
+            extractTiff(reader, metadata, directory, 0);
         } catch (BufferBoundsException e) {
             directory.addError("Exif data segment ended prematurely");
         }
     }
 
-    private static void extractTiff(@NotNull final Metadata metadata,
-                                    @NotNull final ExifIFD0Directory directory,
-                                    final int tiffHeaderOffset,
-                                    @NotNull final RandomAccessReader reader) throws BufferBoundsException
+    private static void extractTiff(@NotNull final RandomAccessReader reader,
+                                    @NotNull final Metadata metadata,
+                                    @NotNull final Directory firstDirectory,
+                                    final int tiffHeaderOffset) throws BufferBoundsException
     {
         // this should be either "MM" or "II"
         String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
@@ -169,7 +160,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         } else if ("II".equals(byteOrderIdentifier)) {
             reader.setMotorolaByteOrder(false);
         } else {
-            directory.addError("Unclear distinction between Motorola/Intel byte ordering: " + byteOrderIdentifier);
+            firstDirectory.addError("Unclear distinction between Motorola/Intel byte ordering: " + byteOrderIdentifier);
             return;
         }
 
@@ -181,7 +172,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         final int panasonicRawTiffMarker = 0x0055; // for RW2 files
 
         if (tiffMarker != standardTiffMarker && tiffMarker != olympusRawTiffMarker && tiffMarker != panasonicRawTiffMarker) {
-            directory.addError("Unexpected TIFF marker after byte order identifier: 0x" + Integer.toHexString(tiffMarker));
+            firstDirectory.addError("Unexpected TIFF marker after byte order identifier: 0x" + Integer.toHexString(tiffMarker));
             return;
         }
 
@@ -190,14 +181,14 @@ public class ExifReader implements JpegSegmentMetadataReader
         // David Ekholm sent a digital camera image that has this problem
         // TODO getLength should be avoided as it causes RandomAccessStreamReader to read to the end of the stream
         if (firstIfdOffset >= reader.getLength() - 1) {
-            directory.addError("First Exif directory offset is beyond end of Exif data segment");
+            firstDirectory.addError("First Exif directory offset is beyond end of Exif data segment");
             // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
             firstIfdOffset = 14;
         }
 
         Set<Integer> processedDirectoryOffsets = new HashSet<Integer>();
 
-        processIFD(directory, processedDirectoryOffsets, firstIfdOffset, tiffHeaderOffset, metadata, reader);
+        processIFD(firstDirectory, processedDirectoryOffsets, firstIfdOffset, tiffHeaderOffset, metadata, reader);
 
         // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
         ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
@@ -209,14 +200,14 @@ public class ExifReader implements JpegSegmentMetadataReader
                     byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
                     thumbnailDirectory.setThumbnailData(thumbnailData);
                 } catch (BufferBoundsException ex) {
-                    directory.addError("Invalid thumbnail data specification: " + ex.getMessage());
+                    firstDirectory.addError("Invalid thumbnail data specification: " + ex.getMessage());
                 }
             }
         }
     }
 
     /**
-     * Processes a TIFF IFD, storing read tag values in the specified {@link Directory}.
+     * Processes a TIFF IFD, storing tag values in the specified {@link Directory}.
      * <p/>
      * IFD Header:
      * <ul>
@@ -316,33 +307,37 @@ public class ExifReader implements JpegSegmentMetadataReader
                 continue;
             }
 
-            switch (tagType) {
-                case TAG_EXIF_SUB_IFD_OFFSET: {
+            //
+            // Special handling for certain known tags that point to or contain other chunks of data to be processed
+            //
+            if (tagType == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET && directory instanceof ExifIFD0Directory) {
+                if (byteCount != 4) {
+                    directory.addError("Exif SubIFD Offset tag should have a component count of four (bytes) for the offset.");
+                } else {
                     final int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset);
                     processIFD(metadata.getOrCreateDirectory(ExifSubIFDDirectory.class), processedIfdOffsets, subDirOffset, tiffHeaderOffset, metadata, reader);
-                    continue;
                 }
-                case TAG_INTEROP_OFFSET: {
+            } else if (tagType == ExifSubIFDDirectory.TAG_INTEROP_OFFSET && directory instanceof ExifSubIFDDirectory) {
+                if (byteCount != 4) {
+                    directory.addError("Exif Interop Offset tag should have a component count of four (bytes) for the offset.");
+                } else {
                     final int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset);
                     processIFD(metadata.getOrCreateDirectory(ExifInteropDirectory.class), processedIfdOffsets, subDirOffset, tiffHeaderOffset, metadata, reader);
-                    continue;
                 }
-                case TAG_GPS_INFO_OFFSET: {
+            } else if (tagType == ExifIFD0Directory.TAG_GPS_INFO_OFFSET && directory instanceof ExifIFD0Directory) {
+                if (byteCount != 4) {
+                    directory.addError("Exif GPS Info Offset tag should have a component count of four (bytes) for the offset.");
+                } else {
                     final int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset);
                     processIFD(metadata.getOrCreateDirectory(GpsDirectory.class), processedIfdOffsets, subDirOffset, tiffHeaderOffset, metadata, reader);
-                    continue;
                 }
-                case TAG_MAKER_NOTE_OFFSET: {
-                    // The makernote tag contains the encoded makernote data directly.
-                    // Pass the offset to this tag's value. Manufacturer/Model-specific logic will be used to
-                    // determine the correct offset for further processing.
-                    processMakerNote(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, metadata, reader);
-                    continue;
-                }
-                default: {
-                    processTag(directory, tagType, tagValueOffset, componentCount, formatCode, reader);
-                    break;
-                }
+            } else if (tagType == ExifSubIFDDirectory.TAG_MAKERNOTE && directory instanceof ExifSubIFDDirectory) {
+                // The makernote tag contains the encoded makernote data directly.
+                // Pass the offset to this tag's value. Manufacturer/Model-specific logic will be used to
+                // determine the correct offset for further processing.
+                processMakernote(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, metadata, reader);
+            } else {
+                processTag(directory, tagType, tagValueOffset, componentCount, formatCode, reader);
             }
         }
 
@@ -365,7 +360,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         }
     }
 
-    private static void processMakerNote(final int makernoteOffset,
+    private static void processMakernote(final int makernoteOffset,
                                          final @NotNull Set<Integer> processedIfdOffsets,
                                          final int tiffHeaderOffset,
                                          final @NotNull Metadata metadata,
@@ -415,7 +410,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                         break;
                 }
             } else {
-                // The IFD begins with the first MakerNote byte (no ASCII name).  This occurs with CoolPix 775, E990 and D1 models.
+                // The IFD begins with the first Makernote byte (no ASCII name).  This occurs with CoolPix 775, E990 and D1 models.
                 processIFD(metadata.getOrCreateDirectory(NikonType2MakernoteDirectory.class), processedIfdOffsets, makernoteOffset, tiffHeaderOffset, metadata, reader);
             }
         } else if ("SONY CAM".equals(firstEightChars) || "SONY DSC".equals(firstEightChars)) {
@@ -532,7 +527,12 @@ public class ExifReader implements JpegSegmentMetadataReader
         }
     }
 
-    private static void processTag(@NotNull final Directory directory, final int tagType, final int tagValueOffset, final int componentCount, final int formatCode, @NotNull final RandomAccessReader reader) throws BufferBoundsException
+    private static void processTag(@NotNull final Directory directory,
+                                   final int tagType,
+                                   final int tagValueOffset,
+                                   final int componentCount,
+                                   final int formatCode,
+                                   @NotNull final RandomAccessReader reader) throws BufferBoundsException
     {
         // Directory simply stores raw values
         // The display side uses a Descriptor class per directory to turn the raw values into 'pretty' descriptions

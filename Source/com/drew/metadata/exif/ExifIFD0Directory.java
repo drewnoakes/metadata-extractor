@@ -50,6 +50,13 @@ public class ExifIFD0Directory extends Directory
     public static final int TAG_YCBCR_POSITIONING = 0x0213;
     public static final int TAG_REFERENCE_BLACK_WHITE = 0x0214;
 
+
+    /** This tag is a pointer to the Exif SubIFD. */
+    public static final int TAG_EXIF_SUB_IFD_OFFSET = 0x8769;
+
+    /** This tag is a pointer to the Exif GPS IFD. */
+    public static final int TAG_GPS_INFO_OFFSET = 0x8825;
+
     public static final int TAG_COPYRIGHT = 0x8298;
 
     /**
