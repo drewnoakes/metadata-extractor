@@ -132,7 +132,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            extractIFD(metadata, metadata.getOrCreateDirectory(ExifIFD0Directory.class), TIFF_HEADER_START_OFFSET, reader);
+            extractTiff(metadata, metadata.getOrCreateDirectory(ExifIFD0Directory.class), TIFF_HEADER_START_OFFSET, reader);
         } catch (BufferBoundsException e) {
             directory.addError("Exif data segment ended prematurely");
         }
@@ -150,13 +150,13 @@ public class ExifReader implements JpegSegmentMetadataReader
         final ExifIFD0Directory directory = metadata.getOrCreateDirectory(ExifIFD0Directory.class);
 
         try {
-            extractIFD(metadata, directory, 0, reader);
+            extractTiff(metadata, directory, 0, reader);
         } catch (BufferBoundsException e) {
             directory.addError("Exif data segment ended prematurely");
         }
     }
 
-    private void extractIFD(@NotNull Metadata metadata, @NotNull final ExifIFD0Directory directory, int tiffHeaderOffset, @NotNull RandomAccessReader reader) throws BufferBoundsException
+    private void extractTiff(@NotNull Metadata metadata, @NotNull final ExifIFD0Directory directory, int tiffHeaderOffset, @NotNull RandomAccessReader reader) throws BufferBoundsException
     {
         // this should be either "MM" or "II"
         String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
@@ -182,19 +182,19 @@ public class ExifReader implements JpegSegmentMetadataReader
             return;
         }
 
-        int firstDirectoryOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
+        int firstIfdOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
 
         // David Ekholm sent a digital camera image that has this problem
         // TODO getLength should be avoided as it causes RandomAccessStreamReader to read to the end of the stream
-        if (firstDirectoryOffset >= reader.getLength() - 1) {
+        if (firstIfdOffset >= reader.getLength() - 1) {
             directory.addError("First Exif directory offset is beyond end of Exif data segment");
             // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
-            firstDirectoryOffset = 14;
+            firstIfdOffset = 14;
         }
 
         Set<Integer> processedDirectoryOffsets = new HashSet<Integer>();
 
-        processIFD(directory, processedDirectoryOffsets, firstDirectoryOffset, tiffHeaderOffset, metadata, reader);
+        processIFD(directory, processedDirectoryOffsets, firstIfdOffset, tiffHeaderOffset, metadata, reader);
 
         // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
         ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);

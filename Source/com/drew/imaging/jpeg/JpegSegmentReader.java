@@ -67,7 +67,7 @@ public class JpegSegmentReader
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(file);
-            return JpegSegmentReader.readSegments(new StreamReader(stream), segmentTypes);
+            return readSegments(new StreamReader(stream), segmentTypes);
         } finally {
             if (stream != null) {
                 stream.close();
