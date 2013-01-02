@@ -20,7 +20,6 @@
  */
 package com.drew.metadata.exif.makernotes;
 
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
@@ -29,6 +28,7 @@ import com.drew.metadata.Age;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Face;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -586,7 +586,7 @@ public class PanasonicMakernoteDirectory extends Directory
                         , null, null);
             }
             return faces;
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -620,7 +620,7 @@ public class PanasonicMakernoteDirectory extends Directory
                         Age.fromPanasonicString(age));
             }
             return faces;
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }

@@ -24,6 +24,8 @@ package com.drew.lang;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -74,7 +76,7 @@ public abstract class RandomAccessTestBase
             RandomAccessReader reader = createReader(new byte[2]);
             reader.getUInt8(2);
             Assert.fail("Exception expected");
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 2, requested count: 1, max index: 1)", ex.getMessage());
         }
     }
@@ -122,7 +124,7 @@ public abstract class RandomAccessTestBase
             RandomAccessReader reader = createReader(new byte[2]);
             reader.getUInt16(1);
             Assert.fail("Exception expected");
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 1, requested count: 2, max index: 1)", ex.getMessage());
         }
     }
@@ -176,13 +178,13 @@ public abstract class RandomAccessTestBase
             RandomAccessReader reader = createReader(new byte[3]);
             reader.getInt32(0);
             Assert.fail("Exception expected");
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 0, requested count: 4, max index: 2)", ex.getMessage());
         }
     }
 
     @Test
-    public void testGetInt64() throws BufferBoundsException
+    public void testGetInt64() throws IOException
     {
         byte[] buffer = new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)0xFF};
         RandomAccessReader reader = createReader(buffer);
@@ -203,14 +205,14 @@ public abstract class RandomAccessTestBase
             RandomAccessReader reader = createReader(new byte[7]);
             reader.getInt64(0);
             Assert.fail("Exception expected");
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 0, requested count: 8, max index: 6)", ex.getMessage());
         }
         try {
             RandomAccessReader reader = createReader(new byte[7]);
             reader.getInt64(-1);
             Assert.fail("Exception expected");
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             assertEquals("Attempt to read from buffer using a negative index (-1)", ex.getMessage());
         }
     }
@@ -288,7 +290,7 @@ public abstract class RandomAccessTestBase
 
         try {
             reader.getBytes(0x6FFFFFFF, 0x6FFFFFFF);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             assertEquals("Number of requested bytes summed with starting index exceed maximum range of signed 32 bit integers (requested index: 1879048191, requested count: 1879048191)", e.getMessage());
         }
     }
@@ -300,7 +302,7 @@ public abstract class RandomAccessTestBase
 
         try {
             reader.getBytes(5, 10);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 5, requested count: 10, max index: 9)", e.getMessage());
         }
     }
@@ -316,7 +318,7 @@ public abstract class RandomAccessTestBase
         try {
             createReader(new byte[50]).getBytes(0, 51);
             fail("Expecting exception");
-        } catch (BufferBoundsException ex) {}
+        } catch (IOException ex) {}
     }
 
     @Test
@@ -333,6 +335,6 @@ public abstract class RandomAccessTestBase
             reader.getInt8(0);
             reader.getInt8(1);
             fail("Expecting exception");
-        } catch (BufferBoundsException ex) {}
+        } catch (IOException ex) {}
     }
 }

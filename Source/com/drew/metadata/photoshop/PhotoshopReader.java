@@ -22,7 +22,6 @@ package com.drew.metadata.photoshop;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
@@ -30,6 +29,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.iptc.IptcReader;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -64,7 +64,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         int pos;
         try {
             pos = reader.getString(0, 13).equals("Photoshop 3.0") ? 14 : 0;
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             directory.addError("Unable to read header");
             return;
         }
@@ -72,7 +72,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         long length;
         try {
             length = reader.getLength();
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             directory.addError("Unable to read Photoshop data: " + e.getMessage());
             return;
         }
@@ -117,7 +117,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 if (tagType >= 0x0fa0 && tagType <= 0x1387)
                     PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));
-            } catch (BufferBoundsException ex) {
+            } catch (IOException ex) {
                 directory.addError(ex.getMessage());
                 return;
             }

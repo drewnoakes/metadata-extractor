@@ -22,7 +22,6 @@ package com.drew.metadata.exif;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
@@ -31,6 +30,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.makernotes.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -111,7 +111,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                 directory.addError("Exif data segment must contain at least 14 bytes");
                 return;
             }
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             directory.addError("Unable to read Exif data: " + e.getMessage());
             return;
         }
@@ -124,7 +124,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             }
 
             extractTiff(reader, metadata, metadata.getOrCreateDirectory(ExifIFD0Directory.class), TIFF_HEADER_START_OFFSET);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             directory.addError("Exif data segment ended prematurely");
         }
     }
@@ -142,15 +142,15 @@ public class ExifReader implements JpegSegmentMetadataReader
 
         try {
             extractTiff(reader, metadata, directory, 0);
-        } catch (BufferBoundsException e) {
-            directory.addError("Exif data segment ended prematurely");
+        } catch (IOException e) {
+            directory.addError("IO problem: " + e.getMessage());
         }
     }
 
     private static void extractTiff(@NotNull final RandomAccessReader reader,
                                     @NotNull final Metadata metadata,
                                     @NotNull final Directory firstDirectory,
-                                    final int tiffHeaderOffset) throws BufferBoundsException
+                                    final int tiffHeaderOffset) throws IOException
     {
         // this should be either "MM" or "II"
         String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
@@ -199,7 +199,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                 try {
                     byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
                     thumbnailDirectory.setThumbnailData(thumbnailData);
-                } catch (BufferBoundsException ex) {
+                } catch (IOException ex) {
                     firstDirectory.addError("Invalid thumbnail data specification: " + ex.getMessage());
                 }
             }
@@ -231,7 +231,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                                    final int ifdOffset,
                                    final int tiffHeaderOffset,
                                    @NotNull final Metadata metadata,
-                                   @NotNull final RandomAccessReader reader) throws BufferBoundsException
+                                   @NotNull final RandomAccessReader reader) throws IOException
     {
         // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
         if (processedIfdOffsets.contains(Integer.valueOf(ifdOffset)))
@@ -364,7 +364,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                                          final @NotNull Set<Integer> processedIfdOffsets,
                                          final int tiffHeaderOffset,
                                          final @NotNull Metadata metadata,
-                                         final @NotNull RandomAccessReader reader) throws BufferBoundsException
+                                         final @NotNull RandomAccessReader reader) throws IOException
     {
         // Determine the camera model and makernote format
         Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
@@ -522,7 +522,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             directory.setInt(KodakMakernoteDirectory.TAG_COLOR_MODE, reader.getUInt16(dataOffset + 102));
             directory.setInt(KodakMakernoteDirectory.TAG_DIGITAL_ZOOM, reader.getUInt16(dataOffset + 104));
             directory.setInt(KodakMakernoteDirectory.TAG_SHARPNESS, reader.getInt8(dataOffset + 107));
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             directory.addError("Error processing Kodak makernote data: " + ex.getMessage());
         }
     }
@@ -532,7 +532,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                                    final int tagValueOffset,
                                    final int componentCount,
                                    final int formatCode,
-                                   @NotNull final RandomAccessReader reader) throws BufferBoundsException
+                                   @NotNull final RandomAccessReader reader) throws IOException
     {
         // Directory simply stores raw values
         // The display side uses a Descriptor class per directory to turn the raw values into 'pretty' descriptions

@@ -21,13 +21,13 @@
 
 package com.drew.metadata.icc;
 
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
@@ -204,7 +204,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                 default:
                     return String.format("%s(0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
             }
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             // TODO decode these values during IccReader.extract so we can report any errors at that time
             // It is convention to return null if a description cannot be formulated.
             // If an error is to be reported, it should be done during the extraction process.
@@ -266,7 +266,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         int i;
         try {
             i = getInt32FromString(str);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return str;
         }
         switch (i) {
@@ -296,7 +296,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         int i;
         try {
             i = getInt32FromString(str);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return str;
         }
         switch (i) {
@@ -334,7 +334,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         return String.format("%d.%d.%d", m, r, R);
     }
 
-    private static int getInt32FromString(@NotNull String string) throws BufferBoundsException
+    private static int getInt32FromString(@NotNull String string) throws IOException
     {
         byte[] bytes = string.getBytes();
         return new ByteArrayReader(bytes).getInt32(0);

@@ -22,13 +22,13 @@ package com.drew.metadata.icc;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -118,19 +118,19 @@ public class IccReader implements JpegSegmentMetadataReader
                 byte[] b = reader.getBytes(tagPtr, tagLen);
                 directory.setByteArray(tagType, b);
             }
-        } catch (BufferBoundsException ex) {
+        } catch (IOException ex) {
             directory.addError("Exception reading ICC profile: " + ex.getMessage());
         }
     }
 
-    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
+    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setString(tagType, getStringFromInt32(i));
     }
 
-    private void setInt32(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
+    private void setInt32(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
@@ -138,7 +138,7 @@ public class IccReader implements JpegSegmentMetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
+    private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
     {
         long l = reader.getInt64(tagType);
         if (l != 0)
@@ -146,7 +146,7 @@ public class IccReader implements JpegSegmentMetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue", "MagicConstant"})
-    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws BufferBoundsException
+    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws IOException
     {
         final int y = reader.getUInt16(tagType);
         final int m = reader.getUInt16(tagType + 2);
@@ -167,7 +167,7 @@ public class IccReader implements JpegSegmentMetadataReader
     public static String getStringFromInt32(int d)
     {
         // MSB
-        byte[] b = new byte[]{
+        byte[] b = new byte[] {
                 (byte) ((d & 0xFF000000) >> 24),
                 (byte) ((d & 0x00FF0000) >> 16),
                 (byte) ((d & 0x0000FF00) >> 8),

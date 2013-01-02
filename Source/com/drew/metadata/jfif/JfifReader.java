@@ -22,12 +22,12 @@ package com.drew.metadata.jfif;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -78,7 +78,7 @@ public class JfifReader implements JpegSegmentMetadataReader
             int width = reader.getUInt16(JfifDirectory.TAG_RESY);
             directory.setInt(JfifDirectory.TAG_RESY, width);
 
-        } catch (BufferBoundsException me) {
+        } catch (IOException me) {
             directory.addError(me.getMessage());
         }
     }

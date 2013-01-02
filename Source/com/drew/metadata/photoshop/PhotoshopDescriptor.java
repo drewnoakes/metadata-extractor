@@ -20,12 +20,13 @@
  */
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
+
+import java.io.IOException;
 
 /** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
 public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
@@ -131,7 +132,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                     ? String.format("%d", s + 2)
                     : String.format("Unknown 0x%04X", s);
             return String.format("%d (%s), %s format, %s scans", q1, quality, format, scans);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -216,7 +217,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             pos += writerLength * 2;
             int fileVersion = reader.getInt32(pos);
             return String.format("%d (%s, %s) %d", ver, readerStr, writerStr, fileVersion);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -243,7 +244,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 String slName=new String(b, pos, slNameLen*2,"UTF-16");
                 res+=slName;
             }*/
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -275,7 +276,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             return String.format("%s, %dx%d, Decomp %d bytes, %d bpp, %d bytes",
                     format == 1 ? "JpegRGB" : "RawRGB",
                     width, height, totalSize, bpp, compSize);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }
@@ -298,7 +299,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
         RandomAccessReader reader = new ByteArrayReader(bytes);
         try {
             return String.format("%d", reader.getInt32(0));
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }

@@ -28,7 +28,7 @@ import java.io.IOException;
  * 
  * @author Drew Noakes http://drewnoakes.com
  */
-public final class BufferBoundsException extends Exception
+public final class BufferBoundsException extends IOException
 {
     private static final long serialVersionUID = 2911102837808946396L;
 
@@ -40,11 +40,6 @@ public final class BufferBoundsException extends Exception
     public BufferBoundsException(final String message)
     {
         super(message);
-    }
-
-    public BufferBoundsException(final String message, final IOException innerException)
-    {
-        super(message, innerException);
     }
 
     private static String getMessage(int index, int bytesRequested, long bufferLength)

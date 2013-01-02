@@ -23,6 +23,7 @@ package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -34,7 +35,6 @@ import java.io.UnsupportedEncodingException;
  * Concrete implementations include:
  * <ul>
  *     <li>{@link ByteArrayReader}</li>
- *     <li>{@link RandomAccessReader}</li>
  *     <li>{@link RandomAccessStreamReader}</li>
  * </ul>
  *
@@ -45,16 +45,18 @@ public abstract class RandomAccessReader
     private boolean _isMotorolaByteOrder = true;
 
     /**
-     * Gets the byte value at the specified byte index.
+     * Gets the byte value at the specified byte <code>index</code>.
      * <p/>
      * Implementations should not perform any bounds checking in this method. That should be performed
      * in <code>validateIndex</code> and <code>isValidIndex</code>.
      *
      * @param index The index from which to read the byte
      * @return The read byte value
-     * @throws BufferBoundsException If the index is invalid, or otherwise unable to be read
+     * @throws IllegalArgumentException <code>index</code> or <code>count</code> are negative
+     * @throws BufferBoundsException if the requested byte is beyond the end of the underlying data source
+     * @throws IOException if the byte is unable to be read
      */
-    protected abstract byte getByte(int index) throws BufferBoundsException;
+    protected abstract byte getByte(int index) throws IOException;
 
     /**
      * Returns the required number of bytes from the specified index from the underlying source.
@@ -62,25 +64,26 @@ public abstract class RandomAccessReader
      * @param index The index from which the bytes begins in the underlying source
      * @param count The number of bytes to be returned
      * @return The requested bytes
-     * @throws BufferBoundsException If the index is invalid, or if the requested number of bytes were unavailable
-     * or otherwise unable to be read
+     * @throws IllegalArgumentException <code>index</code> or <code>count</code> are negative
+     * @throws BufferBoundsException if the requested bytes extend beyond the end of the underlying data source
+     * @throws IOException if the byte is unable to be read
      */
     @NotNull
-    public abstract byte[] getBytes(int index, int count) throws BufferBoundsException;
+    public abstract byte[] getBytes(int index, int count) throws IOException;
 
     /**
      * Ensures that the buffered bytes extend to cover the specified index. If not, an attempt is made
      * to read to that point.
      * <p/>
-     * If the stream ends before the point is reached, a {@link com.drew.lang.BufferBoundsException} is raised.
+     * If the stream ends before the point is reached, a {@link BufferBoundsException} is raised.
      *
      * @param index the index from which the required bytes start
      * @param bytesRequested the number of bytes which are required
-     * @throws com.drew.lang.BufferBoundsException if the stream ends before the required number of bytes are acquired
+     * @throws IOException if the stream ends before the required number of bytes are acquired
      */
-    protected abstract void validateIndex(int index, int bytesRequested) throws BufferBoundsException;
+    protected abstract void validateIndex(int index, int bytesRequested) throws IOException;
 
-    protected abstract boolean isValidIndex(int index, int bytesRequested) throws BufferBoundsException;
+    protected abstract boolean isValidIndex(int index, int bytesRequested) throws IOException;
 
     /**
      * Returns the length of the data source in bytes.
@@ -94,7 +97,7 @@ public abstract class RandomAccessReader
      *
      * @return the length of the data source, in bytes.
      */
-    public abstract long getLength() throws BufferBoundsException;
+    public abstract long getLength() throws IOException;
 
     /**
      * Sets the endianness of this reader.
@@ -127,9 +130,9 @@ public abstract class RandomAccessReader
      *
      * @param index position within the data buffer to read byte
      * @return the 8 bit int value, between 0 and 255
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public short getUInt8(int index) throws BufferBoundsException
+    public short getUInt8(int index) throws IOException
     {
         validateIndex(index, 1);
 
@@ -141,9 +144,9 @@ public abstract class RandomAccessReader
      *
      * @param index position within the data buffer to read byte
      * @return the 8 bit int value, between 0x00 and 0xFF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public byte getInt8(int index) throws BufferBoundsException
+    public byte getInt8(int index) throws IOException
     {
         validateIndex(index, 1);
 
@@ -155,9 +158,9 @@ public abstract class RandomAccessReader
      *
      * @param index position within the data buffer to read first byte
      * @return the 16 bit int value, between 0x0000 and 0xFFFF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public int getUInt16(int index) throws BufferBoundsException
+    public int getUInt16(int index) throws IOException
     {
         validateIndex(index, 2);
 
@@ -177,9 +180,9 @@ public abstract class RandomAccessReader
      *
      * @param index position within the data buffer to read first byte
      * @return the 16 bit int value, between 0x0000 and 0xFFFF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public short getInt16(int index) throws BufferBoundsException
+    public short getInt16(int index) throws IOException
     {
         validateIndex(index, 2);
 
@@ -199,9 +202,9 @@ public abstract class RandomAccessReader
      *
      * @param index position within the data buffer to read first byte
      * @return the unsigned 32-bit int value as a long, between 0x00000000 and 0xFFFFFFFF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public long getUInt32(int index) throws BufferBoundsException
+    public long getUInt32(int index) throws IOException
     {
         validateIndex(index, 4);
 
@@ -225,9 +228,9 @@ public abstract class RandomAccessReader
      *
      * @param index position within the data buffer to read first byte
      * @return the signed 32 bit int value, between 0x00000000 and 0xFFFFFFFF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public int getInt32(int index) throws BufferBoundsException
+    public int getInt32(int index) throws IOException
     {
         validateIndex(index, 4);
 
@@ -251,9 +254,9 @@ public abstract class RandomAccessReader
      *
      * @param index position within the data buffer to read first byte
      * @return the 64 bit int value, between 0x0000000000000000 and 0xFFFFFFFFFFFFFFFF
-     * @throws BufferBoundsException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public long getInt64(int index) throws BufferBoundsException
+    public long getInt64(int index) throws IOException
     {
         validateIndex(index, 8);
 
@@ -280,7 +283,7 @@ public abstract class RandomAccessReader
         }
     }
 
-    public float getS15Fixed16(int index) throws BufferBoundsException
+    public float getS15Fixed16(int index) throws IOException
     {
         validateIndex(index, 4);
 
@@ -300,24 +303,24 @@ public abstract class RandomAccessReader
         }
     }
 
-    public float getFloat32(int index) throws BufferBoundsException
+    public float getFloat32(int index) throws IOException
     {
         return Float.intBitsToFloat(getInt32(index));
     }
 
-    public double getDouble64(int index) throws BufferBoundsException
+    public double getDouble64(int index) throws IOException
     {
         return Double.longBitsToDouble(getInt64(index));
     }
 
     @NotNull
-    public String getString(int index, int bytesRequested) throws BufferBoundsException
+    public String getString(int index, int bytesRequested) throws IOException
     {
         return new String(getBytes(index, bytesRequested));
     }
 
     @NotNull
-    public String getString(int index, int bytesRequested, String charset) throws BufferBoundsException
+    public String getString(int index, int bytesRequested, String charset) throws IOException
     {
         byte[] bytes = getBytes(index, bytesRequested);
         try {
@@ -335,10 +338,10 @@ public abstract class RandomAccessReader
      * @param maxLengthBytes The maximum number of bytes to read.  If a zero-byte is not reached within this limit,
      *                       reading will stop and the string will be truncated to this length.
      * @return The read string.
-     * @throws BufferBoundsException The buffer does not contain enough bytes to satisfy this request.
+     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public String getNullTerminatedString(int index, int maxLengthBytes) throws BufferBoundsException
+    public String getNullTerminatedString(int index, int maxLengthBytes) throws IOException
     {
         // NOTE currently only really suited to single-byte character strings
 

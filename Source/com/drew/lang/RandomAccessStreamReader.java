@@ -67,7 +67,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
      * @return the length of the data source, in bytes.
      */
     @Override
-    public long getLength() throws BufferBoundsException
+    public long getLength() throws IOException
     {
         isValidIndex(Integer.MAX_VALUE, 1);
         assert(_isStreamFinished);
@@ -85,7 +85,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
      * @throws BufferBoundsException if the stream ends before the required number of bytes are acquired
      */
     @Override
-    protected void validateIndex(int index, int bytesRequested) throws BufferBoundsException
+    protected void validateIndex(int index, int bytesRequested) throws IOException
     {
         if (index < 0) {
             throw new BufferBoundsException(String.format("Attempt to read from buffer using a negative index (%d)", index));
@@ -103,7 +103,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
     }
 
     @Override
-    protected boolean isValidIndex(int index, int bytesRequested) throws BufferBoundsException
+    protected boolean isValidIndex(int index, int bytesRequested) throws IOException
     {
         if (index < 0 || bytesRequested < 0) {
             return false;
@@ -130,12 +130,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
             byte[] chunk = new byte[_chunkLength];
             int totalBytesRead = 0;
             while (!_isStreamFinished && totalBytesRead != _chunkLength) {
-                int bytesRead;
-                try {
-                    bytesRead = _stream.read(chunk, totalBytesRead, _chunkLength - totalBytesRead);
-                } catch (IOException e) {
-                    throw new BufferBoundsException("IOException reading from stream", e);
-                }
+                int bytesRead = _stream.read(chunk, totalBytesRead, _chunkLength - totalBytesRead);
                 if (bytesRead == -1) {
                     // the stream has ended, which may be ok
                     _isStreamFinished = true;
@@ -158,7 +153,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
     }
 
     @Override
-    protected byte getByte(int index)
+    protected byte getByte(int index) throws IOException
     {
         assert(index >= 0);
 
@@ -171,7 +166,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
 
     @NotNull
     @Override
-    public byte[] getBytes(int index, int count) throws BufferBoundsException
+    public byte[] getBytes(int index, int count) throws IOException
     {
         validateIndex(index, count);
 

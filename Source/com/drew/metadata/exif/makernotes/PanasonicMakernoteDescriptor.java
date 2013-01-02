@@ -20,7 +20,6 @@
  */
 package com.drew.metadata.exif.makernotes;
 
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
@@ -28,6 +27,8 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Age;
 import com.drew.metadata.Face;
 import com.drew.metadata.TagDescriptor;
+
+import java.io.IOException;
 
 import static com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory.*;
 
@@ -256,7 +257,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return "Stretch High";
 
             return "Unknown (" + val1 + " " + val2 + ")";
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             return null;
         }
     }

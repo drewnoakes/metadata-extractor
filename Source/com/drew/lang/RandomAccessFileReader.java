@@ -57,28 +57,22 @@ public class RandomAccessFileReader extends RandomAccessReader
     }
 
     @Override
-    protected byte getByte(int index) throws BufferBoundsException
+    protected byte getByte(int index) throws IOException
     {
         if (index != _currentIndex)
             seek(index);
 
-        final int b;
-        try {
-            b = _file.read();
-        } catch (IOException e) {
-            throw new BufferBoundsException("IOException reading from file.", e);
-        }
-
+        final int b = _file.read();
         if (b < 0)
             throw new BufferBoundsException("Unexpected end of file encountered.");
-        assert(b <= 0xff);
+        assert (b <= 0xff);
         _currentIndex++;
-        return (byte) b;
+        return (byte)b;
     }
 
     @Override
     @NotNull
-    public byte[] getBytes(int index, int count) throws BufferBoundsException
+    public byte[] getBytes(int index, int count) throws IOException
     {
         validateIndex(index, count);
 
@@ -86,33 +80,24 @@ public class RandomAccessFileReader extends RandomAccessReader
             seek(index);
 
         byte[] bytes = new byte[count];
-        final int bytesRead;
-        try {
-            bytesRead = _file.read(bytes);
-            _currentIndex += bytesRead;
-        } catch (IOException e) {
-            throw new BufferBoundsException("Unexpected end of file encountered.", e);
-        }
+        final int bytesRead = _file.read(bytes);
+        _currentIndex += bytesRead;
         if (bytesRead != count)
             throw new BufferBoundsException("Unexpected end of file encountered.");
         return bytes;
     }
 
-    private void seek(final int index) throws BufferBoundsException
+    private void seek(final int index) throws IOException
     {
         if (index == _currentIndex)
             return;
 
-        try {
-            _file.seek(index);
-            _currentIndex = index;
-        } catch (IOException e) {
-            throw new BufferBoundsException("IOException seeking in file.", e);
-        }
+        _file.seek(index);
+        _currentIndex = index;
     }
 
     @Override
-    protected boolean isValidIndex(int index, int bytesRequested) throws BufferBoundsException
+    protected boolean isValidIndex(int index, int bytesRequested) throws IOException
     {
         return bytesRequested >= 0
                 && index >= 0
@@ -120,7 +105,7 @@ public class RandomAccessFileReader extends RandomAccessReader
     }
 
     @Override
-    protected void validateIndex(final int index, final int bytesRequested) throws BufferBoundsException
+    protected void validateIndex(final int index, final int bytesRequested) throws IOException
     {
         if (!isValidIndex(index, bytesRequested))
             throw new BufferBoundsException(index, bytesRequested, _length);

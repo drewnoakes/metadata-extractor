@@ -23,6 +23,8 @@ package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
 
+import java.io.IOException;
+
 /**
  * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
  * issues.
@@ -54,20 +56,20 @@ public class ByteArrayReader extends RandomAccessReader
     }
 
     @Override
-    protected byte getByte(int index)
+    protected byte getByte(int index) throws IOException
     {
         return _buffer[index];
     }
 
     @Override
-    protected void validateIndex(int index, int bytesRequested) throws BufferBoundsException
+    protected void validateIndex(int index, int bytesRequested) throws IOException
     {
         if (!isValidIndex(index, bytesRequested))
             throw new BufferBoundsException(index, bytesRequested, _buffer.length);
     }
 
     @Override
-    protected boolean isValidIndex(int index, int bytesRequested) throws BufferBoundsException
+    protected boolean isValidIndex(int index, int bytesRequested) throws IOException
     {
         return bytesRequested >= 0
             && index >= 0
@@ -76,7 +78,7 @@ public class ByteArrayReader extends RandomAccessReader
 
     @Override
     @NotNull
-    public byte[] getBytes(int index, int count) throws BufferBoundsException
+    public byte[] getBytes(int index, int count) throws IOException
     {
         validateIndex(index, count);
 

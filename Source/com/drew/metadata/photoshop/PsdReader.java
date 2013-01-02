@@ -21,11 +21,12 @@
 
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.BufferBoundsException;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
+
+import java.io.IOException;
 
 /**
  * Reads metadata stored within PSD file format data.
@@ -71,7 +72,7 @@ public class PsdReader implements MetadataReader
 
             final int colorMode = reader.getUInt16(24);
             directory.setInt(PsdHeaderDirectory.TAG_COLOR_MODE, colorMode);
-        } catch (BufferBoundsException e) {
+        } catch (IOException e) {
             directory.addError("Unable to read PSD header");
         }
     }
