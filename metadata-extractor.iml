@@ -6,15 +6,12 @@
       <sourceFolder url="file://$MODULE_DIR$/Samples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Source" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/Output" />
-      <excludeFolder url="file://$MODULE_DIR$/TestReports" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="xmpcore-5.1.2-sources" level="project" />
-    <orderEntry type="library" name="xmpcore-5.1.2" level="project" />
-    <orderEntry type="library" name="junit-4.11" level="project" />
-    <orderEntry type="library" name="junit-4.11-src" level="project" />
+    <orderEntry type="library" name="Libraries" level="project" />
   </component>
 </module>
 
