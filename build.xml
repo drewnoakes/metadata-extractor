@@ -145,7 +145,7 @@
             version="true"
             use="true"
             access="protected"
-            windowtitle="Metadata-Extractor - Javadoc - An Open Source Java Library for Image File Metadata"
+            windowtitle="metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from image files"
             failonerror="true">
             <arg value="-notimestamp" />
             <!-- be sure to only use single quotes in the CDATA sections below -->
@@ -161,6 +161,7 @@ urchinTracker();
             <!-- Only build Java -->
             <packageset dir="${src}" defaultexcludes="yes">
                 <include name="com/**"/>
+                <exclude name="com/drew/tools/**"/>
             </packageset>
 
             <classpath>
