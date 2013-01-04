@@ -24,8 +24,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 /**
- * Models a particular tag within a directory and provides methods for obtaining its value.  Note that a Tag instance is
- * specific to a particular metadata extraction and cannot be reused.
+ * Models a particular tag within a {@link com.drew.metadata.Directory} and provides methods for obtaining its value.
+ * Immutable.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
@@ -90,10 +90,10 @@ public class Tag
     }
 
     /**
-     * Get the name of the directory in which the tag exists, such as
+     * Get the name of the {@link com.drew.metadata.Directory} in which the tag exists, such as
      * <code>Exif</code>, <code>GPS</code> or <code>Interoperability</code>.
      *
-     * @return name of the directory in which this tag exists
+     * @return name of the {@link com.drew.metadata.Directory} in which this tag exists
      */
     @NotNull
     public String getDirectoryName()
@@ -110,7 +110,7 @@ public class Tag
     public String toString()
     {
         String description = getDescription();
-        if (description==null)
+        if (description == null)
             description = _directory.getString(getTagType()) + " (unable to formulate description)";
         return "[" + _directory.getName() + "] " + getTagName() + " - " + description;
     }
