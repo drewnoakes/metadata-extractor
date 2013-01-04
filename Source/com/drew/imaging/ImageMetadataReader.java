@@ -184,21 +184,24 @@ public class ImageMetadataReader
      * An application entry point.  Takes the name of one or more files as arguments and prints the contents of all
      * metadata directories to <code>System.out</code>.
      * <p/>
-     * If <code>/thumb</code> is passed, then any thumbnail data will be written to a file with name of the
+     * If <code>-thumb</code> is passed, then any thumbnail data will be written to a file with name of the
      * input file having <code>.thumb.jpg</code> appended.
      * <p/>
-     * If <code>/wiki</code> is passed, then output will be in a format suitable for Google Code's wiki.
+     * If <code>-wiki</code> is passed, then output will be in a format suitable for Google Code's wiki.
+     * <p/>
+     * If <code>-hex</code> is passed, then the ID of each tag will be displayed in hexadecimal.
      *
      * @param args the command line arguments
      */
     public static void main(@NotNull String[] args) throws MetadataException, IOException
     {
         Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
-        boolean thumbRequested = argList.remove("/thumb");
-        boolean wikiFormat = argList.remove("/wiki");
+        boolean thumbRequested = argList.remove("-thumb");
+        boolean wikiFormat = argList.remove("-wiki");
+        boolean showHex = argList.remove("-hex");
 
         if (argList.size() < 1) {
-            System.out.println("Usage: java -jar metadata-extractor-a.b.c.jar <filename> [<filename>] [/thumb] [/wiki]");
+            System.out.println("Usage: java -jar metadata-extractor-a.b.c.jar <filename> [<filename>] [-thumb] [-wiki] [-hex]");
             System.exit(1);
         }
 
@@ -260,7 +263,11 @@ public class ImageMetadataReader
                     }
                     else
                     {
-                        System.out.printf("[%s] %s = %s%n", directoryName, tagName, description);
+                        if (showHex) {
+                            System.out.printf("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description);
+                        } else {
+                            System.out.printf("[%s] %s = %s%n", directoryName, tagName, description);
+                        }
                     }
                 }
 
