@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.lang.ByteArrayReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -31,9 +31,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * JUnit test case for class ExifReader.
@@ -46,7 +44,7 @@ public class ExifReaderTest
     public static Metadata processBytes(@NotNull String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
-        new ExifReader().extract(new ByteArrayReader(FileUtil.readBytes(filePath)), metadata);
+        new ExifReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.APP1);
         return metadata;
     }
 
@@ -62,7 +60,7 @@ public class ExifReaderTest
     public void testExtractWithNullDataThrows() throws Exception
     {
         try{
-            new ExifReader().extract(null, new Metadata());
+            new ExifReader().extract(null, new Metadata(), JpegSegmentType.APP1);
             Assert.fail("Exception expected");
         } catch (NullPointerException npe) {
             // passed
@@ -73,7 +71,7 @@ public class ExifReaderTest
     public void testExtractWithNullMetadataThrows() throws Exception
     {
         try{
-            new ExifReader().extract(new ByteArrayReader(new byte[10]), null);
+            new ExifReader().extract(new byte[10], null, JpegSegmentType.APP1);
             Assert.fail("Exception expected");
         } catch (NullPointerException npe) {
             // passed
@@ -97,7 +95,7 @@ public class ExifReaderTest
     {
         byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
         Metadata metadata = new Metadata();
-        new ExifReader().extract(new ByteArrayReader(badExifData), metadata);
+        new ExifReader().extract(badExifData, metadata, JpegSegmentType.APP1);
         Directory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
 
         assertNotNull(directory);
