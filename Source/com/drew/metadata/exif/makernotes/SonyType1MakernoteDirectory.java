@@ -181,7 +181,7 @@ public class SonyType1MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_DYNAMIC_RANGE_OPTIMISER, "Dynamic Range Optimizer");
         _tagNameMap.put(TAG_IMAGE_STABILISATION, "Image Stabilisation");
         _tagNameMap.put(TAG_LENS_ID, "Lens ID");
-        _tagNameMap.put(TAG_MINOLTA_MAKERNOTE, "Minolta Maker Note");
+        _tagNameMap.put(TAG_MINOLTA_MAKERNOTE, "Minolta Makernote");
         _tagNameMap.put(TAG_COLOR_MODE, "Color Mode");
         _tagNameMap.put(TAG_LENS_SPEC, "Lens Spec");
         _tagNameMap.put(TAG_FULL_IMAGE_SIZE, "Full Image Size");

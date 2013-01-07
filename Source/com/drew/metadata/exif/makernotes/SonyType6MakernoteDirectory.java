@@ -35,7 +35,7 @@ public class SonyType6MakernoteDirectory extends Directory
 {
     public static final int TAG_MAKERNOTE_THUMB_OFFSET = 0x0513;
     public static final int TAG_MAKERNOTE_THUMB_LENGTH = 0x0514;
-    public static final int TAG_UNKNOWN_1 = 0x0515;
+//    public static final int TAG_UNKNOWN_1 = 0x0515;
     public static final int TAG_MAKERNOTE_THUMB_VERSION = 0x2000;
 
     @NotNull
@@ -43,10 +43,10 @@ public class SonyType6MakernoteDirectory extends Directory
 
     static
     {
-        _tagNameMap.put(TAG_MAKERNOTE_THUMB_OFFSET, "Maker Note Thumb Offset");
-        _tagNameMap.put(TAG_MAKERNOTE_THUMB_LENGTH, "Maker Note Thumb Length");
-        _tagNameMap.put(TAG_UNKNOWN_1, "Sony-6-0x0203");
-        _tagNameMap.put(TAG_MAKERNOTE_THUMB_VERSION, "Maker Note Thumb Version");
+        _tagNameMap.put(TAG_MAKERNOTE_THUMB_OFFSET, "Makernote Thumb Offset");
+        _tagNameMap.put(TAG_MAKERNOTE_THUMB_LENGTH, "Makernote Thumb Length");
+//        _tagNameMap.put(TAG_UNKNOWN_1, "Sony-6-0x0203");
+        _tagNameMap.put(TAG_MAKERNOTE_THUMB_VERSION, "Makernote Thumb Version");
     }
 
     public SonyType6MakernoteDirectory()
