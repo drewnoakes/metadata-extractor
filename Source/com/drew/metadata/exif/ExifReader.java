@@ -107,9 +107,6 @@ public class ExifReader implements JpegSegmentMetadataReader
 
     public void extract(@NotNull final byte[] segmentBytes, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
-        // TODO remove this -- just there for ordering of directories while regression testing
-        metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
-
         try {
             ByteArrayReader reader = new ByteArrayReader(segmentBytes);
 
