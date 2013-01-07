@@ -476,8 +476,6 @@ public class CanonMakernoteDirectory extends Directory
 //     */
 //    public static final int TAG_CANON_CUSTOM_FUNCTION_SENSOR_CLEANING = 0xC30D;
 
-    // 9  A  B  C  D  E  F  10 11 12 13
-    // 9  10 11 12 13 14 15 16 17 18 19
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -667,7 +665,7 @@ public class CanonMakernoteDirectory extends Directory
     }
 
     @Override
-    public void setIntArray(int tagType, @NotNull int[] ints)
+    public void setObjectArray(int tagType, @NotNull Object array)
     {
         // TODO is there some way to drop out 'null' or 'zero' values that are present in the array to reduce the noise?
         
@@ -676,22 +674,30 @@ public class CanonMakernoteDirectory extends Directory
         // Pick those tags out here and throw away the original array.
         // Otherwise just add as usual.
         switch (tagType) {
-            case TAG_CAMERA_SETTINGS_ARRAY:
+            case TAG_CAMERA_SETTINGS_ARRAY: {
+                int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
                     setInt(CameraSettings.OFFSET + i, ints[i]);
                 break;
-            case TAG_FOCAL_LENGTH_ARRAY:
+            }
+            case TAG_FOCAL_LENGTH_ARRAY: {
+                int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
                     setInt(FocalLength.OFFSET + i, ints[i]);
                 break;
-            case TAG_SHOT_INFO_ARRAY:
+            }
+            case TAG_SHOT_INFO_ARRAY: {
+                int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
                     setInt(ShotInfo.OFFSET + i, ints[i]);
                 break;
-            case TAG_PANORAMA_ARRAY:
+            }
+            case TAG_PANORAMA_ARRAY: {
+                int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
                     setInt(Panorama.OFFSET + i, ints[i]);
                 break;
+            }
             // TODO the interpretation of the custom functions tag depends upon the camera model
 //            case TAG_CANON_CUSTOM_FUNCTIONS_ARRAY:
 //                int subTagTypeBase = 0xC300;
@@ -699,14 +705,17 @@ public class CanonMakernoteDirectory extends Directory
 //                for (int i = 1; i < ints.length; i++)
 //                    setInt(subTagTypeBase + i + 1, ints[i] & 0x0F);
 //                break;
-            case TAG_AF_INFO_ARRAY:
+            case TAG_AF_INFO_ARRAY: {
+                int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
                     setInt(AFInfo.OFFSET + i, ints[i]);
                 break;
-            default:
+            }
+            default: {
                 // no special handling...
-                super.setIntArray(tagType, ints);
+                super.setObjectArray(tagType, array);
                 break;
+            }
         }
     }
 }

@@ -40,8 +40,6 @@ import java.util.*;
  */
 public abstract class Directory
 {
-    // TODO get Array methods need to return cloned data, to maintain this directory's integrity
-
     /** Map of values hashed by type identifiers. */
     @NotNull
     protected final Map<Integer, Object> _tagMap = new HashMap<Integer, Object>();
@@ -497,6 +495,8 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null)
             return null;
+        if (o instanceof int[])
+            return (int[])o;
         if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             int[] ints = new int[rationals.length];
@@ -505,14 +505,19 @@ public abstract class Directory
             }
             return ints;
         }
-        if (o instanceof int[])
-            return (int[])o;
+        if (o instanceof short[]) {
+            short[] shorts = (short[])o;
+            int[] ints = new int[shorts.length];
+            for (int i = 0; i < shorts.length; i++) {
+                ints[i] = shorts[i];
+            }
+            return ints;
+        }
         if (o instanceof byte[]) {
             byte[] bytes = (byte[])o;
             int[] ints = new int[bytes.length];
             for (int i = 0; i < bytes.length; i++) {
-                byte b = bytes[i];
-                ints[i] = b;
+                ints[i] = bytes[i];
             }
             return ints;
         }
@@ -557,6 +562,13 @@ public abstract class Directory
             byte[] bytes = new byte[ints.length];
             for (int i = 0; i < ints.length; i++) {
                 bytes[i] = (byte)ints[i];
+            }
+            return bytes;
+        } else if (o instanceof short[]) {
+            short[] shorts = (short[])o;
+            byte[] bytes = new byte[shorts.length];
+            for (int i = 0; i < shorts.length; i++) {
+                bytes[i] = (byte)shorts[i];
             }
             return bytes;
         } else if (o instanceof CharSequence) {

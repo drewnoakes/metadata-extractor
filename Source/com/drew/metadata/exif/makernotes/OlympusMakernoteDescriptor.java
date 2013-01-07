@@ -127,13 +127,14 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getSpecialModeDescription()
     {
-        int[] values = _directory.getIntArray(TAG_SPECIAL_MODE);
+        long[] values = (long[])_directory.getObject(TAG_SPECIAL_MODE);
         if (values==null)
             return null;
         if (values.length < 1)
             return "";
         StringBuilder desc = new StringBuilder();
-        switch (values[0]) {
+
+        switch ((int)values[0]) {
             case 0:
                 desc.append("Normal picture taking mode");
                 break;
@@ -151,44 +152,43 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
                 break;
         }
 
-        if (values.length < 2)
-            return desc.toString();
-        desc.append(" - ");
-        switch (values[1]) {
-            case 0:
-                desc.append("Unknown sequence number");
-                break;
-            case 1:
-                desc.append("1st in a sequence");
-                break;
-            case 2:
-                desc.append("2nd in a sequence");
-                break;
-            case 3:
-                desc.append("3rd in a sequence");
-                break;
-            default:
-                desc.append(values[1]);
-                desc.append("th in a sequence");
-                break;
+        if (values.length >= 2) {
+            switch ((int)values[1]) {
+                case 0:
+                    break;
+                case 1:
+                    desc.append(" / 1st in a sequence");
+                    break;
+                case 2:
+                    desc.append(" / 2nd in a sequence");
+                    break;
+                case 3:
+                    desc.append(" / 3rd in a sequence");
+                    break;
+                default:
+                    desc.append(" / ");
+                    desc.append(values[1]);
+                    desc.append("th in a sequence");
+                    break;
+            }
         }
-        if (values.length < 3)
-            return desc.toString();
-        desc.append(" - ");
-        switch (values[2]) {
-            case 1:
-                desc.append("Left to right panorama direction");
-                break;
-            case 2:
-                desc.append("Right to left panorama direction");
-                break;
-            case 3:
-                desc.append("Bottom to top panorama direction");
-                break;
-            case 4:
-                desc.append("Top to bottom panorama direction");
-                break;
+        if (values.length >= 3) {
+            switch ((int)values[2]) {
+                case 1:
+                    desc.append(" / Left to right panorama direction");
+                    break;
+                case 2:
+                    desc.append(" / Right to left panorama direction");
+                    break;
+                case 3:
+                    desc.append(" / Bottom to top panorama direction");
+                    break;
+                case 4:
+                    desc.append(" / Top to bottom panorama direction");
+                    break;
+            }
         }
+
         return desc.toString();
     }
 }

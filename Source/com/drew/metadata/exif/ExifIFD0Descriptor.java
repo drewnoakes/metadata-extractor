@@ -166,12 +166,12 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     private String getUnicodeDescription(int tag)
     {
-        byte[] commentBytes = _directory.getByteArray(tag);
-        if (commentBytes == null)
+        byte[] bytes = _directory.getByteArray(tag);
+        if (bytes == null)
             return null;
         try {
             // Decode the unicode string and trim the unicode zero "\0" from the end.
-            return new String(commentBytes, "UTF-16LE").trim();
+            return new String(bytes, "UTF-16LE").trim();
         } catch (UnsupportedEncodingException ex) {
             return null;
         }

@@ -72,7 +72,7 @@ public class NikonType1MakernoteTest
         [Nikon Makernote] Makernote Unknown 2 =
         [Nikon Makernote] Digital Zoom = No digital zoom
         [Nikon Makernote] Fisheye Converter = None
-        [Nikon Makernote] Makernote Unknown 3 = 0 0 16777216 0 -1609193200 0 34833 6931 16178 4372 4372 -972290529 -921882880 15112 0 0 1151495 252903424 17 0 0 844038208 55184128 218129428 1476410198 370540566 -250604010 16711749 204629079 1729
+        [Nikon Makernote] Makernote Unknown 3 = 0 0 16777216 0 2685774096 0 34833 6931 16178 4372 4372 3322676767 3373084416 15112 0 0 1151495 252903424 17 0 0 844038208 55184128 218129428 1476410198 370540566 4044363286 16711749 204629079 1729
     */
     @Test
     public void testNikonMakernote_MatchesKnownValues() throws Exception
@@ -88,8 +88,8 @@ public class NikonType1MakernoteTest
         assertEquals("", _nikonDirectory.getString(NikonType1MakernoteDirectory.TAG_UNKNOWN_2));
         assertEquals(0, _nikonDirectory.getDouble(NikonType1MakernoteDirectory.TAG_DIGITAL_ZOOM), 0.0001);
         assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_CONVERTER));
-        int[] unknown3 = _nikonDirectory.getIntArray(NikonType1MakernoteDirectory.TAG_UNKNOWN_3);
-        int[] expected = new int[] { 0, 0, 16777216, 0, -1609193200, 0, 34833, 6931, 16178, 4372, 4372, -972290529, -921882880, 15112, 0, 0, 1151495, 252903424, 17, 0, 0, 844038208, 55184128, 218129428, 1476410198, 370540566, -250604010, 16711749, 204629079, 1729 };
+        long[] unknown3 = (long[])_nikonDirectory.getObject(NikonType1MakernoteDirectory.TAG_UNKNOWN_3);
+        long[] expected = new long[] { 0, 0, 16777216, 0, 2685774096L, 0, 34833, 6931, 16178, 4372, 4372, 3322676767L, 3373084416L, 15112, 0, 0, 1151495, 252903424, 17, 0, 0, 844038208, 55184128, 218129428, 1476410198, 370540566, 4044363286L, 16711749, 204629079, 1729 };
         assertNotNull(unknown3);
         assertEquals(expected.length, unknown3.length);
         for (int i = 0; i<expected.length; i++) {

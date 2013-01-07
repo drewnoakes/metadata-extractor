@@ -412,9 +412,9 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     {
         return getIndexedDescription(TAG_FILE_SOURCE,
             1,
-            "Film scanner",
-            "Reflection print scanner",
-            "Digital still camera"
+            "Film Scanner",
+            "Reflection Print Scanner",
+            "Digital Still Camera (DSC)"
         );
     }
 
