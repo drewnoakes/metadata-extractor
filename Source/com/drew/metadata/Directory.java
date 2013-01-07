@@ -413,7 +413,9 @@ public abstract class Directory
         if (o == null)
             return null;
 
-        if (o instanceof String) {
+        if (o instanceof Number) {
+            return ((Number)o).intValue();
+        } else if (o instanceof String) {
             try {
                 return Integer.parseInt((String)o);
             } catch (NumberFormatException nfe) {
@@ -427,8 +429,6 @@ public abstract class Directory
                 }
                 return (int)val;
             }
-        } else if (o instanceof Number) {
-            return ((Number)o).intValue();
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             if (rationals.length == 1)
@@ -817,6 +817,7 @@ public abstract class Directory
             boolean isIntArray = componentType.getName().equals("int");
             boolean isLongArray = componentType.getName().equals("long");
             boolean isByteArray = componentType.getName().equals("byte");
+            boolean isShortArray = componentType.getName().equals("short");
             StringBuilder string = new StringBuilder();
             for (int i = 0; i < arrayLength; i++) {
                 if (i != 0)
@@ -825,6 +826,8 @@ public abstract class Directory
                     string.append(Array.get(o, i).toString());
                 else if (isIntArray)
                     string.append(Array.getInt(o, i));
+                else if (isShortArray)
+                    string.append(Array.getShort(o, i));
                 else if (isLongArray)
                     string.append(Array.getLong(o, i));
                 else if (isFloatArray)
