@@ -289,8 +289,8 @@ public class ExifSubIFDDirectory extends Directory
     /** This tag is a pointer to the Exif Interop IFD. */
     public static final int TAG_INTEROP_OFFSET = 0xA005;
 
-    public static final int TAG_FOCAL_PLANE_X_RES = 0xA20E;
-    public static final int TAG_FOCAL_PLANE_Y_RES = 0xA20F;
+    public static final int TAG_FOCAL_PLANE_X_RESOLUTION = 0xA20E;
+    public static final int TAG_FOCAL_PLANE_Y_RESOLUTION = 0xA20F;
     /**
      * Unit of FocalPlaneXResolution/FocalPlaneYResolution. '1' means no-unit,
      * '2' inch, '3' centimeter.
@@ -300,7 +300,7 @@ public class ExifSubIFDDirectory extends Directory
      * '8.3mm?'(1/3in.?) to their ResolutionUnit. Fuji's BUG? Finepix4900Z has
      * been changed to use value '2' but it doesn't match to actual value also.
      */
-    public static final int TAG_FOCAL_PLANE_UNIT = 0xA210;
+    public static final int TAG_FOCAL_PLANE_RESOLUTION_UNIT = 0xA210;
     public static final int TAG_EXPOSURE_INDEX = 0xA215;
     public static final int TAG_SENSING_METHOD = 0xA217;
     public static final int TAG_FILE_SOURCE = 0xA300;
@@ -527,8 +527,8 @@ public class ExifSubIFDDirectory extends Directory
         _tagNameMap.put(0x0156, "Transfer Range");
         _tagNameMap.put(0x0200, "JPEG Proc");
         _tagNameMap.put(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL, "Compressed Bits Per Pixel");
-        _tagNameMap.put(0x927C, "Maker Note");
-        _tagNameMap.put(0xA005, "Interoperability Offset");
+        _tagNameMap.put(TAG_MAKERNOTE, "Makernote");
+        _tagNameMap.put(TAG_INTEROP_OFFSET, "Interoperability Offset");
 
         _tagNameMap.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
         _tagNameMap.put(TAG_SUBFILE_TYPE, "Subfile Type");
@@ -601,11 +601,11 @@ public class ExifSubIFDDirectory extends Directory
         // 0x920C in TIFF/EP
         _tagNameMap.put(TAG_SPATIAL_FREQ_RESPONSE_2, "Spatial Frequency Response");
         // 0x920E in TIFF/EP
-        _tagNameMap.put(TAG_FOCAL_PLANE_X_RES, "Focal Plane X Resolution");
+        _tagNameMap.put(TAG_FOCAL_PLANE_X_RESOLUTION, "Focal Plane X Resolution");
         // 0x920F in TIFF/EP
-        _tagNameMap.put(TAG_FOCAL_PLANE_Y_RES, "Focal Plane Y Resolution");
+        _tagNameMap.put(TAG_FOCAL_PLANE_Y_RESOLUTION, "Focal Plane Y Resolution");
         // 0x9210 in TIFF/EP
-        _tagNameMap.put(TAG_FOCAL_PLANE_UNIT, "Focal Plane Resolution Unit");
+        _tagNameMap.put(TAG_FOCAL_PLANE_RESOLUTION_UNIT, "Focal Plane Resolution Unit");
         // 0x9214 in TIFF/EP
         _tagNameMap.put(TAG_SUBJECT_LOCATION_2, "Subject Location");
         // 0x9215 in TIFF/EP

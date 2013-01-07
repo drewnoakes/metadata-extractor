@@ -106,11 +106,11 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
                 return getExifImageWidthDescription();
             case TAG_EXIF_IMAGE_HEIGHT:
                 return getExifImageHeightDescription();
-            case TAG_FOCAL_PLANE_UNIT:
+            case TAG_FOCAL_PLANE_RESOLUTION_UNIT:
                 return getFocalPlaneResolutionUnitDescription();
-            case TAG_FOCAL_PLANE_X_RES:
+            case TAG_FOCAL_PLANE_X_RESOLUTION:
                 return getFocalPlaneXResolutionDescription();
-            case TAG_FOCAL_PLANE_Y_RES:
+            case TAG_FOCAL_PLANE_Y_RESOLUTION:
                 return getFocalPlaneYResolutionDescription();
             case TAG_BITS_PER_SAMPLE:
                 return getBitsPerSampleDescription();
@@ -411,8 +411,10 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     public String getFileSourceDescription()
     {
         return getIndexedDescription(TAG_FILE_SOURCE,
-            3,
-            "Digital Still Camera (DSC)"
+            1,
+            "Film scanner",
+            "Reflection print scanner",
+            "Digital still camera"
         );
     }
 
@@ -548,7 +550,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getFocalPlaneXResolutionDescription()
     {
-        Rational rational = _directory.getRational(TAG_FOCAL_PLANE_X_RES);
+        Rational rational = _directory.getRational(TAG_FOCAL_PLANE_X_RESOLUTION);
         if (rational == null)
             return null;
         final String unit = getFocalPlaneResolutionUnitDescription();
@@ -559,7 +561,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getFocalPlaneYResolutionDescription()
     {
-        Rational rational = _directory.getRational(TAG_FOCAL_PLANE_Y_RES);
+        Rational rational = _directory.getRational(TAG_FOCAL_PLANE_Y_RESOLUTION);
         if (rational == null)
             return null;
         final String unit = getFocalPlaneResolutionUnitDescription();
@@ -572,7 +574,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     {
         // Unit of FocalPlaneXResolution/FocalPlaneYResolution.
         // '1' means no-unit, '2' inch, '3' centimeter.
-        return getIndexedDescription(TAG_FOCAL_PLANE_UNIT,
+        return getIndexedDescription(TAG_FOCAL_PLANE_RESOLUTION_UNIT,
             1,
             "(No unit)",
             "Inches",
