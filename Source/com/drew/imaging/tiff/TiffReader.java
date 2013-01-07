@@ -35,30 +35,6 @@ import java.util.Set;
  */
 public class TiffReader
 {
-    /** The number of bytes used per format descriptor. */
-    @NotNull
-    private static final int[] COMPONENT_SIZE_BYTES = { 0, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8 };
-
-    //
-    // Format types
-    //
-    // TODO use the TiffDataFormat enum for these?
-    //
-    private static final int FMT_INT8_U = 1;
-    /** A fixed-length character string. */
-    private static final int FMT_STRING = 2;
-    private static final int FMT_INT16_U = 3;
-    private static final int FMT_INT32_U = 4;
-    private static final int FMT_RATIONAL_U = 5;
-    private static final int FMT_INT8_S = 6;
-    private static final int FMT_UNDEFINED = 7;
-    private static final int FMT_INT16_S = 8;
-    private static final int FMT_INT32_S = 9;
-    private static final int FMT_RATIONAL_S = 10;
-    private static final int FMT_SINGLE = 11;
-    private static final int FMT_DOUBLE = 12;
-    private static final int MAX_FORMAT_CODE = 12;
-
     /**
      * Processes a TIFF data sequence.
      *
@@ -167,7 +143,9 @@ public class TiffReader
 
                 // 2 bytes for the format code
                 final int formatCode = reader.getUInt16(tagOffset + 2);
-                if (formatCode < 1 || formatCode > MAX_FORMAT_CODE) {
+                final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode);
+
+                if (format == null) {
                     // This error suggests that we are processing at an incorrect index and will generate
                     // rubbish until we go out of bounds (which may be a while).  Exit now.
                     handler.error("Invalid TIFF tag format code: " + formatCode);
@@ -181,7 +159,7 @@ public class TiffReader
                     continue;
                 }
 
-                final int byteCount = componentCount * COMPONENT_SIZE_BYTES[formatCode];
+                final int byteCount = componentCount * format.getComponentSizeBytes();
 
                 final int tagValueOffset;
                 if (byteCount > 4) {
@@ -255,14 +233,14 @@ public class TiffReader
                                    @NotNull final RandomAccessReader reader) throws IOException
     {
         switch (formatCode) {
-            case FMT_UNDEFINED:
+            case TiffDataFormat.CODE_UNDEFINED:
                 // this includes exif user comments
                 handler.setByteArray(tagId, reader.getBytes(tagValueOffset, componentCount));
                 break;
-            case FMT_STRING:
+            case TiffDataFormat.CODE_STRING:
                 handler.setString(tagId, reader.getNullTerminatedString(tagValueOffset, componentCount));
                 break;
-            case FMT_RATIONAL_S:
+            case TiffDataFormat.CODE_RATIONAL_S:
                 if (componentCount == 1) {
                     handler.setRational(tagId, new Rational(reader.getInt32(tagValueOffset), reader.getInt32(tagValueOffset + 4)));
                 } else if (componentCount > 1) {
@@ -272,7 +250,7 @@ public class TiffReader
                     handler.setRationalArray(tagId, array);
                 }
                 break;
-            case FMT_RATIONAL_U:
+            case TiffDataFormat.CODE_RATIONAL_U:
                 if (componentCount == 1) {
                     handler.setRational(tagId, new Rational(reader.getUInt32(tagValueOffset), reader.getUInt32(tagValueOffset + 4)));
                 } else if (componentCount > 1) {
@@ -282,7 +260,7 @@ public class TiffReader
                     handler.setRationalArray(tagId, array);
                 }
                 break;
-            case FMT_SINGLE:
+            case TiffDataFormat.CODE_SINGLE:
                 if (componentCount == 1) {
                     handler.setFloat(tagId, reader.getFloat32(tagValueOffset));
                 } else {
@@ -292,7 +270,7 @@ public class TiffReader
                     handler.setFloatArray(tagId, array);
                 }
                 break;
-            case FMT_DOUBLE:
+            case TiffDataFormat.CODE_DOUBLE:
                 if (componentCount == 1) {
                     handler.setDouble(tagId, reader.getDouble64(tagValueOffset));
                 } else {
@@ -302,7 +280,7 @@ public class TiffReader
                     handler.setDoubleArray(tagId, array);
                 }
                 break;
-            case FMT_INT8_S:
+            case TiffDataFormat.CODE_INT8_S:
                 if (componentCount == 1) {
                     handler.setInt8s(tagId, reader.getInt8(tagValueOffset));
                 } else {
@@ -312,7 +290,7 @@ public class TiffReader
                     handler.setInt8sArray(tagId, array);
                 }
                 break;
-            case FMT_INT8_U:
+            case TiffDataFormat.CODE_INT8_U:
                 if (componentCount == 1) {
                     handler.setInt8u(tagId, reader.getUInt8(tagValueOffset));
                 } else {
@@ -322,7 +300,7 @@ public class TiffReader
                     handler.setInt8uArray(tagId, array);
                 }
                 break;
-            case FMT_INT16_S:
+            case TiffDataFormat.CODE_INT16_S:
                 if (componentCount == 1) {
                     handler.setInt16s(tagId, (int)reader.getInt16(tagValueOffset));
                 } else {
@@ -332,7 +310,7 @@ public class TiffReader
                     handler.setInt16sArray(tagId, array);
                 }
                 break;
-            case FMT_INT16_U:
+            case TiffDataFormat.CODE_INT16_U:
                 if (componentCount == 1) {
                     handler.setInt16u(tagId, reader.getUInt16(tagValueOffset));
                 } else {
@@ -342,7 +320,7 @@ public class TiffReader
                     handler.setInt16uArray(tagId, array);
                 }
                 break;
-            case FMT_INT32_S:
+            case TiffDataFormat.CODE_INT32_S:
                 // NOTE 'long' in this case means 32 bit, not 64
                 if (componentCount == 1) {
                     handler.setInt32s(tagId, reader.getInt32(tagValueOffset));
@@ -353,7 +331,7 @@ public class TiffReader
                     handler.setInt32sArray(tagId, array);
                 }
                 break;
-            case FMT_INT32_U:
+            case TiffDataFormat.CODE_INT32_U:
                 // NOTE 'long' in this case means 32 bit, not 64
                 if (componentCount == 1) {
                     handler.setInt32u(tagId, reader.getUInt32(tagValueOffset));
@@ -377,8 +355,8 @@ public class TiffReader
      */
     private static int calculateTagOffset(int ifdStartOffset, int entryNumber)
     {
-        // add 2 bytes for the tag count
-        // each entry is 12 bytes, so we skip 12 * the number seen so far
+        // Add 2 bytes for the tag count.
+        // Each entry is 12 bytes.
         return ifdStartOffset + 2 + (12 * entryNumber);
     }
 }
