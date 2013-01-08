@@ -126,7 +126,8 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        return getIndexedDescription(TAG_WHITE_BALANCE, "Auto", "Daylight", "Shade", "Tungsten", "Fluorescent", "Manual");
+        return getIndexedDescription(TAG_WHITE_BALANCE,
+            "Auto", "Daylight", "Shade", "Tungsten", "Fluorescent", "Manual");
     }
 
     @Nullable
@@ -152,23 +153,6 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
     public String getCaptureModeDescription()
     {
         return getIndexedDescription(TAG_CAPTURE_MODE,
-            1, "Auto", "Night-scene", "Manual", "Multiple");
+            "Auto", "Night-scene", "Manual", null, "Multiple");
     }
-
-/*
-    public String getPrintImageMatchingInfoDescription()
-    {
-        return getByteLengthDescription(TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO);
-    }
-
-    public String getMacroModeDescription()
-    {
-        return getIndexedDescription(TAG_PANASONIC_MACRO_MODE, 1, "On", "Off");
-    }
-
-    public String getRecordModeDescription()
-    {
-        return getIndexedDescription(TAG_PANASONIC_RECORD_MODE, 1, "Normal", "Portrait", "Macro");
-    }
-*/
 }
