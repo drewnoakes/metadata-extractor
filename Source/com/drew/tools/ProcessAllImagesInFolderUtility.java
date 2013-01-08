@@ -24,11 +24,15 @@ package com.drew.tools;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.ExifThumbnailDirectory;
 
 import java.io.*;
 import java.util.*;
@@ -51,8 +55,10 @@ public class ProcessAllImagesInFolderUtility
         FileHandler handler = null;
 
         for (String arg : args) {
-            if (arg.equalsIgnoreCase("-write")) {
+            if (arg.equalsIgnoreCase("-text")) {
                 handler = new TextFileOutputHandler();
+            } else if (arg.equalsIgnoreCase("-wiki")) {
+                handler = new WikiTableOutputHandler();
             } else {
                 directories.add(arg);
             }
@@ -119,25 +125,25 @@ public class ProcessAllImagesInFolderUtility
         private final Set<String> _supportedExtensions = new HashSet<String>(
             Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff", "png", "gif", "bmp"));
 
-        private int processedFileCount = 0;
-        private int exceptionCount = 0;
-        private int errorCount = 0;
-        private long processedByteCount = 0;
+        private int _processedFileCount = 0;
+        private int _exceptionCount = 0;
+        private int _errorCount = 0;
+        private long _processedByteCount = 0;
 
         public boolean shouldProcess(@NotNull File file)
         {
-            return _supportedExtensions.contains(getExtension(file.getName()));
+            return _supportedExtensions.contains(getExtension(file));
         }
 
         public void onProcessingStarting(@NotNull File file)
         {
-            processedFileCount++;
-            processedByteCount += file.length();
+            _processedFileCount++;
+            _processedByteCount += file.length();
         }
 
         public void onException(@NotNull File file, @NotNull Throwable throwable)
         {
-            exceptionCount++;
+            _exceptionCount++;
 
             if (throwable instanceof ImageProcessingException) {
                 // this is an error in the Jpeg segment structure.  we're looking for bad handling of
@@ -159,7 +165,7 @@ public class ProcessAllImagesInFolderUtility
                         continue;
                     for (String error : directory.getErrors()) {
                         System.err.printf("\t[%s] %s%n", directory.getName(), error);
-                        errorCount++;
+                        _errorCount++;
                     }
                 }
             }
@@ -167,23 +173,24 @@ public class ProcessAllImagesInFolderUtility
 
         public void onCompleted()
         {
-            if (processedFileCount > 0) {
+            if (_processedFileCount > 0) {
                 System.out.println(String.format(
                     "Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors",
-                    processedFileCount, processedByteCount, exceptionCount, errorCount
+                    _processedFileCount, _processedByteCount, _exceptionCount, _errorCount
                 ));
             }
         }
 
         @Nullable
-        private String getExtension(@NotNull String path)
+        protected String getExtension(@NotNull File file)
         {
-            int i = path.lastIndexOf('.');
+            String fileName = file.getName();
+            int i = fileName.lastIndexOf('.');
             if (i == -1)
                 return null;
-            if (i == path.length() - 1)
+            if (i == fileName.length() - 1)
                 return null;
-            return path.substring(i + 1);
+            return fileName.substring(i + 1);
         }
     }
 
@@ -244,6 +251,143 @@ public class ProcessAllImagesInFolderUtility
                     writer.close();
                 }
             }
+        }
+    }
+
+    /**
+     * Creates a table describing sample images using Wiki markdown.
+     */
+    static class WikiTableOutputHandler extends FileHandlerBase
+    {
+        private final Map<String, String> _extensionEquivalence = new HashMap<String, String>();
+        private final Map<String, List<Row>> _rowListByExtension = new HashMap<String, List<Row>>();
+
+        class Row
+        {
+            File file;
+            Metadata metadata;
+            @Nullable private String manufacturer;
+            @Nullable private String model;
+            @Nullable private String exifVersion;
+            @Nullable private String thumbnail;
+            @Nullable private String makernote;
+
+            Row(@NotNull File file, @NotNull Metadata metadata)
+            {
+                this.file = file;
+                this.metadata = metadata;
+
+                ExifIFD0Directory ifd0Dir = metadata.getDirectory(ExifIFD0Directory.class);
+                ExifSubIFDDirectory subIfdDir = metadata.getDirectory(ExifSubIFDDirectory.class);
+                ExifThumbnailDirectory thumbDir = metadata.getDirectory(ExifThumbnailDirectory.class);
+                if (ifd0Dir != null) {
+                    manufacturer = ifd0Dir.getDescription(ExifIFD0Directory.TAG_MAKE);
+                    model = ifd0Dir.getDescription(ExifIFD0Directory.TAG_MODEL);
+                }
+                boolean hasMakernoteData = false;
+                if (subIfdDir != null) {
+                    exifVersion = subIfdDir.getDescription(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+                    hasMakernoteData = subIfdDir.containsTag(ExifSubIFDDirectory.TAG_MAKERNOTE);
+                }
+                if (thumbDir != null) {
+                    Integer width = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
+                    Integer height = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
+                    thumbnail = width != null && height != null
+                        ? String.format("Yes (%s x %s)", width, height)
+                        : "Yes";
+                }
+                for (Directory directory : metadata.getDirectories()) {
+                    if (directory.getClass().getName().contains("Makernote")) {
+                        makernote = directory.getName().replace("Makernote", "").trim();
+                    }
+                }
+                if (makernote == null) {
+                    makernote = hasMakernoteData ? "(Unknown)" : "N/A";
+                }
+            }
+        }
+
+        public WikiTableOutputHandler()
+        {
+            _extensionEquivalence.put("jpeg", "jpg");
+        }
+
+        @Override
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        {
+            super.onExtracted(file, metadata);
+
+            String extension = getExtension(file);
+
+            if (extension == null) {
+                return;
+            }
+
+            // Sanitise the extension
+            extension = extension.toLowerCase();
+            if (_extensionEquivalence.containsKey(extension))
+                extension =_extensionEquivalence.get(extension);
+
+            List<Row> list = _rowListByExtension.get(extension);
+            if (list == null) {
+                list = new ArrayList<Row>();
+                _rowListByExtension.put(extension, list);
+            }
+            list.add(new Row(file, metadata));
+        }
+
+        @Override
+        public void onCompleted()
+        {
+            super.onCompleted();
+
+            try {
+                System.out.flush();
+                writeOutput(System.out);
+                System.out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void writeOutput(PrintStream stream) throws IOException
+        {
+            Writer writer = new OutputStreamWriter(stream);
+            writer.write("#summary Tabular summary of metadata found in the image database\n\n");
+            writer.write("= Image Database Summary =\n\n");
+
+            for (String extension : _rowListByExtension.keySet()) {
+                writer.write("== " + extension.toUpperCase() + " Files ==\n\n");
+
+                writer.write("|| *File* || *Manufacturer* || *Model* || *Dir Count* || *Exif?* || *Makernote*  || *Thumbnail* || *All Data* ||\n");
+                List<Row> rows = _rowListByExtension.get(extension);
+
+                // Order by manufacturer, then model
+                Collections.sort(rows, new Comparator<Row>() {
+                    public int compare(Row o1, Row o2)
+                    {
+                        int c1 = StringUtil.compare(o1.manufacturer, o2.manufacturer);
+                        return c1 != 0 ? c1 : StringUtil.compare(o1.model, o2.model);
+                    }
+                });
+
+                for (Row row : rows) {
+                    writer.write(String.format("|| [http://sample-images.metadata-extractor.googlecode.com/git/%s %s] || %s || %s || %d || %s ||  %s || %s || [http://sample-images.metadata-extractor.googlecode.com/git/metadata/%s.txt metadata] ||%n",
+                        StringUtil.urlEncode(row.file.getName()),
+                        row.file.getName(),
+                        row.manufacturer == null ? "" : StringUtil.escapeForWiki(row.manufacturer),
+                        row.model == null ? "" : StringUtil.escapeForWiki(row.model),
+                        row.metadata.getDirectoryCount(),
+                        row.exifVersion == null ? "" : row.exifVersion,
+                        row.makernote == null ? "" : row.makernote,
+                        row.thumbnail == null ? "" : row.thumbnail,
+                        StringUtil.urlEncode(row.file.getName()).toLowerCase()
+                    ));
+                }
+
+                writer.write('\n');
+            }
+            writer.flush();
         }
     }
 
