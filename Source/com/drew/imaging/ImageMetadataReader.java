@@ -26,8 +26,8 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.png.PngMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
+import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -225,10 +225,10 @@ public class ImageMetadataReader
 
             if (wikiFormat) {
                 String fileName = file.getName();
-                String urlName = fileName.replace(" ", "%20"); // How to do this using framework?
+                String urlName = StringUtil.urlEncode(fileName);
                 ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-                String make = exifIFD0Directory == null ? "" : escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
-                String model = exifIFD0Directory == null ? "" : escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
+                String make = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
+                String model = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
                 System.out.println();
                 System.out.println("-----");
                 System.out.println();
@@ -236,7 +236,7 @@ public class ImageMetadataReader
                 System.out.println();
                 System.out.printf("<a href=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\">%n", urlName);
                 System.out.printf("<img src=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\" width=\"300\"/><br/>%n", urlName);
-                System.out.println(escapeForWiki(fileName));
+                System.out.println(StringUtil.escapeForWiki(fileName));
                 System.out.println("</a>");
                 System.out.println();
                 System.out.println("|| *Directory* || *Tag Id* || *Tag Name* || *Extracted Value* ||");
@@ -256,10 +256,10 @@ public class ImageMetadataReader
 
                     if (wikiFormat) {
                         System.out.printf("||%s||0x%s||%s||%s||%n",
-                                escapeForWiki(directoryName),
+                                StringUtil.escapeForWiki(directoryName),
                                 Integer.toHexString(tag.getTagType()),
-                                escapeForWiki(tagName),
-                                escapeForWiki(description));
+                                StringUtil.escapeForWiki(tagName),
+                                StringUtil.escapeForWiki(description));
                     }
                     else
                     {
@@ -286,18 +286,5 @@ public class ImageMetadataReader
                 }
             }
         }
-    }
-
-    @Nullable
-    private static String escapeForWiki(@Nullable String text)
-    {
-        if (text==null)
-            return null;
-        text = text.replaceAll("(\\W|^)(([A-Z][a-z0-9]+){2,})", "$1!$2");
-        if (text!=null && text.length() > 120)
-            text = text.substring(0, 120) + "...";
-        if (text != null)
-            text = text.replace("[", "`[`").replace("]", "`]`").replace("<", "`<`").replace(">", "`>`");
-        return text;
     }
 }

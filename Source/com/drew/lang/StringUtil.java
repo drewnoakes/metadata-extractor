@@ -22,6 +22,7 @@
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,9 +30,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-/** @author Drew Noakes http://drewnoakes.com */
+/**
+ * @author Drew Noakes http://drewnoakes.com
+ */
 public class StringUtil
 {
+    @NotNull
     public static String join(@NotNull Iterable<? extends CharSequence> strings, @NotNull String delimiter)
     {
         int capacity = 0;
@@ -53,6 +57,7 @@ public class StringUtil
         return buffer.toString();
     }
 
+    @NotNull
     public static <T extends CharSequence> String join(@NotNull T[] strings, @NotNull String delimiter)
     {
         int capacity = 0;
@@ -83,5 +88,41 @@ public class StringUtil
             sb.append(line);
         }
         return sb.toString();
+    }
+
+    public static int compare(@Nullable String s1, @Nullable String s2)
+    {
+        boolean null1 = s1 == null;
+        boolean null2 = s2 == null;
+
+        if (null1 && null2) {
+            return 0;
+        } else if (null1 && !null2) {
+            return -1;
+        } else if (null2) {
+            return 1;
+        } else {
+            return s1.compareTo(s2);
+        }
+    }
+
+    @Nullable
+    public static String escapeForWiki(@Nullable String text)
+    {
+        if (text == null)
+            return null;
+        text = text.replaceAll("(\\W|^)(([A-Z][a-z0-9]+){2,})", "$1!$2");
+        if (text != null && text.length() > 120)
+            text = text.substring(0, 120) + "...";
+        if (text != null)
+            text = text.replace("[", "`[`").replace("]", "`]`").replace("<", "`<`").replace(">", "`>`").replace("*", "`*`");
+        return text;
+    }
+
+    @NotNull
+    public static String urlEncode(@NotNull String name)
+    {
+        // Sufficient for now, it seems
+        return name.replace(" ", "%20");
     }
 }
