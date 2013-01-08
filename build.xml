@@ -95,7 +95,12 @@
         <java classname="com.drew.tools.ProcessAllImagesInFolderUtility"
               classpath="${output};${lib-xmp}">
             <arg value="${sample-images}"/>
-            <arg value="-write"/>
+            <arg value="-text"/>
+        </java>
+        <java classname="com.drew.tools.ProcessAllImagesInFolderUtility"
+              classpath="${output};${lib-xmp}">
+            <arg value="${sample-images}"/>
+            <arg value="-wiki"/>
         </java>
     </target>
 
