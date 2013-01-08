@@ -49,7 +49,7 @@ public class TagDescriptor<T extends Directory>
     }
 
     /**
-     * Returns a descriptive value of the the specified tag for this image.
+     * Returns a descriptive value of the specified tag for this image.
      * Where possible, known values will be substituted here in place of the raw
      * tokens actually kept in the metadata segment.  If no substitution is
      * available, the value provided by <code>getString(tagType)</code> will be returned.

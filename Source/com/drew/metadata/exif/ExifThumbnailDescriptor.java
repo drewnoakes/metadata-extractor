@@ -53,7 +53,7 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     // ISO100:Sv=5, ISO200:Sv=6, ISO400:Sv=7, ISO125:Sv=5.32.
 
     /**
-     * Returns a descriptive value of the the specified tag for this image.
+     * Returns a descriptive value of the specified tag for this image.
      * Where possible, known values will be substituted here in place of the raw
      * tokens actually kept in the Exif segment.  If no substitution is
      * available, the value provided by getString(int) will be returned.
