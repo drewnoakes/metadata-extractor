@@ -37,7 +37,7 @@ import java.util.*;
  */
 public class ProcessAllImagesInFolderUtility
 {
-    private static final Set<String> _supportedExtensions = new HashSet<String>(Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff"));
+    private static final Set<String> _supportedExtensions = new HashSet<String>(Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff", "png", "gif", "bmp"));
 
     public static void main(String[] args) throws IOException, JpegProcessingException
     {
