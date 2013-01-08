@@ -20,13 +20,15 @@
  */
 package com.drew.metadata.exif.makernotes;
 
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * The Olympus makernote is used by many manufacturers (Konica, Minolta and Epson...), and as such contains some tags
+ * The Olympus makernote is used by many manufacturers (Epson, Konica, Minolta and Agfa...), and as such contains some tags
  * that appear specific to those manufacturers.
  *
  * @author Drew Noakes http://drewnoakes.com
@@ -169,6 +171,62 @@ public class OlympusMakernoteDirectory extends Directory
     public static final int TAG_FINAL_HEIGHT = 0x102F;
     public static final int TAG_COMPRESSION_RATIO = 0x1034;
 
+    public final static class CameraSettings
+    {
+        // These 'sub'-tag values have been created for consistency -- they don't exist within the Makernote IFD
+        private static final int OFFSET = 0xF000;
+
+        public static final int TAG_EXPOSURE_MODE = OFFSET + 2;
+        public static final int TAG_FLASH_MODE = OFFSET + 3;
+        public static final int TAG_WHITE_BALANCE = OFFSET + 4;
+        public static final int TAG_IMAGE_SIZE = OFFSET + 5;
+        public static final int TAG_IMAGE_QUALITY = OFFSET + 6;
+        public static final int TAG_SHOOTING_MODE = OFFSET + 7;
+        public static final int TAG_METERING_MODE = OFFSET + 8;
+        public static final int TAG_APEX_FILM_SPEED_VALUE = OFFSET + 9;
+        public static final int TAG_APEX_SHUTTER_SPEED_TIME_VALUE = OFFSET + 10;
+        public static final int TAG_APEX_APERTURE_VALUE = OFFSET + 11;
+        public static final int TAG_MACRO_MODE = OFFSET + 12;
+        public static final int TAG_DIGITAL_ZOOM = OFFSET + 13;
+        public static final int TAG_EXPOSURE_COMPENSATION = OFFSET + 14;
+        public static final int TAG_BRACKET_STEP = OFFSET + 15;
+
+        public static final int TAG_INTERVAL_LENGTH = OFFSET + 17;
+        public static final int TAG_INTERVAL_NUMBER = OFFSET + 18;
+        public static final int TAG_FOCAL_LENGTH = OFFSET + 19;
+        public static final int TAG_FOCUS_DISTANCE = OFFSET + 20;
+        public static final int TAG_FLASH_FIRED = OFFSET + 21;
+        public static final int TAG_DATE = OFFSET + 22;
+        public static final int TAG_TIME = OFFSET + 23;
+        public static final int TAG_MAX_APERTURE_AT_FOCAL_LENGTH = OFFSET + 24;
+
+        public static final int TAG_FILE_NUMBER_MEMORY = OFFSET + 27;
+        public static final int TAG_LAST_FILE_NUMBER = OFFSET + 28;
+        public static final int TAG_WHITE_BALANCE_RED = OFFSET + 29;
+        public static final int TAG_WHITE_BALANCE_GREEN = OFFSET + 30;
+        public static final int TAG_WHITE_BALANCE_BLUE = OFFSET + 31;
+        public static final int TAG_SATURATION = OFFSET + 32;
+        public static final int TAG_CONTRAST = OFFSET + 33;
+        public static final int TAG_SHARPNESS = OFFSET + 34;
+        public static final int TAG_SUBJECT_PROGRAM = OFFSET + 35;
+        public static final int TAG_FLASH_COMPENSATION = OFFSET + 36;
+        public static final int TAG_ISO_SETTING = OFFSET + 37;
+        public static final int TAG_CAMERA_MODEL = OFFSET + 38;
+        public static final int TAG_INTERVAL_MODE = OFFSET + 39;
+        public static final int TAG_FOLDER_NAME = OFFSET + 40;
+        public static final int TAG_COLOR_MODE = OFFSET + 41;
+        public static final int TAG_COLOR_FILTER = OFFSET + 42;
+        public static final int TAG_BLACK_AND_WHITE_FILTER = OFFSET + 43;
+        public static final int TAG_INTERNAL_FLASH = OFFSET + 44;
+        public static final int TAG_APEX_BRIGHTNESS_VALUE = OFFSET + 45;
+        public static final int TAG_SPOT_FOCUS_POINT_X_COORDINATE = OFFSET + 46;
+        public static final int TAG_SPOT_FOCUS_POINT_Y_COORDINATE = OFFSET + 47;
+        public static final int TAG_WIDE_FOCUS_ZONE = OFFSET + 48;
+        public static final int TAG_FOCUS_MODE = OFFSET + 49;
+        public static final int TAG_FOCUS_AREA = OFFSET + 50;
+        public static final int TAG_DEC_SWITCH_POSITION = OFFSET + 51;
+    }
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -226,6 +284,56 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_FINAL_WIDTH, "Final Width");
         _tagNameMap.put(TAG_FINAL_HEIGHT, "Final Height");
         _tagNameMap.put(TAG_COMPRESSION_RATIO, "Compression Ratio");
+        
+        _tagNameMap.put(CameraSettings.TAG_EXPOSURE_MODE, "Exposure Mode");
+        _tagNameMap.put(CameraSettings.TAG_FLASH_MODE, "Flash Mode");
+        _tagNameMap.put(CameraSettings.TAG_WHITE_BALANCE, "White Balance");
+        _tagNameMap.put(CameraSettings.TAG_IMAGE_SIZE, "Image Size");
+        _tagNameMap.put(CameraSettings.TAG_IMAGE_QUALITY, "Image Quality");
+        _tagNameMap.put(CameraSettings.TAG_SHOOTING_MODE, "Shooting Mode");
+        _tagNameMap.put(CameraSettings.TAG_METERING_MODE, "Metering Mode");
+        _tagNameMap.put(CameraSettings.TAG_APEX_FILM_SPEED_VALUE, "Apex Film Speed Value");
+        _tagNameMap.put(CameraSettings.TAG_APEX_SHUTTER_SPEED_TIME_VALUE, "Apex Shutter Speed Time Value");
+        _tagNameMap.put(CameraSettings.TAG_APEX_APERTURE_VALUE, "Apex Aperture Value");
+        _tagNameMap.put(CameraSettings.TAG_MACRO_MODE, "Macro Mode");
+        _tagNameMap.put(CameraSettings.TAG_DIGITAL_ZOOM, "Digital Zoom");
+        _tagNameMap.put(CameraSettings.TAG_EXPOSURE_COMPENSATION, "Exposure Compensation");
+        _tagNameMap.put(CameraSettings.TAG_BRACKET_STEP, "Bracket Step");
+
+        _tagNameMap.put(CameraSettings.TAG_INTERVAL_LENGTH, "Interval Length");
+        _tagNameMap.put(CameraSettings.TAG_INTERVAL_NUMBER, "Interval Number");
+        _tagNameMap.put(CameraSettings.TAG_FOCAL_LENGTH, "Focal Length");
+        _tagNameMap.put(CameraSettings.TAG_FOCUS_DISTANCE, "Focus Distance");
+        _tagNameMap.put(CameraSettings.TAG_FLASH_FIRED, "Flash Fired");
+        _tagNameMap.put(CameraSettings.TAG_DATE, "Date");
+        _tagNameMap.put(CameraSettings.TAG_TIME, "Time");
+        _tagNameMap.put(CameraSettings.TAG_MAX_APERTURE_AT_FOCAL_LENGTH, "Max Aperture at Focal Length");
+
+        _tagNameMap.put(CameraSettings.TAG_FILE_NUMBER_MEMORY, "File Number Memory");
+        _tagNameMap.put(CameraSettings.TAG_LAST_FILE_NUMBER, "Last File Number");
+        _tagNameMap.put(CameraSettings.TAG_WHITE_BALANCE_RED, "White Balance Red");
+        _tagNameMap.put(CameraSettings.TAG_WHITE_BALANCE_GREEN, "White Balance Green");
+        _tagNameMap.put(CameraSettings.TAG_WHITE_BALANCE_BLUE, "White Balance Blue");
+        _tagNameMap.put(CameraSettings.TAG_SATURATION, "Saturation");
+        _tagNameMap.put(CameraSettings.TAG_CONTRAST, "Contrast");
+        _tagNameMap.put(CameraSettings.TAG_SHARPNESS, "Sharpness");
+        _tagNameMap.put(CameraSettings.TAG_SUBJECT_PROGRAM, "Subject Program");
+        _tagNameMap.put(CameraSettings.TAG_FLASH_COMPENSATION, "Flash Compensation");
+        _tagNameMap.put(CameraSettings.TAG_ISO_SETTING, "ISO Setting");
+        _tagNameMap.put(CameraSettings.TAG_CAMERA_MODEL, "Camera Model");
+        _tagNameMap.put(CameraSettings.TAG_INTERVAL_MODE, "Interval Mode");
+        _tagNameMap.put(CameraSettings.TAG_FOLDER_NAME, "Folder Name");
+        _tagNameMap.put(CameraSettings.TAG_COLOR_MODE, "Color Mode");
+        _tagNameMap.put(CameraSettings.TAG_COLOR_FILTER, "Color Filter");
+        _tagNameMap.put(CameraSettings.TAG_BLACK_AND_WHITE_FILTER, "Black and White Filter");
+        _tagNameMap.put(CameraSettings.TAG_INTERNAL_FLASH, "Internal Flash");
+        _tagNameMap.put(CameraSettings.TAG_APEX_BRIGHTNESS_VALUE, "Apex Brightness Value");
+        _tagNameMap.put(CameraSettings.TAG_SPOT_FOCUS_POINT_X_COORDINATE, "Spot Focus Point X Coordinate");
+        _tagNameMap.put(CameraSettings.TAG_SPOT_FOCUS_POINT_Y_COORDINATE, "Spot Focus Point Y Coordinate");
+        _tagNameMap.put(CameraSettings.TAG_WIDE_FOCUS_ZONE, "Wide Focus Zone");
+        _tagNameMap.put(CameraSettings.TAG_FOCUS_MODE, "Focus Mode");
+        _tagNameMap.put(CameraSettings.TAG_FOCUS_AREA, "Focus Area");
+        _tagNameMap.put(CameraSettings.TAG_DEC_SWITCH_POSITION, "DEC Switch Position");
     }
 
     public OlympusMakernoteDirectory()
@@ -237,6 +345,40 @@ public class OlympusMakernoteDirectory extends Directory
     public String getName()
     {
         return "Olympus Makernote";
+    }
+
+    @Override
+    public void setByteArray(int tagType, @NotNull byte[] bytes)
+    {
+        if (tagType == TAG_CAMERA_SETTINGS_1 || tagType == TAG_CAMERA_SETTINGS_2) {
+            processCameraSettings(bytes);
+        } else {
+            super.setByteArray(tagType, bytes);
+        }
+    }
+
+    private void processCameraSettings(byte[] bytes)
+    {
+        SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
+        reader.setMotorolaByteOrder(true);
+
+        int count = bytes.length / 4;
+
+        try {
+            for (int i = 0; i < count; i++) {
+                int value = reader.getInt32();
+                setInt(CameraSettings.OFFSET + i, value);
+            }
+        } catch (IOException e) {
+            // Should never happen, given that we check the length of the bytes beforehand.
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isIntervalMode()
+    {
+        Long value = getLongObject(CameraSettings.TAG_SHOOTING_MODE);
+        return value != null && value == 5;
     }
 
     @NotNull

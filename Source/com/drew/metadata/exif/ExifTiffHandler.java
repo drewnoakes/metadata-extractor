@@ -152,6 +152,11 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // Epson and Agfa use Olympus makernote standard: http://www.ozhiker.com/electronics/pjmt/jpeg_info/
             pushDirectory(OlympusMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+        } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("MINOLTA")) {
+            // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
+            // area that commences immediately.
+            pushDirectory(OlympusMakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else if (cameraMake != null && cameraMake.trim().toUpperCase().startsWith("NIKON")) {
             if ("Nikon".equals(firstFiveChars)) {
                 /* There are two scenarios here:
@@ -215,11 +220,6 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             int ifdStart = makernoteOffset + reader.getInt32(makernoteOffset + 8);
             pushDirectory(FujifilmMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, ifdStart, makernoteOffset);
-        } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("MINOLTA")) {
-            // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
-            // area that commences immediately.
-            pushDirectory(OlympusMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else if ("KYOCERA".equals(firstSevenChars)) {
             // http://www.ozhiker.com/electronics/pjmt/jpeg_info/kyocera_mn.html
             pushDirectory(KyoceraMakernoteDirectory.class);
