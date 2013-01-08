@@ -195,7 +195,7 @@ public class TiffReader
                     final int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset);
                     processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
                 } else {
-                    if (!handler.customProcessTag(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId)) {
+                    if (!handler.customProcessTag(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount)) {
                         processTag(handler, tagId, tagValueOffset, componentCount, formatCode, reader);
                     }
                 }

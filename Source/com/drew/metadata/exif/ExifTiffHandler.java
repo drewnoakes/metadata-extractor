@@ -93,11 +93,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                     final @NotNull Set<Integer> processedIfdOffsets,
                                     final int tiffHeaderOffset,
                                     final @NotNull RandomAccessReader reader,
-                                    final int tagId) throws IOException
+                                    final int tagId,
+                                    final int byteCount) throws IOException
     {
         // In Exif, we only want custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
-            return processMakernote(makernoteOffset, processedIfdOffsets,  tiffHeaderOffset, reader);
+            return processMakernote(makernoteOffset, processedIfdOffsets, tiffHeaderOffset, reader, byteCount);
         }
 
         return false;
@@ -124,9 +125,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     }
 
     private boolean processMakernote(final int makernoteOffset,
-                                 final @NotNull Set<Integer> processedIfdOffsets,
-                                 final int tiffHeaderOffset,
-                                 final @NotNull RandomAccessReader reader) throws IOException
+                                     final @NotNull Set<Integer> processedIfdOffsets,
+                                     final int tiffHeaderOffset,
+                                     final @NotNull RandomAccessReader reader,
+                                     final int byteCount) throws IOException
     {
         // Determine the camera model and makernote format.
         Directory ifd0Directory = _metadata.getDirectory(ExifIFD0Directory.class);
@@ -136,6 +138,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         String cameraMake = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
+        final String firstTwoChars = reader.getString(makernoteOffset, 2);
         final String firstThreeChars = reader.getString(makernoteOffset, 3);
         final String firstFourChars = reader.getString(makernoteOffset, 4);
         final String firstFiveChars = reader.getString(makernoteOffset, 5);
@@ -232,6 +235,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 // Some Leica cameras use Panasonic makernote tags
                 pushDirectory(PanasonicMakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+            } else {
+                return false;
             }
         } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(makernoteOffset, 12))) {
             // NON-Standard TIFF IFD Data using Panasonic Tags. There is no Next-IFD pointer after the IFD
@@ -264,6 +269,20 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         } else if ("SANYO\0\1\0".equals(firstEightChars)) {
             pushDirectory(SanyoMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
+        } else if (cameraMake != null && cameraMake.toLowerCase().startsWith("ricoh")) {
+            if (firstTwoChars.equals("Rv") || firstThreeChars.equals("Rev")) {
+                // This is a textual format, where the makernote bytes look like:
+                //   Rv0103;Rg1C;Bg18;Ll0;Ld0;Aj0000;Bn0473800;Fp2E00:������������������������������
+                //   Rv0103;Rg1C;Bg18;Ll0;Ld0;Aj0000;Bn0473800;Fp2D05:������������������������������
+                //   Rv0207;Sf6C84;Rg76;Bg60;Gg42;Ll0;Ld0;Aj0004;Bn0B02900;Fp10B8;Md6700;Ln116900086D27;Sv263:0000000000000000000000��
+                // This format is currently unsupported
+                return false;
+            } else if (firstFiveChars.equalsIgnoreCase("Ricoh")) {
+                // Always in Motorola byte order
+                reader.setMotorolaByteOrder(true);
+                pushDirectory(RicohMakernoteDirectory.class);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
+            }
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.

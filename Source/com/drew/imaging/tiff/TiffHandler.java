@@ -52,7 +52,9 @@ public interface TiffHandler
     boolean customProcessTag(int makernoteOffset,
                              @NotNull Set<Integer> processedIfdOffsets,
                              int tiffHeaderOffset,
-                             @NotNull RandomAccessReader reader, int tagId) throws IOException;
+                             @NotNull RandomAccessReader reader,
+                             int tagId,
+                             int byteCount) throws IOException;
 
     void warn(@NotNull String message);
     void error(@NotNull String message);
