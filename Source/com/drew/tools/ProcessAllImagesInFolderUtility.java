@@ -132,7 +132,8 @@ public class ProcessAllImagesInFolderUtility
 
         public boolean shouldProcess(@NotNull File file)
         {
-            return _supportedExtensions.contains(getExtension(file));
+            String extension = getExtension(file);
+            return extension != null && _supportedExtensions.contains(extension.toLowerCase());
         }
 
         public void onProcessingStarting(@NotNull File file)
@@ -248,6 +249,7 @@ public class ProcessAllImagesInFolderUtility
                 if (writer != null) {
                     writer.write("Generated using metadata-extractor\n");
                     writer.write("http://drewnoakes.com/code/exif/\n");
+                    writer.flush();
                     writer.close();
                 }
             }
@@ -341,16 +343,28 @@ public class ProcessAllImagesInFolderUtility
         {
             super.onCompleted();
 
+            OutputStream outputStream = null;
+            PrintStream stream = null;
             try {
-                System.out.flush();
-                writeOutput(System.out);
-                System.out.flush();
+                outputStream = new FileOutputStream("../wiki/ImageDatabaseSummary.wiki", false);
+                stream = new PrintStream(outputStream, false);
+                writeOutput(stream);
+                stream.flush();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                if (stream != null)
+                    stream.close();
+                if (outputStream != null)
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
             }
         }
 
-        private void writeOutput(PrintStream stream) throws IOException
+        private void writeOutput(@NotNull PrintStream stream) throws IOException
         {
             Writer writer = new OutputStreamWriter(stream);
             writer.write("#summary Tabular summary of metadata found in the image database\n\n");
