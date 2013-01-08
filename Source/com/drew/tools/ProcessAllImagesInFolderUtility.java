@@ -25,6 +25,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
@@ -37,8 +38,6 @@ import java.util.*;
  */
 public class ProcessAllImagesInFolderUtility
 {
-    private static final Set<String> _supportedExtensions = new HashSet<String>(Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff", "png", "gif", "bmp"));
-
     public static void main(String[] args) throws IOException, JpegProcessingException
     {
         if (args.length == 0) {
@@ -48,96 +47,167 @@ public class ProcessAllImagesInFolderUtility
 
         // If one of the arguments is "-write" then we write the discovered metadata into a sub-folder relative to the image
         List<String> directories = new ArrayList<String>();
-        boolean write = false;
+
+        FileHandler handler = null;
 
         for (String arg : args) {
             if (arg.equalsIgnoreCase("-write")) {
-                write = true;
+                handler = new TextFileOutputHandler();
             } else {
                 directories.add(arg);
             }
         }
 
+        if (handler == null) {
+            handler = new BasicFileHandler();
+        }
+
         long start = System.nanoTime();
 
         for (String directory : directories) {
-            processDirectory(directory, write);
+            processDirectory(new File(directory), handler);
         }
+
+        handler.onCompleted();
 
         System.out.println(String.format("Completed in %d ms", (System.nanoTime() - start) / 1000000));
     }
 
-    private static void processDirectory(@NotNull String pathName, boolean write)
+    private static void processDirectory(@NotNull File path, @NotNull FileHandler handler)
     {
-        File path = new File(pathName);
         String[] pathItems = path.list();
-        if (pathItems == null)
-            return;
 
-        int processedFileCount = 0;
-        int exceptionCount = 0;
-        int errorCount = 0;
-        long processedByteCount = 0;
+        if (pathItems == null) {
+            return;
+        }
 
         for (String pathItem : pathItems) {
-            String subItem = pathItem.toLowerCase();
-            File file = new File(path, subItem);
+            File file = new File(path, pathItem);
 
             if (file.isDirectory()) {
-                processDirectory(file.getAbsolutePath(), write);
-            } else if (_supportedExtensions.contains(getExtension(subItem))) {
-                // process this item
-                processedFileCount++;
-                processedByteCount += file.length();
+                processDirectory(file, handler);
+            } else if (handler.shouldProcess(file)) {
+
+                handler.onProcessingStarting(file);
 
                 // Read metadata
                 final Metadata metadata;
                 try {
                     metadata = ImageMetadataReader.readMetadata(file);
-                } catch (ImageProcessingException e) {
-                    // this is an error in the Jpeg segment structure.  we're looking for bad handling of
-                    // metadata segments.  in this case, we didn't even get a segment.
-                    exceptionCount++;
-                    System.err.printf("%s: %s [Error Extracting Metadata]\n\t%s%n", e.getClass().getName(), file, e.getMessage());
-                    continue;
                 } catch (Throwable t) {
-                    // general, uncaught exception during processing of jpeg segments
-                    exceptionCount++;
-                    System.err.printf("%s: %s [Error Extracting Metadata]%n", t.getClass().getName(), file);
-                    t.printStackTrace(System.err);
+                    handler.onException(file, t);
                     continue;
                 }
 
-                if (metadata.hasErrors()) {
-                    System.err.println(file);
-                    for (Directory directory : metadata.getDirectories()) {
-                        if (!directory.hasErrors())
-                            continue;
-                        for (String error : directory.getErrors()) {
-                            System.err.printf("\t[%s] %s%n", directory.getName(), error);
-                            errorCount++;
-                        }
-                    }
-                }
+                handler.onExtracted(file, metadata);
+            }
+        }
+    }
 
-                try {
-                    processMetadata(write, file, metadata);
-                } catch (IOException e) {
-                    e.printStackTrace(System.err);
+    interface FileHandler
+    {
+        boolean shouldProcess(@NotNull File file);
+        void onException(@NotNull File file, @NotNull Throwable throwable);
+        void onExtracted(@NotNull File file, @NotNull Metadata metadata);
+        void onCompleted();
+
+        void onProcessingStarting(@NotNull File file);
+    }
+
+    abstract static class FileHandlerBase implements FileHandler
+    {
+        private final Set<String> _supportedExtensions = new HashSet<String>(
+            Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff", "png", "gif", "bmp"));
+
+        private int processedFileCount = 0;
+        private int exceptionCount = 0;
+        private int errorCount = 0;
+        private long processedByteCount = 0;
+
+        public boolean shouldProcess(@NotNull File file)
+        {
+            return _supportedExtensions.contains(getExtension(file.getName()));
+        }
+
+        public void onProcessingStarting(@NotNull File file)
+        {
+            processedFileCount++;
+            processedByteCount += file.length();
+        }
+
+        public void onException(@NotNull File file, @NotNull Throwable throwable)
+        {
+            exceptionCount++;
+
+            if (throwable instanceof ImageProcessingException) {
+                // this is an error in the Jpeg segment structure.  we're looking for bad handling of
+                // metadata segments.  in this case, we didn't even get a segment.
+                System.err.printf("%s: %s [Error Extracting Metadata]\n\t%s%n", throwable.getClass().getName(), file, throwable.getMessage());
+            } else {
+                // general, uncaught exception during processing of jpeg segments
+                System.err.printf("%s: %s [Error Extracting Metadata]%n", throwable.getClass().getName(), file);
+                throwable.printStackTrace(System.err);
+            }
+        }
+
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        {
+            if (metadata.hasErrors()) {
+                System.err.println(file);
+                for (Directory directory : metadata.getDirectories()) {
+                    if (!directory.hasErrors())
+                        continue;
+                    for (String error : directory.getErrors()) {
+                        System.err.printf("\t[%s] %s%n", directory.getName(), error);
+                        errorCount++;
+                    }
                 }
             }
         }
 
-        if (processedFileCount > 0)
-            System.out.println(String.format("Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors in %s", processedFileCount, processedByteCount, exceptionCount, errorCount, path));
+        public void onCompleted()
+        {
+            if (processedFileCount > 0) {
+                System.out.println(String.format(
+                    "Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors",
+                    processedFileCount, processedByteCount, exceptionCount, errorCount
+                ));
+            }
+        }
+
+        @Nullable
+        private String getExtension(@NotNull String path)
+        {
+            int i = path.lastIndexOf('.');
+            if (i == -1)
+                return null;
+            if (i == path.length() - 1)
+                return null;
+            return path.substring(i + 1);
+        }
     }
 
-    private static void processMetadata(boolean write, File file, Metadata metadata) throws IOException
+    /**
+     * Writes a text file containing the extracted metadata for each input file.
+     */
+    static class TextFileOutputHandler extends FileHandlerBase
     {
-        FileWriter writer = null;
-        try
+        @Override
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
         {
-            if (write)
+            super.onExtracted(file, metadata);
+
+            try {
+                writeOutputFile(file, metadata);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void writeOutputFile(File file, Metadata metadata) throws IOException
+        {
+            FileWriter writer = null;
+            try
             {
                 String outputPath = String.format("%s\\metadata\\%s.txt", file.getParent(), file.getName());
                 writer = new FileWriter(outputPath, false);
@@ -154,42 +224,48 @@ public class ProcessAllImagesInFolderUtility
                     }
                     writer.write("\n");
                 }
-            }
 
-            // Iterate through all values
-            for (Directory directory : metadata.getDirectories()) {
-                String directoryName = directory.getName();
-                for (Tag tag : directory.getTags()) {
-                    if (writer != null) {
+                // Iterate through all values
+                for (Directory directory : metadata.getDirectories()) {
+                    String directoryName = directory.getName();
+                    for (Tag tag : directory.getTags()) {
                         String tagName = tag.getTagName();
                         String description = tag.getDescription();
                         writer.write(String.format("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description));
-                    } else {
-                        // Call the code that would obtain the value, just to flush out any potential exceptions.
-                        tag.getTagName();
-                        tag.getDescription();
+                    }
+                    if (directory.getTagCount() != 0) {
+                        writer.write("\n");
                     }
                 }
-                if (writer != null && directory.getTagCount() != 0) {
-                    writer.write("\n");
+            } finally {
+                if (writer != null) {
+                    writer.write("Generated using metadata-extractor\n");
+                    writer.write("http://drewnoakes.com/code/exif/\n");
+                    writer.close();
                 }
-            }
-        } finally {
-            if (writer != null) {
-                writer.write("Generated using metadata-extractor\n");
-                writer.write("http://drewnoakes.com/code/exif/\n");
-                writer.close();
             }
         }
     }
 
-    private static String getExtension(String path)
+    /**
+     * Does nothing with the output except enumerate it in memory and format descriptions. This is useful in order to
+     * flush out any potential exceptions raised during the formatting of extracted value descriptions.
+     */
+    static class BasicFileHandler extends FileHandlerBase
     {
-        int i = path.lastIndexOf('.');
-        if (i == -1)
-            return null;
-        if (i == path.length() - 1)
-            return null;
-        return path.substring(i + 1);
+        @Override
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        {
+            super.onExtracted(file, metadata);
+
+            // Iterate through all values, calling toString to flush out any formatting exceptions
+            for (Directory directory : metadata.getDirectories()) {
+                directory.getName();
+                for (Tag tag : directory.getTags()) {
+                    tag.getTagName();
+                    tag.getDescription();
+                }
+            }
+        }
     }
 }
