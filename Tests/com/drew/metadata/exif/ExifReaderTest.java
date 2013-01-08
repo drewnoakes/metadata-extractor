@@ -96,10 +96,7 @@ public class ExifReaderTest
         byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
         Metadata metadata = new Metadata();
         new ExifReader().extract(badExifData, metadata, JpegSegmentType.APP1);
-        Directory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
-
-        assertNotNull(directory);
-        assertEquals(0, directory.getTagCount());
+        assertEquals(0, metadata.getDirectoryCount());
     }
 
     @Test

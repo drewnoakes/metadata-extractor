@@ -107,6 +107,13 @@ public class ExifReader implements JpegSegmentMetadataReader
 
     public void extract(@NotNull final byte[] segmentBytes, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
+        if (segmentBytes == null)
+            throw new NullPointerException("segmentBytes cannot be null");
+        if (metadata == null)
+            throw new NullPointerException("metadata cannot be null");
+        if (segmentType == null)
+            throw new NullPointerException("segmentType cannot be null");
+
         try {
             ByteArrayReader reader = new ByteArrayReader(segmentBytes);
 
