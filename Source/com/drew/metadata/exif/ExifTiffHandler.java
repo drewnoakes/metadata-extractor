@@ -97,8 +97,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     {
         // In Exif, we only want custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
-            processMakernote(makernoteOffset, processedIfdOffsets,  tiffHeaderOffset, reader);
-            return true;
+            return processMakernote(makernoteOffset, processedIfdOffsets,  tiffHeaderOffset, reader);
         }
 
         return false;
@@ -124,7 +123,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
     }
 
-    private void processMakernote(final int makernoteOffset,
+    private boolean processMakernote(final int makernoteOffset,
                                  final @NotNull Set<Integer> processedIfdOffsets,
                                  final int tiffHeaderOffset,
                                  final @NotNull RandomAccessReader reader) throws IOException
@@ -133,7 +132,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         Directory ifd0Directory = _metadata.getDirectory(ExifIFD0Directory.class);
 
         if (ifd0Directory == null)
-            return;
+            return false;
 
         String cameraMake = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
@@ -268,9 +267,11 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.
+            return false;
         }
 
         reader.setMotorolaByteOrder(byteOrderBefore);
+        return true;
     }
 
     private static void processKodakMakernote(@NotNull final KodakMakernoteDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader)
