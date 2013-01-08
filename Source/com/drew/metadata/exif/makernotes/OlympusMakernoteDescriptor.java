@@ -76,101 +76,101 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
                 return getSharpnessDescription();
 
             case CameraSettings.TAG_EXPOSURE_MODE:
-                return GET_EXPOSURE_MODE_DESCRIPTION();
+                return getExposureModeDescription();
             case CameraSettings.TAG_FLASH_MODE:
-                return GET_FLASH_MODE_DESCRIPTION();
+                return getFlashModeCameraSettingDescription();
             case CameraSettings.TAG_WHITE_BALANCE:
-                return GET_WHITE_BALANCE_DESCRIPTION();
+                return getWhiteBalanceDescription();
             case CameraSettings.TAG_IMAGE_SIZE:
-                return GET_IMAGE_SIZE_DESCRIPTION();
+                return getImageSizeDescription();
             case CameraSettings.TAG_IMAGE_QUALITY:
-                return GET_IMAGE_QUALITY_DESCRIPTION();
+                return getImageQualityDescription();
             case CameraSettings.TAG_SHOOTING_MODE:
-                return GET_SHOOTING_MODE_DESCRIPTION();
+                return getShootingModeDescription();
             case CameraSettings.TAG_METERING_MODE:
-                return GET_METERING_MODE_DESCRIPTION();
+                return getMeteringModeDescription();
             case CameraSettings.TAG_APEX_FILM_SPEED_VALUE:
-                return GET_APEX_FILM_SPEED_VALUE_DESCRIPTION();
+                return getApexFilmSpeedDescription();
             case CameraSettings.TAG_APEX_SHUTTER_SPEED_TIME_VALUE:
-                return GET_APEX_SHUTTER_SPEED_TIME_VALUE_DESCRIPTION();
+                return getApexShutterSpeedTimeDescription();
             case CameraSettings.TAG_APEX_APERTURE_VALUE:
-                return GET_APEX_APERTURE_VALUE_DESCRIPTION();
+                return getApexApertureDescription();
             case CameraSettings.TAG_MACRO_MODE:
-                return GET_MACRO_MODE_DESCRIPTION();
+                return getMacroModeCameraSettingDescription();
             case CameraSettings.TAG_DIGITAL_ZOOM:
-                return GET_DIGITAL_ZOOM_DESCRIPTION();
+                return getDigitalZoomDescription();
             case CameraSettings.TAG_EXPOSURE_COMPENSATION:
-                return GET_EXPOSURE_COMPENSATION_DESCRIPTION();
+                return getExposureCompensationDescription();
             case CameraSettings.TAG_BRACKET_STEP:
-                return GET_BRACKET_STEP_DESCRIPTION();
+                return getBracketStepDescription();
 
             case CameraSettings.TAG_INTERVAL_LENGTH:
-                return GET_INTERVAL_LENGTH_DESCRIPTION();
+                return getIntervalLengthDescription();
             case CameraSettings.TAG_INTERVAL_NUMBER:
-                return GET_INTERVAL_NUMBER_DESCRIPTION();
+                return getIntervalNumberDescription();
             case CameraSettings.TAG_FOCAL_LENGTH:
-                return GET_FOCAL_LENGTH_DESCRIPTION();
+                return getFocalLengthDescription();
             case CameraSettings.TAG_FOCUS_DISTANCE:
-                return GET_FOCUS_DISTANCE_DESCRIPTION();
+                return getFocusDistanceDescription();
             case CameraSettings.TAG_FLASH_FIRED:
-                return GET_FLASH_FIRED_DESCRIPTION();
+                return getFlastFiredDescription();
             case CameraSettings.TAG_DATE:
-                return GET_DATE_DESCRIPTION();
+                return getDateDescription();
             case CameraSettings.TAG_TIME:
-                return GET_TIME_DESCRIPTION();
+                return getTimeDescription();
             case CameraSettings.TAG_MAX_APERTURE_AT_FOCAL_LENGTH:
-                return GET_MAX_APERTURE_AT_FOCAL_LENGTH_DESCRIPTION();
+                return getMaxApertureAtFocalLengthDescription();
 
             case CameraSettings.TAG_FILE_NUMBER_MEMORY:
-                return GET_FILE_NUMBER_MEMORY_DESCRIPTION();
+                return getFileNumberMemoryDescription();
             case CameraSettings.TAG_LAST_FILE_NUMBER:
-                return GET_LAST_FILE_NUMBER_DESCRIPTION();
+                return getLastFileNumberDescription();
             case CameraSettings.TAG_WHITE_BALANCE_RED:
-                return GET_WHITE_BALANCE_RED_DESCRIPTION();
+                return getWhiteBalanceRedDescription();
             case CameraSettings.TAG_WHITE_BALANCE_GREEN:
-                return GET_WHITE_BALANCE_GREEN_DESCRIPTION();
+                return getWhiteBalanceGreenDescription();
             case CameraSettings.TAG_WHITE_BALANCE_BLUE:
-                return GET_WHITE_BALANCE_BLUE_DESCRIPTION();
+                return getWhiteBalanceBlueDescription();
             case CameraSettings.TAG_SATURATION:
-                return GET_SATURATION_DESCRIPTION();
+                return getSaturationDescription();
             case CameraSettings.TAG_CONTRAST:
-                return GET_CONTRAST_DESCRIPTION();
+                return getContrastDescription();
             case CameraSettings.TAG_SHARPNESS:
-                return GET_SHARPNESS_DESCRIPTION();
+                return getSharpnessCameraSettingDescription();
             case CameraSettings.TAG_SUBJECT_PROGRAM:
-                return GET_SUBJECT_PROGRAM_DESCRIPTION();
+                return getSubjectProgramDescription();
             case CameraSettings.TAG_FLASH_COMPENSATION:
-                return GET_FLASH_COMPENSATION_DESCRIPTION();
+                return getFlastCompensationDescription();
             case CameraSettings.TAG_ISO_SETTING:
-                return GET_ISO_SETTING_DESCRIPTION();
+                return getIsoSettingDescription();
             case CameraSettings.TAG_CAMERA_MODEL:
-                return GET_CAMERA_MODEL_DESCRIPTION();
+                return getCameraModelDescription();
             case CameraSettings.TAG_INTERVAL_MODE:
-                return GET_INTERVAL_MODE_DESCRIPTION();
+                return getIntervalModeDescription();
             case CameraSettings.TAG_FOLDER_NAME:
-                return GET_FOLDER_NAME_DESCRIPTION();
+                return getFolderNameDescription();
             case CameraSettings.TAG_COLOR_MODE:
-                return GET_COLOR_MODE_DESCRIPTION();
+                return getColorModeCameraSettingDescription();
             case CameraSettings.TAG_COLOR_FILTER:
-                return GET_COLOR_FILTER_DESCRIPTION();
+                return getColorFilterDescription();
             case CameraSettings.TAG_BLACK_AND_WHITE_FILTER:
-                return GET_BLACK_AND_WHITE_FILTER_DESCRIPTION();
+                return getBlackAndWhiteFilterDescription();
             case CameraSettings.TAG_INTERNAL_FLASH:
-                return GET_INTERNAL_FLASH_DESCRIPTION();
+                return getInternalFlashDescription();
             case CameraSettings.TAG_APEX_BRIGHTNESS_VALUE:
-                return GET_APEX_BRIGHTNESS_VALUE_DESCRIPTION();
+                return getApexBrightnessDescription();
             case CameraSettings.TAG_SPOT_FOCUS_POINT_X_COORDINATE:
-                return GET_SPOT_FOCUS_POINT_X_COORDINATE_DESCRIPTION();
+                return getSpotFocusPointXCoordinateDescription();
             case CameraSettings.TAG_SPOT_FOCUS_POINT_Y_COORDINATE:
-                return GET_SPOT_FOCUS_POINT_Y_COORDINATE_DESCRIPTION();
+                return getSpotFocusPointYCoordinateDescription();
             case CameraSettings.TAG_WIDE_FOCUS_ZONE:
-                return GET_WIDE_FOCUS_ZONE_DESCRIPTION();
+                return getWideFocusZoneDescription();
             case CameraSettings.TAG_FOCUS_MODE:
-                return GET_FOCUS_MODE_DESCRIPTION();
+                return getFocusModeCameraSettingDescription();
             case CameraSettings.TAG_FOCUS_AREA:
-                return GET_FOCUS_AREA_DESCRIPTION();
+                return getFocusAreaDescription();
             case CameraSettings.TAG_DEC_SWITCH_POSITION:
-                return GET_DEC_SWITCH_POSITION_DESCRIPTION();
+                return getDecSwitchPositionDescription();
 
             default:
                 return super.getDescription(tagType);
@@ -178,20 +178,20 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_EXPOSURE_MODE_DESCRIPTION()
+    public String getExposureModeDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_EXPOSURE_MODE, "P", "A", "S", "M");
     }
 
     @Nullable
-    public String GET_FLASH_MODE_DESCRIPTION()
+    public String getFlashModeCameraSettingDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FLASH_MODE,
             "Normal", "Red-eye reduction", "Rear flash sync", "Wireless");
     }
 
     @Nullable
-    public String GET_WHITE_BALANCE_DESCRIPTION()
+    public String getWhiteBalanceDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_WHITE_BALANCE,
             "Auto", // 0
@@ -211,20 +211,20 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_IMAGE_SIZE_DESCRIPTION()
+    public String getImageSizeDescription()
     {
         // This is a pretty weird way to store this information!
         return getIndexedDescription(CameraSettings.TAG_IMAGE_SIZE, "2560 x 1920", "1600 x 1200", "1280 x 960", "640 x 480");
     }
 
     @Nullable
-    public String GET_IMAGE_QUALITY_DESCRIPTION()
+    public String getImageQualityDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_IMAGE_QUALITY, "Raw", "Super Fine", "Fine", "Standard", "Economy", "Extra Fine");
     }
 
     @Nullable
-    public String GET_SHOOTING_MODE_DESCRIPTION()
+    public String getShootingModeDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_SHOOTING_MODE,
             "Single",
@@ -239,13 +239,13 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_METERING_MODE_DESCRIPTION()
+    public String getMeteringModeDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_METERING_MODE, "Multi-Segment", "Centre Weighted", "Spot");
     }
 
     @Nullable
-    public String GET_APEX_FILM_SPEED_VALUE_DESCRIPTION()
+    public String getApexFilmSpeedDescription()
     {
         // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html#Minolta_Camera_Settings
         // Apex Speed value = value/8-1 ,
@@ -260,7 +260,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_APEX_SHUTTER_SPEED_TIME_VALUE_DESCRIPTION()
+    public String getApexShutterSpeedTimeDescription()
     {
         // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html#Minolta_Camera_Settings
         // Apex Time value = value/8-6 ,
@@ -276,7 +276,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_APEX_APERTURE_VALUE_DESCRIPTION()
+    public String getApexApertureDescription()
     {
         // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html#Minolta_Camera_Settings
         // Apex Aperture Value = value/8-1 ,
@@ -291,32 +291,32 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_MACRO_MODE_DESCRIPTION()
+    public String getMacroModeCameraSettingDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_MACRO_MODE, "Off", "On");
     }
 
     @Nullable
-    public String GET_DIGITAL_ZOOM_DESCRIPTION()
+    public String getDigitalZoomDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_DIGITAL_ZOOM, "Off", "Electronic magnification", "Digital zoom 2x");
     }
 
     @Nullable
-    public String GET_EXPOSURE_COMPENSATION_DESCRIPTION()
+    public String getExposureCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_EXPOSURE_COMPENSATION);
         return value == null ? null : ((value / 3d) - 2) + " EV";
     }
 
     @Nullable
-    public String GET_BRACKET_STEP_DESCRIPTION()
+    public String getBracketStepDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_BRACKET_STEP, "1/3 EV", "2/3 EV", "1 EV");
     }
 
     @Nullable
-    public String GET_INTERVAL_LENGTH_DESCRIPTION()
+    public String getIntervalLengthDescription()
     {
         if (!_directory.isIntervalMode())
             return "N/A";
@@ -326,7 +326,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_INTERVAL_NUMBER_DESCRIPTION()
+    public String getIntervalNumberDescription()
     {
         if (!_directory.isIntervalMode())
             return "N/A";
@@ -336,14 +336,14 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_FOCAL_LENGTH_DESCRIPTION()
+    public String getFocalLengthDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FOCAL_LENGTH);
         return value == null ? null : Double.toString(value/256d) + " mm";
     }
 
     @Nullable
-    public String GET_FOCUS_DISTANCE_DESCRIPTION()
+    public String getFocusDistanceDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FOCUS_DISTANCE);
         return value == null
@@ -354,13 +354,13 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_FLASH_FIRED_DESCRIPTION()
+    public String getFlastFiredDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FLASH_FIRED, "No", "Yes");
     }
 
     @Nullable
-    public String GET_DATE_DESCRIPTION()
+    public String getDateDescription()
     {
         // day = value%256,
         // month = floor( (value - floor( value/65536 )*65536 )/256 )
@@ -375,7 +375,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_TIME_DESCRIPTION()
+    public String getTimeDescription()
     {
         // hours = floor( value/65536 ),
         // minutes = floor( ( value - floor( value/65536 )*65536 )/256 ),
@@ -391,7 +391,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_MAX_APERTURE_AT_FOCAL_LENGTH_DESCRIPTION()
+    public String getMaxApertureAtFocalLengthDescription()
     {
         // Aperture F-Stop = 2^(value/16-0.5)
         Long value = _directory.getLongObject(CameraSettings.TAG_TIME);
@@ -402,13 +402,13 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_FILE_NUMBER_MEMORY_DESCRIPTION()
+    public String getFileNumberMemoryDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FILE_NUMBER_MEMORY, "Off", "On");
     }
 
     @Nullable
-    public String GET_LAST_FILE_NUMBER_DESCRIPTION()
+    public String getLastFileNumberDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_LAST_FILE_NUMBER);
         return value == null
@@ -419,67 +419,67 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_WHITE_BALANCE_RED_DESCRIPTION()
+    public String getWhiteBalanceRedDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_RED);
         return value == null ? null : Double.toString(value/256d);
     }
 
     @Nullable
-    public String GET_WHITE_BALANCE_GREEN_DESCRIPTION()
+    public String getWhiteBalanceGreenDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_GREEN);
         return value == null ? null : Double.toString(value/256d);
     }
 
     @Nullable
-    public String GET_WHITE_BALANCE_BLUE_DESCRIPTION()
+    public String getWhiteBalanceBlueDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_BLUE);
         return value == null ? null : Double.toString(value/256d);
     }
 
     @Nullable
-    public String GET_SATURATION_DESCRIPTION()
+    public String getSaturationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_SATURATION);
         return value == null ? null : Long.toString(value-3);
     }
 
     @Nullable
-    public String GET_CONTRAST_DESCRIPTION()
+    public String getContrastDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_CONTRAST);
         return value == null ? null : Long.toString(value-3);
     }
 
     @Nullable
-    public String GET_SHARPNESS_DESCRIPTION()
+    public String getSharpnessCameraSettingDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_SHARPNESS, "Hard", "Normal", "Soft");
     }
 
     @Nullable
-    public String GET_SUBJECT_PROGRAM_DESCRIPTION()
+    public String getSubjectProgramDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_SUBJECT_PROGRAM, "None", "Portrait", "Text", "Night Portrait", "Sunset", "Sports Action");
     }
 
     @Nullable
-    public String GET_FLASH_COMPENSATION_DESCRIPTION()
+    public String getFlastCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FLASH_COMPENSATION);
         return value == null ? null : ((value-6)/3d) + " EV";
     }
 
     @Nullable
-    public String GET_ISO_SETTING_DESCRIPTION()
+    public String getIsoSettingDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_ISO_SETTING, "100", "200", "400", "800", "Auto", "64");
     }
 
     @Nullable
-    public String GET_CAMERA_MODEL_DESCRIPTION()
+    public String getCameraModelDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_CAMERA_MODEL,
             "DiMAGE 7",
@@ -493,63 +493,63 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_INTERVAL_MODE_DESCRIPTION()
+    public String getIntervalModeDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_INTERVAL_MODE, "Still Image", "Time Lapse Movie");
     }
 
     @Nullable
-    public String GET_FOLDER_NAME_DESCRIPTION()
+    public String getFolderNameDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FOLDER_NAME, "Standard Form", "Data Form");
     }
 
     @Nullable
-    public String GET_COLOR_MODE_DESCRIPTION()
+    public String getColorModeCameraSettingDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_COLOR_MODE, "Natural Color", "Black & White", "Vivid Color", "Solarization", "AdobeRGB");
     }
 
     @Nullable
-    public String GET_COLOR_FILTER_DESCRIPTION()
+    public String getColorFilterDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_COLOR_FILTER);
         return value == null ? null : Long.toString(value-3);
     }
 
     @Nullable
-    public String GET_BLACK_AND_WHITE_FILTER_DESCRIPTION()
+    public String getBlackAndWhiteFilterDescription()
     {
         return super.getDescription(CameraSettings.TAG_BLACK_AND_WHITE_FILTER);
     }
 
     @Nullable
-    public String GET_INTERNAL_FLASH_DESCRIPTION()
+    public String getInternalFlashDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_INTERNAL_FLASH, "Did Not Fire", "Fired");
     }
 
     @Nullable
-    public String GET_APEX_BRIGHTNESS_VALUE_DESCRIPTION()
+    public String getApexBrightnessDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_APEX_BRIGHTNESS_VALUE);
         return value == null ? null : Double.toString((value/8d)-6);
     }
 
     @Nullable
-    public String GET_SPOT_FOCUS_POINT_X_COORDINATE_DESCRIPTION()
+    public String getSpotFocusPointXCoordinateDescription()
     {
         return super.getDescription(CameraSettings.TAG_SPOT_FOCUS_POINT_X_COORDINATE);
     }
 
     @Nullable
-    public String GET_SPOT_FOCUS_POINT_Y_COORDINATE_DESCRIPTION()
+    public String getSpotFocusPointYCoordinateDescription()
     {
         return super.getDescription(CameraSettings.TAG_SPOT_FOCUS_POINT_Y_COORDINATE);
     }
 
     @Nullable
-    public String GET_WIDE_FOCUS_ZONE_DESCRIPTION()
+    public String getWideFocusZoneDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_WIDE_FOCUS_ZONE,
             "No Zone or AF Failed",
@@ -561,19 +561,19 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String GET_FOCUS_MODE_DESCRIPTION()
+    public String getFocusModeCameraSettingDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FOCUS_MODE, "Auto Focus", "Manual Focus");
     }
 
     @Nullable
-    public String GET_FOCUS_AREA_DESCRIPTION()
+    public String getFocusAreaDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FOCUS_AREA, "Wide Focus (Normal)", "Spot Focus");
     }
 
     @Nullable
-    public String GET_DEC_SWITCH_POSITION_DESCRIPTION()
+    public String getDecSwitchPositionDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_DEC_SWITCH_POSITION, "Exposure", "Contrast", "Saturation", "Filter");
     }
