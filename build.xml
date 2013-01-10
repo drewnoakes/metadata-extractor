@@ -110,6 +110,7 @@
         <jar destfile="${bin-jar}" update="false">
             <manifest>
                 <attribute name="Main-Class" value="com.drew.imaging.ImageMetadataReader"/>
+                <attribute name="Implementation-Version" value="${library-version}"/>
             </manifest>
             <fileset dir="${output}">
                 <exclude name="com/drew/tools" />

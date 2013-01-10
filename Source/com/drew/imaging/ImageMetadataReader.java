@@ -87,9 +87,9 @@ public class ImageMetadataReader
      * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
      */
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws ImageProcessingException, IOException
+    public static Metadata readMetadata(@NotNull final InputStream inputStream) throws ImageProcessingException, IOException
     {
-        InputStream bufferedInputStream = new BufferedInputStream(inputStream);
+        InputStream bufferedInputStream = inputStream instanceof BufferedInputStream ? inputStream : new BufferedInputStream(inputStream);
 
         int magicNumber = peekMagicNumber(bufferedInputStream);
 
@@ -149,7 +149,7 @@ public class ImageMetadataReader
      * @throws ImageProcessingException for general processing errors.
      */
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws ImageProcessingException, IOException
+    public static Metadata readMetadata(@NotNull final File file) throws ImageProcessingException, IOException
     {
         InputStream inputStream = new FileInputStream(file);
         try {
@@ -162,7 +162,7 @@ public class ImageMetadataReader
     /**
      * Reads the first two bytes from <code>inputStream</code>, then rewinds.
      */
-    private static int peekMagicNumber(@NotNull InputStream inputStream) throws IOException
+    private static int peekMagicNumber(@NotNull final InputStream inputStream) throws IOException
     {
         inputStream.mark(2);
         final int byte1 = inputStream.read();
@@ -201,7 +201,10 @@ public class ImageMetadataReader
         boolean showHex = argList.remove("-hex");
 
         if (argList.size() < 1) {
-            System.out.println("Usage: java -jar metadata-extractor-a.b.c.jar <filename> [<filename>] [-thumb] [-wiki] [-hex]");
+            String version = ImageMetadataReader.class.getPackage().getImplementationVersion();
+            System.out.println("metadata-extractor version " + version);
+            System.out.println();
+            System.out.println(String.format("Usage: java -jar metadata-extractor-%s.jar <filename> [<filename>] [-thumb] [-wiki] [-hex]", version == null ? "a.b.c" : version));
             System.exit(1);
         }
 
