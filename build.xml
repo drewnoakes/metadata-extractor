@@ -53,6 +53,7 @@
     </target>
 
     <target name="compile" description="compile the source">
+        <echo message="Using Java version ${ant.java.version}"/>
         <javac classpath="${classpath}"
                srcdir="${src}"
                destdir="${output}"
