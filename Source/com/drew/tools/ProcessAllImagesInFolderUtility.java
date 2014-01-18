@@ -70,6 +70,9 @@ public class ProcessAllImagesInFolderUtility
 
         long start = System.nanoTime();
 
+        // Order alphabetically so that output is stable across invocations
+        Collections.sort(directories);
+
         for (String directory : directories) {
             processDirectory(new File(directory), handler);
         }
@@ -86,6 +89,9 @@ public class ProcessAllImagesInFolderUtility
         if (pathItems == null) {
             return;
         }
+
+        // Order alphabetically so that output is stable across invocations
+        Arrays.sort(pathItems);
 
         for (String pathItem : pathItems) {
             File file = new File(path, pathItem);
