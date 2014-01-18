@@ -49,13 +49,13 @@ public class ProcessAllImagesInFolderUtility
             System.exit(1);
         }
 
-        // If one of the arguments is "-write" then we write the discovered metadata into a sub-folder relative to the image
         List<String> directories = new ArrayList<String>();
 
         FileHandler handler = null;
 
         for (String arg : args) {
             if (arg.equalsIgnoreCase("-text")) {
+                // If "-test" is specified, write the discovered metadata into a sub-folder relative to the image
                 handler = new TextFileOutputHandler();
             } else if (arg.equalsIgnoreCase("-wiki")) {
                 handler = new WikiTableOutputHandler();
