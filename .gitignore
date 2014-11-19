@@ -3,3 +3,6 @@
 /Output
 /out
 /TestReports
+.project
+.classpath
+.settings/
