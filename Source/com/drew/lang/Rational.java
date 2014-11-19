@@ -34,8 +34,6 @@ import java.io.Serializable;
  */
 public class Rational extends java.lang.Number implements Serializable
 {
-    // TODO make Rational implement Number?
-
     private static final long serialVersionUID = 510688928138848770L;
 
     /** Holds the numerator. */
