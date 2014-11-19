@@ -38,7 +38,7 @@ import java.io.UnsupportedEncodingException;
  *     <li>{@link RandomAccessStreamReader}</li>
  * </ul>
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public abstract class RandomAccessReader
 {

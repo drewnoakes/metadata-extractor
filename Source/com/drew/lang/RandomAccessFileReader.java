@@ -30,7 +30,7 @@ import java.io.RandomAccessFile;
  * Provides methods to read specific values from a {@link RandomAccessFile}, with a consistent, checked exception structure for
  * issues.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  * */
 public class RandomAccessFileReader extends RandomAccessReader
 {

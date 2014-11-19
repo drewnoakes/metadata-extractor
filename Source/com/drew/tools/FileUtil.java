@@ -31,7 +31,7 @@ import java.io.IOException;
  * A series of utility methods for working with the file system. The methods herein are used in unit testing.
  * Use them in production code at your own risk!
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class FileUtil
 {

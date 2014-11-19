@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Kodak cameras.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class KodakMakernoteDirectory extends Directory
 {

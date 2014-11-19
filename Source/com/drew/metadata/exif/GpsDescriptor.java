@@ -33,7 +33,7 @@ import static com.drew.metadata.exif.GpsDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link GpsDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class GpsDescriptor extends TagDescriptor<GpsDirectory>
 {

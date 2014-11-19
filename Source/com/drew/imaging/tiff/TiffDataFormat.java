@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 /**
  * An enumeration of data formats used by the TIFF specification.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class TiffDataFormat
 {

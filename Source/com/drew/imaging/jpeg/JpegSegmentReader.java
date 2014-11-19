@@ -38,7 +38,7 @@ import java.util.Set;
  * values, modelled in the {@link JpegSegmentType} enumeration. Use <code>readSegments</code> to read out the some
  * or all segments into a {@link JpegSegmentData} object, from which the raw JPEG segment byte arrays may be accessed.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegSegmentReader
 {

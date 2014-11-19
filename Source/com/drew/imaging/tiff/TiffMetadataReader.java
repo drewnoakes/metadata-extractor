@@ -35,7 +35,7 @@ import java.io.RandomAccessFile;
  * Obtains all available metadata from TIFF formatted files.  Note that TIFF files include many digital camera RAW
  * formats, including Canon (CRW, CR2), Nikon (NEF), Olympus (ORF) and Panasonic (RW2).
  *
- * @author Darren Salomons, Drew Noakes http://drewnoakes.com
+ * @author Darren Salomons, Drew Noakes https://drewnoakes.com
  */
 public class TiffMetadataReader
 {

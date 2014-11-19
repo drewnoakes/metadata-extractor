@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Kyocera and Contax cameras.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class KyoceraMakernoteDirectory extends Directory
 {

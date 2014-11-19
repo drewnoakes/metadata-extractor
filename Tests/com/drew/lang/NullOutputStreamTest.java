@@ -25,7 +25,7 @@ import org.junit.Test;
 import java.io.OutputStream;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class NullOutputStreamTest
 {

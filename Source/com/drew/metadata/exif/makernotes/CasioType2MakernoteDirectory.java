@@ -31,7 +31,7 @@ import java.util.HashMap;
  * A standard TIFF IFD directory but always uses Motorola (Big-Endian) Byte Alignment.
  * Makernote data begins after a 6-byte header: "QVC\x00\x00\x00"
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class CasioType2MakernoteDirectory extends Directory
 {

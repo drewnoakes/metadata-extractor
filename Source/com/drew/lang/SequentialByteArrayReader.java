@@ -28,7 +28,7 @@ import java.io.IOException;
 
 /**
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class SequentialByteArrayReader extends SequentialReader
 {

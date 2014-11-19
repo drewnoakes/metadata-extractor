@@ -23,7 +23,7 @@ package com.drew.imaging;
 /**
  * Contains helper methods that perform photographic conversions.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public final class PhotographicConversions
 {

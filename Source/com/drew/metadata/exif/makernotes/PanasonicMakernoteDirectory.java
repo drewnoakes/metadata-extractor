@@ -34,7 +34,7 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Panasonic and Leica cameras.
  *
- * @author Drew Noakes http://drewnoakes.com, Philipp Sandhaus
+ * @author Drew Noakes https://drewnoakes.com, Philipp Sandhaus
  */
 public class PanasonicMakernoteDirectory extends Directory
 {

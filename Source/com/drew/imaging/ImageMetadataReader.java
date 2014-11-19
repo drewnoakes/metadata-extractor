@@ -55,7 +55,7 @@ import java.util.Collection;
  * If you know the file type you're working with, you may use one of the above processors directly.
  * For most scenarios it is simpler, more convenient and more robust to use this class.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ImageMetadataReader
 {

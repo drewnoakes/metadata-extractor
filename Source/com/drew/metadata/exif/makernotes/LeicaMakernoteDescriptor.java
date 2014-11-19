@@ -31,7 +31,7 @@ import static com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory.*;
  * <p/>
  * Tag reference from: http://gvsoft.homedns.org/exif/makernote-leica-type1.html
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class LeicaMakernoteDescriptor extends TagDescriptor<LeicaMakernoteDirectory>
 {

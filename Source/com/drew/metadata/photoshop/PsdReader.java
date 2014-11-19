@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * Reads metadata stored within PSD file format data.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PsdReader implements MetadataReader
 {

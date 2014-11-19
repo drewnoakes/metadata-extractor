@@ -31,7 +31,7 @@ import java.util.Stack;
 /**
  * Adapter between the {@link TiffHandler} interface and the {@link Metadata}/{@link Directory} object model.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public abstract class DirectoryTiffHandler implements TiffHandler
 {

@@ -33,7 +33,7 @@ import java.util.Arrays;
 /**
  * Decodes JPEG SOFn data, populating a {@link Metadata} object with tag values in a {@link JpegDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  * @author Darrell Silver http://www.darrellsilver.com
  */
 public class JpegReader implements JpegSegmentMetadataReader

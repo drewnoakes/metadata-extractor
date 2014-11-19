@@ -33,7 +33,7 @@ import java.util.HashMap;
 /**
  * One of several Exif directories.  Otherwise known as IFD1, this directory holds information about an embedded thumbnail image.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifThumbnailDirectory extends Directory
 {

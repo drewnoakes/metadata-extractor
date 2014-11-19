@@ -5,7 +5,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
 {

@@ -46,7 +46,7 @@ import static com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory.*;
  * </li>
  * </ul>
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernoteDirectory>
 {

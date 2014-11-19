@@ -36,7 +36,7 @@ import java.util.List;
  * providing the human-readable string representation of tag values stored in a directory.
  * The directory is provided to the tag descriptor via its constructor.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class TagDescriptor<T extends Directory>
 {

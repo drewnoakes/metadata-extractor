@@ -26,7 +26,7 @@ import java.io.OutputStream;
 /**
  * An implementation of OutputSteam that ignores write requests by doing nothing.  This class may be useful in tests.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class NullOutputStream extends OutputStream
 {

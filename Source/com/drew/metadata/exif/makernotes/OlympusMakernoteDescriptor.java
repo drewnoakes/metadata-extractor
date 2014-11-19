@@ -31,7 +31,7 @@ import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link OlympusMakernoteDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDirectory>
 {

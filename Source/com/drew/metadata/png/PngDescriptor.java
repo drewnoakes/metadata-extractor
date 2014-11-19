@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PngDescriptor extends TagDescriptor<PngDirectory>
 {

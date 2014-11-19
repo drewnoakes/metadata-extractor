@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author  Drew Noakes http://drewnoakes.com
+ * @author  Drew Noakes https://drewnoakes.com
  */
 public class RationalTest
 {

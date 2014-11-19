@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Describes tags used by the International Press Telecommunications Council (IPTC) metadata format.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class IptcDirectory extends Directory
 {

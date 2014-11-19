@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 /**
  * Unit tests for {@link IptcReader}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class IptcReaderTest
 {

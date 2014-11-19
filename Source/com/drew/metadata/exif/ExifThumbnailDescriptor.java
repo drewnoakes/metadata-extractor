@@ -31,7 +31,7 @@ import static com.drew.metadata.exif.ExifThumbnailDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifThumbnailDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirectory>
 {

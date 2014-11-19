@@ -34,7 +34,7 @@ import java.io.InputStream;
 /**
  * Obtains metadata from GIF files.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class GifMetadataReader
 {

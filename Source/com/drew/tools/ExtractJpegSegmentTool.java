@@ -38,7 +38,7 @@ import java.util.Set;
  * <p/>
  * These files are lightweight and convenient for use in unit tests.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExtractJpegSegmentTool
 {

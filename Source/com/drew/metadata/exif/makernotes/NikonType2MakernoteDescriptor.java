@@ -34,7 +34,7 @@ import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.*;
  *
  * Type-2 applies to the E990 and D-series cameras such as the D1, D70 and D100.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2MakernoteDirectory>
 {

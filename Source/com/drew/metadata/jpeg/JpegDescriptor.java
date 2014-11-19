@@ -28,7 +28,7 @@ import com.drew.metadata.TagDescriptor;
  * Provides human-readable string versions of the tags stored in a JpegDirectory.
  * Thanks to Darrell Silver (www.darrellsilver.com) for the initial version of this class.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegDescriptor extends TagDescriptor<JpegDirectory>
 {

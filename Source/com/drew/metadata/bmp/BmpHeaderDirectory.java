@@ -6,7 +6,7 @@ import com.drew.metadata.Directory;
 import java.util.HashMap;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class BmpHeaderDirectory extends Directory
 {

@@ -36,7 +36,7 @@ import static com.drew.metadata.exif.ExifSubIFDDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifSubIFDDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
 {

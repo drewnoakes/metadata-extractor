@@ -28,7 +28,7 @@ import com.drew.metadata.Directory;
 import java.util.HashMap;
 import java.util.Map;
 
-/** @author Torsten Skadell, Drew Noakes http://drewnoakes.com */
+/** @author Torsten Skadell, Drew Noakes https://drewnoakes.com */
 public class XmpDirectory extends Directory
 {
     // These are some Tags, belonging to xmp-data-tags

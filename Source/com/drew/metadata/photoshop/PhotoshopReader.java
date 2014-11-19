@@ -37,7 +37,7 @@ import java.util.Arrays;
  * Note that IPTC data may be stored within this segment, in which case this reader will
  * create both a {@link PhotoshopDirectory} and a {@link com.drew.metadata.iptc.IptcDirectory}.
  *
- * @author Yuri Binev, Drew Noakes http://drewnoakes.com
+ * @author Yuri Binev, Drew Noakes https://drewnoakes.com
  */
 public class PhotoshopReader implements JpegSegmentMetadataReader
 {

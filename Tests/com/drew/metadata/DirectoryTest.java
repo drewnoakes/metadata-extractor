@@ -30,7 +30,7 @@ import java.util.GregorianCalendar;
 import static org.junit.Assert.*;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class DirectoryTest
 {

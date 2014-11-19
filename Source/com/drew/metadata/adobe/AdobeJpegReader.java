@@ -35,7 +35,7 @@ import java.util.Arrays;
 /**
  * Decodes Adobe formatted data stored in JPEG files, normally in the APPE (App14) segment.
  *
- * @author Philip, Drew Noakes http://drewnoakes.com
+ * @author Philip, Drew Noakes https://drewnoakes.com
  */
 public class AdobeJpegReader implements JpegSegmentMetadataReader
 {

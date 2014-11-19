@@ -30,7 +30,7 @@ import java.io.Serializable;
  * Immutable class for holding a rational number without loss of precision.  Provides
  * a familiar representation via toString() in form <code>numerator/denominator</code>.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class Rational extends java.lang.Number implements Serializable
 {

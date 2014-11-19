@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * An enumeration of the known segment types found in JPEG files.
  *
- * @author  Drew Noakes http://drewnoakes.com
+ * @author  Drew Noakes https://drewnoakes.com
  */
 public enum JpegSegmentType
 {

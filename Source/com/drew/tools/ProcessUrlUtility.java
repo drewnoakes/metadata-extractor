@@ -36,7 +36,7 @@ import java.net.URLConnection;
 /**
  * Utility that extracts metadata found at a given URL.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ProcessUrlUtility
 {

@@ -34,7 +34,7 @@ import java.util.Map;
  * Metadata objects may contain zero or more {@link Directory} objects.  Each directory may contain zero or more tags
  * with corresponding values.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public final class Metadata
 {

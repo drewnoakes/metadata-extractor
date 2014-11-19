@@ -31,7 +31,7 @@ import java.util.HashMap;
  * A standard TIFF IFD directory but always uses Motorola (Big-Endian) Byte Alignment.
  * Makernote data begins immediately (no header).
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class CasioType1MakernoteDirectory extends Directory
 {

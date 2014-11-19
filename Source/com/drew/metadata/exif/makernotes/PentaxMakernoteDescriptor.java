@@ -32,7 +32,7 @@ import static com.drew.metadata.exif.makernotes.PentaxMakernoteDirectory.*;
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/pentax_mn.html
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDirectory>
 {

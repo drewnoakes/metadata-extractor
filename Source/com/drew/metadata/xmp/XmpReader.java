@@ -42,7 +42,7 @@ import java.util.Calendar;
  * Copyright (c) 1999 - 2007, Adobe Systems Incorporated All rights reserved.
  *
  * @author Torsten Skadell
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class XmpReader implements JpegSegmentMetadataReader
 {

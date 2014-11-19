@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes tags used by a JPEG file comment.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegCommentDirectory extends Directory
 {

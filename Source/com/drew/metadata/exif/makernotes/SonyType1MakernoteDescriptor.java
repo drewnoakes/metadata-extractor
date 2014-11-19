@@ -30,7 +30,7 @@ import static com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory.*;
  * Provides human-readable string representations of tag values stored in a {@link SonyType1MakernoteDirectory}.
  * Thanks to David Carson for the initial version of this class.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1MakernoteDirectory>
 {

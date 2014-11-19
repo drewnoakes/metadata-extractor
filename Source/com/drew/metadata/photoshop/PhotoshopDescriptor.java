@@ -28,7 +28,7 @@ import com.drew.metadata.TagDescriptor;
 
 import java.io.IOException;
 
-/** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
+/** @author Yuri Binev, Drew Noakes https://drewnoakes.com */
 public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
 {
     public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory)

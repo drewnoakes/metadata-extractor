@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * Describes Exif tags from the IFD0 directory.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifIFD0Directory extends Directory
 {

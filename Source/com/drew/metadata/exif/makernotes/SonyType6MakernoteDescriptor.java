@@ -30,7 +30,7 @@ import static com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link SonyType6MakernoteDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class SonyType6MakernoteDescriptor extends TagDescriptor<SonyType6MakernoteDirectory>
 {

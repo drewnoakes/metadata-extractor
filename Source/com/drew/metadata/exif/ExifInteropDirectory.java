@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes Exif interoperability tags.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifInteropDirectory extends Directory
 {

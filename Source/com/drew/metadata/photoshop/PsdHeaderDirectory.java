@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * Holds the basic metadata found in the header of a Photoshop PSD file.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PsdHeaderDirectory extends Directory
 {

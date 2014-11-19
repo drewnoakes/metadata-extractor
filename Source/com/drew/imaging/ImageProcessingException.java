@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 /**
  * An exception class thrown upon an unexpected condition that was fatal for the processing of an image.
  * 
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ImageProcessingException extends CompoundException
 {

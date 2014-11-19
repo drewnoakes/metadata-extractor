@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class RandomAccessStreamReader extends RandomAccessReader
 {

@@ -45,7 +45,7 @@ import java.util.Set;
 /**
  * Obtains all available metadata from JPEG formatted files.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegMetadataReader
 {

@@ -36,7 +36,7 @@ import static com.drew.metadata.exif.makernotes.KyoceraMakernoteDirectory.*;
  * of TIFF header (same as the other IFD), but Kyocera (along with Fujifilm) counts
  * it from the first byte of Makernote itself.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDirectory>
 {

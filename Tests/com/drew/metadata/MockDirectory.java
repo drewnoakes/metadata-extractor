@@ -27,7 +27,7 @@ import java.util.HashMap;
 /**
  * A mock implementation of Directory used in unit testing.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class MockDirectory extends Directory
 {

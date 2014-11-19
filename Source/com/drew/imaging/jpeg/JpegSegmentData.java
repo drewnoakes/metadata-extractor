@@ -37,7 +37,7 @@ import java.util.*;
  * <code>Map&lt;JpegSegmentType, Collection&lt;byte[]&gt;&gt;</code>. This class provides
  * convenience methods around that structure.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegSegmentData
 {

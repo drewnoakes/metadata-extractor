@@ -31,7 +31,7 @@ import java.util.HashMap;
 /**
  * Describes Exif tags that contain Global Positioning System (GPS) data.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class GpsDirectory extends Directory
 {

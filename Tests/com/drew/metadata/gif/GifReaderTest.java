@@ -32,7 +32,7 @@ import java.io.InputStream;
 import static org.junit.Assert.*;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class GifReaderTest
 {

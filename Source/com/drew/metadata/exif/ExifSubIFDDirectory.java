@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes Exif tags from the SubIFD directory.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifSubIFDDirectory extends Directory
 {

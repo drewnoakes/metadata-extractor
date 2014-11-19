@@ -29,7 +29,7 @@ import static com.drew.metadata.exif.makernotes.CanonMakernoteDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link CanonMakernoteDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirectory>
 {

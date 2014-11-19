@@ -5,7 +5,7 @@ import com.drew.lang.annotations.NotNull;
 /**
  * Models a key/value pair, where both are non-null {@link String} objects.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class KeyValuePair
 {

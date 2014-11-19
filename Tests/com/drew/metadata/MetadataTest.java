@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 /**
  * JUnit test case for class Metadata.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class MetadataTest
 {

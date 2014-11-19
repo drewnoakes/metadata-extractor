@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * Processes TIFF-formatted data, calling into client code via that {@link TiffHandler} interface.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class TiffReader
 {

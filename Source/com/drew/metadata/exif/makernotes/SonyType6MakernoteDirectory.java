@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Sony cameras that use the Sony Type 6 makernote tags.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class SonyType6MakernoteDirectory extends Directory
 {

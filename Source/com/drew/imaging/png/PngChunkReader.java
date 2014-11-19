@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PngChunkReader
 {

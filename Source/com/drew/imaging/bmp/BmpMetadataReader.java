@@ -31,7 +31,7 @@ import java.io.*;
 /**
  * Obtains metadata from BMP files.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class BmpMetadataReader
 {

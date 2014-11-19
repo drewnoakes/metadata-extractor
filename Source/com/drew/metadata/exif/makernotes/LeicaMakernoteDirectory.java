@@ -30,7 +30,7 @@ import java.util.HashMap;
  * <p/>
  * Tag reference from: http://gvsoft.homedns.org/exif/makernote-leica-type1.html
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class LeicaMakernoteDirectory extends Directory
 {

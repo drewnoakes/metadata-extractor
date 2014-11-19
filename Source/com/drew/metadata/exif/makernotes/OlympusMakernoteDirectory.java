@@ -31,7 +31,7 @@ import java.util.HashMap;
  * The Olympus makernote is used by many manufacturers (Epson, Konica, Minolta and Agfa...), and as such contains some tags
  * that appear specific to those manufacturers.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class OlympusMakernoteDirectory extends Directory
 {

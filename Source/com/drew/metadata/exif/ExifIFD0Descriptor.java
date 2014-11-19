@@ -33,7 +33,7 @@ import static com.drew.metadata.exif.ExifIFD0Directory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifIFD0Directory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
 {

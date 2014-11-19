@@ -42,7 +42,7 @@ import java.util.HashMap;
  * later models, the IFD was given the standard prefix to indicate the camera models (most other manufacturers also
  * provide this prefix to aid in software decoding).
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class NikonType2MakernoteDirectory extends Directory
 {

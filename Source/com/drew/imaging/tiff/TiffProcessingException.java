@@ -27,7 +27,7 @@ import com.drew.lang.annotations.Nullable;
 /**
  * An exception class thrown upon unexpected and fatal conditions while processing a TIFF file.
  *
- * @author  Drew Noakes http://drewnoakes.com
+ * @author  Drew Noakes https://drewnoakes.com
  * @author  Darren Salomons
  */
 public class TiffProcessingException extends ImageProcessingException

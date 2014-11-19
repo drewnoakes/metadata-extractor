@@ -31,7 +31,7 @@ import java.io.PrintWriter;
  * unavailable in previous versions.  This class allows support
  * of these previous JDK versions.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class CompoundException extends Exception
 {

@@ -28,7 +28,7 @@ import com.drew.lang.annotations.NotNull;
  * <p/>
  * Instances of this interface must be thread-safe and reusable.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public interface MetadataReader
 {

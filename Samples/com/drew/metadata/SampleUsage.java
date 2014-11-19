@@ -37,7 +37,7 @@ import java.util.Arrays;
  * <p/>
  * For more information, see the project wiki: https://code.google.com/p/metadata-extractor/wiki/GettingStarted
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class SampleUsage
 {

@@ -7,7 +7,7 @@ import com.drew.metadata.TagDescriptor;
 import java.util.HashMap;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PngChromaticitiesDirectory extends Directory
 {

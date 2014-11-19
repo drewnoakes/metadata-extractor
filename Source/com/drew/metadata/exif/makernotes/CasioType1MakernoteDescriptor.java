@@ -29,7 +29,7 @@ import static com.drew.metadata.exif.makernotes.CasioType1MakernoteDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link CasioType1MakernoteDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1MakernoteDirectory>
 {

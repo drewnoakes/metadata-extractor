@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.zip.InflaterInputStream;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PngMetadataReader
 {

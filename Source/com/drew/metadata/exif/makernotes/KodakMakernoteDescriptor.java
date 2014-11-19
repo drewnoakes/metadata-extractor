@@ -29,7 +29,7 @@ import static com.drew.metadata.exif.makernotes.KodakMakernoteDirectory.*;
 /**
  * Provides human-readable string representations of tag values stored in a {@link KodakMakernoteDirectory}.
  * 
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class KodakMakernoteDescriptor extends TagDescriptor<KodakMakernoteDirectory>
 {

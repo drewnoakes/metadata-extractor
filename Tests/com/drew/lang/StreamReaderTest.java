@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class StreamReaderTest extends SequentialAccessTestBase
 {

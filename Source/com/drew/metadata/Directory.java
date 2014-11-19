@@ -36,7 +36,7 @@ import java.util.*;
  * Abstract base class for all directory implementations, having methods for getting and setting tag values of various
  * data types.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public abstract class Directory
 {

@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public abstract class SequentialReader
 {

@@ -41,7 +41,7 @@ import static com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory.*;
  * <li><a href="http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.html">http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Panasonic.html</a></li>
  * </ul>
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  * @author Philipp Sandhaus
  */
 public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakernoteDirectory>

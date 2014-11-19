@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 /**
  * Base class for testing implementations of {@link com.drew.lang.SequentialReader}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public abstract class SequentialAccessTestBase
 {

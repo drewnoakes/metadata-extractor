@@ -4,7 +4,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class GifHeaderDescriptor extends TagDescriptor<GifHeaderDirectory>
 {

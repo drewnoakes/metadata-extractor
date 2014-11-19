@@ -41,7 +41,7 @@ import static com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory.*;
  * :0010: 00 00 EC 02 00 00 03 00-03 00 01 00 00 00 06 00 ................
  * </code></pre>
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1MakernoteDirectory>
 {

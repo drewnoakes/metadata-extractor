@@ -31,7 +31,7 @@ import java.util.Arrays;
  * Decodes the comment stored within JPEG files, populating a {@link Metadata} object with tag values in a
  * {@link JpegCommentDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegCommentReader implements JpegSegmentMetadataReader
 {

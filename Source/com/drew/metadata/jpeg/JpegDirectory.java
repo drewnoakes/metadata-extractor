@@ -30,7 +30,7 @@ import java.util.HashMap;
 /**
  * Directory of tags and values for the SOF0 JPEG segment.  This segment holds basic metadata about the image.
  *
- * @author Darrell Silver http://www.darrellsilver.com and Drew Noakes http://drewnoakes.com
+ * @author Darrell Silver http://www.darrellsilver.com and Drew Noakes https://drewnoakes.com
  */
 public class JpegDirectory extends Directory
 {

@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 /**
  * Base class for all metadata specific exceptions.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class MetadataException extends CompoundException
 {

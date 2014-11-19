@@ -27,7 +27,7 @@ import com.drew.lang.annotations.NotNull;
  * tags, it simply reports tag names using the format 'Unknown tag 0x00' (with the corresponding tag number in hex)
  * and gives descriptions using the default string representation of the value.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class DefaultTagDescriptor extends TagDescriptor<Directory>
 {

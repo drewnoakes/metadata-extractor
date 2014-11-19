@@ -30,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
  * <p/>
  * As the IPTC directory already stores values as strings, this class simply returns the tag's value.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class IptcDescriptor extends TagDescriptor<IptcDirectory>
 {

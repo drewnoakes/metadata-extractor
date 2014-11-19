@@ -38,7 +38,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ProcessAllImagesInFolderUtility
 {

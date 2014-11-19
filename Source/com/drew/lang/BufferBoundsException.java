@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * A checked replacement for {@link IndexOutOfBoundsException}.  Used by {@link RandomAccessReader}.
  * 
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public final class BufferBoundsException extends IOException
 {

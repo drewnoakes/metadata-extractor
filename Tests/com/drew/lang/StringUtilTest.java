@@ -28,7 +28,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/** @author Drew Noakes http://drewnoakes.com */
+/** @author Drew Noakes https://drewnoakes.com */
 public class StringUtilTest
 {
     @Test public void testJoinIterable()

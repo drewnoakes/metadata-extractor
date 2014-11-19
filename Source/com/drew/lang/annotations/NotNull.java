@@ -22,7 +22,7 @@
 package com.drew.lang.annotations;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public @interface NotNull
 {

@@ -32,7 +32,7 @@ import java.util.HashMap;
  *
  * Many tag definitions explained here: http://www.ozhiker.com/electronics/pjmt/jpeg_info/canon_mn.html
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class CanonMakernoteDirectory extends Directory
 {

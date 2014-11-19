@@ -28,7 +28,7 @@ import java.io.Serializable;
  * Stores information about a JPEG image component such as the component id, horiz/vert sampling factor and
  * quantization table number.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegComponent implements Serializable
 {

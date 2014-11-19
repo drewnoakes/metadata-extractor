@@ -30,7 +30,7 @@ import com.drew.metadata.TagDescriptor;
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/ricoh_mn.html
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirectory>
 {

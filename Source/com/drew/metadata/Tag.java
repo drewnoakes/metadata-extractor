@@ -27,7 +27,7 @@ import com.drew.lang.annotations.Nullable;
  * Models a particular tag within a {@link com.drew.metadata.Directory} and provides methods for obtaining its value.
  * Immutable.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class Tag
 {

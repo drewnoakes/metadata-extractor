@@ -25,7 +25,7 @@ import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
-/** @author Yuri Binev, Drew Noakes http://drewnoakes.com */
+/** @author Yuri Binev, Drew Noakes https://drewnoakes.com */
 public class IccDirectory extends Directory
 {
     // These (smaller valued) tags have an integer value that's equal to their offset within the ICC data buffer.

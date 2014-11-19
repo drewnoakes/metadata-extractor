@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Pentax and Asahi cameras.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PentaxMakernoteDirectory extends Directory
 {

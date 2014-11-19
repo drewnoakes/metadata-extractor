@@ -29,7 +29,7 @@ import com.drew.lang.annotations.Nullable;
  * <p/>
  * Used by certain Panasonic cameras which have face recognition features.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class Age
 {

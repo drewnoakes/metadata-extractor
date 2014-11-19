@@ -6,7 +6,7 @@ import com.drew.lang.annotations.NotNull;
 import java.io.IOException;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PngChromaticities
 {

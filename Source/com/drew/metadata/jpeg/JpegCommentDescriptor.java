@@ -27,7 +27,7 @@ import com.drew.metadata.TagDescriptor;
 /**
  * Provides human-readable string representations of tag values stored in a <code>JpegCommentDirectory</code>.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegCommentDescriptor extends TagDescriptor<JpegCommentDirectory>
 {

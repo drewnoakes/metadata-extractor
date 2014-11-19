@@ -32,7 +32,7 @@ import java.io.*;
 /**
  * Obtains metadata from Photoshop's PSD files.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PsdMetadataReader
 {

@@ -3,7 +3,7 @@ package com.drew.imaging.png;
 import com.drew.lang.annotations.NotNull;
 
 /**
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PngChunk
 {

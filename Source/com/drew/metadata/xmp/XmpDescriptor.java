@@ -32,7 +32,7 @@ import java.text.DecimalFormat;
  * Contains all logic for the presentation of xmp data, as stored in Xmp-Segment.  Use
  * this class to provide human-readable descriptions of tag values.
  *
- * @author Torsten Skadell, Drew Noakes http://drewnoakes.com
+ * @author Torsten Skadell, Drew Noakes https://drewnoakes.com
  */
 public class XmpDescriptor extends TagDescriptor<XmpDirectory>
 {

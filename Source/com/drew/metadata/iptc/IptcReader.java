@@ -37,7 +37,7 @@ import java.util.Date;
  * <p/>
  * http://www.iptc.org/std/IIM/4.1/specification/IIMV4.1.pdf
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class IptcReader implements JpegSegmentMetadataReader
 {
