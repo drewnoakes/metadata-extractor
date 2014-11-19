@@ -21,11 +21,12 @@
 
 package com.drew.lang;
 
-import com.drew.lang.annotations.NotNull;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import com.drew.lang.annotations.NotNull;
+import com.google.common.io.ByteStreams;
 
 /**
  *
@@ -37,7 +38,7 @@ public class StreamReader extends SequentialReader
     private final InputStream _stream;
 
     @SuppressWarnings("ConstantConditions")
-    public StreamReader(@NotNull InputStream stream)
+    public StreamReader(@NotNull final InputStream stream)
     {
         if (stream == null)
             throw new NullPointerException();
@@ -48,7 +49,7 @@ public class StreamReader extends SequentialReader
     @Override
     protected byte getByte() throws IOException
     {
-        int value = _stream.read();
+        final int value = _stream.read();
         if (value == -1)
             throw new EOFException("End of data reached.");
         return (byte)value;
@@ -56,9 +57,9 @@ public class StreamReader extends SequentialReader
 
     @NotNull
     @Override
-    public byte[] getBytes(int count) throws IOException
+    public byte[] getBytes(final int count) throws IOException
     {
-        byte[] bytes = new byte[count];
+        final byte[] bytes = new byte[count];
         int totalBytesRead = 0;
 
         while (totalBytesRead != count) {
@@ -72,43 +73,27 @@ public class StreamReader extends SequentialReader
         return bytes;
     }
 
-    @Override
-    public void skip(long n) throws IOException
-    {
-        if (n < 0)
-            throw new IllegalArgumentException("n must be zero or greater.");
+	@Override
+	public void skip(final long n) throws IOException {
+		if (n < 0) {
+			throw new IllegalArgumentException("n must be zero or greater.");
+		}
 
-        long skippedCount = skipInternal(n);
+		ByteStreams.skipFully(_stream, n);
+	}
 
-        if (skippedCount != n)
-            throw new EOFException(String.format("Unable to skip. Requested %d bytes but skipped %d.", n, skippedCount));
-    }
+	@Override
+	public boolean trySkip(final long n) throws IOException {
+		if (n < 0) {
+			throw new IllegalArgumentException("n must be zero or greater.");
+		}
 
-    @Override
-    public boolean trySkip(long n) throws IOException
-    {
-        if (n < 0)
-            throw new IllegalArgumentException("n must be zero or greater.");
+		try {
+			ByteStreams.skipFully(_stream, n);
+		} catch (final EOFException e) {
+			return false;
+		}
 
-        return skipInternal(n) == n;
-    }
-
-    private long skipInternal(long n) throws IOException
-    {
-        // It seems that for some streams, such as BufferedInputStream, that skip can return
-        // some smaller number than was requested. So loop until we either skip enough, or
-        // InputStream.skip returns zero.
-        //
-        // See http://stackoverflow.com/questions/14057720/robust-skipping-of-data-in-a-java-io-inputstream-and-its-subtypes
-        //
-        long skippedTotal = 0;
-        while (skippedTotal != n) {
-            long skipped = _stream.skip(n - skippedTotal);
-            assert(skipped >= 0);
-            skippedTotal += skipped;
-            if (skipped == 0)
-                break;
-        }
-        return skippedTotal;
-    }
+		return true;
+	}
 }
