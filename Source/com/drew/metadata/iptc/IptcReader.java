@@ -20,6 +20,10 @@
  */
 package com.drew.metadata.iptc;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
+
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
@@ -27,10 +31,6 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Decodes IPTC binary data, populating a {@link Metadata} object with tag values in an {@link IptcDirectory}.
@@ -62,13 +62,13 @@ public class IptcReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APPD);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public boolean canProcess(@NotNull final byte[] segmentBytes, @NotNull final JpegSegmentType segmentType)
     {
         // Check whether the first byte resembles
         return segmentBytes.length != 0 && segmentBytes[0] == 0x1c;
     }
 
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull final byte[] segmentBytes, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
         extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
     }
@@ -76,9 +76,9 @@ public class IptcReader implements JpegSegmentMetadataReader
     /**
      * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
      */
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, final long length)
     {
-        IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
+        final IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
 
         int offset = 0;
 
@@ -90,7 +90,7 @@ public class IptcReader implements JpegSegmentMetadataReader
             try {
                 startByte = reader.getUInt8();
                 offset++;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 directory.addError("Unable to read starting byte of IPTC tag");
                 return;
             }
@@ -114,7 +114,7 @@ public class IptcReader implements JpegSegmentMetadataReader
                 tagType = reader.getUInt8();
                 tagByteCount = reader.getUInt16();
                 offset += 4;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 directory.addError("IPTC data segment ended mid-way through tag descriptor");
                 return;
             }
@@ -126,7 +126,7 @@ public class IptcReader implements JpegSegmentMetadataReader
 
             try {
                 processTag(reader, directory, directoryType, tagType, tagByteCount);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 directory.addError("Error processing IPTC tag");
                 return;
             }
@@ -135,16 +135,17 @@ public class IptcReader implements JpegSegmentMetadataReader
         }
     }
 
-    private void processTag(@NotNull SequentialReader reader, @NotNull Directory directory, int directoryType, int tagType, int tagByteCount) throws IOException
+	private static void processTag(@NotNull final SequentialReader reader, @NotNull final Directory directory, final int directoryType,
+			final int tagType, final int tagByteCount) throws IOException
     {
-        int tagIdentifier = tagType | (directoryType << 8);
+        final int tagIdentifier = tagType | (directoryType << 8);
 
         String string = null;
 
         switch (tagIdentifier) {
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
                 // short
-                int shortValue = reader.getUInt16();
+                final int shortValue = reader.getUInt16();
                 reader.skip(tagByteCount - 2);
                 directory.setInt(tagIdentifier, shortValue);
                 return;
@@ -159,13 +160,13 @@ public class IptcReader implements JpegSegmentMetadataReader
                 if (tagByteCount >= 8) {
                     string = reader.getString(tagByteCount);
                     try {
-                        int year = Integer.parseInt(string.substring(0, 4));
-                        int month = Integer.parseInt(string.substring(4, 6)) - 1;
-                        int day = Integer.parseInt(string.substring(6, 8));
-                        Date date = new java.util.GregorianCalendar(year, month, day).getTime();
+                        final int year = Integer.parseInt(string.substring(0, 4));
+                        final int month = Integer.parseInt(string.substring(4, 6)) - 1;
+                        final int day = Integer.parseInt(string.substring(6, 8));
+                        final Date date = new java.util.GregorianCalendar(year, month, day).getTime();
                         directory.setDate(tagIdentifier, date);
                         return;
-                    } catch (NumberFormatException e) {
+                    } catch (final NumberFormatException e) {
                         // fall through and we'll process the 'string' value below
                     }
                 } else {
@@ -186,7 +187,7 @@ public class IptcReader implements JpegSegmentMetadataReader
 
         if (directory.containsTag(tagIdentifier)) {
             // this fancy string[] business avoids using an ArrayList for performance reasons
-            String[] oldStrings = directory.getStringArray(tagIdentifier);
+            final String[] oldStrings = directory.getStringArray(tagIdentifier);
             String[] newStrings;
             if (oldStrings == null) {
                 newStrings = new String[1];

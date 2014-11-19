@@ -20,6 +20,12 @@
  */
 package com.drew.metadata.icc;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
@@ -27,12 +33,6 @@ import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Reads an ICC profile.
@@ -52,15 +52,15 @@ public class IccReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APP2);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public boolean canProcess(@NotNull final byte[] segmentBytes, @NotNull final JpegSegmentType segmentType)
     {
         return segmentBytes.length > 10 && "ICC_PROFILE".equalsIgnoreCase(new String(segmentBytes, 0, 11));
     }
 
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull final byte[] segmentBytes, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
         // skip the first 14 bytes
-        byte[] iccProfileBytes = new byte[segmentBytes.length - 14];
+        final byte[] iccProfileBytes = new byte[segmentBytes.length - 14];
         System.arraycopy(segmentBytes, 14, iccProfileBytes, 0, segmentBytes.length - 14);
 
         extract(new ByteArrayReader(iccProfileBytes), metadata);
@@ -87,7 +87,7 @@ public class IccReader implements JpegSegmentMetadataReader
             setInt32(directory, IccDirectory.TAG_CMM_FLAGS, reader);
             set4ByteString(directory, IccDirectory.TAG_DEVICE_MAKE, reader);
 
-            int temp = reader.getInt32(IccDirectory.TAG_DEVICE_MODEL);
+            final int temp = reader.getInt32(IccDirectory.TAG_DEVICE_MODEL);
             if (temp != 0) {
                 if (temp <= 0x20202020) {
                     directory.setInt(IccDirectory.TAG_DEVICE_MODEL, temp);
@@ -99,7 +99,7 @@ public class IccReader implements JpegSegmentMetadataReader
             setInt32(directory, IccDirectory.TAG_RENDERING_INTENT, reader);
             setInt64(directory, IccDirectory.TAG_DEVICE_ATTR, reader);
 
-            float[] xyz = new float[]{
+            final float[] xyz = new float[]{
                     reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES),
                     reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES + 4),
                     reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES + 8)
@@ -107,46 +107,50 @@ public class IccReader implements JpegSegmentMetadataReader
             directory.setObject(IccDirectory.TAG_XYZ_VALUES, xyz);
 
             // Process 'ICC tags'
-            int tagCount = reader.getInt32(IccDirectory.TAG_TAG_COUNT);
+            final int tagCount = reader.getInt32(IccDirectory.TAG_TAG_COUNT);
             directory.setInt(IccDirectory.TAG_TAG_COUNT, tagCount);
 
             for (int i = 0; i < tagCount; i++) {
-                int pos = IccDirectory.TAG_TAG_COUNT + 4 + i * 12;
-                int tagType = reader.getInt32(pos);
-                int tagPtr = reader.getInt32(pos + 4);
-                int tagLen = reader.getInt32(pos + 8);
-                byte[] b = reader.getBytes(tagPtr, tagLen);
+                final int pos = IccDirectory.TAG_TAG_COUNT + 4 + i * 12;
+                final int tagType = reader.getInt32(pos);
+                final int tagPtr = reader.getInt32(pos + 4);
+                final int tagLen = reader.getInt32(pos + 8);
+                final byte[] b = reader.getBytes(tagPtr, tagLen);
                 directory.setByteArray(tagType, b);
             }
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             directory.addError("Exception reading ICC profile: " + ex.getMessage());
         }
     }
 
-    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+	private static void set4ByteString(@NotNull final Directory directory, final int tagType, @NotNull final RandomAccessReader reader)
+			throws IOException
     {
-        int i = reader.getInt32(tagType);
+        final int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setString(tagType, getStringFromInt32(i));
     }
 
-    private void setInt32(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+	private static void setInt32(@NotNull final Directory directory, final int tagType, @NotNull final RandomAccessReader reader)
+			throws IOException
     {
-        int i = reader.getInt32(tagType);
+        final int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setInt(tagType, i);
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+	private static void setInt64(@NotNull final Directory directory, final int tagType, @NotNull final RandomAccessReader reader)
+			throws IOException
     {
-        long l = reader.getInt64(tagType);
+        final long l = reader.getInt64(tagType);
         if (l != 0)
             directory.setLong(tagType, l);
     }
 
     @SuppressWarnings({"SameParameterValue", "MagicConstant"})
-    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws IOException
+	private static void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull final RandomAccessReader reader)
+			throws IOException
     {
         final int y = reader.getUInt16(tagType);
         final int m = reader.getUInt16(tagType + 2);
@@ -164,10 +168,10 @@ public class IccReader implements JpegSegmentMetadataReader
     }
 
     @NotNull
-    public static String getStringFromInt32(int d)
+    public static String getStringFromInt32(final int d)
     {
         // MSB
-        byte[] b = new byte[] {
+        final byte[] b = new byte[] {
                 (byte) ((d & 0xFF000000) >> 24),
                 (byte) ((d & 0x00FF0000) >> 16),
                 (byte) ((d & 0x0000FF00) >> 8),

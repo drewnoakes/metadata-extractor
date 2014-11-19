@@ -21,6 +21,24 @@
 
 package com.drew.tools;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -34,26 +52,23 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 
-import java.io.*;
-import java.util.*;
-
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
 public class ProcessAllImagesInFolderUtility
 {
-    public static void main(String[] args) throws IOException, JpegProcessingException
+    public static void main(final String[] args) throws IOException, JpegProcessingException
     {
         if (args.length == 0) {
             System.err.println("Expects one or more directories as arguments.");
             System.exit(1);
         }
 
-        List<String> directories = new ArrayList<String>();
+        final List<String> directories = new ArrayList<String>();
 
         FileHandler handler = null;
 
-        for (String arg : args) {
+        for (final String arg : args) {
             if (arg.equalsIgnoreCase("-text")) {
                 // If "-test" is specified, write the discovered metadata into a sub-folder relative to the image
                 handler = new TextFileOutputHandler();
@@ -68,12 +83,12 @@ public class ProcessAllImagesInFolderUtility
             handler = new BasicFileHandler();
         }
 
-        long start = System.nanoTime();
+        final long start = System.nanoTime();
 
         // Order alphabetically so that output is stable across invocations
         Collections.sort(directories);
 
-        for (String directory : directories) {
+        for (final String directory : directories) {
             processDirectory(new File(directory), handler);
         }
 
@@ -82,9 +97,9 @@ public class ProcessAllImagesInFolderUtility
         System.out.println(String.format("Completed in %d ms", (System.nanoTime() - start) / 1000000));
     }
 
-    private static void processDirectory(@NotNull File path, @NotNull FileHandler handler)
+    private static void processDirectory(@NotNull final File path, @NotNull final FileHandler handler)
     {
-        String[] pathItems = path.list();
+        final String[] pathItems = path.list();
 
         if (pathItems == null) {
             return;
@@ -93,8 +108,8 @@ public class ProcessAllImagesInFolderUtility
         // Order alphabetically so that output is stable across invocations
         Arrays.sort(pathItems);
 
-        for (String pathItem : pathItems) {
-            File file = new File(path, pathItem);
+        for (final String pathItem : pathItems) {
+            final File file = new File(path, pathItem);
 
             if (file.isDirectory()) {
                 processDirectory(file, handler);
@@ -106,7 +121,7 @@ public class ProcessAllImagesInFolderUtility
                 final Metadata metadata;
                 try {
                     metadata = ImageMetadataReader.readMetadata(file);
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     handler.onException(file, t);
                     continue;
                 }
@@ -136,19 +151,19 @@ public class ProcessAllImagesInFolderUtility
         private int _errorCount = 0;
         private long _processedByteCount = 0;
 
-        public boolean shouldProcess(@NotNull File file)
+        public boolean shouldProcess(@NotNull final File file)
         {
-            String extension = getExtension(file);
+            final String extension = getExtension(file);
             return extension != null && _supportedExtensions.contains(extension.toLowerCase());
         }
 
-        public void onProcessingStarting(@NotNull File file)
+        public void onProcessingStarting(@NotNull final File file)
         {
             _processedFileCount++;
             _processedByteCount += file.length();
         }
 
-        public void onException(@NotNull File file, @NotNull Throwable throwable)
+        public void onException(@NotNull final File file, @NotNull final Throwable throwable)
         {
             _exceptionCount++;
 
@@ -163,14 +178,14 @@ public class ProcessAllImagesInFolderUtility
             }
         }
 
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull final File file, @NotNull final Metadata metadata)
         {
             if (metadata.hasErrors()) {
                 System.err.println(file);
-                for (Directory directory : metadata.getDirectories()) {
+                for (final Directory directory : metadata.getDirectories()) {
                     if (!directory.hasErrors())
                         continue;
-                    for (String error : directory.getErrors()) {
+                    for (final String error : directory.getErrors()) {
                         System.err.printf("\t[%s] %s%n", directory.getName(), error);
                         _errorCount++;
                     }
@@ -189,10 +204,10 @@ public class ProcessAllImagesInFolderUtility
         }
 
         @Nullable
-        protected String getExtension(@NotNull File file)
+        protected String getExtension(@NotNull final File file)
         {
-            String fileName = file.getName();
-            int i = fileName.lastIndexOf('.');
+            final String fileName = file.getName();
+            final int i = fileName.lastIndexOf('.');
             if (i == -1)
                 return null;
             if (i == fileName.length() - 1)
@@ -207,32 +222,32 @@ public class ProcessAllImagesInFolderUtility
     static class TextFileOutputHandler extends FileHandlerBase
     {
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull final File file, @NotNull final Metadata metadata)
         {
             super.onExtracted(file, metadata);
 
             try {
                 writeOutputFile(file, metadata);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
 
-        private void writeOutputFile(File file, Metadata metadata) throws IOException
+		private static void writeOutputFile(final File file, final Metadata metadata) throws IOException
         {
             FileWriter writer = null;
             try
             {
-                String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName()).toLowerCase();
+                final String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName()).toLowerCase();
                 writer = new FileWriter(outputPath, false);
                 writer.write("FILE: " + file.getName() + "\n");
                 writer.write("\n");
 
                 if (metadata.hasErrors()) {
-                    for (Directory directory : metadata.getDirectories()) {
+                    for (final Directory directory : metadata.getDirectories()) {
                         if (!directory.hasErrors())
                             continue;
-                        for (String error : directory.getErrors()) {
+                        for (final String error : directory.getErrors()) {
                             writer.write(String.format("[ERROR: %s] %s\n", directory.getName(), error));
                         }
                     }
@@ -240,11 +255,11 @@ public class ProcessAllImagesInFolderUtility
                 }
 
                 // Iterate through all values
-                for (Directory directory : metadata.getDirectories()) {
-                    String directoryName = directory.getName();
-                    for (Tag tag : directory.getTags()) {
-                        String tagName = tag.getTagName();
-                        String description = tag.getDescription();
+                for (final Directory directory : metadata.getDirectories()) {
+                    final String directoryName = directory.getName();
+                    for (final Tag tag : directory.getTags()) {
+                        final String tagName = tag.getTagName();
+                        final String description = tag.getDescription();
                         writer.write(String.format("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description));
                     }
                     if (directory.getTagCount() != 0) {
@@ -280,14 +295,14 @@ public class ProcessAllImagesInFolderUtility
             @Nullable private String thumbnail;
             @Nullable private String makernote;
 
-            Row(@NotNull File file, @NotNull Metadata metadata)
+            Row(@NotNull final File file, @NotNull final Metadata metadata)
             {
                 this.file = file;
                 this.metadata = metadata;
 
-                ExifIFD0Directory ifd0Dir = metadata.getDirectory(ExifIFD0Directory.class);
-                ExifSubIFDDirectory subIfdDir = metadata.getDirectory(ExifSubIFDDirectory.class);
-                ExifThumbnailDirectory thumbDir = metadata.getDirectory(ExifThumbnailDirectory.class);
+                final ExifIFD0Directory ifd0Dir = metadata.getDirectory(ExifIFD0Directory.class);
+                final ExifSubIFDDirectory subIfdDir = metadata.getDirectory(ExifSubIFDDirectory.class);
+                final ExifThumbnailDirectory thumbDir = metadata.getDirectory(ExifThumbnailDirectory.class);
                 if (ifd0Dir != null) {
                     manufacturer = ifd0Dir.getDescription(ExifIFD0Directory.TAG_MAKE);
                     model = ifd0Dir.getDescription(ExifIFD0Directory.TAG_MODEL);
@@ -298,13 +313,13 @@ public class ProcessAllImagesInFolderUtility
                     hasMakernoteData = subIfdDir.containsTag(ExifSubIFDDirectory.TAG_MAKERNOTE);
                 }
                 if (thumbDir != null) {
-                    Integer width = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-                    Integer height = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
+                    final Integer width = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
+                    final Integer height = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
                     thumbnail = width != null && height != null
                         ? String.format("Yes (%s x %s)", width, height)
                         : "Yes";
                 }
-                for (Directory directory : metadata.getDirectories()) {
+                for (final Directory directory : metadata.getDirectories()) {
                     if (directory.getClass().getName().contains("Makernote")) {
                         makernote = directory.getName().replace("Makernote", "").trim();
                     }
@@ -321,7 +336,7 @@ public class ProcessAllImagesInFolderUtility
         }
 
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull final File file, @NotNull final Metadata metadata)
         {
             super.onExtracted(file, metadata);
 
@@ -356,7 +371,7 @@ public class ProcessAllImagesInFolderUtility
                 stream = new PrintStream(outputStream, false);
                 writeOutput(stream);
                 stream.flush();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             } finally {
                 if (stream != null)
@@ -364,34 +379,34 @@ public class ProcessAllImagesInFolderUtility
                 if (outputStream != null)
                     try {
                         outputStream.close();
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         e.printStackTrace();
                     }
             }
         }
 
-        private void writeOutput(@NotNull PrintStream stream) throws IOException
+        private void writeOutput(@NotNull final PrintStream stream) throws IOException
         {
-            Writer writer = new OutputStreamWriter(stream);
+            final Writer writer = new OutputStreamWriter(stream);
             writer.write("#summary Tabular summary of metadata found in the image database\n\n");
             writer.write("= Image Database Summary =\n\n");
 
-            for (String extension : _rowListByExtension.keySet()) {
+            for (final String extension : _rowListByExtension.keySet()) {
                 writer.write("== " + extension.toUpperCase() + " Files ==\n\n");
 
                 writer.write("|| *File* || *Manufacturer* || *Model* || *Dir Count* || *Exif?* || *Makernote*  || *Thumbnail* || *All Data* ||\n");
-                List<Row> rows = _rowListByExtension.get(extension);
+                final List<Row> rows = _rowListByExtension.get(extension);
 
                 // Order by manufacturer, then model
                 Collections.sort(rows, new Comparator<Row>() {
-                    public int compare(Row o1, Row o2)
+                    public int compare(final Row o1, final Row o2)
                     {
-                        int c1 = StringUtil.compare(o1.manufacturer, o2.manufacturer);
+                        final int c1 = StringUtil.compare(o1.manufacturer, o2.manufacturer);
                         return c1 != 0 ? c1 : StringUtil.compare(o1.model, o2.model);
                     }
                 });
 
-                for (Row row : rows) {
+                for (final Row row : rows) {
                     writer.write(String.format("|| [http://sample-images.metadata-extractor.googlecode.com/git/%s %s] || %s || %s || %d || %s ||  %s || %s || [http://sample-images.metadata-extractor.googlecode.com/git/metadata/%s.txt metadata] ||%n",
                         StringUtil.urlEncode(row.file.getName()),
                         row.file.getName(),
@@ -418,14 +433,14 @@ public class ProcessAllImagesInFolderUtility
     static class BasicFileHandler extends FileHandlerBase
     {
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull final File file, @NotNull final Metadata metadata)
         {
             super.onExtracted(file, metadata);
 
             // Iterate through all values, calling toString to flush out any formatting exceptions
-            for (Directory directory : metadata.getDirectories()) {
+            for (final Directory directory : metadata.getDirectories()) {
                 directory.getName();
-                for (Tag tag : directory.getTags()) {
+                for (final Tag tag : directory.getTags()) {
                     tag.getTagName();
                     tag.getDescription();
                 }
