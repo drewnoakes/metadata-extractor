@@ -24,15 +24,13 @@ package com.drew.lang;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.Serializable;
-
 /**
  * Immutable class for holding a rational number without loss of precision.  Provides
  * a familiar representation via toString() in form <code>numerator/denominator</code>.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class Rational extends java.lang.Number implements Serializable
+public class Rational extends java.lang.Number
 {
     // TODO make Rational implement Number?
 
@@ -49,7 +47,7 @@ public class Rational extends java.lang.Number implements Serializable
      * once you've set your numerator and denominator values here, you're stuck
      * with them!
      */
-    public Rational(long numerator, long denominator)
+    public Rational(final long numerator, final long denominator)
     {
         _numerator = numerator;
         _denominator = denominator;
@@ -62,7 +60,8 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>double</code>.
      */
-    public double doubleValue()
+    @Override
+	public double doubleValue()
     {
         return (double) _numerator / (double) _denominator;
     }
@@ -74,7 +73,8 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>float</code>.
      */
-    public float floatValue()
+    @Override
+	public float floatValue()
     {
         return (float) _numerator / (float) _denominator;
     }
@@ -87,7 +87,8 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>byte</code>.
      */
-    public final byte byteValue()
+    @Override
+	public final byte byteValue()
     {
         return (byte) doubleValue();
     }
@@ -100,7 +101,8 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>int</code>.
      */
-    public final int intValue()
+    @Override
+	public final int intValue()
     {
         return (int) doubleValue();
     }
@@ -113,7 +115,8 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>long</code>.
      */
-    public final long longValue()
+    @Override
+	public final long longValue()
     {
         return (long) doubleValue();
     }
@@ -126,7 +129,8 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>short</code>.
      */
-    public final short shortValue()
+    @Override
+	public final short shortValue()
     {
         return (short) doubleValue();
     }
@@ -168,7 +172,8 @@ public class Rational extends java.lang.Number implements Serializable
      *
      * @return a string representation of the object.
      */
-    @NotNull
+    @Override
+	@NotNull
     public String toString()
     {
         return _numerator + "/" + _denominator;
@@ -176,7 +181,7 @@ public class Rational extends java.lang.Number implements Serializable
 
     /** Returns the simplest representation of this {@link Rational}'s value possible. */
     @NotNull
-    public String toSimpleString(boolean allowDecimal)
+    public String toSimpleString(final boolean allowDecimal)
     {
         if (_denominator == 0 && _numerator != 0) {
             return toString();
@@ -184,12 +189,12 @@ public class Rational extends java.lang.Number implements Serializable
             return Integer.toString(intValue());
         } else if (_numerator != 1 && _denominator % _numerator == 0) {
             // common factor between denominator and numerator
-            long newDenominator = _denominator / _numerator;
+            final long newDenominator = _denominator / _numerator;
             return new Rational(1, newDenominator).toSimpleString(allowDecimal);
         } else {
-            Rational simplifiedInstance = getSimplifiedInstance();
+            final Rational simplifiedInstance = getSimplifiedInstance();
             if (allowDecimal) {
-                String doubleString = Double.toString(simplifiedInstance.doubleValue());
+                final String doubleString = Double.toString(simplifiedInstance.doubleValue());
                 if (doubleString.length() < 5) {
                     return doubleString;
                 }
@@ -206,7 +211,7 @@ public class Rational extends java.lang.Number implements Serializable
      */
     private boolean tooComplexForSimplification()
     {
-        double maxPossibleCalculations = (((double) (Math.min(_denominator, _numerator) - 1) / 5d) + 2);
+        final double maxPossibleCalculations = (((Math.min(_denominator, _numerator) - 1) / 5d) + 2);
         final int maxSimplificationCalculations = 1000;
         return maxPossibleCalculations > maxSimplificationCalculations;
     }
@@ -220,11 +225,11 @@ public class Rational extends java.lang.Number implements Serializable
      *         return false if <code>obj</code> is not an instance of {@link Rational}.
      */
     @Override
-    public boolean equals(@Nullable Object obj)
+    public boolean equals(@Nullable final Object obj)
     {
         if (obj==null || !(obj instanceof Rational))
             return false;
-        Rational that = (Rational) obj;
+        final Rational that = (Rational) obj;
         return this.doubleValue() == that.doubleValue();
     }
 
