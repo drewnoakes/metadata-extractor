@@ -55,13 +55,15 @@ public class JfifDirectory extends Directory
         this.setDescriptor(new JfifDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "JFIF";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

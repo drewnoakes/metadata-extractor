@@ -55,13 +55,15 @@ public class ExifInteropDirectory extends Directory
         this.setDescriptor(new ExifInteropDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Interoperability";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

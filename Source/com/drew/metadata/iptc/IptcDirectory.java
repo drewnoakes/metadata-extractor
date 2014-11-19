@@ -210,13 +210,15 @@ public class IptcDirectory extends Directory
         this.setDescriptor(new IptcDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "IPTC";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

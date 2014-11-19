@@ -176,13 +176,15 @@ public class IccDirectory extends Directory
         this.setDescriptor(new IccDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "ICC Profile";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

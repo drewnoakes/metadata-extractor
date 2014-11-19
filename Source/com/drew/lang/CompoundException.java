@@ -62,7 +62,8 @@ public class CompoundException extends Exception
         return _innerException;
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String toString()
     {
         StringBuilder string = new StringBuilder();
@@ -76,7 +77,8 @@ public class CompoundException extends Exception
         return string.toString();
     }
 
-    public void printStackTrace(@NotNull PrintStream s)
+    @Override
+	public void printStackTrace(@NotNull PrintStream s)
     {
         super.printStackTrace(s);
         if (_innerException != null) {
@@ -85,7 +87,8 @@ public class CompoundException extends Exception
         }
     }
 
-    public void printStackTrace(@NotNull PrintWriter s)
+    @Override
+	public void printStackTrace(@NotNull PrintWriter s)
     {
         super.printStackTrace(s);
         if (_innerException != null) {
@@ -94,7 +97,8 @@ public class CompoundException extends Exception
         }
     }
 
-    public void printStackTrace()
+    @Override
+	public void printStackTrace()
     {
         super.printStackTrace();
         if (_innerException != null) {

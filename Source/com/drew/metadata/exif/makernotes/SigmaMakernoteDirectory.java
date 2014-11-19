@@ -93,13 +93,15 @@ public class SigmaMakernoteDirectory extends Directory
         this.setDescriptor(new SigmaMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Sigma Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

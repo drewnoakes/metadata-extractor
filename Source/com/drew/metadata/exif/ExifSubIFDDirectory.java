@@ -649,13 +649,15 @@ public class ExifSubIFDDirectory extends Directory
         this.setDescriptor(new ExifSubIFDDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Exif SubIFD";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

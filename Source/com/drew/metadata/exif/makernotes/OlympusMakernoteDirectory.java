@@ -341,7 +341,8 @@ public class OlympusMakernoteDirectory extends Directory
         this.setDescriptor(new OlympusMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Olympus Makernote";
@@ -381,7 +382,8 @@ public class OlympusMakernoteDirectory extends Directory
         return value != null && value == 5;
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

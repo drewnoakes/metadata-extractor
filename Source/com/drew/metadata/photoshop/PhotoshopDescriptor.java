@@ -36,7 +36,8 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
         super(directory);
     }
 
-    public String getDescription(int tagType)
+    @Override
+	public String getDescription(int tagType)
     {
         switch (tagType) {
             case PhotoshopDirectory.TAG_THUMBNAIL:

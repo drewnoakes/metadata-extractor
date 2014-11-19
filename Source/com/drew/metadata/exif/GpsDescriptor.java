@@ -42,7 +42,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         super(directory);
     }
 
-    @Nullable
+    @Override
+	@Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {

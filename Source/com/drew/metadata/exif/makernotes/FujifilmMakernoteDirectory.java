@@ -162,13 +162,15 @@ public class FujifilmMakernoteDirectory extends Directory
         this.setDescriptor(new FujifilmMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Fujifilm Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

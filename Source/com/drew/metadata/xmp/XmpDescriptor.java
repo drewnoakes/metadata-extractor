@@ -47,7 +47,8 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     }
 
     /** Do some simple formatting, dependant upon tagType */
-    public String getDescription(int tagType)
+    @Override
+	public String getDescription(int tagType)
     {
         switch (tagType) {
             case XmpDirectory.TAG_MAKE:

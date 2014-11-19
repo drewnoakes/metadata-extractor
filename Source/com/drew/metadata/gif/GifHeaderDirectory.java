@@ -40,13 +40,15 @@ public class GifHeaderDirectory extends Directory
         this.setDescriptor(new GifHeaderDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "GIF Header";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

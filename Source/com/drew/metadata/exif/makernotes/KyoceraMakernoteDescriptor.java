@@ -45,7 +45,8 @@ public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDi
         super(directory);
     }
 
-    @Nullable
+    @Override
+	@Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {

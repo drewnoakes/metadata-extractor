@@ -652,13 +652,15 @@ public class CanonMakernoteDirectory extends Directory
         this.setDescriptor(new CanonMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Canon Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

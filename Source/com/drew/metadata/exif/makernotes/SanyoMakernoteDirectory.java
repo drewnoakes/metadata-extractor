@@ -108,13 +108,15 @@ public class SanyoMakernoteDirectory extends Directory
         this.setDescriptor(new SanyoMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Sanyo Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

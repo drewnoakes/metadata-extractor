@@ -115,7 +115,8 @@ public class Face
         return result;
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String toString()
     {
         StringBuilder result = new StringBuilder();

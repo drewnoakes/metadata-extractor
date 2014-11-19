@@ -91,13 +91,15 @@ public class LeicaMakernoteDirectory extends Directory
         this.setDescriptor(new LeicaMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Leica Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

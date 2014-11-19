@@ -38,7 +38,8 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         super(directory);
     }
 
-    public String getDescription(int tagType)
+    @Override
+	public String getDescription(int tagType)
     {
         switch (tagType) {
             case IccDirectory.TAG_PROFILE_VERSION:

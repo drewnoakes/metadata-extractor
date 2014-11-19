@@ -33,7 +33,8 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
         super(directory);
     }
 
-    public String getDescription(int tagType)
+    @Override
+	public String getDescription(int tagType)
     {
         switch (tagType) {
             case AdobeJpegDirectory.TAG_COLOR_TRANSFORM:

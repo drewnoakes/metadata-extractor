@@ -38,7 +38,8 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
         super(directory);
     }
 
-    @Nullable
+    @Override
+	@Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {

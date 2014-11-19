@@ -38,7 +38,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         super(directory);
     }
 
-    @Nullable
+    @Override
+	@Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {

@@ -908,13 +908,15 @@ public class NikonType2MakernoteDirectory extends Directory
         this.setDescriptor(new NikonType2MakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Nikon Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

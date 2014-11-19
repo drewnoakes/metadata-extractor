@@ -97,13 +97,15 @@ public class KodakMakernoteDirectory extends Directory
         this.setDescriptor(new KodakMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Kodak Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

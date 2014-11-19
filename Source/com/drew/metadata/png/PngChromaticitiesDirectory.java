@@ -39,13 +39,15 @@ public class PngChromaticitiesDirectory extends Directory
         this.setDescriptor(new TagDescriptor<PngChromaticitiesDirectory>(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "PNG Chromaticities";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

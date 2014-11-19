@@ -42,7 +42,8 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         super(directory);
     }
 
-    @Nullable
+    @Override
+	@Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {

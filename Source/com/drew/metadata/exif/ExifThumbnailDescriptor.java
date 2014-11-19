@@ -62,7 +62,8 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
      * @return a description of the image's value for the specified tag, or
      *         <code>null</code> if the tag hasn't been defined.
      */
-    @Nullable
+    @Override
+	@Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {

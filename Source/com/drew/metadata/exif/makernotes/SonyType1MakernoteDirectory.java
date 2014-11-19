@@ -212,13 +212,15 @@ public class SonyType1MakernoteDirectory extends Directory
         this.setDescriptor(new SonyType1MakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Sony Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

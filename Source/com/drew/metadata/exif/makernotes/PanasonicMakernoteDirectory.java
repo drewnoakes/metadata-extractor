@@ -548,13 +548,15 @@ public class PanasonicMakernoteDirectory extends Directory
         this.setDescriptor(new PanasonicMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Panasonic Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

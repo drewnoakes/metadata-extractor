@@ -106,7 +106,8 @@ public class Tag
      *
      * @return the tag's type and value
      */
-    @NotNull
+    @Override
+	@NotNull
     public String toString()
     {
         String description = getDescription();

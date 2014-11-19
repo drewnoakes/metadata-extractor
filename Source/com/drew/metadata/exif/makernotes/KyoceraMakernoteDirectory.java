@@ -49,13 +49,15 @@ public class KyoceraMakernoteDirectory extends Directory
         this.setDescriptor(new KyoceraMakernoteDescriptor(this));
     }
 
-    @NotNull
+    @Override
+	@NotNull
     public String getName()
     {
         return "Kyocera/Contax Makernote";
     }
 
-    @NotNull
+    @Override
+	@NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;

@@ -50,7 +50,8 @@ public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1Maker
         super(directory);
     }
 
-    @Nullable
+    @Override
+	@Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {
