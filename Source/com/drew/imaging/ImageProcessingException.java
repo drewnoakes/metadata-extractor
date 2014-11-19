@@ -25,25 +25,28 @@ import com.drew.lang.annotations.Nullable;
 
 /**
  * An exception class thrown upon an unexpected condition that was fatal for the processing of an image.
- * 
+ *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class ImageProcessingException extends CompoundException
-{
-    private static final long serialVersionUID = -9115669182209912676L;
+public class ImageProcessingException extends CompoundException {
 
-    public ImageProcessingException(@Nullable String message)
-    {
-        super(message);
-    }
+	/** Could not determine file's magic number. */
+	public final static String messageMagicNumberNotFound = "Could not determine file's magic number.";
+	/** File format is not supported. */
+	public final static String messageFileFormatNotSupported = "File format is not supported yet.";
 
-    public ImageProcessingException(@Nullable String message, @Nullable Throwable cause)
-    {
-        super(message, cause);
-    }
+	private static final long serialVersionUID = -9115669182209912676L;
 
-    public ImageProcessingException(@Nullable Throwable cause)
-    {
-        super(cause);
-    }
+	public ImageProcessingException(@Nullable final String message) {
+		super(message);
+	}
+
+	public ImageProcessingException(@Nullable final String message, @Nullable final Throwable cause) {
+		super(message, cause);
+	}
+
+	public ImageProcessingException(@Nullable final Throwable cause) {
+		super(cause);
+	}
 }
+

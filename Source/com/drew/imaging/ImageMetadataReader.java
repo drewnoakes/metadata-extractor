@@ -20,6 +20,15 @@
  */
 package com.drew.imaging;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.drew.imaging.bmp.BmpMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
@@ -34,11 +43,6 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Obtains {@link Metadata} from all supported file formats.
@@ -89,12 +93,12 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream) throws ImageProcessingException, IOException
     {
-        InputStream bufferedInputStream = inputStream instanceof BufferedInputStream ? inputStream : new BufferedInputStream(inputStream);
+        final InputStream bufferedInputStream = inputStream instanceof BufferedInputStream ? inputStream : new BufferedInputStream(inputStream);
 
-        int magicNumber = peekMagicNumber(bufferedInputStream);
+        final int magicNumber = peekMagicNumber(bufferedInputStream);
 
         if (magicNumber == -1)
-            throw new ImageProcessingException("Could not determine file's magic number.");
+			throw new ImageProcessingException(ImageProcessingException.messageMagicNumberNotFound);
 
         // This covers all JPEG files
         if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
@@ -127,7 +131,7 @@ public class ImageMetadataReader
             return GifMetadataReader.readMetadata(bufferedInputStream);
         }
 
-        throw new ImageProcessingException("File format is not supported");
+		throw new ImageProcessingException(ImageProcessingException.messageFileFormatNotSupported);
     }
 
     /**
@@ -151,7 +155,7 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final File file) throws ImageProcessingException, IOException
     {
-        InputStream inputStream = new FileInputStream(file);
+        final InputStream inputStream = new FileInputStream(file);
         try {
             return readMetadata(inputStream);
         } finally {
@@ -193,24 +197,24 @@ public class ImageMetadataReader
      *
      * @param args the command line arguments
      */
-    public static void main(@NotNull String[] args) throws MetadataException, IOException
+    public static void main(@NotNull final String[] args) throws MetadataException, IOException
     {
-        Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
-        boolean thumbRequested = argList.remove("-thumb");
-        boolean wikiFormat = argList.remove("-wiki");
-        boolean showHex = argList.remove("-hex");
+        final Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
+        final boolean thumbRequested = argList.remove("-thumb");
+        final boolean wikiFormat = argList.remove("-wiki");
+        final boolean showHex = argList.remove("-hex");
 
         if (argList.size() < 1) {
-            String version = ImageMetadataReader.class.getPackage().getImplementationVersion();
+            final String version = ImageMetadataReader.class.getPackage().getImplementationVersion();
             System.out.println("metadata-extractor version " + version);
             System.out.println();
             System.out.println(String.format("Usage: java -jar metadata-extractor-%s.jar <filename> [<filename>] [-thumb] [-wiki] [-hex]", version == null ? "a.b.c" : version));
             System.exit(1);
         }
 
-        for (String filePath : argList) {
-            long startTime = System.nanoTime();
-            File file = new File(filePath);
+        for (final String filePath : argList) {
+            final long startTime = System.nanoTime();
+            final File file = new File(filePath);
 
             if (!wikiFormat && argList.size()>1)
                 System.out.printf("\n***** PROCESSING: %s\n%n", filePath);
@@ -218,20 +222,20 @@ public class ImageMetadataReader
             Metadata metadata = null;
             try {
                 metadata = ImageMetadataReader.readMetadata(file);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 e.printStackTrace(System.err);
                 System.exit(1);
             }
-            long took = System.nanoTime() - startTime;
+            final long took = System.nanoTime() - startTime;
             if (!wikiFormat)
                 System.out.printf("Processed %.3f MB file in %.2f ms%n%n", file.length() / (1024d * 1024), took / 1000000d);
 
             if (wikiFormat) {
-                String fileName = file.getName();
-                String urlName = StringUtil.urlEncode(fileName);
-                ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-                String make = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
-                String model = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
+                final String fileName = file.getName();
+                final String urlName = StringUtil.urlEncode(fileName);
+                final ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+                final String make = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
+                final String model = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
                 System.out.println();
                 System.out.println("-----");
                 System.out.println();
@@ -246,10 +250,10 @@ public class ImageMetadataReader
             }
 
             // iterate over the metadata and print to System.out
-            for (Directory directory : metadata.getDirectories()) {
-                String directoryName = directory.getName();
-                for (Tag tag : directory.getTags()) {
-                    String tagName = tag.getTagName();
+            for (final Directory directory : metadata.getDirectories()) {
+                final String directoryName = directory.getName();
+                for (final Tag tag : directory.getTags()) {
+                    final String tagName = tag.getTagName();
                     String description = tag.getDescription();
 
                     // truncate the description if it's too long
@@ -275,12 +279,12 @@ public class ImageMetadataReader
                 }
 
                 // print out any errors
-                for (String error : directory.getErrors())
+                for (final String error : directory.getErrors())
                     System.err.println("ERROR: " + error);
             }
 
             if (args.length > 1 && thumbRequested) {
-                ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
+                final ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
                 if (directory!=null && directory.hasThumbnailData()) {
                     System.out.println("Writing thumbnail...");
                     directory.writeThumbnail(args[0].trim() + ".thumb.jpg");
