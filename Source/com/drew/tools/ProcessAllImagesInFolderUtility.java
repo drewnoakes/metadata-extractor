@@ -55,7 +55,7 @@ public class ProcessAllImagesInFolderUtility
 
         for (String arg : args) {
             if (arg.equalsIgnoreCase("-text")) {
-                // If "-test" is specified, write the discovered metadata into a sub-folder relative to the image
+                // If "-text" is specified, write the discovered metadata into a sub-folder relative to the image
                 handler = new TextFileOutputHandler();
             } else if (arg.equalsIgnoreCase("-markdown")) {
                 handler = new MarkdownTableOutputHandler();
