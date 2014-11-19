@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: metadata-extractor
+Implementation-Version: 2.7.0-SNAPSHOT
+Implementation-Vendor: https://drewnoakes.com/code/exif/

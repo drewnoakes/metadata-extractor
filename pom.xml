@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <groupId>com.drewnoakes</groupId>
     <artifactId>metadata-extractor</artifactId>
@@ -10,14 +16,14 @@
 
     <name>metadata-extractor</name>
     <description>Java library for extracting EXIF, IPTC, XMP, ICC and other metadata from image files.</description>
-    
+
     <url>https://drewnoakes.com/code/exif/</url>
-    
+
     <issueManagement>
         <system>GitHub Issues</system>
         <url>https://github.com/drewnoakes/metadata-extractor/issues</url>
     </issueManagement>
-    
+
     <mailingLists>
         <mailingList>
             <name>Announce mailing list</name>
@@ -64,11 +70,11 @@
             <artifactId>xmpcore</artifactId>
             <version>5.1.2</version>
         </dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>[14.0,)</version>
-		</dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>[14.0,)</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -106,26 +112,23 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
-                  <source>1.5</source>
-                  <target>1.5</target>
+                    <source>1.5</source>
+                    <target>1.5</target>
                 </configuration>
             </plugin>
-            			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Title>metadata-extractor</Implementation-Title>
-							<Implementation-Version>${project.version}</Implementation-Version>
-							<Implementation-Vendor>${project.url}</Implementation-Vendor>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifestFile>META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -133,7 +136,8 @@
                 <configuration>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>public</show>
-                    <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from image files</windowtitle>
+                    <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC,
+                        XMP, ICC and other metadata from image files</windowtitle>
                     <notimestamp>true</notimestamp>
                     <header><![CDATA[<a href='https://drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='https://raw.githubusercontent.com/drewnoakes/metadata-extractor/master/Resources/metadata-extractor-logo-131x30.png' border="0" alt='Metadata Extractor Logo'></a>]]></header>
                     <bottom><![CDATA[<i>Copyright &#169; 2002-2014 Drew Noakes. All Rights Reserved.</i>
