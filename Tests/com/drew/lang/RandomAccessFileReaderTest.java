@@ -21,16 +21,16 @@
 
 package com.drew.lang;
 
-import org.junit.Assert;
-import org.junit.After;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class RandomAccessFileReaderTest extends RandomAccessTestBase
@@ -39,19 +39,19 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
     private RandomAccessFile _randomAccessFile;
 
     @Override
-    protected RandomAccessReader createReader(byte[] bytes)
+    protected RandomAccessReader createReader(final byte[] bytes)
     {
         try {
             // Unit tests can create multiple readers in the same test, as long as they're used one after the other
             deleteTempFile();
 
             _tempFile = File.createTempFile("metadata-extractor-test-", ".tmp");
-            FileOutputStream stream = new FileOutputStream(_tempFile);
+            final FileOutputStream stream = new FileOutputStream(_tempFile);
             stream.write(bytes);
             stream.close();
             _randomAccessFile = new RandomAccessFile(_tempFile, "r");
             return new RandomAccessFileReader(_randomAccessFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Assert.fail("Unable to create temp file");
             return null;
         }
@@ -65,6 +65,9 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
 
         _randomAccessFile.close();
 
+		if (_tempFile == null) {
+			return;
+		}
         assertTrue(
                 "Unable to delete temp file used during unit test: " + _tempFile.getAbsolutePath(),
                 _tempFile.delete());

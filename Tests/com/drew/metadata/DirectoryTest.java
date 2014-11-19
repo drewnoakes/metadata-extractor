@@ -20,14 +20,20 @@
  */
 package com.drew.metadata;
 
-import com.drew.lang.Rational;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.GregorianCalendar;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.drew.lang.Rational;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -61,15 +67,15 @@ public class DirectoryTest
     @Test
     public void testUnderlyingInt() throws Exception
     {
-        int value = 123;
-        int tagType = 321;
+        final int value = 123;
+        final int tagType = 321;
         _directory.setInt(tagType, value);
 
         assertEquals(value, _directory.getInt(tagType));
         assertEquals(Integer.valueOf(value), _directory.getInteger(tagType));
-        assertEquals((float)value, _directory.getFloat(tagType), 0.00001);
-        assertEquals((double)value, _directory.getDouble(tagType), 0.00001);
-        assertEquals((long)value, _directory.getLong(tagType));
+        assertEquals(value, _directory.getFloat(tagType), 0.00001);
+        assertEquals(value, _directory.getDouble(tagType), 0.00001);
+        assertEquals(value, _directory.getLong(tagType));
         assertEquals(Integer.toString(value), _directory.getString(tagType));
         assertEquals(new Rational(value, 1), _directory.getRational(tagType));
         assertArrayEquals(new int[]{value}, _directory.getIntArray(tagType));
@@ -78,21 +84,21 @@ public class DirectoryTest
 
     @Test public void testSetAndGetIntArray() throws Exception
     {
-        int[] inputValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        int tagType = 123;
+        final int[] inputValues = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        final int tagType = 123;
         _directory.setIntArray(tagType, inputValues);
-        int[] outputValues = _directory.getIntArray(tagType);
+        final int[] outputValues = _directory.getIntArray(tagType);
         assertNotNull(outputValues);
         assertEquals(inputValues.length, outputValues.length);
         for (int i = 0; i < inputValues.length; i++) {
-            int inputValue = inputValues[i];
-            int outputValue = outputValues[i];
+            final int inputValue = inputValues[i];
+            final int outputValue = outputValues[i];
             assertEquals(inputValue, outputValue);
         }
-        assertEquals(inputValues, _directory.getIntArray(tagType));
-        StringBuilder outputString = new StringBuilder();
+		assertArrayEquals(inputValues, _directory.getIntArray(tagType));
+        final StringBuilder outputString = new StringBuilder();
         for (int i = 0; i < inputValues.length; i++) {
-            int inputValue = inputValues[i];
+            final int inputValue = inputValues[i];
             if (i > 0) {
                 outputString.append(' ');
             }
@@ -104,10 +110,10 @@ public class DirectoryTest
     @Test
     public void testSetStringAndGetDate() throws Exception
     {
-        String date1 = "2002:01:30 24:59:59";
-        String date2 = "2002:01:30 24:59";
-        String date3 = "2002-01-30 24:59:59";
-        String date4 = "2002-01-30 24:59";
+        final String date1 = "2002:01:30 24:59:59";
+        final String date2 = "2002:01:30 24:59";
+        final String date3 = "2002-01-30 24:59:59";
+        final String date4 = "2002-01-30 24:59";
         _directory.setString(1, date1);
         _directory.setString(2, date2);
         _directory.setString(3, date3);
@@ -122,10 +128,10 @@ public class DirectoryTest
     @Test
     public void testSetIntArrayGetByteArray() throws Exception
     {
-        int[] ints = {1, 2, 3, 4, 5};
+        final int[] ints = {1, 2, 3, 4, 5};
         _directory.setIntArray(1, ints);
 
-        byte[] bytes = _directory.getByteArray(1);
+        final byte[] bytes = _directory.getByteArray(1);
         assertNotNull(bytes);
         assertEquals(ints.length, bytes.length);
         assertEquals(1, bytes[0]);
@@ -134,7 +140,7 @@ public class DirectoryTest
     @Test
     public void testSetStringGetInt() throws Exception
     {
-        byte[] bytes = { 0x01, 0x02, 0x03 };
+        final byte[] bytes = { 0x01, 0x02, 0x03 };
         _directory.setString(1, new String(bytes));
         assertEquals(0x010203, _directory.getInt(1));
     }
