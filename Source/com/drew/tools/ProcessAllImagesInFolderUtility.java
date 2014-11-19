@@ -58,8 +58,10 @@ public class ProcessAllImagesInFolderUtility
                 // If "-text" is specified, write the discovered metadata into a sub-folder relative to the image
                 handler = new TextFileOutputHandler();
             } else if (arg.equalsIgnoreCase("-markdown")) {
+                // If "-markdown" is specified, write a summary table in markdown format to standard out
                 handler = new MarkdownTableOutputHandler();
             } else {
+                // Treat this argument as a directory
                 directories.add(arg);
             }
         }
