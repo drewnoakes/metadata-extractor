@@ -225,7 +225,7 @@ public class ProcessAllImagesInFolderUtility
             FileWriter writer = null;
             try
             {
-                String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName()).toLowerCase();
+                String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName().toLowerCase());
                 writer = new FileWriter(outputPath, false);
                 writer.write("FILE: " + file.getName() + "\n");
                 writer.write("\n");
