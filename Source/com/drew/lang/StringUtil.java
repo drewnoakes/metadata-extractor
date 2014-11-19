@@ -97,7 +97,7 @@ public class StringUtil
 
         if (null1 && null2) {
             return 0;
-        } else if (null1 && !null2) {
+        } else if (null1) {
             return -1;
         } else if (null2) {
             return 1;
