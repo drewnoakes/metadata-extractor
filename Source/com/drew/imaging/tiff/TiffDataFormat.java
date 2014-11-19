@@ -15,7 +15,7 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
+ *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.imaging.tiff;

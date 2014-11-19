@@ -60,7 +60,7 @@ Three mailing lists exist:
 
 # Credits
 
-This library is developed by [Drew Noakes](http://drewnoakes.com/code/exif/).
+This library is developed by [Drew Noakes](https://drewnoakes.com/code/exif/).
 
 Thanks are due to the many [users](https://github.com/drewnoakes/metadata-extractor/wiki/UsedBy) who sent in suggestions, bug reports,
 [sample images](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase) from their cameras as well as encouragement.
@@ -98,5 +98,5 @@ Copyright 2002-2014 Drew Noakes
 
 More information about this project is available at:
 
-* http://drewnoakes.com/code/exif/
+* https://drewnoakes.com/code/exif/
 * https://github.com/drewnoakes/metadata-extractor/

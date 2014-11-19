@@ -17,7 +17,7 @@
     <name>metadata-extractor</name>
     <description>Java library for extracting EXIF, IPTC, XMP, ICC and other metadata from image files.</description>
     
-    <url>http://drewnoakes.com/code/exif/</url>
+    <url>https://drewnoakes.com/code/exif/</url>
     
     <issueManagement>
         <system>GitHub Issues</system>

@@ -15,7 +15,7 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
+ *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
 
@@ -254,7 +254,7 @@ public class ProcessAllImagesInFolderUtility
             } finally {
                 if (writer != null) {
                     writer.write("Generated using metadata-extractor\n");
-                    writer.write("http://drewnoakes.com/code/exif/\n");
+                    writer.write("https://drewnoakes.com/code/exif/\n");
                     writer.flush();
                     writer.close();
                 }

@@ -17,7 +17,7 @@
   ~
   ~ More information about this project is available at:
   ~
-  ~    http://drewnoakes.com/code/exif/
+  ~    https://drewnoakes.com/code/exif/
   ~    https://github.com/drewnoakes/metadata-extractor
   -->
 
@@ -120,7 +120,7 @@
             <file file="LICENSE-2.0.txt" />
             <file file="README.txt" />
         </jar>
-        <zip file="${bin-zip}" comment="Metadata Extractor ${library-version} - http://drewnoakes.com/code/exif/">
+        <zip file="${bin-zip}" comment="Metadata Extractor ${library-version} - https://drewnoakes.com/code/exif/">
             <file file="${bin-jar}" />
             <file file="${lib-xmp}" />
             <file file="LICENSE-2.0.txt" />
