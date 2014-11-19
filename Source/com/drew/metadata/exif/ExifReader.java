@@ -1,24 +1,24 @@
 /*
- * Copyright 2002-2014 Drew Noakes
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- *
+ * Copyright 2002-2013 Drew Noakes
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  * More information about this project is available at:
- *
- *    https://drewnoakes.com/code/exif/
- *    https://github.com/drewnoakes/metadata-extractor
+ * http://drewnoakes.com/code/exif/
+ * http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
@@ -27,15 +27,27 @@ import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.makernotes.*;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.CasioType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.CasioType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.KodakMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.KyoceraMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.PentaxMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SanyoMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory;
+import com.drew.metadata.iptc.IptcReader;
 
 /**
  * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifSubIFDDirectory},
@@ -89,7 +101,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         return _storeThumbnailBytes;
     }
 
-    public void setStoreThumbnailBytes(boolean storeThumbnailBytes)
+	public void setStoreThumbnailBytes(final boolean storeThumbnailBytes)
     {
         _storeThumbnailBytes = storeThumbnailBytes;
     }
@@ -115,7 +127,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             throw new NullPointerException("segmentType cannot be null");
 
         try {
-            ByteArrayReader reader = new ByteArrayReader(segmentBytes);
+            final ByteArrayReader reader = new ByteArrayReader(segmentBytes);
 
             //
             // Check for the header preamble
@@ -126,7 +138,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                     System.err.println("Invalid JPEG Exif segment preamble");
                     return;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // TODO what do to with this error state?
                 e.printStackTrace(System.err);
                 return;
@@ -141,10 +153,10 @@ public class ExifReader implements JpegSegmentMetadataReader
                 JPEG_EXIF_SEGMENT_PREAMBLE.length()
             );
 
-        } catch (TiffProcessingException e) {
+        } catch (final TiffProcessingException e) {
             // TODO what do to with this error state?
             e.printStackTrace(System.err);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // TODO what do to with this error state?
             e.printStackTrace(System.err);
         }
@@ -164,7 +176,7 @@ public class ExifReader implements JpegSegmentMetadataReader
 
         try {
             extractTiff(reader, metadata, directory, 0);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             directory.addError("IO problem: " + e.getMessage());
         }
     }
@@ -176,7 +188,7 @@ public class ExifReader implements JpegSegmentMetadataReader
                                     final int tiffHeaderOffset) throws IOException
     {
         // this should be either "MM" or "II"
-        String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
+        final String byteOrderIdentifier = reader.getString(tiffHeaderOffset, 2);
 
         if ("MM".equals(byteOrderIdentifier)) {
             reader.setMotorolaByteOrder(true);
@@ -209,19 +221,19 @@ public class ExifReader implements JpegSegmentMetadataReader
             firstIfdOffset = 14;
         }
 
-        Set<Integer> processedIfdOffsets = new HashSet<Integer>();
+        final Set<Integer> processedIfdOffsets = new HashSet<Integer>();
         processIFD(firstDirectory, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset, metadata, reader);
 
         // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
-        ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        final ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
         if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION)) {
-            Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
-            Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
+            final Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
+            final Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
             if (offset != null && length != null) {
                 try {
-                    byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
+                    final byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
                     thumbnailDirectory.setThumbnailData(thumbnailData);
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     firstDirectory.addError("Invalid thumbnail data specification: " + ex.getMessage());
                 }
             }
@@ -269,9 +281,9 @@ public class ExifReader implements JpegSegmentMetadataReader
         }
 
         // First two bytes in the IFD are the number of tags in this directory
-        int dirTagCount = reader.getUInt16(ifdOffset);
+        final int dirTagCount = reader.getUInt16(ifdOffset);
 
-        int dirLength = (2 + (12 * dirTagCount) + 4);
+		final int dirLength = 2 + 12 * dirTagCount + 4;
         if (dirLength + ifdOffset > reader.getLength()) {
             directory.addError("Illegally sized IFD");
             return;
@@ -359,6 +371,10 @@ public class ExifReader implements JpegSegmentMetadataReader
                 // Pass the offset to this tag's value. Manufacturer/Model-specific logic will be used to
                 // determine the correct offset for further processing.
                 processMakernote(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, metadata, reader);
+			} else if (tagType == ExifSubIFDDirectory.TAG_IPTC && directory instanceof ExifIFD0Directory) {
+				// note: Adobe sets type 4 for IPTCs instead than 7
+				final byte[] c = reader.getBytes(tagValueOffset, byteCount);
+				new IptcReader().extract(new SequentialByteArrayReader(c), metadata, c.length);
             } else {
                 processTag(directory, tagType, tagValueOffset, componentCount, formatCode, reader);
             }
@@ -369,14 +385,13 @@ public class ExifReader implements JpegSegmentMetadataReader
         int nextDirectoryOffset = reader.getInt32(finalTagOffset);
         if (nextDirectoryOffset != 0) {
             nextDirectoryOffset += tiffHeaderOffset;
-            if (nextDirectoryOffset >= reader.getLength()) {
-                // Last 4 bytes of IFD reference another IFD with an address that is out of bounds
+			if (nextDirectoryOffset >= reader.getLength())
+				// Last 4 bytes of IFD reference another IFD with an address that is out of bounds
                 // Note this could have been caused by jhead 1.3 cropping too much
                 return;
-            } else if (nextDirectoryOffset < ifdOffset) {
-                // Last 4 bytes of IFD reference another IFD with an address that is before the start of this directory
+			else if (nextDirectoryOffset < ifdOffset)
+				// Last 4 bytes of IFD reference another IFD with an address that is before the start of this directory
                 return;
-            }
             // TODO in Exif, the only known 'follower' IFD is the thumbnail one, however this may not be the case
             final ExifThumbnailDirectory nextDirectory = metadata.getOrCreateDirectory(ExifThumbnailDirectory.class);
             processIFD(nextDirectory, processedIfdOffsets, nextDirectoryOffset, tiffHeaderOffset, metadata, reader);
@@ -391,12 +406,12 @@ public class ExifReader implements JpegSegmentMetadataReader
                                          final @NotNull RandomAccessReader reader) throws IOException
     {
         // Determine the camera model and makernote format
-        Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+        final Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
 
         if (ifd0Directory == null)
             return;
 
-        String cameraMake = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
+        final String cameraMake = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
         final String firstThreeChars = reader.getString(makernoteOffset, 3);
         final String firstFourChars = reader.getString(makernoteOffset, 4);
@@ -406,7 +421,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         final String firstEightChars = reader.getString(makernoteOffset, 8);
         final String firstTwelveChars = reader.getString(makernoteOffset, 12);
 
-        boolean byteOrderBefore = reader.isMotorolaByteOrder();
+        final boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
         if ("OLYMP".equals(firstFiveChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars)) {
             // Olympus Makernote
@@ -463,7 +478,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             // the 4 bytes after "FUJIFILM" in the makernote point to the start of the makernote
             // IFD, though the offset is relative to the start of the makernote, not the TIFF
             // header (like everywhere else)
-            int ifdStart = makernoteOffset + reader.getInt32(makernoteOffset + 8);
+            final int ifdStart = makernoteOffset + reader.getInt32(makernoteOffset + 8);
             processIFD(metadata.getOrCreateDirectory(FujifilmMakernoteDirectory.class), processedIfdOffsets, ifdStart, makernoteOffset, metadata, reader);
         } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("MINOLTA")) {
             // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
@@ -519,7 +534,7 @@ public class ExifReader implements JpegSegmentMetadataReader
     private static void processKodakMakernote(@NotNull final KodakMakernoteDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader)
     {
         // Kodak's makernote is not in IFD format. It has values at fixed offsets.
-        int dataOffset = tagValueOffset + 8;
+        final int dataOffset = tagValueOffset + 8;
         try {
             directory.setString(KodakMakernoteDirectory.TAG_KODAK_MODEL, reader.getString(dataOffset, 8));
             directory.setInt(KodakMakernoteDirectory.TAG_QUALITY, reader.getUInt8(dataOffset + 9));
@@ -547,7 +562,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             directory.setInt(KodakMakernoteDirectory.TAG_COLOR_MODE, reader.getUInt16(dataOffset + 102));
             directory.setInt(KodakMakernoteDirectory.TAG_DIGITAL_ZOOM, reader.getUInt16(dataOffset + 104));
             directory.setInt(KodakMakernoteDirectory.TAG_SHARPNESS, reader.getInt8(dataOffset + 107));
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             directory.addError("Error processing Kodak makernote data: " + ex.getMessage());
         }
     }
@@ -568,16 +583,17 @@ public class ExifReader implements JpegSegmentMetadataReader
                 directory.setByteArray(tagType, reader.getBytes(tagValueOffset, componentCount));
                 break;
             case FMT_STRING:
-                String string = reader.getNullTerminatedString(tagValueOffset, componentCount);
+                final String string = reader.getNullTerminatedString(tagValueOffset, componentCount);
                 directory.setString(tagType, string);
                 break;
             case FMT_SRATIONAL:
                 if (componentCount == 1) {
                     directory.setRational(tagType, new Rational(reader.getInt32(tagValueOffset), reader.getInt32(tagValueOffset + 4)));
                 } else if (componentCount > 1) {
-                    Rational[] rationals = new Rational[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        rationals[i] = new Rational(reader.getInt32(tagValueOffset + (8 * i)), reader.getInt32(tagValueOffset + 4 + (8 * i)));
+                    final Rational[] rationals = new Rational[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						rationals[i] = new Rational(reader.getInt32(tagValueOffset + 8 * i), reader.getInt32(tagValueOffset + 4 + 8 * i));
+					}
                     directory.setRationalArray(tagType, rationals);
                 }
                 break;
@@ -585,9 +601,10 @@ public class ExifReader implements JpegSegmentMetadataReader
                 if (componentCount == 1) {
                     directory.setRational(tagType, new Rational(reader.getUInt32(tagValueOffset), reader.getUInt32(tagValueOffset + 4)));
                 } else if (componentCount > 1) {
-                    Rational[] rationals = new Rational[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        rationals[i] = new Rational(reader.getUInt32(tagValueOffset + (8 * i)), reader.getUInt32(tagValueOffset + 4 + (8 * i)));
+                    final Rational[] rationals = new Rational[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						rationals[i] = new Rational(reader.getUInt32(tagValueOffset + 8 * i), reader.getUInt32(tagValueOffset + 4 + 8 * i));
+					}
                     directory.setRationalArray(tagType, rationals);
                 }
                 break;
@@ -595,9 +612,10 @@ public class ExifReader implements JpegSegmentMetadataReader
                 if (componentCount == 1) {
                     directory.setFloat(tagType, reader.getFloat32(tagValueOffset));
                 } else {
-                    float[] floats = new float[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        floats[i] = reader.getFloat32(tagValueOffset + (i * 4));
+                    final float[] floats = new float[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						floats[i] = reader.getFloat32(tagValueOffset + i * 4);
+					}
                     directory.setFloatArray(tagType, floats);
                 }
                 break;
@@ -605,9 +623,10 @@ public class ExifReader implements JpegSegmentMetadataReader
                 if (componentCount == 1) {
                     directory.setDouble(tagType, reader.getDouble64(tagValueOffset));
                 } else {
-                    double[] doubles = new double[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        doubles[i] = reader.getDouble64(tagValueOffset + (i * 4));
+                    final double[] doubles = new double[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						doubles[i] = reader.getDouble64(tagValueOffset + i * 4);
+					}
                     directory.setDoubleArray(tagType, doubles);
                 }
                 break;
@@ -620,9 +639,10 @@ public class ExifReader implements JpegSegmentMetadataReader
                 if (componentCount == 1) {
                     directory.setInt(tagType, reader.getInt8(tagValueOffset));
                 } else {
-                    int[] bytes = new int[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        bytes[i] = reader.getInt8(tagValueOffset + i);
+                    final int[] bytes = new int[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						bytes[i] = reader.getInt8(tagValueOffset + i);
+					}
                     directory.setIntArray(tagType, bytes);
                 }
                 break;
@@ -630,31 +650,34 @@ public class ExifReader implements JpegSegmentMetadataReader
                 if (componentCount == 1) {
                     directory.setInt(tagType, reader.getUInt8(tagValueOffset));
                 } else {
-                    int[] bytes = new int[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        bytes[i] = reader.getUInt8(tagValueOffset + i);
+                    final int[] bytes = new int[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						bytes[i] = reader.getUInt8(tagValueOffset + i);
+					}
                     directory.setIntArray(tagType, bytes);
                 }
                 break;
             case FMT_USHORT:
                 if (componentCount == 1) {
-                    int i = reader.getUInt16(tagValueOffset);
+                    final int i = reader.getUInt16(tagValueOffset);
                     directory.setInt(tagType, i);
                 } else {
-                    int[] ints = new int[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        ints[i] = reader.getUInt16(tagValueOffset + (i * 2));
+                    final int[] ints = new int[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						ints[i] = reader.getUInt16(tagValueOffset + i * 2);
+					}
                     directory.setIntArray(tagType, ints);
                 }
                 break;
             case FMT_SSHORT:
                 if (componentCount == 1) {
-                    int i = reader.getInt16(tagValueOffset);
+                    final int i = reader.getInt16(tagValueOffset);
                     directory.setInt(tagType, i);
                 } else {
-                    int[] ints = new int[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        ints[i] = reader.getInt16(tagValueOffset + (i * 2));
+                    final int[] ints = new int[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						ints[i] = reader.getInt16(tagValueOffset + i * 2);
+					}
                     directory.setIntArray(tagType, ints);
                 }
                 break;
@@ -662,12 +685,13 @@ public class ExifReader implements JpegSegmentMetadataReader
             case FMT_ULONG:
                 // NOTE 'long' in this case means 32 bit, not 64
                 if (componentCount == 1) {
-                    int i = reader.getInt32(tagValueOffset);
+                    final int i = reader.getInt32(tagValueOffset);
                     directory.setInt(tagType, i);
                 } else {
-                    int[] ints = new int[componentCount];
-                    for (int i = 0; i < componentCount; i++)
-                        ints[i] = reader.getInt32(tagValueOffset + (i * 4));
+                    final int[] ints = new int[componentCount];
+					for (int i = 0; i < componentCount; i++) {
+						ints[i] = reader.getInt32(tagValueOffset + i * 4);
+					}
                     directory.setIntArray(tagType, ints);
                 }
                 break;
@@ -683,10 +707,10 @@ public class ExifReader implements JpegSegmentMetadataReader
      * @param entryNumber    the zero-based entry number
      */
     @Deprecated
-    private static int calculateTagOffset(int ifdStartOffset, int entryNumber)
+	private static int calculateTagOffset(final int ifdStartOffset, final int entryNumber)
     {
         // add 2 bytes for the tag count
         // each entry is 12 bytes, so we skip 12 * the number seen so far
-        return ifdStartOffset + 2 + (12 * entryNumber);
+		return ifdStartOffset + 2 + 12 * entryNumber;
     }
 }

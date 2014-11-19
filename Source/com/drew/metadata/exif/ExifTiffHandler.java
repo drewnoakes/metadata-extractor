@@ -1,24 +1,22 @@
 /*
- * Copyright 2002-2014 Drew Noakes
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- *
+ * Copyright 2002-2013 Drew Noakes
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  * More information about this project is available at:
- *
- *    https://drewnoakes.com/code/exif/
- *    https://github.com/drewnoakes/metadata-extractor
+ * http://drewnoakes.com/code/exif/
+ * http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
+
+import java.io.IOException;
+import java.util.Set;
 
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
@@ -26,11 +24,24 @@ import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.makernotes.*;
+import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.CasioType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.CasioType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.KodakMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.KyoceraMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.PentaxMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.RicohMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SanyoMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
-
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * Implementation of {@link com.drew.imaging.tiff.TiffHandler} used for handling TIFF tags according to the Exif
@@ -44,24 +55,23 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 {
     private boolean _storeThumbnailBytes;
 
-    public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes)
+	public ExifTiffHandler(@NotNull final Metadata metadata, final boolean storeThumbnailBytes)
     {
         super(metadata, ExifIFD0Directory.class);
         _storeThumbnailBytes = storeThumbnailBytes;
     }
 
-    public void setTiffMarker(int marker) throws TiffProcessingException
+	public void setTiffMarker(final int marker) throws TiffProcessingException
     {
         final int standardTiffMarker = 0x002A;
         final int olympusRawTiffMarker = 0x4F52; // for ORF files
         final int panasonicRawTiffMarker = 0x0055; // for RW2 files
 
-        if (marker != standardTiffMarker && marker != olympusRawTiffMarker && marker != panasonicRawTiffMarker) {
-            throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));
-        }
+		if (marker != standardTiffMarker && marker != olympusRawTiffMarker && marker != panasonicRawTiffMarker)
+			throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));
     }
 
-    public boolean isTagIfdPointer(int tagType)
+	public boolean isTagIfdPointer(final int tagType)
     {
         if (tagType == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET && _currentDirectory instanceof ExifIFD0Directory) {
             pushDirectory(ExifSubIFDDirectory.class);
@@ -97,9 +107,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                     final int byteCount) throws IOException
     {
         // In Exif, we only want custom processing for the Makernote tag
-        if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
-            return processMakernote(makernoteOffset, processedIfdOffsets, tiffHeaderOffset, reader, byteCount);
-        }
+		if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory)
+			return processMakernote(makernoteOffset, processedIfdOffsets, tiffHeaderOffset, reader, byteCount);
 
         return false;
     }
@@ -108,15 +117,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     {
         if (_storeThumbnailBytes) {
             // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
-            ExifThumbnailDirectory thumbnailDirectory = _metadata.getDirectory(ExifThumbnailDirectory.class);
+            final ExifThumbnailDirectory thumbnailDirectory = _metadata.getDirectory(ExifThumbnailDirectory.class);
             if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION)) {
-                Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
-                Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
+                final Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
+                final Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
                 if (offset != null && length != null) {
                     try {
-                        byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
+                        final byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
                         thumbnailDirectory.setThumbnailData(thumbnailData);
-                    } catch (IOException ex) {
+                    } catch (final IOException ex) {
                         thumbnailDirectory.addError("Invalid thumbnail data specification: " + ex.getMessage());
                     }
                 }
@@ -131,12 +140,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                      final int byteCount) throws IOException
     {
         // Determine the camera model and makernote format.
-        Directory ifd0Directory = _metadata.getDirectory(ExifIFD0Directory.class);
+        final Directory ifd0Directory = _metadata.getDirectory(ExifIFD0Directory.class);
 
         if (ifd0Directory == null)
             return false;
 
-        String cameraMake = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
+        final String cameraMake = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
         final String firstTwoChars = reader.getString(makernoteOffset, 2);
         final String firstThreeChars = reader.getString(makernoteOffset, 3);
@@ -147,7 +156,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         final String firstEightChars = reader.getString(makernoteOffset, 8);
         final String firstTwelveChars = reader.getString(makernoteOffset, 12);
 
-        boolean byteOrderBefore = reader.isMotorolaByteOrder();
+        final boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
         if ("OLYMP".equals(firstFiveChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars)) {
             // Olympus Makernote
@@ -219,7 +228,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // the 4 bytes after "FUJIFILM" in the makernote point to the start of the makernote
             // IFD, though the offset is relative to the start of the makernote, not the TIFF
             // header (like everywhere else)
-            int ifdStart = makernoteOffset + reader.getInt32(makernoteOffset + 8);
+            final int ifdStart = makernoteOffset + reader.getInt32(makernoteOffset + 8);
             pushDirectory(FujifilmMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, ifdStart, makernoteOffset);
         } else if ("KYOCERA".equals(firstSevenChars)) {
@@ -235,9 +244,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 // Some Leica cameras use Panasonic makernote tags
                 pushDirectory(PanasonicMakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
-            } else {
-                return false;
-            }
+			} else
+				return false;
         } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(makernoteOffset, 12))) {
             // NON-Standard TIFF IFD Data using Panasonic Tags. There is no Next-IFD pointer after the IFD
             // Offsets are relative to the start of the TIFF header at the beginning of the EXIF segment
@@ -270,24 +278,23 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             pushDirectory(SanyoMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
         } else if (cameraMake != null && cameraMake.toLowerCase().startsWith("ricoh")) {
-            if (firstTwoChars.equals("Rv") || firstThreeChars.equals("Rev")) {
-                // This is a textual format, where the makernote bytes look like:
+			if (firstTwoChars.equals("Rv") || firstThreeChars.equals("Rev"))
+				// This is a textual format, where the makernote bytes look like:
                 //   Rv0103;Rg1C;Bg18;Ll0;Ld0;Aj0000;Bn0473800;Fp2E00:������������������������������
                 //   Rv0103;Rg1C;Bg18;Ll0;Ld0;Aj0000;Bn0473800;Fp2D05:������������������������������
                 //   Rv0207;Sf6C84;Rg76;Bg60;Gg42;Ll0;Ld0;Aj0004;Bn0B02900;Fp10B8;Md6700;Ln116900086D27;Sv263:0000000000000000000000��
                 // This format is currently unsupported
                 return false;
-            } else if (firstFiveChars.equalsIgnoreCase("Ricoh")) {
+			else if (firstFiveChars.equalsIgnoreCase("Ricoh")) {
                 // Always in Motorola byte order
                 reader.setMotorolaByteOrder(true);
                 pushDirectory(RicohMakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
             }
-        } else {
-            // The makernote is not comprehended by this library.
+		} else
+			// The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.
             return false;
-        }
 
         reader.setMotorolaByteOrder(byteOrderBefore);
         return true;
@@ -296,7 +303,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     private static void processKodakMakernote(@NotNull final KodakMakernoteDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader)
     {
         // Kodak's makernote is not in IFD format. It has values at fixed offsets.
-        int dataOffset = tagValueOffset + 8;
+        final int dataOffset = tagValueOffset + 8;
         try {
             directory.setString(KodakMakernoteDirectory.TAG_KODAK_MODEL, reader.getString(dataOffset, 8));
             directory.setInt(KodakMakernoteDirectory.TAG_QUALITY, reader.getUInt8(dataOffset + 9));
@@ -324,7 +331,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             directory.setInt(KodakMakernoteDirectory.TAG_COLOR_MODE, reader.getUInt16(dataOffset + 102));
             directory.setInt(KodakMakernoteDirectory.TAG_DIGITAL_ZOOM, reader.getUInt16(dataOffset + 104));
             directory.setInt(KodakMakernoteDirectory.TAG_SHARPNESS, reader.getInt8(dataOffset + 107));
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             directory.addError("Error processing Kodak makernote data: " + ex.getMessage());
         }
     }
