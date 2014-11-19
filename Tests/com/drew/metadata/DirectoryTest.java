@@ -27,12 +27,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.drew.imaging.ImageMetadataReader;
 import com.drew.lang.Rational;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 /**
@@ -169,4 +173,26 @@ public class DirectoryTest
         assertNull(_directory.getRationalArray(ExifSubIFDDirectory.TAG_APERTURE));
         assertNull(_directory.getStringArray(ExifSubIFDDirectory.TAG_APERTURE));
     }
+
+	@Test
+	/**
+	 * Issue 83/93: Incorrect output when date isn't set on camera
+	 *
+	 * Tests if null is returned if the date is not set or not valid (f.e. before UNIX timestamp).
+	 *
+	 * @throws Exception
+	 */
+	public void testNonValidDate() throws Exception {
+		File f = new File("Tests/Data/31233852_edited.jpg");
+		Metadata metadata = ImageMetadataReader.readMetadata(f);
+		Directory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+		Date file_date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+		assertNull(file_date);
+
+		f = new File("Tests/Data/Pallet-collars.jpg");
+		metadata = ImageMetadataReader.readMetadata(f);
+		directory = metadata.getDirectory(ExifIFD0Directory.class);
+		file_date = directory.getDate(ExifIFD0Directory.TAG_DATETIME);
+		assertNull(file_date);
+	}
 }

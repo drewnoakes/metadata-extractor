@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -162,6 +164,39 @@ public class ImageMetadataReader
             inputStream.close();
         }
     }
+
+	/**
+	 * Reads {@link Metadata} from a {@link URL}.
+	 * <p/>
+	 * The file type is determined by inspecting the leading bytes of the stream, and parsing of the file is delegated to one of:
+	 * <ul>
+	 * <li>{@link JpegMetadataReader} for JPEG files</li>
+	 * <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
+	 * <li>{@link PsdMetadataReader} for Photoshop files</li>
+	 * <li>{@link PngMetadataReader} for PNG files</li>
+	 * <li>{@link BmpMetadataReader} for BMP files</li>
+	 * <li>{@link GifMetadataReader} for GIF files</li>
+	 * </ul>
+	 *
+	 * @param url
+	 *            the url which points to the file
+	 * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+	 * @throws ImageProcessingException
+	 *             for general processing errors.
+	 */
+	public static Metadata readMetadata(@NotNull final URL url) throws ImageProcessingException, IOException {
+		final URLConnection urlConnection = url.openConnection();
+		// set the user agent to trick websites
+		urlConnection.setRequestProperty("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36");
+		urlConnection.connect();
+		final InputStream inputStream = urlConnection.getInputStream();
+		try {
+			return readMetadata(inputStream);
+		} finally {
+			inputStream.close();
+		}
+	}
 
     /**
      * Reads the first two bytes from <code>inputStream</code>, then rewinds.
