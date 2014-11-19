@@ -20,14 +20,37 @@
  */
 package com.drew.metadata.exif.makernotes;
 
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_ACTIVE_D_LIGHTING;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_AF_FOCUS_POSITION;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_AUTO_FLASH_COMPENSATION;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_CAMERA_COLOR_MODE;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_CAMERA_HUE_ADJUSTMENT;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_COLOR_SPACE;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_DIGITAL_ZOOM;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_EXPOSURE_DIFFERENCE;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_EXPOSURE_TUNING;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_FIRMWARE_VERSION;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_FLASH_BRACKET_COMPENSATION;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_FLASH_EXPOSURE_COMPENSATION;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_FLASH_USED;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_HIGH_ISO_NOISE_REDUCTION;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_ISO_1;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_LENS;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_LENS_STOPS;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_LENS_TYPE;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_NEF_COMPRESSION;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_POWER_UP_TIME;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_PROGRAM_SHIFT;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_SHOOTING_MODE;
+import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.TAG_VIGNETTE_CONTROL;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
-
-import java.text.DecimalFormat;
-
-import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link NikonType2MakernoteDirectory}.
@@ -38,13 +61,14 @@ import static com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory.*;
  */
 public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2MakernoteDirectory>
 {
-    public NikonType2MakernoteDescriptor(@NotNull NikonType2MakernoteDirectory directory)
+    public NikonType2MakernoteDescriptor(@NotNull final NikonType2MakernoteDirectory directory)
     {
         super(directory);
     }
 
-    @Nullable
-    public String getDescription(int tagType)
+    @Override
+	@Nullable
+    public String getDescription(final int tagType)
     {
         switch (tagType)
         {
@@ -193,7 +217,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getActiveDLightingDescription()
     {
-        Integer value = _directory.getInteger(TAG_ACTIVE_D_LIGHTING);
+        final Integer value = _directory.getInteger(TAG_ACTIVE_D_LIGHTING);
         if (value==null)
             return null;
         switch (value) {
@@ -210,7 +234,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getVignetteControlDescription()
     {
-        Integer value = _directory.getInteger(TAG_VIGNETTE_CONTROL);
+        final Integer value = _directory.getInteger(TAG_VIGNETTE_CONTROL);
         if (value==null)
             return null;
         switch (value) {
@@ -225,7 +249,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getAutoFocusPositionDescription()
     {
-        int[] values = _directory.getIntArray(TAG_AF_FOCUS_POSITION);
+        final int[] values = _directory.getIntArray(TAG_AF_FOCUS_POSITION);
         if (values==null)
             return null;
         if (values.length != 4 || values[0] != 0 || values[2] != 0 || values[3] != 0) {
@@ -250,7 +274,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getDigitalZoomDescription()
     {
-        Rational value = _directory.getRational(TAG_DIGITAL_ZOOM);
+        final Rational value = _directory.getRational(TAG_DIGITAL_ZOOM);
         if (value==null)
             return null;
         return value.intValue() == 1
@@ -301,22 +325,25 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     }
 
     @Nullable
-    private String getEVDescription(int tagType)
+    private String getEVDescription(final int tagType)
     {
-        int[] values = _directory.getIntArray(tagType);
+        final int[] values = _directory.getIntArray(tagType);
         if (values == null)
             return null;
         if (values.length < 3 || values[2] == 0)
             return null;
-        final DecimalFormat decimalFormat = new DecimalFormat("0.##");
-        double ev = values[0] * values[1] / (double)values[2];
+		final DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+		decimalFormatSymbols.setDecimalSeparator('.');
+		decimalFormatSymbols.setGroupingSeparator(',');
+		final DecimalFormat decimalFormat = new DecimalFormat("0.##", decimalFormatSymbols);
+        final double ev = values[0] * values[1] / (double)values[2];
         return decimalFormat.format(ev) + " EV";
     }
 
     @Nullable
     public String getIsoSettingDescription()
     {
-        int[] values = _directory.getIntArray(TAG_ISO_1);
+        final int[] values = _directory.getIntArray(TAG_ISO_1);
         if (values == null)
             return null;
         if (values[0] != 0 || values[1] == 0)
@@ -327,7 +354,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getLensDescription()
     {
-        Rational[] values = _directory.getRationalArray(TAG_LENS);
+        final Rational[] values = _directory.getRationalArray(TAG_LENS);
 
         return values == null
             ? null
@@ -346,7 +373,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getColorModeDescription()
     {
-        String value = _directory.getString(TAG_CAMERA_COLOR_MODE);
+        final String value = _directory.getString(TAG_CAMERA_COLOR_MODE);
         return value == null ? null : value.startsWith("MODE1") ? "Mode I (sRGB)" : value;
     }
 
