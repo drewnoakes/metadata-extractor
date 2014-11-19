@@ -106,19 +106,6 @@ public class StringUtil
         }
     }
 
-    @Nullable
-    public static String escapeForWiki(@Nullable String text)
-    {
-        if (text == null)
-            return null;
-        text = text.replaceAll("(\\W|^)(([A-Z][a-z0-9]+){2,})", "$1!$2");
-        if (text != null && text.length() > 120)
-            text = text.substring(0, 120) + "...";
-        if (text != null)
-            text = text.replace("[", "`[`").replace("]", "`]`").replace("<", "`<`").replace(">", "`>`").replace("*", "`*`");
-        return text;
-    }
-
     @NotNull
     public static String urlEncode(@NotNull String name)
     {

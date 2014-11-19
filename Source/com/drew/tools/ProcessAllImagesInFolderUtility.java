@@ -57,8 +57,8 @@ public class ProcessAllImagesInFolderUtility
             if (arg.equalsIgnoreCase("-text")) {
                 // If "-test" is specified, write the discovered metadata into a sub-folder relative to the image
                 handler = new TextFileOutputHandler();
-            } else if (arg.equalsIgnoreCase("-wiki")) {
-                handler = new WikiTableOutputHandler();
+            } else if (arg.equalsIgnoreCase("-markdown")) {
+                handler = new MarkdownTableOutputHandler();
             } else {
                 directories.add(arg);
             }
@@ -265,7 +265,7 @@ public class ProcessAllImagesInFolderUtility
     /**
      * Creates a table describing sample images using Wiki markdown.
      */
-    static class WikiTableOutputHandler extends FileHandlerBase
+    static class MarkdownTableOutputHandler extends FileHandlerBase
     {
         private final Map<String, String> _extensionEquivalence = new HashMap<String, String>();
         private final Map<String, List<Row>> _rowListByExtension = new HashMap<String, List<Row>>();
@@ -315,7 +315,7 @@ public class ProcessAllImagesInFolderUtility
             }
         }
 
-        public WikiTableOutputHandler()
+        public MarkdownTableOutputHandler()
         {
             _extensionEquivalence.put("jpeg", "jpg");
         }
@@ -352,7 +352,7 @@ public class ProcessAllImagesInFolderUtility
             OutputStream outputStream = null;
             PrintStream stream = null;
             try {
-                outputStream = new FileOutputStream("../wiki/ImageDatabaseSummary.wiki", false);
+                outputStream = new FileOutputStream("../wiki/ImageDatabaseSummary.md", false);
                 stream = new PrintStream(outputStream, false);
                 writeOutput(stream);
                 stream.flush();
@@ -373,13 +373,13 @@ public class ProcessAllImagesInFolderUtility
         private void writeOutput(@NotNull PrintStream stream) throws IOException
         {
             Writer writer = new OutputStreamWriter(stream);
-            writer.write("#summary Tabular summary of metadata found in the image database\n\n");
-            writer.write("= Image Database Summary =\n\n");
+            writer.write("# Image Database Summary\n\n");
 
             for (String extension : _rowListByExtension.keySet()) {
-                writer.write("== " + extension.toUpperCase() + " Files ==\n\n");
+                writer.write("## " + extension.toUpperCase() + " Files\n\n");
 
-                writer.write("|| *File* || *Manufacturer* || *Model* || *Dir Count* || *Exif?* || *Makernote*  || *Thumbnail* || *All Data* ||\n");
+                writer.write("File|Manufacturer|Model|Dir Count|Exif?|Makernote|Thumbnail|All Data\n");
+                writer.write("----|------------|-----|---------|-----|---------|---------|--------\n");
                 List<Row> rows = _rowListByExtension.get(extension);
 
                 // Order by manufacturer, then model
@@ -392,16 +392,16 @@ public class ProcessAllImagesInFolderUtility
                 });
 
                 for (Row row : rows) {
-                    writer.write(String.format("|| [http://sample-images.metadata-extractor.googlecode.com/git/%s %s] || %s || %s || %d || %s ||  %s || %s || [http://sample-images.metadata-extractor.googlecode.com/git/metadata/%s.txt metadata] ||%n",
-                        StringUtil.urlEncode(row.file.getName()),
-                        row.file.getName(),
-                        row.manufacturer == null ? "" : StringUtil.escapeForWiki(row.manufacturer),
-                        row.model == null ? "" : StringUtil.escapeForWiki(row.model),
-                        row.metadata.getDirectoryCount(),
-                        row.exifVersion == null ? "" : row.exifVersion,
-                        row.makernote == null ? "" : row.makernote,
-                        row.thumbnail == null ? "" : row.thumbnail,
-                        StringUtil.urlEncode(row.file.getName()).toLowerCase()
+                    writer.write(String.format("[%s](http://sample-images.metadata-extractor.googlecode.com/git/%s)|%s|%s|%d|%s|%s|%s|[metadata](http://sample-images.metadata-extractor.googlecode.com/git/metadata/%s.txt)%n",
+                            row.file.getName(),
+                            StringUtil.urlEncode(row.file.getName()),
+                            row.manufacturer == null ? "" : row.manufacturer,
+                            row.model == null ? "" : row.model,
+                            row.metadata.getDirectoryCount(),
+                            row.exifVersion == null ? "" : row.exifVersion,
+                            row.makernote == null ? "" : row.makernote,
+                            row.thumbnail == null ? "" : row.thumbnail,
+                            StringUtil.urlEncode(row.file.getName()).toLowerCase()
                     ));
                 }
 

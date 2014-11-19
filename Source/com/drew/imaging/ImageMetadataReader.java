@@ -187,7 +187,7 @@ public class ImageMetadataReader
      * If <code>-thumb</code> is passed, then any thumbnail data will be written to a file with name of the
      * input file having <code>.thumb.jpg</code> appended.
      * <p/>
-     * If <code>-wiki</code> is passed, then output will be in a format suitable for Google Code's wiki.
+     * If <code>-markdown</code> is passed, then output will be in markdown format.
      * <p/>
      * If <code>-hex</code> is passed, then the ID of each tag will be displayed in hexadecimal.
      *
@@ -197,14 +197,14 @@ public class ImageMetadataReader
     {
         Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
         boolean thumbRequested = argList.remove("-thumb");
-        boolean wikiFormat = argList.remove("-wiki");
+        boolean markdownFormat = argList.remove("-markdown");
         boolean showHex = argList.remove("-hex");
 
         if (argList.size() < 1) {
             String version = ImageMetadataReader.class.getPackage().getImplementationVersion();
             System.out.println("metadata-extractor version " + version);
             System.out.println();
-            System.out.println(String.format("Usage: java -jar metadata-extractor-%s.jar <filename> [<filename>] [-thumb] [-wiki] [-hex]", version == null ? "a.b.c" : version));
+            System.out.println(String.format("Usage: java -jar metadata-extractor-%s.jar <filename> [<filename>] [-thumb] [-markdown] [-hex]", version == null ? "a.b.c" : version));
             System.exit(1);
         }
 
@@ -212,7 +212,7 @@ public class ImageMetadataReader
             long startTime = System.nanoTime();
             File file = new File(filePath);
 
-            if (!wikiFormat && argList.size()>1)
+            if (!markdownFormat && argList.size()>1)
                 System.out.printf("\n***** PROCESSING: %s\n%n", filePath);
 
             Metadata metadata = null;
@@ -223,26 +223,27 @@ public class ImageMetadataReader
                 System.exit(1);
             }
             long took = System.nanoTime() - startTime;
-            if (!wikiFormat)
+            if (!markdownFormat)
                 System.out.printf("Processed %.3f MB file in %.2f ms%n%n", file.length() / (1024d * 1024), took / 1000000d);
 
-            if (wikiFormat) {
+            if (markdownFormat) {
                 String fileName = file.getName();
                 String urlName = StringUtil.urlEncode(fileName);
                 ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-                String make = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
-                String model = exifIFD0Directory == null ? "" : StringUtil.escapeForWiki(exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
+                String make = exifIFD0Directory == null ? "" : exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE);
+                String model = exifIFD0Directory == null ? "" : exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL);
                 System.out.println();
-                System.out.println("-----");
+                System.out.println("---");
                 System.out.println();
-                System.out.printf("= %s - %s =%n", make, model);
+                System.out.printf("# %s - %s%n", make, model);
                 System.out.println();
                 System.out.printf("<a href=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\">%n", urlName);
                 System.out.printf("<img src=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\" width=\"300\"/><br/>%n", urlName);
-                System.out.println(StringUtil.escapeForWiki(fileName));
+                System.out.println(fileName);
                 System.out.println("</a>");
                 System.out.println();
-                System.out.println("|| *Directory* || *Tag Id* || *Tag Name* || *Extracted Value* ||");
+                System.out.println("Directory | Tag Id | Tag Name | Extracted Value");
+                System.out.println(":--------:|-------:|----------|----------------");
             }
 
             // iterate over the metadata and print to System.out
@@ -257,12 +258,12 @@ public class ImageMetadataReader
                         description = description.substring(0, 1024) + "...";
                     }
 
-                    if (wikiFormat) {
-                        System.out.printf("||%s||0x%s||%s||%s||%n",
-                                StringUtil.escapeForWiki(directoryName),
+                    if (markdownFormat) {
+                        System.out.printf("%s|0x%s|%s|%s%n",
+                                directoryName,
                                 Integer.toHexString(tag.getTagType()),
-                                StringUtil.escapeForWiki(tagName),
-                                StringUtil.escapeForWiki(description));
+                                tagName,
+                                description);
                     }
                     else
                     {
