@@ -113,6 +113,8 @@
         <jar destfile="${bin-jar}" update="false">
             <manifest>
                 <attribute name="Main-Class" value="com.drew.imaging.ImageMetadataReader"/>
+                <attribute name="Implementation-Title" value="metadata-extractor"/>
+                <attribute name="Implementation-Vendor" value="Drew Noakes"/>
                 <attribute name="Implementation-Version" value="${library-version}"/>
             </manifest>
             <fileset dir="${output}">
