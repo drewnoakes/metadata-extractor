@@ -59,9 +59,7 @@ public class ExifIFD0Directory extends Directory
 
     public static final int TAG_COPYRIGHT = 0x8298;
 
-    /**
-     * Non-standard, but in use.
-     */
+    /** Non-standard, but in use. */
     public static final int TAG_TIME_ZONE_OFFSET = 0x882a;
 
     /** The image title, as used by Windows XP. */
