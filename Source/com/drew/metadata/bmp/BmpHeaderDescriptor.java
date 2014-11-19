@@ -2,6 +2,7 @@ package com.drew.metadata.bmp;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataException;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -9,12 +10,13 @@ import com.drew.metadata.TagDescriptor;
  */
 public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
 {
-    public BmpHeaderDescriptor(@NotNull BmpHeaderDirectory directory)
+    public BmpHeaderDescriptor(@NotNull final BmpHeaderDirectory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType)
+    @Override
+	public String getDescription(final int tagType)
     {
         switch (tagType) {
             case BmpHeaderDirectory.TAG_COMPRESSION:
@@ -35,10 +37,10 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
         // 5 = PNG
         // 6 = Bit field
         try {
-            Integer value = _directory.getInt(BmpHeaderDirectory.TAG_COMPRESSION);
+            final Integer value = _directory.getInt(BmpHeaderDirectory.TAG_COMPRESSION);
             if (value == null)
                 return null;
-            Integer headerSize = _directory.getInt(BmpHeaderDirectory.TAG_HEADER_SIZE);
+            final Integer headerSize = _directory.getInt(BmpHeaderDirectory.TAG_HEADER_SIZE);
             if (headerSize == null)
                 return null;
 
@@ -53,7 +55,7 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
                 default:
                     return super.getDescription(BmpHeaderDirectory.TAG_COMPRESSION);
             }
-        } catch (Exception e) {
+		} catch (final MetadataException e) {
             return null;
         }
     }

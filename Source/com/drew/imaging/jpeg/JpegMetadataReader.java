@@ -20,6 +20,14 @@
  */
 package com.drew.imaging.jpeg;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -34,20 +42,12 @@ import com.drew.metadata.jpeg.JpegReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Obtains all available metadata from JPEG formatted files.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegMetadataReader
+public final class JpegMetadataReader
 {
     public static final Iterable<JpegSegmentMetadataReader> ALL_READERS = Arrays.asList(
             new JpegReader(),
@@ -62,21 +62,21 @@ public class JpegMetadataReader
     );
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, @Nullable final Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
-        Metadata metadata = new Metadata();
+        final Metadata metadata = new Metadata();
         process(metadata, inputStream, readers);
         return metadata;
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull final InputStream inputStream) throws JpegProcessingException, IOException
     {
         return readMetadata(inputStream, null);
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull final File file, @Nullable final Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
         InputStream inputStream = null;
         try
@@ -90,39 +90,39 @@ public class JpegMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull final File file) throws JpegProcessingException, IOException
     {
         return readMetadata(file, null);
     }
 
-    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
+    public static void process(@NotNull final Metadata metadata, @NotNull final InputStream inputStream) throws JpegProcessingException, IOException
     {
         process(metadata, inputStream, null);
     }
 
-    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    public static void process(@NotNull final Metadata metadata, @NotNull final InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
         if (readers == null)
             readers = ALL_READERS;
 
-        Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
-        for (JpegSegmentMetadataReader reader : readers) {
-            for (JpegSegmentType type : reader.getSegmentTypes()) {
+        final Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
+        for (final JpegSegmentMetadataReader reader : readers) {
+            for (final JpegSegmentType type : reader.getSegmentTypes()) {
                 segmentTypes.add(type);
             }
         }
 
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), segmentTypes);
+        final JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), segmentTypes);
 
         processJpegSegmentData(metadata, readers, segmentData);
     }
 
-    public static void processJpegSegmentData(Metadata metadata, Iterable<JpegSegmentMetadataReader> readers, JpegSegmentData segmentData)
+    public static void processJpegSegmentData(final Metadata metadata, final Iterable<JpegSegmentMetadataReader> readers, final JpegSegmentData segmentData)
     {
         // Pass the appropriate byte arrays to each reader.
-        for (JpegSegmentMetadataReader reader : readers) {
-            for (JpegSegmentType segmentType : reader.getSegmentTypes()) {
-                for (byte[] segmentBytes : segmentData.getSegments(segmentType)) {
+        for (final JpegSegmentMetadataReader reader : readers) {
+            for (final JpegSegmentType segmentType : reader.getSegmentTypes()) {
+                for (final byte[] segmentBytes : segmentData.getSegments(segmentType)) {
                     if (reader.canProcess(segmentBytes, segmentType)) {
                         reader.extract(segmentBytes, metadata, segmentType);
                     }
@@ -131,8 +131,8 @@ public class JpegMetadataReader
         }
     }
 
-    private JpegMetadataReader() throws Exception
+	private JpegMetadataReader() throws UnsupportedOperationException
     {
-        throw new Exception("Not intended for instantiation");
+		throw new UnsupportedOperationException("Not intended for instantiation");
     }
 }

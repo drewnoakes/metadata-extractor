@@ -29,9 +29,9 @@ public final class PhotographicConversions
 {
     public final static double ROOT_TWO = Math.sqrt(2);
 
-    private PhotographicConversions() throws Exception
+	private PhotographicConversions() throws UnsupportedOperationException
     {
-        throw new Exception("Not intended for instantiation.");
+		throw new UnsupportedOperationException("Not intended for instantiation.");
     }
 
     /**
@@ -40,7 +40,7 @@ public final class PhotographicConversions
      * @param aperture the aperture value to convert
      * @return the F-stop number of the specified aperture
      */
-    public static double apertureToFStop(double aperture)
+    public static double apertureToFStop(final double aperture)
     {
         return Math.pow(ROOT_TWO, aperture);
 
@@ -54,7 +54,7 @@ public final class PhotographicConversions
      * @param shutterSpeed the shutter speed to convert
      * @return the exposure time of the specified shutter speed
      */
-    public static double shutterSpeedToExposureTime(double shutterSpeed)
+    public static double shutterSpeedToExposureTime(final double shutterSpeed)
     {
         return (float) (1 / Math.exp(shutterSpeed * Math.log(2)));
     }

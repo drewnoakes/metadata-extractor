@@ -20,16 +20,16 @@
  */
 package com.drew.imaging.jpeg;
 
-import com.drew.lang.SequentialReader;
-import com.drew.lang.StreamReader;
-import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.drew.lang.SequentialReader;
+import com.drew.lang.StreamReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 /**
  * Performs read functions of JPEG files, returning specific file segments.
@@ -62,7 +62,7 @@ public class JpegSegmentReader
      *                     then all found segment types are returned.
      */
     @NotNull
-    public static JpegSegmentData readSegments(@NotNull File file, @Nullable Iterable<JpegSegmentType> segmentTypes) throws JpegProcessingException, IOException
+    public static JpegSegmentData readSegments(@NotNull final File file, @Nullable final Iterable<JpegSegmentType> segmentTypes) throws JpegProcessingException, IOException
     {
         FileInputStream stream = null;
         try {
@@ -86,7 +86,7 @@ public class JpegSegmentReader
      *                     then all found segment types are returned.
      */
     @NotNull
-    public static JpegSegmentData readSegments(@NotNull final SequentialReader reader, @Nullable Iterable<JpegSegmentType> segmentTypes) throws JpegProcessingException, IOException
+    public static JpegSegmentData readSegments(@NotNull final SequentialReader reader, @Nullable final Iterable<JpegSegmentType> segmentTypes) throws JpegProcessingException, IOException
     {
         // Must be big-endian
         assert (reader.isMotorolaByteOrder());
@@ -100,12 +100,12 @@ public class JpegSegmentReader
         Set<Byte> segmentTypeBytes = null;
         if (segmentTypes != null) {
             segmentTypeBytes = new HashSet<Byte>();
-            for (JpegSegmentType segmentType : segmentTypes) {
+            for (final JpegSegmentType segmentType : segmentTypes) {
                 segmentTypeBytes.add(segmentType.byteValue);
             }
         }
 
-        JpegSegmentData segmentData = new JpegSegmentData();
+        final JpegSegmentData segmentData = new JpegSegmentData();
 
         do {
             // next byte is the segment identifier: 0xFF
@@ -115,7 +115,7 @@ public class JpegSegmentReader
                 throw new JpegProcessingException("Expected JPEG segment start identifier 0xFF, not 0x" + Integer.toHexString(segmentIdentifier));
 
             // next byte is the segment type
-            byte segmentType = reader.getInt8();
+            final byte segmentType = reader.getInt8();
 
             if (segmentType == SEGMENT_SOS) {
                 // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
@@ -140,7 +140,7 @@ public class JpegSegmentReader
 
             // Check whether we are interested in this segment
             if (segmentTypeBytes == null || segmentTypeBytes.contains(segmentType)) {
-                byte[] segmentBytes = reader.getBytes(segmentLength);
+                final byte[] segmentBytes = reader.getBytes(segmentLength);
                 assert (segmentLength == segmentBytes.length);
                 segmentData.addSegment(segmentType, segmentBytes);
             } else {
@@ -153,8 +153,8 @@ public class JpegSegmentReader
         } while (true);
     }
 
-    private JpegSegmentReader() throws Exception
+	private JpegSegmentReader() throws UnsupportedOperationException
     {
-        throw new Exception("Not intended for instantiation.");
+		throw new UnsupportedOperationException("Not intended for instantiation.");
     }
 }
