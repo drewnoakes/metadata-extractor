@@ -67,8 +67,8 @@ public class RationalTest
         assertEquals("0.4", twoFifths.toSimpleString(true));
         assertEquals("2/5", twoFifths.toSimpleString(false));
 
-        Rational threeEigths = new Rational(3, 8);
-        assertEquals("3/8", threeEigths.toSimpleString(true));
+        Rational threeEighths = new Rational(3, 8);
+        assertEquals("3/8", threeEighths.toSimpleString(true));
 
         Rational zero = new Rational(0, 8);
         assertTrue(zero.isInteger());
