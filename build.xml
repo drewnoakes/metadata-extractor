@@ -59,6 +59,7 @@
                destdir="${output}"
                source="${java-version}"
                target="${java-version}"
+               encoding="UTF-8"
                debug="${debug}"
                verbose="${verbose}"
                includeantruntime="false"/>
@@ -67,6 +68,7 @@
                destdir="${test-output}"
                source="${java-version}"
                target="${java-version}"
+               encoding="UTF-8"
                debug="${debug}"
                verbose="${verbose}"
                includeantruntime="false"/>
