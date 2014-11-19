@@ -21,14 +21,18 @@
 
 package com.drew.metadata.exif;
 
+import static com.drew.metadata.exif.ExifIFD0Directory.TAG_WIN_AUTHOR;
+import static com.drew.metadata.exif.ExifIFD0Directory.TAG_WIN_COMMENT;
+import static com.drew.metadata.exif.ExifIFD0Directory.TAG_WIN_KEYWORDS;
+import static com.drew.metadata.exif.ExifIFD0Directory.TAG_WIN_SUBJECT;
+import static com.drew.metadata.exif.ExifIFD0Directory.TAG_WIN_TITLE;
+
+import java.io.UnsupportedEncodingException;
+
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
-
-import java.io.UnsupportedEncodingException;
-
-import static com.drew.metadata.exif.ExifIFD0Directory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifIFD0Directory}.
@@ -43,7 +47,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
      */
     private final boolean _allowDecimalRepresentationOfRationals = true;
 
-    public ExifIFD0Descriptor(@NotNull ExifIFD0Directory directory)
+    public ExifIFD0Descriptor(@NotNull final ExifIFD0Directory directory)
     {
         super(directory);
     }
@@ -65,20 +69,20 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
      */
     @Override
 	@Nullable
-    public String getDescription(int tagType)
+    public String getDescription(final int tagType)
     {
         switch (tagType) {
-            case TAG_RESOLUTION_UNIT:
+			case ExifCommonDirectoryTags.TAG_RESOLUTION_UNIT:
                 return getResolutionDescription();
-            case TAG_YCBCR_POSITIONING:
+			case ExifCommonDirectoryTags.TAG_YCBCR_POSITIONING:
                 return getYCbCrPositioningDescription();
-            case TAG_X_RESOLUTION:
+			case ExifCommonDirectoryTags.TAG_X_RESOLUTION:
                 return getXResolutionDescription();
-            case TAG_Y_RESOLUTION:
+			case ExifCommonDirectoryTags.TAG_Y_RESOLUTION:
                 return getYResolutionDescription();
-            case TAG_REFERENCE_BLACK_WHITE:
+			case ExifCommonDirectoryTags.TAG_REFERENCE_BLACK_WHITE:
                 return getReferenceBlackWhiteDescription();
-            case TAG_ORIENTATION:
+			case ExifCommonDirectoryTags.TAG_ORIENTATION:
                 return getOrientationDescription();
 
             case TAG_WIN_AUTHOR:
@@ -100,22 +104,22 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getReferenceBlackWhiteDescription()
     {
-        int[] ints = _directory.getIntArray(TAG_REFERENCE_BLACK_WHITE);
+		final int[] ints = _directory.getIntArray(ExifCommonDirectoryTags.TAG_REFERENCE_BLACK_WHITE);
         if (ints==null || ints.length < 6)
             return null;
-        int blackR = ints[0];
-        int whiteR = ints[1];
-        int blackG = ints[2];
-        int whiteG = ints[3];
-        int blackB = ints[4];
-        int whiteB = ints[5];
+        final int blackR = ints[0];
+        final int whiteR = ints[1];
+        final int blackG = ints[2];
+        final int whiteG = ints[3];
+        final int blackB = ints[4];
+        final int whiteB = ints[5];
         return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
     }
 
     @Nullable
     public String getYResolutionDescription()
     {
-        Rational value = _directory.getRational(TAG_Y_RESOLUTION);
+		final Rational value = _directory.getRational(ExifCommonDirectoryTags.TAG_Y_RESOLUTION);
         if (value==null)
             return null;
         final String unit = getResolutionDescription();
@@ -127,7 +131,7 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getXResolutionDescription()
     {
-        Rational value = _directory.getRational(TAG_X_RESOLUTION);
+		final Rational value = _directory.getRational(ExifCommonDirectoryTags.TAG_X_RESOLUTION);
         if (value==null)
             return null;
         final String unit = getResolutionDescription();
@@ -139,13 +143,13 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     @Nullable
     public String getYCbCrPositioningDescription()
     {
-        return getIndexedDescription(TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
+		return getIndexedDescription(ExifCommonDirectoryTags.TAG_YCBCR_POSITIONING, 1, "Center of pixel array", "Datum point");
     }
 
     @Nullable
     public String getOrientationDescription()
     {
-        return getIndexedDescription(TAG_ORIENTATION, 1,
+		return getIndexedDescription(ExifCommonDirectoryTags.TAG_ORIENTATION, 1,
             "Top, left side (Horizontal / normal)",
             "Top, right side (Mirror horizontal)",
             "Bottom, right side (Rotate 180)",
@@ -160,20 +164,20 @@ public class ExifIFD0Descriptor extends TagDescriptor<ExifIFD0Directory>
     public String getResolutionDescription()
     {
         // '1' means no-unit, '2' means inch, '3' means centimeter. Default value is '2'(inch)
-        return getIndexedDescription(TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
+		return getIndexedDescription(ExifCommonDirectoryTags.TAG_RESOLUTION_UNIT, 1, "(No unit)", "Inch", "cm");
     }
 
     /** The Windows specific tags uses plain Unicode. */
     @Nullable
-    private String getUnicodeDescription(int tag)
+    private String getUnicodeDescription(final int tag)
     {
-        byte[] bytes = _directory.getByteArray(tag);
+        final byte[] bytes = _directory.getByteArray(tag);
         if (bytes == null)
             return null;
         try {
             // Decode the unicode string and trim the unicode zero "\0" from the end.
             return new String(bytes, "UTF-16LE").trim();
-        } catch (UnsupportedEncodingException ex) {
+        } catch (final UnsupportedEncodingException ex) {
             return null;
         }
     }

@@ -20,18 +20,59 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.imaging.PhotographicConversions;
-import com.drew.lang.Rational;
-import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.TagDescriptor;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_35MM_FILM_EQUIV_FOCAL_LENGTH;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_APERTURE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_COLOR_SPACE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_COMPONENTS_CONFIGURATION;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_CONTRAST;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_CUSTOM_RENDERED;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_DIGITAL_ZOOM_RATIO;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_EXIF_VERSION;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_EXPOSURE_BIAS;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_EXPOSURE_MODE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_EXPOSURE_TIME;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FILE_SOURCE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FILL_ORDER;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FLASH;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FLASHPIX_VERSION;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FNUMBER;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FOCAL_LENGTH;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FOCAL_PLANE_RESOLUTION_UNIT;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FOCAL_PLANE_X_RESOLUTION;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_FOCAL_PLANE_Y_RESOLUTION;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_GAIN_CONTROL;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_ISO_EQUIVALENT;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_MAX_APERTURE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_METERING_MODE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_NEW_SUBFILE_TYPE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SATURATION;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SCENE_CAPTURE_TYPE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SCENE_TYPE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SENSING_METHOD;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SHARPNESS;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SHUTTER_SPEED;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SUBFILE_TYPE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SUBJECT_DISTANCE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_SUBJECT_DISTANCE_RANGE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_THRESHOLDING;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_USER_COMMENT;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_WHITE_BALANCE;
+import static com.drew.metadata.exif.ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.drew.metadata.exif.ExifSubIFDDirectory.*;
+import com.drew.imaging.PhotographicConversions;
+import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.TagDescriptor;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifSubIFDDirectory}.
@@ -49,7 +90,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
 
-    public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory)
+    public ExifSubIFDDescriptor(@NotNull final ExifSubIFDDirectory directory)
     {
         super(directory);
     }
@@ -72,7 +113,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
      */
     @Override
 	@Nullable
-    public String getDescription(int tagType)
+    public String getDescription(final int tagType)
     {
         switch (tagType) {
             case TAG_NEW_SUBFILE_TYPE:
@@ -113,19 +154,19 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
                 return getFocalPlaneXResolutionDescription();
             case TAG_FOCAL_PLANE_Y_RESOLUTION:
                 return getFocalPlaneYResolutionDescription();
-            case TAG_BITS_PER_SAMPLE:
+			case ExifCommonDirectoryTags.TAG_BITS_PER_SAMPLE:
                 return getBitsPerSampleDescription();
-            case TAG_PHOTOMETRIC_INTERPRETATION:
+			case ExifCommonDirectoryTags.TAG_PHOTOMETRIC_INTERPRETATION:
                 return getPhotometricInterpretationDescription();
-            case TAG_ROWS_PER_STRIP:
+			case ExifCommonDirectoryTags.TAG_ROWS_PER_STRIP:
                 return getRowsPerStripDescription();
-            case TAG_STRIP_BYTE_COUNTS:
+			case ExifCommonDirectoryTags.TAG_STRIP_BYTE_COUNTS:
                 return getStripByteCountsDescription();
-            case TAG_SAMPLES_PER_PIXEL:
+			case ExifCommonDirectoryTags.TAG_SAMPLES_PER_PIXEL:
                 return getSamplesPerPixelDescription();
-            case TAG_PLANAR_CONFIGURATION:
+			case ExifCommonDirectoryTags.TAG_PLANAR_CONFIGURATION:
                 return getPlanarConfigurationDescription();
-            case TAG_YCBCR_SUBSAMPLING:
+			case ExifCommonDirectoryTags.TAG_YCBCR_SUBSAMPLING:
                 return getYCbCrSubsamplingDescription();
             case TAG_EXPOSURE_PROGRAM:
                 return getExposureProgramDescription();
@@ -288,7 +329,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String get35mmFilmEquivFocalLengthDescription()
     {
-        Integer value = _directory.getInteger(TAG_35MM_FILM_EQUIV_FOCAL_LENGTH);
+        final Integer value = _directory.getInteger(TAG_35MM_FILM_EQUIV_FOCAL_LENGTH);
         return value == null
             ? null
             : value == 0
@@ -299,7 +340,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getDigitalZoomRatioDescription()
     {
-        Rational value = _directory.getRational(TAG_DIGITAL_ZOOM_RATIO);
+        final Rational value = _directory.getRational(TAG_DIGITAL_ZOOM_RATIO);
         return value == null
             ? null
             : value.getNumerator() == 0
@@ -338,7 +379,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getUserCommentDescription()
     {
-        byte[] commentBytes = _directory.getByteArray(TAG_USER_COMMENT);
+        final byte[] commentBytes = _directory.getByteArray(TAG_USER_COMMENT);
         if (commentBytes == null)
             return null;
         if (commentBytes.length == 0)
@@ -351,16 +392,16 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
 
         try {
             if (commentBytes.length >= 10) {
-                String firstTenBytesString = new String(commentBytes, 0, 10);
+                final String firstTenBytesString = new String(commentBytes, 0, 10);
 
                 // try each encoding name
-                for (Map.Entry<String, String> pair : encodingMap.entrySet()) {
-                    String encodingName = pair.getKey();
-                    String charset = pair.getValue();
+                for (final Map.Entry<String, String> pair : encodingMap.entrySet()) {
+                    final String encodingName = pair.getKey();
+                    final String charset = pair.getValue();
                     if (firstTenBytesString.startsWith(encodingName)) {
                         // skip any null or blank characters commonly present after the encoding name, up to a limit of 10 from the start
                         for (int j = encodingName.length(); j < 10; j++) {
-                            byte b = commentBytes[j];
+                            final byte b = commentBytes[j];
                             if (b != '\0' && b != ' ')
                                 return new String(commentBytes, j, commentBytes.length - j, charset).trim();
                         }
@@ -370,7 +411,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
             }
             // special handling fell through, return a plain string representation
             return new String(commentBytes, System.getProperty("file.encoding")).trim();
-        } catch (UnsupportedEncodingException ex) {
+        } catch (final UnsupportedEncodingException ex) {
             return null;
         }
     }
@@ -379,7 +420,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     public String getIsoEquivalentDescription()
     {
         // Have seen an exception here from files produced by ACDSEE that stored an int[] here with two values
-        Integer isoEquiv = _directory.getInteger(TAG_ISO_EQUIVALENT);
+        final Integer isoEquiv = _directory.getInteger(TAG_ISO_EQUIVALENT);
         // There used to be a check here that multiplied ISO values < 50 by 200.
         // Issue 36 shows a smart-phone image from a Samsung Galaxy S2 with ISO-40.
         return isoEquiv != null
@@ -422,7 +463,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getExposureBiasDescription()
     {
-        Rational value = _directory.getRational(TAG_EXPOSURE_BIAS);
+        final Rational value = _directory.getRational(TAG_EXPOSURE_BIAS);
         if (value == null)
             return null;
         return value.toSimpleString(true) + " EV";
@@ -431,20 +472,20 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getMaxApertureValueDescription()
     {
-        Double aperture = _directory.getDoubleObject(TAG_MAX_APERTURE);
+        final Double aperture = _directory.getDoubleObject(TAG_MAX_APERTURE);
         if (aperture == null)
             return null;
-        double fStop = PhotographicConversions.apertureToFStop(aperture);
+        final double fStop = PhotographicConversions.apertureToFStop(aperture);
         return "F" + SimpleDecimalFormatter.format(fStop);
     }
 
     @Nullable
     public String getApertureValueDescription()
     {
-        Double aperture = _directory.getDoubleObject(TAG_APERTURE);
+        final Double aperture = _directory.getDoubleObject(TAG_APERTURE);
         if (aperture == null)
             return null;
-        double fStop = PhotographicConversions.apertureToFStop(aperture);
+        final double fStop = PhotographicConversions.apertureToFStop(aperture);
         return "F" + SimpleDecimalFormatter.format(fStop);
     }
 
@@ -467,7 +508,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getYCbCrSubsamplingDescription()
     {
-        int[] positions = _directory.getIntArray(TAG_YCBCR_SUBSAMPLING);
+		final int[] positions = _directory.getIntArray(ExifCommonDirectoryTags.TAG_YCBCR_SUBSAMPLING);
         if (positions == null)
             return null;
         if (positions[0] == 2 && positions[1] == 1) {
@@ -486,7 +527,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
         // data. If value is '1', Y/Cb/Cr value is chunky format, contiguous for each subsampling
         // pixel. If value is '2', Y/Cb/Cr value is separated and stored to Y plane/Cb plane/Cr
         // plane format.
-        return getIndexedDescription(TAG_PLANAR_CONFIGURATION,
+		return getIndexedDescription(ExifCommonDirectoryTags.TAG_PLANAR_CONFIGURATION,
             1,
             "Chunky (contiguous for each subsampling pixel)",
             "Separate (Y-plane/Cb-plane/Cr-plane format)"
@@ -496,21 +537,21 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getSamplesPerPixelDescription()
     {
-        String value = _directory.getString(TAG_SAMPLES_PER_PIXEL);
+		final String value = _directory.getString(ExifCommonDirectoryTags.TAG_SAMPLES_PER_PIXEL);
         return value == null ? null : value + " samples/pixel";
     }
 
     @Nullable
     public String getRowsPerStripDescription()
     {
-        final String value = _directory.getString(TAG_ROWS_PER_STRIP);
+		final String value = _directory.getString(ExifCommonDirectoryTags.TAG_ROWS_PER_STRIP);
         return value == null ? null : value + " rows/strip";
     }
 
     @Nullable
     public String getStripByteCountsDescription()
     {
-        final String value = _directory.getString(TAG_STRIP_BYTE_COUNTS);
+		final String value = _directory.getString(ExifCommonDirectoryTags.TAG_STRIP_BYTE_COUNTS);
         return value == null ? null : value + " bytes";
     }
 
@@ -518,7 +559,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     public String getPhotometricInterpretationDescription()
     {
         // Shows the color space of the image data components
-        Integer value = _directory.getInteger(TAG_PHOTOMETRIC_INTERPRETATION);
+		final Integer value = _directory.getInteger(ExifCommonDirectoryTags.TAG_PHOTOMETRIC_INTERPRETATION);
         if (value == null)
             return null;
         switch (value) {
@@ -544,14 +585,14 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getBitsPerSampleDescription()
     {
-        String value = _directory.getString(TAG_BITS_PER_SAMPLE);
+		final String value = _directory.getString(ExifCommonDirectoryTags.TAG_BITS_PER_SAMPLE);
         return value == null ? null : value + " bits/component/pixel";
     }
 
     @Nullable
     public String getFocalPlaneXResolutionDescription()
     {
-        Rational rational = _directory.getRational(TAG_FOCAL_PLANE_X_RESOLUTION);
+        final Rational rational = _directory.getRational(TAG_FOCAL_PLANE_X_RESOLUTION);
         if (rational == null)
             return null;
         final String unit = getFocalPlaneResolutionUnitDescription();
@@ -562,7 +603,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getFocalPlaneYResolutionDescription()
     {
-        Rational rational = _directory.getRational(TAG_FOCAL_PLANE_Y_RESOLUTION);
+        final Rational rational = _directory.getRational(TAG_FOCAL_PLANE_Y_RESOLUTION);
         if (rational == null)
             return null;
         final String unit = getFocalPlaneResolutionUnitDescription();
@@ -613,10 +654,10 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getFocalLengthDescription()
     {
-        Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
+        final Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
         if (value == null)
             return null;
-        java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
+        final java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
         return formatter.format(value.doubleValue()) + " mm";
     }
 
@@ -639,7 +680,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
         if (value == null)
             return null;
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         if ((value & 0x1) != 0)
             sb.append("Flash fired");
@@ -695,7 +736,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     {
         // '0' means unknown, '1' average, '2' center weighted average, '3' spot
         // '4' multi-spot, '5' multi-segment, '6' partial, '255' other
-        Integer value = _directory.getInteger(TAG_METERING_MODE);
+        final Integer value = _directory.getInteger(TAG_METERING_MODE);
         if (value == null)
             return null;
         switch (value) {
@@ -715,20 +756,20 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getSubjectDistanceDescription()
     {
-        Rational value = _directory.getRational(TAG_SUBJECT_DISTANCE);
+        final Rational value = _directory.getRational(TAG_SUBJECT_DISTANCE);
         if (value == null)
             return null;
-        java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
+        final java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
         return formatter.format(value.doubleValue()) + " metres";
     }
 
     @Nullable
     public String getCompressedAverageBitsPerPixelDescription()
     {
-        Rational value = _directory.getRational(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL);
+        final Rational value = _directory.getRational(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL);
         if (value == null)
             return null;
-        String ratio = value.toSimpleString(_allowDecimalRepresentationOfRationals);
+        final String ratio = value.toSimpleString(_allowDecimalRepresentationOfRationals);
         return value.isInteger() && value.intValue() == 1
             ? ratio + " bit/pixel"
             : ratio + " bits/pixel";
@@ -737,7 +778,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getExposureTimeDescription()
     {
-        String value = _directory.getString(TAG_EXPOSURE_TIME);
+        final String value = _directory.getString(TAG_EXPOSURE_TIME);
         return value == null ? null : value + " sec";
     }
 
@@ -754,16 +795,16 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
         // thanks to Mark Edwards for spotting and patching a bug in the calculation of this
         // description (spotted bug using a Canon EOS 300D)
         // thanks also to Gli Blr for spotting this bug
-        Float apexValue = _directory.getFloatObject(TAG_SHUTTER_SPEED);
+        final Float apexValue = _directory.getFloatObject(TAG_SHUTTER_SPEED);
         if (apexValue == null)
             return null;
         if (apexValue <= 1) {
-            float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
-            long apexPower10 = Math.round((double)apexPower * 10.0);
-            float fApexPower = (float)apexPower10 / 10.0f;
+            final float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
+            final long apexPower10 = Math.round(apexPower * 10.0);
+            final float fApexPower = apexPower10 / 10.0f;
             return fApexPower + " sec";
         } else {
-            int apexPower = (int)((Math.exp(apexValue * Math.log(2))));
+            final int apexPower = (int)((Math.exp(apexValue * Math.log(2))));
             return "1/" + apexPower + " sec";
         }
 
@@ -791,7 +832,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getFNumberDescription()
     {
-        Rational value = _directory.getRational(TAG_FNUMBER);
+        final Rational value = _directory.getRational(TAG_FNUMBER);
         if (value == null)
             return null;
         return "F" + SimpleDecimalFormatter.format(value.doubleValue());
@@ -819,13 +860,13 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
     @Nullable
     public String getComponentConfigurationDescription()
     {
-        int[] components = _directory.getIntArray(TAG_COMPONENTS_CONFIGURATION);
+        final int[] components = _directory.getIntArray(TAG_COMPONENTS_CONFIGURATION);
         if (components == null)
             return null;
-        String[] componentStrings = {"", "Y", "Cb", "Cr", "R", "G", "B"};
-        StringBuilder componentConfig = new StringBuilder();
+        final String[] componentStrings = {"", "Y", "Cb", "Cr", "R", "G", "B"};
+        final StringBuilder componentConfig = new StringBuilder();
         for (int i = 0; i < Math.min(4, components.length); i++) {
-            int j = components[i];
+            final int j = components[i];
             if (j > 0 && j < componentStrings.length) {
                 componentConfig.append(componentStrings[j]);
             }

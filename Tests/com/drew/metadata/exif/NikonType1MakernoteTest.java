@@ -20,13 +20,16 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.lang.Rational;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.drew.lang.Rational;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -53,7 +56,7 @@ public class NikonType1MakernoteTest
     @Before
     public void setUp() throws Exception
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType1.jpg.app1");
+        final Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType1.jpg.app1");
 
         _nikonDirectory = metadata.getDirectory(NikonType1MakernoteDirectory.class);
         _exifSubIFDDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);
@@ -88,8 +91,8 @@ public class NikonType1MakernoteTest
         assertEquals("", _nikonDirectory.getString(NikonType1MakernoteDirectory.TAG_UNKNOWN_2));
         assertEquals(0, _nikonDirectory.getDouble(NikonType1MakernoteDirectory.TAG_DIGITAL_ZOOM), 0.0001);
         assertEquals(0, _nikonDirectory.getInt(NikonType1MakernoteDirectory.TAG_CONVERTER));
-        long[] unknown3 = (long[])_nikonDirectory.getObject(NikonType1MakernoteDirectory.TAG_UNKNOWN_3);
-        long[] expected = new long[] { 0, 0, 16777216, 0, 2685774096L, 0, 34833, 6931, 16178, 4372, 4372, 3322676767L, 3373084416L, 15112, 0, 0, 1151495, 252903424, 17, 0, 0, 844038208, 55184128, 218129428, 1476410198, 370540566, 4044363286L, 16711749, 204629079, 1729 };
+        final long[] unknown3 = (long[])_nikonDirectory.getObject(NikonType1MakernoteDirectory.TAG_UNKNOWN_3);
+        final long[] expected = new long[] { 0, 0, 16777216, 0, 2685774096L, 0, 34833, 6931, 16178, 4372, 4372, 3322676767L, 3373084416L, 15112, 0, 0, 1151495, 252903424, 17, 0, 0, 844038208, 55184128, 218129428, 1476410198, 370540566, 4044363286L, 16711749, 204629079, 1729 };
         assertNotNull(unknown3);
         assertEquals(expected.length, unknown3.length);
         for (int i = 0; i<expected.length; i++) {
@@ -141,13 +144,13 @@ public class NikonType1MakernoteTest
         assertEquals("          ", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_IMAGE_DESCRIPTION));
         assertEquals("NIKON", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
         assertEquals("E950", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
-        assertEquals(1, _exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION));
-        assertEquals(300, _exifIFD0Directory.getDouble(ExifIFD0Directory.TAG_X_RESOLUTION), 0.001);
-        assertEquals(300, _exifIFD0Directory.getDouble(ExifIFD0Directory.TAG_Y_RESOLUTION), 0.001);
-        assertEquals(2, _exifIFD0Directory.getInt(ExifIFD0Directory.TAG_RESOLUTION_UNIT));
+		assertEquals(1, _exifIFD0Directory.getInt(ExifCommonDirectoryTags.TAG_ORIENTATION));
+		assertEquals(300, _exifIFD0Directory.getDouble(ExifCommonDirectoryTags.TAG_X_RESOLUTION), 0.001);
+		assertEquals(300, _exifIFD0Directory.getDouble(ExifCommonDirectoryTags.TAG_Y_RESOLUTION), 0.001);
+		assertEquals(2, _exifIFD0Directory.getInt(ExifCommonDirectoryTags.TAG_RESOLUTION_UNIT));
         assertEquals("v981-79", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_SOFTWARE));
         assertEquals("2001:04:06 11:51:40", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_DATETIME));
-        assertEquals(2, _exifIFD0Directory.getInt(ExifIFD0Directory.TAG_YCBCR_POSITIONING));
+		assertEquals(2, _exifIFD0Directory.getInt(ExifCommonDirectoryTags.TAG_YCBCR_POSITIONING));
 
         assertEquals(new Rational(1, 77), _exifSubIFDDirectory.getRational(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
         assertEquals(5.5, _exifSubIFDDirectory.getDouble(ExifSubIFDDirectory.TAG_FNUMBER), 0.001);

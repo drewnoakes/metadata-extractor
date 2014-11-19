@@ -20,14 +20,15 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.lang.Rational;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.drew.lang.Rational;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -42,8 +43,8 @@ public class NikonType2MakernoteTest2
     @Before
     public void setUp() throws Exception
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2b.jpg.app1");
-        
+        final Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2b.jpg.app1");
+
         _nikonDirectory = metadata.getDirectory(NikonType2MakernoteDirectory.class);
         _exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
         _exifSubIFDDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);
@@ -140,13 +141,13 @@ public class NikonType2MakernoteTest2
         assertEquals("          ", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_IMAGE_DESCRIPTION));
         assertEquals("NIKON", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE));
         assertEquals("E995", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL));
-        assertEquals(300, _exifIFD0Directory.getDouble(ExifIFD0Directory.TAG_X_RESOLUTION), 0.001);
-        assertEquals(300, _exifIFD0Directory.getDouble(ExifIFD0Directory.TAG_Y_RESOLUTION), 0.001);
-        assertEquals(2, _exifIFD0Directory.getInt(ExifIFD0Directory.TAG_RESOLUTION_UNIT));
+		assertEquals(300, _exifIFD0Directory.getDouble(ExifCommonDirectoryTags.TAG_X_RESOLUTION), 0.001);
+		assertEquals(300, _exifIFD0Directory.getDouble(ExifCommonDirectoryTags.TAG_Y_RESOLUTION), 0.001);
+		assertEquals(2, _exifIFD0Directory.getInt(ExifCommonDirectoryTags.TAG_RESOLUTION_UNIT));
         assertEquals("E995v1.6", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_SOFTWARE));
         assertEquals("2002:08:29 17:31:40", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_DATETIME));
-        assertEquals(1, _exifIFD0Directory.getInt(ExifIFD0Directory.TAG_YCBCR_POSITIONING));
-        
+		assertEquals(1, _exifIFD0Directory.getInt(ExifCommonDirectoryTags.TAG_YCBCR_POSITIONING));
+
         assertEquals(new Rational(2439024, 100000000), _exifSubIFDDirectory.getRational(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
         assertEquals(2.6, _exifSubIFDDirectory.getDouble(ExifSubIFDDirectory.TAG_FNUMBER), 0.001);
         assertEquals(2, _exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM));
@@ -185,7 +186,7 @@ public class NikonType2MakernoteTest2
         assertEquals(1494, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
         assertEquals(6077, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH));
         assertEquals(1494, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
-        assertEquals(72, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
-        assertEquals(72, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_Y_RESOLUTION));
+		assertEquals(72, _thumbDirectory.getInt(ExifCommonDirectoryTags.TAG_X_RESOLUTION));
+		assertEquals(72, _thumbDirectory.getInt(ExifCommonDirectoryTags.TAG_Y_RESOLUTION));
     }
 }

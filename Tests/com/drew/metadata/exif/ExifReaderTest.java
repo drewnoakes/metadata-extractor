@@ -127,7 +127,7 @@ public class ExifReaderTest
     {
         final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
-        final Rational rational = directory.getRational(ExifThumbnailDirectory.TAG_X_RESOLUTION);
+		final Rational rational = directory.getRational(ExifCommonDirectoryTags.TAG_X_RESOLUTION);
         assertNotNull(rational);
         assertEquals(72, rational.getNumerator());
         assertEquals(1, rational.getDenominator());
@@ -138,7 +138,7 @@ public class ExifReaderTest
     {
         final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
-        final Rational rational = directory.getRational(ExifThumbnailDirectory.TAG_Y_RESOLUTION);
+		final Rational rational = directory.getRational(ExifCommonDirectoryTags.TAG_Y_RESOLUTION);
         assertNotNull(rational);
         assertEquals(72, rational.getNumerator());
         assertEquals(1, rational.getDenominator());
@@ -205,8 +205,8 @@ public class ExifReaderTest
         assertNotNull(ifd0Directory);
         assertNotNull(thumbnailDirectory);
 
-        assertEquals(1, ifd0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION));
-        assertEquals(8, thumbnailDirectory.getInt(ExifThumbnailDirectory.TAG_ORIENTATION));
+		assertEquals(1, ifd0Directory.getInt(ExifCommonDirectoryTags.TAG_ORIENTATION));
+		assertEquals(8, thumbnailDirectory.getInt(ExifCommonDirectoryTags.TAG_ORIENTATION));
     }
 
 /*

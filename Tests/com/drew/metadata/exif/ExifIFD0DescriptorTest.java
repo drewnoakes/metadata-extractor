@@ -21,10 +21,11 @@
 
 package com.drew.metadata.exif;
 
-import com.drew.lang.Rational;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import com.drew.lang.Rational;
 
 /**
  * Unit tests for {@link ExifIFD0Descriptor}.
@@ -36,29 +37,29 @@ public class ExifIFD0DescriptorTest
     @Test
     public void testXResolutionDescription() throws Exception
     {
-        ExifIFD0Directory directory = new ExifIFD0Directory();
-        directory.setRational(ExifIFD0Directory.TAG_X_RESOLUTION, new Rational(72, 1));
+        final ExifIFD0Directory directory = new ExifIFD0Directory();
+		directory.setRational(ExifCommonDirectoryTags.TAG_X_RESOLUTION, new Rational(72, 1));
         // 2 is for 'Inch'
-        directory.setInt(ExifIFD0Directory.TAG_RESOLUTION_UNIT, 2);
-        ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
-        assertEquals("72 dots per inch", descriptor.getDescription(ExifIFD0Directory.TAG_X_RESOLUTION));
+		directory.setInt(ExifCommonDirectoryTags.TAG_RESOLUTION_UNIT, 2);
+        final ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
+		assertEquals("72 dots per inch", descriptor.getDescription(ExifCommonDirectoryTags.TAG_X_RESOLUTION));
     }
 
     @Test
     public void testYResolutionDescription() throws Exception
     {
-        ExifIFD0Directory directory = new ExifIFD0Directory();
-        directory.setRational(ExifIFD0Directory.TAG_Y_RESOLUTION, new Rational(50, 1));
+        final ExifIFD0Directory directory = new ExifIFD0Directory();
+		directory.setRational(ExifCommonDirectoryTags.TAG_Y_RESOLUTION, new Rational(50, 1));
         // 3 is for 'cm'
-        directory.setInt(ExifIFD0Directory.TAG_RESOLUTION_UNIT, 3);
-        ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
-        assertEquals("50 dots per cm", descriptor.getDescription(ExifIFD0Directory.TAG_Y_RESOLUTION));
+		directory.setInt(ExifCommonDirectoryTags.TAG_RESOLUTION_UNIT, 3);
+        final ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
+		assertEquals("50 dots per cm", descriptor.getDescription(ExifCommonDirectoryTags.TAG_Y_RESOLUTION));
     }
 
     @Test
     public void testWindowsXpFields() throws Exception
     {
-        ExifIFD0Directory directory = ExifReaderTest.processBytes("Tests/Data/windowsXpFields.jpg.app1", ExifIFD0Directory.class);
+        final ExifIFD0Directory directory = ExifReaderTest.processBytes("Tests/Data/windowsXpFields.jpg.app1", ExifIFD0Directory.class);
 
         assertEquals("Testing artist\0", directory.getString(ExifIFD0Directory.TAG_WIN_AUTHOR, "UTF-16LE"));
         assertEquals("Testing comments\0", directory.getString(ExifIFD0Directory.TAG_WIN_COMMENT, "UTF-16LE"));
@@ -66,7 +67,7 @@ public class ExifIFD0DescriptorTest
         assertEquals("Testing subject\0", directory.getString(ExifIFD0Directory.TAG_WIN_SUBJECT, "UTF-16LE"));
         assertEquals("Testing title\0", directory.getString(ExifIFD0Directory.TAG_WIN_TITLE, "UTF-16LE"));
 
-        ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
+        final ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
         assertEquals("Testing artist", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_AUTHOR));
         assertEquals("Testing comments", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_COMMENT));
         assertEquals("Testing keywords", descriptor.getDescription(ExifIFD0Directory.TAG_WIN_KEYWORDS));

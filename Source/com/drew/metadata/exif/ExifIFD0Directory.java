@@ -31,27 +31,15 @@ public class ExifIFD0Directory extends Directory {
 	// Adobe Photoshops surely adds these ones
 	public static final int TAG_IMAGE_HEIGHT = 0x0100;
 	public static final int TAG_IMAGE_WIDTH = 0x0101;
-	public static final int TAG_BIT_PER_SAMPLE = 0x0102;
-	public static final int TAG_SAMPLES_PER_PIXEL = 0x0115;
-	public static final int TAG_ROWS_PER_STRIP = 0x0116;
-	public static final int TAG_STRIP_BYTE_COUNTS = 0x0117;
 
 	public static final int TAG_IMAGE_DESCRIPTION = 0x010E;
 	public static final int TAG_MAKE = 0x010F;
 	public static final int TAG_MODEL = 0x0110;
-	public static final int TAG_ORIENTATION = 0x0112;
-	public static final int TAG_X_RESOLUTION = 0x011A;
-	public static final int TAG_Y_RESOLUTION = 0x011B;
-	public static final int TAG_RESOLUTION_UNIT = 0x0128;
 	public static final int TAG_SOFTWARE = 0x0131;
 	public static final int TAG_DATETIME = 0x0132;
 	public static final int TAG_ARTIST = 0x013B;
 	public static final int TAG_WHITE_POINT = 0x013E;
 	public static final int TAG_PRIMARY_CHROMATICITIES = 0x013F;
-
-	public static final int TAG_YCBCR_COEFFICIENTS = 0x0211;
-	public static final int TAG_YCBCR_POSITIONING = 0x0213;
-	public static final int TAG_REFERENCE_BLACK_WHITE = 0x0214;
 
 	/** This tag is a pointer to the Exif SubIFD. */
 	public static final int TAG_EXIF_SUB_IFD_OFFSET = 0x8769;
@@ -83,26 +71,26 @@ public class ExifIFD0Directory extends Directory {
 	static {
 		_tagNameMap.put(TAG_IMAGE_HEIGHT, "Image height");
 		_tagNameMap.put(TAG_IMAGE_WIDTH, "Image width");
-		_tagNameMap.put(TAG_BIT_PER_SAMPLE, "Bits per sample");
-		_tagNameMap.put(TAG_SAMPLES_PER_PIXEL, "Samples per pixel");
-		_tagNameMap.put(TAG_ROWS_PER_STRIP, "Rows per strip");
-		_tagNameMap.put(TAG_STRIP_BYTE_COUNTS, "Strip byte counts");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_BITS_PER_SAMPLE, "Bits per sample");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_SAMPLES_PER_PIXEL, "Samples per pixel");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_ROWS_PER_STRIP, "Rows per strip");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_STRIP_BYTE_COUNTS, "Strip byte counts");
 		_tagNameMap.put(TAG_IMAGE_DESCRIPTION, "Image Description");
 
 		_tagNameMap.put(TAG_MAKE, "Make");
 		_tagNameMap.put(TAG_MODEL, "Model");
-		_tagNameMap.put(TAG_ORIENTATION, "Orientation");
-		_tagNameMap.put(TAG_X_RESOLUTION, "X Resolution");
-		_tagNameMap.put(TAG_Y_RESOLUTION, "Y Resolution");
-		_tagNameMap.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_ORIENTATION, "Orientation");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_X_RESOLUTION, "X Resolution");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_Y_RESOLUTION, "Y Resolution");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_RESOLUTION_UNIT, "Resolution Unit");
 		_tagNameMap.put(TAG_SOFTWARE, "Software");
 		_tagNameMap.put(TAG_DATETIME, "Date/Time");
 		_tagNameMap.put(TAG_ARTIST, "Artist");
 		_tagNameMap.put(TAG_WHITE_POINT, "White Point");
 		_tagNameMap.put(TAG_PRIMARY_CHROMATICITIES, "Primary Chromaticities");
-		_tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
-		_tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
-		_tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_YCBCR_POSITIONING, "YCbCr Positioning");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
 
 		_tagNameMap.put(TAG_COPYRIGHT, "Copyright");
 

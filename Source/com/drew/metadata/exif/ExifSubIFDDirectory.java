@@ -34,30 +34,6 @@ public class ExifSubIFDDirectory extends Directory {
 	 * F-number is 1.4142^5 = F5.6.
 	 */
 	public static final int TAG_APERTURE = 0x9202;
-	/**
-	 * When image format is no compression, this value shows the number of bits
-	 * per component for each pixel. Usually this value is '8,8,8'.
-	 */
-	public static final int TAG_BITS_PER_SAMPLE = 0x0102;
-
-	/**
-	 * Shows the color space of the image data components.
-	 * 0 = WhiteIsZero
-	 * 1 = BlackIsZero
-	 * 2 = RGB
-	 * 3 = RGB Palette
-	 * 4 = Transparency Mask
-	 * 5 = CMYK
-	 * 6 = YCbCr
-	 * 8 = CIELab
-	 * 9 = ICCLab
-	 * 10 = ITULab
-	 * 32803 = Color Filter Array
-	 * 32844 = Pixar LogL
-	 * 32845 = Pixar LogLuv
-	 * 34892 = Linear Raw
-	 */
-	public static final int TAG_PHOTOMETRIC_INTERPRETATION = 0x0106;
 
 	/**
 	 * 1 = No dithering or halftoning
@@ -73,24 +49,8 @@ public class ExifSubIFDDirectory extends Directory {
 	public static final int TAG_FILL_ORDER = 0x010A;
 	public static final int TAG_DOCUMENT_NAME = 0x010D;
 
-	/** The position in the file of raster data. */
-	public static final int TAG_STRIP_OFFSETS = 0x0111;
-	/** Each pixel is composed of this many samples. */
-	public static final int TAG_SAMPLES_PER_PIXEL = 0x0115;
-	/** The raster is codified by a single block of data holding this many rows. */
-	public static final int TAG_ROWS_PER_STRIP = 0x116;
-	/** The size of the raster data in bytes. */
-	public static final int TAG_STRIP_BYTE_COUNTS = 0x0117;
 	public static final int TAG_MIN_SAMPLE_VALUE = 0x0118;
 	public static final int TAG_MAX_SAMPLE_VALUE = 0x0119;
-	/**
-	 * When image format is no compression YCbCr, this value shows byte aligns of
-	 * YCbCr data. If value is '1', Y/Cb/Cr value is chunky format, contiguous for
-	 * each subsampling pixel. If value is '2', Y/Cb/Cr value is separated and
-	 * stored to Y plane/Cb plane/Cr plane format.
-	 */
-	public static final int TAG_PLANAR_CONFIGURATION = 0x011C;
-	public static final int TAG_YCBCR_SUBSAMPLING = 0x0212;
 
 	/**
 	 * The new subfile type tag.
@@ -524,15 +484,15 @@ public class ExifSubIFDDirectory extends Directory {
 
 		_tagNameMap.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
 		_tagNameMap.put(TAG_SUBFILE_TYPE, "Subfile Type");
-		_tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
-		_tagNameMap.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_BITS_PER_SAMPLE, "Bits Per Sample");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
 		_tagNameMap.put(TAG_THRESHOLDING, "Thresholding");
-		_tagNameMap.put(TAG_STRIP_OFFSETS, "Strip Offsets");
-		_tagNameMap.put(TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
-		_tagNameMap.put(TAG_ROWS_PER_STRIP, "Rows Per Strip");
-		_tagNameMap.put(TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_STRIP_OFFSETS, "Strip Offsets");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_ROWS_PER_STRIP, "Rows Per Strip");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
 		_tagNameMap.put(TAG_PAGE_NAME, "Page Name");
-		_tagNameMap.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_PLANAR_CONFIGURATION, "Planar Configuration");
 		_tagNameMap.put(TAG_TRANSFER_FUNCTION, "Transfer Function");
 		_tagNameMap.put(TAG_PREDICTOR, "Predictor");
 		_tagNameMap.put(TAG_TILE_WIDTH, "Tile Width");
@@ -540,7 +500,7 @@ public class ExifSubIFDDirectory extends Directory {
 		_tagNameMap.put(TAG_TILE_OFFSETS, "Tile Offsets");
 		_tagNameMap.put(TAG_TILE_BYTE_COUNTS, "Tile Byte Counts");
 		_tagNameMap.put(TAG_JPEG_TABLES, "JPEG Tables");
-		_tagNameMap.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
+		_tagNameMap.put(ExifCommonDirectoryTags.TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
 		_tagNameMap.put(TAG_CFA_REPEAT_PATTERN_DIM, "CFA Repeat Pattern Dim");
 		_tagNameMap.put(TAG_CFA_PATTERN_2, "CFA Pattern");
 		_tagNameMap.put(TAG_BATTERY_LEVEL, "Battery Level");
