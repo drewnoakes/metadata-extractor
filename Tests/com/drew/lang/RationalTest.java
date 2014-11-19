@@ -93,4 +93,16 @@ public class RationalTest
         assertEquals("new rational should be reciprocal", new Rational(3, 1), reciprocal);
         assertEquals("original reciprocal should remain unchanged", new Rational(1, 3), rational);
     }
+
+    @Test
+    public void testZeroOverZero() throws Exception
+    {
+        assertEquals(new Rational(0, 0), new Rational(0, 0).getReciprocal());
+        assertEquals(0.0d, new Rational(0, 0).doubleValue(), 0.000000001);
+        assertEquals(0, new Rational(0, 0).byteValue());
+        assertEquals(0.0f, new Rational(0, 0).floatValue(), 0.000000001f);
+        assertEquals(0, new Rational(0, 0).intValue());
+        assertEquals(0L, new Rational(0, 0).longValue());
+        assertTrue(new Rational(0, 0).isInteger());
+    }
 }

@@ -30,6 +30,9 @@ import java.io.Serializable;
  * Immutable class for holding a rational number without loss of precision.  Provides
  * a familiar representation via toString() in form <code>numerator/denominator</code>.
  *
+ * Note that any value with a numerator of zero will be treated as zero, even if the
+ * denominator is also zero.
+ *
  * @author Drew Noakes https://drewnoakes.com
  */
 public class Rational extends java.lang.Number implements Serializable
@@ -62,7 +65,9 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public double doubleValue()
     {
-        return (double) _numerator / (double) _denominator;
+        return _numerator == 0
+            ? 0.0
+            : (double) _numerator / (double) _denominator;
     }
 
     /**
@@ -74,7 +79,9 @@ public class Rational extends java.lang.Number implements Serializable
      */
     public float floatValue()
     {
-        return (float) _numerator / (float) _denominator;
+        return _numerator == 0
+            ? 0.0f
+            : (float) _numerator / (float) _denominator;
     }
 
     /**
