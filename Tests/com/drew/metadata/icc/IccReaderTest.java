@@ -21,28 +21,31 @@
 
 package com.drew.metadata.icc;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+
+import org.junit.Test;
+
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.testing.TestHelper;
-import com.drew.tools.FileUtil;
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
+import com.google.common.io.Files;
 
 public class IccReaderTest
 {
     @Test
     public void testExtract() throws Exception
     {
-        byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
+		final byte[] app2Bytes = Files.toByteArray(new File("Tests/Data/iccDataInvalid1.jpg.app2"));
 
         // ICC data starts after a 14-byte preamble
-        byte[] icc = TestHelper.skipBytes(app2Bytes, 14);
+        final byte[] icc = TestHelper.skipBytes(app2Bytes, 14);
 
-        Metadata metadata = new Metadata();
+        final Metadata metadata = new Metadata();
         new IccReader().extract(new ByteArrayReader(icc), metadata);
 
-        IccDirectory directory = metadata.getDirectory(IccDirectory.class);
+        final IccDirectory directory = metadata.getDirectory(IccDirectory.class);
 
         assertNotNull(directory);
 

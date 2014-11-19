@@ -21,28 +21,32 @@
 
 package com.drew.metadata.adobe;
 
+import static com.drew.lang.Iterables.toList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.Test;
+
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.tools.FileUtil;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static com.drew.lang.Iterables.toList;
-import static org.junit.Assert.*;
+import com.google.common.io.Files;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class AdobeJpegReaderTest
 {
     @NotNull
-    public static AdobeJpegDirectory processBytes(@NotNull String filePath) throws IOException
+    public static AdobeJpegDirectory processBytes(@NotNull final String filePath) throws IOException
     {
-        Metadata metadata = new Metadata();
-        new AdobeJpegReader().extract(new SequentialByteArrayReader(FileUtil.readBytes(filePath)), metadata);
+        final Metadata metadata = new Metadata();
+		new AdobeJpegReader().extract(new SequentialByteArrayReader(Files.toByteArray(new File(filePath))), metadata);
 
-        AdobeJpegDirectory directory = metadata.getDirectory(AdobeJpegDirectory.class);
+        final AdobeJpegDirectory directory = metadata.getDirectory(AdobeJpegDirectory.class);
         assertNotNull(directory);
         return directory;
     }
@@ -50,7 +54,7 @@ public class AdobeJpegReaderTest
     @Test
     public void testSegmentTypes() throws Exception
     {
-        AdobeJpegReader reader = new AdobeJpegReader();
+        final AdobeJpegReader reader = new AdobeJpegReader();
 
         assertEquals(1, toList(reader.getSegmentTypes()).size());
         assertEquals(JpegSegmentType.APPE, toList(reader.getSegmentTypes()).get(0));
@@ -59,7 +63,7 @@ public class AdobeJpegReaderTest
     @Test
     public void testReadAdobeJpegMetadata1() throws Exception
     {
-        AdobeJpegDirectory directory = processBytes("Tests/Data/adobeJpeg1.jpg.appe");
+        final AdobeJpegDirectory directory = processBytes("Tests/Data/adobeJpeg1.jpg.appe");
 
         assertFalse(directory.getErrors().toString(), directory.hasErrors());
 

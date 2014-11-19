@@ -20,16 +20,21 @@
  */
 package com.drew.metadata.iptc;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.Test;
+
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
-import com.drew.tools.FileUtil;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static org.junit.Assert.*;
+import com.google.common.io.Files;
 
 /**
  * Unit tests for {@link IptcReader}.
@@ -39,12 +44,12 @@ import static org.junit.Assert.*;
 public class IptcReaderTest
 {
     @NotNull
-    public static IptcDirectory processBytes(@NotNull String filePath) throws IOException
+    public static IptcDirectory processBytes(@NotNull final String filePath) throws IOException
     {
-        Metadata metadata = new Metadata();
-        byte[] bytes = FileUtil.readBytes(filePath);
+        final Metadata metadata = new Metadata();
+		final byte[] bytes = Files.toByteArray(new File(filePath));
         new IptcReader().extract(new SequentialByteArrayReader(bytes), metadata, bytes.length);
-        IptcDirectory directory = metadata.getDirectory(IptcDirectory.class);
+        final IptcDirectory directory = metadata.getDirectory(IptcDirectory.class);
         assertNotNull(directory);
         return directory;
     }
@@ -52,11 +57,11 @@ public class IptcReaderTest
     @Test
     public void testIptc1BytesFromFile() throws Exception
     {
-        IptcDirectory directory = processBytes("Tests/Data/iptc1.jpg.appd");
+        final IptcDirectory directory = processBytes("Tests/Data/iptc1.jpg.appd");
 
         assertFalse(directory.getErrors().toString(), directory.hasErrors());
 
-        Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
+        final Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
         assertEquals(16, tags.length);
 
         assertEquals(IptcDirectory.TAG_CATEGORY, tags[0].getTagType());
@@ -111,11 +116,11 @@ public class IptcReaderTest
     @Test
     public void testIptc2Photoshop6BytesFromFile() throws Exception
     {
-        IptcDirectory directory = processBytes("Tests/Data/iptc2-photoshop6.jpg.appd");
+        final IptcDirectory directory = processBytes("Tests/Data/iptc2-photoshop6.jpg.appd");
 
         assertFalse(directory.getErrors().toString(), directory.hasErrors());
 
-        Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
+        final Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
         assertEquals(17, tags.length);
 
         assertEquals(IptcDirectory.TAG_APPLICATION_RECORD_VERSION, tags[0].getTagType());

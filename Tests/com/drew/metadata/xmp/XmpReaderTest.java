@@ -20,29 +20,37 @@
  */
 package com.drew.metadata.xmp;
 
-import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.Rational;
-import com.drew.metadata.Metadata;
-import com.drew.tools.FileUtil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.TimeZone;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.junit.Assert.*;
+import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.Rational;
+import com.drew.metadata.Metadata;
+import com.google.common.io.Files;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
  */
 public class XmpReaderTest
 {
-    public static XmpDirectory processApp1Bytes(String filePath) throws IOException
+    public static XmpDirectory processApp1Bytes(final String filePath) throws IOException
     {
-        Metadata metadata = new Metadata();
-        new XmpReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.APP1);
-        XmpDirectory directory = metadata.getDirectory(XmpDirectory.class);
+        final Metadata metadata = new Metadata();
+		new XmpReader().extract(Files.toByteArray(new File(filePath)), metadata, JpegSegmentType.APP1);
+        final XmpDirectory directory = metadata.getDirectory(XmpDirectory.class);
         assertNotNull(directory);
         return directory;
     }
@@ -191,7 +199,7 @@ public class XmpReaderTest
         assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
 //        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
 
-        Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
+        final Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
         assertEquals(calendar.getTime(), actual);
     }
@@ -206,7 +214,7 @@ public class XmpReaderTest
         assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
 //        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
 
-        Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
+        final Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
         assertEquals(calendar.getTime(), actual);
     }
@@ -214,7 +222,7 @@ public class XmpReaderTest
     @Test
     public void testGetXmpProperties() throws Exception
     {
-        Map<String,String> propertyMap = _directory.getXmpProperties();
+        final Map<String,String> propertyMap = _directory.getXmpProperties();
 
         assertEquals(179, propertyMap.size());
 

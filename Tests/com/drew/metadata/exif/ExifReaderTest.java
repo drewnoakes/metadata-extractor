@@ -20,38 +20,42 @@
  */
 package com.drew.metadata.exif;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.tools.FileUtil;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static org.junit.Assert.*;
+import com.google.common.io.Files;
 
 /**
  * JUnit test case for class ExifReader.
- * 
+ *
  * @author  Drew Noakes http://drewnoakes.com
  */
 public class ExifReaderTest
 {
     @NotNull
-    public static Metadata processBytes(@NotNull String filePath) throws IOException
+    public static Metadata processBytes(@NotNull final String filePath) throws IOException
     {
-        Metadata metadata = new Metadata();
-        new ExifReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.APP1);
+        final Metadata metadata = new Metadata();
+		new ExifReader().extract(Files.toByteArray(new File(filePath)), metadata, JpegSegmentType.APP1);
         return metadata;
     }
 
     @NotNull
-    public static <T extends Directory> T processBytes(@NotNull String filePath, @NotNull Class<T> directoryClass) throws IOException
+    public static <T extends Directory> T processBytes(@NotNull final String filePath, @NotNull final Class<T> directoryClass) throws IOException
     {
-        T directory = processBytes(filePath).getDirectory(directoryClass);
+        final T directory = processBytes(filePath).getDirectory(directoryClass);
         assertNotNull(directory);
         return directory;
     }
@@ -62,7 +66,7 @@ public class ExifReaderTest
         try{
             new ExifReader().extract(null, new Metadata(), JpegSegmentType.APP1);
             Assert.fail("Exception expected");
-        } catch (NullPointerException npe) {
+        } catch (final NullPointerException npe) {
             // passed
         }
     }
@@ -73,7 +77,7 @@ public class ExifReaderTest
         try{
             new ExifReader().extract(new byte[10], null, JpegSegmentType.APP1);
             Assert.fail("Exception expected");
-        } catch (NullPointerException npe) {
+        } catch (final NullPointerException npe) {
             // passed
         }
     }
@@ -81,7 +85,7 @@ public class ExifReaderTest
     @Test
     public void testLoadFujifilmJpeg() throws Exception
     {
-        ExifSubIFDDirectory directory = ExifReaderTest.processBytes("Tests/Data/withExif.jpg.app1", ExifSubIFDDirectory.class);
+        final ExifSubIFDDirectory directory = ExifReaderTest.processBytes("Tests/Data/withExif.jpg.app1", ExifSubIFDDirectory.class);
 
         final String description = directory.getDescription(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
         assertNotNull(description);
@@ -93,8 +97,8 @@ public class ExifReaderTest
     @Test
     public void testLoadJpegWithNoExifData() throws Exception
     {
-        byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
-        Metadata metadata = new Metadata();
+        final byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
+        final Metadata metadata = new Metadata();
         new ExifReader().extract(badExifData, metadata, JpegSegmentType.APP1);
         assertEquals(0, metadata.getDirectoryCount());
     }
@@ -105,7 +109,7 @@ public class ExifReaderTest
         // This image was created via a resize in ACDSee.
         // It seems to have a reference to an IFD starting outside the data segment.
         // I've noticed that ACDSee reports a Comment for this image, yet ExifReader doesn't report one.
-        ExifSubIFDDirectory directory = ExifReaderTest.processBytes("Tests/Data/crash01.jpg.app1", ExifSubIFDDirectory.class);
+        final ExifSubIFDDirectory directory = ExifReaderTest.processBytes("Tests/Data/crash01.jpg.app1", ExifSubIFDDirectory.class);
 
         assertTrue(directory.getTagCount() > 0);
     }
@@ -113,7 +117,7 @@ public class ExifReaderTest
     @Test
     public void testDateTime() throws Exception
     {
-        ExifIFD0Directory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifIFD0Directory.class);
+        final ExifIFD0Directory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifIFD0Directory.class);
 
         assertEquals("2002:11:27 18:00:35", directory.getString(ExifIFD0Directory.TAG_DATETIME));
     }
@@ -121,9 +125,9 @@ public class ExifReaderTest
     @Test
     public void testThumbnailXResolution() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
+        final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
-        Rational rational = directory.getRational(ExifThumbnailDirectory.TAG_X_RESOLUTION);
+        final Rational rational = directory.getRational(ExifThumbnailDirectory.TAG_X_RESOLUTION);
         assertNotNull(rational);
         assertEquals(72, rational.getNumerator());
         assertEquals(1, rational.getDenominator());
@@ -132,9 +136,9 @@ public class ExifReaderTest
     @Test
     public void testThumbnailYResolution() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
+        final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
-        Rational rational = directory.getRational(ExifThumbnailDirectory.TAG_Y_RESOLUTION);
+        final Rational rational = directory.getRational(ExifThumbnailDirectory.TAG_Y_RESOLUTION);
         assertNotNull(rational);
         assertEquals(72, rational.getNumerator());
         assertEquals(1, rational.getDenominator());
@@ -143,7 +147,7 @@ public class ExifReaderTest
     @Test
     public void testThumbnailOffset() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
+        final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
         assertEquals(192, directory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
     }
@@ -151,7 +155,7 @@ public class ExifReaderTest
     @Test
     public void testThumbnailLength() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
+        final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
         assertEquals(2970, directory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH));
     }
@@ -159,8 +163,8 @@ public class ExifReaderTest
     @Test
     public void testThumbnailData() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
-        byte[] thumbnailData = directory.getThumbnailData();
+        final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
+        final byte[] thumbnailData = directory.getThumbnailData();
         assertNotNull(thumbnailData);
         assertEquals(2970, thumbnailData.length);
     }
@@ -168,7 +172,7 @@ public class ExifReaderTest
     @Test
     public void testThumbnailCompression() throws Exception
     {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
+        final ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
         // 6 means JPEG compression
         assertEquals(6, directory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION));
@@ -181,7 +185,7 @@ public class ExifReaderTest
         // repeatedly.  Thanks to Alistair Dickie for providing the sample data used in this
         // unit test.
 
-        Metadata metadata = processBytes("Tests/Data/recursiveDirectories.jpg.app1");
+        final Metadata metadata = processBytes("Tests/Data/recursiveDirectories.jpg.app1");
 
         // Mostly we're just happy at this point that we didn't get stuck in an infinite loop.
 
@@ -194,9 +198,9 @@ public class ExifReaderTest
         // This metadata contains different orientations for the thumbnail and the main image.
         // These values used to be merged into a single directory, causing errors.
         // This unit test demonstrates correct behaviour.
-        Metadata metadata = processBytes("Tests/Data/repeatedOrientationTagWithDifferentValues.jpg.app1");
-        ExifIFD0Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-        ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        final Metadata metadata = processBytes("Tests/Data/repeatedOrientationTagWithDifferentValues.jpg.app1");
+        final ExifIFD0Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+        final ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
 
         assertNotNull(ifd0Directory);
         assertNotNull(thumbnailDirectory);

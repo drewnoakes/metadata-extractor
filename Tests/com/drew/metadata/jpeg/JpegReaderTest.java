@@ -20,18 +20,20 @@
  */
 package com.drew.metadata.jpeg;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.tools.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.google.common.io.Files;
 
 /**
  * @author Drew Noakes http://drewnoakes.com
@@ -39,12 +41,12 @@ import static org.junit.Assert.assertNotNull;
 public class JpegReaderTest
 {
     @NotNull
-    public static JpegDirectory processBytes(String filePath) throws IOException
+    public static JpegDirectory processBytes(final String filePath) throws IOException
     {
-        Metadata metadata = new Metadata();
-        new JpegReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.SOF0);
+        final Metadata metadata = new Metadata();
+		new JpegReader().extract(Files.toByteArray(new File(filePath)), metadata, JpegSegmentType.SOF0);
 
-        JpegDirectory directory = metadata.getDirectory(JpegDirectory.class);
+        final JpegDirectory directory = metadata.getDirectory(JpegDirectory.class);
         assertNotNull(directory);
         return directory;
     }
@@ -84,7 +86,7 @@ public class JpegReaderTest
     @Test
     public void testComponentData1() throws Exception
     {
-        JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_COMPONENT_DATA_1);
+        final JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_COMPONENT_DATA_1);
 
         assertNotNull(component);
         assertEquals("Y", component.getComponentName());
@@ -97,7 +99,7 @@ public class JpegReaderTest
     @Test
     public void testComponentData2() throws Exception
     {
-        JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_COMPONENT_DATA_2);
+        final JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_COMPONENT_DATA_2);
 
         assertNotNull(component);
         assertEquals("Cb", component.getComponentName());
@@ -111,7 +113,7 @@ public class JpegReaderTest
     @Test
     public void testComponentData3() throws Exception
     {
-        JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_COMPONENT_DATA_3);
+        final JpegComponent component = (JpegComponent)_directory.getObject(JpegDirectory.TAG_COMPONENT_DATA_3);
 
         assertNotNull(component);
         assertEquals("Cr", component.getComponentName());
