@@ -21,10 +21,10 @@
 
 package com.drew.lang;
 
+import java.text.DecimalFormat;
+
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-
-import java.text.DecimalFormat;
 
 /**
  * Represents a latitude and longitude pair, giving a position on earth in spherical coordinates.
@@ -44,7 +44,7 @@ public final class GeoLocation
      * @param latitude the latitude, in degrees
      * @param longitude the longitude, in degrees
      */
-    public GeoLocation(double latitude, double longitude)
+    public GeoLocation(final double latitude, final double longitude)
     {
         _latitude = latitude;
         _longitude = longitude;
@@ -79,10 +79,10 @@ public final class GeoLocation
      * of format: {@code -1° 23' 4.56"}
      */
     @NotNull
-    public static String decimalToDegreesMinutesSecondsString(double decimal)
+    public static String decimalToDegreesMinutesSecondsString(final double decimal)
     {
-        double[] dms = decimalToDegreesMinutesSeconds(decimal);
-        DecimalFormat format = new DecimalFormat("0.##");
+        final double[] dms = decimalToDegreesMinutesSeconds(decimal);
+        final DecimalFormat format = new DecimalFormat("0.##");
         return String.format("%s° %s' %s\"", format.format(dms[0]), format.format(dms[1]), format.format(dms[2]));
     }
 
@@ -91,11 +91,11 @@ public final class GeoLocation
      * a double array.
      */
     @NotNull
-    public static double[] decimalToDegreesMinutesSeconds(double decimal)
+    public static double[] decimalToDegreesMinutesSeconds(final double decimal)
     {
-        int d = (int)decimal;
-        double m = Math.abs((decimal % 1) * 60);
-        double s = (m % 1) * 60;
+        final int d = (int)decimal;
+        final double m = Math.abs((decimal % 1) * 60);
+        final double s = (m % 1) * 60;
         return new double[] { d, (int)m, s};
     }
 
@@ -106,17 +106,21 @@ public final class GeoLocation
     @Nullable
     public static Double degreesMinutesSecondsToDecimal(@NotNull final Rational degs, @NotNull final Rational mins, @NotNull final Rational secs, final boolean isNegative)
     {
-        double decimal = Math.abs(degs.doubleValue())
-                + mins.doubleValue() / 60.0d
-                + secs.doubleValue() / 3600.0d;
+		final double deg = degs.getDenominator() == 0 ? (degs.getNumerator() == 0 ? 0 : Double.NaN) : Math.abs(degs.doubleValue());
+		final double min = mins.getDenominator() == 0 ? (mins.getNumerator() == 0 ? 0 : Double.NaN) : mins.doubleValue() / 60.0d;
+		final double sec = secs.getDenominator() == 0 ? (secs.getNumerator() == 0 ? 0 : Double.NaN) : secs.doubleValue() / 3600.0d;
 
-        if (Double.isNaN(decimal))
-            return null;
+		double decimal = deg + min + sec;
 
-        if (isNegative)
-            decimal *= -1;
+		if (Double.isNaN(decimal)) {
+			return null;
+		}
 
-        return decimal;
+		if (isNegative) {
+			decimal *= -1;
+		}
+
+		return decimal;
     }
 
     @Override
@@ -124,7 +128,7 @@ public final class GeoLocation
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GeoLocation that = (GeoLocation) o;
+        final GeoLocation that = (GeoLocation) o;
         if (Double.compare(that._latitude, _latitude) != 0) return false;
         if (Double.compare(that._longitude, _longitude) != 0) return false;
         return true;

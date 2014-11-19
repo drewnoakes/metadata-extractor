@@ -21,9 +21,15 @@
 
 package com.drew.lang;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.GpsDirectory;
 
 /**
  * @author  Drew Noakes http://drewnoakes.com
@@ -48,4 +54,19 @@ public class GeoLocationTest
         assertEquals(41.0, dms[1], 0.0001);
         assertEquals(52.8, dms[2], 0.0001);
     }
+
+	@Test
+	/**
+	 * Issue 84: GPS location parsing doesn't handle NaN values
+	 *
+	 * @throws Exception
+	 */
+	public void testSecondsZero() throws Exception {
+		final File f = new File("Tests/data/train.jpg");
+		final Metadata metadata = ImageMetadataReader.readMetadata(f);
+		final GpsDirectory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
+		final GeoLocation geolocation = gpsDirectory.getGeoLocation();
+		assertEquals(48.88872633333333, geolocation.getLatitude(), 0.0001);
+		assertEquals(21.043251166666668, geolocation.getLongitude(), 0.0001);
+	}
 }
