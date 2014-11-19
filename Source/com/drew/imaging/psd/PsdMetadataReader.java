@@ -16,7 +16,7 @@
  * More information about this project is available at:
  *
  *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 
 package com.drew.imaging.psd;
