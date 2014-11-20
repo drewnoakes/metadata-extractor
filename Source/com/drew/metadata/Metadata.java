@@ -121,7 +121,7 @@ public final class Metadata
 
     /**
      * Indicates whether a given directory type has been created in this metadata
-     * repository.  Directories are created by calling <code>getOrCreateDirectory(Class)</code>.
+     * repository.  Directories are created by calling {@link Metadata#getOrCreateDirectory(Class)}.
      *
      * @param type the {@link Directory} type
      * @return true if the {@link Directory} has been created

@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a <code>IptcDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link IptcDirectory}.
  * <p/>
  * As the IPTC directory already stores values as strings, this class simply returns the tag's value.
  *

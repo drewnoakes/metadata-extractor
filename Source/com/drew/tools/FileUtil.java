@@ -52,7 +52,7 @@ public class FileUtil
     }
 
     /**
-     * Reads the contents of a {@link File} into a <code>byte[]</code>. This relies upon <code>File.length()</code>
+     * Reads the contents of a {@link File} into a <code>byte[]</code>. This relies upon {@link File#length()}
      * returning the correct value, which may not be the case when using a network file system. However this method is
      * intended for unit test support, in which case the files should be on the local volume.
      */

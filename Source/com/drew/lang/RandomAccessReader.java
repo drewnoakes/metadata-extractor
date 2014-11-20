@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
  * Base class for random access data reading operations of common data types.
  * <p/>
  * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
- * <code>setMotorolaByteOrder(boolean)</code>.
+ * {@link com.drew.lang.RandomAccessReader#setMotorolaByteOrder(boolean)}.
  * <p/>
  * Concrete implementations include:
  * <ul>

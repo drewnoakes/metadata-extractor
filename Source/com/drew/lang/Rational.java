@@ -28,7 +28,7 @@ import java.io.Serializable;
 
 /**
  * Immutable class for holding a rational number without loss of precision.  Provides
- * a familiar representation via toString() in form <code>numerator/denominator</code>.
+ * a familiar representation via {@link Rational#toString} in form <code>numerator/denominator</code>.
  *
  * Note that any value with a numerator of zero will be treated as zero, even if the
  * denominator is also zero.
@@ -87,7 +87,7 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the value of the specified number as a <code>byte</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>byte</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>byte</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>byte</code>.
@@ -100,7 +100,7 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the value of the specified number as an <code>int</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>int</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>int</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>int</code>.
@@ -113,7 +113,7 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the value of the specified number as a <code>long</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>long</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>long</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>long</code>.
@@ -126,7 +126,7 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the value of the specified number as a <code>short</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>short</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>short</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>short</code>.
