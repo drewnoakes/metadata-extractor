@@ -112,7 +112,7 @@ public class JpegSegmentReader
             final short segmentIdentifier = reader.getUInt8();
 
             if (segmentIdentifier != 0xFF)
-                throw new JpegProcessingException("Expected JPEG segment start identifier 0xFF, not 0x" + Integer.toHexString(segmentIdentifier));
+                throw new JpegProcessingException("Expected JPEG segment start identifier 0xFF, not 0x" + Integer.toHexString(segmentIdentifier).toUpperCase());
 
             // next byte is the segment type
             byte segmentType = reader.getInt8();
