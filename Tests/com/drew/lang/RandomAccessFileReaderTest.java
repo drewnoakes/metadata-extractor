@@ -64,6 +64,9 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
             return;
 
         _randomAccessFile.close();
+        
+        if (_tempFile == null)
+        	return;
 
         if (_tempFile == null)
             return;
