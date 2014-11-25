@@ -225,6 +225,11 @@ public class ProcessAllImagesInFolderUtility
             FileWriter writer = null;
             try
             {
+                // Create the output directory if it doesn't exist
+                File metadataDir = new File(String.format("%s/metadata", file.getParent()));
+                if (!metadataDir.exists())
+                    metadataDir.mkdir();
+
                 String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName().toLowerCase());
                 writer = new FileWriter(outputPath, false);
                 writer.write("FILE: " + file.getName() + "\n");
