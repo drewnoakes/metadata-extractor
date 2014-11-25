@@ -116,6 +116,14 @@ public class JpegSegmentReader
 
             // next byte is the segment type
             byte segmentType = reader.getInt8();
+            /**
+            * Check if the byte is 0xFF which is an invalid byte produced by some metadata manipulating tools.
+            * Try to read the next byte which should be valid.
+            */
+            if (segmentType == (byte)0xFF)  
+                {
+                    segmentType = reader.getInt8();
+                }
 
             if (segmentType == SEGMENT_SOS) {
                 // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
