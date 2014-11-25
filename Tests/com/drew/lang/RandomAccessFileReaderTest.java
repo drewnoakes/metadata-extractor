@@ -60,10 +60,13 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
     @After
     public void deleteTempFile() throws IOException
     {
-        if (_tempFile == null && _randomAccessFile == null)
+        if (_randomAccessFile == null)
             return;
 
         _randomAccessFile.close();
+        
+        if (_tempFile == null)
+        	return;
 
         assertTrue(
                 "Unable to delete temp file used during unit test: " + _tempFile.getAbsolutePath(),

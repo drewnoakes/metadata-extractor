@@ -98,8 +98,6 @@ public class XmpReader implements JpegSegmentMetadataReader
             return;
         }
 
-        ByteArrayReader reader = new ByteArrayReader(segmentBytes);
-
         String preamble = new String(segmentBytes, 0, preambleLength);
         if (!"http://ns.adobe.com/xap/1.0/\0".equals(preamble)) {
             directory.addError("XMP data segment doesn't begin with 'http://ns.adobe.com/xap/1.0/'");
