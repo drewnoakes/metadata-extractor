@@ -89,7 +89,7 @@ public class DirectoryTest
             int outputValue = outputValues[i];
             assertEquals(inputValue, outputValue);
         }
-        assertEquals(inputValues, _directory.getIntArray(tagType));
+        assertArrayEquals(inputValues, _directory.getIntArray(tagType));
         StringBuilder outputString = new StringBuilder();
         for (int i = 0; i < inputValues.length; i++) {
             int inputValue = inputValues[i];
