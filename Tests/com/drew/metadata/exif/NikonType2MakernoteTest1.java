@@ -28,6 +28,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.util.Locale;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -39,6 +41,8 @@ public class NikonType2MakernoteTest1
     @Before
     public void setUp() throws Exception
     {
+        Locale.setDefault(new Locale("en", "GB"));
+
         _nikonDirectory = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2a.jpg.app1", NikonType2MakernoteDirectory.class);
 
         assertNotNull(_nikonDirectory);
