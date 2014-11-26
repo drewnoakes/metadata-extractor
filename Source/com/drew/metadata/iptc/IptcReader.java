@@ -142,6 +142,14 @@ public class IptcReader implements JpegSegmentMetadataReader
         String string = null;
 
         switch (tagIdentifier) {
+            case IptcDirectory.TAG_ENVELOPE_RECORD_VERSION:
+                int erv = reader.getUInt16();
+                reader.skip(tagByteCount - 2);
+                directory.setInt(tagIdentifier, erv);
+                return;
+            case IptcDirectory.TAG_CODED_CHARACTER_SET:
+                directory.setString(tagIdentifier, Iso2022Converter.convertISO2022CharsetToJavaCharset(reader.getBytes(tagByteCount)));
+                return;
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
                 // short
                 int shortValue = reader.getUInt16();
@@ -181,7 +189,17 @@ public class IptcReader implements JpegSegmentMetadataReader
         // If we haven't returned yet, treat it as a string
         // NOTE that there's a chance we've already loaded the value as a string above, but failed to parse the value
         if (string == null) {
-            string = reader.getString(tagByteCount, System.getProperty("file.encoding")); // "ISO-8859-1"
+            String encoding = directory.getString(IptcDirectory.TAG_CODED_CHARACTER_SET);
+            if (encoding != null) {
+                string = reader.getString(tagByteCount, encoding);
+            } else {
+                byte[] bytes = reader.getBytes(tagByteCount);
+               encoding = Iso2022Converter.guessEncoding(bytes);
+               if(encoding != null)
+                    string = new String(bytes, encoding);
+                else
+                    string = new String(bytes); //fall back if the encoding could not be determined
+            }
         }
 
         if (directory.containsTag(tagIdentifier)) {
