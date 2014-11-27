@@ -220,7 +220,7 @@ public class ProcessAllImagesInFolderUtility
             }
         }
 
-        private void writeOutputFile(File file, Metadata metadata) throws IOException
+        private static void writeOutputFile(File file, Metadata metadata) throws IOException
         {
             FileWriter writer = null;
             try
