@@ -27,10 +27,12 @@ import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.makernotes.*;
+import com.drew.metadata.iptc.IptcReader;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -359,6 +361,10 @@ public class ExifReader implements JpegSegmentMetadataReader
                 // Pass the offset to this tag's value. Manufacturer/Model-specific logic will be used to
                 // determine the correct offset for further processing.
                 processMakernote(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, metadata, reader);
+            } else if (tagType == ExifSubIFDDirectory.TAG_IPTC_NAA && directory instanceof ExifIFD0Directory) {
+                // NOTE Adobe sets type 4 for IPTC instead of 7
+                final byte[] c = reader.getBytes(tagValueOffset, byteCount);
+                new IptcReader().extract(new SequentialByteArrayReader(c), metadata, c.length);
             } else {
                 processTag(directory, tagType, tagValueOffset, componentCount, formatCode, reader);
             }
