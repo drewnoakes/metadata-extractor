@@ -143,7 +143,7 @@ public class XmpReader implements JpegSegmentMetadataReader
         }
     }
 
-    private void processXmpTags(XmpDirectory directory, XMPMeta xmpMeta) throws XMPException
+    private static void processXmpTags(XmpDirectory directory, XMPMeta xmpMeta) throws XMPException
     {
         // store the XMPMeta object on the directory in case others wish to use it
         directory.setXMPMeta(xmpMeta);
@@ -207,7 +207,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     /**
      * Reads an property value with given namespace URI and property name. Add property value to directory if exists
      */
-    private void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType, int formatCode) throws XMPException
+    private static void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType, int formatCode) throws XMPException
     {
         String property = meta.getPropertyString(schemaNS, propName);
 
@@ -251,7 +251,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    private void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
+    private static void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
     {
         Calendar cal = meta.getPropertyCalendar(schemaNS, propName);
 
