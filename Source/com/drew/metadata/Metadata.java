@@ -145,4 +145,19 @@ public final class Metadata
         }
         return false;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Directory directory : getDirectories()) {
+            stringBuilder.append(directory);
+            stringBuilder.append('\n');
+            for (Tag tag : directory.getTags()) {
+                stringBuilder.append(tag);
+                stringBuilder.append('\n');
+            }
+            stringBuilder.append('\n');
+        }
+        return stringBuilder.toString();
+    }
 }
