@@ -125,12 +125,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (getByte() << 8 & 0xFF00) |
-                   (getByte()      & 0xFF);
+            return getUInt8() << 8 | getUInt8();
         } else {
             // Intel ordering - LSB first
-            return (getByte()      & 0xFF) |
-                   (getByte() << 8 & 0xFF00);
+            return getUInt8() | getUInt8() << 8;
         }
     }
 
@@ -144,12 +142,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (short) (((short)getByte() << 8 & (short)0xFF00) |
-                            ((short)getByte()      & (short)0xFF));
+            return (short) (getInt8() << 8 | getUInt8());
         } else {
             // Intel ordering - LSB first
-            return (short) (((short)getByte()      & (short)0xFF) |
-                            ((short)getByte() << 8 & (short)0xFF00));
+            return (short) (getUInt8() | getInt8() << 8);
         }
     }
 
@@ -163,16 +159,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return (((long)getByte()) << 24 & 0xFF000000L) |
-                   (((long)getByte()) << 16 & 0xFF0000L) |
-                   (((long)getByte()) << 8  & 0xFF00L) |
-                   (((long)getByte())       & 0xFFL);
+            return (long)getUInt16() << 16 | getUInt16();
         } else {
             // Intel ordering - LSB first (little endian)
-            return (((long)getByte())       & 0xFFL) |
-                   (((long)getByte()) << 8  & 0xFF00L) |
-                   (((long)getByte()) << 16 & 0xFF0000L) |
-                   (((long)getByte()) << 24 & 0xFF000000L);
+            return getUInt16() | (long)getUInt16() << 16 ;
         }
     }
 
@@ -186,16 +176,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return (getByte() << 24 & 0xFF000000) |
-                   (getByte() << 16 & 0xFF0000) |
-                   (getByte() << 8  & 0xFF00) |
-                   (getByte()       & 0xFF);
+            return getInt16() << 16 | getUInt16();
         } else {
             // Intel ordering - LSB first (little endian)
-            return (getByte()       & 0xFF) |
-                   (getByte() << 8  & 0xFF00) |
-                   (getByte() << 16 & 0xFF0000) |
-                   (getByte() << 24 & 0xFF000000);
+            return  getUInt16() | getInt16() << 16;
         }
     }
 
@@ -209,24 +193,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return ((long)getByte() << 56 & 0xFF00000000000000L) |
-                   ((long)getByte() << 48 & 0xFF000000000000L) |
-                   ((long)getByte() << 40 & 0xFF0000000000L) |
-                   ((long)getByte() << 32 & 0xFF00000000L) |
-                   ((long)getByte() << 24 & 0xFF000000L) |
-                   ((long)getByte() << 16 & 0xFF0000L) |
-                   ((long)getByte() << 8  & 0xFF00L) |
-                   ((long)getByte()       & 0xFFL);
+            return (long)getInt32() << 32 | getUInt32();
         } else {
             // Intel ordering - LSB first
-            return ((long)getByte()       & 0xFFL) |
-                   ((long)getByte() << 8  & 0xFF00L) |
-                   ((long)getByte() << 16 & 0xFF0000L) |
-                   ((long)getByte() << 24 & 0xFF000000L) |
-                   ((long)getByte() << 32 & 0xFF00000000L) |
-                   ((long)getByte() << 40 & 0xFF0000000000L) |
-                   ((long)getByte() << 48 & 0xFF000000000000L) |
-                   ((long)getByte() << 56 & 0xFF00000000000000L);
+            return getUInt32() | (long)getInt32() << 32;
         }
     }
 
