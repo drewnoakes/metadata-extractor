@@ -96,7 +96,10 @@ public class IptcReader implements JpegSegmentMetadataReader
             }
 
             if (startByte != 0x1c) {
-                directory.addError("Invalid start to IPTC tag");
+                // NOTE have seen images where there was one extra byte at the end, giving
+                // offset==length at this point, which is not worth logging as an error.
+                if (offset != length)
+                    directory.addError("Invalid start to IPTC tag");
                 return;
             }
 
