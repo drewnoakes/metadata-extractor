@@ -27,6 +27,7 @@ import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataReader;
 import com.drew.metadata.iptc.IptcReader;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ import java.util.Arrays;
  *
  * @author Yuri Binev, Drew Noakes https://drewnoakes.com
  */
-public class PhotoshopReader implements JpegSegmentMetadataReader
+public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReader
 {
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()

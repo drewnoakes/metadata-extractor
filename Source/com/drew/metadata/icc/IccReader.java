@@ -27,6 +27,7 @@ import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ import java.util.TimeZone;
  * @author Yuri Binev
  * @author Drew Noakes
  */
-public class IccReader implements JpegSegmentMetadataReader
+public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 {
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()

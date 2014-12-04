@@ -26,6 +26,7 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import java.util.Arrays;
  *
  * @author Yuri Binev, Drew Noakes, Markus Meyer
  */
-public class JfifReader implements JpegSegmentMetadataReader
+public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
 {
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
