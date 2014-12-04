@@ -98,6 +98,7 @@ public class TiffDataFormat
         return _tiffFormatCode;
     }
 
+    @Override
     @NotNull
     public String toString()
     {

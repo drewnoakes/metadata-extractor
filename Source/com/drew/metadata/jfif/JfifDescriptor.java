@@ -38,6 +38,7 @@ public class JfifDescriptor extends TagDescriptor<JfifDirectory>
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

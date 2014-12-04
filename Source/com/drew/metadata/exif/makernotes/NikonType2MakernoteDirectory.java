@@ -152,7 +152,7 @@ public class NikonType2MakernoteDirectory extends Directory
 
     /**
      * The type of flash used in the photograph, as a string.  Examples include:
-     * 
+     *
      * <ul>
      * <li><code></code></li>
      * <li><code>Built-in,TTL</code></li>
@@ -605,7 +605,7 @@ public class NikonType2MakernoteDirectory extends Directory
      * </ul>
      */
     public static final int TAG_NEF_COMPRESSION = 0x0093;
-    
+
     /**
      * The saturation level, as a signed integer.  Examples include:
      * <ul>
@@ -908,12 +908,14 @@ public class NikonType2MakernoteDirectory extends Directory
         this.setDescriptor(new NikonType2MakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Nikon Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

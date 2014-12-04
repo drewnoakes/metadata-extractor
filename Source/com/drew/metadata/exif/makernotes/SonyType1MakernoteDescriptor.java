@@ -39,6 +39,7 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {
@@ -490,10 +491,10 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
     public String getSonyModelIdDescription()
     {
         Integer value = _directory.getInteger(TAG_SONY_MODEL_ID);
-        
-        if (value == null) 
+
+        if (value == null)
             return null;
-        
+
         switch (value) {
             case 2: return "DSC-R1";
             case 256: return "DSLR-A100";

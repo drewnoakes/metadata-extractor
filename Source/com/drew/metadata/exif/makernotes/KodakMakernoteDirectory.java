@@ -58,7 +58,7 @@ public class KodakMakernoteDirectory extends Directory
     public final static int TAG_COLOR_MODE = 102;
     public final static int TAG_DIGITAL_ZOOM = 104;
     public final static int TAG_SHARPNESS = 107;
-    
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -91,18 +91,20 @@ public class KodakMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_DIGITAL_ZOOM, "Digital Zoom");
         _tagNameMap.put(TAG_SHARPNESS, "Sharpness");
     }
-    
+
     public KodakMakernoteDirectory()
     {
         this.setDescriptor(new KodakMakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Kodak Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

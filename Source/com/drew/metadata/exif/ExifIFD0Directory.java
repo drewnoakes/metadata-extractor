@@ -110,12 +110,14 @@ public class ExifIFD0Directory extends Directory
         this.setDescriptor(new ExifIFD0Descriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Exif IFD0";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

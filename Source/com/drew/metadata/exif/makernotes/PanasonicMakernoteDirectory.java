@@ -49,8 +49,8 @@ public class PanasonicMakernoteDirectory extends Directory
      */
     public static final int TAG_QUALITY_MODE = 0x0001;
     public static final int TAG_FIRMWARE_VERSION = 0x0002;
-    
-    /**                    
+
+    /**
      * <br>
      * 1 = Auto            <br>
      * 2 = Daylight        <br>
@@ -65,7 +65,7 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_WHITE_BALANCE = 0x0003;
 
 
-    /**                        
+    /**
      * <br>
      * 1 = Auto                <br>
      * 2 = Manual              <br>
@@ -160,7 +160,7 @@ public class PanasonicMakernoteDirectory extends Directory
      * 51= HDR                               <br>
      */
     public static final int TAG_RECORD_MODE = 0x001F;
-    
+
     /**
      * 1 = Yes <br>
      * 2 = No  <br>
@@ -175,7 +175,7 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_EASY_MODE = 0x0022;
     public static final int TAG_WHITE_BALANCE_BIAS = 0x0023;
     public static final int TAG_FLASH_BIAS = 0x0024;
-    
+
     /**
      * this number is unique, and contains the date of manufacture,
      * but is not the same as the number printed on the camera body
@@ -186,8 +186,8 @@ public class PanasonicMakernoteDirectory extends Directory
      * Panasonic Exif Version
      */
     public static final int TAG_EXIF_VERSION = 0x0026;
-    
-    
+
+
     /**
      * 1 = Off           <br>
      * 2 = Warm          <br>
@@ -212,9 +212,9 @@ public class PanasonicMakernoteDirectory extends Directory
      * 4 = Unlimited  <br>
      */
     public static final int TAG_BURST_MODE = 0x002a;
-    
+
     public static final int TAG_SEQUENCE_NUMBER = 0x002b;
-    
+
     /**
      * (this decoding seems to work for some models such as the LC1, LX2, FZ7, FZ8, FZ18 and FZ50, but may not be correct for other models such as the FX10, G1, L1, L10 and LC80) <br>
      * 0x0 = Normal                                            <br>
@@ -243,8 +243,8 @@ public class PanasonicMakernoteDirectory extends Directory
      * 42 = Retro (My Color)                                   <br>
      */
     public static final int TAG_CONTRAST_MODE = 0x002c;
-    
-    
+
+
     /**
      * 0 = Standard      <br>
      * 1 = Low (-1)      <br>
@@ -276,23 +276,23 @@ public class PanasonicMakernoteDirectory extends Directory
      * 4 = Disabled and not required
      */
     public static final int TAG_AF_ASSIST_LAMP = 0x0031;
-    
+
     /**
      * 0 = Normal <br>
      * 1 = Natural<br>
      * 2 = Vivid
-     * 
+     *
      */
     public static final int TAG_COLOR_MODE = 0x0032;
-    
+
     public static final int TAG_BABY_AGE = 0x0033;
-    
+
     /**
      *  1 = Standard <br>
      *  2 = Extended
      */
     public static final int TAG_OPTICAL_ZOOM_MODE = 0x0034;
-    
+
     /**
      * 1 = Off <br>
      * 2 = Wide <br>
@@ -300,29 +300,29 @@ public class PanasonicMakernoteDirectory extends Directory
      * 4 = Macro
      */
     public static final int TAG_CONVERSION_LENS = 0x0035;
-    
+
     public static final int TAG_TRAVEL_DAY = 0x0036;
-    
+
     /**
-     * 0 = Normal 
-     */ 
+     * 0 = Normal
+     */
     public static final int TAG_CONTRAST = 0x0039;
-    
+
     /**
      * <br>
      * 1 = Home <br>
-     * 2 = Destination 
-     */ 
+     * 2 = Destination
+     */
     public static final int TAG_WORLD_TIME_LOCATION = 0x003a;
-    
+
     /**
      * 1 = Off   <br>
-     * 2 = On 
+     * 2 = On
      */
     public static final int TAG_TEXT_STAMP = 0x003b;
 
 	public static final int TAG_PROGRAM_ISO = 0x003c;
-    
+
     /**
      * <br>
      * 1 = Normal                               <br>
@@ -339,13 +339,13 @@ public class PanasonicMakernoteDirectory extends Directory
      * 14 = Silhouette                          <br>
      */
     public static final int TAG_ADVANCED_SCENE_MODE = 0x003d;
-    
+
     /**
      * 1 = Off   <br>
-     * 2 = On 
+     * 2 = On
      */
     public static final int TAG_TEXT_STAMP_1 = 0x003e;
-	
+
     public static final int TAG_FACES_DETECTED = 0x003f;
 
     public static final int TAG_SATURATION = 0x0040;
@@ -360,11 +360,11 @@ public class PanasonicMakernoteDirectory extends Directory
 	 * WB adjust GM. Positive is a shift toward green.
 	 */
 	public static final int TAG_WB_ADJUST_GM = 0x0047;
-	
+
 
     public static final int TAG_AF_POINT_POSITION = 0x004d;
-    
-    
+
+
     /**
      * <br>
      * Integer (16Bit) Indexes:                                             <br>
@@ -382,17 +382,17 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_LENS_TYPE = 0x0051;
     public static final int TAG_LENS_SERIAL_NUMBER = 0x0052;
     public static final int TAG_ACCESSORY_TYPE = 0x0053;
-    
+
     /**
-     * (decoded as two 16-bit signed integers) 
-     * '-1 1' = Slim Low 
-     * '-3 2' = Slim High 
-     * '0 0' = Off 
-     * '1 1' = Stretch Low 
-     * '3 2' = Stretch High  
+     * (decoded as two 16-bit signed integers)
+     * '-1 1' = Slim Low
+     * '-3 2' = Slim High
+     * '0 0' = Off
+     * '1 1' = Stretch Low
+     * '3 2' = Stretch High
      */
     public static final int TAG_TRANSFORM = 0x0059;
-    
+
     /**
     * 0 = Off <br>
     * 1 = Low <br>
@@ -400,13 +400,13 @@ public class PanasonicMakernoteDirectory extends Directory
     * 3 = High
     */
     public static final int TAG_INTELLIGENT_EXPOSURE = 0x005d;
-    
+
     /**
 	  * Info at http://www.ozhiker.com/electronics/pjmt/jpeg_info/pim.html
      */
 	public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
-    /**                                                                                    
+    /**
      * Byte Indexes:                                                                       <br>
      *  0    Int (2  Byte) Number of Recognized Faces                                      <br>
      *  4    String(20 Byte)    Recognized Face 1 Name                                     <br>
@@ -427,7 +427,7 @@ public class PanasonicMakernoteDirectory extends Directory
 
     /**
     * 0 = No <br>
-    * 1 = Yes 
+    * 1 = Yes
     */
     public static final int TAG_FLASH_WARNING = 0x0062;
     public static final int TAG_RECOGNIZED_FACE_FLAGS = 0x0063;
@@ -438,14 +438,14 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_STATE = 0x006b;
     public static final int TAG_CITY = 0x006d;
     public static final int TAG_LANDMARK = 0x006f;
-    
+
     /**
      * 0 = Off <br>
      * 2 = Auto <br>
-     * 3 = On 
+     * 3 = On
      */
     public static final int TAG_INTELLIGENT_RESOLUTION = 0x0070;
-    
+
     public static final int TAG_MAKERNOTE_VERSION = 0x8000;
     public static final int TAG_SCENE_MODE = 0x8001;
     public static final int TAG_WB_RED_LEVEL = 0x8004;
@@ -455,14 +455,14 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_TEXT_STAMP_2 = 0x8008;
 	public static final int TAG_TEXT_STAMP_3 = 0x8009;
 	public static final int TAG_BABY_AGE_1 = 0x8010;
-	
+
 	/**
-     * (decoded as two 16-bit signed integers) 
-     * '-1 1' = Slim Low 
-     * '-3 2' = Slim High 
-     * '0 0' = Off 
-     * '1 1' = Stretch Low 
-     * '3 2' = Stretch High  
+     * (decoded as two 16-bit signed integers)
+     * '-1 1' = Slim Low
+     * '-3 2' = Slim High
+     * '0 0' = Off
+     * '1 1' = Stretch Low
+     * '3 2' = Stretch High
      */
     public static final int TAG_TRANSFORM_1 = 0x8012;
 
@@ -548,12 +548,14 @@ public class PanasonicMakernoteDirectory extends Directory
         this.setDescriptor(new PanasonicMakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Panasonic Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
@@ -569,7 +571,7 @@ public class PanasonicMakernoteDirectory extends Directory
 
         RandomAccessReader reader = new ByteArrayReader(bytes);
         reader.setMotorolaByteOrder(false);
-        
+
         try {
             int faceCount = reader.getUInt16(0);
             if (faceCount==0)

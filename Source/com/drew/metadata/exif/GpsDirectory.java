@@ -139,12 +139,14 @@ public class GpsDirectory extends Directory
         this.setDescriptor(new GpsDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "GPS";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

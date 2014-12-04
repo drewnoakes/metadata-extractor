@@ -43,6 +43,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

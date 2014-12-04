@@ -38,6 +38,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         super(directory);
     }
 
+    @Override
     public String getDescription(int tagType)
     {
         switch (tagType) {

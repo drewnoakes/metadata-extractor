@@ -37,6 +37,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

@@ -40,6 +40,7 @@ public class LeicaMakernoteDescriptor extends TagDescriptor<LeicaMakernoteDirect
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

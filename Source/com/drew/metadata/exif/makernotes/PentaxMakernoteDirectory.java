@@ -154,12 +154,14 @@ public class PentaxMakernoteDirectory extends Directory
         this.setDescriptor(new PentaxMakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Pentax Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

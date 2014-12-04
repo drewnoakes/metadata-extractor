@@ -38,12 +38,14 @@ public class MockDirectory extends Directory
         this._tagNameMap = new HashMap<Integer, String>();
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

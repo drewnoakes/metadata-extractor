@@ -42,6 +42,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {
@@ -577,7 +578,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     {
         return getIndexedDescription(CameraSettings.TAG_DEC_SWITCH_POSITION, "Exposure", "Contrast", "Saturation", "Filter");
     }
-    
+
     @Nullable
     public String getMakernoteVersionDescription()
     {

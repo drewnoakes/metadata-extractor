@@ -35,6 +35,7 @@ public class NullOutputStream extends OutputStream
         super();
     }
 
+    @Override
     public void write(int b) throws IOException
     {
         // do nothing

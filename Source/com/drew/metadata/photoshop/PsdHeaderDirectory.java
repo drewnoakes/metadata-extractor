@@ -71,12 +71,14 @@ public class PsdHeaderDirectory extends Directory
         this.setDescriptor(new PsdHeaderDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "PSD Header";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

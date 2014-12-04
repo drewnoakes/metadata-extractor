@@ -76,12 +76,14 @@ public class NikonType1MakernoteDirectory extends Directory
         this.setDescriptor(new NikonType1MakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Nikon Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

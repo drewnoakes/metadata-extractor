@@ -14,6 +14,7 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
         super(directory);
     }
 
+    @Override
     public String getDescription(int tagType)
     {
         switch (tagType) {

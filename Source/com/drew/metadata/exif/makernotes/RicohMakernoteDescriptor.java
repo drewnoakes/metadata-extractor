@@ -39,6 +39,7 @@ public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirect
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

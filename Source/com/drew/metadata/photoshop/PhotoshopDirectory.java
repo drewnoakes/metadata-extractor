@@ -132,12 +132,14 @@ public class PhotoshopDirectory extends Directory
         this.setDescriptor(new PhotoshopDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Photoshop";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

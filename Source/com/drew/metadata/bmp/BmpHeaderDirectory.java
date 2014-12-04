@@ -44,12 +44,14 @@ public class BmpHeaderDirectory extends Directory
         this.setDescriptor(new BmpHeaderDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "BMP Header";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

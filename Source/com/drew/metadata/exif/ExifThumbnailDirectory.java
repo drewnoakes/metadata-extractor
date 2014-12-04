@@ -171,12 +171,14 @@ public class ExifThumbnailDirectory extends Directory
         this.setDescriptor(new ExifThumbnailDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Exif Thumbnail";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

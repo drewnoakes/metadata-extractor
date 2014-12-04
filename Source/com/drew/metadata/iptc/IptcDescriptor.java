@@ -39,6 +39,7 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

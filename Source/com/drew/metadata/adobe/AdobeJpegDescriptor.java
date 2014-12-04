@@ -33,6 +33,7 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
         super(directory);
     }
 
+    @Override
     public String getDescription(int tagType)
     {
         switch (tagType) {
@@ -54,7 +55,6 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
                     ? "100"
                     : Integer.toString(value);
     }
-
 
     private String getColorTransformDescription()
     {

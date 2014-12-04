@@ -54,12 +54,14 @@ public class SonyType6MakernoteDirectory extends Directory
         this.setDescriptor(new SonyType6MakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Sony Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

@@ -39,6 +39,7 @@ public class SanyoMakernoteDescriptor extends TagDescriptor<SanyoMakernoteDirect
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

@@ -50,12 +50,14 @@ public class JpegCommentDirectory extends Directory
         this.setDescriptor(new JpegCommentDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "JpegComment";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

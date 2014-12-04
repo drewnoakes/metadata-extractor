@@ -39,6 +39,7 @@ public class SonyType6MakernoteDescriptor extends TagDescriptor<SonyType6Makerno
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

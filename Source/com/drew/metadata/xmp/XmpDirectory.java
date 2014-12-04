@@ -137,12 +137,14 @@ public class XmpDirectory extends Directory
         this.setDescriptor(new XmpDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Xmp";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

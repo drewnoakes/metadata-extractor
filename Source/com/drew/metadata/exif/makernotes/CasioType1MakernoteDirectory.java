@@ -88,12 +88,14 @@ public class CasioType1MakernoteDirectory extends Directory
         this.setDescriptor(new CasioType1MakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Casio Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

@@ -53,12 +53,14 @@ public class RicohMakernoteDirectory extends Directory
         this.setDescriptor(new RicohMakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Ricoh Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

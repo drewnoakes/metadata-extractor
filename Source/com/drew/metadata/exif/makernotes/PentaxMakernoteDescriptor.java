@@ -41,6 +41,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDire
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

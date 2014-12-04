@@ -216,12 +216,14 @@ public class CasioType2MakernoteDirectory extends Directory
         this.setDescriptor(new CasioType2MakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Casio Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

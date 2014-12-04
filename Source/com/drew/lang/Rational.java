@@ -63,6 +63,7 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>double</code>.
      */
+    @Override
     public double doubleValue()
     {
         return _numerator == 0
@@ -77,6 +78,7 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>float</code>.
      */
+    @Override
     public float floatValue()
     {
         return _numerator == 0
@@ -92,6 +94,7 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>byte</code>.
      */
+    @Override
     public final byte byteValue()
     {
         return (byte) doubleValue();
@@ -105,6 +108,7 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>int</code>.
      */
+    @Override
     public final int intValue()
     {
         return (int) doubleValue();
@@ -118,6 +122,7 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>long</code>.
      */
+    @Override
     public final long longValue()
     {
         return (long) doubleValue();
@@ -131,6 +136,7 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>short</code>.
      */
+    @Override
     public final short shortValue()
     {
         return (short) doubleValue();
@@ -173,6 +179,7 @@ public class Rational extends java.lang.Number implements Serializable
      *
      * @return a string representation of the object.
      */
+    @Override
     @NotNull
     public String toString()
     {

@@ -51,6 +51,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {
@@ -275,7 +276,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         return getIndexedDescription(TAG_FLASH_WARNING,
             "No", "Yes (Flash required but disabled)");
     }
-	
+
     @Nullable
     public String getCountryDescription()
     {
@@ -679,7 +680,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         final Age age = _directory.getAge(TAG_BABY_AGE);
         return age == null ? null : age.toFriendlyString();
     }
-	
+
 	@Nullable
 	public String getBabyAge1Description()
     {

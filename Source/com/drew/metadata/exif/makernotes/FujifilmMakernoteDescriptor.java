@@ -55,6 +55,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

@@ -97,7 +97,7 @@ public class IccDirectory extends Directory
     public static final int TAG_TAG_bfd = 0x62666420;
     public static final int TAG_TAG_vued = 0x76756564;
     public static final int TAG_TAG_view = 0x76696577;
-    
+
     public static final int TAG_APPLE_MULTI_LANGUAGE_PROFILE_NAME = 0x6473636d;
 
     @NotNull
@@ -176,12 +176,14 @@ public class IccDirectory extends Directory
         this.setDescriptor(new IccDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "ICC Profile";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

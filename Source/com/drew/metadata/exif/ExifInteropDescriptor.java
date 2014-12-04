@@ -38,6 +38,7 @@ public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {

@@ -62,6 +62,7 @@ public class CompoundException extends Exception
         return _innerException;
     }
 
+    @Override
     @NotNull
     public String toString()
     {
@@ -76,6 +77,7 @@ public class CompoundException extends Exception
         return string.toString();
     }
 
+    @Override
     public void printStackTrace(@NotNull PrintStream s)
     {
         super.printStackTrace(s);
@@ -85,6 +87,7 @@ public class CompoundException extends Exception
         }
     }
 
+    @Override
     public void printStackTrace(@NotNull PrintWriter s)
     {
         super.printStackTrace(s);
@@ -94,6 +97,7 @@ public class CompoundException extends Exception
         }
     }
 
+    @Override
     public void printStackTrace()
     {
         super.printStackTrace();

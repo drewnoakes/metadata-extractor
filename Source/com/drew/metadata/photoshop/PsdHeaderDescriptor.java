@@ -35,6 +35,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
         super(directory);
     }
 
+    @Override
     public String getDescription(int tagType)
     {
         switch (tagType) {

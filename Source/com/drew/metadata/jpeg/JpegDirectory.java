@@ -83,12 +83,14 @@ public class JpegDirectory extends Directory
         this.setDescriptor(new JpegDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "JPEG";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

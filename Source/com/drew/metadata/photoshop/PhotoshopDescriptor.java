@@ -36,6 +36,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
         super(directory);
     }
 
+    @Override
     public String getDescription(int tagType)
     {
         switch (tagType) {

@@ -264,13 +264,13 @@ public class CanonMakernoteDirectory extends Directory
          */
         public static final int TAG_FOCUS_MODE_2 = OFFSET + 0x20;
     }
-    
+
     public final static class FocalLength
     {
         // These 'sub'-tag values have been created for consistency -- they don't exist within the exif segment
 
         private static final int OFFSET = 0xC200;
-        
+
         /**
          * 0 = Auto
          * 1 = Sunny
@@ -309,7 +309,7 @@ public class CanonMakernoteDirectory extends Directory
         public static final int TAG_AEB_BRACKET_VALUE = OFFSET + 0x11;
         public static final int TAG_SUBJECT_DISTANCE = OFFSET + 0x13;
     }
-    
+
     public final static class ShotInfo
     {
         // These 'sub'-tag values have been created for consistency -- they don't exist within the exif segment
@@ -578,7 +578,7 @@ public class CanonMakernoteDirectory extends Directory
         _tagNameMap.put(AFInfo.TAG_AF_POINTS_IN_FOCUS, "AF Points in Focus Count");
         _tagNameMap.put(AFInfo.TAG_PRIMARY_AF_POINT_1, "Primary AF Point 1");
         _tagNameMap.put(AFInfo.TAG_PRIMARY_AF_POINT_2, "Primary AF Point 2");
-        
+
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_LONG_EXPOSURE_NOISE_REDUCTION, "Long Exposure Noise Reduction");
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_SHUTTER_AUTO_EXPOSURE_LOCK_BUTTONS, "Shutter/Auto Exposure-lock Buttons");
 //        _tagNameMap.put(TAG_CANON_CUSTOM_FUNCTION_MIRROR_LOCKUP, "Mirror Lockup");
@@ -652,12 +652,14 @@ public class CanonMakernoteDirectory extends Directory
         this.setDescriptor(new CanonMakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Canon Makernote";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
@@ -668,7 +670,7 @@ public class CanonMakernoteDirectory extends Directory
     public void setObjectArray(int tagType, @NotNull Object array)
     {
         // TODO is there some way to drop out 'null' or 'zero' values that are present in the array to reduce the noise?
-        
+
         // Certain Canon tags contain arrays of values that we split into 'fake' tags as each
         // index in the array has its own meaning and decoding.
         // Pick those tags out here and throw away the original array.

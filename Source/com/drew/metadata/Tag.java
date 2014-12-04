@@ -106,6 +106,7 @@ public class Tag
      *
      * @return the tag's type and value
      */
+    @Override
     @NotNull
     public String toString()
     {

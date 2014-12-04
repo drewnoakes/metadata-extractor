@@ -629,7 +629,7 @@ public class ExifSubIFDDirectory extends Directory
         _tagNameMap.put(TAG_DEVICE_SETTING_DESCRIPTION, "Device Setting Description");
         _tagNameMap.put(TAG_SUBJECT_DISTANCE_RANGE, "Subject Distance Range");
         _tagNameMap.put(TAG_IMAGE_UNIQUE_ID, "Unique Image ID");
-        
+
         _tagNameMap.put(TAG_CAMERA_OWNER_NAME, "Camera Owner Name");
         _tagNameMap.put(TAG_BODY_SERIAL_NUMBER, "Body Serial Number");
         _tagNameMap.put(TAG_LENS_SPECIFICATION, "Lens Specification");
@@ -649,12 +649,14 @@ public class ExifSubIFDDirectory extends Directory
         this.setDescriptor(new ExifSubIFDDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Exif SubIFD";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

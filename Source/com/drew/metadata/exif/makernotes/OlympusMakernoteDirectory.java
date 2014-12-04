@@ -284,7 +284,7 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_FINAL_WIDTH, "Final Width");
         _tagNameMap.put(TAG_FINAL_HEIGHT, "Final Height");
         _tagNameMap.put(TAG_COMPRESSION_RATIO, "Compression Ratio");
-        
+
         _tagNameMap.put(CameraSettings.TAG_EXPOSURE_MODE, "Exposure Mode");
         _tagNameMap.put(CameraSettings.TAG_FLASH_MODE, "Flash Mode");
         _tagNameMap.put(CameraSettings.TAG_WHITE_BALANCE, "White Balance");
@@ -341,6 +341,7 @@ public class OlympusMakernoteDirectory extends Directory
         this.setDescriptor(new OlympusMakernoteDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
@@ -381,6 +382,7 @@ public class OlympusMakernoteDirectory extends Directory
         return value != null && value == 5;
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
