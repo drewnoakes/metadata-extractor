@@ -20,11 +20,6 @@ public final class Iso2022Converter
     private static final int PERCENT_SIGN = 0x25;
     private static final int ESC = 0x1B;
 
-    public static void main(String[] args) 
-    {
-
-    }
-
     /**
      * Converts the given ISO2022 char set to a java char set.
      *
