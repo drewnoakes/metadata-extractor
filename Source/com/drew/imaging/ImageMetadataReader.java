@@ -237,8 +237,8 @@ public class ImageMetadataReader
                 System.out.println();
                 System.out.printf("# %s - %s%n", make, model);
                 System.out.println();
-                System.out.printf("<a href=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\">%n", urlName);
-                System.out.printf("<img src=\"http://sample-images.metadata-extractor.googlecode.com/git/%s\" width=\"300\"/><br/>%n", urlName);
+                System.out.printf("<a href=\"https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s\">%n", urlName);
+                System.out.printf("<img src=\"https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s\" width=\"300\"/><br/>%n", urlName);
                 System.out.println(fileName);
                 System.out.println("</a>");
                 System.out.println();
