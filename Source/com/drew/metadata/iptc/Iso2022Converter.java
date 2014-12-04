@@ -55,24 +55,25 @@ public final class Iso2022Converter
             cs.decode(ByteBuffer.wrap(bytes));
             return UTF_8;
         } catch (CharacterCodingException e) {
+            // fall through...
         }
 
         cs = Charset.forName(System.getProperty("file.encoding")).newDecoder();
-        try 
+        try
         {
             cs.decode(ByteBuffer.wrap(bytes));
             return System.getProperty("file.encoding");
-        } catch (CharacterCodingException e) 
-        {
+        } catch (CharacterCodingException e) {
+            // fall through...
         }
 
         cs = Charset.forName(ISO_8859_1).newDecoder();
-        try 
+        try
         {
             cs.decode(ByteBuffer.wrap(bytes));
             return ISO_8859_1;
-        } catch (CharacterCodingException e) 
-        {
+        } catch (CharacterCodingException e) {
+            // fall through...
         }
 
         return null;
