@@ -138,7 +138,7 @@ public abstract class SequentialReader
      * Returns a signed 16-bit int calculated from two bytes of data (MSB, LSB).
      *
      * @return the 16 bit int value, between 0x0000 and 0xFFFF
-     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request
      */
     public short getInt16() throws IOException
     {
@@ -157,7 +157,7 @@ public abstract class SequentialReader
      * Get a 32-bit unsigned integer from the buffer, returning it as a long.
      *
      * @return the unsigned 32-bit int value as a long, between 0x00000000 and 0xFFFFFFFF
-     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request
      */
     public long getUInt32() throws IOException
     {
@@ -180,7 +180,7 @@ public abstract class SequentialReader
      * Returns a signed 32-bit integer from four bytes of data.
      *
      * @return the signed 32 bit int value, between 0x00000000 and 0xFFFFFFFF
-     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request
      */
     public int getInt32() throws IOException
     {
@@ -203,7 +203,7 @@ public abstract class SequentialReader
      * Get a signed 64-bit integer from the buffer.
      *
      * @return the 64 bit int value, between 0x0000000000000000 and 0xFFFFFFFFFFFFFFFF
-     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException the buffer does not contain enough bytes to service the request
      */
     public long getInt64() throws IOException
     {
