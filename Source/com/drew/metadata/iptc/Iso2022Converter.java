@@ -1,5 +1,8 @@
 package com.drew.metadata.iptc;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -21,7 +24,8 @@ public final class Iso2022Converter
      * @param bytes the ISO2022 char set
      * @return the java char set name as a string or null if the converting was not possible
      */
-    public static String convertISO2022CharsetToJavaCharset(final byte[] bytes)
+    @Nullable
+    public static String convertISO2022CharsetToJavaCharset(@NotNull final byte[] bytes)
     {
         if (bytes.length > 2 && bytes[0] == ESC && bytes[1] == PERCENT_SIGN && bytes[2] == LATIN_CAPITAL_G)
             return UTF_8;
@@ -44,7 +48,8 @@ public final class Iso2022Converter
      * @param bytes some text as bytes
      * @return the name of the encoding or null if none could be guessed
      */
-    static String guessEncoding(final byte[] bytes)
+    @Nullable
+    static String guessEncoding(@NotNull final byte[] bytes)
     {
         CharsetDecoder cs = Charset.forName(UTF_8).newDecoder();
 
