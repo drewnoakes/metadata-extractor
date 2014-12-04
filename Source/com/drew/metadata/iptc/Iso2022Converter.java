@@ -5,7 +5,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
-public final class Iso2022Converter 
+public final class Iso2022Converter
 {
 
     private Iso2022Converter() 
@@ -26,12 +26,12 @@ public final class Iso2022Converter
     }
 
     /**
-     * Converts the given ISO2022 char set to a java char set.  
-     * 
+     * Converts the given ISO2022 char set to a java char set.
+     *
      * @param bytes the ISO2022 char set
      * @return the java char set name as a string or null if the converting was not possible
      */
-    public static String convertISO2022CharsetToJavaCharset(byte[] bytes) 
+    public static String convertISO2022CharsetToJavaCharset(byte[] bytes)
     {
         if (bytes[0] == ESC && bytes[1] == PERCENT_SIGN && bytes[2] == LATIN_CAPITAL_G)
             return UTF_8;
@@ -46,10 +46,10 @@ public final class Iso2022Converter
      * It's only purpose is to guess the encoding if and only if iptc tag coded character set is not set. If the
      * encoding is not UTF-8, the tag should be set. Otherwise it is bad practice. This method tries to
      * workaround this issue since some metadata manipulating tools do not prevent such bad practice.
-     *  
+     *
      * About the reliability of this method: The check if some bytes are UTF-8 or not has a very high reliability.
      * The two other checks are less reliable.
-     * 
+     *
      * @param bytes some text as bytes
      * @return the name of the encoding or null if none could be guessed
      */
@@ -61,7 +61,7 @@ public final class Iso2022Converter
             return UTF_8;
         } catch (CharacterCodingException e) {
         }
-        
+
         cs = Charset.forName(System.getProperty("file.encoding")).newDecoder();
         try 
         {
@@ -70,7 +70,7 @@ public final class Iso2022Converter
         } catch (CharacterCodingException e) 
         {
         }
-        
+
         cs = Charset.forName(ISO_8859_1).newDecoder();
         try 
         {
@@ -79,7 +79,7 @@ public final class Iso2022Converter
         } catch (CharacterCodingException e) 
         {
         }
-        
+
         return null;
     }
     
