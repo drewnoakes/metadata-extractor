@@ -194,11 +194,8 @@ public class IptcReader implements JpegSegmentMetadataReader
                 string = reader.getString(tagByteCount, encoding);
             } else {
                 byte[] bytes = reader.getBytes(tagByteCount);
-               encoding = Iso2022Converter.guessEncoding(bytes);
-               if(encoding != null)
-                    string = new String(bytes, encoding);
-                else
-                    string = new String(bytes); //fall back if the encoding could not be determined
+                encoding = Iso2022Converter.guessEncoding(bytes);
+                string = encoding != null ? new String(bytes, encoding) : new String(bytes);
             }
         }
 
