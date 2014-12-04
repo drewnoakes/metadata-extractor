@@ -7,11 +7,6 @@ import java.nio.charset.CharsetDecoder;
 
 public final class Iso2022Converter
 {
-
-    private Iso2022Converter() 
-    {
-    }
-    
     private static final String ISO_8859_1 = "ISO-8859-1";
     private static final String UTF_8 = "UTF-8";
     private static final int LATIN_CAPITAL_A = 0x41;
@@ -30,6 +25,7 @@ public final class Iso2022Converter
     {
         if (bytes[0] == ESC && bytes[1] == PERCENT_SIGN && bytes[2] == LATIN_CAPITAL_G)
             return UTF_8;
+
         if (bytes[0] == ESC && (bytes[3] & 0xFF | ((bytes[2] & 0xFF) << 8) | ((bytes[1] & 0xFF ) <<16)) == DOT && bytes[4] == LATIN_CAPITAL_A)
             return ISO_8859_1;
 
@@ -38,7 +34,7 @@ public final class Iso2022Converter
 
     /**
      * This method tries to guess if the encoding is UTF-8, System.getProperty("file.encoding") or ISO-8859-1.
-     * It's only purpose is to guess the encoding if and only if iptc tag coded character set is not set. If the
+     * Its only purpose is to guess the encoding if and only if iptc tag coded character set is not set. If the
      * encoding is not UTF-8, the tag should be set. Otherwise it is bad practice. This method tries to
      * workaround this issue since some metadata manipulating tools do not prevent such bad practice.
      *
@@ -48,7 +44,8 @@ public final class Iso2022Converter
      * @param bytes some text as bytes
      * @return the name of the encoding or null if none could be guessed
      */
-    static String guessEncoding(byte[] bytes) {
+    static String guessEncoding(byte[] bytes)
+    {
         CharsetDecoder cs = Charset.forName(UTF_8).newDecoder();
 
         try {
@@ -78,6 +75,7 @@ public final class Iso2022Converter
 
         return null;
     }
-    
-    
+
+    private Iso2022Converter()
+    {}
 }
