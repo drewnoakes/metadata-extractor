@@ -108,19 +108,22 @@ public class JpegSegmentReader
         JpegSegmentData segmentData = new JpegSegmentData();
 
         do {
-            // next byte is the segment identifier: 0xFF
+            // Find the segment marker. Markers are zero or more 0xFF bytes, followed
+            // by a 0xFF and then a byte not equal to 0x00 or 0xFF.
+
             final short segmentIdentifier = reader.getUInt8();
 
+            // We must have at least one 0xFF byte
             if (segmentIdentifier != 0xFF)
                 throw new JpegProcessingException("Expected JPEG segment start identifier 0xFF, not 0x" + Integer.toHexString(segmentIdentifier).toUpperCase());
 
-            // next byte is the segment type
+            // Read until we have a non-0xFF byte. This identifies the segment type.
             byte segmentType = reader.getInt8();
-
-            // Check if the byte is 0xFF which is an invalid byte produced by some metadata manipulating tools.
-            // Try to read the next byte which should be valid.
-            if (segmentType == (byte)0xFF)
+            while (segmentType == (byte)0xFF)
                 segmentType = reader.getInt8();
+
+            if (segmentType == 0)
+                throw new JpegProcessingException("Expected non-zero byte as part of JPEG marker identifier");
 
             if (segmentType == SEGMENT_SOS) {
                 // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
