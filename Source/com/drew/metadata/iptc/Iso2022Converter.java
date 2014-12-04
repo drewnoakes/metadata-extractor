@@ -51,33 +51,21 @@ public final class Iso2022Converter
     @Nullable
     static String guessEncoding(@NotNull final byte[] bytes)
     {
-        CharsetDecoder cs = Charset.forName(UTF_8).newDecoder();
+        String[] encodings = { UTF_8, System.getProperty("file.encoding"), ISO_8859_1 };
 
-        try {
-            cs.decode(ByteBuffer.wrap(bytes));
-            return UTF_8;
-        } catch (CharacterCodingException e) {
-            // fall through...
-        }
-
-        cs = Charset.forName(System.getProperty("file.encoding")).newDecoder();
-        try
+        for (String encoding : encodings)
         {
-            cs.decode(ByteBuffer.wrap(bytes));
-            return System.getProperty("file.encoding");
-        } catch (CharacterCodingException e) {
-            // fall through...
+            CharsetDecoder cs = Charset.forName(encoding).newDecoder();
+
+            try {
+                cs.decode(ByteBuffer.wrap(bytes));
+                return encoding;
+            } catch (CharacterCodingException e) {
+                // fall through...
+            }
         }
 
-        cs = Charset.forName(ISO_8859_1).newDecoder();
-        try
-        {
-            cs.decode(ByteBuffer.wrap(bytes));
-            return ISO_8859_1;
-        } catch (CharacterCodingException e) {
-            // fall through...
-        }
-
+        // No encodings succeeded. Return null.
         return null;
     }
 
