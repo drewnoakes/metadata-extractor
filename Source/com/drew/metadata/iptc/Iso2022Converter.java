@@ -20,10 +20,10 @@ public final class Iso2022Converter
     private static final byte ESC = 0x1B;
 
     /**
-     * Converts the given ISO2022 char set to a java char set.
+     * Converts the given ISO2022 char set to a Java charset name.
      *
-     * @param bytes the ISO2022 char set
-     * @return the java char set name as a string or null if the converting was not possible
+     * @param bytes string data encoded using ISO2022
+     * @return the Java charset name as a string, or <code>null</code> if the conversion was not possible
      */
     @Nullable
     public static String convertISO2022CharsetToJavaCharset(@NotNull final byte[] bytes)
@@ -38,11 +38,19 @@ public final class Iso2022Converter
     }
 
     /**
-     * This method tries to guess if the encoding is UTF-8, System.getProperty("file.encoding") or ISO-8859-1.
+     * Attempts to guess the encoding of a string provided as a byte array.
+     * <p/>
+     * Encodings trialled are, in order:
+     * <ul>
+     *     <li>UTF-8</li>
+     *     <li><code>System.getProperty("file.encoding")</code></li>
+     *     <li>ISO-8859-1</li>
+     * </ul>
+     * <p/>
      * Its only purpose is to guess the encoding if and only if iptc tag coded character set is not set. If the
      * encoding is not UTF-8, the tag should be set. Otherwise it is bad practice. This method tries to
      * workaround this issue since some metadata manipulating tools do not prevent such bad practice.
-     *
+     * <p/>
      * About the reliability of this method: The check if some bytes are UTF-8 or not has a very high reliability.
      * The two other checks are less reliable.
      *
