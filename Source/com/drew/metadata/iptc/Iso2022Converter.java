@@ -12,11 +12,12 @@ public final class Iso2022Converter
 {
     private static final String ISO_8859_1 = "ISO-8859-1";
     private static final String UTF_8 = "UTF-8";
-    private static final int LATIN_CAPITAL_A = 0x41;
+
+    private static final byte LATIN_CAPITAL_A = 0x41;
     private static final int DOT = 0xe280a2;
-    private static final int LATIN_CAPITAL_G = 0x47;
-    private static final int PERCENT_SIGN = 0x25;
-    private static final int ESC = 0x1B;
+    private static final byte LATIN_CAPITAL_G = 0x47;
+    private static final byte PERCENT_SIGN = 0x25;
+    private static final byte ESC = 0x1B;
 
     /**
      * Converts the given ISO2022 char set to a java char set.
