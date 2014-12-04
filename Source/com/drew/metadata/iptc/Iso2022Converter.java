@@ -23,10 +23,10 @@ public final class Iso2022Converter
      */
     public static String convertISO2022CharsetToJavaCharset(byte[] bytes)
     {
-        if (bytes[0] == ESC && bytes[1] == PERCENT_SIGN && bytes[2] == LATIN_CAPITAL_G)
+        if (bytes.length > 2 && bytes[0] == ESC && bytes[1] == PERCENT_SIGN && bytes[2] == LATIN_CAPITAL_G)
             return UTF_8;
 
-        if (bytes[0] == ESC && (bytes[3] & 0xFF | ((bytes[2] & 0xFF) << 8) | ((bytes[1] & 0xFF ) <<16)) == DOT && bytes[4] == LATIN_CAPITAL_A)
+        if (bytes.length > 3 && bytes[0] == ESC && (bytes[3] & 0xFF | ((bytes[2] & 0xFF) << 8) | ((bytes[1] & 0xFF) << 16)) == DOT && bytes[4] == LATIN_CAPITAL_A)
             return ISO_8859_1;
 
         return null;
