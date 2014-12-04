@@ -230,6 +230,14 @@ public abstract class SequentialReader
         }
     }
 
+    /**
+     * Gets a s15.16 fixed point float from the buffer.
+     * <p/>
+     * This particular fixed point encoding has one sign bit, 15 numerator bits and 16 denominator bits.
+     *
+     * @return the floating point value
+     * @throws IOException the buffer does not contain enough bytes to service the request
+     */
     public float getS15Fixed16() throws IOException
     {
         if (_isMotorolaByteOrder) {
