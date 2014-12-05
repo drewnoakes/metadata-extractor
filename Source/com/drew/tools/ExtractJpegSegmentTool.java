@@ -100,9 +100,9 @@ public class ExtractJpegSegmentTool
     private static void printUsage()
     {
         System.out.println("USAGE:\n");
-        System.out.println("\tjava com.drew.tools.ExtractJpegSegmentTool <filename> (*|<segment> [<segment> ...])\n");
+        System.out.println("\tjava com.drew.tools.ExtractJpegSegmentTool <filename> [<segment> ...]\n");
 
-        System.out.print("Where segment is one or more of:");
+        System.out.print("Where <segment> is zero or more of:");
         for (JpegSegmentType segmentType : JpegSegmentType.class.getEnumConstants()) {
             if (segmentType.canContainMetadata) {
                 System.out.print(" " + segmentType.toString());
