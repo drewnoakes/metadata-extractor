@@ -34,9 +34,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Extracts JPEG segments from .jpg files to individual binary files.
+ * Extracts JPEG segments and writes them to individual files.
  * <p/>
- * These files are lightweight and convenient for use in unit tests.
+ * Extracting only the required segment(s) for use in unit testing has several benefits:
+ * <ul>
+ *     <li>Helps reduce the repository size. For example a small JPEG image may still be 20kB+ in size, yet its
+ *         APPD (IPTC) segment may be as small as 200 bytes.</li>
+ *     <li>Makes unit tests run more rapidly.</li>
+ *     <li>Partially anonymises user-contributed data by removing image portions.</li>
+ * </ul>
  *
  * @author Drew Noakes https://drewnoakes.com
  */
