@@ -166,12 +166,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (getByte(index    ) << 8 & 0xFF00) |
-                   (getByte(index + 1)      & 0xFF);
+            return getUInt8(index) << 8 | getUInt8(index + 1);
         } else {
             // Intel ordering - LSB first
-            return (getByte(index + 1) << 8 & 0xFF00) |
-                   (getByte(index    )      & 0xFF);
+            return getUInt8(index) | getUInt8(index + 1) << 8;
         }
     }
 
@@ -188,12 +186,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (short) (((short)getByte(index    ) << 8 & (short)0xFF00) |
-                            ((short)getByte(index + 1)      & (short)0xFF));
+            return (short) (getInt8(index) << 8 | getUInt8(index + 1));
         } else {
             // Intel ordering - LSB first
-            return (short) (((short)getByte(index + 1) << 8 & (short)0xFF00) |
-                            ((short)getByte(index    )      & (short)0xFF));
+            return (short) (getUInt8(index) | getInt8(index + 1) << 8);
         }
     }
 
@@ -210,16 +206,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return (((long)getByte(index    )) << 24 & 0xFF000000L) |
-                   (((long)getByte(index + 1)) << 16 & 0xFF0000L) |
-                   (((long)getByte(index + 2)) << 8  & 0xFF00L) |
-                   (((long)getByte(index + 3))       & 0xFFL);
+            return (long) getUInt16(index) << 16 | getUInt16(index + 2);
         } else {
             // Intel ordering - LSB first (little endian)
-            return (((long)getByte(index + 3)) << 24 & 0xFF000000L) |
-                   (((long)getByte(index + 2)) << 16 & 0xFF0000L) |
-                   (((long)getByte(index + 1)) << 8  & 0xFF00L) |
-                   (((long)getByte(index    ))       & 0xFFL);
+            return getUInt16(index) | (long) getUInt16(index + 2) << 16;
         }
     }
 
@@ -236,16 +226,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return (getByte(index    ) << 24 & 0xFF000000) |
-                   (getByte(index + 1) << 16 & 0xFF0000) |
-                   (getByte(index + 2) << 8  & 0xFF00) |
-                   (getByte(index + 3)       & 0xFF);
+            return getInt16(index) << 16 | getUInt16(index + 2);
         } else {
             // Intel ordering - LSB first (little endian)
-            return (getByte(index + 3) << 24 & 0xFF000000) |
-                   (getByte(index + 2) << 16 & 0xFF0000) |
-                   (getByte(index + 1) << 8  & 0xFF00) |
-                   (getByte(index    )       & 0xFF);
+            return getUInt16(index) | getInt16(index + 2) << 16 ;
         }
     }
 
@@ -262,24 +246,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return ((long)getByte(index    ) << 56 & 0xFF00000000000000L) |
-                   ((long)getByte(index + 1) << 48 & 0xFF000000000000L) |
-                   ((long)getByte(index + 2) << 40 & 0xFF0000000000L) |
-                   ((long)getByte(index + 3) << 32 & 0xFF00000000L) |
-                   ((long)getByte(index + 4) << 24 & 0xFF000000L) |
-                   ((long)getByte(index + 5) << 16 & 0xFF0000L) |
-                   ((long)getByte(index + 6) << 8  & 0xFF00L) |
-                   ((long)getByte(index + 7)       & 0xFFL);
+            return (long) getInt32(index) << 32 | getUInt32(index + 4);
         } else {
             // Intel ordering - LSB first
-            return ((long)getByte(index + 7) << 56 & 0xFF00000000000000L) |
-                   ((long)getByte(index + 6) << 48 & 0xFF000000000000L) |
-                   ((long)getByte(index + 5) << 40 & 0xFF0000000000L) |
-                   ((long)getByte(index + 4) << 32 & 0xFF00000000L) |
-                   ((long)getByte(index + 3) << 24 & 0xFF000000L) |
-                   ((long)getByte(index + 2) << 16 & 0xFF0000L) |
-                   ((long)getByte(index + 1) << 8  & 0xFF00L) |
-                   ((long)getByte(index    )       & 0xFFL);
+            return getUInt32(index) | (long) getInt32(index + 4) << 32;
         }
     }
 
