@@ -169,4 +169,67 @@ public class IptcReaderTest
         assertEquals(IptcDirectory.TAG_COPYRIGHT_NOTICE, tags[16].getTagType());
         assertEquals("Copyright", directory.getObject(tags[16].getTagType()));
     }
+
+    @Test
+    public void testIptcEncodingUtf8() throws Exception
+    {
+        IptcDirectory directory = processBytes("Tests/Data/iptc-encoding-defined-utf8.bytes");
+
+        assertFalse(directory.getErrors().toString(), directory.hasErrors());
+
+        Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
+        assertEquals(4, tags.length);
+
+        assertEquals(IptcDirectory.TAG_ENVELOPE_RECORD_VERSION, tags[0].getTagType());
+        assertEquals(2, directory.getObject(tags[0].getTagType()));
+
+        assertEquals(IptcDirectory.TAG_CODED_CHARACTER_SET, tags[1].getTagType());
+        assertEquals("UTF-8", directory.getObject(tags[1].getTagType()));
+
+        assertEquals(IptcDirectory.TAG_APPLICATION_RECORD_VERSION, tags[2].getTagType());
+        assertEquals(2, directory.getObject(tags[2].getTagType()));
+
+        assertEquals(IptcDirectory.TAG_CAPTION, tags[3].getTagType());
+        assertEquals("In diesem Text sind Umlaute enthalten, nämlich öfter als üblich: ÄÖÜäöüß\r", directory.getObject(tags[3].getTagType()));
+    }
+
+    @Test
+    public void testIptcEncodingUndefinedIso() throws Exception
+    {
+        IptcDirectory directory = processBytes("Tests/Data/iptc-encoding-undefined-iso.bytes");
+
+        assertFalse(directory.getErrors().toString(), directory.hasErrors());
+
+        Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
+        assertEquals(3, tags.length);
+
+        assertEquals(IptcDirectory.TAG_ENVELOPE_RECORD_VERSION, tags[0].getTagType());
+        assertEquals(2, directory.getObject(tags[0].getTagType()));
+
+        assertEquals(IptcDirectory.TAG_APPLICATION_RECORD_VERSION, tags[1].getTagType());
+        assertEquals(2, directory.getObject(tags[1].getTagType()));
+
+        assertEquals(IptcDirectory.TAG_CAPTION, tags[2].getTagType());
+        assertEquals("In diesem Text sind Umlaute enthalten, nämlich öfter als üblich: ÄÖÜäöüß\r", directory.getObject(tags[2].getTagType()));
+    }
+
+    @Test
+    public void testIptcEncodingUnknown() throws Exception
+    {
+        IptcDirectory directory = processBytes("Tests/Data/iptc-encoding-unknown.bytes");
+
+        assertFalse(directory.getErrors().toString(), directory.hasErrors());
+
+        Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
+        assertEquals(3, tags.length);
+
+        assertEquals(IptcDirectory.TAG_APPLICATION_RECORD_VERSION, tags[0].getTagType());
+        assertEquals(2, directory.getObject(tags[0].getTagType()));
+
+        assertEquals(IptcDirectory.TAG_CAPTION, tags[1].getTagType());
+        assertEquals("Das Encoding dieser Metadaten ist nicht deklariert und lässt sich nur schwer erkennen.", directory.getObject(tags[1].getTagType()));
+
+        assertEquals(IptcDirectory.TAG_KEYWORDS, tags[2].getTagType());
+        assertArrayEquals(new String[]{"häufig", "üblich", "Lösung", "Spaß"}, directory.getStringArray(tags[2].getTagType()));
+    }
 }
