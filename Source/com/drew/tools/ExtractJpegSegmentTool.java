@@ -72,6 +72,8 @@ public class ExtractJpegSegmentTool
             segmentTypes.addAll(JpegSegmentType.canContainMetadataTypes);
         }
 
+        System.out.println("Reading: " + filePath);
+
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File(filePath), segmentTypes);
 
         saveSegmentFiles(filePath, segmentData);
@@ -88,10 +90,12 @@ public class ExtractJpegSegmentTool
             if (segments.size() > 1) {
                 for (int i = 0; i < segments.size(); i++) {
                     String outputFilePath = String.format("%s.%s.%d", jpegFilePath, segmentType.toString().toLowerCase(), i);
+                    System.out.println("Writing: " + outputFilePath);
                     FileUtil.saveBytes(new File(outputFilePath), segments.get(i));
                 }
             } else {
                 String outputFilePath = String.format("%s.%s", jpegFilePath, segmentType.toString().toLowerCase());
+                System.out.println("Writing: " + outputFilePath);
                 FileUtil.saveBytes(new File(outputFilePath), segments.get(0));
             }
         }
