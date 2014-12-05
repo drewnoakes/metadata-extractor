@@ -145,14 +145,10 @@ public class IptcReader implements JpegSegmentMetadataReader
         String string = null;
 
         switch (tagIdentifier) {
-            case IptcDirectory.TAG_ENVELOPE_RECORD_VERSION:
-                int erv = reader.getUInt16();
-                reader.skip(tagByteCount - 2);
-                directory.setInt(tagIdentifier, erv);
-                return;
             case IptcDirectory.TAG_CODED_CHARACTER_SET:
                 directory.setString(tagIdentifier, Iso2022Converter.convertISO2022CharsetToJavaCharset(reader.getBytes(tagByteCount)));
                 return;
+            case IptcDirectory.TAG_ENVELOPE_RECORD_VERSION:
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
                 // short
                 int shortValue = reader.getUInt16();
