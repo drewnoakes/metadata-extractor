@@ -166,10 +166,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return getUInt8(index) << 8 | getUInt8(index + 1);
+            return (getByte(index) & 0xFF) << 8 | (getByte(index+1) & 0xFF);
         } else {
             // Intel ordering - LSB first
-            return getUInt8(index) | getUInt8(index + 1) << 8;
+            return (getByte(index) & 0xFF) | (getByte(index+1) & 0xFF) << 8;
         }
     }
 
@@ -186,10 +186,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (short) (getInt8(index) << 8 | getUInt8(index + 1));
+            return (short) (getByte(index) << 8 | (getByte(index+1) & 0xFF));
         } else {
             // Intel ordering - LSB first
-            return (short) (getUInt8(index) | getInt8(index + 1) << 8);
+            return (short) ((getByte(index) & 0xFF)  | getByte(index + 1) << 8);
         }
     }
 
@@ -206,10 +206,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return (long) getUInt16(index) << 16 | getUInt16(index + 2);
+            return (getByte(index) & 0xFFL) << 24 | (getByte(index+1) & 0xFF) << 16 | (getByte(index+2) & 0xFF) << 8 | (getByte(index+3) & 0xFF);
         } else {
             // Intel ordering - LSB first (little endian)
-            return getUInt16(index) | (long) getUInt16(index + 2) << 16;
+            return (getByte(index) & 0xFF) | (getByte(index+1) & 0xFF) << 8 | (getByte(index+2) & 0xFF) << 16 | (getByte(index+3) & 0xFFL) << 24;
         }
     }
 
@@ -226,10 +226,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return getInt16(index) << 16 | getUInt16(index + 2);
+            return getByte(index) << 24 | (getByte(index+1) & 0xFF) <<16 | (getByte(index+2) & 0xFF) << 8 | (getByte(index+3) & 0xFF);
         } else {
             // Intel ordering - LSB first (little endian)
-            return getUInt16(index) | getInt16(index + 2) << 16 ;
+            return (getByte(index) & 0xFF) | (getByte(index+1) & 0xFF) << 8 | (getByte(index+2) & 0xFF) << 16 | getByte(index + 3) << 24;
         }
     }
 
@@ -246,10 +246,10 @@ public abstract class RandomAccessReader
 
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (long) getInt32(index) << 32 | getUInt32(index + 4);
+            return (long)getByte(index) << 56 | (getByte(index+1) & 0xFFL) << 48 | (getByte(index+2) & 0xFFL) << 40 | (getByte(index+3) & 0xFFL) << 32 | (getByte(index+4) & 0xFFL) << 24 | (getByte(index+5) & 0xFF) << 16 | (getByte(index+6) & 0xFF) << 8 | (getByte(index+7) & 0xFF);
         } else {
             // Intel ordering - LSB first
-            return getUInt32(index) | (long) getInt32(index + 4) << 32;
+            return (getByte(index) & 0xFF) | (getByte(index+1) & 0xFF) << 8 | (getByte(index+2) & 0xFF) << 16 | (getByte(index+3) & 0xFFL) << 24 | (getByte(index+4) & 0xFFL) << 32 | (getByte(index+5) & 0xFFL) << 40 | (getByte(index+6) & 0xFFL) << 48 | (long)getByte(index + 7) << 56;
         }
     }
 

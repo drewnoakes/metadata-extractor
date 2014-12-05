@@ -125,10 +125,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return getUInt8() << 8 | getUInt8();
+            return (getByte() & 0xFF) << 8 | (getByte() & 0xFF);
         } else {
             // Intel ordering - LSB first
-            return getUInt8() | getUInt8() << 8;
+            return (getByte() & 0xFF) | (getByte() & 0xFF) << 8;
         }
     }
 
@@ -142,10 +142,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (short) (getInt8() << 8 | getUInt8());
+            return (short) (getByte() << 8 | (getByte() & 0xFF));
         } else {
             // Intel ordering - LSB first
-            return (short) (getUInt8() | getInt8() << 8);
+            return (short) ((getByte() & 0xFF)| getByte() << 8);
         }
     }
 
@@ -159,10 +159,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return (long)getUInt16() << 16 | getUInt16();
+            return (getByte() & 0xFFL) <<24 | (getByte() & 0xFF) << 16 | (getByte() & 0xFF) << 8 | (getByte() & 0xFF);
         } else {
             // Intel ordering - LSB first (little endian)
-            return getUInt16() | (long)getUInt16() << 16 ;
+            return (getByte() & 0xFF) | (getByte() & 0xFF) << 8 | (getByte() & 0xFF) <<16 | (getByte() & 0xFFL) << 24;
         }
     }
 
@@ -170,16 +170,16 @@ public abstract class SequentialReader
      * Returns a signed 32-bit integer from four bytes of data.
      *
      * @return the signed 32 bit int value, between 0x00000000 and 0xFFFFFFFF
-     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     * @throws IOException
+     *             the buffer does not contain enough bytes to service the request, or index is negative
      */
-    public int getInt32() throws IOException
-    {
+    public int getInt32() throws IOException {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first (big endian)
-            return getInt16() << 16 | getUInt16();
+            return (getByte() << 24 | (getByte() & 0xFF) << 16) | (getByte() & 0xFF) << 8 | (getByte() & 0xFF);
         } else {
             // Intel ordering - LSB first (little endian)
-            return  getUInt16() | getInt16() << 16;
+            return (getByte() & 0xFF) | (getByte() & 0xFF) << 8 | (getByte() & 0xFF) << 16 | getByte() << 24;
         }
     }
 
@@ -193,10 +193,10 @@ public abstract class SequentialReader
     {
         if (_isMotorolaByteOrder) {
             // Motorola - MSB first
-            return (long)getInt32() << 32 | getUInt32();
+            return ((long)getByte() << 56 | (getByte() & 0xFFL) << 48) | (getByte() & 0xFFL) << 40 | (getByte() & 0xFFL) << 32 | (getByte() & 0xFFL) <<24 | (getByte() & 0xFF) << 16 | (getByte() & 0xFF) << 8 | (getByte() & 0xFF);
         } else {
             // Intel ordering - LSB first
-            return getUInt32() | (long)getInt32() << 32;
+            return (getByte() & 0xFF) | (getByte() & 0xFF) << 8 | (getByte() & 0xFF) <<16 | (getByte() & 0xFFL) << 24 | (getByte() & 0xFFL) << 32 | (getByte() & 0xFFL) << 40 | (getByte() & 0xFFL) << 48 | (getByte() & 0xFFL) << 56;
         }
     }
 
