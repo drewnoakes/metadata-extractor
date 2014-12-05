@@ -20,6 +20,7 @@
  */
 package com.drew.metadata;
 
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import org.junit.Test;
@@ -76,5 +77,16 @@ public class MetadataTest
         final ExifSubIFDDirectory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
         directory.addError("Test Error 1");
         assertTrue(metadata.hasErrors());
+    }
+
+    @Test
+    public void testToString()
+    {
+        Metadata metadata = new Metadata();
+        assertEquals("Metadata (0 directories)", metadata.toString());
+        metadata.getOrCreateDirectory(ExifIFD0Directory.class);
+        assertEquals("Metadata (1 directory)", metadata.toString());
+        metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
+        assertEquals("Metadata (2 directories)", metadata.toString());
     }
 }

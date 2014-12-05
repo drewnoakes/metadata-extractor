@@ -145,4 +145,14 @@ public final class Metadata
         }
         return false;
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("Metadata (%d %s)",
+            _directoryList.size(),
+            _directoryList.size() == 1
+                ? "directory"
+                : "directories");
+    }
 }

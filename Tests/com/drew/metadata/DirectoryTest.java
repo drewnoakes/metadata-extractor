@@ -21,6 +21,7 @@
 package com.drew.metadata;
 
 import com.drew.lang.Rational;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import org.junit.Before;
 import org.junit.Test;
@@ -162,5 +163,16 @@ public class DirectoryTest
         assertNull(_directory.getRational(ExifSubIFDDirectory.TAG_APERTURE));
         assertNull(_directory.getRationalArray(ExifSubIFDDirectory.TAG_APERTURE));
         assertNull(_directory.getStringArray(ExifSubIFDDirectory.TAG_APERTURE));
+    }
+
+    @Test
+    public void testToString()
+    {
+        Directory directory = new ExifIFD0Directory();
+        assertEquals("Exif IFD0 Directory (0 tags)", directory.toString());
+        directory.setString(1, "Tag 1");
+        assertEquals("Exif IFD0 Directory (1 tag)", directory.toString());
+        directory.setString(2, "Tag 2");
+        assertEquals("Exif IFD0 Directory (2 tags)", directory.toString());
     }
 }

@@ -922,4 +922,15 @@ public abstract class Directory
         assert(_descriptor != null);
         return _descriptor.getDescription(tagType);
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s Directory (%d %s)",
+            getName(),
+            _tagMap.size(),
+            _tagMap.size() == 1
+                ? "tag"
+                : "tags");
+    }
 }
