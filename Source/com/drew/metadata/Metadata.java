@@ -23,10 +23,7 @@ package com.drew.metadata;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A top-level object that holds the metadata values extracted from an image.
@@ -56,7 +53,7 @@ public final class Metadata
     @NotNull
     public Iterable<Directory> getDirectories()
     {
-        return _directoryList;
+        return Collections.unmodifiableCollection(_directoryList);
     }
 
     /**

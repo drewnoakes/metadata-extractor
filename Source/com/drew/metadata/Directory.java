@@ -101,7 +101,7 @@ public abstract class Directory
     @NotNull
     public Collection<Tag> getTags()
     {
-        return _definedTagList;
+        return Collections.unmodifiableCollection(_definedTagList);
     }
 
     /**
@@ -155,7 +155,7 @@ public abstract class Directory
     @NotNull
     public Iterable<String> getErrors()
     {
-        return _errorList;
+        return Collections.unmodifiableCollection(_errorList);
     }
 
     /** Returns the count of error messages in this directory. */
