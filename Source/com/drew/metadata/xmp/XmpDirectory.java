@@ -25,6 +25,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -165,7 +166,7 @@ public class XmpDirectory extends Directory
     @NotNull
     public Map<String, String> getXmpProperties()
     {
-        return _propertyValueByPath;
+        return Collections.unmodifiableMap(_propertyValueByPath);
     }
 
     public void setXMPMeta(@NotNull XMPMeta xmpMeta)
