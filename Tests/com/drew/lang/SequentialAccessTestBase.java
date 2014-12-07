@@ -290,7 +290,7 @@ public abstract class SequentialAccessTestBase
         try {
             createReader(new byte[50]).getBytes(51);
             fail("Expecting exception");
-        } catch (EOFException ex) {}
+        } catch (EOFException ignored) {}
     }
 
     @Test
@@ -307,7 +307,7 @@ public abstract class SequentialAccessTestBase
             reader.getInt8();
             reader.getInt8();
             fail("Expecting exception");
-        } catch (EOFException ex) {}
+        } catch (EOFException ignored) {}
     }
 
     @Test
@@ -324,7 +324,7 @@ public abstract class SequentialAccessTestBase
             reader.skip(1);
             reader.skip(1);
             fail("Expecting exception");
-        } catch (EOFException ex) {}
+        } catch (EOFException ignored) {}
     }
 
     @Test

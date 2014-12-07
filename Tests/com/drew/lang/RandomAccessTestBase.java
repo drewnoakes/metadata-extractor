@@ -318,7 +318,7 @@ public abstract class RandomAccessTestBase
         try {
             createReader(new byte[50]).getBytes(0, 51);
             fail("Expecting exception");
-        } catch (IOException ex) {}
+        } catch (IOException ignored) {}
     }
 
     @Test
@@ -335,6 +335,6 @@ public abstract class RandomAccessTestBase
             reader.getInt8(0);
             reader.getInt8(1);
             fail("Expecting exception");
-        } catch (IOException ex) {}
+        } catch (IOException ignored) {}
     }
 }
