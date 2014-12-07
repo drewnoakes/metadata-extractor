@@ -17,7 +17,7 @@
     <version>2.7.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>metadata-extractor</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Java library for extracting EXIF, IPTC, XMP, ICC and other metadata from image files.</description>
     
     <url>https://drewnoakes.com/code/exif/</url>
