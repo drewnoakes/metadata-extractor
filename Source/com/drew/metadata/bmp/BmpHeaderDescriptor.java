@@ -36,10 +36,10 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
         // 5 = PNG
         // 6 = Bit field
         try {
-            Integer value = _directory.getInt(BmpHeaderDirectory.TAG_COMPRESSION);
+            Integer value = _directory.getInteger(BmpHeaderDirectory.TAG_COMPRESSION);
             if (value == null)
                 return null;
-            Integer headerSize = _directory.getInt(BmpHeaderDirectory.TAG_HEADER_SIZE);
+            Integer headerSize = _directory.getInteger(BmpHeaderDirectory.TAG_HEADER_SIZE);
             if (headerSize == null)
                 return null;
 

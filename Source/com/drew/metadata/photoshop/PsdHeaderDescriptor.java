@@ -58,7 +58,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getChannelCountDescription()
     {
         try {
-            Integer value = _directory.getInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT);
+            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_CHANNEL_COUNT);
             if (value == null)
                 return null;
             return value + " channel" + (value == 1 ? "" : "s");
@@ -71,7 +71,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getBitsPerChannelDescription()
     {
         try {
-            Integer value = _directory.getInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL);
+            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL);
             if (value == null)
                 return null;
             return value + " bit" + (value == 1 ? "" : "s") + " per channel";
@@ -85,7 +85,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     {
         // Bitmap = 0; Grayscale = 1; Indexed = 2; RGB = 3; CMYK = 4; Multichannel = 7; Duotone = 8; Lab = 9
         try {
-            Integer value = _directory.getInt(PsdHeaderDirectory.TAG_COLOR_MODE);
+            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_COLOR_MODE);
             if (value == null)
                 return null;
             switch (value){
@@ -108,7 +108,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getImageHeightDescription()
     {
         try {
-            Integer value = _directory.getInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT);
+            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_HEIGHT);
             if (value == null)
                 return null;
             return value + " pixel" + (value == 1 ? "" : "s");
@@ -121,7 +121,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getImageWidthDescription()
     {
         try {
-            Integer value = _directory.getInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH);
+            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_WIDTH);
             if (value == null)
                 return null;
             return value + " pixel" + (value == 1 ? "" : "s");
