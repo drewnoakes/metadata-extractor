@@ -27,7 +27,6 @@ import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
