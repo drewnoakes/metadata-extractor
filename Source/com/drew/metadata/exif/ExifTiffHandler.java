@@ -42,7 +42,7 @@ import java.util.Set;
  */
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
-    private boolean _storeThumbnailBytes;
+    private final boolean _storeThumbnailBytes;
 
     public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes)
     {

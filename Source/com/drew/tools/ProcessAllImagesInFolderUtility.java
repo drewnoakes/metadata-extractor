@@ -279,8 +279,8 @@ public class ProcessAllImagesInFolderUtility
 
         class Row
         {
-            File file;
-            Metadata metadata;
+            final File file;
+            final Metadata metadata;
             @Nullable private String manufacturer;
             @Nullable private String model;
             @Nullable private String exifVersion;

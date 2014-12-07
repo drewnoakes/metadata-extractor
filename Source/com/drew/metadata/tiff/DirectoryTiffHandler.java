@@ -38,7 +38,7 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     private final Stack<Directory> _directoryStack = new Stack<Directory>();
 
     protected Directory _currentDirectory;
-    protected Metadata _metadata;
+    protected final Metadata _metadata;
 
     protected DirectoryTiffHandler(Metadata metadata, Class<? extends Directory> initialDirectory)
     {
