@@ -152,6 +152,14 @@ urchinTracker();
                     <excludePackageNames>com.drew.tools</excludePackageNames>
                     <stylesheetfile>Resources/javadoc-stylesheet.css</stylesheetfile>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
