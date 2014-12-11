@@ -189,7 +189,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         // NOTE that there's a chance we've already loaded the value as a string above, but failed to parse the value
         if (string == null) {
             String encoding = directory.getString(IptcDirectory.TAG_CODED_CHARACTER_SET);
-            if (encoding != null) {
+            if (encoding != null && !encoding.isEmpty()) {
                 string = reader.getString(tagByteCount, encoding);
             } else {
                 byte[] bytes = reader.getBytes(tagByteCount);

@@ -34,7 +34,7 @@ public final class Iso2022Converter
         if (bytes.length > 3 && bytes[0] == ESC && (bytes[3] & 0xFF | ((bytes[2] & 0xFF) << 8) | ((bytes[1] & 0xFF) << 16)) == DOT && bytes[4] == LATIN_CAPITAL_A)
             return ISO_8859_1;
 
-        return null;
+        return "";
     }
 
     /**
