@@ -232,4 +232,20 @@ public class IptcReaderTest
         assertEquals(IptcDirectory.TAG_KEYWORDS, tags[2].getTagType());
         assertArrayEquals(new String[]{"häufig", "üblich", "Lösung", "Spaß"}, directory.getStringArray(tags[2].getTagType()));
     }
+
+    @Test
+    public void testIptcEncodingUnknown2() throws Exception
+    {
+        // This metadata has an encoding of three characters [ \ESC '%' '5' ]
+        // It's not clear what to do with this, so it should be ignored.
+        // Version 2.7.0 tripped up on this and threw an exception.
+        IptcDirectory directory = processBytes("Tests/Data/iptc-encoding-unknown-2.bytes");
+
+        assertFalse(directory.getErrors().toString(), directory.hasErrors());
+
+        Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
+        assertEquals(37, tags.length);
+
+        assertEquals("MEDWAS,MEDLON,MEDTOR,RONL,ASIA,AONL,APC,USA,CAN,SAM,BIZ", directory.getString(IptcDirectory.TAG_DESTINATION));
+    }
 }
