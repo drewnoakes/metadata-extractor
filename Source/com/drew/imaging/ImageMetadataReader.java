@@ -94,7 +94,7 @@ public class ImageMetadataReader
         int magicNumber = peekMagicNumber(bufferedInputStream);
 
         if (magicNumber == -1)
-            throw new ImageProcessingException("Could not determine file's magic number.");
+            throw new ImageProcessingException("Stream ended before file's magic number could be determined.");
 
         // This covers all JPEG files
         if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
