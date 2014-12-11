@@ -95,7 +95,7 @@ public class PngMetadataReader
                 SequentialReader reader = new SequentialByteArrayReader(bytes);
                 String profileName = reader.getNullTerminatedString(79);
                 PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
-                directory.setString(PngDirectory.TAG_PROFILE_NAME, profileName);
+                directory.setString(PngDirectory.TAG_ICC_PROFILE_NAME, profileName);
                 byte compressionMethod = reader.getInt8();
                 if (compressionMethod == 0) {
                     // Only compression method allowed by the spec is zero: deflate
