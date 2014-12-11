@@ -68,13 +68,15 @@ public class PngChunkReader
 
             PngChunkType chunkType = new PngChunkType(reader.getBytes(4));
 
+            boolean willStoreChunk = desiredChunkTypes == null || desiredChunkTypes.contains(chunkType);
+
             byte[] chunkData = reader.getBytes(chunkDataLength);
 
             // Skip the CRC bytes at the end of the chunk
             // TODO consider verifying the CRC value to determine if we're processing bad data
             reader.skip(4);
 
-            if (seenChunkTypes.contains(chunkType) && !chunkType.areMultipleAllowed()) {
+            if (willStoreChunk && seenChunkTypes.contains(chunkType) && !chunkType.areMultipleAllowed()) {
                 throw new PngProcessingException(String.format("Observed multiple instances of PNG chunk '%s', for which multiples are not allowed", chunkType));
             }
 
@@ -88,7 +90,7 @@ public class PngChunkReader
                 seenImageTrailer = true;
             }
 
-            if (desiredChunkTypes == null || desiredChunkTypes.contains(chunkType)) {
+            if (willStoreChunk) {
                 chunks.add(new PngChunk(chunkType, chunkData));
             }
 
