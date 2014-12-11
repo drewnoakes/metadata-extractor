@@ -112,7 +112,7 @@ public class ImageMetadataReader
             return PsdMetadataReader.readMetadata(bufferedInputStream);
         }
 
-        // This covers BMP files
+        // This covers PNG files
         if (magicNumber == PNG_MAGIC_NUMBER) {
             return PngMetadataReader.readMetadata(bufferedInputStream);
         }
