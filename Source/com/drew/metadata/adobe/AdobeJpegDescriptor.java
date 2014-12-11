@@ -21,6 +21,7 @@
 
 package com.drew.metadata.adobe;
 
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -46,6 +47,7 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
         }
     }
 
+    @Nullable
     private String getDctEncodeVersionDescription()
     {
         Integer value = _directory.getInteger(AdobeJpegDirectory.TAG_COLOR_TRANSFORM);
@@ -56,6 +58,7 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
                     : Integer.toString(value);
     }
 
+    @Nullable
     private String getColorTransformDescription()
     {
         Integer value = _directory.getInteger(AdobeJpegDirectory.TAG_COLOR_TRANSFORM);
