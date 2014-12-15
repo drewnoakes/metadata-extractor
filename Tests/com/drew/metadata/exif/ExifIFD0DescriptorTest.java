@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Unit tests for {@link ExifIFD0Descriptor}.
  *
- * @author  Drew Noakes https://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifIFD0DescriptorTest
 {

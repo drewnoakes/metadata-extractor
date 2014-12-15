@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * JUnit test case for class ExifThumbnailDescriptor.
  *
- * @author  Drew Noakes https://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifThumbnailDescriptorTest
 {
