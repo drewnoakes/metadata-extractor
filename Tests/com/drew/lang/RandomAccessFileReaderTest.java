@@ -21,7 +21,6 @@
 
 package com.drew.lang;
 
-import org.junit.Assert;
 import org.junit.After;
 import org.junit.Test;
 
@@ -31,6 +30,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /** @author Drew Noakes https://drewnoakes.com */
 public class RandomAccessFileReaderTest extends RandomAccessTestBase
@@ -52,7 +52,7 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
             _randomAccessFile = new RandomAccessFile(_tempFile, "r");
             return new RandomAccessFileReader(_randomAccessFile);
         } catch (IOException e) {
-            Assert.fail("Unable to create temp file");
+            fail("Unable to create temp file");
             return null;
         }
     }

@@ -21,15 +21,12 @@
 package com.drew.imaging.jpeg;
 
 import com.drew.tools.FileUtil;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for {@link JpegSegmentReader}.
@@ -142,7 +139,7 @@ public class JpegSegmentReaderTest
     {
         try {
             JpegSegmentReader.readSegments(new File("Tests/com/drew/imaging/jpeg/JpegSegmentReaderTest.java"), null);
-            Assert.fail("shouldn't be able to construct JpegSegmentReader with non-JPEG file");
+            fail("shouldn't be able to construct JpegSegmentReader with non-JPEG file");
         } catch (JpegProcessingException e) {
             // expect exception
         }

@@ -26,7 +26,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.tools.FileUtil;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class ExifReaderTest
     {
         try{
             new ExifReader().extract(null, new Metadata(), JpegSegmentType.APP1);
-            Assert.fail("Exception expected");
+            fail("Exception expected");
         } catch (NullPointerException npe) {
             // passed
         }
@@ -72,7 +71,7 @@ public class ExifReaderTest
     {
         try{
             new ExifReader().extract(new byte[10], null, JpegSegmentType.APP1);
-            Assert.fail("Exception expected");
+            fail("Exception expected");
         } catch (NullPointerException npe) {
             // passed
         }

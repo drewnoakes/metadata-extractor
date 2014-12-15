@@ -26,7 +26,6 @@ import com.drew.lang.SequentialByteArrayReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -68,7 +67,7 @@ public class ExifDirectoryTest
             // attempt to read the thumbnail -- it should be a legal Jpeg file
             JpegSegmentReader.readSegments(new SequentialByteArrayReader(thumbData), null);
         } catch (JpegProcessingException e) {
-            Assert.fail("Unable to construct JpegSegmentReader from thumbnail data");
+            fail("Unable to construct JpegSegmentReader from thumbnail data");
         }
     }
 
@@ -87,7 +86,7 @@ public class ExifDirectoryTest
             assertTrue(file.exists());
         } finally {
             if (!thumbnailFile.delete())
-                Assert.fail("Unable to delete temp thumbnail file.");
+                fail("Unable to delete temp thumbnail file.");
         }
     }
 
@@ -111,7 +110,7 @@ public class ExifDirectoryTest
         ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
         assertNotNull(thumbnailDirectory);
         assertEquals(72, thumbnailDirectory.getInt(ExifThumbnailDirectory.TAG_X_RESOLUTION));
-        
+
         ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
         assertNotNull(exifIFD0Directory);
         assertEquals(216, exifIFD0Directory.getInt(ExifIFD0Directory.TAG_X_RESOLUTION));

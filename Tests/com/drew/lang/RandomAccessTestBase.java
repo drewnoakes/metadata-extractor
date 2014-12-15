@@ -21,7 +21,6 @@
 
 package com.drew.lang;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -75,7 +74,7 @@ public abstract class RandomAccessTestBase
         try {
             RandomAccessReader reader = createReader(new byte[2]);
             reader.getUInt8(2);
-            Assert.fail("Exception expected");
+            fail("Exception expected");
         } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 2, requested count: 1, max index: 1)", ex.getMessage());
         }
@@ -123,7 +122,7 @@ public abstract class RandomAccessTestBase
         try {
             RandomAccessReader reader = createReader(new byte[2]);
             reader.getUInt16(1);
-            Assert.fail("Exception expected");
+            fail("Exception expected");
         } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 1, requested count: 2, max index: 1)", ex.getMessage());
         }
@@ -177,7 +176,7 @@ public abstract class RandomAccessTestBase
         try {
             RandomAccessReader reader = createReader(new byte[3]);
             reader.getInt32(0);
-            Assert.fail("Exception expected");
+            fail("Exception expected");
         } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 0, requested count: 4, max index: 2)", ex.getMessage());
         }
@@ -204,14 +203,14 @@ public abstract class RandomAccessTestBase
         try {
             RandomAccessReader reader = createReader(new byte[7]);
             reader.getInt64(0);
-            Assert.fail("Exception expected");
+            fail("Exception expected");
         } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 0, requested count: 8, max index: 6)", ex.getMessage());
         }
         try {
             RandomAccessReader reader = createReader(new byte[7]);
             reader.getInt64(-1);
-            Assert.fail("Exception expected");
+            fail("Exception expected");
         } catch (IOException ex) {
             assertEquals("Attempt to read from buffer using a negative index (-1)", ex.getMessage());
         }

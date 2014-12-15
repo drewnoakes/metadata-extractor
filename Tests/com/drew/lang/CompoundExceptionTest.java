@@ -20,7 +20,6 @@
  */
 package com.drew.lang;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,6 +28,7 @@ import java.io.PrintWriter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -73,7 +73,7 @@ public class CompoundExceptionTest
                 e.printStackTrace(nullStream);
                 e.printStackTrace(new PrintWriter(nullStream));
             } catch (Exception e1) {
-                Assert.fail("Exception during printStackTrace for CompoundException with no inner exception");
+                fail("Exception during printStackTrace for CompoundException with no inner exception");
             }
         }
     }
