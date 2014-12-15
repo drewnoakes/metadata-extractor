@@ -32,7 +32,9 @@ import java.io.RandomAccessFile;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/** @author Drew Noakes https://drewnoakes.com */
+/**
+ * @author Drew Noakes https://drewnoakes.com
+ */
 public class RandomAccessFileReaderTest extends RandomAccessTestBase
 {
     private File _tempFile;

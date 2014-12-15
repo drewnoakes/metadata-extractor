@@ -23,7 +23,9 @@ package com.drew.lang;
 
 import org.junit.Test;
 
-/** @author Drew Noakes https://drewnoakes.com */
+/**
+ * @author Drew Noakes https://drewnoakes.com
+ */
 public class ByteArrayReaderTest extends RandomAccessTestBase
 {
     @Override

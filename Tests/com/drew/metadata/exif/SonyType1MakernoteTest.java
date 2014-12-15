@@ -27,7 +27,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/** @author Drew Noakes https://drewnoakes.com */
+/**
+ * @author Drew Noakes https://drewnoakes.com
+ */
 public class SonyType1MakernoteTest
 {
     @Test public void testSonyType1Makernote() throws Exception
