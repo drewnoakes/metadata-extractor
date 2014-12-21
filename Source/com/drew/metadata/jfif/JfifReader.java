@@ -33,7 +33,7 @@ import java.util.Arrays;
 
 /**
  * Reader for JFIF data, found in the APP0 JPEG segment.
- * <p/>
+ * <p>
  * More info at: http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
  *
  * @author Yuri Binev, Drew Noakes, Markus Meyer

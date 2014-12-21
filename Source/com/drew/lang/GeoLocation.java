@@ -28,9 +28,9 @@ import java.text.DecimalFormat;
 
 /**
  * Represents a latitude and longitude pair, giving a position on earth in spherical coordinates.
- * <p/>
+ * <p>
  * Values of latitude and longitude are given in degrees.
- * <p/>
+ * <p>
  * This type is immutable.
  */
 public final class GeoLocation

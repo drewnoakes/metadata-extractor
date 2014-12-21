@@ -34,7 +34,7 @@ import java.util.Date;
 
 /**
  * Decodes IPTC binary data, populating a {@link Metadata} object with tag values in an {@link IptcDirectory}.
- * <p/>
+ * <p>
  * http://www.iptc.org/std/IIM/4.1/specification/IIMV4.1.pdf
  *
  * @author Drew Noakes https://drewnoakes.com

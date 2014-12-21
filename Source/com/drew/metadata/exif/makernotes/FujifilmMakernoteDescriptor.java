@@ -29,7 +29,7 @@ import static com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link FujifilmMakernoteDirectory}.
- * <p/>
+ * <p>
  * Fujifilm added their Makernote tag from the Year 2000's models (e.g.Finepix1400,
  * Finepix4700). It uses IFD format and start from ASCII character 'FUJIFILM', and next 4
  * bytes (value 0x000c) points the offset to first IFD entry.

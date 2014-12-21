@@ -28,7 +28,7 @@ import static com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link LeicaMakernoteDirectory}.
- * <p/>
+ * <p>
  * Tag reference from: http://gvsoft.homedns.org/exif/makernote-leica-type1.html
  *
  * @author Drew Noakes https://drewnoakes.com

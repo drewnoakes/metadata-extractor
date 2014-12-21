@@ -28,10 +28,10 @@ import static com.drew.metadata.exif.makernotes.KyoceraMakernoteDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link KyoceraMakernoteDirectory}.
- * <p/>
+ * <p>
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/kyocera_mn.html
- * <p/>
+ * <p>
  * Most manufacturer's Makernote counts the "offset to data" from the first byte
  * of TIFF header (same as the other IFD), but Kyocera (along with Fujifilm) counts
  * it from the first byte of Makernote itself.

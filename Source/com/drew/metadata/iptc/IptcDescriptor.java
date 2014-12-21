@@ -27,7 +27,7 @@ import com.drew.metadata.TagDescriptor;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link IptcDirectory}.
- * <p/>
+ * <p>
  * As the IPTC directory already stores values as strings, this class simply returns the tag's value.
  *
  * @author Drew Noakes https://drewnoakes.com

@@ -232,7 +232,7 @@ public abstract class SequentialReader
 
     /**
      * Gets a s15.16 fixed point float from the buffer.
-     * <p/>
+     * <p>
      * This particular fixed point encoding has one sign bit, 15 numerator bits and 16 denominator bits.
      *
      * @return the floating point value

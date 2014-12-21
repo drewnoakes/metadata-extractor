@@ -35,7 +35,7 @@ import java.util.Set;
 /**
  * Implementation of {@link com.drew.imaging.tiff.TiffHandler} used for handling TIFF tags according to the Exif
  * standard.
- * <p/>
+ * <p>
  * Includes support for camera manufacturer makernotes.
  *
  * @author Drew Noakes https://drewnoakes.com

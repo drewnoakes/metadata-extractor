@@ -172,7 +172,7 @@ public class CanonMakernoteDirectory extends Directory
          * 3 = Fast Shutter
          * 4 = Slow Shutter
          * 5 = Night
-         * 6 = Black & White
+         * 6 = Black &amp; White
          * 7 = Sepia
          * 8 = Portrait
          * 9 = Sports

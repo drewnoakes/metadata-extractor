@@ -26,7 +26,7 @@ import com.drew.lang.annotations.Nullable;
 
 /**
  * Represents an age in years, months, days, hours, minutes and seconds.
- * <p/>
+ * <p>
  * Used by certain Panasonic cameras which have face recognition features.
  *
  * @author Drew Noakes https://drewnoakes.com

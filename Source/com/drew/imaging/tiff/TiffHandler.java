@@ -34,7 +34,7 @@ public interface TiffHandler
 {
     /**
      * Receives the 2-byte marker found in the TIFF header.
-     * <p/>
+     * <p>
      * Implementations are not obligated to use this information for any purpose, though it may be useful for
      * validation or perhaps differentiating the type of mapping to use for observed tags and IFDs.
      *

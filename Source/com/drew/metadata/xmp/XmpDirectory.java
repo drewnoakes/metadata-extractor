@@ -162,7 +162,7 @@ public class XmpDirectory extends Directory
 
     /**
      * Gets a map of all XMP properties in this directory, not just the known ones.
-     * <p/>
+     * <p>
      * This is required because XMP properties are represented as strings, whereas the rest of this library
      * uses integers for keys.
      */

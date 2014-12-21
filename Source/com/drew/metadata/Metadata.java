@@ -27,7 +27,7 @@ import java.util.*;
 
 /**
  * A top-level object that holds the metadata values extracted from an image.
- * <p/>
+ * <p>
  * Metadata objects may contain zero or more {@link Directory} objects.  Each directory may contain zero or more tags
  * with corresponding values.
  *

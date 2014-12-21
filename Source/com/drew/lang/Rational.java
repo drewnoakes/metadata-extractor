@@ -257,21 +257,21 @@ public class Rational extends java.lang.Number implements Serializable
      * the minimum number of checks required.</p>
      * <p>
      * However, generating the prime number series seems to be a hefty task.  Perhaps
-     * it's simpler to check if both d & n are divisible by all numbers from 2 ->
+     * it's simpler to check if both d &amp; n are divisible by all numbers from 2 {@literal ->}
      * (Math.min(denominator, numerator) / 2).  In doing this, one can check for 2
      * and 5 once, then ignore all even numbers, and all numbers ending in 0 or 5.
      * This leaves four numbers from every ten to check.</p>
      * <p>
      * Therefore, the max number of pairs of modulus divisions required will be:</p>
-     * <code><pre>
+     * <pre><code>
      *    4   Math.min(denominator, numerator) - 1
      *   -- * ------------------------------------ + 2
      *   10                    2
-     * <p/>
+     * 
      *   Math.min(denominator, numerator) - 1
      * = ------------------------------------ + 2
      *                  5
-     * </pre></code>
+     * </code></pre>
      *
      * @return a simplified instance, or if the Rational could not be simplified,
      *         returns itself (unchanged)

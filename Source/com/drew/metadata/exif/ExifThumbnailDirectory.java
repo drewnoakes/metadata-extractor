@@ -56,7 +56,7 @@ public class ExifThumbnailDirectory extends Directory
      * 6 = JPEG (old-style)
      * 7 = JPEG
      * 8 = Adobe Deflate
-     * 9 = JBIG B&W
+     * 9 = JBIG B&amp;W
      * 10 = JBIG Color
      * 32766 = Next
      * 32771 = CCIRLEW

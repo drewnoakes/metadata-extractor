@@ -25,7 +25,7 @@ import com.drew.lang.annotations.NotNull;
 
 /**
  * Defines an object capable of processing a particular type of metadata from a {@link RandomAccessReader}.
- * <p/>
+ * <p>
  * Instances of this interface must be thread-safe and reusable.
  *
  * @author Drew Noakes https://drewnoakes.com

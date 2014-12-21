@@ -53,7 +53,7 @@ public class OlympusMakernoteDirectory extends Directory
     /**
      * Used by Konica / Minolta cameras
      * 0 = Natural Colour
-     * 1 = Black & White
+     * 1 = Black &amp; White
      * 2 = Vivid colour
      * 3 = Solarization
      * 4 = AdobeRGB
@@ -72,7 +72,7 @@ public class OlympusMakernoteDirectory extends Directory
 
     /**
      * Not 100% sure about this tag.
-     * <p/>
+     * <p>
      * Used by Konica / Minolta cameras.
      * 0 = Raw
      * 1 = Super Fine

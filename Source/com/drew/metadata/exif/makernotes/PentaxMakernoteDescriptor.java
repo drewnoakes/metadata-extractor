@@ -28,7 +28,7 @@ import static com.drew.metadata.exif.makernotes.PentaxMakernoteDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link PentaxMakernoteDirectory}.
- * <p/>
+ * <p>
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/pentax_mn.html
  *

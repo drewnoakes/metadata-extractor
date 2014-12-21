@@ -26,7 +26,7 @@ import com.drew.metadata.TagDescriptor;
 
 /**
  * Provides human-readable string versions of the tags stored in a JfifDirectory.
- * <p/>
+ * <p>
  * More info at: http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
  *
  * @author Yuri Binev, Drew Noakes

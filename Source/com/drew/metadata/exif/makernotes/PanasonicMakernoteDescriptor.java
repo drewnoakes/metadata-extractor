@@ -34,7 +34,7 @@ import static com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link PanasonicMakernoteDirectory}.
- * <p/>
+ * <p>
  * Some information about this makernote taken from here:
  * <ul>
  * <li><a href="http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html">http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html</a></li>

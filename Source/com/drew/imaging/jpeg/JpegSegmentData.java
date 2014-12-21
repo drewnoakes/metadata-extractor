@@ -29,10 +29,10 @@ import java.util.*;
  * Holds a collection of JPEG data segments.  This need not necessarily be all segments
  * within the JPEG. For example, it may be convenient to store only the non-image
  * segments when analysing metadata.
- * <p/>
+ * <p>
  * Segments are keyed via their {@link JpegSegmentType}. Where multiple segments use the
  * same segment type, they will all be stored and available.
- * <p/>
+ * <p>
  * Each segment type may contain multiple entries. Conceptually the model is:
  * <code>Map&lt;JpegSegmentType, Collection&lt;byte[]&gt;&gt;</code>. This class provides
  * convenience methods around that structure.
@@ -106,7 +106,7 @@ public class JpegSegmentData
      *
      * @param segmentType identifies the required segment
      * @param occurrence  the zero-based index of the occurrence
-     * @return the segment data as a byte[], or null if no segment exists for the type & occurrence
+     * @return the segment data as a byte[], or null if no segment exists for the type &amp; occurrence
      */
     @Nullable
     public byte[] getSegment(@NotNull JpegSegmentType segmentType, int occurrence)
@@ -120,7 +120,7 @@ public class JpegSegmentData
      *
      * @param segmentType identifies the required segment
      * @param occurrence  the zero-based index of the occurrence
-     * @return the segment data as a byte[], or null if no segment exists for the type & occurrence
+     * @return the segment data as a byte[], or null if no segment exists for the type &amp; occurrence
      */
     @Nullable
     public byte[] getSegment(byte segmentType, int occurrence)

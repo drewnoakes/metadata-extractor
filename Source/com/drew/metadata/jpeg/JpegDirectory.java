@@ -47,7 +47,7 @@ public class JpegDirectory extends Directory
      * component Id(1byte)(1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q),
      * sampling factors (1byte) (bit 0-3 vertical., 4-7 horizontal.),
      * quantization table number (1 byte).
-     * <p/>
+     * <p>
      * This info is from http://www.funducode.com/freec/Fileformats/format3/format3b.htm
      */
     public static final int TAG_NUMBER_OF_COMPONENTS = 5;

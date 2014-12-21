@@ -107,7 +107,7 @@ public class PentaxMakernoteDirectory extends Directory
 
     /**
      * 1 = Normal
-     * 2 = Black & White
+     * 2 = Black &amp; White
      * 3 = Sepia
      */
     public static final int TAG_COLOUR = 0x0017;

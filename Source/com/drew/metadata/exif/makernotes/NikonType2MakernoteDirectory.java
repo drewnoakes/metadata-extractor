@@ -28,16 +28,16 @@ import java.util.HashMap;
 /**
  * Describes tags specific to Nikon (type 2) cameras.  Type-2 applies to the E990 and D-series cameras such as the E990, D1,
  * D70 and D100.
- * <p/>
+ * <p>
  * Thanks to Fabrizio Giudici for publishing his reverse-engineering of the D100 makernote data.
  * http://www.timelesswanderings.net/equipment/D100/NEF.html
- * <p/>
+ * <p>
  * Note that the camera implements image protection (locking images) via the file's 'readonly' attribute.  Similarly
  * image hiding uses the 'hidden' attribute (observed on the D70).  Consequently, these values are not available here.
- * <p/>
+ * <p>
  * Additional sample images have been observed, and their tag values recorded in javadoc comments for each tag's field.
  * New tags have subsequently been added since Fabrizio's observations.
- * <p/>
+ * <p>
  * In earlier models (such as the E990 and D1), this directory begins at the first byte of the makernote IFD.  In
  * later models, the IFD was given the standard prefix to indicate the camera models (most other manufacturers also
  * provide this prefix to aid in software decoding).
@@ -63,7 +63,7 @@ public class NikonType2MakernoteDirectory extends Directory
     /**
      * The camera's color mode, as an uppercase string.  Examples include:
      * <ul>
-     * <li><code>B & W</code></li>
+     * <li><code>B &amp; W</code></li>
      * <li><code>COLOR</code></li>
      * <li><code>COOL</code></li>
      * <li><code>SEPIA</code></li>
@@ -226,20 +226,20 @@ public class NikonType2MakernoteDirectory extends Directory
      * The camera's ISO mode, as an uppercase string.
      *
      * <ul>
-     * <li><code>AUTO</code></code></li>
+     * <li><code>AUTO</code></li>
      * <li><code>MANUAL</code></li>
      * </ul>
      */
     public static final int TAG_ISO_MODE = 0x000F;
 
     /**
-     * Added during merge of Type2 & Type3.  May apply to earlier models, such as E990 and D1.
+     * Added during merge of Type2 &amp; Type3.  May apply to earlier models, such as E990 and D1.
      */
     public static final int TAG_DATA_DUMP = 0x0010;
 
     /**
      * Preview to another IFD (?)
-     * <p/>
+     * <p>
      * Details here: http://gvsoft.homedns.org/exif/makernote-nikon-2-tag0x0011.html
      * // TODO if this is another IFD, decode it
      */
@@ -400,7 +400,7 @@ public class NikonType2MakernoteDirectory extends Directory
      * <li><code>CONTRAST(+)</code></li>
      * <li><code>CONTRAST(-)</code></li>
      * <li><code>NORMAL</code></li>
-     * <li><code>B & W</code></li>
+     * <li><code>B &amp; W</code></li>
      * <li><code>BRIGHTNESS(+)</code></li>
      * <li><code>BRIGHTNESS(-)</code></li>
      * <li><code>SEPIA</code></li>
@@ -467,7 +467,7 @@ public class NikonType2MakernoteDirectory extends Directory
     public static final int TAG_LENS = 0x0084;
 
     /**
-     * Added during merge of Type2 & Type3.  May apply to earlier models, such as E990 and D1.
+     * Added during merge of Type2 &amp; Type3.  May apply to earlier models, such as E990 and D1.
      */
     public static final int TAG_MANUAL_FOCUS_DISTANCE = 0x0085;
 
@@ -497,7 +497,7 @@ public class NikonType2MakernoteDirectory extends Directory
 
     /**
      * The camera's shooting mode.
-     * <p/>
+     * <p>
      * A bit-array with:
      * <ul>
      * <li><code>0</code> Single Frame</li>
@@ -536,7 +536,7 @@ public class NikonType2MakernoteDirectory extends Directory
      * <li><code>MODE2</code> = Mode 2 (Adobe RGB)</li>
      * <li><code>MODE3</code> = Mode 2 (sRGB): Higher Saturation</li>
      * <li><code>MODE3a</code> = Mode 2 (sRGB): Higher Saturation</li>
-     * <li><code>B & W</code> = B & W</li>
+     * <li><code>B &amp; W</code> = B &amp; W</li>
      * </ul>
      */
     public static final int TAG_CAMERA_COLOR_MODE = 0x008D;
@@ -615,7 +615,7 @@ public class NikonType2MakernoteDirectory extends Directory
      * <li><code>0</code> Normal</li>
      * <li><code>-1</code></li>
      * <li><code>-2</code></li>
-     * <li><code>-3</code> (B&W)</li>
+     * <li><code>-3</code> (B&amp;W)</li>
      * </ul>
      */
     public static final int TAG_SATURATION = 0x0094;

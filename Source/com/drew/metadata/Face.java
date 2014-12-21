@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 
 /**
  * Class to hold information about a detected or recognized face in a photo.
- * <p/>
+ * <p>
  * When a face is <em>detected</em>, the camera believes that a face is present at a given location in
  * the image, but is not sure whose face it is.  When a face is <em>recognised</em>, then the face is
  * both detected and identified as belonging to a known person.

@@ -28,10 +28,10 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Base class for random access data reading operations of common data types.
- * <p/>
+ * <p>
  * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
  * {@link com.drew.lang.RandomAccessReader#setMotorolaByteOrder(boolean)}.
- * <p/>
+ * <p>
  * Concrete implementations include:
  * <ul>
  *     <li>{@link ByteArrayReader}</li>
@@ -46,7 +46,7 @@ public abstract class RandomAccessReader
 
     /**
      * Gets the byte value at the specified byte <code>index</code>.
-     * <p/>
+     * <p>
      * Implementations should not perform any bounds checking in this method. That should be performed
      * in <code>validateIndex</code> and <code>isValidIndex</code>.
      *
@@ -74,7 +74,7 @@ public abstract class RandomAccessReader
     /**
      * Ensures that the buffered bytes extend to cover the specified index. If not, an attempt is made
      * to read to that point.
-     * <p/>
+     * <p>
      * If the stream ends before the point is reached, a {@link BufferBoundsException} is raised.
      *
      * @param index the index from which the required bytes start
@@ -87,10 +87,10 @@ public abstract class RandomAccessReader
 
     /**
      * Returns the length of the data source in bytes.
-     * <p/>
+     * <p>
      * This is a simple operation for implementations (such as {@link RandomAccessFileReader} and
      * {@link ByteArrayReader}) that have the entire data source available.
-     * <p/>
+     * <p>
      * Users of this method must be aware that sequentially accessed implementations such as
      * {@link RandomAccessStreamReader} will have to read and buffer the entire data source in
      * order to determine the length.
@@ -285,7 +285,7 @@ public abstract class RandomAccessReader
 
     /**
      * Gets a s15.16 fixed point float from the buffer.
-     * <p/>
+     * <p>
      * This particular fixed point encoding has one sign bit, 15 numerator bits and 16 denominator bits.
      *
      * @return the floating point value

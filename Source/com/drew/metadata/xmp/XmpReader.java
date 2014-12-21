@@ -36,7 +36,7 @@ import java.util.Calendar;
 
 /**
  * Extracts XMP data from a JPEG header segment.
- * <p/>
+ * <p>
  * The extraction is done with Adobe's XmpCore-Library (XMP-Toolkit)
  * Copyright (c) 1999 - 2007, Adobe Systems Incorporated All rights reserved.
  *
@@ -110,7 +110,7 @@ public class XmpReader implements JpegSegmentMetadataReader
 
     /**
      * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
-     * <p/>
+     * <p>
      * The extraction is done with Adobe's XMPCore library.
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
@@ -127,7 +127,7 @@ public class XmpReader implements JpegSegmentMetadataReader
 
     /**
      * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
-     * <p/>
+     * <p>
      * The extraction is done with Adobe's XMPCore library.
      */
     public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)

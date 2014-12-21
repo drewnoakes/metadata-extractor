@@ -58,7 +58,7 @@ public class PanasonicMakernoteDirectory extends Directory
      * 4 = Incandescent    <br>
      * 5 = Manual          <br>
      * 8 = Flash           <br>
-     * 10 = Black & White  <br>
+     * 10 = Black &amp; White  <br>
      * 11 = Manual         <br>
      * 12 = Shade          <br>
      */
@@ -192,7 +192,7 @@ public class PanasonicMakernoteDirectory extends Directory
      * 1 = Off           <br>
      * 2 = Warm          <br>
      * 3 = Cool          <br>
-     * 4 = Black & White <br>
+     * 4 = Black &amp; White <br>
      * 5 = Sepia         <br>
      */
     public static final int TAG_COLOR_EFFECT = 0x0028;
@@ -233,8 +233,8 @@ public class PanasonicMakernoteDirectory extends Directory
      * 4 = +2                                                  <br>
      * 7 = Nature (Color Film)                                 <br>
      * 12 = Smooth (Color Film) or Pure (My Color)             <br>
-     * 17 = Dynamic (B&W Film)                                 <br>
-     * 22 = Smooth (B&W Film)                                  <br>
+     * 17 = Dynamic (B&amp;W Film)                                 <br>
+     * 22 = Smooth (B&amp;W Film)                                  <br>
      * 27 = Dynamic (Color Film)                               <br>
      * 32 = Vibrant (Color Film) or Expressive (My Color)      <br>
      * 33 = Elegant (My Color)                                 <br>
@@ -327,7 +327,7 @@ public class PanasonicMakernoteDirectory extends Directory
      * <br>
      * 1 = Normal                               <br>
      * 2 = Outdoor/Illuminations/Flower/HDR Art <br>
-     * 3 = Indoor/Architecture/Objects/HDR B&W  <br>
+     * 3 = Indoor/Architecture/Objects/HDR B&amp;W  <br>
      * 4 = Creative                             <br>
      * 5 = Auto                                 <br>
      * 7 = Expressive                           <br>

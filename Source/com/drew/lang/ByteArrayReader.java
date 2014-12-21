@@ -28,7 +28,7 @@ import java.io.IOException;
 /**
  * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
  * issues.
- * <p/>
+ * <p>
  * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
  * <code>setMotorolaByteOrder(boolean)</code>.
  * 

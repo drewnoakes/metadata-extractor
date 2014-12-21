@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 /**
  * Describes tags specific to certain Leica cameras.
- * <p/>
+ * <p>
  * Tag reference from: http://gvsoft.homedns.org/exif/makernote-leica-type1.html
  *
  * @author Drew Noakes https://drewnoakes.com

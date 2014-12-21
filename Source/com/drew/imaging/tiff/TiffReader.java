@@ -82,7 +82,7 @@ public class TiffReader
 
     /**
      * Processes a TIFF IFD.
-     * <p/>
+     * 
      * IFD Header:
      * <ul>
      *     <li><b>2 bytes</b> number of tags</li>

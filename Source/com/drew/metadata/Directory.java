@@ -714,7 +714,7 @@ public abstract class Directory
 
     /**
      * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
-     * <p/>
+     * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
      * the current {@link TimeZone}.  If the {@link TimeZone} is known, call the overload that accepts one as an argument.
      */
@@ -726,7 +726,7 @@ public abstract class Directory
     
     /**
      * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
-     * <p/>
+     * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
      * the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).  Note that this parameter
      * is only considered if the underlying value is a string and parsing occurs, otherwise it has no effect.

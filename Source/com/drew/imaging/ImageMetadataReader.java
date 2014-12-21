@@ -42,7 +42,7 @@ import java.util.Collection;
 
 /**
  * Obtains {@link Metadata} from all supported file formats.
- * <p/>
+ * <p>
  * This class a lightweight wrapper around specific file type processors:
  * <ul>
  *     <li>{@link JpegMetadataReader} for JPEG files</li>
@@ -69,7 +69,7 @@ public class ImageMetadataReader
 
     /**
      * Reads metadata from an {@link InputStream}.
-     * <p/>
+     * <p>
      * The file type is determined by inspecting the leading bytes of the stream, and parsing of the file
      * is delegated to one of:
      * <ul>
@@ -132,7 +132,7 @@ public class ImageMetadataReader
 
     /**
      * Reads {@link Metadata} from a {@link File} object.
-     * <p/>
+     * <p>
      * The file type is determined by inspecting the leading bytes of the stream, and parsing of the file
      * is delegated to one of:
      * <ul>
@@ -183,12 +183,12 @@ public class ImageMetadataReader
     /**
      * An application entry point.  Takes the name of one or more files as arguments and prints the contents of all
      * metadata directories to <code>System.out</code>.
-     * <p/>
+     * <p>
      * If <code>-thumb</code> is passed, then any thumbnail data will be written to a file with name of the
      * input file having <code>.thumb.jpg</code> appended.
-     * <p/>
+     * <p>
      * If <code>-markdown</code> is passed, then output will be in markdown format.
-     * <p/>
+     * <p>
      * If <code>-hex</code> is passed, then the ID of each tag will be displayed in hexadecimal.
      *
      * @param args the command line arguments
