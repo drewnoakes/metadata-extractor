@@ -169,10 +169,13 @@ public class IptcReader implements JpegSegmentMetadataReader
             case IptcDirectory.TAG_ARM_VERSION:
             case IptcDirectory.TAG_PROGRAM_VERSION:
                 // short
-                int shortValue = reader.getUInt16();
-                reader.skip(tagByteCount - 2);
-                directory.setInt(tagIdentifier, shortValue);
-                return;
+                if (tagByteCount >= 2) {
+                    int shortValue = reader.getUInt16();
+                    reader.skip(tagByteCount - 2);
+                    directory.setInt(tagIdentifier, shortValue);
+                    return;
+                }
+                break;
             case IptcDirectory.TAG_URGENCY:
                 // byte
                 directory.setInt(tagIdentifier, reader.getUInt8());
