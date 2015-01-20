@@ -115,6 +115,7 @@ public class IptcReader implements JpegSegmentMetadataReader
             try {
                 directoryType = reader.getUInt8();
                 tagType = reader.getUInt8();
+                // TODO support Extended DataSet Tag (see 1.5(c), p14, IPTC-IIMV4.2.pdf)
                 tagByteCount = reader.getUInt16();
                 offset += 4;
             } catch (IOException e) {
