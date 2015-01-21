@@ -54,19 +54,14 @@ import java.util.Collection;
  * </ul>
  * If you know the file type you're working with, you may use one of the above processors directly.
  * For most scenarios it is simpler, more convenient and more robust to use this class.
+ * <p>
+ * {@link FileTypeDetector} is used to determine the provided image's file type, and therefore
+ * the appropriate metadata reader to use.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
 public class ImageMetadataReader
 {
-    private static final int JPEG_FILE_MAGIC_NUMBER = 0xFFD8;
-    private static final int MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D;  // "MM"
-    private static final int INTEL_TIFF_MAGIC_NUMBER = 0x4949;     // "II"
-    private static final int PSD_MAGIC_NUMBER = 0x3842;            // "8B" // TODO the full magic number is 8BPS
-    private static final int PNG_MAGIC_NUMBER = 0x8950;            // "?P" // TODO the full magic number is six bytes long
-    private static final int BMP_MAGIC_NUMBER = 0x424D;            // "BM" // TODO technically there are other very rare magic numbers for OS/2 BMP files...
-    private static final int GIF_MAGIC_NUMBER = 0x4749;            // "GI" // TODO the full magic number is GIF or possibly GIF89a/GIF87a
-
     /**
      * Reads metadata from an {@link InputStream}.
      * <p>
@@ -89,43 +84,29 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream) throws ImageProcessingException, IOException
     {
-        InputStream bufferedInputStream = inputStream instanceof BufferedInputStream ? inputStream : new BufferedInputStream(inputStream);
+        BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
+            ? (BufferedInputStream)inputStream
+            : new BufferedInputStream(inputStream);
 
-        int magicNumber = peekMagicNumber(bufferedInputStream);
+        FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
 
-        if (magicNumber == -1)
-            throw new ImageProcessingException("Stream ended before file's magic number could be determined.");
-
-        // This covers all JPEG files
-        if ((magicNumber & JPEG_FILE_MAGIC_NUMBER) == JPEG_FILE_MAGIC_NUMBER) {
+        if (fileType == FileType.Jpeg)
             return JpegMetadataReader.readMetadata(bufferedInputStream);
-        }
 
-        // This covers all TIFF and camera RAW files
-        if (magicNumber == INTEL_TIFF_MAGIC_NUMBER || magicNumber == MOTOROLA_TIFF_MAGIC_NUMBER) {
+        if (fileType == FileType.Tiff)
             return TiffMetadataReader.readMetadata(bufferedInputStream);
-        }
 
-        // This covers PSD files
-        // TODO we should really check all 4 bytes of the PSD magic number
-        if (magicNumber == PSD_MAGIC_NUMBER) {
+        if (fileType == FileType.Psd)
             return PsdMetadataReader.readMetadata(bufferedInputStream);
-        }
 
-        // This covers PNG files
-        if (magicNumber == PNG_MAGIC_NUMBER) {
+        if (fileType == FileType.Png)
             return PngMetadataReader.readMetadata(bufferedInputStream);
-        }
 
-        // This covers BMP files
-        if (magicNumber == BMP_MAGIC_NUMBER) {
+        if (fileType == FileType.Bmp)
             return BmpMetadataReader.readMetadata(bufferedInputStream);
-        }
 
-        // This covers GIF files
-        if (magicNumber == GIF_MAGIC_NUMBER) {
+        if (fileType == FileType.Gif)
             return GifMetadataReader.readMetadata(bufferedInputStream);
-        }
 
         throw new ImageProcessingException("File format is not supported");
     }
@@ -157,22 +138,6 @@ public class ImageMetadataReader
         } finally {
             inputStream.close();
         }
-    }
-
-    /**
-     * Reads the first two bytes from <code>inputStream</code>, then rewinds.
-     */
-    private static int peekMagicNumber(@NotNull final InputStream inputStream) throws IOException
-    {
-        inputStream.mark(2);
-        final int byte1 = inputStream.read();
-        final int byte2 = inputStream.read();
-        inputStream.reset();
-
-        if (byte1 == -1 || byte2 == -1)
-            return -1;
-
-        return byte1 << 8 | byte2;
     }
 
     private ImageMetadataReader() throws Exception
