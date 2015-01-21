@@ -267,7 +267,7 @@ public class Rational extends java.lang.Number implements Serializable
      *    4   Math.min(denominator, numerator) - 1
      *   -- * ------------------------------------ + 2
      *   10                    2
-     * 
+     *
      *   Math.min(denominator, numerator) - 1
      * = ------------------------------------ + 2
      *                  5

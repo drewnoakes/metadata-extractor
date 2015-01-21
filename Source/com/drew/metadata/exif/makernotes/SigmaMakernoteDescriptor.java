@@ -29,7 +29,7 @@ import static com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link SigmaMakernoteDirectory}.
- * 
+ *
  * @author Drew Noakes https://drewnoakes.com
  */
 public class SigmaMakernoteDescriptor extends TagDescriptor<SigmaMakernoteDirectory>

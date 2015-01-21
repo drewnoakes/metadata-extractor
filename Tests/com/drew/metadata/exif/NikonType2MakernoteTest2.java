@@ -43,7 +43,7 @@ public class NikonType2MakernoteTest2
     public void setUp() throws Exception
     {
         Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2b.jpg.app1");
-        
+
         _nikonDirectory = metadata.getDirectory(NikonType2MakernoteDirectory.class);
         _exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
         _exifSubIFDDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);
@@ -146,7 +146,7 @@ public class NikonType2MakernoteTest2
         assertEquals("E995v1.6", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_SOFTWARE));
         assertEquals("2002:08:29 17:31:40", _exifIFD0Directory.getString(ExifIFD0Directory.TAG_DATETIME));
         assertEquals(1, _exifIFD0Directory.getInt(ExifIFD0Directory.TAG_YCBCR_POSITIONING));
-        
+
         assertEquals(new Rational(2439024, 100000000), _exifSubIFDDirectory.getRational(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
         assertEquals(2.6, _exifSubIFDDirectory.getDouble(ExifSubIFDDirectory.TAG_FNUMBER), 0.001);
         assertEquals(2, _exifSubIFDDirectory.getInt(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM));

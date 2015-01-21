@@ -31,7 +31,7 @@ import java.io.IOException;
  * <p>
  * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
  * <code>setMotorolaByteOrder(boolean)</code>.
- * 
+ *
  * @author Drew Noakes https://drewnoakes.com
  * */
 public class ByteArrayReader extends RandomAccessReader
@@ -45,7 +45,7 @@ public class ByteArrayReader extends RandomAccessReader
     {
         if (buffer == null)
             throw new NullPointerException();
-        
+
         _buffer = buffer;
     }
 

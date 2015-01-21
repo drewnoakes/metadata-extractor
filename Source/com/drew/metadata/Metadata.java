@@ -37,7 +37,7 @@ public final class Metadata
 {
     @NotNull
     private final Map<Class<? extends Directory>,Directory> _directoryByClass = new HashMap<Class<? extends Directory>, Directory>();
-    
+
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes
      * creation of an Iterator and counting tags simple.

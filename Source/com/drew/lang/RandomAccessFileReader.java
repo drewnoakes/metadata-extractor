@@ -45,7 +45,7 @@ public class RandomAccessFileReader extends RandomAccessReader
     {
         if (file == null)
             throw new NullPointerException();
-        
+
         _file = file;
         _length = _file.length();
     }

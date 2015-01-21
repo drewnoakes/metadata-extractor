@@ -44,7 +44,7 @@ public class StringUtilTest
 
         assertEquals("", StringUtil.join(new ArrayList<String>(), ";"));
     }
-    
+
     @Test public void testJoinArray()
     {
         String[] strings = new String[]{"A", "B", "C"};

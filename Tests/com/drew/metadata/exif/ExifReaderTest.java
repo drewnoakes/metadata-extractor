@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test case for class ExifReader.
- * 
+ *
  * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifReaderTest
