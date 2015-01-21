@@ -166,7 +166,6 @@ public class JpegSegmentData
     @NotNull
     private List<byte[]> getOrCreateSegmentList(byte segmentType)
     {
-
         List<byte[]> segmentList;
         if (_segmentDataMap.containsKey(segmentType)) {
             segmentList = _segmentDataMap.get(segmentType);

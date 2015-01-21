@@ -259,14 +259,16 @@ public class TagDescriptor<T extends Directory>
 
     @Nullable
     protected String getAsciiStringFromBytes(int tag)
-{
+    {
         byte[] values = _directory.getByteArray(tag);
-if (values == null)
-return null;
-try {
-return new String(values, "ASCII").trim();
-} catch (UnsupportedEncodingException e) {
-return null;
-}
+
+        if (values == null)
+            return null;
+
+        try {
+            return new String(values, "ASCII").trim();
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
 }

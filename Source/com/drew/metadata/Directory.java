@@ -531,7 +531,7 @@ public abstract class Directory
         }
         if (o instanceof Integer)
             return new int[] { (Integer)o };
-        
+
         return null;
     }
 
@@ -723,7 +723,7 @@ public abstract class Directory
     {
         return getDate(tagType, null);
     }
-    
+
     /**
      * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
      * <p>
