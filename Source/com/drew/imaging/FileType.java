@@ -31,5 +31,6 @@ public enum FileType
     Psd,
     Png,
     Bmp,
-    Gif
+    Gif,
+    Ico
 }

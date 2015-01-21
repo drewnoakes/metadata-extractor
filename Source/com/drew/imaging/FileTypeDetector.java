@@ -40,6 +40,7 @@ public class FileTypeDetector
     private static final int  BMP_MAGIC_NUMBER    = 0x424D;              // "BM" // TODO technically there are other very rare magic numbers for OS/2 BMP files...
     private static final long GIF87a_MAGIC_NUMBER = 0x474946383761L;     // "GIF87a"
     private static final long GIF89a_MAGIC_NUMBER = 0x474946383961L;     // "GIF89a"
+    private static final int  ICO_MAGIC_NUMBER    = 0x00000100;
 
     private FileTypeDetector() throws Exception
     {
@@ -92,6 +93,9 @@ public class FileTypeDetector
 
         if (six == GIF87a_MAGIC_NUMBER || six == GIF89a_MAGIC_NUMBER)
             return FileType.Gif;
+
+        if (four == ICO_MAGIC_NUMBER)
+            return FileType.Ico;
 
         return FileType.Unknown;
     }
