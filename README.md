@@ -84,7 +84,7 @@ to pull from your clone. Ask around on the mailing list to avoid duplication of 
 
 # License
 
-Copyright 2002-2014 Drew Noakes
+Copyright 2002-2015 Drew Noakes
 
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.
