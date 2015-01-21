@@ -78,6 +78,20 @@ public class Tag
     }
 
     /**
+     * Get whether this tag has a name.
+     *
+     * If <code>true</code>, it may be accessed via {@link #getTagName}.
+     * If <code>false</code>, {@link #getTagName} will return a string resembling <code>"Unknown tag (0x1234)"</code>.
+     *
+     * @return whether this tag has a name
+     */
+    @NotNull
+    public String hasTagName()
+    {
+        return _directory.getTagName(_tagType);
+    }
+
+    /**
      * Get the name of the tag, such as <code>Aperture</code>, or
      * <code>InteropVersion</code>.
      *

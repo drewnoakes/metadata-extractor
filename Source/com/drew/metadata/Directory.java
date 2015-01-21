@@ -910,6 +910,17 @@ public abstract class Directory
     }
 
     /**
+     * Gets whether the specified tag is known by the directory and has a name.
+     *
+     * @param tagType the tag type identifier
+     * @return whether this directory has a name for the specified tag
+     */
+    public boolean hasTagName(int tagType)
+    {
+        return getTagNameMap().containsKey(tagType);
+    }
+
+    /**
      * Provides a description of a tag's value using the descriptor set by
      * <code>setDescriptor(Descriptor)</code>.
      *
