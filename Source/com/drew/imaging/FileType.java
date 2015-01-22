@@ -32,5 +32,18 @@ public enum FileType
     Png,
     Bmp,
     Gif,
-    Ico
+    Ico,
+
+    /** Sony camera raw. */
+    Arw,
+    /** Canon camera raw, version 1. */
+    Crw,
+    /** Canon camera raw, version 2. */
+    Cr2,
+    /** Nikon camera raw. */
+    Nef,
+    /** Olympus camera raw. */
+    Orf,
+    /** Panasonic camera raw. */
+    Rw2
 }

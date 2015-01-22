@@ -93,7 +93,13 @@ public class ImageMetadataReader
         if (fileType == FileType.Jpeg)
             return JpegMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Tiff)
+        if (fileType == FileType.Tiff ||
+            fileType == FileType.Arw ||
+            fileType == FileType.Crw ||
+            fileType == FileType.Cr2 ||
+            fileType == FileType.Nef ||
+            fileType == FileType.Orf ||
+            fileType == FileType.Rw2)
             return TiffMetadataReader.readMetadata(bufferedInputStream);
 
         if (fileType == FileType.Psd)
