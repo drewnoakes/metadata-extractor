@@ -20,6 +20,7 @@
  */
 package com.drew.imaging;
 
+import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
 
 import java.io.BufferedInputStream;
@@ -30,17 +31,26 @@ import java.io.IOException;
  */
 public class FileTypeDetector
 {
-    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    private final static ByteTrie<FileType> _root;
 
-    private static final int  JPEG_MAGIC_NUMBER          = 0xFFD8;
-    private static final int  MOTOROLA_TIFF_MAGIC_NUMBER = 0x4D4D002A;   // "MM?*"
-    private static final int  INTEL_TIFF_MAGIC_NUMBER    = 0x49492A00;   // "II*?"
-    private static final int  PSD_MAGIC_NUMBER    = 0x38425053;          // "8BPS"
-    private static final long PNG_MAGIC_NUMBER    = 0x89504E470D0A1A0AL; // "?PNG????"
-    private static final int  BMP_MAGIC_NUMBER    = 0x424D;              // "BM" // TODO technically there are other very rare magic numbers for OS/2 BMP files...
-    private static final long GIF87a_MAGIC_NUMBER = 0x474946383761L;     // "GIF87a"
-    private static final long GIF89a_MAGIC_NUMBER = 0x474946383961L;     // "GIF89a"
-    private static final int  ICO_MAGIC_NUMBER    = 0x00000100;
+    static
+    {
+        _root = new ByteTrie<FileType>();
+        _root.setDefaultValue(FileType.Unknown);
+
+        // https://en.wikipedia.org/wiki/List_of_file_signatures
+
+        _root.addPath(FileType.Jpeg, new byte[]{(byte)0xff, (byte)0xd8});
+        _root.addPath(FileType.Tiff, "II".getBytes(), new byte[]{0x2a, 0x00});
+        _root.addPath(FileType.Tiff, "MM".getBytes(), new byte[]{0x00, 0x2a});
+        _root.addPath(FileType.Psd, "8BPS".getBytes());
+        _root.addPath(FileType.Png, new byte[]{(byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52});
+        _root.addPath(FileType.Bmp, "BM".getBytes()); // TODO technically there are other very rare magic numbers for OS/2 BMP files...
+        _root.addPath(FileType.Gif, "GIF87a".getBytes());
+        _root.addPath(FileType.Gif, "GIF89a".getBytes());
+        _root.addPath(FileType.Ico, new byte[]{0x00, 0x00, 0x01, 0x00});
+
+    }
 
     private FileTypeDetector() throws Exception
     {
@@ -60,43 +70,19 @@ public class FileTypeDetector
     @NotNull
     public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
     {
-        byte[] bytes = new byte[8];
+        int maxByteCount = _root.getMaxDepth();
 
-        inputStream.mark(8);
+        inputStream.mark(maxByteCount);
 
+        byte[] bytes = new byte[maxByteCount];
         int bytesRead = inputStream.read(bytes);
+
+        if (bytesRead == -1)
+            throw new IOException("Stream ended before file's magic number could be determined.");
 
         inputStream.reset();
 
-        if (bytesRead != 8)
-            throw new IOException("Stream ended before file's magic number could be determined.");
-
-        int  two   =              (bytes[0] & 0xFF) << 8 | (bytes[1] & 0xFF);
-        int  four  = two  << 16 | (bytes[2] & 0xFF) << 8 | (bytes[3] & 0xFF);
-        long six   = four << 16 | (bytes[4] & 0xFF) << 8 | (bytes[5] & 0xFF);
-        long eight = six  << 16 | (bytes[6] & 0xFF) << 8 | (bytes[7] & 0xFF);
-
-        if (two == JPEG_MAGIC_NUMBER)
-            return FileType.Jpeg;
-
-        if (two == INTEL_TIFF_MAGIC_NUMBER || two == MOTOROLA_TIFF_MAGIC_NUMBER)
-            return FileType.Tiff;
-
-        if (two == BMP_MAGIC_NUMBER)
-            return FileType.Bmp;
-
-        if (four == PSD_MAGIC_NUMBER)
-            return FileType.Psd;
-
-        if (eight == PNG_MAGIC_NUMBER)
-            return FileType.Png;
-
-        if (six == GIF87a_MAGIC_NUMBER || six == GIF89a_MAGIC_NUMBER)
-            return FileType.Gif;
-
-        if (four == ICO_MAGIC_NUMBER)
-            return FileType.Ico;
-
-        return FileType.Unknown;
+        //noinspection ConstantConditions
+        return _root.find(bytes);
     }
 }
