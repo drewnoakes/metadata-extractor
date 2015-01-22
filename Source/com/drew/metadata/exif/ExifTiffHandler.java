@@ -23,10 +23,12 @@ package com.drew.metadata.exif;
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.RandomAccessReader;
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.makernotes.*;
+import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 
 import java.io.IOException;
@@ -101,9 +103,20 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                     final int tagId,
                                     final int byteCount) throws IOException
     {
-        // In Exif, we only want custom processing for the Makernote tag
+        // Custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
             return processMakernote(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader, byteCount);
+        }
+
+        // Custom processing for embedded IPTC data
+        if (tagId == ExifSubIFDDirectory.TAG_IPTC_NAA && _currentDirectory instanceof ExifIFD0Directory) {
+            // NOTE Adobe sets type 4 for IPTC instead of 7
+            if (reader.getInt8(tagOffset) == 0x1c) {
+                final byte[] iptcBytes = reader.getBytes(tagOffset, byteCount);
+                new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), _metadata, iptcBytes.length);
+                return true;
+            }
+            return false;
         }
 
         return false;
