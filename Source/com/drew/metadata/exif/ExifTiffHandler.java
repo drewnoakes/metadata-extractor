@@ -84,6 +84,11 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             pushDirectory(ExifThumbnailDirectory.class);
             return true;
         }
+
+        // The Canon EOS 7D (CR2) has three chained/following thumbnail IFDs
+        if (_currentDirectory instanceof ExifThumbnailDirectory)
+            return true;
+
         // This should not happen, as Exif doesn't use follower IFDs apart from that above.
         // NOTE have seen the CanonMakernoteDirectory IFD have a follower pointer, but it points to invalid data.
         return false;
