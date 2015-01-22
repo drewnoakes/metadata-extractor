@@ -141,14 +141,16 @@ public class IptcReader implements JpegSegmentMetadataReader
 
     private void processTag(@NotNull SequentialReader reader, @NotNull Directory directory, int directoryType, int tagType, int tagByteCount) throws IOException
     {
+        int tagIdentifier = tagType | (directoryType << 8);
+
         // Some images have been seen that specify a zero byte tag, which cannot be of much use.
         // We elect here to completely ignore the tag. The IPTC specification doesn't mention
         // anything about the interpretation of this situation.
         // https://raw.githubusercontent.com/wiki/drewnoakes/metadata-extractor/docs/IPTC-IIMV4.2.pdf
-        if (tagByteCount == 0)
+        if (tagByteCount == 0) {
+            directory.setString(tagIdentifier, "");
             return;
-
-        int tagIdentifier = tagType | (directoryType << 8);
+        }
 
         String string = null;
 
