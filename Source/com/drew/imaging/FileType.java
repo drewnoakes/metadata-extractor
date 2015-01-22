@@ -44,6 +44,8 @@ public enum FileType
     Nef,
     /** Olympus camera raw. */
     Orf,
+    /** FujiFilm camera raw. */
+    Raf,
     /** Panasonic camera raw. */
     Rw2
 }
