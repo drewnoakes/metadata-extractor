@@ -74,6 +74,8 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     {
         try {
             byte[] bytes = _directory.getByteArray(tagType);
+            if (bytes == null)
+                return _directory.getString(tagType);
             RandomAccessReader reader = new ByteArrayReader(bytes);
             int iccTagType = reader.getInt32(0);
             switch (iccTagType) {

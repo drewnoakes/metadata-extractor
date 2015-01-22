@@ -80,6 +80,8 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     {
         try {
             byte[] b = _directory.getByteArray(PhotoshopDirectory.TAG_JPEG_QUALITY);
+            if (b == null)
+                return _directory.getString(PhotoshopDirectory.TAG_JPEG_QUALITY);
             RandomAccessReader reader = new ByteArrayReader(b);
             int q = reader.getUInt16(0); // & 0xFFFF;
             int f = reader.getUInt16(2); // & 0xFFFF;
