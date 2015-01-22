@@ -49,7 +49,7 @@ public interface TiffHandler
 
     void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset);
 
-    boolean customProcessTag(int makernoteOffset,
+    boolean customProcessTag(int tagOffset,
                              @NotNull Set<Integer> processedIfdOffsets,
                              int tiffHeaderOffset,
                              @NotNull RandomAccessReader reader,

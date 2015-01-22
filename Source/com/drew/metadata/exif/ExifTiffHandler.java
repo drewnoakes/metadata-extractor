@@ -89,7 +89,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return false;
     }
 
-    public boolean customProcessTag(final int makernoteOffset,
+    public boolean customProcessTag(final int tagOffset,
                                     final @NotNull Set<Integer> processedIfdOffsets,
                                     final int tiffHeaderOffset,
                                     final @NotNull RandomAccessReader reader,
@@ -98,7 +98,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     {
         // In Exif, we only want custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
-            return processMakernote(makernoteOffset, processedIfdOffsets, tiffHeaderOffset, reader, byteCount);
+            return processMakernote(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader, byteCount);
         }
 
         return false;
