@@ -95,7 +95,6 @@ public class ImageMetadataReader
 
         if (fileType == FileType.Tiff ||
             fileType == FileType.Arw ||
-            fileType == FileType.Crw ||
             fileType == FileType.Cr2 ||
             fileType == FileType.Nef ||
             fileType == FileType.Orf ||
