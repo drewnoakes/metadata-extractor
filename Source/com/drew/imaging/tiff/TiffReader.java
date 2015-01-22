@@ -135,6 +135,7 @@ public class TiffReader
             //
             // Handle each tag in this directory
             //
+            int invalidTiffFormatCodeCount = 0;
             for (int tagNumber = 0; tagNumber < dirTagCount; tagNumber++) {
                 final int tagOffset = calculateTagOffset(ifdOffset, tagNumber);
 
@@ -149,7 +150,12 @@ public class TiffReader
                     // This error suggests that we are processing at an incorrect index and will generate
                     // rubbish until we go out of bounds (which may be a while).  Exit now.
                     handler.error("Invalid TIFF tag format code: " + formatCode);
-                    return;
+                    // TODO specify threshold as a parameter, or provide some other external control over this behaviour
+                    if (++invalidTiffFormatCodeCount > 5) {
+                        handler.error("Stopping processing as too many errors seen in TIFF IFD");
+                        return;
+                    }
+                    continue;
                 }
 
                 // 4 bytes dictate the number of components in this tag's data
