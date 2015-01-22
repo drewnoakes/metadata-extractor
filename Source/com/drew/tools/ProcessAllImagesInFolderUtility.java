@@ -214,57 +214,85 @@ public class ProcessAllImagesInFolderUtility
             super.onExtracted(file, metadata);
 
             try {
-                writeOutputFile(file, metadata);
+                PrintWriter writer = null;
+                try
+                {
+                    writer = openWriter(file);
+
+                    // Write any errors
+                    if (metadata.hasErrors()) {
+                        for (Directory directory : metadata.getDirectories()) {
+                            if (!directory.hasErrors())
+                                continue;
+                            for (String error : directory.getErrors()) {
+                                writer.format("[ERROR: %s] %s\n", directory.getName(), error);
+                            }
+                        }
+                        writer.write("\n");
+                    }
+
+                    // Iterate through all values
+                    for (Directory directory : metadata.getDirectories()) {
+                        String directoryName = directory.getName();
+                        for (Tag tag : directory.getTags()) {
+                            String tagName = tag.getTagName();
+                            String description = tag.getDescription();
+                            writer.format("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description);
+                        }
+                        if (directory.getTagCount() != 0) {
+                            writer.write('\n');
+                        }
+                    }
+                } finally {
+                    closeWriter(writer);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        private static void writeOutputFile(File file, Metadata metadata) throws IOException
+        @Override
+        public void onException(@NotNull File file, @NotNull Throwable throwable)
         {
-            FileWriter writer = null;
-            try
-            {
-                // Create the output directory if it doesn't exist
-                File metadataDir = new File(String.format("%s/metadata", file.getParent()));
-                if (!metadataDir.exists())
-                    metadataDir.mkdir();
+            super.onException(file, throwable);
 
-                String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName().toLowerCase());
-                writer = new FileWriter(outputPath, false);
-                writer.write("FILE: " + file.getName() + "\n");
-                writer.write("\n");
+            try {
+                PrintWriter writer = null;
+                try {
+                    writer = openWriter(file);
+                    throwable.printStackTrace(writer);
+                    writer.write('\n');
+                } finally {
+                    closeWriter(writer);
+                }
+            } catch (IOException e) {
+                System.err.printf("IO exception writing metadata file: %s%n", e.getMessage());
+            }
+        }
 
-                if (metadata.hasErrors()) {
-                    for (Directory directory : metadata.getDirectories()) {
-                        if (!directory.hasErrors())
-                            continue;
-                        for (String error : directory.getErrors()) {
-                            writer.write(String.format("[ERROR: %s] %s\n", directory.getName(), error));
-                        }
-                    }
-                    writer.write("\n");
-                }
+        @NotNull
+        private static PrintWriter openWriter(@NotNull File file) throws IOException
+        {
+            // Create the output directory if it doesn't exist
+            File metadataDir = new File(String.format("%s/metadata", file.getParent()));
+            if (!metadataDir.exists())
+                metadataDir.mkdir();
 
-                // Iterate through all values
-                for (Directory directory : metadata.getDirectories()) {
-                    String directoryName = directory.getName();
-                    for (Tag tag : directory.getTags()) {
-                        String tagName = tag.getTagName();
-                        String description = tag.getDescription();
-                        writer.write(String.format("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description));
-                    }
-                    if (directory.getTagCount() != 0) {
-                        writer.write("\n");
-                    }
-                }
-            } finally {
-                if (writer != null) {
-                    writer.write("Generated using metadata-extractor\n");
-                    writer.write("https://drewnoakes.com/code/exif/\n");
-                    writer.flush();
-                    writer.close();
-                }
+            String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName().toLowerCase());
+            FileWriter writer = new FileWriter(outputPath, false);
+            writer.write("FILE: " + file.getName() + "\n");
+            writer.write('\n');
+
+            return new PrintWriter(writer);
+        }
+
+        private static void closeWriter(@Nullable Writer writer) throws IOException
+        {
+            if (writer != null) {
+                writer.write("Generated using metadata-extractor\n");
+                writer.write("https://drewnoakes.com/code/exif/\n");
+                writer.flush();
+                writer.close();
             }
         }
     }
