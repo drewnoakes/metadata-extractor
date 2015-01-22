@@ -24,7 +24,7 @@ import com.drew.lang.RandomAccessFileReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.exif.ExifTiffHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,18 +35,20 @@ import java.io.RandomAccessFile;
  * Obtains all available metadata from TIFF formatted files.  Note that TIFF files include many digital camera RAW
  * formats, including Canon (CRW, CR2), Nikon (NEF), Olympus (ORF) and Panasonic (RW2).
  *
- * @author Darren Salomons, Drew Noakes https://drewnoakes.com
+ * @author Darren Salomons
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class TiffMetadataReader
 {
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws IOException
+    public static Metadata readMetadata(@NotNull File file) throws IOException, TiffProcessingException
     {
         Metadata metadata = new Metadata();
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
         try {
-            new ExifReader().extractTiff(new RandomAccessFileReader(randomAccessFile), metadata);
+            ExifTiffHandler handler = new ExifTiffHandler(metadata, false);
+            new TiffReader().processTiff(new RandomAccessFileReader(randomAccessFile), handler, 0);
         } finally {
             randomAccessFile.close();
         }
@@ -55,14 +57,15 @@ public class TiffMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException, TiffProcessingException
     {
         // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
-        // InputStream does not support seeking backwards, and so is not a viable option for TIFF processing.
-        // We use RandomAccessStreamReader, which buffers data from the stream as we seek forward.
+        // InputStream does not support seeking backwards, so we wrap it with RandomAccessStreamReader, which
+        // buffers data from the stream as we seek forward.
 
         Metadata metadata = new Metadata();
-        new ExifReader().extractTiff(new RandomAccessStreamReader(inputStream), metadata);
+        ExifTiffHandler handler = new ExifTiffHandler(metadata, false);
+        new TiffReader().processTiff(new RandomAccessStreamReader(inputStream), handler, 0);
         return metadata;
     }
 }
