@@ -131,7 +131,7 @@ public class ProcessAllImagesInFolderUtility
     abstract static class FileHandlerBase implements FileHandler
     {
         private final Set<String> _supportedExtensions = new HashSet<String>(
-            Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff", "png", "gif", "bmp"));
+            Arrays.asList("jpg", "jpeg", "nef", "crw", "cr2", "orf", "tif", "tiff", "png", "gif", "bmp", "arw"));
 
         private int _processedFileCount = 0;
         private int _exceptionCount = 0;
