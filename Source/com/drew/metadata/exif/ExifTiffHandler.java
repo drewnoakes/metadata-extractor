@@ -105,7 +105,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     {
         // Custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
-            return processMakernote(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader, byteCount);
+            return processMakernote(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader);
         }
 
         // Custom processing for embedded IPTC data
@@ -145,8 +145,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     private boolean processMakernote(final int makernoteOffset,
                                      final @NotNull Set<Integer> processedIfdOffsets,
                                      final int tiffHeaderOffset,
-                                     final @NotNull RandomAccessReader reader,
-                                     final int byteCount) throws IOException
+                                     final @NotNull RandomAccessReader reader) throws IOException
     {
         // Determine the camera model and makernote format.
         Directory ifd0Directory = _metadata.getDirectory(ExifIFD0Directory.class);
