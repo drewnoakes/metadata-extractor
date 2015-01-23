@@ -76,7 +76,7 @@ public class ProcessAllImagesInFolderUtility
         Collections.sort(directories);
 
         for (String directory : directories) {
-            processDirectory(new File(directory), handler);
+            processDirectory(new File(directory), handler, "");
         }
 
         handler.onCompleted();
@@ -84,7 +84,7 @@ public class ProcessAllImagesInFolderUtility
         System.out.println(String.format("Completed in %d ms", (System.nanoTime() - start) / 1000000));
     }
 
-    private static void processDirectory(@NotNull File path, @NotNull FileHandler handler)
+    private static void processDirectory(@NotNull File path, @NotNull FileHandler handler, @NotNull String relativePath)
     {
         String[] pathItems = path.list();
 
@@ -99,7 +99,7 @@ public class ProcessAllImagesInFolderUtility
             File file = new File(path, pathItem);
 
             if (file.isDirectory()) {
-                processDirectory(file, handler);
+                processDirectory(file, handler, relativePath.length() == 0 ? pathItem : relativePath + "/" + pathItem);
             } else if (handler.shouldProcess(file)) {
 
                 handler.onProcessingStarting(file);
@@ -113,7 +113,7 @@ public class ProcessAllImagesInFolderUtility
                     continue;
                 }
 
-                handler.onExtracted(file, metadata);
+                handler.onExtracted(file, metadata, relativePath);
             }
         }
     }
@@ -122,7 +122,7 @@ public class ProcessAllImagesInFolderUtility
     {
         boolean shouldProcess(@NotNull File file);
         void onException(@NotNull File file, @NotNull Throwable throwable);
-        void onExtracted(@NotNull File file, @NotNull Metadata metadata);
+        void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath);
         void onCompleted();
 
         void onProcessingStarting(@NotNull File file);
@@ -165,7 +165,7 @@ public class ProcessAllImagesInFolderUtility
             }
         }
 
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
         {
             if (metadata.hasErrors()) {
                 System.err.println(file);
@@ -209,9 +209,9 @@ public class ProcessAllImagesInFolderUtility
     static class TextFileOutputHandler extends FileHandlerBase
     {
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
         {
-            super.onExtracted(file, metadata);
+            super.onExtracted(file, metadata, relativePath);
 
             try {
                 PrintWriter writer = null;
@@ -309,16 +309,18 @@ public class ProcessAllImagesInFolderUtility
         {
             final File file;
             final Metadata metadata;
+            @NotNull final String relativePath;
             @Nullable private String manufacturer;
             @Nullable private String model;
             @Nullable private String exifVersion;
             @Nullable private String thumbnail;
             @Nullable private String makernote;
 
-            Row(@NotNull File file, @NotNull Metadata metadata)
+            Row(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
             {
                 this.file = file;
                 this.metadata = metadata;
+                this.relativePath = relativePath;
 
                 ExifIFD0Directory ifd0Dir = metadata.getDirectory(ExifIFD0Directory.class);
                 ExifSubIFDDirectory subIfdDir = metadata.getDirectory(ExifSubIFDDirectory.class);
@@ -356,9 +358,9 @@ public class ProcessAllImagesInFolderUtility
         }
 
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
         {
-            super.onExtracted(file, metadata);
+            super.onExtracted(file, metadata, relativePath);
 
             String extension = getExtension(file);
 
@@ -376,7 +378,7 @@ public class ProcessAllImagesInFolderUtility
                 list = new ArrayList<Row>();
                 _rowListByExtension.put(extension, list);
             }
-            list.add(new Row(file, metadata));
+            list.add(new Row(file, metadata, relativePath));
         }
 
         @Override
@@ -427,8 +429,9 @@ public class ProcessAllImagesInFolderUtility
                 });
 
                 for (Row row : rows) {
-                    writer.write(String.format("[%s](http://sample-images.metadata-extractor.googlecode.com/git/%s)|%s|%s|%d|%s|%s|%s|[metadata](http://sample-images.metadata-extractor.googlecode.com/git/metadata/%s.txt)%n",
+                    writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/metadata/%s.txt)%n",
                             row.file.getName(),
+                            row.relativePath,
                             StringUtil.urlEncode(row.file.getName()),
                             row.manufacturer == null ? "" : row.manufacturer,
                             row.model == null ? "" : row.model,
@@ -436,6 +439,7 @@ public class ProcessAllImagesInFolderUtility
                             row.exifVersion == null ? "" : row.exifVersion,
                             row.makernote == null ? "" : row.makernote,
                             row.thumbnail == null ? "" : row.thumbnail,
+                            row.relativePath,
                             StringUtil.urlEncode(row.file.getName()).toLowerCase()
                     ));
                 }
@@ -453,9 +457,9 @@ public class ProcessAllImagesInFolderUtility
     static class BasicFileHandler extends FileHandlerBase
     {
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata)
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
         {
-            super.onExtracted(file, metadata);
+            super.onExtracted(file, metadata, relativePath);
 
             // Iterate through all values, calling toString to flush out any formatting exceptions
             for (Directory directory : metadata.getDirectories()) {
