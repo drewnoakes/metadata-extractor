@@ -34,24 +34,28 @@ import static org.junit.Assert.*;
  */
 public class MetadataTest
 {
-    @Test public void testGetDirectoryWhenNotExists()
+    @Test
+    public void testGetDirectoryWhenNotExists()
     {
         assertNull(new Metadata().getDirectory(ExifSubIFDDirectory.class));
     }
 
-    @Test public void testGetOrCreateDirectoryWhenNotExists()
+    @Test
+    public void testGetOrCreateDirectoryWhenNotExists()
     {
         assertNotNull(new Metadata().getOrCreateDirectory(ExifSubIFDDirectory.class));
     }
 
-    @Test public void testGetDirectoryReturnsSameInstance()
+    @Test
+    public void testGetDirectoryReturnsSameInstance()
     {
         Metadata metadata = new Metadata();
         Directory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
         assertSame(directory, metadata.getDirectory(ExifSubIFDDirectory.class));
     }
 
-    @Test public void testGetOrCreateDirectoryReturnsSameInstance()
+    @Test
+    public void testGetOrCreateDirectoryReturnsSameInstance()
     {
         Metadata metadata = new Metadata();
         Directory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
