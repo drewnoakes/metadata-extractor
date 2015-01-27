@@ -36,7 +36,6 @@
     <property name="sample-src"           value="Samples"/>
     <property name="javadoc"              value="../javadoc/${library-version}"/>
     <property name="sample-images"        value="../sample-images/"/>
-    <property name="sample-images-output" value="../sample-images/metadata"/>
     <property name="lib"                  value="Libraries"/>
     <property name="verbose"              value="true"/>
     <property name="debug"                value="off"/>
@@ -94,7 +93,6 @@
 
     <target name="process-sample-files" depends="compile" description="extract metadata from all sample images, and update output text files">
         <delete verbose="${verbose}" dir="${sample-images-output}"/>
-        <mkdir dir="${sample-images-output}"/>
         <java classname="com.drew.tools.ProcessAllImagesInFolderUtility"
               classpath="${output};${lib-xmp}">
             <arg value="${sample-images}"/>
