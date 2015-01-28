@@ -198,7 +198,7 @@ public class ImageMetadataReader
 
             if (markdownFormat) {
                 String fileName = file.getName();
-                String urlName = StringUtil.urlEncode(fileName);
+                String urlName = StringUtil.urlEncode(filePath);
                 ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
                 String make = exifIFD0Directory == null ? "" : exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE);
                 String model = exifIFD0Directory == null ? "" : exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL);
