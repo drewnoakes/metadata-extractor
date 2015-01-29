@@ -78,6 +78,9 @@ public class ExifIFD0Directory extends Directory
 
     public static final int TAG_PRINT_IM = 0xC4A5;
 
+    public static final int TAG_PANASONIC_TITLE = 0xC6D2;
+    public static final int TAG_PANASONIC_TITLE_2 = 0xC6D3;
+
     public static final int TAG_PADDING = 0xEA1C;
 
     @NotNull
@@ -116,6 +119,9 @@ public class ExifIFD0Directory extends Directory
         _tagNameMap.put(TAG_WIN_TITLE, "Windows XP Title");
 
         _tagNameMap.put(TAG_PRINT_IM, "Print IM");
+
+        _tagNameMap.put(TAG_PANASONIC_TITLE, "Panasonic Title");
+        _tagNameMap.put(TAG_PANASONIC_TITLE_2, "Panasonic Title (2)");
 
         _tagNameMap.put(TAG_PADDING, "Padding");
     }
