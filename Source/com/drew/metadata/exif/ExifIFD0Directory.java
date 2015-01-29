@@ -50,6 +50,7 @@ public class ExifIFD0Directory extends Directory
     public static final int TAG_YCBCR_POSITIONING = 0x0213;
     public static final int TAG_REFERENCE_BLACK_WHITE = 0x0214;
 
+    public static final int TAG_RATING = 0x4746;
 
     /** This tag is a pointer to the Exif SubIFD. */
     public static final int TAG_EXIF_SUB_IFD_OFFSET = 0x8769;
@@ -93,6 +94,8 @@ public class ExifIFD0Directory extends Directory
         _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
         _tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
         _tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
+
+        _tagNameMap.put(TAG_RATING, "Rating");
 
         _tagNameMap.put(TAG_COPYRIGHT, "Copyright");
 
