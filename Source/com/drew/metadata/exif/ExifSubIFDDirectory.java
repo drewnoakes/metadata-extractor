@@ -511,6 +511,8 @@ public class ExifSubIFDDirectory extends Directory
     /** Rational64u. */
     public static final int TAG_GAMMA = 0xA500;
 
+    public static final int TAG_PADDING = 0xEA1C;
+
     public static final int TAG_LENS = 0xFDEA;
 
     @NotNull
@@ -637,6 +639,8 @@ public class ExifSubIFDDirectory extends Directory
         _tagNameMap.put(TAG_LENS_MODEL, "Lens Model");
         _tagNameMap.put(TAG_LENS_SERIAL_NUMBER, "Lens Serial Number");
         _tagNameMap.put(TAG_GAMMA, "Gamma");
+
+        _tagNameMap.put(TAG_PADDING, "Padding");
 
         _tagNameMap.put(TAG_MIN_SAMPLE_VALUE, "Minimum sample value");
         _tagNameMap.put(TAG_MAX_SAMPLE_VALUE, "Maximum sample value");
