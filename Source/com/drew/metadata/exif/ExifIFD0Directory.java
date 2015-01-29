@@ -74,6 +74,8 @@ public class ExifIFD0Directory extends Directory
     /** The image subject, as used by Windows XP. */
     public static final int TAG_WIN_SUBJECT = 0x9C9F;
 
+    public static final int TAG_PRINT_IM = 0xC4A5;
+
     public static final int TAG_PADDING = 0xEA1C;
 
     @NotNull
@@ -108,6 +110,8 @@ public class ExifIFD0Directory extends Directory
         _tagNameMap.put(TAG_WIN_KEYWORDS, "Windows XP Keywords");
         _tagNameMap.put(TAG_WIN_SUBJECT, "Windows XP Subject");
         _tagNameMap.put(TAG_WIN_TITLE, "Windows XP Title");
+
+        _tagNameMap.put(TAG_PRINT_IM, "Print IM");
 
         _tagNameMap.put(TAG_PADDING, "Padding");
     }
