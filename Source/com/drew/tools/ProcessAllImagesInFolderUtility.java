@@ -60,6 +60,9 @@ public class ProcessAllImagesInFolderUtility
             } else if (arg.equalsIgnoreCase("-markdown")) {
                 // If "-markdown" is specified, write a summary table in markdown format to standard out
                 handler = new MarkdownTableOutputHandler();
+            } else if (arg.equalsIgnoreCase("-unknown")) {
+                // If "-unknown" is specified, write CSV tallying unknown tag counts
+                handler = new UnknownTagHandler();
             } else {
                 // Treat this argument as a directory
                 directories.add(arg);
@@ -450,6 +453,66 @@ public class ProcessAllImagesInFolderUtility
                 writer.write('\n');
             }
             writer.flush();
+        }
+    }
+
+    /**
+     * Keeps track of unknown tags.
+     */
+    static class UnknownTagHandler extends FileHandlerBase
+    {
+        private HashMap<String, HashMap<Integer, Integer>> _occurrenceCountByTagByDirectory = new HashMap<String, HashMap<Integer, Integer>>();
+
+        @Override
+        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
+        {
+            super.onExtracted(file, metadata, relativePath);
+
+            for (Directory directory : metadata.getDirectories()) {
+                for (Tag tag : directory.getTags()) {
+
+                    // Only interested in unknown tags (those without names)
+                    if (tag.hasTagName())
+                        continue;
+
+                    HashMap<Integer, Integer> occurrenceCountByTag = _occurrenceCountByTagByDirectory.get(directory.getName());
+                    if (occurrenceCountByTag == null) {
+                        occurrenceCountByTag = new HashMap<Integer, Integer>();
+                        _occurrenceCountByTagByDirectory.put(directory.getName(), occurrenceCountByTag);
+                    }
+
+                    Integer count = occurrenceCountByTag.get(tag.getTagType());
+                    if (count == null) {
+                        count = 0;
+                        occurrenceCountByTag.put(tag.getTagType(), 0);
+                    }
+
+                    occurrenceCountByTag.put(tag.getTagType(), count + 1);
+                }
+            }
+        }
+
+        @Override
+        public void onCompleted()
+        {
+            super.onCompleted();
+
+            for (Map.Entry<String, HashMap<Integer, Integer>> pair1 : _occurrenceCountByTagByDirectory.entrySet()) {
+                String directoryName = pair1.getKey();
+                List<Map.Entry<Integer, Integer>> counts = new ArrayList<Map.Entry<Integer, Integer>>(pair1.getValue().entrySet());
+                Collections.sort(counts, new Comparator<Map.Entry<Integer, Integer>>()
+                {
+                    public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2)
+                    {
+                        return o2.getValue().compareTo(o1.getValue());
+                    }
+                });
+                for (Map.Entry<Integer, Integer> pair2 : counts) {
+                    Integer tagType = pair2.getKey();
+                    Integer count = pair2.getValue();
+                    System.out.format("%s, 0x%05X, %d\n", directoryName, tagType, count);
+                }
+            }
         }
     }
 
