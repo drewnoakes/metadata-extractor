@@ -33,6 +33,8 @@ import java.util.HashMap;
  */
 public class ExifIFD0Directory extends Directory
 {
+    public static final int TAG_IMAGE_WIDTH = 0x0100;
+    public static final int TAG_IMAGE_HEIGHT = 0x0101;
     public static final int TAG_IMAGE_DESCRIPTION = 0x010E;
     public static final int TAG_MAKE = 0x010F;
     public static final int TAG_MODEL = 0x0110;
@@ -83,6 +85,8 @@ public class ExifIFD0Directory extends Directory
 
     static
     {
+        _tagNameMap.put(TAG_IMAGE_WIDTH, "Image Width");
+        _tagNameMap.put(TAG_IMAGE_HEIGHT, "Image Height");
         _tagNameMap.put(TAG_IMAGE_DESCRIPTION, "Image Description");
         _tagNameMap.put(TAG_MAKE, "Make");
         _tagNameMap.put(TAG_MODEL, "Model");
