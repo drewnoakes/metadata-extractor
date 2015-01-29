@@ -109,7 +109,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     {
         // time in hour, min, sec
         int[] timeComponents = _directory.getIntArray(TAG_TIME_STAMP);
-        return timeComponents == null ? null : String.format("%d:%d:%d UTC", timeComponents[0], timeComponents[1], timeComponents[2]);
+        return timeComponents == null ? null : String.format("%02d:%02d:%02d UTC", timeComponents[0], timeComponents[1], timeComponents[2]);
     }
 
     @Nullable
