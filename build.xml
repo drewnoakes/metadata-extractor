@@ -26,7 +26,7 @@
 
     <description>metadata-extractor build file</description>
 
-    <property name="library-version"      value="2.7.0"/>
+    <property name="library-version"      value="2.7.2"/>
     <property name="java-version"         value="1.5"/>
     <property name="dist"                 location="Releases"/>
     <property name="src"                  value="Source"/>
