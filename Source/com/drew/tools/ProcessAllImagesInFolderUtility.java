@@ -510,7 +510,7 @@ public class ProcessAllImagesInFolderUtility
                 for (Map.Entry<Integer, Integer> pair2 : counts) {
                     Integer tagType = pair2.getKey();
                     Integer count = pair2.getValue();
-                    System.out.format("%s, 0x%05X, %d\n", directoryName, tagType, count);
+                    System.out.format("%s, 0x%04X, %d\n", directoryName, tagType, count);
                 }
             }
         }
