@@ -30,24 +30,14 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class ExifInteropDirectory extends Directory
+public class ExifInteropDirectory extends ExifDirectoryBase
 {
-    public static final int TAG_INTEROP_INDEX = 0x0001;
-    public static final int TAG_INTEROP_VERSION = 0x0002;
-    public static final int TAG_RELATED_IMAGE_FILE_FORMAT = 0x1000;
-    public static final int TAG_RELATED_IMAGE_WIDTH = 0x1001;
-    public static final int TAG_RELATED_IMAGE_LENGTH = 0x1002;
-
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TAG_INTEROP_INDEX, "Interoperability Index");
-        _tagNameMap.put(TAG_INTEROP_VERSION, "Interoperability Version");
-        _tagNameMap.put(TAG_RELATED_IMAGE_FILE_FORMAT, "Related Image File Format");
-        _tagNameMap.put(TAG_RELATED_IMAGE_WIDTH, "Related Image Width");
-        _tagNameMap.put(TAG_RELATED_IMAGE_LENGTH, "Related Image Length");
+        addExifTagNames(_tagNameMap);
     }
 
     public ExifInteropDirectory()

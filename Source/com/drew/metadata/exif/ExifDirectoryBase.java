@@ -32,6 +32,9 @@ import java.util.HashMap;
  */
 public abstract class ExifDirectoryBase extends Directory
 {
+    public static final int TAG_INTEROP_INDEX = 0x0001;
+    public static final int TAG_INTEROP_VERSION = 0x0002;
+
     /**
      * The new subfile type tag.
      * 0 = Full-resolution Image
@@ -571,6 +574,8 @@ public abstract class ExifDirectoryBase extends Directory
 
     protected static void addExifTagNames(HashMap<Integer, String> map)
     {
+        map.put(TAG_INTEROP_INDEX, "Interoperability Index");
+        map.put(TAG_INTEROP_VERSION, "Interoperability Version");
         map.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
         map.put(TAG_SUBFILE_TYPE, "Subfile Type");
         map.put(TAG_IMAGE_WIDTH, "Image Width");

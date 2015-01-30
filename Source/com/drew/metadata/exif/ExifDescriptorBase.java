@@ -69,6 +69,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         // TODO order case blocks and corresponding methods in the same order as the TAG_* values are defined
 
         switch (tagType) {
+            case TAG_INTEROP_INDEX:
+                return getInteropIndexDescription();
+            case TAG_INTEROP_VERSION:
+                return getInteropVersionDescription();
             case TAG_ORIENTATION:
                 return getOrientationDescription();
             case TAG_RESOLUTION_UNIT:
@@ -197,9 +201,30 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getSensitivityTypeRangeDescription();
             case TAG_COMPRESSION:
                 return getCompressionDescription();
+            case TAG_JPEG_PROC:
+                return getJpegProcDescription();
             default:
                 return super.getDescription(tagType);
         }
+    }
+
+    @Nullable
+    public String getInteropVersionDescription()
+    {
+        return getVersionBytesDescription(TAG_INTEROP_VERSION, 2);
+    }
+
+    @Nullable
+    public String getInteropIndexDescription()
+    {
+        String value = _directory.getString(TAG_INTEROP_INDEX);
+
+        if (value == null)
+            return null;
+
+        return "R98".equalsIgnoreCase(value.trim())
+            ? "Recommended Exif Interoperability Rules (ExifR98)"
+            : "Unknown (" + value + ")";
     }
 
     @Nullable
@@ -873,7 +898,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             case 6: return "Partial";
             case 255: return "(Other)";
             default:
-                return "";
+                return "Unknown (" + value + ")";
         }
     }
 
@@ -926,7 +951,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             case 65000: return "Kodak DCR Compressed";
             case 65535: return "Pentax PEF Compressed";
             default:
-                return "";
+                return "Unknown (" + value + ")";
         }
     }
 
@@ -1049,5 +1074,19 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             }
         }
         return componentConfig.toString();
+    }
+
+    @Nullable
+    public String getJpegProcDescription()
+    {
+        Integer value = _directory.getInteger(TAG_JPEG_PROC);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 1: return "Baseline";
+            case 14: return "Lossless";
+            default:
+                return "Unknown (" + value + ")";
+        }
     }
 }

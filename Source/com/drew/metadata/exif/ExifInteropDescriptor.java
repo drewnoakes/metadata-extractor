@@ -21,53 +21,16 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.TagDescriptor;
-
-import static com.drew.metadata.exif.ExifInteropDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifInteropDirectory}.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class ExifInteropDescriptor extends TagDescriptor<ExifInteropDirectory>
+public class ExifInteropDescriptor extends ExifDescriptorBase<ExifInteropDirectory>
 {
     public ExifInteropDescriptor(@NotNull ExifInteropDirectory directory)
     {
         super(directory);
-    }
-
-    @Override
-    @Nullable
-    public String getDescription(int tagType)
-    {
-        switch (tagType) {
-            case TAG_INTEROP_INDEX:
-                return getInteropIndexDescription();
-            case TAG_INTEROP_VERSION:
-                return getInteropVersionDescription();
-            default:
-                return super.getDescription(tagType);
-        }
-    }
-
-    @Nullable
-    public String getInteropVersionDescription()
-    {
-        return getVersionBytesDescription(TAG_INTEROP_VERSION, 2);
-    }
-
-    @Nullable
-    public String getInteropIndexDescription()
-    {
-        String value = _directory.getString(TAG_INTEROP_INDEX);
-
-        if (value == null)
-            return null;
-
-        return "R98".equalsIgnoreCase(value.trim())
-                ? "Recommended Exif Interoperability Rules (ExifR98)"
-                : "Unknown (" + value + ")";
     }
 }
