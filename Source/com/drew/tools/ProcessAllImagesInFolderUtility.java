@@ -341,8 +341,8 @@ public class ProcessAllImagesInFolderUtility
                     hasMakernoteData = subIfdDir.containsTag(ExifSubIFDDirectory.TAG_MAKERNOTE);
                 }
                 if (thumbDir != null) {
-                    Integer width = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH);
-                    Integer height = thumbDir.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT);
+                    Integer width = thumbDir.getInteger(ExifThumbnailDirectory.TAG_IMAGE_WIDTH);
+                    Integer height = thumbDir.getInteger(ExifThumbnailDirectory.TAG_IMAGE_HEIGHT);
                     thumbnail = width != null && height != null
                         ? String.format("Yes (%s x %s)", width, height)
                         : "Yes";

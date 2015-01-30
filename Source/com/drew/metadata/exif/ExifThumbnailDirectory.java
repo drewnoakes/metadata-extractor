@@ -23,7 +23,6 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 import com.drew.metadata.MetadataException;
 
 import java.io.FileOutputStream;
@@ -35,16 +34,16 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class ExifThumbnailDirectory extends Directory
+public class ExifThumbnailDirectory extends ExifDirectoryBase
 {
-    public static final int TAG_THUMBNAIL_IMAGE_WIDTH = 0x0100;
-    public static final int TAG_THUMBNAIL_IMAGE_HEIGHT = 0x0101;
-
     /**
-     * When image format is no compression, this value shows the number of bits
-     * per component for each pixel. Usually this value is '8,8,8'.
+     * The offset to thumbnail image bytes.
      */
-    public static final int TAG_BITS_PER_SAMPLE = 0x0102;
+    public static final int TAG_THUMBNAIL_OFFSET = 0x0201;
+    /**
+     * The size of the thumbnail image data in bytes.
+     */
+    public static final int TAG_THUMBNAIL_LENGTH = 0x0202;
 
     /**
      * Shows compression method for Thumbnail.
@@ -78,89 +77,16 @@ public class ExifThumbnailDirectory extends Directory
      */
     public static final int TAG_THUMBNAIL_COMPRESSION = 0x0103;
 
-    /**
-     * Shows the color space of the image data components.
-     * 0 = WhiteIsZero
-     * 1 = BlackIsZero
-     * 2 = RGB
-     * 3 = RGB Palette
-     * 4 = Transparency Mask
-     * 5 = CMYK
-     * 6 = YCbCr
-     * 8 = CIELab
-     * 9 = ICCLab
-     * 10 = ITULab
-     * 32803 = Color Filter Array
-     * 32844 = Pixar LogL
-     * 32845 = Pixar LogLuv
-     * 34892 = Linear Raw
-     */
-    public static final int TAG_PHOTOMETRIC_INTERPRETATION = 0x0106;
-
-    /**
-     * The position in the file of raster data.
-     */
-    public static final int TAG_STRIP_OFFSETS = 0x0111;
-    public static final int TAG_ORIENTATION = 0x0112;
-    /**
-     * Each pixel is composed of this many samples.
-     */
-    public static final int TAG_SAMPLES_PER_PIXEL = 0x0115;
-    /**
-     * The raster is codified by a single block of data holding this many rows.
-     */
-    public static final int TAG_ROWS_PER_STRIP = 0x116;
-    /**
-     * The size of the raster data in bytes.
-     */
-    public static final int TAG_STRIP_BYTE_COUNTS = 0x0117;
-    /**
-     * When image format is no compression YCbCr, this value shows byte aligns of
-     * YCbCr data. If value is '1', Y/Cb/Cr value is chunky format, contiguous for
-     * each subsampling pixel. If value is '2', Y/Cb/Cr value is separated and
-     * stored to Y plane/Cb plane/Cr plane format.
-     */
-    public static final int TAG_X_RESOLUTION = 0x011A;
-    public static final int TAG_Y_RESOLUTION = 0x011B;
-    public static final int TAG_PLANAR_CONFIGURATION = 0x011C;
-    public static final int TAG_RESOLUTION_UNIT = 0x0128;
-    /**
-     * The offset to thumbnail image bytes.
-     */
-    public static final int TAG_THUMBNAIL_OFFSET = 0x0201;
-    /**
-     * The size of the thumbnail image data in bytes.
-     */
-    public static final int TAG_THUMBNAIL_LENGTH = 0x0202;
-    public static final int TAG_YCBCR_COEFFICIENTS = 0x0211;
-    public static final int TAG_YCBCR_SUBSAMPLING = 0x0212;
-    public static final int TAG_YCBCR_POSITIONING = 0x0213;
-    public static final int TAG_REFERENCE_BLACK_WHITE = 0x0214;
-
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-    static {
-        _tagNameMap.put(TAG_THUMBNAIL_IMAGE_WIDTH, "Thumbnail Image Width");
-        _tagNameMap.put(TAG_THUMBNAIL_IMAGE_HEIGHT, "Thumbnail Image Height");
-        _tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
+    static
+    {
+        addExifTagNames(_tagNameMap);
+
         _tagNameMap.put(TAG_THUMBNAIL_COMPRESSION, "Thumbnail Compression");
-        _tagNameMap.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
-        _tagNameMap.put(TAG_STRIP_OFFSETS, "Strip Offsets");
-        _tagNameMap.put(TAG_ORIENTATION, "Orientation");
-        _tagNameMap.put(TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
-        _tagNameMap.put(TAG_ROWS_PER_STRIP, "Rows Per Strip");
-        _tagNameMap.put(TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
-        _tagNameMap.put(TAG_X_RESOLUTION, "X Resolution");
-        _tagNameMap.put(TAG_Y_RESOLUTION, "Y Resolution");
-        _tagNameMap.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
-        _tagNameMap.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
         _tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
         _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
-        _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
-        _tagNameMap.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
-        _tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
-        _tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
     }
 
     @Nullable

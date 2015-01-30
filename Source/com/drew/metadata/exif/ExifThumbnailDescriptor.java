@@ -81,10 +81,6 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
                 return getThumbnailOffsetDescription();
             case TAG_THUMBNAIL_LENGTH:
                 return getThumbnailLengthDescription();
-            case TAG_THUMBNAIL_IMAGE_WIDTH:
-                return getThumbnailImageWidthDescription();
-            case TAG_THUMBNAIL_IMAGE_HEIGHT:
-                return getThumbnailImageHeightDescription();
             case TAG_BITS_PER_SAMPLE:
                 return getBitsPerSampleDescription();
             case TAG_THUMBNAIL_COMPRESSION:
@@ -244,20 +240,6 @@ public class ExifThumbnailDescriptor extends TagDescriptor<ExifThumbnailDirector
     {
         String value = _directory.getString(TAG_BITS_PER_SAMPLE);
         return value == null ? null : value + " bits/component/pixel";
-    }
-
-    @Nullable
-    public String getThumbnailImageWidthDescription()
-    {
-        String value = _directory.getString(TAG_THUMBNAIL_IMAGE_WIDTH);
-        return value == null ? null : value + " pixels";
-    }
-
-    @Nullable
-    public String getThumbnailImageHeightDescription()
-    {
-        String value = _directory.getString(TAG_THUMBNAIL_IMAGE_HEIGHT);
-        return value == null ? null : value + " pixels";
     }
 
     @Nullable
