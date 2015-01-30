@@ -59,16 +59,13 @@ Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/Get
 
 # Feedback
 
-Have questions or ideas? Try the [mailing list](http://groups.google.com/group/metadata-extractor-dev) or open an issue report. GitHub's [issue tracker](https://github.com/drewnoakes/metadata-extractor/issues) accepts attachments, and sample images are often helpful/crucial in debugging problems.
+Have questions or ideas? Try the [mailing list](http://groups.google.com/group/metadata-extractor-dev) or [open an issue](https://github.com/drewnoakes/metadata-extractor/issues). GitHub's issue tracker accepts attachments, and sample images are often crucial in debugging problems.
 
 # Contribute
 
-If you want to get your hands dirty, clone this repository, enhance the library and let us know
-to pull from your clone. Review the issue list and ask around on the mailing list to avoid
-duplication of work.
+If you want to get your hands dirty, clone this repository, enhance the library and submit a pull request. Review the issue list and ask around on the mailing list to avoid duplication of work.
 
-An easier way to help is to contribute to the [sample image file library](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase)
-used for research and testing.
+An easier way to help is to contribute to the [sample image file library](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase) used for research and testing.
 
 # Credits
 
