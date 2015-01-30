@@ -57,14 +57,6 @@ Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/Get
 * [metadata-extractor-dev](https://groups.google.com/forum/#!forum/metadata-extractor-dev) for discussion about development and notifications of changes to issues and source code
 * [metadata-extractor-announce](https://groups.google.com/forum/#!forum/metadata-extractor-announce) for announcements of new releases
 
-# Credits
-
-This library is developed by [Drew Noakes](https://drewnoakes.com/code/exif/).
-
-Thanks are due to the many [users](https://github.com/drewnoakes/metadata-extractor/wiki/UsedBy) who sent in suggestions, bug reports,
-[sample images](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase) from their cameras as well as encouragement.
-Wherever possible, they have been credited in the source code and commit logs.
-
 # Feedback
 
 Have questions or ideas? Try the [mailing list](http://groups.google.com/group/metadata-extractor-dev) or open an issue report. GitHub's [issue tracker](https://github.com/drewnoakes/metadata-extractor/issues) accepts attachments, and sample images are often helpful/crucial in debugging problems.
@@ -77,6 +69,14 @@ duplication of work.
 
 An easier way to help is to contribute to the [sample image file library](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase)
 used for research and testing.
+
+# Credits
+
+This library is developed by [Drew Noakes](https://drewnoakes.com/code/exif/).
+
+Thanks are due to the many [users](https://github.com/drewnoakes/metadata-extractor/wiki/UsedBy) who sent in suggestions, bug reports,
+[sample images](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase) from their cameras as well as encouragement.
+Wherever possible, they have been credited in the source code and commit logs.
 
 # License
 
