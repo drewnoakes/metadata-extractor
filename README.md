@@ -54,11 +54,8 @@ Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/Get
 
 # Mailing Lists
 
-Three mailing lists exist:
-
-* [metadata-extractor-announce](http://groups.google.com/group/metadata-extractor-announce) for read-only announcements of new releases
-* [metadata-extractor-dev](http://groups.google.com/group/metadata-extractor-dev) for discussion about development and notifications of changes to issues and source code
-* [metadata-extractor-changes](http://groups.google.com/group/metadata-extractor-changes) for automated emails when code, issues or the wiki are changed
+* [metadata-extractor-dev](https://groups.google.com/forum/#!forum/metadata-extractor-dev) for discussion about development and notifications of changes to issues and source code
+* [metadata-extractor-announce](https://groups.google.com/forum/#!forum/metadata-extractor-announce) for announcements of new releases
 
 # Credits
 
@@ -70,17 +67,16 @@ Wherever possible, they have been credited in the source code and commit logs.
 
 # Feedback
 
-Have questions or ideas? Try the [mailing list](http://groups.google.com/group/metadata-extractor-dev).
-
-Found a bug or have a patch? Search the issue list and if it isn't already there, create it.
+Have questions or ideas? Try the [mailing list](http://groups.google.com/group/metadata-extractor-dev) or open an issue report. GitHub's [issue tracker](https://github.com/drewnoakes/metadata-extractor/issues) accepts attachments, and sample images are often helpful/crucial in debugging problems.
 
 # Contribute
 
-The easiest way to help is to contribute to the [sample image file library](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase)
-used for research and testing.
-
 If you want to get your hands dirty, clone this repository, enhance the library and let us know
-to pull from your clone. Ask around on the mailing list to avoid duplication of work.
+to pull from your clone. Review the issue list and ask around on the mailing list to avoid
+duplication of work.
+
+An easier way to help is to contribute to the [sample image file library](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase)
+used for research and testing.
 
 # License
 
