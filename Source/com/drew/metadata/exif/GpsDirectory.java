@@ -33,7 +33,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class GpsDirectory extends Directory
+public class GpsDirectory extends ExifDirectoryBase
 {
     /** GPS tag version GPSVersionID 0 0 BYTE 4 */
     public static final int TAG_VERSION_ID = 0x0000;
@@ -101,6 +101,8 @@ public class GpsDirectory extends Directory
 
     static
     {
+        addExifTagNames(_tagNameMap);
+
         _tagNameMap.put(TAG_VERSION_ID, "GPS Version ID");
         _tagNameMap.put(TAG_LATITUDE_REF, "GPS Latitude Ref");
         _tagNameMap.put(TAG_LATITUDE, "GPS Latitude");

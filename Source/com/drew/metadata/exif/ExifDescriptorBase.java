@@ -66,6 +66,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Override
     public String getDescription(int tagType)
     {
+        // TODO order case blocks and corresponding methods in the same order as the TAG_* values are defined
+
         switch (tagType) {
             case TAG_ORIENTATION:
                 return getOrientationDescription();
@@ -191,6 +193,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getSharpnessDescription();
             case TAG_SUBJECT_DISTANCE_RANGE:
                 return getSubjectDistanceRangeDescription();
+            case TAG_SENSITIVITY_TYPE:
+                return getSensitivityTypeRangeDescription();
+            case TAG_COMPRESSION:
+                return getCompressionDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -456,6 +462,21 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             "Macro",
             "Close view",
             "Distant view"
+        );
+    }
+
+    @Nullable
+    public String getSensitivityTypeRangeDescription()
+    {
+        return getIndexedDescription(TAG_SENSITIVITY_TYPE,
+            "Unknown",
+            "Standard Output Sensitivity",
+            "Recommended Exposure Index",
+            "ISO Speed",
+            "Standard Output Sensitivity and Recommended Exposure Index",
+            "Standard Output Sensitivity and ISO Speed",
+            "Recommended Exposure Index and ISO Speed",
+            "Standard Output Sensitivity, Recommended Exposure Index and ISO Speed"
         );
     }
 
@@ -851,6 +872,59 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             case 5: return "Multi-segment";
             case 6: return "Partial";
             case 255: return "(Other)";
+            default:
+                return "";
+        }
+    }
+
+    @Nullable
+    public String getCompressionDescription()
+    {
+        Integer value = _directory.getInteger(TAG_COMPRESSION);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 1: return "Uncompressed";
+            case 2: return "CCITT 1D";
+            case 3: return "T4/Group 3 Fax";
+            case 4: return "T6/Group 4 Fax";
+            case 5: return "LZW";
+            case 6: return "JPEG (old-style)";
+            case 7: return "JPEG";
+            case 8: return "Adobe Deflate";
+            case 9: return "JBIG B&W";
+            case 10: return "JBIG Color";
+            case 99: return "JPEG";
+            case 262: return "Kodak 262";
+            case 32766: return "Next";
+            case 32767: return "Sony ARW Compressed";
+            case 32769: return "Packed RAW";
+            case 32770: return "Samsung SRW Compressed";
+            case 32771: return "CCIRLEW";
+            case 32772: return "Samsung SRW Compressed 2";
+            case 32773: return "PackBits";
+            case 32809: return "Thunderscan";
+            case 32867: return "Kodak KDC Compressed";
+            case 32895: return "IT8CTPAD";
+            case 32896: return "IT8LW";
+            case 32897: return "IT8MP";
+            case 32898: return "IT8BL";
+            case 32908: return "PixarFilm";
+            case 32909: return "PixarLog";
+            case 32946: return "Deflate";
+            case 32947: return "DCS";
+            case 34661: return "JBIG";
+            case 34676: return "SGILog";
+            case 34677: return "SGILog24";
+            case 34712: return "JPEG 2000";
+            case 34713: return "Nikon NEF Compressed";
+            case 34715: return "JBIG2 TIFF FX";
+            case 34718: return "Microsoft Document Imaging (MDI) Binary Level Codec";
+            case 34719: return "Microsoft Document Imaging (MDI) Progressive Transform Codec";
+            case 34720: return "Microsoft Document Imaging (MDI) Vector";
+            case 34892: return "Lossy JPEG";
+            case 65000: return "Kodak DCR Compressed";
+            case 65535: return "Pentax PEF Compressed";
             default:
                 return "";
         }

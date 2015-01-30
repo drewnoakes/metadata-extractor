@@ -60,6 +60,7 @@ public abstract class ExifDirectoryBase extends Directory
      * per component for each pixel. Usually this value is '8,8,8'.
      */
     public static final int TAG_BITS_PER_SAMPLE                   = 0x0102;
+    public static final int TAG_COMPRESSION                       = 0x0103;
 
     /**
      * Shows the color space of the image data components.
@@ -125,6 +126,7 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_SOFTWARE                          = 0x0131;
     public static final int TAG_DATETIME                          = 0x0132;
     public static final int TAG_ARTIST                            = 0x013B;
+    public static final int TAG_HOST_COMPUTER                     = 0x013C;
     public static final int TAG_PREDICTOR                         = 0x013D;
     public static final int TAG_WHITE_POINT                       = 0x013E;
     public static final int TAG_PRIMARY_CHROMATICITIES            = 0x013F;
@@ -181,6 +183,21 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_OPTO_ELECTRIC_CONVERSION_FUNCTION = 0x8828;
     public static final int TAG_INTERLACE                         = 0x8829;
+    /**
+     * Applies to ISO tag.
+     *
+     * 0 = Unknown
+     * 1 = Standard Output Sensitivity
+     * 2 = Recommended Exposure Index
+     * 3 = ISO Speed
+     * 4 = Standard Output Sensitivity and Recommended Exposure Index
+     * 5 = Standard Output Sensitivity and ISO Speed
+     * 6 = Recommended Exposure Index and ISO Speed
+     * 7 = Standard Output Sensitivity, Recommended Exposure Index and ISO Speed
+     */
+    public static final int TAG_SENSITIVITY_TYPE                  = 0x8830;
+    public static final int TAG_STANDARD_OUTPUT_SENSITIVITY       = 0x8831;
+    public static final int TAG_RECOMMENDED_EXPOSURE_INDEX        = 0x8832;
     /** Non-standard, but in use. */
     public static final int TAG_TIME_ZONE_OFFSET                  = 0x882A;
     public static final int TAG_SELF_TIMER_MODE                   = 0x882B;
@@ -561,6 +578,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_IMAGE_WIDTH, "Image Width");
         map.put(TAG_IMAGE_HEIGHT, "Image Height");
         map.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
+        map.put(TAG_COMPRESSION, "Compression");
         map.put(TAG_PHOTOMETRIC_INTERPRETATION, "Photometric Interpretation");
         map.put(TAG_THRESHOLDING, "Thresholding");
         map.put(TAG_FILL_ORDER, "Fill Order");
@@ -585,6 +603,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_DATETIME, "Date/Time");
         map.put(TAG_ARTIST, "Artist");
         map.put(TAG_PREDICTOR, "Predictor");
+        map.put(TAG_HOST_COMPUTER, "Host Computer");
         map.put(TAG_WHITE_POINT, "White Point");
         map.put(TAG_PRIMARY_CHROMATICITIES, "Primary Chromaticities");
         map.put(TAG_TILE_WIDTH, "Tile Width");
@@ -610,6 +629,9 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_ISO_EQUIVALENT, "ISO Speed Ratings");
         map.put(TAG_OPTO_ELECTRIC_CONVERSION_FUNCTION, "Opto-electric Conversion Function (OECF)");
         map.put(TAG_INTERLACE, "Interlace");
+        map.put(TAG_SENSITIVITY_TYPE, "Sensitivity Type");
+        map.put(TAG_STANDARD_OUTPUT_SENSITIVITY, "Standard Output Sensitivity");
+        map.put(TAG_RECOMMENDED_EXPOSURE_INDEX, "Recommended Exposure Index");
         map.put(TAG_TIME_ZONE_OFFSET, "Time Zone Offset");
         map.put(TAG_SELF_TIMER_MODE, "Self Timer Mode");
         map.put(TAG_EXIF_VERSION, "Exif Version");
