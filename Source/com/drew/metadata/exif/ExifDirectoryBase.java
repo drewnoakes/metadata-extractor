@@ -136,12 +136,18 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_TILE_OFFSETS                      = 0x0144;
     public static final int TAG_TILE_BYTE_COUNTS                  = 0x0145;
 
+    public static final int TAG_TRANSFER_RANGE                    = 0x0156;
     public static final int TAG_JPEG_TABLES                       = 0x015B;
+    public static final int TAG_JPEG_PROC                         = 0x0200;
 
     public static final int TAG_YCBCR_COEFFICIENTS                = 0x0211;
     public static final int TAG_YCBCR_SUBSAMPLING                 = 0x0212;
     public static final int TAG_YCBCR_POSITIONING                 = 0x0213;
     public static final int TAG_REFERENCE_BLACK_WHITE             = 0x0214;
+
+    public static final int TAG_RELATED_IMAGE_FILE_FORMAT         = 0x1000;
+    public static final int TAG_RELATED_IMAGE_WIDTH               = 0x1001;
+    public static final int TAG_RELATED_IMAGE_HEIGHT              = 0x1002;
 
     public static final int TAG_RATING                            = 0x4746;
 
@@ -565,14 +571,6 @@ public abstract class ExifDirectoryBase extends Directory
 
     protected static void addExifTagNames(HashMap<Integer, String> map)
     {
-        // TODO why don't these tags have fields associated with them?
-        map.put(0x1000, "Related Image File Format");
-        map.put(0x1001, "Related Image Width");
-        map.put(0x1002, "Related Image Length");
-        map.put(0x0156, "Transfer Range");
-        map.put(0x0200, "JPEG Proc");
-
-
         map.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
         map.put(TAG_SUBFILE_TYPE, "Subfile Type");
         map.put(TAG_IMAGE_WIDTH, "Image Width");
@@ -610,11 +608,16 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_TILE_LENGTH, "Tile Length");
         map.put(TAG_TILE_OFFSETS, "Tile Offsets");
         map.put(TAG_TILE_BYTE_COUNTS, "Tile Byte Counts");
+        map.put(TAG_TRANSFER_RANGE, "Transfer Range");
         map.put(TAG_JPEG_TABLES, "JPEG Tables");
+        map.put(TAG_JPEG_PROC, "JPEG Proc");
         map.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
         map.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
         map.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
         map.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
+        map.put(TAG_RELATED_IMAGE_FILE_FORMAT, "Related Image File Format");
+        map.put(TAG_RELATED_IMAGE_WIDTH, "Related Image Width");
+        map.put(TAG_RELATED_IMAGE_HEIGHT, "Related Image Height");
         map.put(TAG_RATING, "Rating");
         map.put(TAG_CFA_REPEAT_PATTERN_DIM, "CFA Repeat Pattern Dim");
         map.put(TAG_CFA_PATTERN_2, "CFA Pattern");
