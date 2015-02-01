@@ -27,7 +27,6 @@ import com.drew.tools.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -38,23 +37,15 @@ import static org.junit.Assert.*;
  */
 public class XmpReaderTest
 {
-    public static XmpDirectory processApp1Bytes(String filePath) throws IOException
-    {
-        Metadata metadata = new Metadata();
-        new XmpReader().extract(FileUtil.readBytes(filePath), metadata);
-        Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
-        assertNotNull(xmpDirectories);
-        assertEquals(1, xmpDirectories.size());
-        return xmpDirectories.iterator().next();
-    }
-
     private XmpDirectory _directory;
 
     @Before
     public void setUp() throws Exception
     {
         Metadata metadata = new Metadata();
-        new XmpReader().extract(FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1"), metadata);
+        List<byte[]> jpegSegments = new ArrayList<byte[]>();
+        jpegSegments.add(FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1"));
+        new XmpReader().readJpegSegments(jpegSegments, metadata, JpegSegmentType.APP1);
 
         Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
 
@@ -62,6 +53,8 @@ public class XmpReaderTest
         assertEquals(1, xmpDirectories.size());
 
         _directory = xmpDirectories.iterator().next();
+
+        assertFalse(_directory.hasErrors());
     }
 
     /*
