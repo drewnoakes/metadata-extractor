@@ -139,6 +139,8 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_TILE_OFFSETS                      = 0x0144;
     public static final int TAG_TILE_BYTE_COUNTS                  = 0x0145;
 
+    public static final int TAG_SUB_IFD_OFFSET                    = 0x014a;
+
     public static final int TAG_TRANSFER_RANGE                    = 0x0156;
     public static final int TAG_JPEG_TABLES                       = 0x015B;
     public static final int TAG_JPEG_PROC                         = 0x0200;
@@ -192,6 +194,8 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_OPTO_ELECTRIC_CONVERSION_FUNCTION = 0x8828;
     public static final int TAG_INTERLACE                         = 0x8829;
+    public static final int TAG_TIME_ZONE_OFFSET_TIFF_EP          = 0x882A;
+    public static final int TAG_SELF_TIMER_MODE_TIFF_EP           = 0x882B;
     /**
      * Applies to ISO tag.
      *
@@ -255,14 +259,14 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_METERING_MODE                     = 0x9207;
 
-    public static final int TAG_LIGHT_SOURCE                      = 0x9208;
+    public static final int TAG_LIGHT_SOURCE                      = 0x9208; // TODO duplicate tag
     /**
      * White balance (aka light source). '0' means unknown, '1' daylight,
      * '2' fluorescent, '3' tungsten, '10' flash, '17' standard light A,
      * '18' standard light B, '19' standard light C, '20' D55, '21' D65,
      * '22' D75, '255' other.
      */
-    public static final int TAG_WHITE_BALANCE                     = 0x9208;
+    public static final int TAG_WHITE_BALANCE                     = 0x9208; // TODO duplicate tag
     /**
      * 0x0  = 0000000 = No Flash
      * 0x1  = 0000001 = Fired
@@ -304,16 +308,17 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_FOCAL_LENGTH                      = 0x920A;
 
-    public static final int TAG_FLASH_ENERGY                      = 0x920B;
-    public static final int TAG_SPATIAL_FREQ_RESPONSE             = 0x920C;
+    public static final int TAG_FLASH_ENERGY_TIFF_EP              = 0x920B;
+    public static final int TAG_SPATIAL_FREQ_RESPONSE_TIFF_EP     = 0x920C;
     public static final int TAG_NOISE                             = 0x920D;
+    public static final int TAG_FOCAL_PLANE_X_RESOLUTION_TIFF_EP  = 0x920E;
+    public static final int TAG_FOCAL_PLANE_Y_RESOLUTION_TIFF_EP = 0x920F;
     public static final int TAG_IMAGE_NUMBER                      = 0x9211;
     public static final int TAG_SECURITY_CLASSIFICATION           = 0x9212;
     public static final int TAG_IMAGE_HISTORY                     = 0x9213;
-    public static final int TAG_SUBJECT_LOCATION                  = 0x9214;
-    /** There are two definitions for exposure index, I don't know the difference... */
-    public static final int TAG_EXPOSURE_INDEX_2                  = 0x9215;
-    public static final int TAG_TIFF_EP_STANDARD_ID               = 0x9216;
+    public static final int TAG_SUBJECT_LOCATION_TIFF_EP          = 0x9214;
+    public static final int TAG_EXPOSURE_INDEX_TIFF_EP            = 0x9215;
+    public static final int TAG_STANDARD_ID_TIFF_EP               = 0x9216;
 
     /**
      * This tag holds the Exif Makernote. Makernotes are free to be in any format, though they are often IFDs.
@@ -352,8 +357,8 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_EXIF_IMAGE_HEIGHT                 = 0xA003;
     public static final int TAG_RELATED_SOUND_FILE                = 0xA004;
 
-    public static final int TAG_FLASH_ENERGY_2                    = 0xA20B;
-    public static final int TAG_SPATIAL_FREQ_RESPONSE_2           = 0xA20C;
+    public static final int TAG_FLASH_ENERGY                      = 0xA20B;
+    public static final int TAG_SPATIAL_FREQ_RESPONSE             = 0xA20C;
     public static final int TAG_FOCAL_PLANE_X_RESOLUTION          = 0xA20E;
     public static final int TAG_FOCAL_PLANE_Y_RESOLUTION          = 0xA20F;
     /**
@@ -366,7 +371,7 @@ public abstract class ExifDirectoryBase extends Directory
      * been changed to use value '2' but it doesn't match to actual value also.
      */
     public static final int TAG_FOCAL_PLANE_RESOLUTION_UNIT       = 0xA210;
-    public static final int TAG_SUBJECT_LOCATION_2                = 0xA214;
+    public static final int TAG_SUBJECT_LOCATION                  = 0xA214;
     public static final int TAG_EXPOSURE_INDEX                    = 0xA215;
     public static final int TAG_SENSING_METHOD                    = 0xA217;
 
@@ -613,6 +618,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_TILE_LENGTH, "Tile Length");
         map.put(TAG_TILE_OFFSETS, "Tile Offsets");
         map.put(TAG_TILE_BYTE_COUNTS, "Tile Byte Counts");
+        map.put(TAG_SUB_IFD_OFFSET, "Sub IFD Pointer(s)");
         map.put(TAG_TRANSFER_RANGE, "Transfer Range");
         map.put(TAG_JPEG_TABLES, "JPEG Tables");
         map.put(TAG_JPEG_PROC, "JPEG Proc");
@@ -637,6 +643,8 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_ISO_EQUIVALENT, "ISO Speed Ratings");
         map.put(TAG_OPTO_ELECTRIC_CONVERSION_FUNCTION, "Opto-electric Conversion Function (OECF)");
         map.put(TAG_INTERLACE, "Interlace");
+        map.put(TAG_TIME_ZONE_OFFSET_TIFF_EP, "Time Zone Offset");
+        map.put(TAG_SELF_TIMER_MODE_TIFF_EP, "Self Timer Mode");
         map.put(TAG_SENSITIVITY_TYPE, "Sensitivity Type");
         map.put(TAG_STANDARD_OUTPUT_SENSITIVITY, "Standard Output Sensitivity");
         map.put(TAG_RECOMMENDED_EXPOSURE_INDEX, "Recommended Exposure Index");
@@ -658,15 +666,17 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_WHITE_BALANCE, "White Balance");
         map.put(TAG_FLASH, "Flash");
         map.put(TAG_FOCAL_LENGTH, "Focal Length");
-        map.put(TAG_FLASH_ENERGY, "Flash Energy");
-        map.put(TAG_SPATIAL_FREQ_RESPONSE, "Spatial Frequency Response");
+        map.put(TAG_FLASH_ENERGY_TIFF_EP, "Flash Energy");
+        map.put(TAG_SPATIAL_FREQ_RESPONSE_TIFF_EP, "Spatial Frequency Response");
         map.put(TAG_NOISE, "Noise");
+        map.put(TAG_FOCAL_PLANE_X_RESOLUTION_TIFF_EP, "Focal Plane X Resolution");
+        map.put(TAG_FOCAL_PLANE_Y_RESOLUTION_TIFF_EP, "Focal Plane Y Resolution");
         map.put(TAG_IMAGE_NUMBER, "Image Number");
         map.put(TAG_SECURITY_CLASSIFICATION, "Security Classification");
         map.put(TAG_IMAGE_HISTORY, "Image History");
-        map.put(TAG_SUBJECT_LOCATION, "Subject Location");
-        map.put(TAG_EXPOSURE_INDEX_2, "Exposure Index");
-        map.put(TAG_TIFF_EP_STANDARD_ID, "TIFF/EP Standard ID");
+        map.put(TAG_SUBJECT_LOCATION_TIFF_EP, "Subject Location");
+        map.put(TAG_EXPOSURE_INDEX_TIFF_EP, "Exposure Index");
+        map.put(TAG_STANDARD_ID_TIFF_EP, "TIFF/EP Standard ID");
         map.put(TAG_MAKERNOTE, "Makernote");
         map.put(TAG_USER_COMMENT, "User Comment");
         map.put(TAG_SUBSECOND_TIME, "Sub-Sec Time");
@@ -682,12 +692,12 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_EXIF_IMAGE_WIDTH, "Exif Image Width");
         map.put(TAG_EXIF_IMAGE_HEIGHT, "Exif Image Height");
         map.put(TAG_RELATED_SOUND_FILE, "Related Sound File");
-        map.put(TAG_FLASH_ENERGY_2, "Flash Energy");
-        map.put(TAG_SPATIAL_FREQ_RESPONSE_2, "Spatial Frequency Response");
+        map.put(TAG_FLASH_ENERGY, "Flash Energy");
+        map.put(TAG_SPATIAL_FREQ_RESPONSE, "Spatial Frequency Response");
         map.put(TAG_FOCAL_PLANE_X_RESOLUTION, "Focal Plane X Resolution");
         map.put(TAG_FOCAL_PLANE_Y_RESOLUTION, "Focal Plane Y Resolution");
         map.put(TAG_FOCAL_PLANE_RESOLUTION_UNIT, "Focal Plane Resolution Unit");
-        map.put(TAG_SUBJECT_LOCATION_2, "Subject Location");
+        map.put(TAG_SUBJECT_LOCATION, "Subject Location");
         map.put(TAG_EXPOSURE_INDEX, "Exposure Index");
         map.put(TAG_SENSING_METHOD, "Sensing Method");
         map.put(TAG_FILE_SOURCE, "File Source");
