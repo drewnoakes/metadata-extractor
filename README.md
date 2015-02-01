@@ -29,6 +29,7 @@ It will process files of type:
 * PNG
 * BMP
 * GIF
+* ICO
 * Camera Raw (NEF/CR2/ORF/ARW/RW2/...)
 
 Special camera-specific data is decoded for most cameras manufactured by:
