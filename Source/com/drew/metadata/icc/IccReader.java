@@ -43,7 +43,7 @@ import java.util.TimeZone;
  * </ul>
  *
  * @author Yuri Binev
- * @author Drew Noakes
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 {

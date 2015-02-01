@@ -32,7 +32,7 @@ import java.io.IOException;
  * <li>https://en.wikipedia.org/wiki/ICO_(file_format)</li>
  * </ul>
  *
- * @author Drew Noakes
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class IcoReader
 {
