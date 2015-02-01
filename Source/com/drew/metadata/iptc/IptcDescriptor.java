@@ -48,6 +48,8 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
                 return getFileFormatDescription();
             case IptcDirectory.TAG_KEYWORDS:
                 return getKeywordsDescription();
+            case IptcDirectory.TAG_TIME_CREATED:
+                return getTimeCreatedDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -226,7 +228,12 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getTimeCreatedDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_TIME_CREATED);
+        String s = _directory.getString(IptcDirectory.TAG_TIME_CREATED);
+        if (s == null)
+            return null;
+        if (s.length() == 6 || s.length() == 11)
+            return s.substring(0, 2) + ':' + s.substring(2, 4) + ':' + s.substring(4);
+        return s;
     }
 
     @Nullable
