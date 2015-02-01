@@ -40,11 +40,7 @@ import java.util.Arrays;
  */
 public class ExifReader implements JpegSegmentMetadataReader
 {
-    /**
-     * The offset at which the TIFF data actually starts. This may be necessary when, for example, processing
-     * JPEG Exif data from APP0 which has a 6-byte preamble before starting the TIFF data.
-     */
-    private static final String JPEG_EXIF_SEGMENT_PREAMBLE = "Exif\0\0";
+    private static final String PREAMBLE = "Exif\0\0";
 
     private boolean _storeThumbnailBytes = true;
 
@@ -64,20 +60,18 @@ public class ExifReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APP1);
     }
 
-    public boolean canProcess(@NotNull final byte[] segmentBytes, @NotNull final JpegSegmentType segmentType)
+    public void extract(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
-        return segmentBytes.length >= JPEG_EXIF_SEGMENT_PREAMBLE.length() && new String(segmentBytes, 0, JPEG_EXIF_SEGMENT_PREAMBLE.length()).equalsIgnoreCase(JPEG_EXIF_SEGMENT_PREAMBLE);
+        for (byte[] segmentBytes : segments) {
+            // Filter any segments containing unexpected preambles
+            if (segmentBytes.length < PREAMBLE.length() || !new String(segmentBytes, 0, PREAMBLE.length()).equalsIgnoreCase(PREAMBLE))
+                continue;
+            extract(segmentBytes, metadata);
+        }
     }
 
-    public void extract(@NotNull final byte[] segmentBytes, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
+    public void extract(@NotNull final byte[] segmentBytes, @NotNull final Metadata metadata)
     {
-        if (segmentBytes == null)
-            throw new NullPointerException("segmentBytes cannot be null");
-        if (metadata == null)
-            throw new NullPointerException("metadata cannot be null");
-        if (segmentType == null)
-            throw new NullPointerException("segmentType cannot be null");
-
         try {
             ByteArrayReader reader = new ByteArrayReader(segmentBytes);
 
@@ -85,7 +79,7 @@ public class ExifReader implements JpegSegmentMetadataReader
             // Check for the header preamble
             //
             try {
-                if (!reader.getString(0, JPEG_EXIF_SEGMENT_PREAMBLE.length()).equals(JPEG_EXIF_SEGMENT_PREAMBLE)) {
+                if (!reader.getString(0, PREAMBLE.length()).equals(PREAMBLE)) {
                     // TODO what do to with this error state?
                     System.err.println("Invalid JPEG Exif segment preamble");
                     return;
@@ -102,9 +96,8 @@ public class ExifReader implements JpegSegmentMetadataReader
             new TiffReader().processTiff(
                 reader,
                 new ExifTiffHandler(metadata, _storeThumbnailBytes),
-                JPEG_EXIF_SEGMENT_PREAMBLE.length()
+                PREAMBLE.length()
             );
-
         } catch (TiffProcessingException e) {
             // TODO what do to with this error state?
             e.printStackTrace(System.err);

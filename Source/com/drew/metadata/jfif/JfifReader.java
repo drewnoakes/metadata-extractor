@@ -40,20 +40,21 @@ import java.util.Arrays;
  */
 public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
 {
+    public static final String PREAMBLE = "JFIF";
+
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APP0);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        return segmentBytes.length > 3 && "JFIF".equals(new String(segmentBytes, 0, 4));
-    }
-
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
-    {
-        extract(new ByteArrayReader(segmentBytes), metadata);
+        for (byte[] segmentBytes : segments) {
+            // Skip segments not starting with the required header
+            if (segmentBytes.length >= 4 && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
+                extract(new ByteArrayReader(segmentBytes), metadata);
+        }
     }
 
     /**

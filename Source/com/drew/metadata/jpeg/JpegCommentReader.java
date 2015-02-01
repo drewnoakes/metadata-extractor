@@ -47,12 +47,14 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
         return true;
     }
 
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        JpegCommentDirectory directory = new JpegCommentDirectory();
-        metadata.addDirectory(directory);
+        for (byte[] segmentBytes : segments) {
+            JpegCommentDirectory directory = new JpegCommentDirectory();
+            metadata.addDirectory(directory);
 
-        // The entire contents of the directory are the comment
-        directory.setString(JpegCommentDirectory.TAG_COMMENT, new String(segmentBytes));
+            // The entire contents of the directory are the comment
+            directory.setString(JpegCommentDirectory.TAG_COMMENT, new String(segmentBytes));
+        }
     }
 }

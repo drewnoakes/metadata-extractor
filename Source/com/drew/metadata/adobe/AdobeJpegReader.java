@@ -35,24 +35,25 @@ import java.util.Arrays;
 /**
  * Decodes Adobe formatted data stored in JPEG files, normally in the APPE (App14) segment.
  *
- * @author Philip, Drew Noakes https://drewnoakes.com
+ * @author Philip
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class AdobeJpegReader implements JpegSegmentMetadataReader
 {
+    public static final String PREAMBLE = "Adobe";
+
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APPE);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        return segmentBytes.length == 12 && "Adobe".equalsIgnoreCase(new String(segmentBytes, 0, 5));
-    }
-
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
-    {
-        extract(new SequentialByteArrayReader(segmentBytes), metadata);
+        for (byte[] bytes : segments) {
+            if (bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(bytes, 0, PREAMBLE.length())))
+                extract(new SequentialByteArrayReader(bytes), metadata);
+        }
     }
 
     public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata)
@@ -63,7 +64,7 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
         try {
             reader.setMotorolaByteOrder(false);
 
-            if (!reader.getString(5).equals("Adobe")) {
+            if (!reader.getString(PREAMBLE.length()).equals(PREAMBLE)) {
                 directory.addError("Invalid Adobe JPEG data header.");
                 return;
             }

@@ -122,11 +122,7 @@ public class JpegMetadataReader
         // Pass the appropriate byte arrays to each reader.
         for (JpegSegmentMetadataReader reader : readers) {
             for (JpegSegmentType segmentType : reader.getSegmentTypes()) {
-                for (byte[] segmentBytes : segmentData.getSegments(segmentType)) {
-                    if (reader.canProcess(segmentBytes, segmentType)) {
-                        reader.extract(segmentBytes, metadata, segmentType);
-                    }
-                }
+                reader.extract(segmentData.getSegments(segmentType), metadata, segmentType);
             }
         }
     }

@@ -62,15 +62,14 @@ public class IptcReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APPD);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        // Check whether the first byte resembles
-        return segmentBytes.length != 0 && segmentBytes[0] == 0x1c;
-    }
-
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
-    {
-        extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
+        for (byte[] segmentBytes : segments) {
+            // Ensure data starts with the IPTC marker byte
+            if (segmentBytes.length != 0 && segmentBytes[0] == 0x1c) {
+                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
+            }
+        }
     }
 
     /**

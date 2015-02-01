@@ -43,7 +43,7 @@ public class ExifReaderTest
     public static Metadata processBytes(@NotNull String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
-        new ExifReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.APP1);
+        new ExifReader().extract(FileUtil.readBytes(filePath), metadata);
         return metadata;
     }
 
@@ -70,7 +70,7 @@ public class ExifReaderTest
     public void testExtractWithNullMetadataThrows() throws Exception
     {
         try{
-            new ExifReader().extract(new byte[10], null, JpegSegmentType.APP1);
+            new ExifReader().extract(new byte[10], null);
             fail("Exception expected");
         } catch (NullPointerException npe) {
             // passed
@@ -94,7 +94,7 @@ public class ExifReaderTest
     {
         byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
         Metadata metadata = new Metadata();
-        new ExifReader().extract(badExifData, metadata, JpegSegmentType.APP1);
+        new ExifReader().extract(badExifData, metadata);
         assertEquals(0, metadata.getDirectoryCount());
     }
 

@@ -47,35 +47,44 @@ import java.util.TimeZone;
  */
 public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 {
+    public static final String JPEG_SEGMENT_PREAMBLE = "ICC_PROFILE";
+
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APP2);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        return segmentBytes.length > 10 && "ICC_PROFILE".equalsIgnoreCase(new String(segmentBytes, 0, 11));
-    }
+        // TODO ICC data can be spread across multiple JPEG segments if too large to fit in a single segment
 
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
-    {
-        // skip the first 14 bytes
-        byte[] iccProfileBytes = new byte[segmentBytes.length - 14];
-        System.arraycopy(segmentBytes, 14, iccProfileBytes, 0, segmentBytes.length - 14);
+        final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
-        extract(new ByteArrayReader(iccProfileBytes), metadata);
+        for (byte[] segmentBytes : segments) {
+            // Skip any segments that do not contain the required preamble
+            if (segmentBytes.length < preambleLength || !JPEG_SEGMENT_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)))
+                continue;
+
+            // NOTE we ignore three bytes here -- are they useful for anything?
+
+            // skip the first 14 bytes
+            byte[] iccProfileBytes = new byte[segmentBytes.length - 14];
+            System.arraycopy(segmentBytes, 14, iccProfileBytes, 0, segmentBytes.length - 14);
+
+            extract(new ByteArrayReader(iccProfileBytes), metadata);
+        }
     }
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
-        // TODO review whether the 'tagPtr' values below really do require ICC processing to work with a RandomAccessReader
+        // TODO review whether the 'tagPtr' values below really do require RandomAccessReader or whether SequentialReader may be used instead
 
         IccDirectory directory = new IccDirectory();
-        metadata.addDirectory(directory);
 
         try {
-            directory.setInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT));
+            int profileByteCount = reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT);
+            directory.setInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, profileByteCount);
 
             // For these tags, the int value of the tag is in fact it's offset within the buffer.
             set4ByteString(directory, IccDirectory.TAG_CMM_TYPE, reader);
@@ -123,6 +132,8 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         } catch (IOException ex) {
             directory.addError("Exception reading ICC profile: " + ex.getMessage());
         }
+
+        metadata.addDirectory(directory);
     }
 
     private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException

@@ -38,24 +38,29 @@ import java.util.Arrays;
  * Note that IPTC data may be stored within this segment, in which case this reader will
  * create both a {@link PhotoshopDirectory} and a {@link com.drew.metadata.iptc.IptcDirectory}.
  *
- * @author Yuri Binev, Drew Noakes https://drewnoakes.com
+ * @author Yuri Binev
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReader
 {
+    @NotNull
+    private static final String PREAMBLE = "Photoshop 3.0";
+
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Arrays.asList(JpegSegmentType.APPD);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        return segmentBytes.length > 12 && "Photoshop 3.0".equals(new String(segmentBytes, 0, 13));
-    }
+        final int preambleLength = PREAMBLE.length();
 
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
-    {
-        extract(new ByteArrayReader(segmentBytes), metadata);
+        for (byte[] segmentBytes : segments) {
+            // Ensure data starts with the necessary preamble
+            if (segmentBytes.length >= preambleLength && PREAMBLE.equals(new String(segmentBytes, 0, preambleLength)))
+                extract(new ByteArrayReader(segmentBytes), metadata);
+        }
     }
 
     public void extract(@NotNull final RandomAccessReader reader, final @NotNull Metadata metadata)
@@ -63,9 +68,11 @@ public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReade
         PhotoshopDirectory directory = new PhotoshopDirectory();
         metadata.addDirectory(directory);
 
+        final int preambleLength = PREAMBLE.length();
+
         int pos;
         try {
-            pos = reader.getString(0, 13).equals("Photoshop 3.0") ? 14 : 0;
+            pos = reader.getString(0, preambleLength).equals(PREAMBLE) ? preambleLength + 1 : 0;
         } catch (IOException e) {
             directory.addError("Unable to read header");
             return;

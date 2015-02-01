@@ -49,7 +49,6 @@ public class XmpReader implements JpegSegmentMetadataReader
     private static final int FMT_RATIONAL = 2;
     private static final int FMT_INT = 3;
     private static final int FMT_DOUBLE = 4;
-
     /**
      * XMP tag namespace.
      * TODO the older "xap", "xapBJ", "xapMM" or "xapRights" namespace prefixes should be translated to the newer "xmp", "xmpBJ", "xmpMM" and "xmpRights" prefixes for use in family 1 group names
@@ -62,6 +61,8 @@ public class XmpReader implements JpegSegmentMetadataReader
     private static final String SCHEMA_EXIF_ADDITIONAL_PROPERTIES = "http://ns.adobe.com/exif/1.0/aux/";
     @NotNull
     private static final String SCHEMA_EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
+    @NotNull
+    public static final String XMP_JPEG_PREAMBLE = "http://ns.adobe.com/xap/1.0/\0";
 //    @NotNull
 //    private static final String SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES = "http://purl.org/dc/elements/1.1/";
 
@@ -71,43 +72,27 @@ public class XmpReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APP1);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
-    {
-        return segmentBytes.length > 27 && "http://ns.adobe.com/xap/1.0/".equalsIgnoreCase(new String(segmentBytes, 0, 28));
-    }
-
     /**
      * Version specifically for dealing with XMP found in JPEG segments. This form of XMP has a peculiar preamble, which
      * must be removed before parsing the XML.
      *
-     * @param segmentBytes The byte array from which the metadata should be extracted.
+     * @param segments The byte array from which the metadata should be extracted.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
      */
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        // XMP in a JPEG file has a 29 byte preamble which is not valid XML.
-        final int preambleLength = 29;
+        for (byte[] segmentBytes : segments) {
+            // XMP in a JPEG file has an identifying preamble which is not valid XML
+            final int preambleLength = XMP_JPEG_PREAMBLE.length();
 
-        // check for the header length
-        if (segmentBytes.length <= preambleLength + 1) {
-            XmpDirectory directory = new XmpDirectory();
-            directory.addError(String.format("Xmp data segment must contain at least %d bytes", preambleLength + 1));
-            metadata.addDirectory(directory);
-            return;
+            if (segmentBytes.length < preambleLength || !XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)))
+                continue;
+
+            byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
+            System.arraycopy(segmentBytes, preambleLength, xmlBytes, 0, xmlBytes.length);
+            extract(xmlBytes, metadata);
         }
-
-        String preamble = new String(segmentBytes, 0, preambleLength);
-        if (!"http://ns.adobe.com/xap/1.0/\0".equals(preamble)) {
-            XmpDirectory directory = new XmpDirectory();
-            directory.addError("XMP data segment doesn't begin with 'http://ns.adobe.com/xap/1.0/'");
-            metadata.addDirectory(directory);
-            return;
-        }
-
-        byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
-        System.arraycopy(segmentBytes, 29, xmlBytes, 0, xmlBytes.length);
-        extract(xmlBytes, metadata);
     }
 
     /**

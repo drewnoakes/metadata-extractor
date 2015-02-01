@@ -41,7 +41,7 @@ public class XmpReaderTest
     public static XmpDirectory processApp1Bytes(String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
-        new XmpReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.APP1);
+        new XmpReader().extract(FileUtil.readBytes(filePath), metadata);
         Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
         assertNotNull(xmpDirectories);
         assertEquals(1, xmpDirectories.size());
@@ -54,7 +54,7 @@ public class XmpReaderTest
     public void setUp() throws Exception
     {
         Metadata metadata = new Metadata();
-        new XmpReader().extract(FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1"), metadata, JpegSegmentType.APP1);
+        new XmpReader().extract(FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1"), metadata);
 
         Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
 
