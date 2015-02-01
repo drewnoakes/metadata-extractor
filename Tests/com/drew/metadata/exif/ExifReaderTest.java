@@ -67,17 +67,6 @@ public class ExifReaderTest
     }
 
     @Test
-    public void testExtractWithNullMetadataThrows() throws Exception
-    {
-        try{
-            new ExifReader().extract(new byte[10], null);
-            fail("Exception expected");
-        } catch (NullPointerException npe) {
-            // passed
-        }
-    }
-
-    @Test
     public void testLoadFujifilmJpeg() throws Exception
     {
         ExifSubIFDDirectory directory = ExifReaderTest.processBytes("Tests/Data/withExif.jpg.app1", ExifSubIFDDirectory.class);
