@@ -57,9 +57,11 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        // TODO ICC data can be spread across multiple JPEG segments if too large to fit in a single segment
-
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
+
+        // ICC data can be spread across multiple JPEG segments.
+        // We concat them together in this buffer for later processing.
+        byte[] buffer = null;
 
         for (byte[] segmentBytes : segments) {
             // Skip any segments that do not contain the required preamble
@@ -68,12 +70,21 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
             // NOTE we ignore three bytes here -- are they useful for anything?
 
-            // skip the first 14 bytes
-            byte[] iccProfileBytes = new byte[segmentBytes.length - 14];
-            System.arraycopy(segmentBytes, 14, iccProfileBytes, 0, segmentBytes.length - 14);
-
-            extract(new ByteArrayReader(iccProfileBytes), metadata);
+            // Grow the buffer
+            if (buffer == null) {
+                buffer = new byte[segmentBytes.length - 14];
+                // skip the first 14 bytes
+                System.arraycopy(segmentBytes, 14, buffer, 0, segmentBytes.length - 14);
+            } else {
+                byte[] newBuffer = new byte[buffer.length + segmentBytes.length - 14];
+                System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
+                System.arraycopy(segmentBytes, 14, newBuffer, buffer.length, segmentBytes.length - 14);
+                buffer = newBuffer;
+            }
         }
+
+        if (buffer != null)
+            extract(new ByteArrayReader(buffer), metadata);
     }
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
