@@ -225,29 +225,41 @@ public class ProcessAllImagesInFolderUtility
                 {
                     writer = openWriter(file);
 
+                    // Build a list of all directories
+                    List<Directory> directories = new ArrayList<Directory>();
+                    for (Directory directory : metadata.getDirectories())
+                        directories.add(directory);
+
+                    // Sort them by name
+                    Collections.sort(directories, new Comparator<Directory>()
+                    {
+                        public int compare(Directory o1, Directory o2)
+                        {
+                            return o1.getName().compareTo(o2.getName());
+                        }
+                    });
+
                     // Write any errors
                     if (metadata.hasErrors()) {
-                        for (Directory directory : metadata.getDirectories()) {
+                        for (Directory directory : directories) {
                             if (!directory.hasErrors())
                                 continue;
-                            for (String error : directory.getErrors()) {
+                            for (String error : directory.getErrors())
                                 writer.format("[ERROR: %s] %s\n", directory.getName(), error);
-                            }
                         }
                         writer.write("\n");
                     }
 
-                    // Iterate through all values
-                    for (Directory directory : metadata.getDirectories()) {
+                    // Write tag values for each directory
+                    for (Directory directory : directories) {
                         String directoryName = directory.getName();
                         for (Tag tag : directory.getTags()) {
                             String tagName = tag.getTagName();
                             String description = tag.getDescription();
                             writer.format("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description);
                         }
-                        if (directory.getTagCount() != 0) {
+                        if (directory.getTagCount() != 0)
                             writer.write('\n');
-                        }
                     }
                 } finally {
                     closeWriter(writer);
