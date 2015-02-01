@@ -52,7 +52,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReade
         return Arrays.asList(JpegSegmentType.APPD);
     }
 
-    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         final int preambleLength = PREAMBLE.length();
 

@@ -47,7 +47,7 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
         return true;
     }
 
-    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         for (byte[] segmentBytes : segments) {
             JpegCommentDirectory directory = new JpegCommentDirectory();

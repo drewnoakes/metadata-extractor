@@ -24,5 +24,5 @@ public interface JpegSegmentMetadataReader
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
      */
-    public void extract(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType);
+    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType);
 }

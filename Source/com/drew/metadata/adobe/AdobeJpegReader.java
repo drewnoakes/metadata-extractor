@@ -48,7 +48,7 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APPE);
     }
 
-    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         for (byte[] bytes : segments) {
             if (bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(bytes, 0, PREAMBLE.length())))

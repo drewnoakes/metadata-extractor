@@ -60,7 +60,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APP1);
     }
 
-    public void extract(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
         for (byte[] segmentBytes : segments) {
             // Filter any segments containing unexpected preambles

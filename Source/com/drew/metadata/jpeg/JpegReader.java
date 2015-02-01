@@ -62,7 +62,7 @@ public class JpegReader implements JpegSegmentMetadataReader
         );
     }
 
-    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         for (byte[] segmentBytes : segments) {
             extract(segmentBytes, metadata, segmentType);

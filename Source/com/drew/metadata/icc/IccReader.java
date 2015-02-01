@@ -55,7 +55,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         return Arrays.asList(JpegSegmentType.APP2);
     }
 
-    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         // TODO ICC data can be spread across multiple JPEG segments if too large to fit in a single segment
 

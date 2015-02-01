@@ -80,7 +80,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
      */
-    public void extract(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         for (byte[] segmentBytes : segments) {
             // XMP in a JPEG file has an identifying preamble which is not valid XML

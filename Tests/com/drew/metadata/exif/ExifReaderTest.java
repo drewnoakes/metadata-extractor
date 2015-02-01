@@ -59,7 +59,7 @@ public class ExifReaderTest
     public void testExtractWithNullDataThrows() throws Exception
     {
         try{
-            new ExifReader().extract(null, new Metadata(), JpegSegmentType.APP1);
+            new ExifReader().readJpegSegments(null, new Metadata(), JpegSegmentType.APP1);
             fail("Exception expected");
         } catch (NullPointerException npe) {
             // passed
