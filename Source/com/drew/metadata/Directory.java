@@ -82,6 +82,14 @@ public abstract class Directory
 // VARIOUS METHODS
 
     /**
+     * Gets a value indicating whether the directory is empty, meaning it contains no errors and no tag values.
+     */
+    public boolean isEmpty()
+    {
+        return _errorList.isEmpty() && _definedTagList.isEmpty();
+    }
+
+    /**
      * Indicates whether the specified tag type has been set.
      *
      * @param tagType the tag type to check for

@@ -37,7 +37,8 @@ public class PsdReader implements MetadataReader
 {
     public void extract(@NotNull final RandomAccessReader reader, final @NotNull Metadata metadata)
     {
-        final PsdHeaderDirectory directory = metadata.getOrCreateDirectory(PsdHeaderDirectory.class);
+        PsdHeaderDirectory directory = new PsdHeaderDirectory();
+        metadata.addDirectory(directory);
 
         try {
             final int signature = reader.getInt32(0);

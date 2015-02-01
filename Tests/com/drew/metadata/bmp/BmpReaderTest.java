@@ -46,7 +46,7 @@ public class BmpReaderTest
         new BmpReader().extract(new StreamReader(stream), metadata);
         stream.close();
 
-        BmpHeaderDirectory directory = metadata.getDirectory(BmpHeaderDirectory.class);
+        BmpHeaderDirectory directory = metadata.getFirstDirectoryOfType(BmpHeaderDirectory.class);
         assertNotNull(directory);
         return directory;
     }

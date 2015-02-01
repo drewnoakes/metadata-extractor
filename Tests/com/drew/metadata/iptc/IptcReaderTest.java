@@ -44,7 +44,7 @@ public class IptcReaderTest
         Metadata metadata = new Metadata();
         byte[] bytes = FileUtil.readBytes(filePath);
         new IptcReader().extract(new SequentialByteArrayReader(bytes), metadata, bytes.length);
-        IptcDirectory directory = metadata.getDirectory(IptcDirectory.class);
+        IptcDirectory directory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
         assertNotNull(directory);
         return directory;
     }

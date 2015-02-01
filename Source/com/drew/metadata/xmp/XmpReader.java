@@ -86,20 +86,22 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
-
         // XMP in a JPEG file has a 29 byte preamble which is not valid XML.
         final int preambleLength = 29;
 
         // check for the header length
         if (segmentBytes.length <= preambleLength + 1) {
+            XmpDirectory directory = new XmpDirectory();
             directory.addError(String.format("Xmp data segment must contain at least %d bytes", preambleLength + 1));
+            metadata.addDirectory(directory);
             return;
         }
 
         String preamble = new String(segmentBytes, 0, preambleLength);
         if (!"http://ns.adobe.com/xap/1.0/\0".equals(preamble)) {
+            XmpDirectory directory = new XmpDirectory();
             directory.addError("XMP data segment doesn't begin with 'http://ns.adobe.com/xap/1.0/'");
+            metadata.addDirectory(directory);
             return;
         }
 
@@ -115,7 +117,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
-        XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
+        XmpDirectory directory = new XmpDirectory();
 
         try {
             XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBytes);
@@ -123,6 +125,9 @@ public class XmpReader implements JpegSegmentMetadataReader
         } catch (XMPException e) {
             directory.addError("Error processing XMP data: " + e.getMessage());
         }
+
+        if (!directory.isEmpty())
+            metadata.addDirectory(directory);
     }
 
     /**
@@ -132,7 +137,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)
     {
-        XmpDirectory directory = metadata.getOrCreateDirectory(XmpDirectory.class);
+        XmpDirectory directory = new XmpDirectory();
 
         try {
             XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmpString);
@@ -140,6 +145,9 @@ public class XmpReader implements JpegSegmentMetadataReader
         } catch (XMPException e) {
             directory.addError("Error processing XMP data: " + e.getMessage());
         }
+
+        if (!directory.isEmpty())
+            metadata.addDirectory(directory);
     }
 
     private static void processXmpTags(XmpDirectory directory, XMPMeta xmpMeta) throws XMPException

@@ -126,7 +126,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     {
         if (_storeThumbnailBytes) {
             // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
-            ExifThumbnailDirectory thumbnailDirectory = _metadata.getDirectory(ExifThumbnailDirectory.class);
+            ExifThumbnailDirectory thumbnailDirectory = _metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
             if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION)) {
                 Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
                 Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
@@ -148,7 +148,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                      final @NotNull RandomAccessReader reader) throws IOException
     {
         // Determine the camera model and makernote format.
-        Directory ifd0Directory = _metadata.getDirectory(ExifIFD0Directory.class);
+        Directory ifd0Directory = _metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
 
         if (ifd0Directory == null)
             return false;
@@ -218,7 +218,9 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 10, tiffHeaderOffset);
         } else if ("KDK".equals(firstThreeChars)) {
             reader.setMotorolaByteOrder(firstSevenChars.equals("KDK INFO"));
-            processKodakMakernote(_metadata.getOrCreateDirectory(KodakMakernoteDirectory.class), makernoteOffset, reader);
+            KodakMakernoteDirectory directory = new KodakMakernoteDirectory();
+            _metadata.addDirectory(directory);
+            processKodakMakernote(directory, makernoteOffset, reader);
         } else if ("Canon".equalsIgnoreCase(cameraMake)) {
             pushDirectory(CanonMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);

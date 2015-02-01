@@ -50,7 +50,7 @@ public class ExifReaderTest
     @NotNull
     public static <T extends Directory> T processBytes(@NotNull String filePath, @NotNull Class<T> directoryClass) throws IOException
     {
-        T directory = processBytes(filePath).getDirectory(directoryClass);
+        T directory = processBytes(filePath).getFirstDirectoryOfType(directoryClass);
         assertNotNull(directory);
         return directory;
     }
@@ -194,8 +194,8 @@ public class ExifReaderTest
         // These values used to be merged into a single directory, causing errors.
         // This unit test demonstrates correct behaviour.
         Metadata metadata = processBytes("Tests/Data/repeatedOrientationTagWithDifferentValues.jpg.app1");
-        ExifIFD0Directory ifd0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-        ExifThumbnailDirectory thumbnailDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        ExifIFD0Directory ifd0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        ExifThumbnailDirectory thumbnailDirectory = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
 
         assertNotNull(ifd0Directory);
         assertNotNull(thumbnailDirectory);

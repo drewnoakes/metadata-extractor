@@ -50,7 +50,6 @@ public class PngMetadataReader
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), desiredChunkTypes);
 
         Metadata metadata = new Metadata();
-        List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
 
         for (PngChunk chunk : chunks) {
             PngChunkType chunkType = chunk.getType();
@@ -58,7 +57,7 @@ public class PngMetadataReader
 
             if (chunkType.equals(PngChunkType.IHDR)) {
                 PngHeader header = new PngHeader(bytes);
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.IHDR);
                 directory.setInt(PngDirectory.TAG_IMAGE_WIDTH, header.getImageWidth());
                 directory.setInt(PngDirectory.TAG_IMAGE_HEIGHT, header.getImageHeight());
                 directory.setInt(PngDirectory.TAG_BITS_PER_SAMPLE, header.getBitsPerSample());
@@ -66,19 +65,23 @@ public class PngMetadataReader
                 directory.setInt(PngDirectory.TAG_COMPRESSION_TYPE, header.getCompressionType());
                 directory.setInt(PngDirectory.TAG_FILTER_METHOD, header.getFilterMethod());
                 directory.setInt(PngDirectory.TAG_INTERLACE_METHOD, header.getInterlaceMethod());
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.PLTE)) {
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.PLTE);
                 directory.setInt(PngDirectory.TAG_PALETTE_SIZE, bytes.length / 3);
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.tRNS)) {
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.tRNS);
                 directory.setInt(PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY, 1);
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.sRGB)) {
                 int srgbRenderingIntent = new SequentialByteArrayReader(bytes).getInt8();
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.sRGB);
                 directory.setInt(PngDirectory.TAG_SRGB_RENDERING_INTENT, srgbRenderingIntent);
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.cHRM)) {
                 PngChromaticities chromaticities = new PngChromaticities(bytes);
-                PngChromaticitiesDirectory directory = metadata.getOrCreateDirectory(PngChromaticitiesDirectory.class);
+                PngChromaticitiesDirectory directory = new PngChromaticitiesDirectory();
                 directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
                 directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
                 directory.setInt(PngChromaticitiesDirectory.TAG_RED_X, chromaticities.getRedX());
@@ -87,14 +90,16 @@ public class PngMetadataReader
                 directory.setInt(PngChromaticitiesDirectory.TAG_GREEN_Y, chromaticities.getGreenY());
                 directory.setInt(PngChromaticitiesDirectory.TAG_BLUE_X, chromaticities.getBlueX());
                 directory.setInt(PngChromaticitiesDirectory.TAG_BLUE_Y, chromaticities.getBlueY());
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.gAMA)) {
                 int gammaInt = new SequentialByteArrayReader(bytes).getInt32();
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.gAMA);
                 directory.setDouble(PngDirectory.TAG_GAMMA, gammaInt / 100000.0);
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.iCCP)) {
                 SequentialReader reader = new SequentialByteArrayReader(bytes);
                 String profileName = reader.getNullTerminatedString(79);
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.iCCP);
                 directory.setString(PngDirectory.TAG_ICC_PROFILE_NAME, profileName);
                 byte compressionMethod = reader.getInt8();
                 if (compressionMethod == 0) {
@@ -106,15 +111,21 @@ public class PngMetadataReader
                     new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata);
                     inflateStream.close();
                 }
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.bKGD)) {
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.bKGD);
                 directory.setByteArray(PngDirectory.TAG_BACKGROUND_COLOR, bytes);
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.tEXt)) {
                 SequentialReader reader = new SequentialByteArrayReader(bytes);
                 String keyword = reader.getNullTerminatedString(79);
                 int bytesLeft = bytes.length - keyword.length() - 1;
                 String value = reader.getNullTerminatedString(bytesLeft);
+                List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
                 textPairs.add(new KeyValuePair(keyword, value));
+                PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
+                directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
+                metadata.addDirectory(directory);
             } else if (chunkType.equals(PngChunkType.iTXt)) {
                 SequentialReader reader = new SequentialByteArrayReader(bytes);
                 String keyword = reader.getNullTerminatedString(79);
@@ -130,10 +141,14 @@ public class PngMetadataReader
                     if (compressionMethod == 0) {
                         text = StringUtil.fromStream(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
                     } else {
-                        metadata.getOrCreateDirectory(PngDirectory.class).addError("Invalid compression method value");
+                        PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
+                        directory.addError("Invalid compression method value");
+                        metadata.addDirectory(directory);
                     }
                 } else {
-                    metadata.getOrCreateDirectory(PngDirectory.class).addError("Invalid compression flag value");
+                    PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
+                    directory.addError("Invalid compression flag value");
+                    metadata.addDirectory(directory);
                 }
 
                 if (text != null) {
@@ -141,7 +156,11 @@ public class PngMetadataReader
                         // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
                         new XmpReader().extract(text, metadata);
                     } else {
+                        List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
                         textPairs.add(new KeyValuePair(keyword, text));
+                        PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
+                        directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
+                        metadata.addDirectory(directory);
                     }
                 }
             } else if (chunkType.equals(PngChunkType.tIME)) {
@@ -155,14 +174,10 @@ public class PngMetadataReader
                 Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 //noinspection MagicConstant
                 calendar.set(year, month, day, hour, minute, second);
-                PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
+                PngDirectory directory = new PngDirectory(PngChunkType.tIME);
                 directory.setDate(PngDirectory.TAG_LAST_MODIFICATION_TIME, calendar.getTime());
+                metadata.addDirectory(directory);
             }
-        }
-
-        if (textPairs.size() != 0) {
-            PngDirectory directory = metadata.getOrCreateDirectory(PngDirectory.class);
-            directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
         }
 
         return metadata;

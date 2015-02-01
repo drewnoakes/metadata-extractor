@@ -36,96 +36,81 @@ import java.util.*;
 public final class Metadata
 {
     @NotNull
-    private final Map<Class<? extends Directory>,Directory> _directoryByClass = new HashMap<Class<? extends Directory>, Directory>();
+    private final Map<Class<? extends Directory>,Collection<Directory>> _directoryListByClass = new HashMap<Class<? extends Directory>, Collection<Directory>>();
 
     /**
-     * List of Directory objects set against this object.  Keeping a list handy makes
-     * creation of an Iterator and counting tags simple.
-     */
-    @NotNull
-    private final Collection<Directory> _directoryList = new ArrayList<Directory>();
-
-    /**
-     * Returns an objects for iterating over Directory objects in the order in which they were added.
+     * Returns an iterable set of the {@link Directory} instances contained in this metadata collection.
      *
-     * @return an iterable collection of directories
+     * @return an iterable set of directories
      */
     @NotNull
     public Iterable<Directory> getDirectories()
     {
-        return Collections.unmodifiableCollection(_directoryList);
+        return new DirectoryIterable(_directoryListByClass);
+    }
+
+    @Nullable
+    public <T extends Directory> Collection<T> getDirectoriesOfType(Class<T> type)
+    {
+        return (Collection<T>)_directoryListByClass.get(type);
     }
 
     /**
-     * Returns a count of unique directories in this metadata collection.
+     * Returns the count of directories in this metadata collection.
      *
      * @return the number of unique directory types set for this metadata collection
      */
     public int getDirectoryCount()
     {
-        return _directoryList.size();
+        int count = 0;
+        for (Map.Entry<Class<? extends Directory>,Collection<Directory>> pair : _directoryListByClass.entrySet())
+            count += pair.getValue().size();
+        return count;
     }
 
     /**
-     * Returns a {@link Directory} of specified type.  If this {@link Metadata} object already contains
-     * such a directory, it is returned.  Otherwise a new instance of this directory will be created and stored within
-     * this {@link Metadata} object.
+     * Adds a directory to this metadata collection.
      *
-     * @param type the type of the Directory implementation required.
-     * @return a directory of the specified type.
+     * @param directory the {@link Directory} to add into this metadata collection.
      */
-    @NotNull
-    @SuppressWarnings("unchecked")
-    public <T extends Directory> T getOrCreateDirectory(@NotNull Class<T> type)
+    public <T extends Directory> void addDirectory(@NotNull T directory)
     {
-        // We suppress the warning here as the code asserts a map signature of Class<T>,T.
-        // So after get(Class<T>) it is for sure the result is from type T.
-
-        // check if we've already issued this type of directory
-        if (_directoryByClass.containsKey(type))
-            return (T)_directoryByClass.get(type);
-
-        T directory;
-        try {
-            directory = type.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot instantiate provided Directory type: " + type.toString());
-        }
-        // store the directory
-        _directoryByClass.put(type, directory);
-        _directoryList.add(directory);
-
-        return directory;
+        getOrCreateDirectoryList(directory.getClass()).add(directory);
     }
 
     /**
-     * If this {@link Metadata} object contains a {@link Directory} of the specified type, it is returned.
-     * Otherwise <code>null</code> is returned.
+     * Gets the first {@link Directory} of the specified type contained within this metadata collection.
+     * If no instances of this type are present, <code>null</code> is returned.
      *
      * @param type the Directory type
      * @param <T> the Directory type
-     * @return a Directory of type T if it exists in this {@link Metadata} object, otherwise <code>null</code>.
+     * @return the first Directory of type T in this metadata collection, or <code>null</code> if none exist
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    public <T extends Directory> T getDirectory(@NotNull Class<T> type)
+    public <T extends Directory> T getFirstDirectoryOfType(@NotNull Class<T> type)
     {
         // We suppress the warning here as the code asserts a map signature of Class<T>,T.
         // So after get(Class<T>) it is for sure the result is from type T.
 
-        return (T)_directoryByClass.get(type);
+        Collection<Directory> list = getDirectoryList(type);
+
+        if (list == null || list.isEmpty())
+            return null;
+
+        return (T)list.iterator().next();
     }
 
     /**
-     * Indicates whether a given directory type has been created in this metadata
-     * repository.  Directories are created by calling {@link Metadata#getOrCreateDirectory(Class)}.
+     * Indicates whether an instance of the given directory type exists in this Metadata instance.
      *
      * @param type the {@link Directory} type
-     * @return true if the {@link Directory} has been created
+     * @return <code>true</code> if a {@link Directory} of the specified type exists, otherwise <code>false</code>
      */
-    public boolean containsDirectory(Class<? extends Directory> type)
+    public boolean containsDirectoryOfType(Class<? extends Directory> type)
     {
-        return _directoryByClass.containsKey(type);
+        Collection<Directory> list = getDirectoryList(type);
+        return list != null && !list.isEmpty();
     }
 
     /**
@@ -136,7 +121,7 @@ public final class Metadata
      */
     public boolean hasErrors()
     {
-        for (Directory directory : _directoryList) {
+        for (Directory directory : getDirectories()) {
             if (directory.hasErrors())
                 return true;
         }
@@ -146,10 +131,80 @@ public final class Metadata
     @Override
     public String toString()
     {
+        int count = getDirectoryCount();
         return String.format("Metadata (%d %s)",
-            _directoryList.size(),
-            _directoryList.size() == 1
+            count,
+            count == 1
                 ? "directory"
                 : "directories");
+    }
+
+    @Nullable
+    private <T extends Directory> Collection<Directory> getDirectoryList(@NotNull Class<T> type)
+    {
+        return _directoryListByClass.get(type);
+    }
+
+    @NotNull
+    private <T extends Directory> Collection<Directory> getOrCreateDirectoryList(@NotNull Class<T> type)
+    {
+        Collection<Directory> collection = getDirectoryList(type);
+        if (collection != null)
+            return collection;
+        collection = new ArrayList<Directory>();
+        _directoryListByClass.put(type, collection);
+        return collection;
+    }
+
+    private static class DirectoryIterable implements Iterable<Directory>
+    {
+        private final Map<Class<? extends Directory>, Collection<Directory>> _map;
+
+        public DirectoryIterable(Map<Class<? extends Directory>, Collection<Directory>> map)
+        {
+            _map = map;
+        }
+
+        public Iterator<Directory> iterator()
+        {
+            return new DirectoryIterator(_map);
+        }
+
+        private static class DirectoryIterator implements Iterator<Directory>
+        {
+            @NotNull
+            private final Iterator<Map.Entry<Class<? extends Directory>, Collection<Directory>>> _mapIterator;
+            @Nullable
+            private Iterator<Directory> _listIterator;
+
+            public DirectoryIterator(Map<Class<? extends Directory>, Collection<Directory>> map)
+            {
+                _mapIterator = map.entrySet().iterator();
+
+                if (_mapIterator.hasNext())
+                    _listIterator = _mapIterator.next().getValue().iterator();
+            }
+
+            public boolean hasNext()
+            {
+                return _listIterator != null && (_listIterator.hasNext() || _mapIterator.hasNext());
+            }
+
+            public Directory next()
+            {
+                if (_listIterator == null || (!_listIterator.hasNext() && !_mapIterator.hasNext()))
+                    throw new NoSuchElementException();
+
+                while (!_listIterator.hasNext())
+                    _listIterator = _mapIterator.next().getValue().iterator();
+
+                return _listIterator.next();
+            }
+
+            public void remove()
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
     }
 }

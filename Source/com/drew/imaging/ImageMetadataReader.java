@@ -199,7 +199,7 @@ public class ImageMetadataReader
             if (markdownFormat) {
                 String fileName = file.getName();
                 String urlName = StringUtil.urlEncode(filePath);
-                ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+                ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
                 String make = exifIFD0Directory == null ? "" : exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE);
                 String model = exifIFD0Directory == null ? "" : exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL);
                 System.out.println();
@@ -251,7 +251,7 @@ public class ImageMetadataReader
             }
 
             if (args.length > 1 && thumbRequested) {
-                ExifThumbnailDirectory directory = metadata.getDirectory(ExifThumbnailDirectory.class);
+                ExifThumbnailDirectory directory = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
                 if (directory!=null && directory.hasThumbnailData()) {
                     System.out.println("Writing thumbnail...");
                     directory.writeThumbnail(args[0].trim() + ".thumb.jpg");

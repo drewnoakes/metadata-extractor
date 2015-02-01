@@ -49,7 +49,7 @@ public class JfifReaderTest
         reader.extract(new ByteArrayReader(jfifData), metadata);
 
         assertEquals(1, metadata.getDirectoryCount());
-        JfifDirectory directory = metadata.getDirectory(JfifDirectory.class);
+        JfifDirectory directory = metadata.getFirstDirectoryOfType(JfifDirectory.class);
         assertNotNull(directory);
         assertFalse(directory.getErrors().toString(), directory.hasErrors());
 

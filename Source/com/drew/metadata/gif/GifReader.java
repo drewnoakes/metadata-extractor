@@ -16,7 +16,8 @@ public class GifReader
 
     public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata)
     {
-        final GifHeaderDirectory directory = metadata.getOrCreateDirectory(GifHeaderDirectory.class);
+        GifHeaderDirectory directory = new GifHeaderDirectory();
+        metadata.addDirectory(directory);
 
         // FILE HEADER
         //

@@ -50,7 +50,7 @@ public class JpegMetadataReaderTest
 
     private void validate(Metadata metadata)
     {
-        Directory directory = metadata.getDirectory(ExifSubIFDDirectory.class);
+        Directory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
         assertNotNull(directory);
         assertEquals("80", directory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
     }

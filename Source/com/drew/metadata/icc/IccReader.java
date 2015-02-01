@@ -71,7 +71,8 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
     {
         // TODO review whether the 'tagPtr' values below really do require ICC processing to work with a RandomAccessReader
 
-        final IccDirectory directory = metadata.getOrCreateDirectory(IccDirectory.class);
+        IccDirectory directory = new IccDirectory();
+        metadata.addDirectory(directory);
 
         try {
             directory.setInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT));

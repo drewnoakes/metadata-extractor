@@ -340,9 +340,9 @@ public class ProcessAllImagesInFolderUtility
                 this.metadata = metadata;
                 this.relativePath = relativePath;
 
-                ExifIFD0Directory ifd0Dir = metadata.getDirectory(ExifIFD0Directory.class);
-                ExifSubIFDDirectory subIfdDir = metadata.getDirectory(ExifSubIFDDirectory.class);
-                ExifThumbnailDirectory thumbDir = metadata.getDirectory(ExifThumbnailDirectory.class);
+                ExifIFD0Directory ifd0Dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+                ExifSubIFDDirectory subIfdDir = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+                ExifThumbnailDirectory thumbDir = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
                 if (ifd0Dir != null) {
                     manufacturer = ifd0Dir.getDescription(ExifIFD0Directory.TAG_MAKE);
                     model = ifd0Dir.getDescription(ExifIFD0Directory.TAG_MODEL);

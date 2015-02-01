@@ -62,7 +62,8 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
      */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
-        JfifDirectory directory = metadata.getOrCreateDirectory(JfifDirectory.class);
+        JfifDirectory directory = new JfifDirectory();
+        metadata.addDirectory(directory);
 
         try {
             // For JFIF, the tag number is also the offset into the segment

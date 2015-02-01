@@ -45,7 +45,7 @@ public class PsdReaderTest
         new PsdReader().extract(new RandomAccessFileReader(randomAccessFile), metadata);
         randomAccessFile.close();
 
-        PsdHeaderDirectory directory = metadata.getDirectory(PsdHeaderDirectory.class);
+        PsdHeaderDirectory directory = metadata.getFirstDirectoryOfType(PsdHeaderDirectory.class);
         assertNotNull(directory);
         return directory;
     }

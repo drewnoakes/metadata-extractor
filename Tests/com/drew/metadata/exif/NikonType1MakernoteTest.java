@@ -55,10 +55,10 @@ public class NikonType1MakernoteTest
     {
         Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType1.jpg.app1");
 
-        _nikonDirectory = metadata.getDirectory(NikonType1MakernoteDirectory.class);
-        _exifSubIFDDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);
-        _exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-        _thumbDirectory = metadata.getDirectory(ExifThumbnailDirectory.class);
+        _nikonDirectory = metadata.getFirstDirectoryOfType(NikonType1MakernoteDirectory.class);
+        _exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+        _exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        _thumbDirectory = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
     }
 
     /*

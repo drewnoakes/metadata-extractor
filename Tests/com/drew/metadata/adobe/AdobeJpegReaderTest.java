@@ -44,7 +44,7 @@ public class AdobeJpegReaderTest
         Metadata metadata = new Metadata();
         new AdobeJpegReader().extract(new SequentialByteArrayReader(FileUtil.readBytes(filePath)), metadata);
 
-        AdobeJpegDirectory directory = metadata.getDirectory(AdobeJpegDirectory.class);
+        AdobeJpegDirectory directory = metadata.getFirstDirectoryOfType(AdobeJpegDirectory.class);
         assertNotNull(directory);
         return directory;
     }

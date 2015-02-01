@@ -57,7 +57,9 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
 
     public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata)
     {
-        final Directory directory = metadata.getOrCreateDirectory(AdobeJpegDirectory.class);
+        Directory directory = new AdobeJpegDirectory();
+        metadata.addDirectory(directory);
+
         try {
             reader.setMotorolaByteOrder(false);
 

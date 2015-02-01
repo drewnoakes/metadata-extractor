@@ -24,7 +24,6 @@ import com.drew.lang.GeoLocation;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 

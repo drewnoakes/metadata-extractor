@@ -78,7 +78,8 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
     {
-        IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
+        IptcDirectory directory = new IptcDirectory();
+        metadata.addDirectory(directory);
 
         int offset = 0;
 

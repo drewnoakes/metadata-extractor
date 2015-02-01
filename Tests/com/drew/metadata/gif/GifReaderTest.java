@@ -44,7 +44,7 @@ public class GifReaderTest
         new GifReader().extract(new StreamReader(stream), metadata);
         stream.close();
 
-        GifHeaderDirectory directory = metadata.getDirectory(GifHeaderDirectory.class);
+        GifHeaderDirectory directory = metadata.getFirstDirectoryOfType(GifHeaderDirectory.class);
         assertNotNull(directory);
         return directory;
     }

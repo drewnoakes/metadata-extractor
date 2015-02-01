@@ -42,7 +42,7 @@ public class IccReaderTest
         Metadata metadata = new Metadata();
         new IccReader().extract(new ByteArrayReader(icc), metadata);
 
-        IccDirectory directory = metadata.getDirectory(IccDirectory.class);
+        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
         assertNotNull(directory);
 

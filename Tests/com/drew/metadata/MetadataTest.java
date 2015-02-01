@@ -22,7 +22,6 @@ package com.drew.metadata;
 
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.iptc.IptcDirectory;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -37,49 +36,19 @@ public class MetadataTest
     @Test
     public void testGetDirectoryWhenNotExists()
     {
-        assertNull(new Metadata().getDirectory(ExifSubIFDDirectory.class));
-    }
-
-    @Test
-    public void testGetOrCreateDirectoryWhenNotExists()
-    {
-        assertNotNull(new Metadata().getOrCreateDirectory(ExifSubIFDDirectory.class));
-    }
-
-    @Test
-    public void testGetDirectoryReturnsSameInstance()
-    {
-        Metadata metadata = new Metadata();
-        Directory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
-        assertSame(directory, metadata.getDirectory(ExifSubIFDDirectory.class));
-    }
-
-    @Test
-    public void testGetOrCreateDirectoryReturnsSameInstance()
-    {
-        Metadata metadata = new Metadata();
-        Directory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
-        assertSame(directory, metadata.getOrCreateDirectory(ExifSubIFDDirectory.class));
-        assertNotSame(directory, metadata.getOrCreateDirectory(IptcDirectory.class));
+        assertNull(new Metadata().getFirstDirectoryOfType(ExifSubIFDDirectory.class));
     }
 
     @Test
     public void testHasErrors() throws Exception
     {
-        Metadata metadata = new Metadata();
-        assertFalse(metadata.hasErrors());
-        final ExifSubIFDDirectory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
+        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
         directory.addError("Test Error 1");
-        assertTrue(metadata.hasErrors());
-    }
 
-    @Test
-    public void testGetErrors() throws Exception
-    {
         Metadata metadata = new Metadata();
         assertFalse(metadata.hasErrors());
-        final ExifSubIFDDirectory directory = metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
-        directory.addError("Test Error 1");
+
+        metadata.addDirectory(directory);
         assertTrue(metadata.hasErrors());
     }
 
@@ -88,9 +57,11 @@ public class MetadataTest
     {
         Metadata metadata = new Metadata();
         assertEquals("Metadata (0 directories)", metadata.toString());
-        metadata.getOrCreateDirectory(ExifIFD0Directory.class);
+
+        metadata.addDirectory(new ExifIFD0Directory());
         assertEquals("Metadata (1 directory)", metadata.toString());
-        metadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
+
+        metadata.addDirectory(new ExifSubIFDDirectory());
         assertEquals("Metadata (2 directories)", metadata.toString());
     }
 }

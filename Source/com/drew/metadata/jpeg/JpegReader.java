@@ -69,13 +69,14 @@ public class JpegReader implements JpegSegmentMetadataReader
 
     public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        if (metadata.containsDirectory(JpegDirectory.class)) {
+        if (metadata.containsDirectoryOfType(JpegDirectory.class)) {
             // If this directory is already present, discontinue this operation.
             // We only store metadata for the *first* matching SOFn segment.
             return;
         }
 
-        JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
+        JpegDirectory directory = new JpegDirectory();
+        metadata.addDirectory(directory);
 
         // The value of TAG_COMPRESSION_TYPE is determined by the segment type found
         directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);

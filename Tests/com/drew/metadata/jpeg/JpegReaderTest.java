@@ -44,7 +44,7 @@ public class JpegReaderTest
         Metadata metadata = new Metadata();
         new JpegReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.SOF0);
 
-        JpegDirectory directory = metadata.getDirectory(JpegDirectory.class);
+        JpegDirectory directory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         assertNotNull(directory);
         return directory;
     }

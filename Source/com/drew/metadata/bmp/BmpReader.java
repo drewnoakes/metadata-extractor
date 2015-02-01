@@ -13,7 +13,8 @@ public class BmpReader
 {
     public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata)
     {
-        final BmpHeaderDirectory directory = metadata.getOrCreateDirectory(BmpHeaderDirectory.class);
+        BmpHeaderDirectory directory = new BmpHeaderDirectory();
+        metadata.addDirectory(directory);
 
         // FILE HEADER
         //

@@ -1,5 +1,6 @@
 package com.drew.metadata.png;
 
+import com.drew.imaging.png.PngChunkType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
@@ -47,16 +48,26 @@ public class PngDirectory extends Directory
         _tagNameMap.put(TAG_BACKGROUND_COLOR, "Background Color");
     }
 
-    public PngDirectory()
+    private final PngChunkType _pngChunkType;
+
+    public PngDirectory(@NotNull PngChunkType pngChunkType)
     {
+        _pngChunkType = pngChunkType;
+
         this.setDescriptor(new PngDescriptor(this));
+    }
+
+    @NotNull
+    public PngChunkType getPngChunkType()
+    {
+        return _pngChunkType;
     }
 
     @Override
     @NotNull
     public String getName()
     {
-        return "PNG";
+        return "PNG-" + _pngChunkType.getIdentifier();
     }
 
     @Override
