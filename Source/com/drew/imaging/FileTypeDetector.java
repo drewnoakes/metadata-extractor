@@ -49,6 +49,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Gif, "GIF87a".getBytes());
         _root.addPath(FileType.Gif, "GIF89a".getBytes());
         _root.addPath(FileType.Ico, new byte[]{0x00, 0x00, 0x01, 0x00});
+        _root.addPath(FileType.Riff, "RIFF".getBytes());
 
         _root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
         _root.addPath(FileType.Crw, "II".getBytes(), new byte[]{0x1a, 0x00, 0x00, 0x00}, "HEAPCCDR".getBytes());
