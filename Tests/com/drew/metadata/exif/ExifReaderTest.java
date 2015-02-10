@@ -21,6 +21,7 @@
 package com.drew.metadata.exif;
 
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -29,6 +30,7 @@ import com.drew.tools.FileUtil;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -43,7 +45,8 @@ public class ExifReaderTest
     public static Metadata processBytes(@NotNull String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
-        new ExifReader().extract(FileUtil.readBytes(filePath), metadata);
+        byte[] bytes = FileUtil.readBytes(filePath);
+        new ExifReader().extract(new ByteArrayReader(bytes), metadata, ExifReader.JPEG_SEGMENT_PREAMBLE.length());
         return metadata;
     }
 
@@ -79,12 +82,15 @@ public class ExifReaderTest
     }
 
     @Test
-    public void testLoadJpegWithNoExifData() throws Exception
+    public void testReadJpegSegmentWithNoExifData() throws Exception
     {
         byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
         Metadata metadata = new Metadata();
-        new ExifReader().extract(badExifData, metadata);
+        ArrayList<byte[]> segments = new ArrayList<byte[]>();
+        segments.add(badExifData);
+        new ExifReader().readJpegSegments(segments, metadata, JpegSegmentType.APP1);
         assertEquals(0, metadata.getDirectoryCount());
+        assertFalse(metadata.hasErrors());
     }
 
     @Test
