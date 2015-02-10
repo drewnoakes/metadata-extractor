@@ -64,7 +64,7 @@ public class ExifReader implements JpegSegmentMetadataReader
     {
         for (byte[] segmentBytes : segments) {
             // Filter any segments containing unexpected preambles
-            if (segmentBytes.length < PREAMBLE.length() || !new String(segmentBytes, 0, PREAMBLE.length()).equalsIgnoreCase(PREAMBLE))
+            if (segmentBytes.length < PREAMBLE.length() || !new String(segmentBytes, 0, PREAMBLE.length()).equals(PREAMBLE))
                 continue;
             extract(segmentBytes, metadata);
         }
