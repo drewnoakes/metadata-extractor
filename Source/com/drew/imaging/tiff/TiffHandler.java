@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
+ * Interface of an class capable of handling events raised during the reading of a TIFF file
+ * via {@link TiffReader}.
+ *
  * @author Drew Noakes https://drewnoakes.com
  */
 public interface TiffHandler
