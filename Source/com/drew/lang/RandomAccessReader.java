@@ -216,6 +216,30 @@ public abstract class RandomAccessReader
     }
 
     /**
+     * Get a 24-bit unsigned integer from the buffer, returning it as an int.
+     *
+     * @param index position within the data buffer to read first byte
+     * @return the unsigned 24-bit int value as a long, between 0x00000000 and 0x00FFFFFF
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public int getInt24(int index) throws IOException
+    {
+        validateIndex(index, 3);
+
+        if (_isMotorolaByteOrder) {
+            // Motorola - MSB first (big endian)
+            return (((int)getByte(index    )) << 16 & 0xFF0000) |
+                   (((int)getByte(index + 1)) << 8  & 0xFF00) |
+                   (((int)getByte(index + 2))       & 0xFF);
+        } else {
+            // Intel ordering - LSB first (little endian)
+            return (((int)getByte(index + 2)) << 16 & 0xFF0000) |
+                   (((int)getByte(index + 1)) << 8  & 0xFF00) |
+                   (((int)getByte(index    ))       & 0xFF);
+        }
+    }
+
+    /**
      * Get a 32-bit unsigned integer from the buffer, returning it as a long.
      *
      * @param index position within the data buffer to read first byte
