@@ -126,6 +126,24 @@ public abstract class RandomAccessReader
     }
 
     /**
+     * Gets whether a bit at a specific index is set or not.
+     *
+     * @param index the number of bits at which to test
+     * @return true if the bit is set, otherwise false
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public boolean getBit(int index) throws IOException
+    {
+        int byteIndex = index / 8;
+        int bitIndex = index % 8;
+
+        validateIndex(byteIndex, 1);
+
+        byte b = getByte(byteIndex);
+        return ((b >> bitIndex) & 1) == 1;
+    }
+
+    /**
      * Returns an unsigned 8-bit int calculated from one byte of data at the specified index.
      *
      * @param index position within the data buffer to read byte
