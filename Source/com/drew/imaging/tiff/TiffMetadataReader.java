@@ -25,11 +25,9 @@ import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifTiffHandler;
+import com.drew.metadata.file.FileMetadataReader;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
  * Obtains all available metadata from TIFF formatted files.  Note that TIFF files include many digital camera RAW
@@ -52,6 +50,8 @@ public class TiffMetadataReader
         } finally {
             randomAccessFile.close();
         }
+
+        new FileMetadataReader().read(file, metadata);
 
         return metadata;
     }

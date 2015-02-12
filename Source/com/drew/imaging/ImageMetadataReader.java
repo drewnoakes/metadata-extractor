@@ -36,6 +36,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
+import com.drew.metadata.file.FileMetadataReader;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -146,11 +147,14 @@ public class ImageMetadataReader
     public static Metadata readMetadata(@NotNull final File file) throws ImageProcessingException, IOException
     {
         InputStream inputStream = new FileInputStream(file);
+        Metadata metadata;
         try {
-            return readMetadata(inputStream);
+            metadata = readMetadata(inputStream);
         } finally {
             inputStream.close();
         }
+        new FileMetadataReader().read(file, metadata);
+        return metadata;
     }
 
     private ImageMetadataReader() throws Exception

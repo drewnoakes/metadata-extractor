@@ -24,6 +24,7 @@ package com.drew.imaging.gif;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.gif.GifReader;
 
 import java.io.File;
@@ -41,15 +42,15 @@ public class GifMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
-        FileInputStream stream = null;
+        InputStream inputStream = new FileInputStream(file);
+        Metadata metadata;
         try {
-            stream = new FileInputStream(file);
-            return readMetadata(stream);
+            metadata = readMetadata(inputStream);
         } finally {
-            if (stream != null) {
-                stream.close();
-            }
+            inputStream.close();
         }
+        new FileMetadataReader().read(file, metadata);
+        return metadata;
     }
 
     @NotNull

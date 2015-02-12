@@ -3,6 +3,7 @@ package com.drew.imaging.png;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
 import com.drew.metadata.png.PngDirectory;
@@ -20,14 +21,15 @@ public class PngMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws PngProcessingException, IOException
     {
-        InputStream inputStream = null;
+        InputStream inputStream = new FileInputStream(file);
+        Metadata metadata;
         try {
-            inputStream = new FileInputStream(file);
-            return readMetadata(inputStream);
+            metadata = readMetadata(inputStream);
         } finally {
-            if (inputStream != null)
-                inputStream.close();
+            inputStream.close();
         }
+        new FileMetadataReader().read(file, metadata);
+        return metadata;
     }
 
     @NotNull

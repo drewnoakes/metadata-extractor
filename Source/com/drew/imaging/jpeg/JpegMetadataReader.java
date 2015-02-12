@@ -26,6 +26,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.adobe.AdobeJpegReader;
 import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.jfif.JfifReader;
@@ -78,15 +79,15 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
-        InputStream inputStream = null;
-        try
-        {
-            inputStream = new FileInputStream(file);
-            return readMetadata(inputStream, readers);
+        InputStream inputStream = new FileInputStream(file);
+        Metadata metadata;
+        try {
+            metadata = readMetadata(inputStream, readers);
         } finally {
-            if (inputStream != null)
-                inputStream.close();
+            inputStream.close();
         }
+        new FileMetadataReader().read(file, metadata);
+        return metadata;
     }
 
     @NotNull

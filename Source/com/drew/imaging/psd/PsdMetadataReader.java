@@ -25,6 +25,7 @@ import com.drew.lang.RandomAccessFileReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.photoshop.PsdReader;
 
 import java.io.*;
@@ -48,6 +49,8 @@ public class PsdMetadataReader
         } finally {
             randomAccessFile.close();
         }
+
+        new FileMetadataReader().read(file, metadata);
 
         return metadata;
     }

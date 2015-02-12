@@ -18,42 +18,43 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.imaging.ico;
+package com.drew.metadata.file;
 
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.file.FileMetadataReader;
-import com.drew.metadata.ico.IcoReader;
-
-import java.io.*;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.TagDescriptor;
 
 /**
- * Obtains metadata from ICO (Windows Icon) files.
- *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class IcoMetadataReader
+public class FileMetadataDescriptor extends TagDescriptor<FileMetadataDirectory>
 {
-    @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws IOException
+    public FileMetadataDescriptor(@NotNull FileMetadataDirectory directory)
     {
-        InputStream inputStream = new FileInputStream(file);
-        Metadata metadata;
-        try {
-            metadata = readMetadata(inputStream);
-        } finally {
-            inputStream.close();
-        }
-        new FileMetadataReader().read(file, metadata);
-        return metadata;
+        super(directory);
     }
 
-    @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    @Override
+    @Nullable
+    public String getDescription(int tagType)
     {
-        Metadata metadata = new Metadata();
-        new IcoReader().extract(new StreamReader(inputStream), metadata);
-        return metadata;
+        switch (tagType) {
+            case FileMetadataDirectory.TAG_FILE_SIZE:
+                return getFileSizeDescription();
+            default:
+                return super.getDescription(tagType);
+        }
+    }
+
+    @Nullable
+    private String getFileSizeDescription()
+    {
+        Long size = _directory.getLongObject(FileMetadataDirectory.TAG_FILE_SIZE);
+
+        if (size == null)
+            return null;
+
+        return Long.toString(size) + " bytes";
     }
 }
+
