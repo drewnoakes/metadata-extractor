@@ -242,9 +242,8 @@ public class ImageMetadataReader
                                 Integer.toHexString(tag.getTagType()),
                                 tagName,
                                 description);
-                    }
-                    else
-                    {
+                    } else {
+                        // simple formatting
                         if (showHex) {
                             System.out.printf("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description);
                         } else {
