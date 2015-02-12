@@ -17,6 +17,7 @@ The library understands several formats of metadata, many of which may be presen
 * [JFIF / JFXX](http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format)
 * [ICC Profiles](http://en.wikipedia.org/wiki/ICC_profile)
 * [Photoshop](http://en.wikipedia.org/wiki/Photoshop) fields
+* [WebP](http://en.wikipedia.org/wiki/WebP) properties
 * [PNG](http://en.wikipedia.org/wiki/Portable_Network_Graphics) properties
 * [BMP](http://en.wikipedia.org/wiki/BMP_file_format) properties
 * [GIF](http://en.wikipedia.org/wiki/Graphics_Interchange_Format) properties
@@ -25,6 +26,7 @@ It will process files of type:
 
 * JPEG
 * TIFF
+* WebP
 * PSD
 * PNG
 * BMP
