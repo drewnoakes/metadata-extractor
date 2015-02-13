@@ -20,14 +20,14 @@
  */
 package com.drew.metadata.xmp;
 
+import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Torsten Skadell
@@ -35,6 +35,8 @@ import java.util.Map;
  */
 public class XmpDirectory extends Directory
 {
+    public static final int TAG_XMP_VALUE_COUNT = 0xFFFF;
+
     // These are some Tags, belonging to xmp-data-tags
     // The numeration is more like enums. The real xmp-tags are strings,
     // so we do some kind of mapping here...
@@ -90,6 +92,8 @@ public class XmpDirectory extends Directory
     private final Map<String, String> _propertyValueByPath = new HashMap<String, String>();
 
     static {
+        _tagNameMap.put(TAG_XMP_VALUE_COUNT, "XMP Value Count");
+
         _tagNameMap.put(TAG_MAKE, "Make");
         _tagNameMap.put(TAG_MODEL, "Model");
         _tagNameMap.put(TAG_EXPOSURE_TIME, "Exposure Time");
@@ -175,6 +179,19 @@ public class XmpDirectory extends Directory
     public void setXMPMeta(@NotNull XMPMeta xmpMeta)
     {
         _xmpMeta = xmpMeta;
+
+        try {
+            int valueCount = 0;
+            for (Iterator i = _xmpMeta.iterator(); i.hasNext(); ) {
+                XMPPropertyInfo prop = (XMPPropertyInfo)i.next();
+                if (prop.getPath() != null) {
+                    //System.out.printf("%s = %s\n", prop.getPath(), prop.getValue());
+                    valueCount++;
+                }
+            }
+            setInt(TAG_XMP_VALUE_COUNT, valueCount);
+        } catch (XMPException ignored) {
+        }
     }
 
     /**
