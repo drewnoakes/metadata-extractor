@@ -126,7 +126,9 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
         List<KeyValuePair> keyValues = (List<KeyValuePair>)object;
         StringBuilder sb = new StringBuilder();
         for (KeyValuePair keyValue : keyValues) {
-            sb.append(String.format("%s: %s\n", keyValue.getKey(), keyValue.getValue()));
+            if (sb.length() != 0)
+                sb.append('\n');
+            sb.append(String.format("%s: %s", keyValue.getKey(), keyValue.getValue()));
         }
         return sb.toString();
     }
