@@ -97,8 +97,8 @@ public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReade
                 pos += 2;
 
                 // A variable number of bytes holding a pascal string (two leading bytes for length).
-                int descriptionLength = reader.getUInt16(pos);
-                pos += 2;
+                short descriptionLength = reader.getUInt8();
+                pos += 1;
                 // Some basic bounds checking
                 if (descriptionLength < 0 || descriptionLength + pos > length)
                     return;
