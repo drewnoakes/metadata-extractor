@@ -18,6 +18,29 @@ import java.util.zip.InflaterInputStream;
  */
 public class PngMetadataReader
 {
+    private static Set<PngChunkType> _desiredChunkTypes;
+
+    static
+    {
+        Set<PngChunkType> desiredChunkTypes = new HashSet<PngChunkType>();
+
+        desiredChunkTypes.add(PngChunkType.IHDR);
+        desiredChunkTypes.add(PngChunkType.PLTE);
+        desiredChunkTypes.add(PngChunkType.tRNS);
+        desiredChunkTypes.add(PngChunkType.cHRM);
+        desiredChunkTypes.add(PngChunkType.sRGB);
+        desiredChunkTypes.add(PngChunkType.gAMA);
+        desiredChunkTypes.add(PngChunkType.iCCP);
+        desiredChunkTypes.add(PngChunkType.bKGD);
+        desiredChunkTypes.add(PngChunkType.tEXt);
+        desiredChunkTypes.add(PngChunkType.iTXt);
+        desiredChunkTypes.add(PngChunkType.tIME);
+        desiredChunkTypes.add(PngChunkType.pHYs);
+        desiredChunkTypes.add(PngChunkType.sBIT);
+
+        _desiredChunkTypes = Collections.unmodifiableSet(desiredChunkTypes);
+    }
+
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws PngProcessingException, IOException
     {
@@ -35,23 +58,7 @@ public class PngMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws PngProcessingException, IOException
     {
-        // TODO keep a single static hash of these
-        Set<PngChunkType> desiredChunkTypes = new HashSet<PngChunkType>();
-        desiredChunkTypes.add(PngChunkType.IHDR);
-        desiredChunkTypes.add(PngChunkType.PLTE);
-        desiredChunkTypes.add(PngChunkType.tRNS);
-        desiredChunkTypes.add(PngChunkType.cHRM);
-        desiredChunkTypes.add(PngChunkType.sRGB);
-        desiredChunkTypes.add(PngChunkType.gAMA);
-        desiredChunkTypes.add(PngChunkType.iCCP);
-        desiredChunkTypes.add(PngChunkType.bKGD);
-        desiredChunkTypes.add(PngChunkType.tEXt);
-        desiredChunkTypes.add(PngChunkType.iTXt);
-        desiredChunkTypes.add(PngChunkType.tIME);
-        desiredChunkTypes.add(PngChunkType.pHYs);
-        desiredChunkTypes.add(PngChunkType.sBIT);
-
-        Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), desiredChunkTypes);
+        Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), _desiredChunkTypes);
 
         Metadata metadata = new Metadata();
 
