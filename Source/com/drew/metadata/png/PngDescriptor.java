@@ -62,6 +62,8 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
                 return getTextualDataDescription();
             case PngDirectory.TAG_BACKGROUND_COLOR:
                 return getBackgroundColorDescription();
+            case PngDirectory.TAG_UNIT_SPECIFIER:
+                return getUnitSpecifierDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -112,6 +114,16 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
             "Relative Colorimetric",
             "Saturation",
             "Absolute Colorimetric"
+        );
+    }
+
+    @Nullable
+    public String getUnitSpecifierDescription()
+    {
+        return getIndexedDescription(
+            PngDirectory.TAG_UNIT_SPECIFIER,
+            "Unspecified",
+            "Metres"
         );
     }
 

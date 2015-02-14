@@ -47,6 +47,10 @@ public class PngDirectory extends Directory
     public static final int TAG_LAST_MODIFICATION_TIME = 14;
     public static final int TAG_BACKGROUND_COLOR = 15;
 
+    public static final int TAG_PIXELS_PER_UNIT_X = 16;
+    public static final int TAG_PIXELS_PER_UNIT_Y = 17;
+    public static final int TAG_UNIT_SPECIFIER = 18;
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -66,6 +70,9 @@ public class PngDirectory extends Directory
         _tagNameMap.put(TAG_TEXTUAL_DATA, "Textual Data");
         _tagNameMap.put(TAG_LAST_MODIFICATION_TIME, "Last Modification Time");
         _tagNameMap.put(TAG_BACKGROUND_COLOR, "Background Color");
+        _tagNameMap.put(TAG_PIXELS_PER_UNIT_X, "Pixels Per Unit X");
+        _tagNameMap.put(TAG_PIXELS_PER_UNIT_Y, "Pixels Per Unit Y");
+        _tagNameMap.put(TAG_UNIT_SPECIFIER, "Unit Specifier");
     }
 
     private final PngChunkType _pngChunkType;

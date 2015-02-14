@@ -48,6 +48,7 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.tEXt);
         desiredChunkTypes.add(PngChunkType.iTXt);
         desiredChunkTypes.add(PngChunkType.tIME);
+        desiredChunkTypes.add(PngChunkType.pHYs);
 
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), desiredChunkTypes);
 
@@ -178,6 +179,16 @@ public class PngMetadataReader
                 calendar.set(year, month, day, hour, minute, second);
                 PngDirectory directory = new PngDirectory(PngChunkType.tIME);
                 directory.setDate(PngDirectory.TAG_LAST_MODIFICATION_TIME, calendar.getTime());
+                metadata.addDirectory(directory);
+            } else if (chunkType.equals(PngChunkType.pHYs)) {
+                SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
+                int pixelsPerUnitX = reader.getInt32();
+                int pixelsPerUnitY = reader.getInt32();
+                byte unitSpecifier = reader.getInt8();
+                PngDirectory directory = new PngDirectory(PngChunkType.pHYs);
+                directory.setInt(PngDirectory.TAG_PIXELS_PER_UNIT_X, pixelsPerUnitX);
+                directory.setInt(PngDirectory.TAG_PIXELS_PER_UNIT_Y, pixelsPerUnitY);
+                directory.setInt(PngDirectory.TAG_UNIT_SPECIFIER, unitSpecifier);
                 metadata.addDirectory(directory);
             }
         }
