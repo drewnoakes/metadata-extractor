@@ -70,6 +70,16 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         PhotoshopDirectory directory = new PhotoshopDirectory();
         metadata.addDirectory(directory);
 
+        // Data contains a sequence of Image Resource Blocks (IRBs):
+        //
+        // 4 bytes - Signature "8BIM"
+        // 2 bytes - Resource identifier
+        // String  - Pascal string, padded to make length even
+        // 4 bytes - Size of resource data which follows
+        // Data    - The resource data, padded to make size even
+        //
+        // http://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
+
         int pos = 0;
         while (pos < length) {
             try {
