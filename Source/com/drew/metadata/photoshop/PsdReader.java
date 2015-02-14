@@ -76,5 +76,7 @@ public class PsdReader implements MetadataReader
         } catch (IOException e) {
             directory.addError("Unable to read PSD header");
         }
+
+        // TODO read the sequence of 8BIM values here (using PhotoshopReader)
     }
 }
