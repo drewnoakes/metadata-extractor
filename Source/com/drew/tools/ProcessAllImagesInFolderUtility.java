@@ -135,7 +135,7 @@ public class ProcessAllImagesInFolderUtility
     {
         private final Set<String> _supportedExtensions = new HashSet<String>(
             Arrays.asList(
-                "jpg", "jpeg", "png", "gif", "bmp", "ico", "webp",
+                "jpg", "jpeg", "png", "gif", "bmp", "ico", "webp", "pcx", "ai", "eps",
                 "nef", "crw", "cr2", "orf", "arw", "raf", "srw", "x3f", "rw2", "rwl",
                 "tif", "tiff", "psd", "dng"));
 
