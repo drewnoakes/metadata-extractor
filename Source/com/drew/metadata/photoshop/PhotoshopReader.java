@@ -98,7 +98,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                 pos += 1;
                 // Some basic bounds checking
                 if (descriptionLength < 0 || descriptionLength + pos > length)
-                    return;
+                    throw new ImageProcessingException("Invalid string length");
                 // We don't use the string value here
                 reader.skip(descriptionLength);
                 pos += descriptionLength;
