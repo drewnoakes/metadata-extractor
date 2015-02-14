@@ -36,14 +36,19 @@ public class SequentialByteArrayReader extends SequentialReader
     private final byte[] _bytes;
     private int _index;
 
-    @SuppressWarnings("ConstantConditions")
     public SequentialByteArrayReader(@NotNull byte[] bytes)
+    {
+        this(bytes, 0);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public SequentialByteArrayReader(@NotNull byte[] bytes, int baseIndex)
     {
         if (bytes == null)
             throw new NullPointerException();
 
         _bytes = bytes;
-        _index = 0;
+        _index = baseIndex;
     }
 
     @Override
