@@ -35,7 +35,7 @@ import java.io.IOException;
  */
 public class PsdReader implements MetadataReader
 {
-    public void extract(@NotNull final RandomAccessReader reader, final @NotNull Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
         PsdHeaderDirectory directory = new PsdHeaderDirectory();
         metadata.addDirectory(directory);

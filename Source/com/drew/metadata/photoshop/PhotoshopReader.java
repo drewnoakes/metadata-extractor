@@ -63,7 +63,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReade
         }
     }
 
-    public void extract(@NotNull final RandomAccessReader reader, final @NotNull Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
         PhotoshopDirectory directory = new PhotoshopDirectory();
         metadata.addDirectory(directory);
