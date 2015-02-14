@@ -49,6 +49,7 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.iTXt);
         desiredChunkTypes.add(PngChunkType.tIME);
         desiredChunkTypes.add(PngChunkType.pHYs);
+        desiredChunkTypes.add(PngChunkType.sBIT);
 
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), desiredChunkTypes);
 
@@ -189,6 +190,10 @@ public class PngMetadataReader
                 directory.setInt(PngDirectory.TAG_PIXELS_PER_UNIT_X, pixelsPerUnitX);
                 directory.setInt(PngDirectory.TAG_PIXELS_PER_UNIT_Y, pixelsPerUnitY);
                 directory.setInt(PngDirectory.TAG_UNIT_SPECIFIER, unitSpecifier);
+                metadata.addDirectory(directory);
+            } else if (chunkType.equals(PngChunkType.sBIT)) {
+                PngDirectory directory = new PngDirectory(PngChunkType.sBIT);
+                directory.setByteArray(PngDirectory.TAG_SIGNIFICANT_BITS, bytes);
                 metadata.addDirectory(directory);
             }
         }

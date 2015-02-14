@@ -51,6 +51,8 @@ public class PngDirectory extends Directory
     public static final int TAG_PIXELS_PER_UNIT_Y = 17;
     public static final int TAG_UNIT_SPECIFIER = 18;
 
+    public static final int TAG_SIGNIFICANT_BITS = 19;
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -73,6 +75,7 @@ public class PngDirectory extends Directory
         _tagNameMap.put(TAG_PIXELS_PER_UNIT_X, "Pixels Per Unit X");
         _tagNameMap.put(TAG_PIXELS_PER_UNIT_Y, "Pixels Per Unit Y");
         _tagNameMap.put(TAG_UNIT_SPECIFIER, "Unit Specifier");
+        _tagNameMap.put(TAG_SIGNIFICANT_BITS, "Significant Bits");
     }
 
     private final PngChunkType _pngChunkType;
