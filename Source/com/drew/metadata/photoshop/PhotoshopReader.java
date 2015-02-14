@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.photoshop;
 
+import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.*;
@@ -27,7 +28,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.iptc.IptcReader;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -84,7 +84,9 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         while (pos < length) {
             try {
                 // 4 bytes for the signature.  Should always be "8BIM".
-                reader.skip(4);
+                String signature = reader.getString(4);
+                if (!signature.equals("8BIM"))
+                    throw new ImageProcessingException("Expecting 8BIM marker");
                 pos += 4;
 
                 // 2 bytes for the resource identifier (tag type).
@@ -126,7 +128,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 if (tagType >= 0x0fa0 && tagType <= 0x1387)
                     PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 directory.addError(ex.getMessage());
                 return;
             }
