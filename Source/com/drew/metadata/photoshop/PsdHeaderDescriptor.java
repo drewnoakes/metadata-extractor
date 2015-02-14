@@ -58,6 +58,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getChannelCountDescription()
     {
         try {
+            // Supported range is 1 to 56.
             Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_CHANNEL_COUNT);
             if (value == null)
                 return null;
@@ -71,6 +72,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getBitsPerChannelDescription()
     {
         try {
+            // Supported values are 1, 8, 16 and 32.
             Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL);
             if (value == null)
                 return null;
