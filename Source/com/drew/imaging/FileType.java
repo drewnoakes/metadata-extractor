@@ -33,6 +33,7 @@ public enum FileType
     Bmp,
     Gif,
     Ico,
+    Pcx,
     Riff,
 
     /** Sony camera raw. */

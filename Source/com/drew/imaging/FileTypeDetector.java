@@ -49,6 +49,10 @@ public class FileTypeDetector
         _root.addPath(FileType.Gif, "GIF87a".getBytes());
         _root.addPath(FileType.Gif, "GIF89a".getBytes());
         _root.addPath(FileType.Ico, new byte[]{0x00, 0x00, 0x01, 0x00});
+        _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x00, 0x01}); // multiple PCX versions, explicitly listed
+        _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x02, 0x01});
+        _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
+        _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x05, 0x01});
         _root.addPath(FileType.Riff, "RIFF".getBytes());
 
         _root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
