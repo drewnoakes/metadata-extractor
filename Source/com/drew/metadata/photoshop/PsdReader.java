@@ -39,9 +39,11 @@ public class PsdReader
         PsdHeaderDirectory directory = new PsdHeaderDirectory();
         metadata.addDirectory(directory);
 
+        // FILE HEADER SECTION
+
         try {
             final int signature = reader.getInt32();
-            if (signature != 0x38425053)
+            if (signature != 0x38425053) // "8BPS"
             {
                 directory.addError("Invalid PSD file signature");
                 return;
@@ -75,8 +77,45 @@ public class PsdReader
             directory.setInt(PsdHeaderDirectory.TAG_COLOR_MODE, colorMode);
         } catch (IOException e) {
             directory.addError("Unable to read PSD header");
+            return;
         }
 
-        // TODO read the sequence of 8BIM values here (using PhotoshopReader)
+        // COLOR MODE DATA SECTION
+
+        try {
+            long sectionLength = reader.getUInt32();
+
+            /*
+             * Only indexed color and duotone (see the mode field in the File header section) have color mode data.
+             * For all other modes, this section is just the 4-byte length field, which is set to zero.
+             *
+             * Indexed color images: length is 768; color data contains the color table for the image,
+             *                       in non-interleaved order.
+             * Duotone images: color data contains the duotone specification (the format of which is not documented).
+             *                 Other applications that read Photoshop files can treat a duotone image as a gray	image,
+             *                 and just preserve the contents of the duotone information when reading and writing the
+             *                 file.
+             */
+
+            reader.skip(sectionLength);
+        } catch (IOException e) {
+            return;
+        }
+
+        // IMAGE RESOURCES SECTION
+
+        try {
+            long sectionLength = reader.getUInt32();
+
+            assert(sectionLength <= Integer.MAX_VALUE);
+
+            new PhotoshopReader().extract(reader, (int)sectionLength, metadata);
+        } catch (IOException e) {
+            // ignore
+        }
+
+        // LAYER AND MASK INFORMATION SECTION (skipped)
+
+        // IMAGE DATA SECTION (skipped)
     }
 }
