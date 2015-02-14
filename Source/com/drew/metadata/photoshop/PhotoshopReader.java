@@ -22,12 +22,9 @@ package com.drew.metadata.photoshop;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessReader;
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 import com.drew.metadata.iptc.IptcReader;
 
 import java.io.IOException;
@@ -41,10 +38,10 @@ import java.util.Arrays;
  * @author Yuri Binev
  * @author Drew Noakes https://drewnoakes.com
  */
-public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReader
+public class PhotoshopReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    private static final String PREAMBLE = "Photoshop 3.0";
+    private static final String JPEG_SEGMENT_PREAMBLE = "Photoshop 3.0";
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -54,46 +51,34 @@ public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReade
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        final int preambleLength = PREAMBLE.length();
+        final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the necessary preamble
-            if (segmentBytes.length >= preambleLength && PREAMBLE.equals(new String(segmentBytes, 0, preambleLength)))
-                extract(new ByteArrayReader(segmentBytes), metadata);
+            if (segmentBytes.length < preambleLength + 1 || !JPEG_SEGMENT_PREAMBLE.equals(new String(segmentBytes, 0, preambleLength)))
+                continue;
+
+            extract(
+                new SequentialByteArrayReader(segmentBytes, preambleLength + 1),
+                segmentBytes.length - preambleLength - 1,
+                metadata);
         }
     }
 
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata)
     {
         PhotoshopDirectory directory = new PhotoshopDirectory();
         metadata.addDirectory(directory);
 
-        final int preambleLength = PREAMBLE.length();
-
-        int pos;
-        try {
-            pos = reader.getString(0, preambleLength).equals(PREAMBLE) ? preambleLength + 1 : 0;
-        } catch (IOException e) {
-            directory.addError("Unable to read header");
-            return;
-        }
-
-        long length;
-        try {
-            length = reader.getLength();
-        } catch (IOException e) {
-            directory.addError("Unable to read Photoshop data: " + e.getMessage());
-            return;
-        }
-
+        int pos = 0;
         while (pos < length) {
             try {
                 // 4 bytes for the signature.  Should always be "8BIM".
-                //String signature = new String(data, pos, 4);
+                reader.skip(4);
                 pos += 4;
 
                 // 2 bytes for the resource identifier (tag type).
-                int tagType = reader.getUInt16(pos); // segment type
+                int tagType = reader.getUInt16(); // segment type
                 pos += 2;
 
                 // A variable number of bytes holding a pascal string (two leading bytes for length).
@@ -102,21 +87,26 @@ public class PhotoshopReader implements JpegSegmentMetadataReader, MetadataReade
                 // Some basic bounds checking
                 if (descriptionLength < 0 || descriptionLength + pos > length)
                     return;
-                //String description = new String(data, pos, descriptionLength);
+                // We don't use the string value here
+                reader.skip(descriptionLength);
                 pos += descriptionLength;
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
-                if (pos % 2 != 0)
+                if (pos % 2 != 0) {
+                    reader.skip(1);
                     pos++;
+                }
 
                 // 4 bytes for the size of the resource data that follows.
-                int byteCount = reader.getInt32(pos);
+                int byteCount = reader.getInt32();
                 pos += 4;
                 // The resource data.
-                byte[] tagBytes = reader.getBytes(pos, byteCount);
+                byte[] tagBytes = reader.getBytes(byteCount);
                 pos += byteCount;
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
-                if (pos % 2 != 0)
+                if (pos % 2 != 0) {
+                    reader.skip(1);
                     pos++;
+                }
 
                 directory.setByteArray(tagType, tagBytes);
 
