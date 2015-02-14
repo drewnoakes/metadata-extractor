@@ -21,10 +21,9 @@
 
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.RandomAccessReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 
@@ -33,22 +32,22 @@ import java.io.IOException;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class PsdReader implements MetadataReader
+public class PsdReader
 {
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
         PsdHeaderDirectory directory = new PsdHeaderDirectory();
         metadata.addDirectory(directory);
 
         try {
-            final int signature = reader.getInt32(0);
+            final int signature = reader.getInt32();
             if (signature != 0x38425053)
             {
                 directory.addError("Invalid PSD file signature");
                 return;
             }
 
-            final int version = reader.getUInt16(4);
+            final int version = reader.getUInt16();
             if (version != 1 && version != 2)
             {
                 directory.addError("Invalid PSD file version (must be 1 or 2)");
@@ -56,22 +55,23 @@ public class PsdReader implements MetadataReader
             }
 
             // 6 reserved bytes are skipped here.  They should be zero.
+            reader.skip(6);
 
-            final int channelCount = reader.getUInt16(12);
+            final int channelCount = reader.getUInt16();
             directory.setInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT, channelCount);
 
             // even though this is probably an unsigned int, the max height in practice is 300,000
-            final int imageHeight = reader.getInt32(14);
+            final int imageHeight = reader.getInt32();
             directory.setInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT, imageHeight);
 
             // even though this is probably an unsigned int, the max width in practice is 300,000
-            final int imageWidth = reader.getInt32(18);
+            final int imageWidth = reader.getInt32();
             directory.setInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH, imageWidth);
 
-            final int bitsPerChannel = reader.getUInt16(22);
+            final int bitsPerChannel = reader.getUInt16();
             directory.setInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL, bitsPerChannel);
 
-            final int colorMode = reader.getUInt16(24);
+            final int colorMode = reader.getUInt16();
             directory.setInt(PsdHeaderDirectory.TAG_COLOR_MODE, colorMode);
         } catch (IOException e) {
             directory.addError("Unable to read PSD header");

@@ -21,13 +21,14 @@
 
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.RandomAccessFileReader;
+import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.RandomAccessFile;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,9 +42,13 @@ public class PsdReaderTest
     public static PsdHeaderDirectory processBytes(@NotNull String file) throws Exception
     {
         Metadata metadata = new Metadata();
-        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(file), "r");
-        new PsdReader().extract(new RandomAccessFileReader(randomAccessFile), metadata);
-        randomAccessFile.close();
+        InputStream stream = new FileInputStream(new File(file));
+        try {
+            new PsdReader().extract(new StreamReader(stream), metadata);
+        } catch (Exception e) {
+            stream.close();
+            throw e;
+        }
 
         PsdHeaderDirectory directory = metadata.getFirstDirectoryOfType(PsdHeaderDirectory.class);
         assertNotNull(directory);

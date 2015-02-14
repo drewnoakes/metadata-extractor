@@ -21,8 +21,7 @@
 
 package com.drew.imaging.psd;
 
-import com.drew.lang.RandomAccessFileReader;
-import com.drew.lang.RandomAccessStreamReader;
+import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileMetadataReader;
@@ -41,17 +40,13 @@ public class PsdMetadataReader
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
         Metadata metadata = new Metadata();
-
-        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-
+        InputStream stream = new FileInputStream(file);
         try {
-            new PsdReader().extract(new RandomAccessFileReader(randomAccessFile), metadata);
+            new PsdReader().extract(new StreamReader(stream), metadata);
         } finally {
-            randomAccessFile.close();
+            stream.close();
         }
-
         new FileMetadataReader().read(file, metadata);
-
         return metadata;
     }
 
@@ -59,7 +54,7 @@ public class PsdMetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
-        new PsdReader().extract(new RandomAccessStreamReader(inputStream), metadata);
+        new PsdReader().extract(new StreamReader(inputStream), metadata);
         return metadata;
     }
 }
