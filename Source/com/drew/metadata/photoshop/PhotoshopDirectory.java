@@ -30,7 +30,8 @@ import java.util.HashMap;
 /**
  * Holds the metadata found in the APPD segment of a JPEG file saved by Photoshop.
  *
- * @author Yuri Binev, Drew Noakes https://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
+ * @author Yuri Binev
  */
 public class PhotoshopDirectory extends Directory
 {
