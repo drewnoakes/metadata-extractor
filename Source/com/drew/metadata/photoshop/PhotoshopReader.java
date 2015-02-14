@@ -29,6 +29,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
+import com.drew.metadata.xmp.XmpReader;
 
 import java.util.Arrays;
 
@@ -128,6 +129,8 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                     new IccReader().extract(new ByteArrayReader(tagBytes), metadata);
                 else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
                     new ExifReader().extract(new ByteArrayReader(tagBytes), metadata);
+                else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
+                    new XmpReader().extract(tagBytes, metadata);
                 else
                     directory.setByteArray(tagType, tagBytes);
 
