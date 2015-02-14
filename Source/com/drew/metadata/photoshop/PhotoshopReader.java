@@ -26,6 +26,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 
 import java.util.Arrays;
@@ -120,11 +121,12 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                     pos++;
                 }
 
-                directory.setByteArray(tagType, tagBytes);
-
-                // TODO allow rebasing the reader with a new zero-point, rather than copying data here
                 if (tagType == PhotoshopDirectory.TAG_IPTC)
                     new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length);
+                else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
+                    new IccReader().extract(new ByteArrayReader(tagBytes), metadata);
+                else
+                    directory.setByteArray(tagType, tagBytes);
 
                 if (tagType >= 0x0fa0 && tagType <= 0x1387)
                     PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));
