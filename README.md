@@ -32,9 +32,16 @@ It will process files of type:
 * BMP
 * GIF
 * ICO
-* Camera Raw (NEF/CR2/ORF/ARW/RW2/...)
+* Camera Raw
+  * NEF (Nikon)
+  * CR2 (Canon)
+  * ORF (Olympus)
+  * ARW (Sony)
+  * RW2 (Panasonic)
+  * RWL (Leica)
+  * SRW (Samsung)
 
-Special camera-specific data is decoded for most cameras manufactured by:
+Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 * Agfa
 * Canon
