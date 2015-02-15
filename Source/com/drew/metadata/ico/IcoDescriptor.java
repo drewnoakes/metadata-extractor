@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.ico.IcoDirectory.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -39,13 +41,13 @@ public class IcoDescriptor extends TagDescriptor<IcoDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case IcoDirectory.TAG_IMAGE_TYPE:
+            case TAG_IMAGE_TYPE:
                 return getImageTypeDescription();
-            case IcoDirectory.TAG_IMAGE_WIDTH:
+            case TAG_IMAGE_WIDTH:
                 return getImageWidthDescription();
-            case IcoDirectory.TAG_IMAGE_HEIGHT:
+            case TAG_IMAGE_HEIGHT:
                 return getImageHeightDescription();
-            case IcoDirectory.TAG_COLOUR_PALETTE_SIZE:
+            case TAG_COLOUR_PALETTE_SIZE:
                 return getColourPaletteSizeDescription();
             default:
                 return super.getDescription(tagType);
@@ -55,13 +57,13 @@ public class IcoDescriptor extends TagDescriptor<IcoDirectory>
     @Nullable
     public String getImageTypeDescription()
     {
-        return getIndexedDescription(IcoDirectory.TAG_IMAGE_TYPE, 1, "Icon", "Cursor");
+        return getIndexedDescription(TAG_IMAGE_TYPE, 1, "Icon", "Cursor");
     }
 
     @Nullable
     public String getImageWidthDescription()
     {
-        Integer width = _directory.getInteger(IcoDirectory.TAG_IMAGE_WIDTH);
+        Integer width = _directory.getInteger(TAG_IMAGE_WIDTH);
         if (width == null)
             return null;
         return (width == 0 ? 256 : width) + " pixels";
@@ -70,7 +72,7 @@ public class IcoDescriptor extends TagDescriptor<IcoDirectory>
     @Nullable
     public String getImageHeightDescription()
     {
-        Integer width = _directory.getInteger(IcoDirectory.TAG_IMAGE_HEIGHT);
+        Integer width = _directory.getInteger(TAG_IMAGE_HEIGHT);
         if (width == null)
             return null;
         return (width == 0 ? 256 : width) + " pixels";
@@ -79,7 +81,7 @@ public class IcoDescriptor extends TagDescriptor<IcoDirectory>
     @Nullable
     public String getColourPaletteSizeDescription()
     {
-        Integer size = _directory.getInteger(IcoDirectory.TAG_COLOUR_PALETTE_SIZE);
+        Integer size = _directory.getInteger(TAG_COLOUR_PALETTE_SIZE);
         if (size == null)
             return null;
         return size == 0 ? "No palette" : size + " colour" + (size == 1 ? "" : "s");
