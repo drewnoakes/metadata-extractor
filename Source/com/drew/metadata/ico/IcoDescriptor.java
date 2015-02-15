@@ -55,10 +55,7 @@ public class IcoDescriptor extends TagDescriptor<IcoDirectory>
     @Nullable
     public String getImageTypeDescription()
     {
-        Integer type = _directory.getInteger(IcoDirectory.TAG_IMAGE_TYPE);
-        if (type == null)
-            return null;
-        return getIndexedDescription(type, 1, "Icon", "Cursor");
+        return getIndexedDescription(IcoDirectory.TAG_IMAGE_TYPE, 1, "Icon", "Cursor");
     }
 
     @Nullable
