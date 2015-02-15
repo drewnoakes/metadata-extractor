@@ -32,6 +32,7 @@ It will process files of type:
 * BMP
 * GIF
 * ICO
+* PCX
 * Camera Raw
   * NEF (Nikon)
   * CR2 (Canon)

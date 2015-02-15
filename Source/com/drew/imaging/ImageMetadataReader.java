@@ -24,6 +24,7 @@ import com.drew.imaging.bmp.BmpMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.pcx.PcxMetadataReader;
 import com.drew.imaging.png.PngMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
@@ -118,6 +119,9 @@ public class ImageMetadataReader
 
         if (fileType == FileType.Ico)
             return IcoMetadataReader.readMetadata(bufferedInputStream);
+
+        if (fileType == FileType.Pcx)
+            return PcxMetadataReader.readMetadata(bufferedInputStream);
 
         if (fileType == FileType.Riff)
             return WebpMetadataReader.readMetadata(bufferedInputStream);
