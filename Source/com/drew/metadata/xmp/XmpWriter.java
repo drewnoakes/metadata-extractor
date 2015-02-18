@@ -18,7 +18,7 @@ public class XmpWriter
 	 */
 	public static boolean write(OutputStream os, Metadata data)
 	{
-		XmpDirectory dir = data.getDirectory(XmpDirectory.class);
+		XmpDirectory dir = data.getFirstDirectoryOfType(XmpDirectory.class);
 		if (dir == null)
 			return false;
 		XMPMeta meta = dir.getXMPMeta();

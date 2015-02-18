@@ -201,7 +201,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     /**
      * Reads an property value with given namespace URI and property name. Add property value to directory if exists
 	 */
-	private void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType, int formatCode) throws XMPException
+	private static void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType, int formatCode) throws XMPException
 	{
 		String schemaNS = XmpDirectory._tagSchemaMap.get(tagType);
 		String propName = XmpDirectory._tagPropNameMap.get(tagType);
@@ -257,7 +257,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue"})
-	private void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType)
+	private static void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType)
 			throws XMPException
 	{
 		String schemaNS = XmpDirectory._tagSchemaMap.get(tagType);
