@@ -20,19 +20,23 @@
  */
 package com.drew.metadata.xmp;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Arrays;
+import java.util.Calendar;
+
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
+import com.adobe.xmp.impl.XMPMetaImpl;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-
-import java.util.Arrays;
-import java.util.Calendar;
+import com.drew.metadata.Schema;
 
 /**
  * Extracts XMP data from a JPEG header segment.
@@ -45,14 +49,11 @@ import java.util.Calendar;
  */
 public class XmpReader implements JpegSegmentMetadataReader
 {
-    private static final int FMT_STRING = 1;
-    private static final int FMT_RATIONAL = 2;
-    private static final int FMT_INT = 3;
-    private static final int FMT_DOUBLE = 4;
-    /**
-     * XMP tag namespace.
-     * TODO the older "xap", "xapBJ", "xapMM" or "xapRights" namespace prefixes should be translated to the newer "xmp", "xmpBJ", "xmpMM" and "xmpRights" prefixes for use in family 1 group names
-     */
+	private static final int FMT_STRING = 1;
+	private static final int FMT_RATIONAL = 2;
+	private static final int FMT_INT = 3;
+	private static final int FMT_DOUBLE = 4;
+	private static final int FMT_STRING_ARRAY = 5;
     @NotNull
     private static final String SCHEMA_XMP_PROPERTIES = "http://ns.adobe.com/xap/1.0/";
     @NotNull
@@ -140,52 +141,53 @@ public class XmpReader implements JpegSegmentMetadataReader
         // store the XMPMeta object on the directory in case others wish to use it
         directory.setXMPMeta(xmpMeta);
 
-        // read all the tags and send them to the directory
-        // I've added some popular tags, feel free to add more tags
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:LensInfo", XmpDirectory.TAG_LENS_INFO, FMT_STRING);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:Lens", XmpDirectory.TAG_LENS, FMT_STRING);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:SerialNumber", XmpDirectory.TAG_CAMERA_SERIAL_NUMBER, FMT_STRING);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_ADDITIONAL_PROPERTIES, "aux:Firmware", XmpDirectory.TAG_FIRMWARE, FMT_STRING);
+		// read all the tags and send them to the directory
+		// I've added some popular tags, feel free to add more tags
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LENS_INFO, FMT_STRING);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LENS, FMT_STRING);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CAMERA_SERIAL_NUMBER, FMT_STRING);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_FIRMWARE, FMT_STRING);
 
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_TIFF_PROPERTIES, "tiff:Make", XmpDirectory.TAG_MAKE, FMT_STRING);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_TIFF_PROPERTIES, "tiff:Model", XmpDirectory.TAG_MODEL, FMT_STRING);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MAKE, FMT_STRING);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MODEL, FMT_STRING);
 
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ExposureTime", XmpDirectory.TAG_EXPOSURE_TIME, FMT_STRING);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ExposureProgram", XmpDirectory.TAG_EXPOSURE_PROGRAM, FMT_INT);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ApertureValue", XmpDirectory.TAG_APERTURE_VALUE, FMT_RATIONAL);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:FNumber", XmpDirectory.TAG_F_NUMBER, FMT_RATIONAL);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:FocalLength", XmpDirectory.TAG_FOCAL_LENGTH, FMT_RATIONAL);
-        processXmpTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:ShutterSpeedValue", XmpDirectory.TAG_SHUTTER_SPEED, FMT_RATIONAL);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_EXPOSURE_TIME, FMT_STRING);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_EXPOSURE_PROGRAM, FMT_INT);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_APERTURE_VALUE, FMT_RATIONAL);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_F_NUMBER, FMT_RATIONAL);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_FOCAL_LENGTH, FMT_RATIONAL);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_SHUTTER_SPEED, FMT_RATIONAL);
 
-        processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeOriginal", XmpDirectory.TAG_DATETIME_ORIGINAL);
-        processXmpDateTag(xmpMeta, directory, SCHEMA_EXIF_SPECIFIC_PROPERTIES, "exif:DateTimeDigitized", XmpDirectory.TAG_DATETIME_DIGITIZED);
+		processXmpDateTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_ORIGINAL);
+		processXmpDateTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_DIGITIZED);
 
-        processXmpTag(xmpMeta, directory, SCHEMA_XMP_PROPERTIES, "xmp:Rating", XmpDirectory.TAG_RATING, FMT_DOUBLE);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_RATING, FMT_DOUBLE);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LABEL, FMT_STRING);
 
-/*
-            // this requires further research
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:title", XmpDirectory.TAG_TITLE, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:subject", XmpDirectory.TAG_SUBJECT, FMT_STRING);
-            processXmpDateTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:date", XmpDirectory.TAG_DATE);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:type", XmpDirectory.TAG_TYPE, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:description", XmpDirectory.TAG_DESCRIPTION, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:relation", XmpDirectory.TAG_RELATION, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:coverage", XmpDirectory.TAG_COVERAGE, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:creator", XmpDirectory.TAG_CREATOR, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:publisher", XmpDirectory.TAG_PUBLISHER, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:contributor", XmpDirectory.TAG_CONTRIBUTOR, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:rights", XmpDirectory.TAG_RIGHTS, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:format", XmpDirectory.TAG_FORMAT, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:identifier", XmpDirectory.TAG_IDENTIFIER, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:language", XmpDirectory.TAG_LANGUAGE, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:audience", XmpDirectory.TAG_AUDIENCE, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:provenance", XmpDirectory.TAG_PROVENANCE, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:rightsHolder", XmpDirectory.TAG_RIGHTS_HOLDER, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:instructionalMethod", XmpDirectory.TAG_INSTRUCTIONAL_METHOD, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualMethod", XmpDirectory.TAG_ACCRUAL_METHOD, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPeriodicity", XmpDirectory.TAG_ACCRUAL_PERIODICITY, FMT_STRING);
-            processXmpTag(xmpMeta, directory, SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPolicy", XmpDirectory.TAG_ACCRUAL_POLICY, FMT_STRING);
-*/
+		// this requires further research
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:title", XmpDirectory.TAG_TITLE, FMT_STRING);
+		processXmpTag(xmpMeta, directory, XmpDirectory.TAG_SUBJECT, FMT_STRING_ARRAY);
+		// processXmpDateTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:date", XmpDirectory.TAG_DATE);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:type", XmpDirectory.TAG_TYPE, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:description", XmpDirectory.TAG_DESCRIPTION, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:relation", XmpDirectory.TAG_RELATION, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:coverage", XmpDirectory.TAG_COVERAGE, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:creator", XmpDirectory.TAG_CREATOR, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:publisher", XmpDirectory.TAG_PUBLISHER, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:contributor", XmpDirectory.TAG_CONTRIBUTOR, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:rights", XmpDirectory.TAG_RIGHTS, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:format", XmpDirectory.TAG_FORMAT, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:identifier", XmpDirectory.TAG_IDENTIFIER, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:language", XmpDirectory.TAG_LANGUAGE, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:audience", XmpDirectory.TAG_AUDIENCE, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:provenance", XmpDirectory.TAG_PROVENANCE, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:rightsHolder", XmpDirectory.TAG_RIGHTS_HOLDER, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:instructionalMethod", XmpDirectory.TAG_INSTRUCTIONAL_METHOD,
+		// FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualMethod", XmpDirectory.TAG_ACCRUAL_METHOD, FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPeriodicity", XmpDirectory.TAG_ACCRUAL_PERIODICITY,
+		// FMT_STRING);
+		// processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:accrualPolicy", XmpDirectory.TAG_ACCRUAL_POLICY, FMT_STRING);
 
         for (XMPIterator iterator = xmpMeta.iterator(); iterator.hasNext(); ) {
             XMPPropertyInfo propInfo = (XMPPropertyInfo) iterator.next();
@@ -198,10 +200,12 @@ public class XmpReader implements JpegSegmentMetadataReader
 
     /**
      * Reads an property value with given namespace URI and property name. Add property value to directory if exists
-     */
-    private static void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType, int formatCode) throws XMPException
-    {
-        String property = meta.getPropertyString(schemaNS, propName);
+	 */
+	private static void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType, int formatCode) throws XMPException
+	{
+		String schemaNS = XmpDirectory._tagSchemaMap.get(tagType);
+		String propName = XmpDirectory._tagPropNameMap.get(tagType);
+		String property = meta.getPropertyString(schemaNS, propName);
 
         if (property == null)
             return;
@@ -237,14 +241,27 @@ public class XmpReader implements JpegSegmentMetadataReader
             case FMT_STRING:
                 directory.setString(tagType, property);
                 break;
+			case FMT_STRING_ARRAY: 
+				//XMP iterators are 1-based
+				int count = meta.countArrayItems(schemaNS, propName);
+				String[] array = new String[count];
+				for ( int i = 1; i <= count; ++i) 
+				{
+					array[i-1] = meta.getArrayItem(schemaNS, propName, i).getValue();
+				}
+				directory.setStringArray(tagType, array);
+				break;
             default:
                 directory.addError(String.format("Unknown format code %d for tag %d", formatCode, tagType));
         }
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    private static void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, @NotNull String schemaNS, @NotNull String propName, int tagType) throws XMPException
-    {
+	private static void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType)
+			throws XMPException
+	{
+		String schemaNS = XmpDirectory._tagSchemaMap.get(tagType);
+		String propName = XmpDirectory._tagPropNameMap.get(tagType);
         Calendar cal = meta.getPropertyCalendar(schemaNS, propName);
 
         if (cal != null) {
