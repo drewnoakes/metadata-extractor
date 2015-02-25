@@ -65,22 +65,22 @@ Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/GettingStarted) for an introduction to the basics of using this library.
 
-# Mailing Lists
+## Mailing Lists
 
 * [metadata-extractor-dev](https://groups.google.com/forum/#!forum/metadata-extractor-dev) for discussion about development and notifications of changes to issues and source code
 * [metadata-extractor-announce](https://groups.google.com/forum/#!forum/metadata-extractor-announce) for announcements of new releases
 
-# Feedback
+## Feedback
 
 Have questions or ideas? Try the [mailing list](http://groups.google.com/group/metadata-extractor-dev) or [open an issue](https://github.com/drewnoakes/metadata-extractor/issues). GitHub's issue tracker accepts attachments, and sample images are often crucial in debugging problems.
 
-# Contribute
+## Contribute
 
 If you want to get your hands dirty, clone this repository, enhance the library and submit a pull request. Review the issue list and ask around on the mailing list to avoid duplication of work.
 
 An easier way to help is to contribute to the [sample image file library](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase) used for research and testing.
 
-# Credits
+## Credits
 
 This library is developed by [Drew Noakes](https://drewnoakes.com/code/exif/).
 
@@ -88,7 +88,7 @@ Thanks are due to the many [users](https://github.com/drewnoakes/metadata-extrac
 [sample images](https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase) from their cameras as well as encouragement.
 Wherever possible, they have been credited in the source code and commit logs.
 
-# License
+## License
 
 Copyright 2002-2015 Drew Noakes
 
