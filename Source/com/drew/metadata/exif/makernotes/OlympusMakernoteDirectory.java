@@ -50,6 +50,8 @@ public class OlympusMakernoteDirectory extends Directory
     /** Length of thumbnail in bytes. Used by Konica / Minolta cameras. */
     public static final int TAG_MINOLTA_THUMBNAIL_LENGTH = 0x0089;
 
+    public static final int TAG_THUMBNAIL_IMAGE = 0x0100;
+
     /**
      * Used by Konica / Minolta cameras
      * 0 = Natural Colour
@@ -82,6 +84,7 @@ public class OlympusMakernoteDirectory extends Directory
      */
     public static final int TAG_IMAGE_QUALITY_2 = 0x0103;
 
+    public static final int TAG_BODY_FIRMWARE_VERSION = 0x0104;
 
     /**
      * Three values:
@@ -135,32 +138,65 @@ public class OlympusMakernoteDirectory extends Directory
     /** A string. Used by Epson cameras. */
     public static final int TAG_ORIGINAL_MANUFACTURER_MODEL = 0x020D;
 
+    public static final int TAG_PREVIEW_IMAGE = 0x0280;
+    public static final int TAG_PRE_CAPTURE_FRAMES = 0x0300;
+    public static final int TAG_WHITE_BOARD = 0x0301;
+    public static final int TAG_ONE_TOUCH_WB = 0x0302;
+    public static final int TAG_WHITE_BALANCE_BRACKET = 0x0303;
+    public static final int TAG_WHITE_BALANCE_BIAS = 0x0304;
+    public static final int TAG_SCENE_MODE = 0x0403;
+    public static final int TAG_FIRMWARE = 0x0404;
+
     /**
      * See the PIM specification here:
      * http://www.ozhiker.com/electronics/pjmt/jpeg_info/pim.html
      */
     public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
-    public static final int TAG_DATA_DUMP = 0x0F00;
+    public static final int TAG_DATA_DUMP_1 = 0x0F00;
+    public static final int TAG_DATA_DUMP_2 = 0x0F01;
+
     public static final int TAG_SHUTTER_SPEED_VALUE = 0x1000;
     public static final int TAG_ISO_VALUE = 0x1001;
     public static final int TAG_APERTURE_VALUE = 0x1002;
     public static final int TAG_BRIGHTNESS_VALUE = 0x1003;
     public static final int TAG_FLASH_MODE = 0x1004;
+    public static final int TAG_FLASH_DEVICE = 0x1005;
     public static final int TAG_BRACKET = 0x1006;
+    public static final int TAG_SENSOR_TEMPERATURE = 0x1007;
+    public static final int TAG_LENS_TEMPERATURE = 0x1008;
+    public static final int TAG_LIGHT_CONDITION = 0x1009;
     public static final int TAG_FOCUS_RANGE = 0x100A;
     public static final int TAG_FOCUS_MODE = 0x100B;
     public static final int TAG_FOCUS_DISTANCE = 0x100C;
     public static final int TAG_ZOOM = 0x100D;
     public static final int TAG_MACRO_FOCUS = 0x100E;
     public static final int TAG_SHARPNESS = 0x100F;
+    public static final int TAG_FLASH_CHARGE_LEVEL = 0x1010;
     public static final int TAG_COLOUR_MATRIX = 0x1011;
     public static final int TAG_BLACK_LEVEL = 0x1012;
+//    public static final int TAG_ = 0x1013;
+//    public static final int TAG_ = 0x1014;
     public static final int TAG_WHITE_BALANCE = 0x1015;
+//    public static final int TAG_ = 0x1016;
     public static final int TAG_RED_BIAS = 0x1017;
     public static final int TAG_BLUE_BIAS = 0x1018;
+    public static final int TAG_COLOR_MATRIX_NUMBER = 0x1019;
     public static final int TAG_SERIAL_NUMBER = 0x101A;
+//    public static final int TAG_ = 0x101B;
+//    public static final int TAG_ = 0x101C;
+//    public static final int TAG_ = 0x101D;
+//    public static final int TAG_ = 0x101E;
+//    public static final int TAG_ = 0x101F;
+//    public static final int TAG_ = 0x1020;
+//    public static final int TAG_ = 0x1021;
+//    public static final int TAG_ = 0x1022;
     public static final int TAG_FLASH_BIAS = 0x1023;
+//    public static final int TAG_ = 0x1024;
+//    public static final int TAG_ = 0x1025;
+    public static final int TAG_EXTERNAL_FLASH_BOUNCE = 0x1026;
+    public static final int TAG_EXTERNAL_FLASH_ZOOM = 0x1027;
+    public static final int TAG_EXTERNAL_FLASH_MODE = 0x1028;
     public static final int TAG_CONTRAST = 0x1029;
     public static final int TAG_SHARPNESS_FACTOR = 0x102A;
     public static final int TAG_COLOUR_CONTROL = 0x102B;
@@ -168,7 +204,26 @@ public class OlympusMakernoteDirectory extends Directory
     public static final int TAG_CORING_FILTER = 0x102D;
     public static final int TAG_FINAL_WIDTH = 0x102E;
     public static final int TAG_FINAL_HEIGHT = 0x102F;
+//    public static final int TAG_ = 0x1030;
+//    public static final int TAG_ = 0x1031;
+//    public static final int TAG_ = 0x1032;
+//    public static final int TAG_ = 0x1033;
     public static final int TAG_COMPRESSION_RATIO = 0x1034;
+    public static final int TAG_THUMBNAIL = 0x1035;
+    public static final int TAG_THUMBNAIL_OFFSET = 0x1036;
+    public static final int TAG_THUMBNAIL_LENGTH = 0x1037;
+//    public static final int TAG_ = 0x1038;
+    public static final int TAG_CCD_SCAN_MODE = 0x1039;
+    public static final int TAG_NOISE_REDUCTION = 0x103A;
+    public static final int TAG_INFINITY_LENS_STEP = 0x103B;
+    public static final int TAG_NEAR_LENS_STEP = 0x103C;
+    public static final int TAG_EQUIPMENT = 0x2010;
+    public static final int TAG_CAMERA_SETTINGS = 0x2020;
+    public static final int TAG_RAW_DEVELOPMENT = 0x2030;
+    public static final int TAG_RAW_DEVELOPMENT_2 = 0x2031;
+    public static final int TAG_IMAGE_PROCESSING = 0x2040;
+    public static final int TAG_FOCUS_INFO = 0x2050;
+    public static final int TAG_RAW_INFO = 0x3000;
 
     public final static class CameraSettings
     {
@@ -189,7 +244,7 @@ public class OlympusMakernoteDirectory extends Directory
         public static final int TAG_DIGITAL_ZOOM = OFFSET + 13;
         public static final int TAG_EXPOSURE_COMPENSATION = OFFSET + 14;
         public static final int TAG_BRACKET_STEP = OFFSET + 15;
-
+        // 16 missing
         public static final int TAG_INTERVAL_LENGTH = OFFSET + 17;
         public static final int TAG_INTERVAL_NUMBER = OFFSET + 18;
         public static final int TAG_FOCAL_LENGTH = OFFSET + 19;
@@ -198,7 +253,7 @@ public class OlympusMakernoteDirectory extends Directory
         public static final int TAG_DATE = OFFSET + 22;
         public static final int TAG_TIME = OFFSET + 23;
         public static final int TAG_MAX_APERTURE_AT_FOCAL_LENGTH = OFFSET + 24;
-
+        // 25, 26 missing
         public static final int TAG_FILE_NUMBER_MEMORY = OFFSET + 27;
         public static final int TAG_LAST_FILE_NUMBER = OFFSET + 28;
         public static final int TAG_WHITE_BALANCE_RED = OFFSET + 29;
@@ -237,9 +292,11 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_MINOLTA_THUMBNAIL_OFFSET_1, "Thumbnail Offset");
         _tagNameMap.put(TAG_MINOLTA_THUMBNAIL_OFFSET_2, "Thumbnail Offset");
         _tagNameMap.put(TAG_MINOLTA_THUMBNAIL_LENGTH, "Thumbnail Length");
+        _tagNameMap.put(TAG_THUMBNAIL_IMAGE, "Thumbnail Image");
         _tagNameMap.put(TAG_COLOUR_MODE, "Colour Mode");
         _tagNameMap.put(TAG_IMAGE_QUALITY_1, "Image Quality");
         _tagNameMap.put(TAG_IMAGE_QUALITY_2, "Image Quality");
+        _tagNameMap.put(TAG_BODY_FIRMWARE_VERSION, "Body Firmware Version");
         _tagNameMap.put(TAG_SPECIAL_MODE, "Special Mode");
         _tagNameMap.put(TAG_JPEG_QUALITY, "JPEG Quality");
         _tagNameMap.put(TAG_MACRO_MODE, "Macro");
@@ -253,27 +310,45 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_IMAGE_WIDTH, "Image Width");
         _tagNameMap.put(TAG_IMAGE_HEIGHT, "Image Height");
         _tagNameMap.put(TAG_ORIGINAL_MANUFACTURER_MODEL, "Original Manufacturer Model");
+        _tagNameMap.put(TAG_PREVIEW_IMAGE, "Preview Image");
+        _tagNameMap.put(TAG_PRE_CAPTURE_FRAMES, "Pre Capture Frames");
+        _tagNameMap.put(TAG_WHITE_BOARD, "White Board");
+        _tagNameMap.put(TAG_ONE_TOUCH_WB, "One Touch WB");
+        _tagNameMap.put(TAG_WHITE_BALANCE_BRACKET, "White Balance Bracket");
+        _tagNameMap.put(TAG_WHITE_BALANCE_BIAS, "White Balance Bias");
+        _tagNameMap.put(TAG_SCENE_MODE, "Scene Mode");
+        _tagNameMap.put(TAG_FIRMWARE, "Firmware");
         _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
-        _tagNameMap.put(TAG_DATA_DUMP, "Data Dump");
+        _tagNameMap.put(TAG_DATA_DUMP_1, "Data Dump");
+        _tagNameMap.put(TAG_DATA_DUMP_2, "Data Dump 2");
         _tagNameMap.put(TAG_SHUTTER_SPEED_VALUE, "Shutter Speed Value");
         _tagNameMap.put(TAG_ISO_VALUE, "ISO Value");
         _tagNameMap.put(TAG_APERTURE_VALUE, "Aperture Value");
         _tagNameMap.put(TAG_BRIGHTNESS_VALUE, "Brightness Value");
         _tagNameMap.put(TAG_FLASH_MODE, "Flash Mode");
+        _tagNameMap.put(TAG_FLASH_DEVICE, "Flash Device");
         _tagNameMap.put(TAG_BRACKET, "Bracket");
+        _tagNameMap.put(TAG_SENSOR_TEMPERATURE, "Sensor Temperature");
+        _tagNameMap.put(TAG_LENS_TEMPERATURE, "Lens Temperature");
+        _tagNameMap.put(TAG_LIGHT_CONDITION, "Light Condition");
         _tagNameMap.put(TAG_FOCUS_RANGE, "Focus Range");
         _tagNameMap.put(TAG_FOCUS_MODE, "Focus Mode");
         _tagNameMap.put(TAG_FOCUS_DISTANCE, "Focus Distance");
         _tagNameMap.put(TAG_ZOOM, "Zoom");
         _tagNameMap.put(TAG_MACRO_FOCUS, "Macro Focus");
         _tagNameMap.put(TAG_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_FLASH_CHARGE_LEVEL, "Flash Charge Level");
         _tagNameMap.put(TAG_COLOUR_MATRIX, "Colour Matrix");
         _tagNameMap.put(TAG_BLACK_LEVEL, "Black Level");
         _tagNameMap.put(TAG_WHITE_BALANCE, "White Balance");
         _tagNameMap.put(TAG_RED_BIAS, "Red Bias");
         _tagNameMap.put(TAG_BLUE_BIAS, "Blue Bias");
+        _tagNameMap.put(TAG_COLOR_MATRIX_NUMBER, "Color Matrix Number");
         _tagNameMap.put(TAG_SERIAL_NUMBER, "Serial Number");
         _tagNameMap.put(TAG_FLASH_BIAS, "Flash Bias");
+        _tagNameMap.put(TAG_EXTERNAL_FLASH_BOUNCE, "External Flash Bounce");
+        _tagNameMap.put(TAG_EXTERNAL_FLASH_ZOOM, "External Flash Zoom");
+        _tagNameMap.put(TAG_EXTERNAL_FLASH_MODE, "External Flash Mode");
         _tagNameMap.put(TAG_CONTRAST, "Contrast");
         _tagNameMap.put(TAG_SHARPNESS_FACTOR, "Sharpness Factor");
         _tagNameMap.put(TAG_COLOUR_CONTROL, "Colour Control");
@@ -282,6 +357,20 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_FINAL_WIDTH, "Final Width");
         _tagNameMap.put(TAG_FINAL_HEIGHT, "Final Height");
         _tagNameMap.put(TAG_COMPRESSION_RATIO, "Compression Ratio");
+        _tagNameMap.put(TAG_THUMBNAIL, "Thumbnail");
+        _tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
+        _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
+        _tagNameMap.put(TAG_CCD_SCAN_MODE, "CCD Scan Mode");
+        _tagNameMap.put(TAG_NOISE_REDUCTION, "Noise Reduction");
+        _tagNameMap.put(TAG_INFINITY_LENS_STEP, "Infinity Lens Step");
+        _tagNameMap.put(TAG_NEAR_LENS_STEP, "Near Lens Step");
+        _tagNameMap.put(TAG_EQUIPMENT, "Equipment");
+        _tagNameMap.put(TAG_CAMERA_SETTINGS, "Camera Settings");
+        _tagNameMap.put(TAG_RAW_DEVELOPMENT, "Raw Development");
+        _tagNameMap.put(TAG_RAW_DEVELOPMENT_2, "Raw Development 2");
+        _tagNameMap.put(TAG_IMAGE_PROCESSING, "Image Processing");
+        _tagNameMap.put(TAG_FOCUS_INFO, "Focus Info");
+        _tagNameMap.put(TAG_RAW_INFO, "Raw Info");
 
         _tagNameMap.put(CameraSettings.TAG_EXPOSURE_MODE, "Exposure Mode");
         _tagNameMap.put(CameraSettings.TAG_FLASH_MODE, "Flash Mode");
