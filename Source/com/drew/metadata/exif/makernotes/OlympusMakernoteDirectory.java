@@ -142,7 +142,6 @@ public class OlympusMakernoteDirectory extends Directory
     public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
     public static final int TAG_DATA_DUMP = 0x0F00;
-
     public static final int TAG_SHUTTER_SPEED_VALUE = 0x1000;
     public static final int TAG_ISO_VALUE = 0x1001;
     public static final int TAG_APERTURE_VALUE = 0x1002;
@@ -231,17 +230,6 @@ public class OlympusMakernoteDirectory extends Directory
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-        _tagNameMap.put(TAG_SPECIAL_MODE, "Special Mode");
-        _tagNameMap.put(TAG_JPEG_QUALITY, "JPEG Quality");
-        _tagNameMap.put(TAG_MACRO_MODE, "Macro");
-        _tagNameMap.put(TAG_BW_MODE, "BW Mode");
-        _tagNameMap.put(TAG_DIGI_ZOOM_RATIO, "DigiZoom Ratio");
-        _tagNameMap.put(TAG_FOCAL_PLANE_DIAGONAL, "Focal Plane Diagonal");
-        _tagNameMap.put(TAG_LENS_DISTORTION_PARAMETERS, "Lens Distortion Parameters");
-        _tagNameMap.put(TAG_FIRMWARE_VERSION, "Firmware Version");
-        _tagNameMap.put(TAG_PICT_INFO, "Pict Info");
-        _tagNameMap.put(TAG_CAMERA_ID, "Camera Id");
-        _tagNameMap.put(TAG_DATA_DUMP, "Data Dump");
         _tagNameMap.put(TAG_MAKERNOTE_VERSION, "Makernote Version");
         _tagNameMap.put(TAG_CAMERA_SETTINGS_1, "Camera Settings");
         _tagNameMap.put(TAG_CAMERA_SETTINGS_2, "Camera Settings");
@@ -252,11 +240,21 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_COLOUR_MODE, "Colour Mode");
         _tagNameMap.put(TAG_IMAGE_QUALITY_1, "Image Quality");
         _tagNameMap.put(TAG_IMAGE_QUALITY_2, "Image Quality");
-        _tagNameMap.put(TAG_IMAGE_HEIGHT, "Image Height");
+        _tagNameMap.put(TAG_SPECIAL_MODE, "Special Mode");
+        _tagNameMap.put(TAG_JPEG_QUALITY, "JPEG Quality");
+        _tagNameMap.put(TAG_MACRO_MODE, "Macro");
+        _tagNameMap.put(TAG_BW_MODE, "BW Mode");
+        _tagNameMap.put(TAG_DIGI_ZOOM_RATIO, "DigiZoom Ratio");
+        _tagNameMap.put(TAG_FOCAL_PLANE_DIAGONAL, "Focal Plane Diagonal");
+        _tagNameMap.put(TAG_LENS_DISTORTION_PARAMETERS, "Lens Distortion Parameters");
+        _tagNameMap.put(TAG_FIRMWARE_VERSION, "Firmware Version");
+        _tagNameMap.put(TAG_PICT_INFO, "Pict Info");
+        _tagNameMap.put(TAG_CAMERA_ID, "Camera Id");
         _tagNameMap.put(TAG_IMAGE_WIDTH, "Image Width");
+        _tagNameMap.put(TAG_IMAGE_HEIGHT, "Image Height");
         _tagNameMap.put(TAG_ORIGINAL_MANUFACTURER_MODEL, "Original Manufacturer Model");
         _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
-
+        _tagNameMap.put(TAG_DATA_DUMP, "Data Dump");
         _tagNameMap.put(TAG_SHUTTER_SPEED_VALUE, "Shutter Speed Value");
         _tagNameMap.put(TAG_ISO_VALUE, "ISO Value");
         _tagNameMap.put(TAG_APERTURE_VALUE, "Aperture Value");
