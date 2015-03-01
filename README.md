@@ -67,6 +67,8 @@ Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/Get
 
 ## Mailing Lists
 
+[![Join the chat at https://gitter.im/drewnoakes/metadata-extractor](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/drewnoakes/metadata-extractor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 * [metadata-extractor-dev](https://groups.google.com/forum/#!forum/metadata-extractor-dev) for discussion about development and notifications of changes to issues and source code
 * [metadata-extractor-announce](https://groups.google.com/forum/#!forum/metadata-extractor-announce) for announcements of new releases
 
