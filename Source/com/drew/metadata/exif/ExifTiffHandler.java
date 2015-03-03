@@ -56,9 +56,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     {
         final int standardTiffMarker = 0x002A;
         final int olympusRawTiffMarker = 0x4F52; // for ORF files
+        final int olympusRawTiffMarker2 = 0x5352; // for ORF files
         final int panasonicRawTiffMarker = 0x0055; // for RW2 files
 
-        if (marker != standardTiffMarker && marker != olympusRawTiffMarker && marker != panasonicRawTiffMarker) {
+        if (marker != standardTiffMarker && marker != olympusRawTiffMarker && marker != olympusRawTiffMarker2 && marker != panasonicRawTiffMarker) {
             throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));
         }
     }
