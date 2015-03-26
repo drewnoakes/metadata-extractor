@@ -1050,7 +1050,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_FNUMBER);
         if (value == null)
             return null;
-        return "F" + SimpleDecimalFormatter.format(value.doubleValue());
+        return "f/" + SimpleDecimalFormatterWithPrecision.format(value.doubleValue());
     }
 
     @Nullable
