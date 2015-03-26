@@ -858,9 +858,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        // '0' means unknown, '1' daylight, '2' fluorescent, '3' tungsten, '10' flash,
+        // '0' means unknown, '1' daylight, '2' fluorescent, '3' tungsten, '4' flash,
         // '17' standard light A, '18' standard light B, '19' standard light C, '20' D55,
         // '21' D65, '22' D75, '255' other.
+        // see http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
         final Integer value = _directory.getInteger(TAG_WHITE_BALANCE);
         if (value == null)
             return null;
