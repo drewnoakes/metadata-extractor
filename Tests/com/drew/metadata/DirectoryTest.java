@@ -122,10 +122,10 @@ public class DirectoryTest
             // clear millis to 0 or test will fail
         gc.setTimeInMillis(0); 
         gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59);
-        assertEquals(gc.getTime(), _directory.getDate(1, gmt));
+        assertEquals(gc.getTime(), _directory.getDate(1, null));
 
         gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 00);
-        assertEquals(gc.getTime(), _directory.getDate(2, gmt));
+        assertEquals(gc.getTime(), _directory.getDate(2, null));
 
             // Use specific timezone
         TimeZone pst = TimeZone.getTimeZone("PST");
