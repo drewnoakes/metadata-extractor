@@ -81,6 +81,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return getAfPointSelectedDescription();
             case CameraSettings.TAG_EXPOSURE_MODE:
                 return getExposureModeDescription();
+            case CameraSettings.TAG_LENS_TYPE:
+                return getLensTypeDescription();
             case CameraSettings.TAG_LONG_FOCAL_LENGTH:
                 return getLongFocalLengthDescription();
             case CameraSettings.TAG_SHORT_FOCAL_LENGTH:
@@ -447,6 +449,15 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
             "Manual",
             "A-DEP"
         );
+    }
+
+    @Nullable
+    public String getLensTypeDescription() {
+        Integer value = _directory.getInteger(CameraSettings.TAG_LENS_TYPE);
+        if (value == null)
+            return null;
+
+        return "Lens type: " + Integer.toString(value);
     }
 
     @Nullable
