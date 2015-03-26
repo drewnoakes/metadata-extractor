@@ -76,7 +76,7 @@ public class PngMetadataReaderTest
             assertEquals(PngChunkType.tIME, dirs[4].getPngChunkType());
 
             java.util.Date modTime = dirs[4].getDate(PngDirectory.TAG_LAST_MODIFICATION_TIME);
-            SimpleDateFormat formatter = new SimpleDateFormat("EE MMM DD HH:mm:ss z YYYY");
+            SimpleDateFormat formatter = new SimpleDateFormat("EE MMM DD HH:mm:ss z yyyy");
             formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
             assertEquals("Tue Jan 01 04:08:30 GMT 2013", formatter.format(modTime));
 
