@@ -766,6 +766,9 @@ public abstract class Directory
                     DateFormat parser = new SimpleDateFormat(datePattern);
                     if (timeZone != null)
                         parser.setTimeZone(timeZone);
+                    else
+                        parser.setTimeZone(TimeZone.getTimeZone("GMT")); // don't interpret zone time
+
                     return parser.parse(dateString);
                 } catch (ParseException ex) {
                     // simply try the next pattern

@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -114,10 +115,28 @@ public class DirectoryTest
         _directory.setString(3, date3);
         _directory.setString(4, date4);
         assertEquals(date1, _directory.getString(1));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), _directory.getDate(1));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), _directory.getDate(2));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59).getTime(), _directory.getDate(3));
-        assertEquals(new GregorianCalendar(2002, GregorianCalendar.JANUARY, 30, 24, 59, 0).getTime(), _directory.getDate(4));
+
+            // Don't use default timezone
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        GregorianCalendar gc = new GregorianCalendar(gmt);
+            // clear millis to 0 or test will fail
+        gc.setTimeInMillis(0); 
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59);
+        assertEquals(gc.getTime(), _directory.getDate(1, null));
+
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 00);
+        assertEquals(gc.getTime(), _directory.getDate(2, null));
+
+            // Use specific timezone
+        TimeZone pst = TimeZone.getTimeZone("PST");
+        gc = new GregorianCalendar(pst);
+        gc.setTimeInMillis(0); 
+
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59);
+        assertEquals(gc.getTime(), _directory.getDate(3, pst));
+
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 00);
+        assertEquals(gc.getTime(), _directory.getDate(4, pst));
     }
 
     @Test

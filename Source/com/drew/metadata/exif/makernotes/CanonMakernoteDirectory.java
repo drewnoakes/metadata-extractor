@@ -244,7 +244,7 @@ public class CanonMakernoteDirectory extends Directory
          */
         public static final int TAG_EXPOSURE_MODE = OFFSET + 0x14;
         public static final int TAG_UNKNOWN_7 = OFFSET + 0x15;
-        public static final int TAG_UNKNOWN_8 = OFFSET + 0x16;
+        public static final int TAG_LENS_TYPE = OFFSET + 0x16;
         public static final int TAG_LONG_FOCAL_LENGTH = OFFSET + 0x17;
         public static final int TAG_SHORT_FOCAL_LENGTH = OFFSET + 0x18;
         public static final int TAG_FOCAL_UNITS_PER_MM = OFFSET + 0x19;
@@ -518,7 +518,7 @@ public class CanonMakernoteDirectory extends Directory
         _tagNameMap.put(CameraSettings.TAG_DIGITAL_ZOOM, "Digital Zoom");
         _tagNameMap.put(CameraSettings.TAG_FOCUS_TYPE, "Focus Type");
         _tagNameMap.put(CameraSettings.TAG_UNKNOWN_7, "Unknown Camera Setting 7");
-        _tagNameMap.put(CameraSettings.TAG_UNKNOWN_8, "Unknown Camera Setting 8");
+        _tagNameMap.put(CameraSettings.TAG_LENS_TYPE, "Lens Type");
         _tagNameMap.put(CameraSettings.TAG_UNKNOWN_9, "Unknown Camera Setting 9");
         _tagNameMap.put(CameraSettings.TAG_UNKNOWN_10, "Unknown Camera Setting 10");
         _tagNameMap.put(CameraSettings.TAG_FLASH_ACTIVITY, "Flash Activity");

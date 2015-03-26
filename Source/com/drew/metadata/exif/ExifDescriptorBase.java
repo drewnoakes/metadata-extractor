@@ -50,6 +50,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
 
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
+    @NotNull
+    private static final java.text.DecimalFormat SimpleDecimalFormatterWithPrecision = new DecimalFormat("0.0");
 
     // Note for the potential addition of brightness presentation in eV:
     // Brightness of taken subject. To calculate Exposure(Ev) from BrightnessValue(Bv),
@@ -708,7 +710,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return "F" + SimpleDecimalFormatter.format(fStop);
+        return "f/" + SimpleDecimalFormatterWithPrecision.format(fStop);
     }
 
     @Nullable
@@ -718,7 +720,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return "F" + SimpleDecimalFormatter.format(fStop);
+        return "f/" + SimpleDecimalFormatterWithPrecision.format(fStop);
     }
 
     @Nullable
@@ -856,9 +858,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        // '0' means unknown, '1' daylight, '2' fluorescent, '3' tungsten, '10' flash,
+        // '0' means unknown, '1' daylight, '2' fluorescent, '3' tungsten, '4' flash,
         // '17' standard light A, '18' standard light B, '19' standard light C, '20' D55,
         // '21' D65, '22' D75, '255' other.
+        // see http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
         final Integer value = _directory.getInteger(TAG_WHITE_BALANCE);
         if (value == null)
             return null;
@@ -867,13 +870,23 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             case 1: return "Daylight";
             case 2: return "Florescent";
             case 3: return "Tungsten";
-            case 10: return "Flash";
+            case 4: return "Flash";
+            case 9: return "Fine Weather";
+            case 10: return "Cloudy";
+            case 11: return "Shade";
+            case 12: return "Daylight Flourescent";
+            case 13: return "Day White Flourescent";
+            case 14: return "Cool White Flourescent";
+            case 15: return "White Flourescent";
+            case 16: return "Warm White Flourescent";
             case 17: return "Standard light";
             case 18: return "Standard light (B)";
             case 19: return "Standard light (C)";
             case 20: return "D55";
             case 21: return "D65";
             case 22: return "D75";
+            case 23: return "D50";
+            case 24: return "Studio Tungsten";
             case 255: return "(Other)";
             default:
                 return "Unknown (" + value + ")";
@@ -1037,7 +1050,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_FNUMBER);
         if (value == null)
             return null;
-        return "F" + SimpleDecimalFormatter.format(value.doubleValue());
+        return "f/" + SimpleDecimalFormatterWithPrecision.format(value.doubleValue());
     }
 
     @Nullable
