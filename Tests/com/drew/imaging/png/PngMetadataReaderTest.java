@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -72,7 +74,11 @@ public class PngMetadataReaderTest
             assertEquals(2835, dirs[3].getInt(PngDirectory.TAG_PIXELS_PER_UNIT_Y));
 
             assertEquals(PngChunkType.tIME, dirs[4].getPngChunkType());
-            assertEquals("Tue Jan 01 04:08:30 GMT 2013", dirs[4].getDate(PngDirectory.TAG_LAST_MODIFICATION_TIME).toString());
+
+            java.util.Date modTime = dirs[4].getDate(PngDirectory.TAG_LAST_MODIFICATION_TIME);
+            SimpleDateFormat formatter = new SimpleDateFormat("EE MMM DD HH:mm:ss z YYYY");
+            formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+            assertEquals("Tue Jan 01 04:08:30 GMT 2013", formatter.format(modTime));
 
             assertEquals(PngChunkType.iTXt, dirs[5].getPngChunkType());
             @SuppressWarnings("unchecked")
