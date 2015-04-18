@@ -20,23 +20,16 @@
  */
 package com.drew.metadata.xmp;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.Arrays;
-import java.util.Calendar;
-
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
-import com.adobe.xmp.impl.XMPMetaImpl;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Schema;
 
 import java.util.Arrays;
 import java.util.Calendar;
