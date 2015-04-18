@@ -87,7 +87,14 @@ public class XmpReader implements JpegSegmentMetadataReader
             // XMP in a JPEG file has an identifying preamble which is not valid XML
             final int preambleLength = XMP_JPEG_PREAMBLE.length();
 
-            if (segmentBytes.length < preambleLength || !XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)))
+            if (segmentBytes.length < preambleLength)
+                continue;
+
+            // NOTE we expect the full preamble here, but some images (such as that reported on GitHub #102)
+            // start with "XMP\0://ns.adobe.com/xap/1.0/" which appears to be an error but is easily recovered
+            // from. In such cases, the actual XMP data begins at the same offset.
+            if (!XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)) &&
+                !"XMP".equalsIgnoreCase(new String(segmentBytes, 0, 3)))
                 continue;
 
             byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
