@@ -7,3 +7,5 @@
 .classpath
 .settings/
 build
+*.iml
+.idea
