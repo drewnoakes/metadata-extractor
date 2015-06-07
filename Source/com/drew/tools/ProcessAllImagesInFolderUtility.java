@@ -22,7 +22,6 @@
 package com.drew.tools;
 
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
@@ -184,14 +183,7 @@ public class ProcessAllImagesInFolderUtility
         public void onExtractionError(@NotNull File file, @NotNull Throwable throwable, @NotNull PrintStream log)
         {
             _exceptionCount++;
-
-            if (throwable instanceof ImageProcessingException) {
-                // Some occurrences of this exception type are to be expected, so don't print stack frames
-                log.printf("%s: %s [Error Extracting Metadata]\n\t%s%n", throwable.getClass().getName(), file, throwable.getMessage());
-            } else {
-                log.printf("%s: %s [Error Extracting Metadata]%n", throwable.getClass().getName(), file);
-                throwable.printStackTrace(log);
-            }
+            log.printf("\t[%s] %s%n", throwable.getClass().getName(), throwable.getMessage());
         }
 
         public void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log)
