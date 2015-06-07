@@ -44,11 +44,6 @@ public class ProcessAllImagesInFolderUtility
 {
     public static void main(String[] args) throws IOException, JpegProcessingException
     {
-        if (args.length == 0) {
-            System.err.println("Expects one or more directories as arguments.");
-            System.exit(1);
-        }
-
         List<String> directories = new ArrayList<String>();
 
         FileHandler handler = null;
@@ -67,6 +62,11 @@ public class ProcessAllImagesInFolderUtility
                 // Treat this argument as a directory
                 directories.add(arg);
             }
+        }
+
+        if (directories.isEmpty()) {
+            System.err.println("Expects one or more directories as arguments.");
+            System.exit(1);
         }
 
         if (handler == null) {
