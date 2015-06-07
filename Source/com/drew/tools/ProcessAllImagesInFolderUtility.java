@@ -355,7 +355,7 @@ public class ProcessAllImagesInFolderUtility
             if (!metadataDir.exists())
                 metadataDir.mkdir();
 
-            String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName().toLowerCase());
+            String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName());
             FileWriter writer = new FileWriter(outputPath, false);
             writer.write("FILE: " + file.getName() + "\n");
             writer.write('\n');
