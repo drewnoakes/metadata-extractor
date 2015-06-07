@@ -54,14 +54,14 @@ public class ProcessAllImagesInFolderUtility
         FileHandler handler = null;
 
         for (String arg : args) {
-            if (arg.equalsIgnoreCase("-text")) {
-                // If "-text" is specified, write the discovered metadata into a sub-folder relative to the image
+            if (arg.equalsIgnoreCase("--text")) {
+                // If "--text" is specified, write the discovered metadata into a sub-folder relative to the image
                 handler = new TextFileOutputHandler();
-            } else if (arg.equalsIgnoreCase("-markdown")) {
-                // If "-markdown" is specified, write a summary table in markdown format to standard out
+            } else if (arg.equalsIgnoreCase("--markdown")) {
+                // If "--markdown" is specified, write a summary table in markdown format to standard out
                 handler = new MarkdownTableOutputHandler();
-            } else if (arg.equalsIgnoreCase("-unknown")) {
-                // If "-unknown" is specified, write CSV tallying unknown tag counts
+            } else if (arg.equalsIgnoreCase("--unknown")) {
+                // If "--unknown" is specified, write CSV tallying unknown tag counts
                 handler = new UnknownTagHandler();
             } else {
                 // Treat this argument as a directory
