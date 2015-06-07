@@ -105,6 +105,8 @@ public class ProcessAllImagesInFolderUtility
 
     private static void processDirectory(@NotNull File path, @NotNull FileHandler handler, @NotNull String relativePath, PrintStream log)
     {
+        handler.onStartingDirectory(path);
+
         String[] pathItems = path.list();
 
         if (pathItems == null) {
@@ -139,6 +141,9 @@ public class ProcessAllImagesInFolderUtility
 
     interface FileHandler
     {
+        /** Called when the scan is about to start processing files in directory <code>path</code>. */
+        void onStartingDirectory(@NotNull File directoryPath);
+
         /** Called to determine whether the implementation should process <code>filePath</code>. */
         boolean shouldProcess(@NotNull File file);
 
@@ -167,6 +172,9 @@ public class ProcessAllImagesInFolderUtility
         private int _exceptionCount = 0;
         private int _errorCount = 0;
         private long _processedByteCount = 0;
+
+        public void onStartingDirectory(@NotNull File directoryPath)
+        {}
 
         public boolean shouldProcess(@NotNull File file)
         {
@@ -229,6 +237,35 @@ public class ProcessAllImagesInFolderUtility
      */
     static class TextFileOutputHandler extends FileHandlerBase
     {
+        @Override
+        public void onStartingDirectory(@NotNull File directoryPath)
+        {
+            super.onStartingDirectory(directoryPath);
+
+            // Delete any existing 'metadata' folder
+            File metadataDirectory = new File(directoryPath + "/metadata");
+            if (metadataDirectory.exists())
+                deleteRecursively(metadataDirectory);
+        }
+
+        private static void deleteRecursively(File directory)
+        {
+            if (!directory.isDirectory())
+                throw new IllegalArgumentException("Must be a directory.");
+
+            if (directory.exists()) {
+                for (String item : directory.list()) {
+                    File file = new File(item);
+                    if (file.isDirectory())
+                        deleteRecursively(file);
+                    else
+                        file.delete();
+                }
+            }
+
+            directory.delete();
+        }
+
         @Override
         public void onBeforeExtraction(@NotNull File file, @NotNull PrintStream log, @NotNull String relativePath)
         {
