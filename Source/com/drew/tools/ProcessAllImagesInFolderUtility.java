@@ -47,8 +47,10 @@ public class ProcessAllImagesInFolderUtility
         List<String> directories = new ArrayList<String>();
 
         FileHandler handler = null;
+        PrintStream log = System.out;
 
-        for (String arg : args) {
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
             if (arg.equalsIgnoreCase("--text")) {
                 // If "--text" is specified, write the discovered metadata into a sub-folder relative to the image
                 handler = new TextFileOutputHandler();
@@ -58,6 +60,12 @@ public class ProcessAllImagesInFolderUtility
             } else if (arg.equalsIgnoreCase("--unknown")) {
                 // If "--unknown" is specified, write CSV tallying unknown tag counts
                 handler = new UnknownTagHandler();
+            } else if (arg.equalsIgnoreCase("--log-file")) {
+                if (i == args.length - 1) {
+                    printUsage();
+                    System.exit(1);
+                }
+                log = new PrintStream(new FileOutputStream(args[++i], false), true);
             } else {
                 // Treat this argument as a directory
                 directories.add(arg);
@@ -66,6 +74,7 @@ public class ProcessAllImagesInFolderUtility
 
         if (directories.isEmpty()) {
             System.err.println("Expects one or more directories as arguments.");
+            printUsage();
             System.exit(1);
         }
 
@@ -76,15 +85,26 @@ public class ProcessAllImagesInFolderUtility
         long start = System.nanoTime();
 
         for (String directory : directories) {
-            processDirectory(new File(directory), handler, "");
+            processDirectory(new File(directory), handler, "", log);
         }
 
-        handler.onCompleted();
+        handler.onScanCompleted(log);
 
         System.out.println(String.format("Completed in %d ms", (System.nanoTime() - start) / 1000000));
+
+        if (log != System.out) {
+            log.close();
+        }
     }
 
-    private static void processDirectory(@NotNull File path, @NotNull FileHandler handler, @NotNull String relativePath)
+    private static void printUsage()
+    {
+        System.out.println("Usage:");
+        System.out.println();
+        System.out.println("  java com.drew.tools.ProcessAllImagesInFolderUtility [--text|--markdown|--unknown] [--log-file <file-name>]");
+    }
+
+    private static void processDirectory(@NotNull File path, @NotNull FileHandler handler, @NotNull String relativePath, PrintStream log)
     {
         String[] pathItems = path.list();
 
@@ -99,33 +119,41 @@ public class ProcessAllImagesInFolderUtility
             File file = new File(path, pathItem);
 
             if (file.isDirectory()) {
-                processDirectory(file, handler, relativePath.length() == 0 ? pathItem : relativePath + "/" + pathItem);
+                processDirectory(file, handler, relativePath.length() == 0 ? pathItem : relativePath + "/" + pathItem, log);
             } else if (handler.shouldProcess(file)) {
 
-                handler.onProcessingStarting(file);
+                handler.onBeforeExtraction(file, log, relativePath);
 
                 // Read metadata
                 final Metadata metadata;
                 try {
                     metadata = ImageMetadataReader.readMetadata(file);
                 } catch (Throwable t) {
-                    handler.onException(file, t);
+                    handler.onExtractionError(file, t, log);
                     continue;
                 }
 
-                handler.onExtracted(file, metadata, relativePath);
+                handler.onExtractionSuccess(file, metadata, relativePath, log);
             }
         }
     }
 
     interface FileHandler
     {
+        /** Called to determine whether the implementation should process <code>filePath</code>. */
         boolean shouldProcess(@NotNull File file);
-        void onException(@NotNull File file, @NotNull Throwable throwable);
-        void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath);
-        void onCompleted();
 
-        void onProcessingStarting(@NotNull File file);
+        /** Called before extraction is performed on <code>filePath</code>. */
+        void onBeforeExtraction(@NotNull File file, @NotNull PrintStream log, @NotNull String relativePath);
+
+        /** Called when extraction on <code>filePath</code> completed without an exception. */
+        void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log);
+
+        /** Called when extraction on <code>filePath</code> resulted in an exception. */
+        void onExtractionError(@NotNull File file, @NotNull Throwable throwable, @NotNull PrintStream log);
+
+        /** Called when all files have been processed. */
+        void onScanCompleted(@NotNull PrintStream log);
     }
 
     abstract static class FileHandlerBase implements FileHandler
@@ -147,46 +175,44 @@ public class ProcessAllImagesInFolderUtility
             return extension != null && _supportedExtensions.contains(extension.toLowerCase());
         }
 
-        public void onProcessingStarting(@NotNull File file)
+        public void onBeforeExtraction(@NotNull File file, @NotNull PrintStream log, @NotNull String relativePath)
         {
             _processedFileCount++;
             _processedByteCount += file.length();
         }
 
-        public void onException(@NotNull File file, @NotNull Throwable throwable)
+        public void onExtractionError(@NotNull File file, @NotNull Throwable throwable, @NotNull PrintStream log)
         {
             _exceptionCount++;
 
             if (throwable instanceof ImageProcessingException) {
-                // this is an error in the Jpeg segment structure.  we're looking for bad handling of
-                // metadata segments.  in this case, we didn't even get a segment.
-                System.err.printf("%s: %s [Error Extracting Metadata]\n\t%s%n", throwable.getClass().getName(), file, throwable.getMessage());
+                // Some occurrences of this exception type are to be expected, so don't print stack frames
+                log.printf("%s: %s [Error Extracting Metadata]\n\t%s%n", throwable.getClass().getName(), file, throwable.getMessage());
             } else {
-                // general, uncaught exception during processing of jpeg segments
-                System.err.printf("%s: %s [Error Extracting Metadata]%n", throwable.getClass().getName(), file);
-                throwable.printStackTrace(System.err);
+                log.printf("%s: %s [Error Extracting Metadata]%n", throwable.getClass().getName(), file);
+                throwable.printStackTrace(log);
             }
         }
 
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
+        public void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log)
         {
             if (metadata.hasErrors()) {
-                System.err.println(file);
+                log.println(file);
                 for (Directory directory : metadata.getDirectories()) {
                     if (!directory.hasErrors())
                         continue;
                     for (String error : directory.getErrors()) {
-                        System.err.printf("\t[%s] %s%n", directory.getName(), error);
+                        log.printf("\t[%s] %s%n", directory.getName(), error);
                         _errorCount++;
                     }
                 }
             }
         }
 
-        public void onCompleted()
+        public void onScanCompleted(@NotNull PrintStream log)
         {
             if (_processedFileCount > 0) {
-                System.out.println(String.format(
+                log.println(String.format(
                     "Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors",
                     _processedFileCount, _processedByteCount, _exceptionCount, _errorCount
                 ));
@@ -212,9 +238,16 @@ public class ProcessAllImagesInFolderUtility
     static class TextFileOutputHandler extends FileHandlerBase
     {
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
+        public void onBeforeExtraction(@NotNull File file, @NotNull PrintStream log, @NotNull String relativePath)
         {
-            super.onExtracted(file, metadata, relativePath);
+            super.onBeforeExtraction(file, log, relativePath);
+            log.println(file.getAbsoluteFile());
+        }
+
+        @Override
+        public void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log)
+        {
+            super.onExtractionSuccess(file, metadata, relativePath, log);
 
             try {
                 PrintWriter writer = null;
@@ -267,9 +300,9 @@ public class ProcessAllImagesInFolderUtility
         }
 
         @Override
-        public void onException(@NotNull File file, @NotNull Throwable throwable)
+        public void onExtractionError(@NotNull File file, @NotNull Throwable throwable, @NotNull PrintStream log)
         {
-            super.onException(file, throwable);
+            super.onExtractionError(file, throwable, log);
 
             try {
                 PrintWriter writer = null;
@@ -281,7 +314,7 @@ public class ProcessAllImagesInFolderUtility
                     closeWriter(writer);
                 }
             } catch (IOException e) {
-                System.err.printf("IO exception writing metadata file: %s%n", e.getMessage());
+                log.printf("IO exception writing metadata file: %s%n", e.getMessage());
             }
         }
 
@@ -373,9 +406,9 @@ public class ProcessAllImagesInFolderUtility
         }
 
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
+        public void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log)
         {
-            super.onExtracted(file, metadata, relativePath);
+            super.onExtractionSuccess(file, metadata, relativePath, log);
 
             String extension = getExtension(file);
 
@@ -397,9 +430,9 @@ public class ProcessAllImagesInFolderUtility
         }
 
         @Override
-        public void onCompleted()
+        public void onScanCompleted(@NotNull PrintStream log)
         {
-            super.onCompleted();
+            super.onScanCompleted(log);
 
             OutputStream outputStream = null;
             PrintStream stream = null;
@@ -473,9 +506,9 @@ public class ProcessAllImagesInFolderUtility
         private HashMap<String, HashMap<Integer, Integer>> _occurrenceCountByTagByDirectory = new HashMap<String, HashMap<Integer, Integer>>();
 
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
+        public void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log)
         {
-            super.onExtracted(file, metadata, relativePath);
+            super.onExtractionSuccess(file, metadata, relativePath, log);
 
             for (Directory directory : metadata.getDirectories()) {
                 for (Tag tag : directory.getTags()) {
@@ -502,9 +535,9 @@ public class ProcessAllImagesInFolderUtility
         }
 
         @Override
-        public void onCompleted()
+        public void onScanCompleted(@NotNull PrintStream log)
         {
-            super.onCompleted();
+            super.onScanCompleted(log);
 
             for (Map.Entry<String, HashMap<Integer, Integer>> pair1 : _occurrenceCountByTagByDirectory.entrySet()) {
                 String directoryName = pair1.getKey();
@@ -519,7 +552,7 @@ public class ProcessAllImagesInFolderUtility
                 for (Map.Entry<Integer, Integer> pair2 : counts) {
                     Integer tagType = pair2.getKey();
                     Integer count = pair2.getValue();
-                    System.out.format("%s, 0x%04X, %d\n", directoryName, tagType, count);
+                    log.format("%s, 0x%04X, %d\n", directoryName, tagType, count);
                 }
             }
         }
@@ -532,9 +565,9 @@ public class ProcessAllImagesInFolderUtility
     static class BasicFileHandler extends FileHandlerBase
     {
         @Override
-        public void onExtracted(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath)
+        public void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log)
         {
-            super.onExtracted(file, metadata, relativePath);
+            super.onExtractionSuccess(file, metadata, relativePath, log);
 
             // Iterate through all values, calling toString to flush out any formatting exceptions
             for (Directory directory : metadata.getDirectories()) {
