@@ -191,18 +191,19 @@ public class ProcessAllImagesInFolderUtility
         public void onExtractionError(@NotNull File file, @NotNull Throwable throwable, @NotNull PrintStream log)
         {
             _exceptionCount++;
-            log.printf("\t[%s] %s%n", throwable.getClass().getName(), throwable.getMessage());
+            log.printf("\t[%s] %s\n", throwable.getClass().getName(), throwable.getMessage());
         }
 
         public void onExtractionSuccess(@NotNull File file, @NotNull Metadata metadata, @NotNull String relativePath, @NotNull PrintStream log)
         {
             if (metadata.hasErrors()) {
-                log.println(file);
+                log.print(file);
+                log.print('\n');
                 for (Directory directory : metadata.getDirectories()) {
                     if (!directory.hasErrors())
                         continue;
                     for (String error : directory.getErrors()) {
-                        log.printf("\t[%s] %s%n", directory.getName(), error);
+                        log.printf("\t[%s] %s\n", directory.getName(), error);
                         _errorCount++;
                     }
                 }
@@ -212,8 +213,8 @@ public class ProcessAllImagesInFolderUtility
         public void onScanCompleted(@NotNull PrintStream log)
         {
             if (_processedFileCount > 0) {
-                log.println(String.format(
-                    "Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors",
+                log.print(String.format(
+                    "Processed %,d files (%,d bytes) with %,d exceptions and %,d file errors\n",
                     _processedFileCount, _processedByteCount, _exceptionCount, _errorCount
                 ));
             }
@@ -270,7 +271,8 @@ public class ProcessAllImagesInFolderUtility
         public void onBeforeExtraction(@NotNull File file, @NotNull PrintStream log, @NotNull String relativePath)
         {
             super.onBeforeExtraction(file, log, relativePath);
-            log.println(file.getAbsoluteFile());
+            log.print(file.getAbsoluteFile());
+            log.print('\n');
         }
 
         @Override
@@ -315,7 +317,7 @@ public class ProcessAllImagesInFolderUtility
                         for (Tag tag : directory.getTags()) {
                             String tagName = tag.getTagName();
                             String description = tag.getDescription();
-                            writer.format("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description);
+                            writer.format("[%s - %s] %s = %s\n", directoryName, tag.getTagTypeHex(), tagName, description);
                         }
                         if (directory.getTagCount() != 0)
                             writer.write('\n');
@@ -337,13 +339,13 @@ public class ProcessAllImagesInFolderUtility
                 PrintWriter writer = null;
                 try {
                     writer = openWriter(file);
-                    throwable.printStackTrace(writer);
+                    writer.write("EXCEPTION: " + throwable.getMessage() + "\n");
                     writer.write('\n');
                 } finally {
                     closeWriter(writer);
                 }
             } catch (IOException e) {
-                log.printf("IO exception writing metadata file: %s%n", e.getMessage());
+                log.printf("IO exception writing metadata file: %s\n", e.getMessage());
             }
         }
 
@@ -506,7 +508,7 @@ public class ProcessAllImagesInFolderUtility
                 });
 
                 for (Row row : rows) {
-                    writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/metadata/%s.txt)%n",
+                    writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/metadata/%s.txt)\n",
                             row.file.getName(),
                             row.relativePath,
                             StringUtil.urlEncode(row.file.getName()),
