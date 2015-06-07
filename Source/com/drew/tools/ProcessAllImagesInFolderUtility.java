@@ -75,9 +75,6 @@ public class ProcessAllImagesInFolderUtility
 
         long start = System.nanoTime();
 
-        // Order alphabetically so that output is stable across invocations
-        Collections.sort(directories);
-
         for (String directory : directories) {
             processDirectory(new File(directory), handler, "");
         }
