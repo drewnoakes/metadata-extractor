@@ -106,7 +106,7 @@ public class PngMetadataReader
             PngChromaticities chromaticities = new PngChromaticities(bytes);
             PngChromaticitiesDirectory directory = new PngChromaticitiesDirectory();
             directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
-            directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
+            directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_Y, chromaticities.getWhitePointY());
             directory.setInt(PngChromaticitiesDirectory.TAG_RED_X, chromaticities.getRedX());
             directory.setInt(PngChromaticitiesDirectory.TAG_RED_Y, chromaticities.getRedY());
             directory.setInt(PngChromaticitiesDirectory.TAG_GREEN_X, chromaticities.getGreenX());
