@@ -236,7 +236,7 @@ public class PhotoshopDirectory extends Directory
         byte[] storedBytes = getByteArray(PhotoshopDirectory.TAG_THUMBNAIL);
         if (storedBytes == null)
             storedBytes = getByteArray(PhotoshopDirectory.TAG_THUMBNAIL_OLD);
-        if (storedBytes == null)
+        if (storedBytes == null || storedBytes.length <= 28)
             return null;
 
         int thumbSize = storedBytes.length - 28;
