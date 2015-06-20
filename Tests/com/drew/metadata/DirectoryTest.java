@@ -120,8 +120,8 @@ public class DirectoryTest
         TimeZone gmt = TimeZone.getTimeZone("GMT");
         GregorianCalendar gc = new GregorianCalendar(gmt);
             // clear millis to 0 or test will fail
-        gc.setTimeInMillis(0); 
         gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59);
+        gc.setTimeInMillis(0);
         assertEquals(gc.getTime(), _directory.getDate(1, null));
 
         gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 00);
@@ -130,7 +130,7 @@ public class DirectoryTest
             // Use specific timezone
         TimeZone pst = TimeZone.getTimeZone("PST");
         gc = new GregorianCalendar(pst);
-        gc.setTimeInMillis(0); 
+        gc.setTimeInMillis(0);
 
         gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59);
         assertEquals(gc.getTime(), _directory.getDate(3, pst));
