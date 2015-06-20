@@ -21,22 +21,28 @@
 
 package com.drew.metadata.icc;
 
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
 import com.drew.testing.TestHelper;
 import com.drew.tools.FileUtil;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class IccReaderTest
 {
+    // TODO add a test with well-formed ICC data and assert output values are correct
+
     @Test
-    public void testExtract() throws Exception
+    public void testExtract_InvalidData() throws Exception
     {
         byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
 
-        // ICC data starts after a 14-byte preamble
+        // When in an APP2 segment, ICC data starts after a 14-byte preamble
         byte[] icc = TestHelper.skipBytes(app2Bytes, 14);
 
         Metadata metadata = new Metadata();
@@ -45,11 +51,20 @@ public class IccReaderTest
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
         assertNotNull(directory);
+        assertTrue(directory.hasErrors());
+    }
 
-        // TODO validate expected values
+    @Test
+    public void testReadJpegSegments_InvalidData() throws Exception
+    {
+        byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
 
-//        for (Tag tag : directory.getTags()) {
-//            System.out.println(tag);
-//        }
+        Metadata metadata = new Metadata();
+        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+
+        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+
+        assertNotNull(directory);
+        assertTrue(directory.hasErrors());
     }
 }
