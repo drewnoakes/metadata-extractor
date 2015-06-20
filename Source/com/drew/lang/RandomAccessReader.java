@@ -52,7 +52,7 @@ public abstract class RandomAccessReader
      *
      * @param index The index from which to read the byte
      * @return The read byte value
-     * @throws IllegalArgumentException <code>index</code> or <code>count</code> are negative
+     * @throws IllegalArgumentException <code>index</code> is negative
      * @throws BufferBoundsException if the requested byte is beyond the end of the underlying data source
      * @throws IOException if the byte is unable to be read
      */
