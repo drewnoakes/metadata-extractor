@@ -20,9 +20,9 @@
  */
 package com.drew.metadata.iptc;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class Iso2022ConverterTest
 {

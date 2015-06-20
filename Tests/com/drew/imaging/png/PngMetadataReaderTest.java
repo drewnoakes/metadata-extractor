@@ -28,11 +28,10 @@ import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.TimeZone;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 
