@@ -61,14 +61,9 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
     @Nullable
     private String getColorTransformDescription()
     {
-        Integer value = _directory.getInteger(AdobeJpegDirectory.TAG_COLOR_TRANSFORM);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0: return "Unknown (RGB or CMYK)";
-            case 1: return "YCbCr";
-            case 2: return "YCCK";
-            default: return String.format("Unknown transform (%d)", value);
-        }
+        return getIndexedDescription(AdobeJpegDirectory.TAG_COLOR_TRANSFORM,
+            "Unknown (RGB or CMYK)",
+            "YCbCr",
+            "YCCK");
     }
 }
