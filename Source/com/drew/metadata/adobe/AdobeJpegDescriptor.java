@@ -50,7 +50,7 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
     @Nullable
     private String getDctEncodeVersionDescription()
     {
-        Integer value = _directory.getInteger(AdobeJpegDirectory.TAG_COLOR_TRANSFORM);
+        Integer value = _directory.getInteger(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION);
         return value == null
                 ? null
                 : value == 0x64
