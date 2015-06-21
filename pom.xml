@@ -19,14 +19,14 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Java library for extracting EXIF, IPTC, XMP, ICC and other metadata from image files.</description>
-    
+
     <url>https://drewnoakes.com/code/exif/</url>
-    
+
     <issueManagement>
         <system>GitHub Issues</system>
         <url>https://github.com/drewnoakes/metadata-extractor/issues</url>
     </issueManagement>
-    
+
     <mailingLists>
         <mailingList>
             <name>Announce mailing list</name>
@@ -111,8 +111,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>
-                  <source>1.5</source>
-                  <target>1.5</target>
+                    <source>1.5</source>
+                    <target>1.5</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -140,9 +140,12 @@
                     <!--<additionalparam>-Xdoclint:none</additionalparam>-->
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>public</show>
-                    <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from image files</windowtitle>
+                    <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from
+                        image files
+                    </windowtitle>
                     <notimestamp>true</notimestamp>
-                    <header><![CDATA[<a href='https://drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='https://raw.githubusercontent.com/drewnoakes/metadata-extractor/master/Resources/metadata-extractor-logo-131x30.png' border="0" alt='Metadata Extractor Logo'></a>]]></header>
+                    <header>
+                        <![CDATA[<a href='https://drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='https://raw.githubusercontent.com/drewnoakes/metadata-extractor/master/Resources/metadata-extractor-logo-131x30.png' border="0" alt='Metadata Extractor Logo'></a>]]></header>
                     <bottom><![CDATA[<i>Copyright &#169; 2002-2015 Drew Noakes. All Rights Reserved.</i>
 <script src='http://www.google-analytics.com/urchin.js' type='text/javascript'></script>
 <script type='text/javascript'>
@@ -189,6 +192,38 @@ urchinTracker();
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.7</version>
+                        <configuration>
+                            <formats>
+                                <format>xml</format>
+                            </formats>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>cobertura-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>cobertura</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <distributionManagement>
         <snapshotRepository>
