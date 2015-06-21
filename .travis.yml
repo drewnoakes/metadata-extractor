@@ -5,4 +5,4 @@ jdk:
 script:
   mvn clean verify
 
-install: mvn install DskipTests=true -Dgpg.skip=true
+install: mvn install -DskipTests=true -Dgpg.skip=true
