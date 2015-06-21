@@ -36,10 +36,6 @@
             <name>Development mailing list</name>
             <archive>http://groups.google.com/group/metadata-extractor-dev</archive>
         </mailingList>
-        <mailingList>
-            <name>Changes mailing list</name>
-            <archive>http://groups.google.com/group/metadata-extractor-changes</archive>
-        </mailingList>
     </mailingLists>
 
     <licenses>
