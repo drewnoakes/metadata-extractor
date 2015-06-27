@@ -70,8 +70,7 @@ public class TagDescriptor<T extends Directory>
         if (object.getClass().isArray()) {
             final int length = Array.getLength(object);
             if (length > 16) {
-                final String componentTypeName = object.getClass().getComponentType().getName();
-                return String.format("[%d %s%s]", length, componentTypeName, length == 1 ? "" : "s");
+                return String.format("[%d %s]", length, length == 1 ? "value" : "values");
             }
         }
 
