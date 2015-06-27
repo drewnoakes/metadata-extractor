@@ -358,7 +358,10 @@ public class ProcessAllImagesInFolderUtility
                 metadataDir.mkdir();
 
             String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName());
-            FileWriter writer = new FileWriter(outputPath, false);
+            Writer writer = new OutputStreamWriter(
+                new FileOutputStream(outputPath),
+                "UTF-8"
+            );
             writer.write("FILE: " + file.getName() + "\n");
             writer.write('\n');
 
