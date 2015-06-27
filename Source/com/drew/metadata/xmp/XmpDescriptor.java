@@ -87,32 +87,17 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     @Nullable
     public String getExposureProgramDescription()
     {
-        // '1' means manual control, '2' program normal, '3' aperture priority,
-        // '4' shutter priority, '5' program creative (slow program),
-        // '6' program action(high-speed program), '7' portrait mode, '8' landscape mode.
-        final Integer value = _directory.getInteger(XmpDirectory.TAG_EXPOSURE_PROGRAM);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 1:
-                return "Manual control";
-            case 2:
-                return "Program normal";
-            case 3:
-                return "Aperture priority";
-            case 4:
-                return "Shutter priority";
-            case 5:
-                return "Program creative (slow program)";
-            case 6:
-                return "Program action (high-speed program)";
-            case 7:
-                return "Portrait mode";
-            case 8:
-                return "Landscape mode";
-            default:
-                return "Unknown program (" + value + ")";
-        }
+        return getIndexedDescription(XmpDirectory.TAG_EXPOSURE_PROGRAM,
+            1,
+            "Manual control",
+            "Program normal",
+            "Aperture priority",
+            "Shutter priority",
+            "Program creative (slow program)",
+            "Program action (high-speed program)",
+            "Portrait mode",
+            "Landscape mode"
+        );
     }
 
 
