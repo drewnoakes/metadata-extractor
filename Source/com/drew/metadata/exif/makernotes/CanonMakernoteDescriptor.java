@@ -24,6 +24,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.text.DecimalFormat;
+
 import static com.drew.metadata.exif.makernotes.CanonMakernoteDirectory.*;
 
 /**
@@ -673,8 +675,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         if (value == 0) {
             return "Self timer not used";
         } else {
-            // TODO find an image that tests this calculation
-            return Double.toString((double)value * 0.1d) + " sec";
+            DecimalFormat format = new DecimalFormat("0.##");
+            return format.format((double)value * 0.1d) + " sec";
         }
     }
 
