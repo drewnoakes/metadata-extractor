@@ -210,7 +210,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                     return res.toString();
                 }
                 default:
-                    return String.format("%s(0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
+                    return String.format("%s (0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
             }
         } catch (IOException e) {
             // TODO decode these values during IccReader.extract so we can report any errors at that time
