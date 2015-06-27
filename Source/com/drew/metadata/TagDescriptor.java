@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,6 +73,14 @@ public class TagDescriptor<T extends Directory>
             if (length > 16) {
                 return String.format("[%d %s]", length, length == 1 ? "value" : "values");
             }
+        }
+
+        if (object instanceof Date)
+        {
+            // Produce a date string having a format that includes the offset in form "+00:00"
+            return new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy")
+                .format((Date)object)
+                .replaceAll("([0-9]{2} [^ ]+)$", ":$1");
         }
 
         // no special handling required, so use default conversion to a string
