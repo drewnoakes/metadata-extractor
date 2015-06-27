@@ -284,6 +284,6 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFStopDescription(double fStop)
     {
-        return "f/" + new DecimalFormat("0.0#").format(fStop);
+        return "f/" + new DecimalFormat("0.0").format(fStop);
     }
 }
