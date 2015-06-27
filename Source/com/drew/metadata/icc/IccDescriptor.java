@@ -104,10 +104,10 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                             observerString = "Unknown";
                             break;
                         case 1:
-                            observerString = "1931 2°";
+                            observerString = "1931 2\u00B0";
                             break;
                         case 2:
-                            observerString = "1964 10°";
+                            observerString = "1964 10\u00B0";
                             break;
                         default:
                             observerString = String.format("Unknown %d", observerType);
