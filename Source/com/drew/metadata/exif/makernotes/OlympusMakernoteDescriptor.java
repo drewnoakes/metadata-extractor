@@ -24,6 +24,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
 
 import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
@@ -287,8 +288,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (value == null)
             return null;
 
+        DecimalFormat format = new DecimalFormat("0.0#");
         double fStop = Math.pow((value/16d) - 0.5, 2);
-        return "F" + Double.toString(fStop);
+        return "f/" + format.format(fStop);
     }
 
     @Nullable
@@ -398,8 +400,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         Long value = _directory.getLongObject(CameraSettings.TAG_TIME);
         if (value == null)
             return null;
+        DecimalFormat format = new DecimalFormat("0.0#");
         double fStop = Math.pow((value/16d) - 0.5, 2);
-        return "F" + fStop;
+        return "f/" + format.format(fStop);
     }
 
     @Nullable

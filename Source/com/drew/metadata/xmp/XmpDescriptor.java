@@ -148,7 +148,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
         final Rational value = _directory.getRational(XmpDirectory.TAG_F_NUMBER);
         if (value==null)
             return null;
-        return "F" + SimpleDecimalFormatter.format(value.doubleValue());
+        return "f/" + SimpleDecimalFormatter.format(value.doubleValue());
     }
 
     /** This code is from ExifSubIFDDescriptor.java */
@@ -170,6 +170,6 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
         if (value==null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(value);
-        return "F" + SimpleDecimalFormatter.format(fStop);
+        return "f/" + SimpleDecimalFormatter.format(fStop);
     }
 }
