@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,7 +80,7 @@ public class TagDescriptor<T extends Directory>
         {
             // Produce a date string having a format that includes the offset in form "+00:00"
             return new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy")
-                .format((Date)object)
+                .format((Date) object)
                 .replaceAll("([0-9]{2} [^ ]+)$", ":$1");
         }
 
@@ -278,5 +279,11 @@ public class TagDescriptor<T extends Directory>
         } catch (UnsupportedEncodingException e) {
             return null;
         }
+    }
+
+    @Nullable
+    protected static String getFStopDescription(double fStop)
+    {
+        return "f/" + new DecimalFormat("0.0#").format(fStop);
     }
 }

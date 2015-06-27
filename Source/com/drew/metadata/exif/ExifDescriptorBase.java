@@ -710,7 +710,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return "f/" + SimpleDecimalFormatterWithPrecision.format(fStop);
+        return getFStopDescription(fStop);
     }
 
     @Nullable
@@ -720,7 +720,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return "f/" + SimpleDecimalFormatterWithPrecision.format(fStop);
+        return getFStopDescription(fStop);
     }
 
     @Nullable
@@ -1050,7 +1050,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_FNUMBER);
         if (value == null)
             return null;
-        return "f/" + SimpleDecimalFormatterWithPrecision.format(value.doubleValue());
+        return getFStopDescription(value.doubleValue());
     }
 
     @Nullable

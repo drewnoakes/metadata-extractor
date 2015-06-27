@@ -38,9 +38,6 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
 {
     // TODO some of these methods look similar to those found in Exif*Descriptor... extract common functionality from both
 
-    @NotNull
-    private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
-
     public XmpDescriptor(@NotNull XmpDirectory directory)
     {
         super(directory);
@@ -148,7 +145,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
         final Rational value = _directory.getRational(XmpDirectory.TAG_F_NUMBER);
         if (value==null)
             return null;
-        return "f/" + SimpleDecimalFormatter.format(value.doubleValue());
+        return getFStopDescription(value.doubleValue());
     }
 
     /** This code is from ExifSubIFDDescriptor.java */
@@ -170,6 +167,6 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
         if (value==null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(value);
-        return "f/" + SimpleDecimalFormatter.format(fStop);
+        return getFStopDescription(fStop);
     }
 }
