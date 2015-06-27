@@ -137,6 +137,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getSerialNumberDescription()
     {
+        // http://www.ozhiker.com/electronics/pjmt/jpeg_info/canon_mn.html
         Integer value = _directory.getInteger(TAG_CANON_SERIAL_NUMBER);
         if (value == null)
             return null;
