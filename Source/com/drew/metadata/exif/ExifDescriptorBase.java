@@ -50,8 +50,6 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
 
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
-    @NotNull
-    private static final java.text.DecimalFormat SimpleDecimalFormatterWithPrecision = new DecimalFormat("0.0");
 
     // Note for the potential addition of brightness presentation in eV:
     // Brightness of taken subject. To calculate Exposure(Ev) from BrightnessValue(Bv),
