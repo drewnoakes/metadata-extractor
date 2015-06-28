@@ -576,7 +576,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         return value == null
             ? null
             : value.getNumerator() == 0
-                ? "Digital zoom not used."
+                ? "Digital zoom not used"
                 : SimpleDecimalFormatter.format(value.doubleValue());
     }
 
