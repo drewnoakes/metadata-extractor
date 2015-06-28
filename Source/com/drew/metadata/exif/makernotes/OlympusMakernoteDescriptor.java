@@ -24,6 +24,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
 
 import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
@@ -307,7 +308,8 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getExposureCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_EXPOSURE_COMPENSATION);
-        return value == null ? null : ((value / 3d) - 2) + " EV";
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format((value / 3d) - 2) + " EV";
     }
 
     @Nullable
@@ -457,21 +459,24 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getWhiteBalanceRedDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_RED);
-        return value == null ? null : Double.toString(value/256d);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format(value/256d);
     }
 
     @Nullable
     public String getWhiteBalanceGreenDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_GREEN);
-        return value == null ? null : Double.toString(value/256d);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format(value/256d);
     }
 
     @Nullable
     public String getWhiteBalanceBlueDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_BLUE);
-        return value == null ? null : Double.toString(value/256d);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format(value / 256d);
     }
 
     @Nullable
@@ -504,7 +509,8 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getFlastCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FLASH_COMPENSATION);
-        return value == null ? null : ((value-6)/3d) + " EV";
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format((value-6)/3d) + " EV";
     }
 
     @Nullable
@@ -568,7 +574,8 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getApexBrightnessDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_APEX_BRIGHTNESS_VALUE);
-        return value == null ? null : Double.toString((value/8d)-6);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format((value/8d)-6);
     }
 
     @Nullable
