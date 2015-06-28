@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 /**
  * @author Yuri Binev
@@ -195,7 +196,8 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             RandomAccessReader reader = new ByteArrayReader(bytes);
             float resX = reader.getS15Fixed16(0);
             float resY = reader.getS15Fixed16(8); // is this the correct offset? it's only reading 4 bytes each time
-            return resX + "x" + resY + " DPI";
+            DecimalFormat format = new DecimalFormat("0.##");
+            return format.format(resX) + "x" + format.format(resY) + " DPI";
         } catch (Exception e) {
             return null;
         }
