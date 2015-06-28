@@ -29,6 +29,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -806,7 +807,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
         if (value == null)
             return null;
-        java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##");
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
         return formatter.format(value.doubleValue()) + " mm";
     }
 
