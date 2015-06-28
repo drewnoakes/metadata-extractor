@@ -67,29 +67,25 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageCompressionTypeDescription()
     {
-        Integer value = _directory.getInteger(JpegDirectory.TAG_COMPRESSION_TYPE);
-        if (value==null)
-            return null;
-        // Note there is no 2 or 12
-        switch (value) {
-            case 0: return "Baseline";
-            case 1: return "Extended sequential, Huffman";
-            case 2: return "Progressive, Huffman";
-            case 3: return "Lossless, Huffman";
-            case 5: return "Differential sequential, Huffman";
-            case 6: return "Differential progressive, Huffman";
-            case 7: return "Differential lossless, Huffman";
-            case 8: return "Reserved for JPEG extensions";
-            case 9: return "Extended sequential, arithmetic";
-            case 10: return "Progressive, arithmetic";
-            case 11: return "Lossless, arithmetic";
-            case 13: return "Differential sequential, arithmetic";
-            case 14: return "Differential progressive, arithmetic";
-            case 15: return "Differential lossless, arithmetic";
-            default:
-                return "Unknown type: "+ value;
-        }
+        return getIndexedDescription(JpegDirectory.TAG_COMPRESSION_TYPE,
+            "Baseline",
+            "Extended sequential, Huffman",
+            "Progressive, Huffman",
+            "Lossless, Huffman",
+            null, // no 4
+            "Differential sequential, Huffman",
+            "Differential progressive, Huffman",
+            "Differential lossless, Huffman",
+            "Reserved for JPEG extensions",
+            "Extended sequential, arithmetic",
+            "Progressive, arithmetic",
+            "Lossless, arithmetic",
+            null, // no 12
+            "Differential sequential, arithmetic",
+            "Differential progressive, arithmetic",
+            "Differential lossless, arithmetic");
     }
+
     @Nullable
     public String getImageWidthDescription()
     {
