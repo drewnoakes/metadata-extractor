@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.photoshop.PsdHeaderDirectory.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -39,15 +41,15 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case PsdHeaderDirectory.TAG_CHANNEL_COUNT:
+            case TAG_CHANNEL_COUNT:
                 return getChannelCountDescription();
-            case PsdHeaderDirectory.TAG_BITS_PER_CHANNEL:
+            case TAG_BITS_PER_CHANNEL:
                 return getBitsPerChannelDescription();
-            case PsdHeaderDirectory.TAG_COLOR_MODE:
+            case TAG_COLOR_MODE:
                 return getColorModeDescription();
-            case PsdHeaderDirectory.TAG_IMAGE_HEIGHT:
+            case TAG_IMAGE_HEIGHT:
                 return getImageHeightDescription();
-            case PsdHeaderDirectory.TAG_IMAGE_WIDTH:
+            case TAG_IMAGE_WIDTH:
                 return getImageWidthDescription();
             default:
                 return super.getDescription(tagType);
@@ -58,7 +60,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getChannelCountDescription()
     {
         // Supported range is 1 to 56.
-        Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_CHANNEL_COUNT);
+        Integer value = _directory.getInteger(TAG_CHANNEL_COUNT);
         if (value == null)
             return null;
         return value + " channel" + (value == 1 ? "" : "s");
@@ -68,7 +70,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getBitsPerChannelDescription()
     {
         // Supported values are 1, 8, 16 and 32.
-        Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL);
+        Integer value = _directory.getInteger(TAG_BITS_PER_CHANNEL);
         if (value == null)
             return null;
         return value + " bit" + (value == 1 ? "" : "s") + " per channel";
@@ -77,7 +79,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     @Nullable
     public String getColorModeDescription()
     {
-        return getIndexedDescription(PsdHeaderDirectory.TAG_COLOR_MODE,
+        return getIndexedDescription(TAG_COLOR_MODE,
             "Bitmap",
             "Grayscale",
             "Indexed",
@@ -93,7 +95,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     @Nullable
     public String getImageHeightDescription()
     {
-        Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_HEIGHT);
+        Integer value = _directory.getInteger(TAG_IMAGE_HEIGHT);
         if (value == null)
             return null;
         return value + " pixel" + (value == 1 ? "" : "s");
@@ -103,7 +105,7 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getImageWidthDescription()
     {
         try {
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_WIDTH);
+            Integer value = _directory.getInteger(TAG_IMAGE_WIDTH);
             if (value == null)
                 return null;
             return value + " pixel" + (value == 1 ? "" : "s");

@@ -24,6 +24,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.bmp.BmpHeaderDirectory.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -38,7 +40,7 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case BmpHeaderDirectory.TAG_COMPRESSION:
+            case TAG_COMPRESSION:
                 return getCompressionDescription();
             default:
                 return super.getDescription(tagType);
@@ -56,10 +58,10 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
         // 5 = PNG
         // 6 = Bit field
         try {
-            Integer value = _directory.getInteger(BmpHeaderDirectory.TAG_COMPRESSION);
+            Integer value = _directory.getInteger(TAG_COMPRESSION);
             if (value == null)
                 return null;
-            Integer headerSize = _directory.getInteger(BmpHeaderDirectory.TAG_HEADER_SIZE);
+            Integer headerSize = _directory.getInteger(TAG_HEADER_SIZE);
             if (headerSize == null)
                 return null;
 
@@ -72,7 +74,7 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
                 case 5: return "PNG";
                 case 6: return "Bit field";
                 default:
-                    return super.getDescription(BmpHeaderDirectory.TAG_COMPRESSION);
+                    return super.getDescription(TAG_COMPRESSION);
             }
         } catch (Exception e) {
             return null;

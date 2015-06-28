@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.pcx.PcxDirectory.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -39,11 +41,11 @@ public class PcxDescriptor extends TagDescriptor<PcxDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case PcxDirectory.TAG_VERSION:
+            case TAG_VERSION:
                 return getVersionDescription();
-            case PcxDirectory.TAG_COLOR_PLANES:
+            case TAG_COLOR_PLANES:
                 return getColorPlanesDescription();
-            case PcxDirectory.TAG_PALETTE_TYPE:
+            case TAG_PALETTE_TYPE:
                 return getPaletteTypeDescription();
             default:
                 return super.getDescription(tagType);
@@ -56,7 +58,7 @@ public class PcxDescriptor extends TagDescriptor<PcxDirectory>
         // Prior to v2.5 of PC Paintbrush, the PCX image file format was considered proprietary information
         // by ZSoft Corporation
 
-        return getIndexedDescription(PcxDirectory.TAG_VERSION,
+        return getIndexedDescription(TAG_VERSION,
             "2.5 with fixed EGA palette information",
             null,
             "2.8 with modifiable EGA palette information",
@@ -68,7 +70,7 @@ public class PcxDescriptor extends TagDescriptor<PcxDirectory>
     @Nullable
     public String getColorPlanesDescription()
     {
-        return getIndexedDescription(PcxDirectory.TAG_COLOR_PLANES, 3,
+        return getIndexedDescription(TAG_COLOR_PLANES, 3,
             "24-bit color",
             "16 colors");
     }
@@ -76,7 +78,7 @@ public class PcxDescriptor extends TagDescriptor<PcxDirectory>
     @Nullable
     public String getPaletteTypeDescription()
     {
-        return getIndexedDescription(PcxDirectory.TAG_PALETTE_TYPE, 1,
+        return getIndexedDescription(TAG_PALETTE_TYPE, 1,
             "Color or B&W",
             "Grayscale");
     }

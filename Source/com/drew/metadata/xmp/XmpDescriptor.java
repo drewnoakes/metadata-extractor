@@ -28,6 +28,8 @@ import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
 
+import static com.drew.metadata.xmp.XmpDirectory.*;
+
 /**
  * Contains all logic for the presentation of xmp data, as stored in Xmp-Segment.  Use
  * this class to provide human-readable descriptions of tag values.
@@ -48,25 +50,25 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case XmpDirectory.TAG_MAKE:
-            case XmpDirectory.TAG_MODEL:
+            case TAG_MAKE:
+            case TAG_MODEL:
                 return _directory.getString(tagType);
-            case XmpDirectory.TAG_EXPOSURE_TIME:
+            case TAG_EXPOSURE_TIME:
                 return getExposureTimeDescription();
-            case XmpDirectory.TAG_EXPOSURE_PROGRAM:
+            case TAG_EXPOSURE_PROGRAM:
                 return getExposureProgramDescription();
-            case XmpDirectory.TAG_SHUTTER_SPEED:
+            case TAG_SHUTTER_SPEED:
                 return getShutterSpeedDescription();
-            case XmpDirectory.TAG_F_NUMBER:
+            case TAG_F_NUMBER:
                 return getFNumberDescription();
-            case XmpDirectory.TAG_LENS:
-            case XmpDirectory.TAG_LENS_INFO:
-            case XmpDirectory.TAG_CAMERA_SERIAL_NUMBER:
-            case XmpDirectory.TAG_FIRMWARE:
+            case TAG_LENS:
+            case TAG_LENS_INFO:
+            case TAG_CAMERA_SERIAL_NUMBER:
+            case TAG_FIRMWARE:
                 return _directory.getString(tagType);
-            case XmpDirectory.TAG_FOCAL_LENGTH:
+            case TAG_FOCAL_LENGTH:
                 return getFocalLengthDescription();
-            case XmpDirectory.TAG_APERTURE_VALUE:
+            case TAG_APERTURE_VALUE:
                 return getApertureValueDescription();
             default:
                 return super.getDescription(tagType);
@@ -77,7 +79,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     @Nullable
     public String getExposureTimeDescription()
     {
-        final String value = _directory.getString(XmpDirectory.TAG_EXPOSURE_TIME);
+        final String value = _directory.getString(TAG_EXPOSURE_TIME);
         if (value==null)
             return null;
         return value + " sec";
@@ -87,7 +89,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     @Nullable
     public String getExposureProgramDescription()
     {
-        return getIndexedDescription(XmpDirectory.TAG_EXPOSURE_PROGRAM,
+        return getIndexedDescription(TAG_EXPOSURE_PROGRAM,
             1,
             "Manual control",
             "Program normal",
@@ -105,7 +107,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     @Nullable
     public String getShutterSpeedDescription()
     {
-        final Float value = _directory.getFloatObject(XmpDirectory.TAG_SHUTTER_SPEED);
+        final Float value = _directory.getFloatObject(TAG_SHUTTER_SPEED);
         if (value==null)
             return null;
 
@@ -127,7 +129,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     @Nullable
     public String getFNumberDescription()
     {
-        final Rational value = _directory.getRational(XmpDirectory.TAG_F_NUMBER);
+        final Rational value = _directory.getRational(TAG_F_NUMBER);
         if (value==null)
             return null;
         return getFStopDescription(value.doubleValue());
@@ -137,7 +139,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     @Nullable
     public String getFocalLengthDescription()
     {
-        final Rational value = _directory.getRational(XmpDirectory.TAG_FOCAL_LENGTH);
+        final Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
         if (value==null)
             return null;
         java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
@@ -148,7 +150,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     @Nullable
     public String getApertureValueDescription()
     {
-        final Double value = _directory.getDoubleObject(XmpDirectory.TAG_APERTURE_VALUE);
+        final Double value = _directory.getDoubleObject(TAG_APERTURE_VALUE);
         if (value==null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(value);

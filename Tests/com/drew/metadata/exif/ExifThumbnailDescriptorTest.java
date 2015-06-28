@@ -23,6 +23,7 @@ package com.drew.metadata.exif;
 
 import org.junit.Test;
 
+import static com.drew.metadata.exif.ExifThumbnailDirectory.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -36,15 +37,15 @@ public class ExifThumbnailDescriptorTest
     public void testGetYCbCrSubsamplingDescription() throws Exception
     {
         ExifThumbnailDirectory directory = new ExifThumbnailDirectory();
-        directory.setIntArray(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING, new int[]{2, 1});
+        directory.setIntArray(TAG_YCBCR_SUBSAMPLING, new int[]{2, 1});
 
         ExifThumbnailDescriptor descriptor = new ExifThumbnailDescriptor(directory);
-        assertEquals("YCbCr4:2:2", descriptor.getDescription(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING));
+        assertEquals("YCbCr4:2:2", descriptor.getDescription(TAG_YCBCR_SUBSAMPLING));
         assertEquals("YCbCr4:2:2", descriptor.getYCbCrSubsamplingDescription());
 
-        directory.setIntArray(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING, new int[]{2, 2});
+        directory.setIntArray(TAG_YCBCR_SUBSAMPLING, new int[]{2, 2});
 
-        assertEquals("YCbCr4:2:0", descriptor.getDescription(ExifThumbnailDirectory.TAG_YCBCR_SUBSAMPLING));
+        assertEquals("YCbCr4:2:0", descriptor.getDescription(TAG_YCBCR_SUBSAMPLING));
         assertEquals("YCbCr4:2:0", descriptor.getYCbCrSubsamplingDescription());
     }
 }

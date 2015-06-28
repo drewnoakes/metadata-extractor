@@ -22,6 +22,7 @@ package com.drew.metadata.exif;
 
 import org.junit.Test;
 
+import static com.drew.metadata.exif.ExifSubIFDDirectory.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -36,9 +37,9 @@ public class ExifSubIFDDescriptorTest
     {
         byte[] commentBytes = "\0\0\0\0\0\0\0\0This is a comment".getBytes();
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
+        directory.setByteArray(TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        assertEquals("This is a comment", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("This is a comment", descriptor.getDescription(TAG_USER_COMMENT));
     }
 
     @Test
@@ -46,9 +47,9 @@ public class ExifSubIFDDescriptorTest
     {
         byte[] commentBytes = "ASCII\0\0This is a comment".getBytes();
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
+        directory.setByteArray(TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        assertEquals("This is a comment", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("This is a comment", descriptor.getDescription(TAG_USER_COMMENT));
     }
 
     @Test
@@ -56,9 +57,9 @@ public class ExifSubIFDDescriptorTest
     {
         byte[] commentBytes = "ASCII\0\0\0          ".getBytes();
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
+        directory.setByteArray(TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        assertEquals("", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("", descriptor.getDescription(TAG_USER_COMMENT));
     }
 
     @Test
@@ -67,9 +68,9 @@ public class ExifSubIFDDescriptorTest
         // the 10-byte encoding region is only partially full
         byte[] commentBytes = "ASCII\0\0\0".getBytes();
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
+        directory.setByteArray(TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        assertEquals("ASCII", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("ASCII", descriptor.getDescription(TAG_USER_COMMENT));
     }
 
     @Test
@@ -78,9 +79,9 @@ public class ExifSubIFDDescriptorTest
         // fill the 10-byte encoding region
         byte[] commentBytes = "ASCII\0\0\0\0\0".getBytes();
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
+        directory.setByteArray(TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        assertEquals("", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("", descriptor.getDescription(TAG_USER_COMMENT));
     }
 
     @Test
@@ -88,9 +89,9 @@ public class ExifSubIFDDescriptorTest
     {
         byte[] commentBytes = new byte[] { 85, 78, 73, 67, 79, 68, 69, 0, 84, 0, 104, 0, 105, 0, 115, 0, 32, 0, 109, 0, 97, 0, 114, 0, 109, 0, 111, 0, 116, 0, 32, 0, 105, 0, 115, 0, 32, 0, 103, 0, 101, 0, 116, 0, 116, 0, 105, 0, 110, 0, 103, 0, 32, 0, 99, 0, 108, 0, 111, 0, 115, 0, 101, 0, 46, 0, 46, 0, 46, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0, 32, 0 };
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
+        directory.setByteArray(TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        assertEquals("This marmot is getting close...", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("This marmot is getting close...", descriptor.getDescription(TAG_USER_COMMENT));
     }
 
     @Test
@@ -98,8 +99,8 @@ public class ExifSubIFDDescriptorTest
     {
         byte[] commentBytes = new byte[] { 65, 83, 67, 73, 73, 0, 0, 0, 73, 32, 97, 109, 32, 97, 32, 99, 111, 109, 109, 101, 110, 116, 46, 32, 89, 101, 121, 46, 0 };
         ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
-        directory.setByteArray(ExifSubIFDDirectory.TAG_USER_COMMENT, commentBytes);
+        directory.setByteArray(TAG_USER_COMMENT, commentBytes);
         ExifSubIFDDescriptor descriptor = new ExifSubIFDDescriptor(directory);
-        assertEquals("I am a comment. Yey.", descriptor.getDescription(ExifSubIFDDirectory.TAG_USER_COMMENT));
+        assertEquals("I am a comment. Yey.", descriptor.getDescription(TAG_USER_COMMENT));
     }
 }

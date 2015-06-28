@@ -24,6 +24,7 @@ import com.drew.metadata.MetadataException;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.drew.metadata.jpeg.JpegDirectory.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -51,33 +52,33 @@ public class JpegDescriptorTest
     @Test
     public void testGetImageWidthDescription() throws Exception
     {
-        _directory.setInt(JpegDirectory.TAG_IMAGE_WIDTH, 123);
+        _directory.setInt(TAG_IMAGE_WIDTH, 123);
         assertEquals("123 pixels", _descriptor.getImageWidthDescription());
-        assertEquals("123 pixels", _directory.getDescription(JpegDirectory.TAG_IMAGE_WIDTH));
+        assertEquals("123 pixels", _directory.getDescription(TAG_IMAGE_WIDTH));
     }
 
     @Test
     public void testGetImageHeightDescription() throws Exception
     {
-        _directory.setInt(JpegDirectory.TAG_IMAGE_HEIGHT, 123);
+        _directory.setInt(TAG_IMAGE_HEIGHT, 123);
         assertEquals("123 pixels", _descriptor.getImageHeightDescription());
-        assertEquals("123 pixels", _directory.getDescription(JpegDirectory.TAG_IMAGE_HEIGHT));
+        assertEquals("123 pixels", _directory.getDescription(TAG_IMAGE_HEIGHT));
     }
 
     @Test
     public void testGetDataPrecisionDescription() throws Exception
     {
-        _directory.setInt(JpegDirectory.TAG_DATA_PRECISION, 8);
+        _directory.setInt(TAG_DATA_PRECISION, 8);
         assertEquals("8 bits", _descriptor.getDataPrecisionDescription());
-        assertEquals("8 bits", _directory.getDescription(JpegDirectory.TAG_DATA_PRECISION));
+        assertEquals("8 bits", _directory.getDescription(TAG_DATA_PRECISION));
     }
 
     @Test
     public void testGetComponentDescription() throws MetadataException
     {
         JpegComponent component1 = new JpegComponent(1, 0x22, 0);
-        _directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_1, component1);
-        assertEquals("Y component: Quantization table 0, Sampling factors 2 horiz/2 vert", _directory.getDescription(JpegDirectory.TAG_COMPONENT_DATA_1));
+        _directory.setObject(TAG_COMPONENT_DATA_1, component1);
+        assertEquals("Y component: Quantization table 0, Sampling factors 2 horiz/2 vert", _directory.getDescription(TAG_COMPONENT_DATA_1));
         assertEquals("Y component: Quantization table 0, Sampling factors 2 horiz/2 vert", _descriptor.getComponentDataDescription(0));
     }
 }
