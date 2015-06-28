@@ -85,25 +85,17 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     @Nullable
     public String getColorModeDescription()
     {
-        // Bitmap = 0; Grayscale = 1; Indexed = 2; RGB = 3; CMYK = 4; Multichannel = 7; Duotone = 8; Lab = 9
-        try {
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_COLOR_MODE);
-            if (value == null)
-                return null;
-            switch (value){
-                case 0: return "Bitmap";
-                case 1: return "Grayscale";
-                case 2: return "Indexed";
-                case 3: return "RGB";
-                case 4: return "CMYK";
-                case 7: return "Multichannel";
-                case 8: return "Duotone";
-                case 9: return "Lab";
-                default: return "Unknown color mode (" + value + ")";
-            }
-        } catch (Exception e) {
-            return null;
-        }
+        return getIndexedDescription(PsdHeaderDirectory.TAG_COLOR_MODE,
+            "Bitmap",
+            "Grayscale",
+            "Indexed",
+            "RGB",
+            "CMYK",
+            null,
+            null,
+            "Multichannel",
+            "Duotone",
+            "Lab");
     }
 
     @Nullable
