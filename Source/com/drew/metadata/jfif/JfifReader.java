@@ -56,7 +56,7 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
     {
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header
-            if (segmentBytes.length >= 4 && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
+            if (segmentBytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
                 extract(new ByteArrayReader(segmentBytes), metadata);
         }
     }
