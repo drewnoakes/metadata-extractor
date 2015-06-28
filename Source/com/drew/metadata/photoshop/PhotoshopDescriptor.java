@@ -81,20 +81,20 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     {
         try {
             byte[] b = _directory.getByteArray(PhotoshopDirectory.TAG_JPEG_QUALITY);
+
             if (b == null)
                 return _directory.getString(PhotoshopDirectory.TAG_JPEG_QUALITY);
+
             RandomAccessReader reader = new ByteArrayReader(b);
             int q = reader.getUInt16(0); // & 0xFFFF;
             int f = reader.getUInt16(2); // & 0xFFFF;
             int s = reader.getUInt16(4);
 
-            int q1;
-            if (q <= 0xFFFF && q >= 0xFFFD)
-                q1 = q - 0xFFFC;
-            else if (q <= 8)
-                q1 = q + 4;
-            else
-                q1 = q;
+            int q1 = q <= 0xFFFF && q >= 0xFFFD
+                ? q - 0xFFFC
+                : q <= 8
+                    ? q + 4
+                    : q;
 
             String quality;
             switch (q) {
@@ -121,6 +121,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 default:
                     quality = "Unknown";
             }
+
             String format;
             switch (f) {
                 case 0x0000:
@@ -135,9 +136,11 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 default:
                     format = String.format("Unknown 0x%04X", f);
             }
+
             String scans = s >= 1 && s <= 3
                     ? String.format("%d", s + 2)
                     : String.format("Unknown 0x%04X", s);
+
             return String.format("%d (%s), %s format, %s scans", q1, quality, format, scans);
         } catch (IOException e) {
             return null;
@@ -242,16 +245,8 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             String name = reader.getString(24, nameLength * 2, "UTF-16");
             int pos = 24 + nameLength * 2;
             int sliceCount = reader.getInt32(pos);
-            //pos += 4;
             return String.format("%s (%d,%d,%d,%d) %d Slices",
                     name, reader.getInt32(4), reader.getInt32(8), reader.getInt32(12), reader.getInt32(16), sliceCount);
-            /*for (int i=0;i<sliceCount;i++){
-                pos+=16;
-                int slNameLen=getInt32(b,pos);
-                pos+=4;
-                String slName=new String(b, pos, slNameLen*2,"UTF-16");
-                res+=slName;
-            }*/
         } catch (IOException e) {
             return null;
         }
@@ -265,22 +260,14 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             if (v == null)
                 return null;
             RandomAccessReader reader = new ByteArrayReader(v);
-            //int pos = 0;
             int format = reader.getInt32(0);
-            //pos += 4;
             int width = reader.getInt32(4);
-            //pos += 4;
             int height = reader.getInt32(8);
-            //pos += 4;
-            //pos += 4; //skip WidthBytes
+            //skip WidthBytes
             int totalSize = reader.getInt32(16);
-            //pos += 4;
             int compSize = reader.getInt32(20);
-            //pos += 4;
             int bpp = reader.getInt32(24);
-            //pos+=2;
-            //pos+=2; //skip Number of planes
-            //int thumbSize=v.length-pos;
+            //skip Number of planes
             return String.format("%s, %dx%d, Decomp %d bytes, %d bpp, %d bytes",
                     format == 1 ? "JpegRGB" : "RawRGB",
                     width, height, totalSize, bpp, compSize);
