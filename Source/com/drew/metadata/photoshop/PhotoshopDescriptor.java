@@ -129,7 +129,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                     format = "Optimised";
                     break;
                 case 0x0101:
-                    format = "Progressive ";
+                    format = "Progressive";
                     break;
                 default:
                     format = String.format("Unknown 0x%04X", f);
