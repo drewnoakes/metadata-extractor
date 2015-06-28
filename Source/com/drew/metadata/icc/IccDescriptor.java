@@ -162,12 +162,13 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                             illuminantString = String.format("Unknown %d", illuminantType);
                             break;
                     }
+                    DecimalFormat format = new DecimalFormat("0.###");
                     return String.format("%s Observer, Backing (%s, %s, %s), Geometry %s, Flare %d%%, Illuminant %s",
-                            observerString, x, y, z, geometryString, Math.round(flare * 100), illuminantString);
+                            observerString, format.format(x), format.format(y), format.format(z), geometryString, Math.round(flare * 100), illuminantString);
                 }
                 case ICC_TAG_TYPE_XYZ_ARRAY: {
                     StringBuilder res = new StringBuilder();
-                    DecimalFormat format = new DecimalFormat("0.0####");
+                    DecimalFormat format = new DecimalFormat("0.####");
                     int count = (bytes.length - 8) / 12;
                     for (int i = 0; i < count; i++) {
                         float x = reader.getS15Fixed16(8 + i * 12);

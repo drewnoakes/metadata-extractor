@@ -28,6 +28,7 @@ import com.drew.lang.annotations.SuppressWarnings;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,6 +41,8 @@ import java.util.*;
  */
 public abstract class Directory
 {
+    private static final DecimalFormat _floatFormat = new DecimalFormat("0.###");
+
     /** Map of values hashed by type identifiers. */
     @NotNull
     protected final Map<Integer, Object> _tagMap = new HashMap<Integer, Object>();
@@ -866,13 +869,13 @@ public abstract class Directory
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(Array.getFloat(o, i));
+                    string.append(_floatFormat.format(Array.getFloat(o, i)));
                 }
             } else if (componentType.getName().equals("double")) {
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(Array.getDouble(o, i));
+                    string.append(_floatFormat.format(Array.getDouble(o, i)));
                 }
             } else if (componentType.getName().equals("byte")) {
                 for (int i = 0; i < arrayLength; i++) {
@@ -886,6 +889,12 @@ public abstract class Directory
 
             return string.toString();
         }
+
+        if (o instanceof Double)
+            return _floatFormat.format(((Double)o).doubleValue());
+
+        if (o instanceof Float)
+            return _floatFormat.format(((Float)o).floatValue());
 
         // Note that several cameras leave trailing spaces (Olympus, Nikon) but this library is intended to show
         // the actual data within the file.  It is not inconceivable that whitespace may be significant here, so we
