@@ -291,7 +291,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     private String getBooleanString(int tag)
     {
         final byte[] bytes = _directory.getByteArray(tag);
-        if (bytes == null)
+        if (bytes == null || bytes.length == 0)
             return null;
         return bytes[0] == 0 ? "No" : "Yes";
     }
