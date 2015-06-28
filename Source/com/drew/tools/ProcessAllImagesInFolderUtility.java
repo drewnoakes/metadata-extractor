@@ -286,23 +286,9 @@ public class ProcessAllImagesInFolderUtility
                 {
                     writer = openWriter(file);
 
-                    // Build a list of all directories
-                    List<Directory> directories = new ArrayList<Directory>();
-                    for (Directory directory : metadata.getDirectories())
-                        directories.add(directory);
-
-                    // Sort them by name
-                    Collections.sort(directories, new Comparator<Directory>()
-                    {
-                        public int compare(Directory o1, Directory o2)
-                        {
-                            return o1.getName().compareTo(o2.getName());
-                        }
-                    });
-
                     // Write any errors
                     if (metadata.hasErrors()) {
-                        for (Directory directory : directories) {
+                        for (Directory directory : metadata.getDirectories()) {
                             if (!directory.hasErrors())
                                 continue;
                             for (String error : directory.getErrors())
@@ -312,7 +298,7 @@ public class ProcessAllImagesInFolderUtility
                     }
 
                     // Write tag values for each directory
-                    for (Directory directory : directories) {
+                    for (Directory directory : metadata.getDirectories()) {
                         String directoryName = directory.getName();
                         for (Tag tag : directory.getTags()) {
                             String tagName = tag.getTagName();
