@@ -80,11 +80,9 @@ public class IcoReader
         }
 
         // Read each embedded image
-        IcoDirectory directory = null;
-        try {
-            for (int imageIndex = 0; imageIndex < imageCount; imageIndex++) {
-                directory = new IcoDirectory();
-                metadata.addDirectory(directory);
+        for (int imageIndex = 0; imageIndex < imageCount; imageIndex++) {
+            IcoDirectory directory = new IcoDirectory();
+            try {
                 directory.setInt(IcoDirectory.TAG_IMAGE_TYPE, type);
 
                 directory.setInt(IcoDirectory.TAG_IMAGE_WIDTH, reader.getUInt8());
@@ -103,10 +101,11 @@ public class IcoReader
                 }
                 directory.setLong(IcoDirectory.TAG_IMAGE_SIZE_BYTES, reader.getUInt32());
                 directory.setLong(IcoDirectory.TAG_IMAGE_OFFSET_BYTES, reader.getUInt32());
+            } catch (IOException ex) {
+                assert (directory != null);
+                directory.addError("Exception reading ICO file metadata: " + ex.getMessage());
             }
-        } catch (IOException ex) {
-            assert(directory != null);
-            directory.addError("Exception reading ICO file metadata: " + ex.getMessage());
+            metadata.addDirectory(directory);
         }
     }
 }
