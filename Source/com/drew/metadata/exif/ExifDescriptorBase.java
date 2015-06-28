@@ -576,8 +576,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         return value == null
             ? null
             : value.getNumerator() == 0
-            ? "Digital zoom not used."
-            : SimpleDecimalFormatter.format(value.doubleValue());
+                ? "Digital zoom not used."
+                : SimpleDecimalFormatter.format(value.doubleValue());
     }
 
     @Nullable
@@ -966,7 +966,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_SUBJECT_DISTANCE);
         if (value == null)
             return null;
-        java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##");
         return formatter.format(value.doubleValue()) + " metres";
     }
 
