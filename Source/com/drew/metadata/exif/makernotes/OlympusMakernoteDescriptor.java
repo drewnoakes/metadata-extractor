@@ -115,7 +115,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             case CameraSettings.TAG_FOCUS_DISTANCE:
                 return getFocusDistanceDescription();
             case CameraSettings.TAG_FLASH_FIRED:
-                return getFlastFiredDescription();
+                return getFlashFiredDescription();
             case CameraSettings.TAG_DATE:
                 return getDateDescription();
             case CameraSettings.TAG_TIME:
@@ -142,7 +142,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             case CameraSettings.TAG_SUBJECT_PROGRAM:
                 return getSubjectProgramDescription();
             case CameraSettings.TAG_FLASH_COMPENSATION:
-                return getFlastCompensationDescription();
+                return getFlashCompensationDescription();
             case CameraSettings.TAG_ISO_SETTING:
                 return getIsoSettingDescription();
             case CameraSettings.TAG_CAMERA_MODEL:
@@ -357,7 +357,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String getFlastFiredDescription()
+    public String getFlashFiredDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FLASH_FIRED, "No", "Yes");
     }
@@ -506,7 +506,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String getFlastCompensationDescription()
+    public String getFlashCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FLASH_COMPENSATION);
         DecimalFormat format = new DecimalFormat("0.##");
