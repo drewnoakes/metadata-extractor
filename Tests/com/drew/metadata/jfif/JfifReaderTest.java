@@ -54,7 +54,7 @@ public class JfifReaderTest
         assertFalse(directory.getErrors().toString(), directory.hasErrors());
 
         Tag[] tags = directory.getTags().toArray(new Tag[directory.getTagCount()]);
-        assertEquals(4, tags.length);
+        assertEquals(6, tags.length);
 
         assertEquals(JfifDirectory.TAG_VERSION, tags[0].getTagType());
         assertEquals(0x0102, directory.getInt(tags[0].getTagType()));
@@ -67,5 +67,11 @@ public class JfifReaderTest
 
         assertEquals(JfifDirectory.TAG_RESY, tags[3].getTagType());
         assertEquals(108, directory.getInt(tags[3].getTagType()));
+
+        assertEquals(JfifDirectory.TAG_THUMB_WIDTH, tags[4].getTagType());
+        assertEquals(0, directory.getInt(tags[4].getTagType()));
+
+        assertEquals(JfifDirectory.TAG_THUMB_HEIGHT, tags[5].getTagType());
+        assertEquals(0, directory.getInt(tags[5].getTagType()));
     }
 }
