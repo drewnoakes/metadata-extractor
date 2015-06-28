@@ -57,29 +57,21 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     @Nullable
     public String getChannelCountDescription()
     {
-        try {
-            // Supported range is 1 to 56.
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_CHANNEL_COUNT);
-            if (value == null)
-                return null;
-            return value + " channel" + (value == 1 ? "" : "s");
-        } catch (Exception e) {
+        // Supported range is 1 to 56.
+        Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_CHANNEL_COUNT);
+        if (value == null)
             return null;
-        }
+        return value + " channel" + (value == 1 ? "" : "s");
     }
 
     @Nullable
     public String getBitsPerChannelDescription()
     {
-        try {
-            // Supported values are 1, 8, 16 and 32.
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL);
-            if (value == null)
-                return null;
-            return value + " bit" + (value == 1 ? "" : "s") + " per channel";
-        } catch (Exception e) {
+        // Supported values are 1, 8, 16 and 32.
+        Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL);
+        if (value == null)
             return null;
-        }
+        return value + " bit" + (value == 1 ? "" : "s") + " per channel";
     }
 
     @Nullable
@@ -101,14 +93,10 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     @Nullable
     public String getImageHeightDescription()
     {
-        try {
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_HEIGHT);
-            if (value == null)
-                return null;
-            return value + " pixel" + (value == 1 ? "" : "s");
-        } catch (Exception e) {
+        Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_HEIGHT);
+        if (value == null)
             return null;
-        }
+        return value + " pixel" + (value == 1 ? "" : "s");
     }
 
     @Nullable
