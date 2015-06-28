@@ -303,6 +303,8 @@ public class ProcessAllImagesInFolderUtility
                         for (Tag tag : directory.getTags()) {
                             String tagName = tag.getTagName();
                             String description = tag.getDescription();
+                            if (description == null)
+                                description = "";
                             writer.format("[%s - %s] %s = %s\n", directoryName, tag.getTagTypeHex(), tagName, description);
                         }
                         if (directory.getTagCount() != 0)
