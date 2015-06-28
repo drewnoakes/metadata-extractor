@@ -834,34 +834,56 @@ public abstract class Directory
             // handle arrays of objects and primitives
             int arrayLength = Array.getLength(o);
             final Class<?> componentType = o.getClass().getComponentType();
-            boolean isObjectArray = Object.class.isAssignableFrom(componentType);
-            boolean isFloatArray = componentType.getName().equals("float");
-            boolean isDoubleArray = componentType.getName().equals("double");
-            boolean isIntArray = componentType.getName().equals("int");
-            boolean isLongArray = componentType.getName().equals("long");
-            boolean isByteArray = componentType.getName().equals("byte");
-            boolean isShortArray = componentType.getName().equals("short");
+
             StringBuilder string = new StringBuilder();
-            for (int i = 0; i < arrayLength; i++) {
-                if (i != 0)
-                    string.append(' ');
-                if (isObjectArray)
+
+            if (Object.class.isAssignableFrom(componentType)) {
+                // object array
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.get(o, i).toString());
-                else if (isIntArray)
+                }
+            } else if (componentType.getName().equals("int")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getInt(o, i));
-                else if (isShortArray)
+                }
+            } else if (componentType.getName().equals("short")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getShort(o, i));
-                else if (isLongArray)
+                }
+            } else if (componentType.getName().equals("long")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getLong(o, i));
-                else if (isFloatArray)
+                }
+            } else if (componentType.getName().equals("float")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getFloat(o, i));
-                else if (isDoubleArray)
+                }
+            } else if (componentType.getName().equals("double")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getDouble(o, i));
-                else if (isByteArray)
+                }
+            } else if (componentType.getName().equals("byte")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getByte(o, i));
-                else
-                    addError("Unexpected array component type: " + componentType.getName());
+                }
+            } else {
+                addError("Unexpected array component type: " + componentType.getName());
             }
+
             return string.toString();
         }
 
