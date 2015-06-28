@@ -26,8 +26,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
-import java.text.DecimalFormat;
-
 import static com.drew.metadata.xmp.XmpDirectory.*;
 
 /**
@@ -140,10 +138,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
     public String getFocalLengthDescription()
     {
         final Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
-        if (value==null)
-            return null;
-        DecimalFormat formatter = new DecimalFormat("0.##");
-        return formatter.format(value.doubleValue()) + " mm";
+        return value == null ? null : getFocalLengthDescription(value.doubleValue());
     }
 
     /** This code is from ExifSubIFDDescriptor.java */

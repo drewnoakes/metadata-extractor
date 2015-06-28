@@ -289,4 +289,12 @@ public class TagDescriptor<T extends Directory>
         format.setRoundingMode(RoundingMode.HALF_UP);
         return "f/" + format.format(fStop);
     }
+
+    @Nullable
+    protected static String getFocalLengthDescription(double mm)
+    {
+        DecimalFormat format = new DecimalFormat("0.#");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return format.format(mm) + " mm";
+    }
 }

@@ -340,7 +340,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getFocalLengthDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FOCAL_LENGTH);
-        return value == null ? null : Double.toString(value/256d) + " mm";
+        return value == null ? null : getFocalLengthDescription(value/256d);
     }
 
     @Nullable
