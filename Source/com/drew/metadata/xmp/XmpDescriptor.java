@@ -142,7 +142,7 @@ public class XmpDescriptor extends TagDescriptor<XmpDirectory>
         final Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
         if (value==null)
             return null;
-        java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.##");
         return formatter.format(value.doubleValue()) + " mm";
     }
 
