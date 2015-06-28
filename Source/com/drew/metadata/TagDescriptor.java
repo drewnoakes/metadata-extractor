@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -284,6 +285,8 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFStopDescription(double fStop)
     {
-        return "f/" + new DecimalFormat("0.0").format(fStop);
+        DecimalFormat format = new DecimalFormat("0.0");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return "f/" + format.format(fStop);
     }
 }
