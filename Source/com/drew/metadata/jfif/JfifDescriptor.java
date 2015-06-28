@@ -28,8 +28,11 @@ import static com.drew.metadata.jfif.JfifDirectory.*;
 
 /**
  * Provides human-readable string versions of the tags stored in a JfifDirectory.
- * <p>
- * More info at: http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
+ *
+ * <ul>
+ *   <li>http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format</li>
+ *   <li>http://www.w3.org/Graphics/JPEG/jfif3.pdf</li>
+ * </ul>
  *
  * @author Yuri Binev, Drew Noakes
  */

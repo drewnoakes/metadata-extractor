@@ -18,7 +18,7 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.metadata.jfif;
+package com.drew.metadata.jfxx;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
@@ -32,18 +32,18 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * Reader for JFIF data, found in the APP0 JPEG segment.
+ * Reader for JFXX (JFIF extensions) data, found in the APP0 JPEG segment.
  *
  * <ul>
  *   <li>http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format</li>
  *   <li>http://www.w3.org/Graphics/JPEG/jfif3.pdf</li>
  * </ul>
  *
- * @author Yuri Binev, Drew Noakes, Markus Meyer
+ * @author Drew Noakes
  */
-public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
+public class JfxxReader implements JpegSegmentMetadataReader, MetadataReader
 {
-    public static final String PREAMBLE = "JFIF";
+    public static final String PREAMBLE = "JFXX";
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -61,23 +61,18 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
     }
 
     /**
-     * Performs the Jfif data extraction, adding found values to the specified
+     * Performs the JFXX data extraction, adding found values to the specified
      * instance of {@link Metadata}.
      */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
-        JfifDirectory directory = new JfifDirectory();
+        JfxxDirectory directory = new JfxxDirectory();
         metadata.addDirectory(directory);
 
         try {
-            // For JFIF, the tag number is also the offset into the segment
+            // For JFXX, the tag number is also the offset into the segment
 
-            directory.setInt(JfifDirectory.TAG_VERSION,      reader.getUInt16(JfifDirectory.TAG_VERSION));
-            directory.setInt(JfifDirectory.TAG_UNITS,        reader.getUInt8(JfifDirectory.TAG_UNITS));
-            directory.setInt(JfifDirectory.TAG_RESX,         reader.getUInt16(JfifDirectory.TAG_RESX));
-            directory.setInt(JfifDirectory.TAG_RESY,         reader.getUInt16(JfifDirectory.TAG_RESY));
-            directory.setInt(JfifDirectory.TAG_THUMB_WIDTH,  reader.getUInt8(JfifDirectory.TAG_THUMB_WIDTH));
-            directory.setInt(JfifDirectory.TAG_THUMB_HEIGHT, reader.getUInt8(JfifDirectory.TAG_THUMB_HEIGHT));
+            directory.setInt(JfxxDirectory.TAG_EXTENSION_CODE, reader.getUInt8(JfxxDirectory.TAG_EXTENSION_CODE));
         } catch (IOException me) {
             directory.addError(me.getMessage());
         }
