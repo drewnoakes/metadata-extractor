@@ -83,6 +83,9 @@ public class FileTypeDetector
     @NotNull
     public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
     {
+        if (!inputStream.markSupported())
+            throw new IOException("Stream must support mark/reset");
+
         int maxByteCount = _root.getMaxDepth();
 
         inputStream.mark(maxByteCount);
