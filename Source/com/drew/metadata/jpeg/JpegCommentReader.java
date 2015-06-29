@@ -41,12 +41,6 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.COM);
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
-    {
-        // The entire contents of the byte[] is the comment. There's nothing here to discriminate upon.
-        return true;
-    }
-
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         for (byte[] segmentBytes : segments) {
