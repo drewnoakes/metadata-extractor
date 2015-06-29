@@ -27,6 +27,7 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.pcx.PcxMetadataReader;
 import com.drew.imaging.png.PngMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
+import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
 import com.drew.lang.StringUtil;
@@ -125,6 +126,9 @@ public class ImageMetadataReader
 
         if (fileType == FileType.Riff)
             return WebpMetadataReader.readMetadata(bufferedInputStream);
+
+        if (fileType == FileType.Raf)
+            return RafMetadataReader.readMetadata(bufferedInputStream);
 
         throw new ImageProcessingException("File format is not supported");
     }
