@@ -1,5 +1,8 @@
 language: java
 jdk:
   - openjdk6
+  - openjdk7
+script:
+  mvn clean verify -Dgpg.skip=true
 
 install: mvn install -DskipTests=true -Dgpg.skip=true
