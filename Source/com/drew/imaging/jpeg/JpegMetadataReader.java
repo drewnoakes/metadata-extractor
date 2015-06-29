@@ -33,6 +33,7 @@ import com.drew.metadata.jfif.JfifReader;
 import com.drew.metadata.jfxx.JfxxReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
 import com.drew.metadata.jpeg.JpegReader;
+import com.drew.metadata.photoshop.DuckyReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -60,6 +61,7 @@ public class JpegMetadataReader
             new XmpReader(),
             new IccReader(),
             new PhotoshopReader(),
+            new DuckyReader(),
             new IptcReader(),
             new AdobeJpegReader()
     );
