@@ -109,3 +109,7 @@ More information about this project is available at:
 
 * https://drewnoakes.com/code/exif/
 * https://github.com/drewnoakes/metadata-extractor/
+
+## Other languages
+
+A feature-equivalent .NET implementation, [metadata-extractor-dotnet](https://github.com/drewnoakes/metadata-extractor-dotnet) is now being developed alongside this original Java version.
