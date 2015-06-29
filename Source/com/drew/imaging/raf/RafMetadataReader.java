@@ -41,7 +41,7 @@ public class RafMetadataReader
         byte[] data = new byte[512];
         inputStream.read(data);
         inputStream.reset();
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < data.length - 2; i++) {
             if (data[i] == (byte) 0xff && data[i + 1] == (byte) 0xd8 && data[i + 2] == (byte) 0xff) {
                 inputStream.skip(i);
                 break;
