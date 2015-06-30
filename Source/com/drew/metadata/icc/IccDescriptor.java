@@ -247,23 +247,11 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getRenderingIntentDescription()
     {
-        Integer value = _directory.getInteger(TAG_RENDERING_INTENT);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 0:
-                return "Perceptual";
-            case 1:
-                return "Media-Relative Colorimetric";
-            case 2:
-                return "Saturation";
-            case 3:
-                return "ICC-Absolute Colorimetric";
-            default:
-                return String.format("Unknown (%d)", value);
-        }
+        return getIndexedDescription(TAG_RENDERING_INTENT,
+            "Perceptual",
+            "Media-Relative Colorimetric",
+            "Saturation",
+            "ICC-Absolute Colorimetric");
     }
 
     @Nullable
