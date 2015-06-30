@@ -9,7 +9,5 @@ install: mvn install -DskipTests=true -Dgpg.skip=true
 script:
   - mvn clean verify -Dgpg.skip=true
 
-
 after_success:
-  - mvn -Pcoverage -e -X clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
-
+  - mvn -Pcoverage clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
