@@ -181,7 +181,7 @@ public class NikonType2MakernoteTest2
     @Test
     public void testExifThumbnailDirectory_MatchesKnownValues() throws Exception
     {
-        assertEquals(6, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION));
+        assertEquals(6, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_COMPRESSION));
         assertEquals(1494, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
         assertEquals(6077, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH));
         assertEquals(1494, _thumbDirectory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET));
