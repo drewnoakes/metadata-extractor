@@ -37,9 +37,12 @@ import java.util.TimeZone;
 
 /**
  * Reads an ICC profile.
+ * <p/>
+ * More information about ICC:
  * <ul>
  * <li>http://en.wikipedia.org/wiki/ICC_profile</li>
  * <li>http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html</li>
+ * <li>https://developer.apple.com/library/mac/samplecode/ImageApp/Listings/ICC_h.html</li>
  * </ul>
  *
  * @author Yuri Binev
