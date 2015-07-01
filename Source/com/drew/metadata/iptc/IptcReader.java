@@ -29,7 +29,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -59,7 +59,7 @@ public class IptcReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APPD);
+        return Collections.singletonList(JpegSegmentType.APPD);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)

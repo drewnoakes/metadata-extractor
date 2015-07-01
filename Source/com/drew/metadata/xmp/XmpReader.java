@@ -31,8 +31,8 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 
 /**
  * Extracts XMP data from a JPEG header segment.
@@ -70,7 +70,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APP1);
+        return Collections.singletonList(JpegSegmentType.APP1);
     }
 
     /**

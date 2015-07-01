@@ -28,7 +28,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Reads Photoshop "ducky" segments, created during Save-for-Web.
@@ -43,7 +43,7 @@ public class DuckyReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APPC);
+        return Collections.singletonList(JpegSegmentType.APPC);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)

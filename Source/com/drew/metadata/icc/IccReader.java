@@ -31,8 +31,8 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.TimeZone;
 
 /**
@@ -55,7 +55,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APP2);
+        return Collections.singletonList(JpegSegmentType.APP2);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)

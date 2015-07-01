@@ -23,7 +23,9 @@ package com.drew.metadata.photoshop;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.*;
+import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
@@ -31,7 +33,7 @@ import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.xmp.XmpReader;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Reads metadata created by Photoshop and stored in the APPD segment of JPEG files.
@@ -49,7 +51,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APPD);
+        return Collections.singletonList(JpegSegmentType.APPD);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
