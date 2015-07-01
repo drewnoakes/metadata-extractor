@@ -182,11 +182,11 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         final int M = reader.getUInt16(tagType + 8);
         final int s = reader.getUInt16(tagType + 10);
 
-        if (DateUtil.isValidDate(y, m, d) && DateUtil.isValidTime(h, M, s))
+        if (DateUtil.isValidDate(y, m - 1, d) && DateUtil.isValidTime(h, M, s))
         {
 //          Date value = new Date(Date.UTC(y - 1900, m - 1, d, h, M, s));
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            calendar.set(y, m, d, h, M, s);
+            calendar.set(y, m - 1, d, h, M, s);
             directory.setDate(tagType, calendar.getTime());
         }
         else
