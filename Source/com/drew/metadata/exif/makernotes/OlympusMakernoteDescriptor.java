@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif.makernotes;
 
+import com.drew.lang.DateUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -362,24 +363,6 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         return getIndexedDescription(CameraSettings.TAG_FLASH_FIRED, "No", "Yes");
     }
 
-    private static int[] _daysInMonth365 = new int[] {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-    private static boolean isValidDate(int year, int month, int day)
-    {
-        if (year < 1 || year > 9999 || month < 0 || month > 11)
-            return false;
-
-        int daysInMonth = _daysInMonth365[month];
-        if (month == 1)
-        {
-            boolean isLeapYear = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-            if (isLeapYear)
-                daysInMonth++;
-        }
-
-        return day >= 1 && day <= daysInMonth;
-    }
-
     @Nullable
     public String getDateDescription()
     {
@@ -394,17 +377,10 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         int month = (int) ((value >> 16) & 0xFF);
         int year = (int) ((value >> 8) & 0xFF);
 
-        if (!isValidDate(year, month, day))
+        if (!DateUtil.isValidDate(year, month, day))
             return "Invalid date";
 
         return new GregorianCalendar(year + 1970, month, day).getTime().toString();
-    }
-
-    private static boolean isValidTime(int hours, int minutes, int seconds)
-    {
-        return hours >= 0 && hours < 24
-            && minutes >= 0 && minutes < 60
-            && seconds >= 0 && seconds < 60;
     }
 
     @Nullable
@@ -421,7 +397,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         int minutes = (int) ((value >> 16) & 0xFF);
         int seconds = (int) (value & 0xFF);
 
-        if (!isValidTime(hours, minutes, seconds))
+        if (!DateUtil.isValidTime(hours, minutes, seconds))
             return "Invalid time";
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
