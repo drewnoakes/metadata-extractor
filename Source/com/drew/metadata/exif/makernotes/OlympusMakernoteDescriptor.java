@@ -380,12 +380,12 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
 
         int day = (int) (value & 0xFF);
         int month = (int) ((value >> 16) & 0xFF);
-        int year = (int) ((value >> 8) & 0xFF);
+        int year = (int) ((value >> 8) & 0xFF) + 1970;
 
         if (!DateUtil.isValidDate(year, month, day))
             return "Invalid date";
 
-        return new GregorianCalendar(year + 1970, month, day).getTime().toString();
+        return new GregorianCalendar(year, month, day).getTime().toString();
     }
 
     @Nullable
