@@ -25,6 +25,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
 
@@ -259,7 +260,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double iso = Math.pow((value / 8d) - 1, 2) * 3.125;
-        return Double.toString(iso);
+        DecimalFormat format = new DecimalFormat("0.##");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return format.format(iso);
     }
 
     @Nullable
@@ -275,7 +278,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double shutterSpeed = Math.pow((49-value) / 8d, 2);
-        return Double.toString(shutterSpeed) + " sec";
+        DecimalFormat format = new DecimalFormat("0.###");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return format.format(shutterSpeed) + " sec";
     }
 
     @Nullable
