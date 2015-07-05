@@ -29,6 +29,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -1009,7 +1010,9 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
             long apexPower10 = Math.round((double)apexPower * 10.0);
             float fApexPower = (float)apexPower10 / 10.0f;
-            return fApexPower + " sec";
+            DecimalFormat format = new DecimalFormat("0.##");
+            format.setRoundingMode(RoundingMode.HALF_UP);
+            return format.format(fApexPower) + " sec";
         } else {
             int apexPower = (int)((Math.exp(apexValue * Math.log(2))));
             return "1/" + apexPower + " sec";
