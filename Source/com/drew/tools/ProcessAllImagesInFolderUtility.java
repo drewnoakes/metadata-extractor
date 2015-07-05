@@ -32,6 +32,7 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
+import com.drew.metadata.file.FileMetadataDirectory;
 
 import java.io.*;
 import java.util.*;
@@ -305,6 +306,9 @@ public class ProcessAllImagesInFolderUtility
                             String description = tag.getDescription();
                             if (description == null)
                                 description = "";
+                            // Skip the file write-time as this changes based on the time at which the regression test image repository was cloned
+                            if (directory instanceof FileMetadataDirectory && tag.getTagType() == FileMetadataDirectory.TAG_FILE_MODIFIED_DATE)
+                                description = "<omitted for regression testing as checkout dependent>";
                             writer.format("[%s - %s] %s = %s\n", directoryName, tag.getTagTypeHex(), tagName, description);
                         }
                         if (directory.getTagCount() != 0)
