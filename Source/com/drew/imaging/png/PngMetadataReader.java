@@ -153,6 +153,8 @@ public class PngMetadataReader
                 InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
                 new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata);
                 inflateStream.close();
+            } else {
+                directory.addError("Invalid compression method value");
             }
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.bKGD)) {
