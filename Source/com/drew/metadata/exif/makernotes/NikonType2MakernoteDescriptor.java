@@ -305,7 +305,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     private String getEVDescription(int tagType)
     {
         int[] values = _directory.getIntArray(tagType);
-        if (values == null)
+        if (values == null || values.length < 2)
             return null;
         if (values.length < 3 || values[2] == 0)
             return null;
