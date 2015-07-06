@@ -118,7 +118,7 @@ public class PngMetadataReader
             directory.setInt(PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY, 1);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.sRGB)) {
-            int srgbRenderingIntent = new SequentialByteArrayReader(bytes).getInt8();
+            int srgbRenderingIntent = bytes[0];
             PngDirectory directory = new PngDirectory(PngChunkType.sRGB);
             directory.setInt(PngDirectory.TAG_SRGB_RENDERING_INTENT, srgbRenderingIntent);
             metadata.addDirectory(directory);
@@ -135,7 +135,8 @@ public class PngMetadataReader
             directory.setInt(PngChromaticitiesDirectory.TAG_BLUE_Y, chromaticities.getBlueY());
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.gAMA)) {
-            int gammaInt = new SequentialByteArrayReader(bytes).getInt32();
+            int gammaInt = ByteConvert.toInt32BigEndian(bytes);
+            new SequentialByteArrayReader(bytes).getInt32();
             PngDirectory directory = new PngDirectory(PngChunkType.gAMA);
             directory.setDouble(PngDirectory.TAG_GAMMA, gammaInt / 100000.0);
             metadata.addDirectory(directory);
