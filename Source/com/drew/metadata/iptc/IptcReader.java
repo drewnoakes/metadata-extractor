@@ -22,6 +22,7 @@ package com.drew.metadata.iptc;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.DateUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
@@ -189,13 +190,16 @@ public class IptcReader implements JpegSegmentMetadataReader
                 // Date object
                 if (tagByteCount >= 8) {
                     string = reader.getString(tagByteCount);
+                    assert(string.length() >= 8);
                     try {
                         int year = Integer.parseInt(string.substring(0, 4));
                         int month = Integer.parseInt(string.substring(4, 6)) - 1;
                         int day = Integer.parseInt(string.substring(6, 8));
-                        Date date = new java.util.GregorianCalendar(year, month, day).getTime();
-                        directory.setDate(tagIdentifier, date);
-                        return;
+                        if (DateUtil.isValidDate(year, month, day)) {
+                            Date date = new java.util.GregorianCalendar(year, month, day).getTime();
+                            directory.setDate(tagIdentifier, date);
+                            return;
+                        }
                     } catch (NumberFormatException e) {
                         // fall through and we'll process the 'string' value below
                     }
