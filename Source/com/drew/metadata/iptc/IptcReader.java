@@ -231,6 +231,7 @@ public class IptcReader implements JpegSegmentMetadataReader
             String[] oldStrings = directory.getStringArray(tagIdentifier);
             String[] newStrings;
             if (oldStrings == null) {
+                // TODO hitting this block means any prior value(s) are discarded
                 newStrings = new String[1];
             } else {
                 newStrings = new String[oldStrings.length + 1];
