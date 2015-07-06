@@ -185,6 +185,7 @@ public class IptcReader implements JpegSegmentMetadataReader
                 return;
             case IptcDirectory.TAG_RELEASE_DATE:
             case IptcDirectory.TAG_DATE_CREATED:
+            case IptcDirectory.TAG_DIGITAL_DATE_CREATED:
                 // Date object
                 if (tagByteCount >= 8) {
                     string = reader.getString(tagByteCount);
