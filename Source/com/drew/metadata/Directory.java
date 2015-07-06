@@ -881,7 +881,7 @@ public abstract class Directory
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(Array.getByte(o, i));
+                    string.append(Array.getByte(o, i) & 0xff);
                 }
             } else {
                 addError("Unexpected array component type: " + componentType.getName());
