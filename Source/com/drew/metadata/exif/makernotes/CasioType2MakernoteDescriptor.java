@@ -239,9 +239,7 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     public String getFocalLengthDescription()
     {
         Double value = _directory.getDoubleObject(TAG_FOCAL_LENGTH);
-        if (value == null)
-            return null;
-        return Double.toString(value / 10d) + " mm";
+        return value == null ? null : getFocalLengthDescription(value / 10d);
     }
 
     @Nullable

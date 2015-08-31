@@ -23,6 +23,7 @@ package com.drew.metadata.exif;
 
 import org.junit.Test;
 
+import static com.drew.metadata.exif.ExifInteropDirectory.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -36,9 +37,9 @@ public class ExifInteropDescriptorTest
     public void testGetInteropVersionDescription() throws Exception
     {
         ExifInteropDirectory directory = new ExifInteropDirectory();
-        directory.setIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION, new int[]{0, 1, 0, 0});
+        directory.setIntArray(TAG_INTEROP_VERSION, new int[]{0, 1, 0, 0});
         ExifInteropDescriptor descriptor = new ExifInteropDescriptor(directory);
-        assertEquals("1.00", descriptor.getDescription(ExifInteropDirectory.TAG_INTEROP_VERSION));
+        assertEquals("1.00", descriptor.getDescription(TAG_INTEROP_VERSION));
         assertEquals("1.00", descriptor.getInteropVersionDescription());
     }
 
@@ -46,9 +47,9 @@ public class ExifInteropDescriptorTest
     public void testGetInteropIndexDescription() throws Exception
     {
         ExifInteropDirectory directory = new ExifInteropDirectory();
-        directory.setString(ExifInteropDirectory.TAG_INTEROP_INDEX, "R98");
+        directory.setString(TAG_INTEROP_INDEX, "R98");
         ExifInteropDescriptor descriptor = new ExifInteropDescriptor(directory);
-        assertEquals("Recommended Exif Interoperability Rules (ExifR98)", descriptor.getDescription(ExifInteropDirectory.TAG_INTEROP_INDEX));
+        assertEquals("Recommended Exif Interoperability Rules (ExifR98)", descriptor.getDescription(TAG_INTEROP_INDEX));
         assertEquals("Recommended Exif Interoperability Rules (ExifR98)", descriptor.getInteropIndexDescription());
     }
 }

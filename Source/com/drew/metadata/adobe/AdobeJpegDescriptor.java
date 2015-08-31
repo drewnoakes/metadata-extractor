@@ -24,6 +24,8 @@ package com.drew.metadata.adobe;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.adobe.AdobeJpegDirectory.*;
+
 /**
  * Provides human-readable string versions of the tags stored in an AdobeJpegDirectory.
  */
@@ -38,9 +40,9 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case AdobeJpegDirectory.TAG_COLOR_TRANSFORM:
+            case TAG_COLOR_TRANSFORM:
                 return getColorTransformDescription();
-            case AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION:
+            case TAG_DCT_ENCODE_VERSION:
                 return getDctEncodeVersionDescription();
             default:
                 return super.getDescription(tagType);
@@ -50,7 +52,7 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
     @Nullable
     private String getDctEncodeVersionDescription()
     {
-        Integer value = _directory.getInteger(AdobeJpegDirectory.TAG_COLOR_TRANSFORM);
+        Integer value = _directory.getInteger(TAG_DCT_ENCODE_VERSION);
         return value == null
                 ? null
                 : value == 0x64
@@ -61,14 +63,9 @@ public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
     @Nullable
     private String getColorTransformDescription()
     {
-        Integer value = _directory.getInteger(AdobeJpegDirectory.TAG_COLOR_TRANSFORM);
-        if (value==null)
-            return null;
-        switch (value) {
-            case 0: return "Unknown (RGB or CMYK)";
-            case 1: return "YCbCr";
-            case 2: return "YCCK";
-            default: return String.format("Unknown transform (%d)", value);
-        }
+        return getIndexedDescription(TAG_COLOR_TRANSFORM,
+            "Unknown (RGB or CMYK)",
+            "YCbCr",
+            "YCCK");
     }
 }

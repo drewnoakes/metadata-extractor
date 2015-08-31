@@ -23,6 +23,7 @@ package com.drew.imaging.jpeg;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.xmp.XmpDirectory;
 import org.junit.Test;
 
 import java.io.File;
@@ -46,6 +47,14 @@ public class JpegMetadataReaderTest
     public void testExtractMetadataUsingInputStream() throws Exception
     {
         validate(JpegMetadataReader.readMetadata(new FileInputStream((new File("Tests/Data/withExif.jpg")))));
+    }
+
+    @Test
+    public void testExtractXmpMetadata() throws Exception
+    {
+        Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withXmp.jpg"));
+        Directory directory = metadata.getFirstDirectoryOfType(XmpDirectory.class);
+        assertNotNull(directory);
     }
 
     private void validate(Metadata metadata)

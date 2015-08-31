@@ -23,6 +23,7 @@ package com.drew.metadata.icc;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.DateUtil;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -30,16 +31,18 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Collections;
 import java.util.TimeZone;
 
 /**
  * Reads an ICC profile.
+ * <p/>
+ * More information about ICC:
  * <ul>
  * <li>http://en.wikipedia.org/wiki/ICC_profile</li>
  * <li>http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html</li>
+ * <li>https://developer.apple.com/library/mac/samplecode/ImageApp/Listings/ICC_h.html</li>
  * </ul>
  *
  * @author Yuri Binev
@@ -52,7 +55,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APP2);
+        return Collections.singletonList(JpegSegmentType.APP2);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
@@ -179,12 +182,19 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         final int M = reader.getUInt16(tagType + 8);
         final int s = reader.getUInt16(tagType + 10);
 
-//        final Date value = new Date(Date.UTC(y - 1900, m - 1, d, h, M, s));
-        final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        calendar.set(y, m, d, h, M, s);
-        final Date value = calendar.getTime();
-
-        directory.setDate(tagType, value);
+        if (DateUtil.isValidDate(y, m - 1, d) && DateUtil.isValidTime(h, M, s))
+        {
+//          Date value = new Date(Date.UTC(y - 1900, m - 1, d, h, M, s));
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            calendar.set(y, m - 1, d, h, M, s);
+            directory.setDate(tagType, calendar.getTime());
+        }
+        else
+        {
+            directory.addError(String.format(
+                "ICC data describes an invalid date/time: year=%d month=%d day=%d hour=%d minute=%d second=%d",
+                y, m, d, h, M, s));
+        }
     }
 
     @NotNull

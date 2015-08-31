@@ -29,6 +29,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,8 +51,6 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
 
     @NotNull
     private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
-    @NotNull
-    private static final java.text.DecimalFormat SimpleDecimalFormatterWithPrecision = new DecimalFormat("0.0");
 
     // Note for the potential addition of brightness presentation in eV:
     // Brightness of taken subject. To calculate Exposure(Ev) from BrightnessValue(Bv),
@@ -567,8 +566,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         return value == null
             ? null
             : value == 0
-            ? "Unknown"
-            : SimpleDecimalFormatter.format(value) + "mm";
+                ? "Unknown"
+                : getFocalLengthDescription(value);
     }
 
     @Nullable
@@ -578,8 +577,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         return value == null
             ? null
             : value.getNumerator() == 0
-            ? "Digital zoom not used."
-            : SimpleDecimalFormatter.format(value.doubleValue());
+                ? "Digital zoom not used"
+                : SimpleDecimalFormatter.format(value.doubleValue());
     }
 
     @Nullable
@@ -710,7 +709,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return "f/" + SimpleDecimalFormatterWithPrecision.format(fStop);
+        return getFStopDescription(fStop);
     }
 
     @Nullable
@@ -720,7 +719,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return "f/" + SimpleDecimalFormatterWithPrecision.format(fStop);
+        return getFStopDescription(fStop);
     }
 
     @Nullable
@@ -806,10 +805,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     public String getFocalLengthDescription()
     {
         Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
-        if (value == null)
-            return null;
-        java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
-        return formatter.format(value.doubleValue()) + " mm";
+        return value == null ? null : getFocalLengthDescription(value.doubleValue());
     }
 
     @Nullable
@@ -858,10 +854,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        // '0' means unknown, '1' daylight, '2' fluorescent, '3' tungsten, '4' flash,
-        // '17' standard light A, '18' standard light B, '19' standard light C, '20' D55,
-        // '21' D65, '22' D75, '255' other.
-        // see http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
+        // See http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
         final Integer value = _directory.getInteger(TAG_WHITE_BALANCE);
         if (value == null)
             return null;
@@ -874,11 +867,11 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             case 9: return "Fine Weather";
             case 10: return "Cloudy";
             case 11: return "Shade";
-            case 12: return "Daylight Flourescent";
-            case 13: return "Day White Flourescent";
-            case 14: return "Cool White Flourescent";
-            case 15: return "White Flourescent";
-            case 16: return "Warm White Flourescent";
+            case 12: return "Daylight Fluorescent";
+            case 13: return "Day White Fluorescent";
+            case 14: return "Cool White Fluorescent";
+            case 15: return "White Fluorescent";
+            case 16: return "Warm White Fluorescent";
             case 17: return "Standard light";
             case 18: return "Standard light (B)";
             case 19: return "Standard light (C)";
@@ -974,7 +967,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_SUBJECT_DISTANCE);
         if (value == null)
             return null;
-        java.text.DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##");
         return formatter.format(value.doubleValue()) + " metres";
     }
 
@@ -1017,7 +1010,9 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
             long apexPower10 = Math.round((double)apexPower * 10.0);
             float fApexPower = (float)apexPower10 / 10.0f;
-            return fApexPower + " sec";
+            DecimalFormat format = new DecimalFormat("0.##");
+            format.setRoundingMode(RoundingMode.HALF_UP);
+            return format.format(fApexPower) + " sec";
         } else {
             int apexPower = (int)((Math.exp(apexValue * Math.log(2))));
             return "1/" + apexPower + " sec";
@@ -1050,7 +1045,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_FNUMBER);
         if (value == null)
             return null;
-        return "f/" + SimpleDecimalFormatterWithPrecision.format(value.doubleValue());
+        return getFStopDescription(value.doubleValue());
     }
 
     @Nullable

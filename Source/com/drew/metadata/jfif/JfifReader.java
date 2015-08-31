@@ -29,12 +29,15 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Reader for JFIF data, found in the APP0 JPEG segment.
- * <p>
- * More info at: http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format
+ *
+ * <ul>
+ *   <li>http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format</li>
+ *   <li>http://www.w3.org/Graphics/JPEG/jfif3.pdf</li>
+ * </ul>
  *
  * @author Yuri Binev, Drew Noakes, Markus Meyer
  */
@@ -45,14 +48,14 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APP0);
+        return Collections.singletonList(JpegSegmentType.APP0);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header
-            if (segmentBytes.length >= 4 && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
+            if (segmentBytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
                 extract(new ByteArrayReader(segmentBytes), metadata);
         }
     }
@@ -69,18 +72,12 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
         try {
             // For JFIF, the tag number is also the offset into the segment
 
-            int ver = reader.getUInt16(JfifDirectory.TAG_VERSION);
-            directory.setInt(JfifDirectory.TAG_VERSION, ver);
-
-            int units = reader.getUInt8(JfifDirectory.TAG_UNITS);
-            directory.setInt(JfifDirectory.TAG_UNITS, units);
-
-            int height = reader.getUInt16(JfifDirectory.TAG_RESX);
-            directory.setInt(JfifDirectory.TAG_RESX, height);
-
-            int width = reader.getUInt16(JfifDirectory.TAG_RESY);
-            directory.setInt(JfifDirectory.TAG_RESY, width);
-
+            directory.setInt(JfifDirectory.TAG_VERSION,      reader.getUInt16(JfifDirectory.TAG_VERSION));
+            directory.setInt(JfifDirectory.TAG_UNITS,        reader.getUInt8(JfifDirectory.TAG_UNITS));
+            directory.setInt(JfifDirectory.TAG_RESX,         reader.getUInt16(JfifDirectory.TAG_RESX));
+            directory.setInt(JfifDirectory.TAG_RESY,         reader.getUInt16(JfifDirectory.TAG_RESY));
+            directory.setInt(JfifDirectory.TAG_THUMB_WIDTH,  reader.getUInt8(JfifDirectory.TAG_THUMB_WIDTH));
+            directory.setInt(JfifDirectory.TAG_THUMB_HEIGHT, reader.getUInt8(JfifDirectory.TAG_THUMB_HEIGHT));
         } catch (IOException me) {
             directory.addError(me.getMessage());
         }

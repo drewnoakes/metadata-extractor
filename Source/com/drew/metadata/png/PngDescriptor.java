@@ -31,6 +31,8 @@ import com.drew.metadata.TagDescriptor;
 import java.io.IOException;
 import java.util.List;
 
+import static com.drew.metadata.png.PngDirectory.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -46,23 +48,23 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case PngDirectory.TAG_COLOR_TYPE:
+            case TAG_COLOR_TYPE:
                 return getColorTypeDescription();
-            case PngDirectory.TAG_COMPRESSION_TYPE:
+            case TAG_COMPRESSION_TYPE:
                 return getCompressionTypeDescription();
-            case PngDirectory.TAG_FILTER_METHOD:
+            case TAG_FILTER_METHOD:
                 return getFilterMethodDescription();
-            case PngDirectory.TAG_INTERLACE_METHOD:
+            case TAG_INTERLACE_METHOD:
                 return getInterlaceMethodDescription();
-            case PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY:
+            case TAG_PALETTE_HAS_TRANSPARENCY:
                 return getPaletteHasTransparencyDescription();
-            case PngDirectory.TAG_SRGB_RENDERING_INTENT:
+            case TAG_SRGB_RENDERING_INTENT:
                 return getIsSrgbColorSpaceDescription();
-            case PngDirectory.TAG_TEXTUAL_DATA:
+            case TAG_TEXTUAL_DATA:
                 return getTextualDataDescription();
-            case PngDirectory.TAG_BACKGROUND_COLOR:
+            case TAG_BACKGROUND_COLOR:
                 return getBackgroundColorDescription();
-            case PngDirectory.TAG_UNIT_SPECIFIER:
+            case TAG_UNIT_SPECIFIER:
                 return getUnitSpecifierDescription();
             default:
                 return super.getDescription(tagType);
@@ -72,7 +74,7 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     @Nullable
     public String getColorTypeDescription()
     {
-        Integer value = _directory.getInteger(PngDirectory.TAG_COLOR_TYPE);
+        Integer value = _directory.getInteger(TAG_COLOR_TYPE);
         if (value == null)
             return null;
         PngColorType colorType = PngColorType.fromNumericValue(value);
@@ -84,32 +86,32 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     @Nullable
     public String getCompressionTypeDescription()
     {
-        return getIndexedDescription(PngDirectory.TAG_COMPRESSION_TYPE, "Deflate");
+        return getIndexedDescription(TAG_COMPRESSION_TYPE, "Deflate");
     }
 
     @Nullable
     public String getFilterMethodDescription()
     {
-        return getIndexedDescription(PngDirectory.TAG_FILTER_METHOD, "Adaptive");
+        return getIndexedDescription(TAG_FILTER_METHOD, "Adaptive");
     }
 
     @Nullable
     public String getInterlaceMethodDescription()
     {
-        return getIndexedDescription(PngDirectory.TAG_INTERLACE_METHOD, "No Interlace", "Adam7 Interlace");
+        return getIndexedDescription(TAG_INTERLACE_METHOD, "No Interlace", "Adam7 Interlace");
     }
 
     @Nullable
     public String getPaletteHasTransparencyDescription()
     {
-        return getIndexedDescription(PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY, null, "Yes");
+        return getIndexedDescription(TAG_PALETTE_HAS_TRANSPARENCY, null, "Yes");
     }
 
     @Nullable
     public String getIsSrgbColorSpaceDescription()
     {
         return getIndexedDescription(
-            PngDirectory.TAG_SRGB_RENDERING_INTENT,
+            TAG_SRGB_RENDERING_INTENT,
             "Perceptual",
             "Relative Colorimetric",
             "Saturation",
@@ -121,7 +123,7 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     public String getUnitSpecifierDescription()
     {
         return getIndexedDescription(
-            PngDirectory.TAG_UNIT_SPECIFIER,
+            TAG_UNIT_SPECIFIER,
             "Unspecified",
             "Metres"
         );
@@ -130,7 +132,7 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     @Nullable
     public String getTextualDataDescription()
     {
-        Object object = _directory.getObject(PngDirectory.TAG_TEXTUAL_DATA);
+        Object object = _directory.getObject(TAG_TEXTUAL_DATA);
         if (object == null) {
             return null;
         }
@@ -148,8 +150,8 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     @Nullable
     public String getBackgroundColorDescription()
     {
-        byte[] bytes = _directory.getByteArray(PngDirectory.TAG_BACKGROUND_COLOR);
-        Integer colorType = _directory.getInteger(PngDirectory.TAG_COLOR_TYPE);
+        byte[] bytes = _directory.getByteArray(TAG_BACKGROUND_COLOR);
+        Integer colorType = _directory.getInteger(TAG_COLOR_TYPE);
         if (bytes == null || colorType == null) {
             return null;
         }

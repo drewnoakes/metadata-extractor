@@ -128,7 +128,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         if (_storeThumbnailBytes) {
             // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
             ExifThumbnailDirectory thumbnailDirectory = _metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
-            if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION)) {
+            if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_COMPRESSION)) {
                 Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
                 Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
                 if (offset != null && length != null) {

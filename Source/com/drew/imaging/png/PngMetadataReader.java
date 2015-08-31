@@ -1,3 +1,23 @@
+/*
+ * Copyright 2002-2015 Drew Noakes
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
+ */
 package com.drew.imaging.png;
 
 import com.drew.lang.*;
@@ -98,7 +118,7 @@ public class PngMetadataReader
             directory.setInt(PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY, 1);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.sRGB)) {
-            int srgbRenderingIntent = new SequentialByteArrayReader(bytes).getInt8();
+            int srgbRenderingIntent = bytes[0];
             PngDirectory directory = new PngDirectory(PngChunkType.sRGB);
             directory.setInt(PngDirectory.TAG_SRGB_RENDERING_INTENT, srgbRenderingIntent);
             metadata.addDirectory(directory);
@@ -106,7 +126,7 @@ public class PngMetadataReader
             PngChromaticities chromaticities = new PngChromaticities(bytes);
             PngChromaticitiesDirectory directory = new PngChromaticitiesDirectory();
             directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
-            directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
+            directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_Y, chromaticities.getWhitePointY());
             directory.setInt(PngChromaticitiesDirectory.TAG_RED_X, chromaticities.getRedX());
             directory.setInt(PngChromaticitiesDirectory.TAG_RED_Y, chromaticities.getRedY());
             directory.setInt(PngChromaticitiesDirectory.TAG_GREEN_X, chromaticities.getGreenX());
@@ -115,7 +135,8 @@ public class PngMetadataReader
             directory.setInt(PngChromaticitiesDirectory.TAG_BLUE_Y, chromaticities.getBlueY());
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.gAMA)) {
-            int gammaInt = new SequentialByteArrayReader(bytes).getInt32();
+            int gammaInt = ByteConvert.toInt32BigEndian(bytes);
+            new SequentialByteArrayReader(bytes).getInt32();
             PngDirectory directory = new PngDirectory(PngChunkType.gAMA);
             directory.setDouble(PngDirectory.TAG_GAMMA, gammaInt / 100000.0);
             metadata.addDirectory(directory);
@@ -133,6 +154,8 @@ public class PngMetadataReader
                 InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
                 new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata);
                 inflateStream.close();
+            } else {
+                directory.addError("Invalid compression method value");
             }
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.bKGD)) {

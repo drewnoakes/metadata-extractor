@@ -30,7 +30,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifSubIFDDirectory},
@@ -59,7 +59,7 @@ public class ExifReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APP1);
+        return Collections.singletonList(JpegSegmentType.APP1);
     }
 
     public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)

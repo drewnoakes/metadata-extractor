@@ -160,12 +160,12 @@ public class ExifReaderTest
     }
 
     @Test
-    public void testThumbnailCompression() throws Exception
+    public void testCompression() throws Exception
     {
         ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
 
         // 6 means JPEG compression
-        assertEquals(6, directory.getInt(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION));
+        assertEquals(6, directory.getInt(ExifThumbnailDirectory.TAG_COMPRESSION));
     }
 
     @Test

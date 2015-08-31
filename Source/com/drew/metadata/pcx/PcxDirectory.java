@@ -55,13 +55,13 @@ public class PcxDirectory extends Directory
         _tagNameMap.put(TAG_YMIN, "Y Min");
         _tagNameMap.put(TAG_XMAX, "X Max");
         _tagNameMap.put(TAG_YMAX, "Y Max");
-        _tagNameMap.put(TAG_HORIZONTAL_DPI, "Horitzontal DPI");
+        _tagNameMap.put(TAG_HORIZONTAL_DPI, "Horizontal DPI");
         _tagNameMap.put(TAG_VERTICAL_DPI, "Vertical DPI");
         _tagNameMap.put(TAG_PALETTE, "Palette");
         _tagNameMap.put(TAG_COLOR_PLANES, "Color Planes");
         _tagNameMap.put(TAG_BYTES_PER_LINE, "Bytes Per Line");
         _tagNameMap.put(TAG_PALETTE_TYPE, "Palette Type");
-        _tagNameMap.put(TAG_HSCR_SIZE, "H Hcr Size");
+        _tagNameMap.put(TAG_HSCR_SIZE, "H Scr Size");
         _tagNameMap.put(TAG_VSCR_SIZE, "V Scr Size");
     }
 

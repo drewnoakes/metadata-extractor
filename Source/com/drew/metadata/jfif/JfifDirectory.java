@@ -38,6 +38,8 @@ public class JfifDirectory extends Directory
     public static final int TAG_UNITS = 7;
     public static final int TAG_RESX = 8;
     public static final int TAG_RESY = 10;
+    public static final int TAG_THUMB_WIDTH = 12;
+    public static final int TAG_THUMB_HEIGHT = 13;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -48,6 +50,8 @@ public class JfifDirectory extends Directory
         _tagNameMap.put(TAG_UNITS, "Resolution Units");
         _tagNameMap.put(TAG_RESY, "Y Resolution");
         _tagNameMap.put(TAG_RESX, "X Resolution");
+        _tagNameMap.put(TAG_THUMB_WIDTH, "Thumbnail Width Pixels");
+        _tagNameMap.put(TAG_THUMB_HEIGHT, "Thumbnail Height Pixels");
     }
 
     public JfifDirectory()
@@ -88,5 +92,4 @@ public class JfifDirectory extends Directory
     {
         return getInt(JfifDirectory.TAG_RESX);
     }
-
 }

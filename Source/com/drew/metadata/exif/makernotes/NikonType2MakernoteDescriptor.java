@@ -305,7 +305,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     private String getEVDescription(int tagType)
     {
         int[] values = _directory.getIntArray(tagType);
-        if (values == null)
+        if (values == null || values.length < 2)
             return null;
         if (values.length < 3 || values[2] == 0)
             return null;
@@ -334,8 +334,14 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
             ? null
             : values.length < 4
                 ? _directory.getString(TAG_LENS)
-                : String.format("%d-%dmm f/%.1f-%.1f", values[0].intValue(), values[1].intValue(), values[2].floatValue(), values[3].floatValue());
-
+                : String.format(
+                    values[2].equals(values[3])
+                        ? "%d-%dmm f/%s"
+                        : "%d-%dmm f/%s-%s",
+                    values[0].intValue(),
+                    values[1].intValue(),
+                    values[2].floatValue(),
+                    values[3].floatValue());
     }
 
     @Nullable

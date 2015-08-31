@@ -27,6 +27,9 @@ import com.drew.lang.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,9 +73,16 @@ public class TagDescriptor<T extends Directory>
         if (object.getClass().isArray()) {
             final int length = Array.getLength(object);
             if (length > 16) {
-                final String componentTypeName = object.getClass().getComponentType().getName();
-                return String.format("[%d %s%s]", length, componentTypeName, length == 1 ? "" : "s");
+                return String.format("[%d %s]", length, length == 1 ? "value" : "values");
             }
+        }
+
+        if (object instanceof Date)
+        {
+            // Produce a date string having a format that includes the offset in form "+00:00"
+            return new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy")
+                .format((Date) object)
+                .replaceAll("([0-9]{2} [^ ]+)$", ":$1");
         }
 
         // no special handling required, so use default conversion to a string
@@ -270,5 +280,21 @@ public class TagDescriptor<T extends Directory>
         } catch (UnsupportedEncodingException e) {
             return null;
         }
+    }
+
+    @Nullable
+    protected static String getFStopDescription(double fStop)
+    {
+        DecimalFormat format = new DecimalFormat("0.0");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return "f/" + format.format(fStop);
+    }
+
+    @Nullable
+    protected static String getFocalLengthDescription(double mm)
+    {
+        DecimalFormat format = new DecimalFormat("0.#");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return format.format(mm) + " mm";
     }
 }

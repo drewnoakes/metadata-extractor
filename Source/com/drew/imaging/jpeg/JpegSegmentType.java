@@ -29,17 +29,22 @@ import java.util.List;
 /**
  * An enumeration of the known segment types found in JPEG files.
  *
+ * <ul>
+ *     <li>http://www.ozhiker.com/electronics/pjmt/jpeg_info/app_segments.html</li>
+ *     <li>http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/JPEG.html</li>
+ * </ul>
+ *
  * @author Drew Noakes https://drewnoakes.com
  */
 public enum JpegSegmentType
 {
-    /** APP0 JPEG segment identifier -- JFIF data (also JFXX apparently). */
+    /** APP0 JPEG segment identifier. Commonly contains JFIF, JFXX. */
     APP0((byte)0xE0, true),
 
-    /** APP1 JPEG segment identifier -- where Exif data is kept.  XMP data is also kept in here, though usually in a second instance. */
+    /** APP1 JPEG segment identifier. Commonly contains Exif. XMP data is also kept in here, though usually in a second instance. */
     APP1((byte)0xE1, true),
 
-    /** APP2 JPEG segment identifier. */
+        /** APP2 JPEG segment identifier. Commonly contains ICC. */
     APP2((byte)0xE2, true),
 
     /** APP3 JPEG segment identifier. */
@@ -63,7 +68,7 @@ public enum JpegSegmentType
     /** APP9 JPEG segment identifier. */
     APP9((byte)0xE9, true),
 
-    /** APPA (App10) JPEG segment identifier -- can hold Unicode comments. */
+    /** APPA (App10) JPEG segment identifier. Can contain Unicode comments, though {@link JpegSegmentType#COM} is more commonly used for comments. */
     APPA((byte)0xEA, true),
 
     /** APPB (App11) JPEG segment identifier. */
@@ -72,10 +77,10 @@ public enum JpegSegmentType
     /** APPC (App12) JPEG segment identifier. */
     APPC((byte)0xEC, true),
 
-    /** APPD (App13) JPEG segment identifier -- IPTC data in here. */
+    /** APPD (App13) JPEG segment identifier. Commonly contains IPTC, Photoshop data. */
     APPD((byte)0xED, true),
 
-    /** APPE (App14) JPEG segment identifier. */
+    /** APPE (App14) JPEG segment identifier. Commonly contains Adobe data. */
     APPE((byte)0xEE, true),
 
     /** APPF (App15) JPEG segment identifier. */

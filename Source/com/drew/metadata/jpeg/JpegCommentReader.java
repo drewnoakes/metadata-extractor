@@ -25,7 +25,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Decodes the comment stored within JPEG files, populating a {@link Metadata} object with tag values in a
@@ -38,13 +38,7 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.COM);
-    }
-
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
-    {
-        // The entire contents of the byte[] is the comment. There's nothing here to discriminate upon.
-        return true;
+        return Collections.singletonList(JpegSegmentType.COM);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)

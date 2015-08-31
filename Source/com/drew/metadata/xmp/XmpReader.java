@@ -20,26 +20,19 @@
  */
 package com.drew.metadata.xmp;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.Arrays;
-import java.util.Calendar;
-
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
-import com.adobe.xmp.impl.XMPMetaImpl;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Schema;
 
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 
 /**
  * Extracts XMP data from a JPEG header segment.
@@ -77,7 +70,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APP1);
+        return Collections.singletonList(JpegSegmentType.APP1);
     }
 
     /**
@@ -94,7 +87,14 @@ public class XmpReader implements JpegSegmentMetadataReader
             // XMP in a JPEG file has an identifying preamble which is not valid XML
             final int preambleLength = XMP_JPEG_PREAMBLE.length();
 
-            if (segmentBytes.length < preambleLength || !XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)))
+            if (segmentBytes.length < preambleLength)
+                continue;
+
+            // NOTE we expect the full preamble here, but some images (such as that reported on GitHub #102)
+            // start with "XMP\0://ns.adobe.com/xap/1.0/" which appears to be an error but is easily recovered
+            // from. In such cases, the actual XMP data begins at the same offset.
+            if (!XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)) &&
+                !"XMP".equalsIgnoreCase(new String(segmentBytes, 0, 3)))
                 continue;
 
             byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];

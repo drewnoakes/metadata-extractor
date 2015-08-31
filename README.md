@@ -1,7 +1,8 @@
 ![metadata-extractor logo](https://raw.githubusercontent.com/drewnoakes/metadata-extractor/master/Resources/metadata-extractor-logo-500x123.png)
 
-[![metadata-extractor build status](https://api.travis-ci.org/drewnoakes/metadata-extractor.svg)](https://travis-ci.org/drewnoakes/metadata-extractor) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.drewnoakes/metadata-extractor/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.drewnoakes/metadata-extractor)
-
+[![metadata-extractor build status](https://api.travis-ci.org/drewnoakes/metadata-extractor.svg)](https://travis-ci.org/drewnoakes/metadata-extractor)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.drewnoakes/metadata-extractor/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.drewnoakes/metadata-extractor)
+[![Issue Stats](http://issuestats.com/github/drewnoakes/metadata-extractor/badge/pr?style=flat)](http://issuestats.com/github/drewnoakes/metadata-extractor)
 
 _metadata-extractor_ is a straightforward Java library for reading metadata from image files.
 
@@ -22,6 +23,7 @@ The library understands several formats of metadata, many of which may be presen
 * [PNG](http://en.wikipedia.org/wiki/Portable_Network_Graphics) properties
 * [BMP](http://en.wikipedia.org/wiki/BMP_file_format) properties
 * [GIF](http://en.wikipedia.org/wiki/Graphics_Interchange_Format) properties
+* [ICO](https://en.wikipedia.org/wiki/ICO_(file_format)) properties
 * [PCX](http://en.wikipedia.org/wiki/PCX) properties
 
 It will process files of type:
@@ -108,3 +110,7 @@ More information about this project is available at:
 
 * https://drewnoakes.com/code/exif/
 * https://github.com/drewnoakes/metadata-extractor/
+
+## Other languages
+
+A feature-equivalent .NET implementation, [metadata-extractor-dotnet](https://github.com/drewnoakes/metadata-extractor-dotnet) is now being developed alongside this original Java version.

@@ -106,10 +106,10 @@ public class DirectoryTest
     @Test
     public void testSetStringAndGetDate() throws Exception
     {
-        String date1 = "2002:01:30 24:59:59";
-        String date2 = "2002:01:30 24:59";
-        String date3 = "2002-01-30 24:59:59";
-        String date4 = "2002-01-30 24:59";
+        String date1 = "2002:01:30 23:59:59";
+        String date2 = "2002:01:30 23:59";
+        String date3 = "2002-01-30 23:59:59";
+        String date4 = "2002-01-30 23:59";
         _directory.setString(1, date1);
         _directory.setString(2, date2);
         _directory.setString(3, date3);
@@ -120,22 +120,22 @@ public class DirectoryTest
         TimeZone gmt = TimeZone.getTimeZone("GMT");
         GregorianCalendar gc = new GregorianCalendar(gmt);
             // clear millis to 0 or test will fail
-        gc.setTimeInMillis(0); 
-        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59);
+        gc.setTimeInMillis(0);
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 23, 59, 59);
         assertEquals(gc.getTime(), _directory.getDate(1, null));
 
-        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 00);
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 23, 59, 0);
         assertEquals(gc.getTime(), _directory.getDate(2, null));
 
             // Use specific timezone
         TimeZone pst = TimeZone.getTimeZone("PST");
         gc = new GregorianCalendar(pst);
-        gc.setTimeInMillis(0); 
+        gc.setTimeInMillis(0);
 
-        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 59);
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 23, 59, 59);
         assertEquals(gc.getTime(), _directory.getDate(3, pst));
 
-        gc.set(2002, GregorianCalendar.JANUARY, 30, 24, 59, 00);
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 23, 59, 0);
         assertEquals(gc.getTime(), _directory.getDate(4, pst));
     }
 

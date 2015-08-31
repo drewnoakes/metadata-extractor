@@ -29,6 +29,9 @@ import com.drew.metadata.TagDescriptor;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+
+import static com.drew.metadata.icc.IccDirectory.*;
 
 /**
  * @author Yuri Binev
@@ -45,13 +48,13 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case IccDirectory.TAG_PROFILE_VERSION:
+            case TAG_PROFILE_VERSION:
                 return getProfileVersionDescription();
-            case IccDirectory.TAG_PROFILE_CLASS:
+            case TAG_PROFILE_CLASS:
                 return getProfileClassDescription();
-            case IccDirectory.TAG_PLATFORM:
+            case TAG_PLATFORM:
                 return getPlatformDescription();
-            case IccDirectory.TAG_RENDERING_INTENT:
+            case TAG_RENDERING_INTENT:
                 return getRenderingIntentDescription();
         }
 
@@ -104,10 +107,10 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                             observerString = "Unknown";
                             break;
                         case 1:
-                            observerString = "1931 2°";
+                            observerString = "1931 2\u00B0";
                             break;
                         case 2:
-                            observerString = "1964 10°";
+                            observerString = "1964 10\u00B0";
                             break;
                         default:
                             observerString = String.format("Unknown %d", observerType);
@@ -159,11 +162,13 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                             illuminantString = String.format("Unknown %d", illuminantType);
                             break;
                     }
+                    DecimalFormat format = new DecimalFormat("0.###");
                     return String.format("%s Observer, Backing (%s, %s, %s), Geometry %s, Flare %d%%, Illuminant %s",
-                            observerString, x, y, z, geometryString, Math.round(flare * 100), illuminantString);
+                            observerString, format.format(x), format.format(y), format.format(z), geometryString, Math.round(flare * 100), illuminantString);
                 }
                 case ICC_TAG_TYPE_XYZ_ARRAY: {
                     StringBuilder res = new StringBuilder();
+                    DecimalFormat format = new DecimalFormat("0.####");
                     int count = (bytes.length - 8) / 12;
                     for (int i = 0; i < count; i++) {
                         float x = reader.getS15Fixed16(8 + i * 12);
@@ -171,7 +176,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                         float z = reader.getS15Fixed16(8 + i * 12 + 8);
                         if (i > 0)
                             res.append(", ");
-                        res.append("(").append(x).append(", ").append(y).append(", ").append(z).append(")");
+                        res.append("(").append(format.format(x)).append(", ").append(format.format(y)).append(", ").append(format.format(z)).append(")");
                     }
                     return res.toString();
                 }
@@ -208,7 +213,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                     return res.toString();
                 }
                 default:
-                    return String.format("%s(0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
+                    return String.format("%s (0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
             }
         } catch (IOException e) {
             // TODO decode these values during IccReader.extract so we can report any errors at that time
@@ -242,29 +247,17 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getRenderingIntentDescription()
     {
-        Integer value = _directory.getInteger(IccDirectory.TAG_RENDERING_INTENT);
-
-        if (value == null)
-            return null;
-
-        switch (value) {
-            case 0:
-                return "Perceptual";
-            case 1:
-                return "Media-Relative Colorimetric";
-            case 2:
-                return "Saturation";
-            case 3:
-                return "ICC-Absolute Colorimetric";
-            default:
-                return String.format("Unknown (%d)", value);
-        }
+        return getIndexedDescription(TAG_RENDERING_INTENT,
+            "Perceptual",
+            "Media-Relative Colorimetric",
+            "Saturation",
+            "ICC-Absolute Colorimetric");
     }
 
     @Nullable
     private String getPlatformDescription()
     {
-        String str = _directory.getString(IccDirectory.TAG_PLATFORM);
+        String str = _directory.getString(TAG_PLATFORM);
         if (str==null)
             return null;
         // Because Java doesn't allow switching on string values, create an integer from the first four chars
@@ -294,7 +287,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getProfileClassDescription()
     {
-        String str = _directory.getString(IccDirectory.TAG_PROFILE_CLASS);
+        String str = _directory.getString(TAG_PROFILE_CLASS);
         if (str==null)
             return null;
         // Because Java doesn't allow switching on string values, create an integer from the first four chars
@@ -328,7 +321,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     @Nullable
     private String getProfileVersionDescription()
     {
-        Integer value = _directory.getInteger(IccDirectory.TAG_PROFILE_VERSION);
+        Integer value = _directory.getInteger(TAG_PROFILE_VERSION);
 
         if (value == null)
             return null;

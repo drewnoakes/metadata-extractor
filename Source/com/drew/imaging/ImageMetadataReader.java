@@ -27,6 +27,7 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.pcx.PcxMetadataReader;
 import com.drew.imaging.png.PngMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
+import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
 import com.drew.lang.StringUtil;
@@ -45,17 +46,25 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Obtains {@link Metadata} from all supported file formats.
+ * Reads metadata from any supported file format.
  * <p>
- * This class a lightweight wrapper around specific file type processors:
+ * This class a lightweight wrapper around other, specific metadata processors.
+ * During extraction, the file type is determined from the first few bytes of the file.
+ * Parsing is then delegated to one of:
+ *
  * <ul>
  *     <li>{@link JpegMetadataReader} for JPEG files</li>
  *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
  *     <li>{@link PsdMetadataReader} for Photoshop files</li>
- *     <li>{@link PngMetadataReader} for BMP files</li>
+ *     <li>{@link PngMetadataReader} for PNG files</li>
  *     <li>{@link BmpMetadataReader} for BMP files</li>
  *     <li>{@link GifMetadataReader} for GIF files</li>
+ *     <li>{@link IcoMetadataReader} for ICO files</li>
+ *     <li>{@link PcxMetadataReader} for PCX files</li>
+ *     <li>{@link WebpMetadataReader} for WebP files</li>
+ *     <li>{@link RafMetadataReader} for RAF files</li>
  * </ul>
+ *
  * If you know the file type you're working with, you may use one of the above processors directly.
  * For most scenarios it is simpler, more convenient and more robust to use this class.
  * <p>
@@ -68,17 +77,6 @@ public class ImageMetadataReader
 {
     /**
      * Reads metadata from an {@link InputStream}.
-     * <p>
-     * The file type is determined by inspecting the leading bytes of the stream, and parsing of the file
-     * is delegated to one of:
-     * <ul>
-     *     <li>{@link JpegMetadataReader} for JPEG files</li>
-     *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
-     *     <li>{@link PsdMetadataReader} for Photoshop files</li>
-     *     <li>{@link PngMetadataReader} for PNG files</li>
-     *     <li>{@link BmpMetadataReader} for BMP files</li>
-     *     <li>{@link GifMetadataReader} for GIF files</li>
-     * </ul>
      *
      * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
      *                    beginning of the file's data.
@@ -126,22 +124,14 @@ public class ImageMetadataReader
         if (fileType == FileType.Riff)
             return WebpMetadataReader.readMetadata(bufferedInputStream);
 
+        if (fileType == FileType.Raf)
+            return RafMetadataReader.readMetadata(bufferedInputStream);
+
         throw new ImageProcessingException("File format is not supported");
     }
 
     /**
      * Reads {@link Metadata} from a {@link File} object.
-     * <p>
-     * The file type is determined by inspecting the leading bytes of the stream, and parsing of the file
-     * is delegated to one of:
-     * <ul>
-     *     <li>{@link JpegMetadataReader} for JPEG files</li>
-     *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
-     *     <li>{@link PsdMetadataReader} for Photoshop files</li>
-     *     <li>{@link PngMetadataReader} for PNG files</li>
-     *     <li>{@link BmpMetadataReader} for BMP files</li>
-     *     <li>{@link GifMetadataReader} for GIF files</li>
-     * </ul>
      *
      * @param file a file from which the image data may be read.
      * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.

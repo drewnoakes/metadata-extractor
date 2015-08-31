@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.photoshop.PsdHeaderDirectory.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -39,15 +41,15 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case PsdHeaderDirectory.TAG_CHANNEL_COUNT:
+            case TAG_CHANNEL_COUNT:
                 return getChannelCountDescription();
-            case PsdHeaderDirectory.TAG_BITS_PER_CHANNEL:
+            case TAG_BITS_PER_CHANNEL:
                 return getBitsPerChannelDescription();
-            case PsdHeaderDirectory.TAG_COLOR_MODE:
+            case TAG_COLOR_MODE:
                 return getColorModeDescription();
-            case PsdHeaderDirectory.TAG_IMAGE_HEIGHT:
+            case TAG_IMAGE_HEIGHT:
                 return getImageHeightDescription();
-            case PsdHeaderDirectory.TAG_IMAGE_WIDTH:
+            case TAG_IMAGE_WIDTH:
                 return getImageWidthDescription();
             default:
                 return super.getDescription(tagType);
@@ -57,73 +59,53 @@ public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
     @Nullable
     public String getChannelCountDescription()
     {
-        try {
-            // Supported range is 1 to 56.
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_CHANNEL_COUNT);
-            if (value == null)
-                return null;
-            return value + " channel" + (value == 1 ? "" : "s");
-        } catch (Exception e) {
+        // Supported range is 1 to 56.
+        Integer value = _directory.getInteger(TAG_CHANNEL_COUNT);
+        if (value == null)
             return null;
-        }
+        return value + " channel" + (value == 1 ? "" : "s");
     }
 
     @Nullable
     public String getBitsPerChannelDescription()
     {
-        try {
-            // Supported values are 1, 8, 16 and 32.
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL);
-            if (value == null)
-                return null;
-            return value + " bit" + (value == 1 ? "" : "s") + " per channel";
-        } catch (Exception e) {
+        // Supported values are 1, 8, 16 and 32.
+        Integer value = _directory.getInteger(TAG_BITS_PER_CHANNEL);
+        if (value == null)
             return null;
-        }
+        return value + " bit" + (value == 1 ? "" : "s") + " per channel";
     }
 
     @Nullable
     public String getColorModeDescription()
     {
-        // Bitmap = 0; Grayscale = 1; Indexed = 2; RGB = 3; CMYK = 4; Multichannel = 7; Duotone = 8; Lab = 9
-        try {
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_COLOR_MODE);
-            if (value == null)
-                return null;
-            switch (value){
-                case 0: return "Bitmap";
-                case 1: return "Grayscale";
-                case 2: return "Indexed";
-                case 3: return "RGB";
-                case 4: return "CMYK";
-                case 7: return "Multichannel";
-                case 8: return "Duotone";
-                case 9: return "Lab";
-                default: return "Unknown color mode (" + value + ")";
-            }
-        } catch (Exception e) {
-            return null;
-        }
+        return getIndexedDescription(TAG_COLOR_MODE,
+            "Bitmap",
+            "Grayscale",
+            "Indexed",
+            "RGB",
+            "CMYK",
+            null,
+            null,
+            "Multichannel",
+            "Duotone",
+            "Lab");
     }
 
     @Nullable
     public String getImageHeightDescription()
     {
-        try {
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_HEIGHT);
-            if (value == null)
-                return null;
-            return value + " pixel" + (value == 1 ? "" : "s");
-        } catch (Exception e) {
+        Integer value = _directory.getInteger(TAG_IMAGE_HEIGHT);
+        if (value == null)
             return null;
-        }
+        return value + " pixel" + (value == 1 ? "" : "s");
     }
 
     @Nullable
     public String getImageWidthDescription()
     {
         try {
-            Integer value = _directory.getInteger(PsdHeaderDirectory.TAG_IMAGE_WIDTH);
+            Integer value = _directory.getInteger(TAG_IMAGE_WIDTH);
             if (value == null)
                 return null;
             return value + " pixel" + (value == 1 ? "" : "s");

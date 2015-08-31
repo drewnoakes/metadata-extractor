@@ -22,7 +22,12 @@ package com.drew.metadata;
 
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.ExifThumbnailDirectory;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -63,5 +68,48 @@ public class MetadataTest
 
         metadata.addDirectory(new ExifSubIFDDirectory());
         assertEquals("Metadata (2 directories)", metadata.toString());
+    }
+
+    @Test
+    public void testOrderOfSameType()
+    {
+        Metadata metadata = new Metadata();
+        Directory directory2 = new ExifSubIFDDirectory();
+        Directory directory3 = new ExifSubIFDDirectory();
+        Directory directory1 = new ExifSubIFDDirectory();
+
+        metadata.addDirectory(directory1);
+        metadata.addDirectory(directory2);
+        metadata.addDirectory(directory3);
+
+        Collection<ExifSubIFDDirectory> directories = metadata.getDirectoriesOfType(ExifSubIFDDirectory.class);
+
+        assertEquals(3, directories.size());
+        assertSame(directory1, directories.toArray()[0]);
+        assertSame(directory2, directories.toArray()[1]);
+        assertSame(directory3, directories.toArray()[2]);
+    }
+
+    @Test
+    public void testOrderOfDifferentTypes()
+    {
+        Metadata metadata = new Metadata();
+        Directory directory1 = new ExifSubIFDDirectory();
+        Directory directory2 = new ExifThumbnailDirectory();
+        Directory directory3 = new ExifIFD0Directory();
+
+        metadata.addDirectory(directory1);
+        metadata.addDirectory(directory2);
+        metadata.addDirectory(directory3);
+
+        List<Directory> directories = new ArrayList<Directory>();
+        for (Directory directory : metadata.getDirectories()) {
+            directories.add(directory);
+        }
+
+        assertEquals(3, directories.size());
+        assertSame(directory1, directories.toArray()[0]);
+        assertSame(directory2, directories.toArray()[1]);
+        assertSame(directory3, directories.toArray()[2]);
     }
 }

@@ -35,8 +35,11 @@ import java.util.*;
  */
 public final class Metadata
 {
+    /**
+     * The list of {@link Directory} instances in this container, in the order they were added.
+     */
     @NotNull
-    private final Map<Class<? extends Directory>,Collection<Directory>> _directoryListByClass = new HashMap<Class<? extends Directory>, Collection<Directory>>();
+    private final List<Directory> _directories = new ArrayList<Directory>();
 
     /**
      * Returns an iterable set of the {@link Directory} instances contained in this metadata collection.
@@ -46,13 +49,20 @@ public final class Metadata
     @NotNull
     public Iterable<Directory> getDirectories()
     {
-        return new DirectoryIterable(_directoryListByClass);
+        return _directories;
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     public <T extends Directory> Collection<T> getDirectoriesOfType(Class<T> type)
     {
-        return (Collection<T>)_directoryListByClass.get(type);
+        List<T> directories = new ArrayList<T>();
+        for (Directory dir : _directories) {
+            if (type.isAssignableFrom(dir.getClass())) {
+                directories.add((T)dir);
+            }
+        }
+        return directories;
     }
 
     /**
@@ -62,10 +72,7 @@ public final class Metadata
      */
     public int getDirectoryCount()
     {
-        int count = 0;
-        for (Map.Entry<Class<? extends Directory>,Collection<Directory>> pair : _directoryListByClass.entrySet())
-            count += pair.getValue().size();
-        return count;
+        return _directories.size();
     }
 
     /**
@@ -75,7 +82,7 @@ public final class Metadata
      */
     public <T extends Directory> void addDirectory(@NotNull T directory)
     {
-        getOrCreateDirectoryList(directory.getClass()).add(directory);
+        _directories.add(directory);
     }
 
     /**
@@ -90,15 +97,11 @@ public final class Metadata
     @SuppressWarnings("unchecked")
     public <T extends Directory> T getFirstDirectoryOfType(@NotNull Class<T> type)
     {
-        // We suppress the warning here as the code asserts a map signature of Class<T>,T.
-        // So after get(Class<T>) it is for sure the result is from type T.
-
-        Collection<Directory> list = getDirectoryList(type);
-
-        if (list == null || list.isEmpty())
-            return null;
-
-        return (T)list.iterator().next();
+        for (Directory dir : _directories) {
+            if (type.isAssignableFrom(dir.getClass()))
+                return (T)dir;
+        }
+        return null;
     }
 
     /**
@@ -109,8 +112,11 @@ public final class Metadata
      */
     public boolean containsDirectoryOfType(Class<? extends Directory> type)
     {
-        Collection<Directory> list = getDirectoryList(type);
-        return list != null && !list.isEmpty();
+        for (Directory dir : _directories) {
+            if (type.isAssignableFrom(dir.getClass()))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -137,74 +143,5 @@ public final class Metadata
             count == 1
                 ? "directory"
                 : "directories");
-    }
-
-    @Nullable
-    private <T extends Directory> Collection<Directory> getDirectoryList(@NotNull Class<T> type)
-    {
-        return _directoryListByClass.get(type);
-    }
-
-    @NotNull
-    private <T extends Directory> Collection<Directory> getOrCreateDirectoryList(@NotNull Class<T> type)
-    {
-        Collection<Directory> collection = getDirectoryList(type);
-        if (collection != null)
-            return collection;
-        collection = new ArrayList<Directory>();
-        _directoryListByClass.put(type, collection);
-        return collection;
-    }
-
-    private static class DirectoryIterable implements Iterable<Directory>
-    {
-        private final Map<Class<? extends Directory>, Collection<Directory>> _map;
-
-        public DirectoryIterable(Map<Class<? extends Directory>, Collection<Directory>> map)
-        {
-            _map = map;
-        }
-
-        public Iterator<Directory> iterator()
-        {
-            return new DirectoryIterator(_map);
-        }
-
-        private static class DirectoryIterator implements Iterator<Directory>
-        {
-            @NotNull
-            private final Iterator<Map.Entry<Class<? extends Directory>, Collection<Directory>>> _mapIterator;
-            @Nullable
-            private Iterator<Directory> _listIterator;
-
-            public DirectoryIterator(Map<Class<? extends Directory>, Collection<Directory>> map)
-            {
-                _mapIterator = map.entrySet().iterator();
-
-                if (_mapIterator.hasNext())
-                    _listIterator = _mapIterator.next().getValue().iterator();
-            }
-
-            public boolean hasNext()
-            {
-                return _listIterator != null && (_listIterator.hasNext() || _mapIterator.hasNext());
-            }
-
-            public Directory next()
-            {
-                if (_listIterator == null || (!_listIterator.hasNext() && !_mapIterator.hasNext()))
-                    throw new NoSuchElementException();
-
-                while (!_listIterator.hasNext())
-                    _listIterator = _mapIterator.next().getValue().iterator();
-
-                return _listIterator.next();
-            }
-
-            public void remove()
-            {
-                throw new UnsupportedOperationException();
-            }
-        }
     }
 }

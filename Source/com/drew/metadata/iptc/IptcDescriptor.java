@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.iptc.IptcDirectory.*;
+
 /**
  * Provides human-readable string representations of tag values stored in a {@link IptcDirectory}.
  * <p>
@@ -44,13 +46,13 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case IptcDirectory.TAG_FILE_FORMAT:
+            case TAG_FILE_FORMAT:
                 return getFileFormatDescription();
-            case IptcDirectory.TAG_KEYWORDS:
+            case TAG_KEYWORDS:
                 return getKeywordsDescription();
-            case IptcDirectory.TAG_TIME_CREATED:
+            case TAG_TIME_CREATED:
                 return getTimeCreatedDescription();
-            case IptcDirectory.TAG_DIGITAL_TIME_CREATED:
+            case TAG_DIGITAL_TIME_CREATED:
                 return getDigitalTimeCreatedDescription();
             default:
                 return super.getDescription(tagType);
@@ -60,7 +62,7 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getFileFormatDescription()
     {
-        Integer value = _directory.getInteger(IptcDirectory.TAG_FILE_FORMAT);
+        Integer value = _directory.getInteger(TAG_FILE_FORMAT);
         if (value == null)
             return null;
         switch (value) {
@@ -101,67 +103,67 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getByLineDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_BY_LINE);
+        return _directory.getString(TAG_BY_LINE);
     }
 
     @Nullable
     public String getByLineTitleDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_BY_LINE_TITLE);
+        return _directory.getString(TAG_BY_LINE_TITLE);
     }
 
     @Nullable
     public String getCaptionDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_CAPTION);
+        return _directory.getString(TAG_CAPTION);
     }
 
     @Nullable
     public String getCategoryDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_CATEGORY);
+        return _directory.getString(TAG_CATEGORY);
     }
 
     @Nullable
     public String getCityDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_CITY);
+        return _directory.getString(TAG_CITY);
     }
 
     @Nullable
     public String getCopyrightNoticeDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_COPYRIGHT_NOTICE);
+        return _directory.getString(TAG_COPYRIGHT_NOTICE);
     }
 
     @Nullable
     public String getCountryOrPrimaryLocationDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_COUNTRY_OR_PRIMARY_LOCATION_NAME);
+        return _directory.getString(TAG_COUNTRY_OR_PRIMARY_LOCATION_NAME);
     }
 
     @Nullable
     public String getCreditDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_CREDIT);
+        return _directory.getString(TAG_CREDIT);
     }
 
     @Nullable
     public String getDateCreatedDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_DATE_CREATED);
+        return _directory.getString(TAG_DATE_CREATED);
     }
 
     @Nullable
     public String getHeadlineDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_HEADLINE);
+        return _directory.getString(TAG_HEADLINE);
     }
 
     @Nullable
     public String getKeywordsDescription()
     {
-        final String[] keywords = _directory.getStringArray(IptcDirectory.TAG_KEYWORDS);
+        final String[] keywords = _directory.getStringArray(TAG_KEYWORDS);
         if (keywords==null)
             return null;
         return StringUtil.join(keywords, ";");
@@ -170,67 +172,67 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getObjectNameDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_OBJECT_NAME);
+        return _directory.getString(TAG_OBJECT_NAME);
     }
 
     @Nullable
     public String getOriginalTransmissionReferenceDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_ORIGINAL_TRANSMISSION_REFERENCE);
+        return _directory.getString(TAG_ORIGINAL_TRANSMISSION_REFERENCE);
     }
 
     @Nullable
     public String getOriginatingProgramDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_ORIGINATING_PROGRAM);
+        return _directory.getString(TAG_ORIGINATING_PROGRAM);
     }
 
     @Nullable
     public String getProvinceOrStateDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_PROVINCE_OR_STATE);
+        return _directory.getString(TAG_PROVINCE_OR_STATE);
     }
 
     @Nullable
     public String getRecordVersionDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_APPLICATION_RECORD_VERSION);
+        return _directory.getString(TAG_APPLICATION_RECORD_VERSION);
     }
 
     @Nullable
     public String getReleaseDateDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_RELEASE_DATE);
+        return _directory.getString(TAG_RELEASE_DATE);
     }
 
     @Nullable
     public String getReleaseTimeDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_RELEASE_TIME);
+        return _directory.getString(TAG_RELEASE_TIME);
     }
 
     @Nullable
     public String getSourceDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_SOURCE);
+        return _directory.getString(TAG_SOURCE);
     }
 
     @Nullable
     public String getSpecialInstructionsDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_SPECIAL_INSTRUCTIONS);
+        return _directory.getString(TAG_SPECIAL_INSTRUCTIONS);
     }
 
     @Nullable
     public String getSupplementalCategoriesDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_SUPPLEMENTAL_CATEGORIES);
+        return _directory.getString(TAG_SUPPLEMENTAL_CATEGORIES);
     }
 
     @Nullable
     public String getTimeCreatedDescription()
     {
-        String s = _directory.getString(IptcDirectory.TAG_TIME_CREATED);
+        String s = _directory.getString(TAG_TIME_CREATED);
         if (s == null)
             return null;
         if (s.length() == 6 || s.length() == 11)
@@ -241,7 +243,7 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getDigitalTimeCreatedDescription()
     {
-        String s = _directory.getString(IptcDirectory.TAG_DIGITAL_TIME_CREATED);
+        String s = _directory.getString(TAG_DIGITAL_TIME_CREATED);
         if (s == null)
             return null;
         if (s.length() == 6 || s.length() == 11)
@@ -252,12 +254,12 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getUrgencyDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_URGENCY);
+        return _directory.getString(TAG_URGENCY);
     }
 
     @Nullable
     public String getWriterDescription()
     {
-        return _directory.getString(IptcDirectory.TAG_CAPTION_WRITER);
+        return _directory.getString(TAG_CAPTION_WRITER);
     }
 }

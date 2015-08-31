@@ -24,6 +24,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.jpeg.JpegDirectory.*;
+
 /**
  * Provides human-readable string versions of the tags stored in a JpegDirectory.
  * Thanks to Darrell Silver (www.darrellsilver.com) for the initial version of this class.
@@ -43,21 +45,21 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     {
         switch (tagType)
         {
-            case JpegDirectory.TAG_COMPRESSION_TYPE:
+            case TAG_COMPRESSION_TYPE:
                 return getImageCompressionTypeDescription();
-            case JpegDirectory.TAG_COMPONENT_DATA_1:
+            case TAG_COMPONENT_DATA_1:
                 return getComponentDataDescription(0);
-            case JpegDirectory.TAG_COMPONENT_DATA_2:
+            case TAG_COMPONENT_DATA_2:
                 return getComponentDataDescription(1);
-            case JpegDirectory.TAG_COMPONENT_DATA_3:
+            case TAG_COMPONENT_DATA_3:
                 return getComponentDataDescription(2);
-            case JpegDirectory.TAG_COMPONENT_DATA_4:
+            case TAG_COMPONENT_DATA_4:
                 return getComponentDataDescription(3);
-            case JpegDirectory.TAG_DATA_PRECISION:
+            case TAG_DATA_PRECISION:
                 return getDataPrecisionDescription();
-            case JpegDirectory.TAG_IMAGE_HEIGHT:
+            case TAG_IMAGE_HEIGHT:
                 return getImageHeightDescription();
-            case JpegDirectory.TAG_IMAGE_WIDTH:
+            case TAG_IMAGE_WIDTH:
                 return getImageWidthDescription();
             default:
                 return super.getDescription(tagType);
@@ -67,33 +69,29 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageCompressionTypeDescription()
     {
-        Integer value = _directory.getInteger(JpegDirectory.TAG_COMPRESSION_TYPE);
-        if (value==null)
-            return null;
-        // Note there is no 2 or 12
-        switch (value) {
-            case 0: return "Baseline";
-            case 1: return "Extended sequential, Huffman";
-            case 2: return "Progressive, Huffman";
-            case 3: return "Lossless, Huffman";
-            case 5: return "Differential sequential, Huffman";
-            case 6: return "Differential progressive, Huffman";
-            case 7: return "Differential lossless, Huffman";
-            case 8: return "Reserved for JPEG extensions";
-            case 9: return "Extended sequential, arithmetic";
-            case 10: return "Progressive, arithmetic";
-            case 11: return "Lossless, arithmetic";
-            case 13: return "Differential sequential, arithmetic";
-            case 14: return "Differential progressive, arithmetic";
-            case 15: return "Differential lossless, arithmetic";
-            default:
-                return "Unknown type: "+ value;
-        }
+        return getIndexedDescription(TAG_COMPRESSION_TYPE,
+            "Baseline",
+            "Extended sequential, Huffman",
+            "Progressive, Huffman",
+            "Lossless, Huffman",
+            null, // no 4
+            "Differential sequential, Huffman",
+            "Differential progressive, Huffman",
+            "Differential lossless, Huffman",
+            "Reserved for JPEG extensions",
+            "Extended sequential, arithmetic",
+            "Progressive, arithmetic",
+            "Lossless, arithmetic",
+            null, // no 12
+            "Differential sequential, arithmetic",
+            "Differential progressive, arithmetic",
+            "Differential lossless, arithmetic");
     }
+
     @Nullable
     public String getImageWidthDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_IMAGE_WIDTH);
+        final String value = _directory.getString(TAG_IMAGE_WIDTH);
         if (value==null)
             return null;
         return value + " pixels";
@@ -102,7 +100,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageHeightDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_IMAGE_HEIGHT);
+        final String value = _directory.getString(TAG_IMAGE_HEIGHT);
         if (value==null)
             return null;
         return value + " pixels";
@@ -111,7 +109,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getDataPrecisionDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_DATA_PRECISION);
+        final String value = _directory.getString(TAG_DATA_PRECISION);
         if (value==null)
             return null;
         return value + " bits";

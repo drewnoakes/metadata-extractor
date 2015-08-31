@@ -1,5 +1,13 @@
 language: java
+
 jdk:
   - openjdk6
+  - openjdk7
 
 install: mvn install -DskipTests=true -Dgpg.skip=true
+
+script:
+  - mvn clean verify -Dgpg.skip=true
+
+after_success:
+  - mvn -Pcoverage clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report

@@ -30,7 +30,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Decodes Adobe formatted data stored in JPEG files, normally in the APPE (App14) segment.
@@ -45,7 +45,7 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APPE);
+        return Collections.singletonList(JpegSegmentType.APPE);
     }
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)

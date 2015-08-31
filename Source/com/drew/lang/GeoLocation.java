@@ -83,7 +83,7 @@ public final class GeoLocation
     {
         double[] dms = decimalToDegreesMinutesSeconds(decimal);
         DecimalFormat format = new DecimalFormat("0.##");
-        return String.format("%s° %s' %s\"", format.format(dms[0]), format.format(dms[1]), format.format(dms[2]));
+        return String.format("%s\u00B0 %s' %s\"", format.format(dms[0]), format.format(dms[1]), format.format(dms[2]));
     }
 
     /**

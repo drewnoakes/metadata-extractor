@@ -20,10 +20,13 @@
  */
 package com.drew.metadata.exif.makernotes;
 
+import com.drew.lang.DateUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
 
 import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
@@ -114,7 +117,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             case CameraSettings.TAG_FOCUS_DISTANCE:
                 return getFocusDistanceDescription();
             case CameraSettings.TAG_FLASH_FIRED:
-                return getFlastFiredDescription();
+                return getFlashFiredDescription();
             case CameraSettings.TAG_DATE:
                 return getDateDescription();
             case CameraSettings.TAG_TIME:
@@ -141,7 +144,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             case CameraSettings.TAG_SUBJECT_PROGRAM:
                 return getSubjectProgramDescription();
             case CameraSettings.TAG_FLASH_COMPENSATION:
-                return getFlastCompensationDescription();
+                return getFlashCompensationDescription();
             case CameraSettings.TAG_ISO_SETTING:
                 return getIsoSettingDescription();
             case CameraSettings.TAG_CAMERA_MODEL:
@@ -257,7 +260,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double iso = Math.pow((value / 8d) - 1, 2) * 3.125;
-        return Double.toString(iso);
+        DecimalFormat format = new DecimalFormat("0.##");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return format.format(iso);
     }
 
     @Nullable
@@ -273,7 +278,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double shutterSpeed = Math.pow((49-value) / 8d, 2);
-        return Double.toString(shutterSpeed) + " sec";
+        DecimalFormat format = new DecimalFormat("0.###");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        return format.format(shutterSpeed) + " sec";
     }
 
     @Nullable
@@ -288,7 +295,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double fStop = Math.pow((value/16d) - 0.5, 2);
-        return "F" + Double.toString(fStop);
+        return getFStopDescription(fStop);
     }
 
     @Nullable
@@ -307,7 +314,8 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getExposureCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_EXPOSURE_COMPENSATION);
-        return value == null ? null : ((value / 3d) - 2) + " EV";
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format((value / 3d) - 2) + " EV";
     }
 
     @Nullable
@@ -340,7 +348,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getFocalLengthDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FOCAL_LENGTH);
-        return value == null ? null : Double.toString(value/256d) + " mm";
+        return value == null ? null : getFocalLengthDescription(value/256d);
     }
 
     @Nullable
@@ -355,7 +363,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String getFlastFiredDescription()
+    public String getFlashFiredDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FLASH_FIRED, "No", "Yes");
     }
@@ -369,10 +377,15 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         Long value = _directory.getLongObject(CameraSettings.TAG_DATE);
         if (value == null)
             return null;
-        long day = value & 0xFF;
-        long month = (value >> 16) & 0xFF;
-        long year = (value >> 8) & 0xFF;
-        return new GregorianCalendar((int)year + 1970, (int)month, (int)day).getTime().toString();
+
+        int day = (int) (value & 0xFF);
+        int month = (int) ((value >> 16) & 0xFF);
+        int year = (int) ((value >> 8) & 0xFF) + 1970;
+
+        if (!DateUtil.isValidDate(year, month, day))
+            return "Invalid date";
+
+        return new GregorianCalendar(year, month, day).getTime().toString();
     }
 
     @Nullable
@@ -384,9 +397,13 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         Long value = _directory.getLongObject(CameraSettings.TAG_TIME);
         if (value == null)
             return null;
-        long hours = (value >> 8) & 0xFF;
-        long minutes = (value >> 16) & 0xFF;
-        long seconds = value & 0xFF;
+
+        int hours = (int) ((value >> 8) & 0xFF);
+        int minutes = (int) ((value >> 16) & 0xFF);
+        int seconds = (int) (value & 0xFF);
+
+        if (!DateUtil.isValidTime(hours, minutes, seconds))
+            return "Invalid time";
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
@@ -399,7 +416,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (value == null)
             return null;
         double fStop = Math.pow((value/16d) - 0.5, 2);
-        return "F" + fStop;
+        return getFStopDescription(fStop);
     }
 
     @Nullable
@@ -423,21 +440,24 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getWhiteBalanceRedDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_RED);
-        return value == null ? null : Double.toString(value/256d);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format(value/256d);
     }
 
     @Nullable
     public String getWhiteBalanceGreenDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_GREEN);
-        return value == null ? null : Double.toString(value/256d);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format(value/256d);
     }
 
     @Nullable
     public String getWhiteBalanceBlueDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_BLUE);
-        return value == null ? null : Double.toString(value/256d);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format(value / 256d);
     }
 
     @Nullable
@@ -467,10 +487,11 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String getFlastCompensationDescription()
+    public String getFlashCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FLASH_COMPENSATION);
-        return value == null ? null : ((value-6)/3d) + " EV";
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format((value-6)/3d) + " EV";
     }
 
     @Nullable
@@ -534,7 +555,8 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getApexBrightnessDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_APEX_BRIGHTNESS_VALUE);
-        return value == null ? null : Double.toString((value/8d)-6);
+        DecimalFormat format = new DecimalFormat("0.##");
+        return value == null ? null : format.format((value/8d)-6);
     }
 
     @Nullable
