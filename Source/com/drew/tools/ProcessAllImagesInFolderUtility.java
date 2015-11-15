@@ -239,6 +239,9 @@ public class ProcessAllImagesInFolderUtility
      */
     static class TextFileOutputHandler extends FileHandlerBase
     {
+        /** Standardise line ending so that generated files can be more easily diffed. */
+        private static final String NEW_LINE = "\n";
+
         @Override
         public void onStartingDirectory(@NotNull File directoryPath)
         {
@@ -273,7 +276,7 @@ public class ProcessAllImagesInFolderUtility
         {
             super.onBeforeExtraction(file, log, relativePath);
             log.print(file.getAbsoluteFile());
-            log.print('\n');
+            log.print(NEW_LINE);
         }
 
         @Override
@@ -293,9 +296,9 @@ public class ProcessAllImagesInFolderUtility
                             if (!directory.hasErrors())
                                 continue;
                             for (String error : directory.getErrors())
-                                writer.format("[ERROR: %s] %s\n", directory.getName(), error);
+                                writer.format("[ERROR: %s] %s%s", directory.getName(), error, NEW_LINE);
                         }
-                        writer.write("\n");
+                        writer.write(NEW_LINE);
                     }
 
                     // Write tag values for each directory
@@ -309,10 +312,10 @@ public class ProcessAllImagesInFolderUtility
                             // Skip the file write-time as this changes based on the time at which the regression test image repository was cloned
                             if (directory instanceof FileMetadataDirectory && tag.getTagType() == FileMetadataDirectory.TAG_FILE_MODIFIED_DATE)
                                 description = "<omitted for regression testing as checkout dependent>";
-                            writer.format("[%s - %s] %s = %s\n", directoryName, tag.getTagTypeHex(), tagName, description);
+                            writer.format("[%s - %s] %s = %s%s", directoryName, tag.getTagTypeHex(), tagName, description, NEW_LINE);
                         }
                         if (directory.getTagCount() != 0)
-                            writer.write('\n');
+                            writer.write(NEW_LINE);
                     }
                 } finally {
                     closeWriter(writer);
@@ -331,13 +334,13 @@ public class ProcessAllImagesInFolderUtility
                 PrintWriter writer = null;
                 try {
                     writer = openWriter(file);
-                    writer.write("EXCEPTION: " + throwable.getMessage() + "\n");
-                    writer.write('\n');
+                    writer.write("EXCEPTION: " + throwable.getMessage() + NEW_LINE);
+                    writer.write(NEW_LINE);
                 } finally {
                     closeWriter(writer);
                 }
             } catch (IOException e) {
-                log.printf("IO exception writing metadata file: %s\n", e.getMessage());
+                log.printf("IO exception writing metadata file: %s%s", e.getMessage(), NEW_LINE);
             }
         }
 
@@ -354,8 +357,8 @@ public class ProcessAllImagesInFolderUtility
                 new FileOutputStream(outputPath),
                 "UTF-8"
             );
-            writer.write("FILE: " + file.getName() + "\n");
-            writer.write('\n');
+            writer.write("FILE: " + file.getName() + NEW_LINE);
+            writer.write(NEW_LINE);
 
             return new PrintWriter(writer);
         }
@@ -363,8 +366,8 @@ public class ProcessAllImagesInFolderUtility
         private static void closeWriter(@Nullable Writer writer) throws IOException
         {
             if (writer != null) {
-                writer.write("Generated using metadata-extractor\n");
-                writer.write("https://drewnoakes.com/code/exif/\n");
+                writer.write("Generated using metadata-extractor" + NEW_LINE);
+                writer.write("https://drewnoakes.com/code/exif/" + NEW_LINE);
                 writer.flush();
                 writer.close();
             }
