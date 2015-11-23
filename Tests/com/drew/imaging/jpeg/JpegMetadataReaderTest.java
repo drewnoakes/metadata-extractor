@@ -22,12 +22,14 @@ package com.drew.imaging.jpeg;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,6 +57,24 @@ public class JpegMetadataReaderTest
         Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withXmp.jpg"));
         Directory directory = metadata.getFirstDirectoryOfType(XmpDirectory.class);
         assertNotNull(directory);
+    }
+
+    @Test
+    public void testFStopFormatting() throws Exception
+    {
+        Locale previousLocale = Locale.getDefault();
+
+        // Settings this locale would cause an f-number with a comma:
+        Locale.setDefault(Locale.forLanguageTag("nl-NL"));
+
+        try {
+            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withExif.jpg"));
+            final ExifSubIFDDirectory subIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            assertEquals("f/4.0", subIFDDirectory.getDescription(ExifDirectoryBase.TAG_FNUMBER));
+        } finally {
+            // Reset the locale:
+            Locale.setDefault(previousLocale);
+        }
     }
 
     private void validate(Metadata metadata)

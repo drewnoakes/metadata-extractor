@@ -29,10 +29,12 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Base class for all tag descriptor classes.  Implementations are responsible for
@@ -285,7 +287,8 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFStopDescription(double fStop)
     {
-        DecimalFormat format = new DecimalFormat("0.0");
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.ROOT);
+        DecimalFormat format = new DecimalFormat("0.0", symbols);
         format.setRoundingMode(RoundingMode.HALF_UP);
         return "f/" + format.format(fStop);
     }
@@ -293,7 +296,8 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFocalLengthDescription(double mm)
     {
-        DecimalFormat format = new DecimalFormat("0.#");
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.ROOT);
+        DecimalFormat format = new DecimalFormat("0.#", symbols);
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(mm) + " mm";
     }
