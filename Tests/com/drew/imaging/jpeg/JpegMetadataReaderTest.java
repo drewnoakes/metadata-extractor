@@ -64,7 +64,7 @@ public class JpegMetadataReaderTest
     {
         Locale previousLocale = Locale.getDefault();
 
-        // Settings this locale would cause an f-number with a comma:
+        // Setting this locale would cause an f-number with a comma:
         Locale.setDefault(Locale.forLanguageTag("nl-NL"));
 
         try {
