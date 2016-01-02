@@ -34,7 +34,7 @@ import java.util.Arrays;
 
 /**
  * Showcases the most popular ways of using the metadata-extractor library.
- * <p/>
+ * <p>
  * For more information, see the project wiki: https://github.com/drewnoakes/metadata-extractor/wiki/GettingStarted
  *
  * @author Drew Noakes https://drewnoakes.com

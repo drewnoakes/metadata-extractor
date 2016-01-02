@@ -37,7 +37,7 @@ import java.util.TimeZone;
 
 /**
  * Reads an ICC profile.
- * <p/>
+ * <p>
  * More information about ICC:
  * <ul>
  * <li>http://en.wikipedia.org/wiki/ICC_profile</li>

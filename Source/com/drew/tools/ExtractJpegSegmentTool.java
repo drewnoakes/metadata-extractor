@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * Extracts JPEG segments and writes them to individual files.
- * <p/>
+ * <p>
  * Extracting only the required segment(s) for use in unit testing has several benefits:
  * <ul>
  *     <li>Helps reduce the repository size. For example a small JPEG image may still be 20kB+ in size, yet its
