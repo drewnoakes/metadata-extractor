@@ -167,7 +167,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
-        if ("OLYMP".equals(firstFiveChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars)) {
+        if ("OLYMP\0".equals(firstSixChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars)) {
             // Olympus Makernote
             // Epson and Agfa use Olympus makernote standard: http://www.ozhiker.com/electronics/pjmt/jpeg_info/
             pushDirectory(OlympusMakernoteDirectory.class);
