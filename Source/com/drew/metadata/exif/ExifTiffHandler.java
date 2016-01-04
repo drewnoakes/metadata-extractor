@@ -163,6 +163,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         final String firstSixChars = reader.getString(makernoteOffset, 6);
         final String firstSevenChars = reader.getString(makernoteOffset, 7);
         final String firstEightChars = reader.getString(makernoteOffset, 8);
+        final String firstTenChars = reader.getString(makernoteOffset, 10);
         final String firstTwelveChars = reader.getString(makernoteOffset, 12);
 
         boolean byteOrderBefore = reader.isMotorolaByteOrder();
@@ -172,6 +173,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // Epson and Agfa use Olympus makernote standard: http://www.ozhiker.com/electronics/pjmt/jpeg_info/
             pushDirectory(OlympusMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+        } else if ("OLYMPUS\0II".equals(firstTenChars)) {
+            // Olympus Makernote (alternate)
+            // Note that data is relative to the beginning of the makernote
+            // http://exiv2.org/makernote.html
+            pushDirectory(OlympusMakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, makernoteOffset);
         } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("MINOLTA")) {
             // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
             // area that commences immediately.
