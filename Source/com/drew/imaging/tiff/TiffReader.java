@@ -109,6 +109,7 @@ public class TiffReader
                                   final int ifdOffset,
                                   final int tiffHeaderOffset) throws IOException
     {
+        Boolean resetByteOrder = null;
         try {
             // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
             if (processedIfdOffsets.contains(Integer.valueOf(ifdOffset))) {
@@ -125,6 +126,16 @@ public class TiffReader
 
             // First two bytes in the IFD are the number of tags in this directory
             int dirTagCount = reader.getUInt16(ifdOffset);
+
+            // Some software modifies the byte order of the file, but misses some IFDs (such as makernotes).
+            // The entire test image repository doesn't contain a single IFD with more than 255 entries.
+            // Here we detect switched bytes that suggest this problem, and temporarily swap the byte order.
+            // This was discussed in GitHub issue #136.
+            if (dirTagCount > 0xFF && (dirTagCount & 0xFF) == 0) {
+                resetByteOrder = reader.isMotorolaByteOrder();
+                dirTagCount >>= 8;
+                reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
+            }
 
             int dirLength = (2 + (12 * dirTagCount) + 4);
             if (dirLength + ifdOffset > reader.getLength()) {
@@ -228,6 +239,8 @@ public class TiffReader
             }
         } finally {
             handler.endingIFD();
+            if (resetByteOrder != null)
+                reader.setMotorolaByteOrder(resetByteOrder);
         }
     }
 
