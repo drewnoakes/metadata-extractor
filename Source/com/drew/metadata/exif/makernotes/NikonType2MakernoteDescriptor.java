@@ -24,6 +24,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
+import com.drew.metadata.MetadataException;
 
 import java.text.DecimalFormat;
 
@@ -345,6 +346,13 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     }
 
     @Nullable
+    public String getLensFocusDistance() throws MetadataException
+    {
+        int[] values = _directory.getDecryptedIntArray(TAG_LENS_DATA);
+        return String.format("%.2fm", getDistanceInMeters(values[10]));
+    }
+
+    @Nullable
     public String getHueAdjustmentDescription()
     {
         return getFormattedString(TAG_CAMERA_HUE_ADJUSTMENT, "%s degrees");
@@ -362,4 +370,10 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     {
         return getVersionBytesDescription(TAG_FIRMWARE_VERSION, 2);
     }
+
+	@Nullable
+    private double getDistanceInMeters(int val)
+    {
+        return 0.01 * Math.pow(10, val / 40.0f);
+    }   
 }
