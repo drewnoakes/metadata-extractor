@@ -37,6 +37,11 @@ public class GifHeaderDirectory extends Directory
     public static final int TAG_IS_COLOR_TABLE_SORTED = 5;
     public static final int TAG_BITS_PER_PIXEL = 6;
     public static final int TAG_HAS_GLOBAL_COLOR_TABLE = 7;
+    /**
+     * @deprecated use {@link #TAG_BACKGROUND_COLOR_INDEX} instead.
+     */
+    @Deprecated
+    public static final int TAG_TRANSPARENT_COLOR_INDEX = 8;
     public static final int TAG_BACKGROUND_COLOR_INDEX = 8;
     public static final int TAG_PIXEL_ASPECT_RATIO = 9;
 
