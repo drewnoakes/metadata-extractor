@@ -511,28 +511,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getLensSpecificationDescription()
     {
-        Rational[] values = _directory.getRationalArray(TAG_LENS_SPECIFICATION);
-
-        if (values == null || values.length != 4 || (values[0].doubleValue() == 0 && values[2].doubleValue() == 0))
-            return null;
-
-        StringBuilder sb = new StringBuilder();
-
-        if (values[0].equals(values[1]))
-            sb.append(values[0].toSimpleString(true)).append("mm");
-        else
-            sb.append(values[0].toSimpleString(true)).append('-').append(values[1].toSimpleString(true)).append("mm");
-
-        if (values[2].doubleValue() != 0) {
-            sb.append(' ');
-
-            if (values[2].equals(values[3]))
-                sb.append(getFStopDescription(values[2].doubleValue()));
-            else
-                sb.append(getFStopDescription(values[2].doubleValue())).append('-').append(getFStopDescription(values[3].doubleValue()));
-        }
-
-        return sb.toString();
+        return getLensSpecificationDescription(TAG_LENS_SPECIFICATION);
     }
 
     @Nullable
