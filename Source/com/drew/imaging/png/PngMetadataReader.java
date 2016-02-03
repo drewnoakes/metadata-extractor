@@ -218,6 +218,7 @@ public class PngMetadataReader
             int minute = reader.getUInt8();
             int second = reader.getUInt8();
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            calendar.setTimeInMillis(0);
             //noinspection MagicConstant
             calendar.set(year, month, day, hour, minute, second);
             PngDirectory directory = new PngDirectory(PngChunkType.tIME);
