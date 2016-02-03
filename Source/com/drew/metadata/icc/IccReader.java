@@ -186,6 +186,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         {
 //          Date value = new Date(Date.UTC(y - 1900, m - 1, d, h, M, s));
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            calendar.setTimeInMillis(0);
             calendar.set(y, m - 1, d, h, M, s);
             directory.setDate(tagType, calendar.getTime());
         }
