@@ -204,6 +204,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getCompressionDescription();
             case TAG_JPEG_PROC:
                 return getJpegProcDescription();
+            case TAG_LENS_SPECIFICATION:
+                return getLensSpecificationDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -504,6 +506,12 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             "Recommended Exposure Index and ISO Speed",
             "Standard Output Sensitivity, Recommended Exposure Index and ISO Speed"
         );
+    }
+
+    @Nullable
+    public String getLensSpecificationDescription()
+    {
+        return getLensSpecificationDescription(TAG_LENS_SPECIFICATION);
     }
 
     @Nullable

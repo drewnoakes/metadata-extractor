@@ -297,4 +297,34 @@ public class TagDescriptor<T extends Directory>
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(mm) + " mm";
     }
+
+    @Nullable
+    protected String getLensSpecificationDescription(int tag)
+    {
+        Rational[] values = _directory.getRationalArray(tag);
+
+        if (values == null || values.length != 4 || (values[0].doubleValue() == 0 && values[2].doubleValue() == 0))
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+
+        if (values[0].equals(values[1]))
+            sb.append(values[0].toSimpleString(true)).append("mm");
+        else
+            sb.append(values[0].toSimpleString(true)).append('-').append(values[1].toSimpleString(true)).append("mm");
+
+        if (values[2].doubleValue() != 0) {
+            sb.append(' ');
+
+            DecimalFormat format = new DecimalFormat("0.0");
+            format.setRoundingMode(RoundingMode.HALF_UP);
+
+            if (values[2].equals(values[3]))
+                sb.append(getFStopDescription(values[2].doubleValue()));
+            else
+                sb.append("f/").append(format.format(values[2].doubleValue())).append('-').append(format.format(values[3].doubleValue()));
+        }
+
+        return sb.toString();
+    }
 }

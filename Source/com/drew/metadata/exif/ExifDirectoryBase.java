@@ -259,14 +259,18 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_METERING_MODE                     = 0x9207;
 
-    public static final int TAG_LIGHT_SOURCE                      = 0x9208; // TODO duplicate tag
+    /**
+     * @deprecated use {@link com.drew.metadata.exif.ExifDirectoryBase#TAG_WHITE_BALANCE} instead.
+     */
+    @Deprecated
+    public static final int TAG_LIGHT_SOURCE                      = 0x9208;
     /**
      * White balance (aka light source). '0' means unknown, '1' daylight,
      * '2' fluorescent, '3' tungsten, '10' flash, '17' standard light A,
      * '18' standard light B, '19' standard light C, '20' D55, '21' D65,
      * '22' D75, '255' other.
      */
-    public static final int TAG_WHITE_BALANCE                     = 0x9208; // TODO duplicate tag
+    public static final int TAG_WHITE_BALANCE                     = 0x9208;
     /**
      * 0x0  = 0000000 = No Flash
      * 0x1  = 0000001 = Fired
@@ -662,7 +666,6 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_MAX_APERTURE, "Max Aperture Value");
         map.put(TAG_SUBJECT_DISTANCE, "Subject Distance");
         map.put(TAG_METERING_MODE, "Metering Mode");
-        map.put(TAG_LIGHT_SOURCE, "Light Source");
         map.put(TAG_WHITE_BALANCE, "White Balance");
         map.put(TAG_FLASH, "Flash");
         map.put(TAG_FOCAL_LENGTH, "Focal Length");

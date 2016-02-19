@@ -83,12 +83,30 @@ public class JfifDirectory extends Directory
         return getInt(JfifDirectory.TAG_UNITS);
     }
 
+    /**
+     * @deprecated use {@link #getResY} instead.
+     */
+    @Deprecated
     public int getImageWidth() throws MetadataException
     {
         return getInt(JfifDirectory.TAG_RESY);
     }
 
+    public int getResY() throws MetadataException
+    {
+        return getInt(JfifDirectory.TAG_RESY);
+    }
+
+    /**
+     * @deprecated use {@link #getResX} instead.
+     */
+    @Deprecated
     public int getImageHeight() throws MetadataException
+    {
+        return getInt(JfifDirectory.TAG_RESX);
+    }
+
+    public int getResX() throws MetadataException
     {
         return getInt(JfifDirectory.TAG_RESX);
     }

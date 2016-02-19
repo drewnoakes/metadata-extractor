@@ -77,7 +77,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
     /**
      * Ensures that the buffered bytes extend to cover the specified index. If not, an attempt is made
      * to read to that point.
-     * <p/>
+     * <p>
      * If the stream ends before the point is reached, a {@link BufferBoundsException} is raised.
      *
      * @param index the index from which the required bytes start

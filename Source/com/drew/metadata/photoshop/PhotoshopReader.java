@@ -77,7 +77,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
         // Data contains a sequence of Image Resource Blocks (IRBs):
         //
-        // 4 bytes - Signature "8BIM"
+        // 4 bytes - Signature; mostly "8BIM" but "PHUT", "AgHg" and "DCSR" are also found
         // 2 bytes - Resource identifier
         // String  - Pascal string, padded to make length even
         // 4 bytes - Size of resource data which follows
@@ -88,10 +88,8 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         int pos = 0;
         while (pos < length) {
             try {
-                // 4 bytes for the signature.  Should always be "8BIM".
+                // 4 bytes for the signature ("8BIM", "PHUT", etc.)
                 String signature = reader.getString(4);
-                if (!signature.equals("8BIM"))
-                    throw new ImageProcessingException("Expecting 8BIM marker");
                 pos += 4;
 
                 // 2 bytes for the resource identifier (tag type).
@@ -125,19 +123,21 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                     pos++;
                 }
 
-                if (tagType == PhotoshopDirectory.TAG_IPTC)
-                    new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length);
-                else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
-                    new IccReader().extract(new ByteArrayReader(tagBytes), metadata);
-                else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
-                    new ExifReader().extract(new ByteArrayReader(tagBytes), metadata);
-                else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
-                    new XmpReader().extract(tagBytes, metadata);
-                else
-                    directory.setByteArray(tagType, tagBytes);
+                if (signature.equals("8BIM")) {
+                    if (tagType == PhotoshopDirectory.TAG_IPTC)
+                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length);
+                    else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
+                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata);
+                    else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
+                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata);
+                    else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
+                        new XmpReader().extract(tagBytes, metadata);
+                    else
+                        directory.setByteArray(tagType, tagBytes);
 
-                if (tagType >= 0x0fa0 && tagType <= 0x1387)
-                    PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));
+                    if (tagType >= 0x0fa0 && tagType <= 0x1387)
+                        PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));
+                }
             } catch (Exception ex) {
                 directory.addError(ex.getMessage());
                 return;
