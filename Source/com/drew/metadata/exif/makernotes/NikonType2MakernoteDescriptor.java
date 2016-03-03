@@ -362,6 +362,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
 	@Nullable
     private double getDistanceInMeters(int val)
     {
+        if (val < 0) val += 256;
         return 0.01 * Math.pow(10, val / 40.0f);
     }   
 }
