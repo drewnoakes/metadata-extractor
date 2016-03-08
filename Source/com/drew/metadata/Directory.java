@@ -32,6 +32,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Abstract base class for all directory implementations, having methods for getting and setting tag values of various
@@ -753,6 +755,9 @@ public abstract class Directory
         if (o instanceof java.util.Date)
             return (java.util.Date)o;
 
+        java.util.Date date = null;
+        String subsecond = null;
+
         if (o instanceof String) {
             // This seems to cover all known Exif date strings
             // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
@@ -762,8 +767,23 @@ public abstract class Directory
                     "yyyy-MM-dd HH:mm:ss",
                     "yyyy-MM-dd HH:mm",
                     "yyyy.MM.dd HH:mm:ss",
-                    "yyyy.MM.dd HH:mm" };
+                    "yyyy.MM.dd HH:mm",
+                    "yyyy-MM-dd'T'HH:mm:ssX",
+                    "yyyy-MM-dd'T'HH:mm:ss",
+                    "yyyy-MM-dd'T'HH:mmX",
+                    "yyyy-MM-dd'T'HH:mm",
+                    "yyyy-MM-dd",
+                    "yyyy-MM",
+                    "yyyy" };
             String dateString = (String)o;
+
+            Pattern subsecondPattern = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)(\\.\\d+)");
+            Matcher subsecondMatcher = subsecondPattern.matcher(dateString);
+            if (subsecondMatcher.find()) {
+                subsecond = subsecondMatcher.group(2).substring(1);
+                dateString = subsecondMatcher.replaceAll("$1");
+            }
+
             for (String datePattern : datePatterns) {
                 try {
                     DateFormat parser = new SimpleDateFormat(datePattern);
@@ -772,13 +792,33 @@ public abstract class Directory
                     else
                         parser.setTimeZone(TimeZone.getTimeZone("GMT")); // don't interpret zone time
 
-                    return parser.parse(dateString);
+                    // if the date string has time zone information, it supersedes the time zone set above
+                    date = parser.parse(dateString);
+                    break;
                 } catch (ParseException ex) {
                     // simply try the next pattern
                 }
             }
         }
-        return null;
+
+        if (date == null)
+            return null;
+
+        if (subsecond == null)
+            return date;
+
+        try {
+            int millisecond = (int) (Double.parseDouble("." + subsecond) * 1000);
+            if (millisecond >= 0 && millisecond < 1000) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.set(Calendar.MILLISECOND, millisecond);
+                return calendar.getTime();
+            }
+            return date;
+        } catch (NumberFormatException e) {
+            return date;
+        }
     }
 
     /** Returns the specified tag's value as a Rational.  If the value is unset or cannot be converted, <code>null</code> is returned. */

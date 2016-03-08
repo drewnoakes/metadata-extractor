@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -66,5 +67,20 @@ public class IccReaderTest
 
         assertNotNull(directory);
         assertTrue(directory.hasErrors());
+    }
+
+    @Test
+    public void testExtract_ProfileDateTime() throws Exception
+    {
+        byte[] app2Bytes = FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2");
+
+        Metadata metadata = new Metadata();
+        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+
+        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals("1998:02:09 06:49:00", directory.getString(IccDirectory.TAG_PROFILE_DATETIME));
+        assertEquals(887006940000L, directory.getDate(IccDirectory.TAG_PROFILE_DATETIME).getTime());
     }
 }

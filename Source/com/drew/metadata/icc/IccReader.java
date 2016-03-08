@@ -31,9 +31,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.TimeZone;
 
 /**
  * Reads an ICC profile.
@@ -184,11 +182,8 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
         if (DateUtil.isValidDate(y, m - 1, d) && DateUtil.isValidTime(h, M, s))
         {
-//          Date value = new Date(Date.UTC(y - 1900, m - 1, d, h, M, s));
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            calendar.setTimeInMillis(0);
-            calendar.set(y, m - 1, d, h, M, s);
-            directory.setDate(tagType, calendar.getTime());
+            String dateString = String.format("%04d:%02d:%02d %02d:%02d:%02d", y, m, d, h, M, s);
+            directory.setString(tagType, dateString);
         }
         else
         {
