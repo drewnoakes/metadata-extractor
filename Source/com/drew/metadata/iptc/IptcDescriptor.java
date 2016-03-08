@@ -46,17 +46,57 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
+            case TAG_DATE_CREATED:
+                return getDateCreatedDescription();
+            case TAG_DIGITAL_DATE_CREATED:
+                return getDigitalDateCreatedDescription();
+            case TAG_DATE_SENT:
+                return getDateSentDescription();
+            case TAG_EXPIRATION_DATE:
+                return getExpirationDateDescription();
+            case TAG_EXPIRATION_TIME:
+                return getExpirationTimeDescription();
             case TAG_FILE_FORMAT:
                 return getFileFormatDescription();
             case TAG_KEYWORDS:
                 return getKeywordsDescription();
+            case TAG_REFERENCE_DATE:
+                return getReferenceDateDescription();
+            case TAG_RELEASE_DATE:
+                return getReleaseDateDescription();
+            case TAG_RELEASE_TIME:
+                return getReleaseTimeDescription();
             case TAG_TIME_CREATED:
                 return getTimeCreatedDescription();
             case TAG_DIGITAL_TIME_CREATED:
                 return getDigitalTimeCreatedDescription();
+            case TAG_TIME_SENT:
+                return getTimeSentDescription();
             default:
                 return super.getDescription(tagType);
         }
+    }
+
+    @Nullable
+    public String getDateDescription(int tagType)
+    {
+        String s = _directory.getString(tagType);
+        if (s == null)
+            return null;
+        if (s.length() == 8)
+            return s.substring(0, 4) + ':' + s.substring(4, 6) + ':' + s.substring(6);
+        return s;
+    }
+
+    @Nullable
+    public String getTimeDescription(int tagType)
+    {
+        String s = _directory.getString(tagType);
+        if (s == null)
+            return null;
+        if (s.length() == 6 || s.length() == 11)
+            return s.substring(0, 2) + ':' + s.substring(2, 4) + ':' + s.substring(4);
+        return s;
     }
 
     @Nullable
@@ -151,7 +191,31 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getDateCreatedDescription()
     {
-        return _directory.getString(TAG_DATE_CREATED);
+        return getDateDescription(TAG_DATE_CREATED);
+    }
+
+    @Nullable
+    public String getDigitalDateCreatedDescription()
+    {
+        return getDateDescription(TAG_DIGITAL_DATE_CREATED);
+    }
+
+    @Nullable
+    public String getDateSentDescription()
+    {
+        return getDateDescription(TAG_DATE_SENT);
+    }
+
+    @Nullable
+    public String getExpirationDateDescription()
+    {
+        return getDateDescription(TAG_EXPIRATION_DATE);
+    }
+
+    @Nullable
+    public String getExpirationTimeDescription()
+    {
+        return getTimeDescription(TAG_EXPIRATION_TIME);
     }
 
     @Nullable
@@ -200,15 +264,21 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     }
 
     @Nullable
+    public String getReferenceDateDescription()
+    {
+        return getDateDescription(TAG_REFERENCE_DATE);
+    }
+
+    @Nullable
     public String getReleaseDateDescription()
     {
-        return _directory.getString(TAG_RELEASE_DATE);
+        return getDateDescription(TAG_RELEASE_DATE);
     }
 
     @Nullable
     public String getReleaseTimeDescription()
     {
-        return _directory.getString(TAG_RELEASE_TIME);
+        return getTimeDescription(TAG_RELEASE_TIME);
     }
 
     @Nullable
@@ -232,23 +302,19 @@ public class IptcDescriptor extends TagDescriptor<IptcDirectory>
     @Nullable
     public String getTimeCreatedDescription()
     {
-        String s = _directory.getString(TAG_TIME_CREATED);
-        if (s == null)
-            return null;
-        if (s.length() == 6 || s.length() == 11)
-            return s.substring(0, 2) + ':' + s.substring(2, 4) + ':' + s.substring(4);
-        return s;
+        return getTimeDescription(TAG_TIME_CREATED);
     }
 
     @Nullable
     public String getDigitalTimeCreatedDescription()
     {
-        String s = _directory.getString(TAG_DIGITAL_TIME_CREATED);
-        if (s == null)
-            return null;
-        if (s.length() == 6 || s.length() == 11)
-            return s.substring(0, 2) + ':' + s.substring(2, 4) + ':' + s.substring(4);
-        return s;
+        return getTimeDescription(TAG_DIGITAL_TIME_CREATED);
+    }
+
+    @Nullable
+    public String getTimeSentDescription()
+    {
+        return getTimeDescription(TAG_TIME_SENT);
     }
 
     @Nullable

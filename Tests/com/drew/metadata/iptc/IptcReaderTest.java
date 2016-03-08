@@ -90,7 +90,7 @@ public class IptcReaderTest
         assertEquals("City", directory.getObject(tags[9].getTagType()));
 
         assertEquals(IptcDirectory.TAG_DATE_CREATED, tags[10].getTagType());
-        assertEquals(new java.util.GregorianCalendar(2000, 0, 1).getTime(), directory.getObject(tags[10].getTagType()));
+        assertEquals("20000101", directory.getObject(tags[10].getTagType()));
 
         assertEquals(IptcDirectory.TAG_OBJECT_NAME, tags[11].getTagType());
         assertEquals("ObjectName", directory.getObject(tags[11].getTagType()));
