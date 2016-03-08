@@ -768,9 +768,7 @@ public abstract class Directory
                     "yyyy-MM-dd HH:mm",
                     "yyyy.MM.dd HH:mm:ss",
                     "yyyy.MM.dd HH:mm",
-                    "yyyy-MM-dd'T'HH:mm:ssX",
                     "yyyy-MM-dd'T'HH:mm:ss",
-                    "yyyy-MM-dd'T'HH:mmX",
                     "yyyy-MM-dd'T'HH:mm",
                     "yyyy-MM-dd",
                     "yyyy-MM",
@@ -784,6 +782,14 @@ public abstract class Directory
                 dateString = subsecondMatcher.replaceAll("$1");
             }
 
+            // if the date string has time zone information, it supersedes the timeZone parameter
+            Pattern timeZonePattern = Pattern.compile("(Z|[+-]\\d\\d:\\d\\d)$");
+            Matcher timeZoneMatcher = timeZonePattern.matcher(dateString);
+            if (timeZoneMatcher.find()) {
+                timeZone = TimeZone.getTimeZone("GMT" + timeZoneMatcher.group().replaceAll("Z", ""));
+                dateString = timeZoneMatcher.replaceAll("");
+            }
+
             for (String datePattern : datePatterns) {
                 try {
                     DateFormat parser = new SimpleDateFormat(datePattern);
@@ -792,7 +798,6 @@ public abstract class Directory
                     else
                         parser.setTimeZone(TimeZone.getTimeZone("GMT")); // don't interpret zone time
 
-                    // if the date string has time zone information, it supersedes the time zone set above
                     date = parser.parse(dateString);
                     break;
                 } catch (ParseException ex) {
