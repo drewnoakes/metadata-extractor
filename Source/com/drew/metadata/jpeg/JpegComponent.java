@@ -81,11 +81,11 @@ public class JpegComponent implements Serializable
 
     public int getHorizontalSamplingFactor()
     {
-        return _samplingFactorByte & 0x0F;
+        return (_samplingFactorByte>>4) & 0x0F;
     }
 
     public int getVerticalSamplingFactor()
     {
-        return (_samplingFactorByte>>4) & 0x0F;
+        return _samplingFactorByte & 0x0F;
     }
 }
