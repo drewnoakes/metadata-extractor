@@ -149,6 +149,8 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_YCBCR_SUBSAMPLING                 = 0x0212;
     public static final int TAG_YCBCR_POSITIONING                 = 0x0213;
     public static final int TAG_REFERENCE_BLACK_WHITE             = 0x0214;
+    public static final int TAG_STRIP_ROW_COUNTS                  = 0x022f;
+    public static final int TAG_APPLICATION_NOTES                 = 0x02bc;
 
     public static final int TAG_RELATED_IMAGE_FILE_FORMAT         = 0x1000;
     public static final int TAG_RELATED_IMAGE_WIDTH               = 0x1001;
@@ -630,6 +632,8 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
         map.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
         map.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
+        map.put(TAG_STRIP_ROW_COUNTS, "Strip Row Counts");
+        map.put(TAG_APPLICATION_NOTES, "Application Notes");
         map.put(TAG_RELATED_IMAGE_FILE_FORMAT, "Related Image File Format");
         map.put(TAG_RELATED_IMAGE_WIDTH, "Related Image Width");
         map.put(TAG_RELATED_IMAGE_HEIGHT, "Related Image Height");
