@@ -605,8 +605,8 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
         map.put(TAG_ROWS_PER_STRIP, "Rows Per Strip");
         map.put(TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
-        map.put(TAG_MIN_SAMPLE_VALUE, "Minimum sample value");
-        map.put(TAG_MAX_SAMPLE_VALUE, "Maximum sample value");
+        map.put(TAG_MIN_SAMPLE_VALUE, "Minimum Sample Value");
+        map.put(TAG_MAX_SAMPLE_VALUE, "Maximum Sample Value");
         map.put(TAG_X_RESOLUTION, "X Resolution");
         map.put(TAG_Y_RESOLUTION, "Y Resolution");
         map.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
