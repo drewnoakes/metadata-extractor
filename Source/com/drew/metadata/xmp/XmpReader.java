@@ -48,7 +48,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     private static final int FMT_RATIONAL = 2;
     private static final int FMT_INT = 3;
     private static final int FMT_DOUBLE = 4;
-	  private static final int FMT_STRING_ARRAY = 5;
+    private static final int FMT_STRING_ARRAY = 5;
     /**
      * XMP tag namespace.
      * TODO the older "xap", "xapBJ", "xapMM" or "xapRights" namespace prefixes should be translated to the newer "xmp", "xmpBJ", "xmpMM" and "xmpRights" prefixes for use in family 1 group names
