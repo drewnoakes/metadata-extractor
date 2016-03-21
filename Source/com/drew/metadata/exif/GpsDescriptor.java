@@ -109,7 +109,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     {
         // time in hour, min, sec
         Rational[] timeComponents = _directory.getRationalArray(TAG_TIME_STAMP);
-        DecimalFormat df = new DecimalFormat("00.00");
+        DecimalFormat df = new DecimalFormat("00.000");
         return timeComponents == null
             ? null
             : String.format("%02d:%02d:%s UTC",

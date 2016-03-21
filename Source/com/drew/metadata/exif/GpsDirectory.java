@@ -25,6 +25,10 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -163,10 +167,10 @@ public class GpsDirectory extends ExifDirectoryBase
     @Nullable
     public GeoLocation getGeoLocation()
     {
-        Rational[] latitudes = getRationalArray(GpsDirectory.TAG_LATITUDE);
-        Rational[] longitudes = getRationalArray(GpsDirectory.TAG_LONGITUDE);
-        String latitudeRef = getString(GpsDirectory.TAG_LATITUDE_REF);
-        String longitudeRef = getString(GpsDirectory.TAG_LONGITUDE_REF);
+        Rational[] latitudes = getRationalArray(TAG_LATITUDE);
+        Rational[] longitudes = getRationalArray(TAG_LONGITUDE);
+        String latitudeRef = getString(TAG_LATITUDE_REF);
+        String longitudeRef = getString(TAG_LONGITUDE_REF);
 
         // Make sure we have the required values
         if (latitudes == null || latitudes.length != 3)
@@ -184,5 +188,33 @@ public class GpsDirectory extends ExifDirectoryBase
             return null;
 
         return new GeoLocation(lat, lon);
+    }
+
+    /**
+     * Parses the date stamp tag and the time stamp tag to obtain a single Date object representing the
+     * date and time when this image was captured.
+     *
+     * @return A Date object representing when this image was captured, if possible, otherwise null
+     */
+    @Nullable
+    public Date getGpsDate()
+    {
+        String date = getString(TAG_DATE_STAMP);
+        Rational[] timeComponents = getRationalArray(TAG_TIME_STAMP);
+
+        // Make sure we have the required values
+        if (date == null)
+            return null;
+        if (timeComponents == null || timeComponents.length != 3)
+            return null;
+
+        String dateTime = String.format("%s %02d:%02d:%02.3f UTC",
+            date, timeComponents[0].intValue(), timeComponents[1].intValue(), timeComponents[2].doubleValue());
+        try {
+            DateFormat parser = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.S z");
+            return parser.parse(dateTime);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }
