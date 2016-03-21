@@ -93,6 +93,7 @@ public class PngMetadataReaderTest
             assertEquals(2835, dirs[3].getInt(PngDirectory.TAG_PIXELS_PER_UNIT_Y));
 
             assertEquals(PngChunkType.tIME, dirs[4].getPngChunkType());
+            assertEquals("2013:01:01 04:08:30", dirs[4].getString(PngDirectory.TAG_LAST_MODIFICATION_TIME));
 
             java.util.Date modTime = dirs[4].getDate(PngDirectory.TAG_LAST_MODIFICATION_TIME);
             SimpleDateFormat formatter = new SimpleDateFormat("EE MMM DD HH:mm:ss z yyyy");

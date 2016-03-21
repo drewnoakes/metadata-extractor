@@ -31,7 +31,6 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
-import java.util.Calendar;
 import java.util.Collections;
 
 /**
@@ -49,7 +48,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     private static final int FMT_RATIONAL = 2;
     private static final int FMT_INT = 3;
     private static final int FMT_DOUBLE = 4;
-	private static final int FMT_STRING_ARRAY = 5;
+	  private static final int FMT_STRING_ARRAY = 5;
     /**
      * XMP tag namespace.
      * TODO the older "xap", "xapBJ", "xapMM" or "xapRights" namespace prefixes should be translated to the newer "xmp", "xmpBJ", "xmpMM" and "xmpRights" prefixes for use in family 1 group names
@@ -165,8 +164,8 @@ public class XmpReader implements JpegSegmentMetadataReader
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_FOCAL_LENGTH, FMT_RATIONAL);
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_SHUTTER_SPEED, FMT_RATIONAL);
 
-        processXmpDateTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_ORIGINAL);
-        processXmpDateTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_DIGITIZED);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_ORIGINAL, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_DIGITIZED, FMT_STRING);
 
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_RATING, FMT_DOUBLE);
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LABEL, FMT_STRING);
@@ -260,19 +259,6 @@ public class XmpReader implements JpegSegmentMetadataReader
                 break;
             default:
                 directory.addError(String.format("Unknown format code %d for tag %d", formatCode, tagType));
-        }
-    }
-
-    @SuppressWarnings({"SameParameterValue"})
-    private static void processXmpDateTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType)
-            throws XMPException
-    {
-        String schemaNS = XmpDirectory._tagSchemaMap.get(tagType);
-        String propName = XmpDirectory._tagPropNameMap.get(tagType);
-        Calendar cal = meta.getPropertyCalendar(schemaNS, propName);
-
-        if (cal != null) {
-            directory.setDate(tagType, cal.getTime());
         }
     }
 }

@@ -196,6 +196,7 @@ public class XmpReaderTest
         Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
         assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
     }
 
     @Test
@@ -211,6 +212,7 @@ public class XmpReaderTest
         Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
         assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
     }
 
     @Test
