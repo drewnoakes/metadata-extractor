@@ -216,6 +216,61 @@ public class XmpReaderTest
     }
 
     @Test
+    public void testExtract_CreateDate() throws Exception
+    {
+        final Date actual = _directory.getDate(XmpDirectory.TAG_CREATE_DATE);
+
+        // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
+
+        assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
+//        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
+
+        Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 11, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
+    }
+
+    @Test
+    public void testExtract_CreatorTool() throws Exception
+    {
+        assertEquals("Adobe Photoshop Lightroom", _directory.getString(XmpDirectory.TAG_CREATOR_TOOL));
+    }
+
+    @Test
+    public void testExtract_MetadataDate() throws Exception
+    {
+        final Date actual = _directory.getDate(XmpDirectory.TAG_METADATA_DATE);
+
+        // Underlying string value (in XMP data) is: 2011-01-09T21:31:56.078-01:00
+
+        assertEquals(new SimpleDateFormat("hh:mm:ss.S dd MM yyyy Z").parse("22:31:56.078 09 01 2011 +0000"), actual);
+//        assertEquals(new SimpleDateFormat("HH:mm:ss.S dd MMM yyyy Z").parse("21:31:56.078 09 Jan 2011 -0100"), actual);
+
+        Calendar calendar = new GregorianCalendar(2011, 1-1, 9, 22, 31, 56);
+        calendar.set(Calendar.MILLISECOND, 78);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1294612316078L, actual.getTime());
+    }
+
+    @Test
+    public void testExtract_ModifyDate() throws Exception
+    {
+        final Date actual = _directory.getDate(XmpDirectory.TAG_MODIFY_DATE);
+
+        // Underlying string value (in XMP data) is: 2011-01-10T21:09+01:00
+
+        assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("20:09:00 10 01 2011 +0000"), actual);
+//        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("21:09:00 10 Jan 2011 +0100"), actual);
+
+        Calendar calendar = new GregorianCalendar(2011, 1-1, 10, 20, 9, 0);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1294690140000L, actual.getTime());
+    }
+
+    @Test
     public void testGetXmpProperties() throws Exception
     {
         Map<String,String> propertyMap = _directory.getXmpProperties();

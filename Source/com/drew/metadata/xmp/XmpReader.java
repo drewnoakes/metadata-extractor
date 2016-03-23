@@ -167,6 +167,13 @@ public class XmpReader implements JpegSegmentMetadataReader
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_ORIGINAL, FMT_STRING);
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_DIGITIZED, FMT_STRING);
 
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_BASE_URL, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CREATE_DATE, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CREATOR_TOOL, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_IDENTIFIER, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_METADATA_DATE, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MODIFY_DATE, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_NICKNAME, FMT_STRING);
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_RATING, FMT_DOUBLE);
         processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LABEL, FMT_STRING);
 
