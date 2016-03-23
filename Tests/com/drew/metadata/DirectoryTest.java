@@ -163,6 +163,11 @@ public class DirectoryTest
         assertEquals(gc.getTime(), _directory.getDate(5, gmt));
         assertEquals(gc.getTime(), _directory.getDate(6, pst));
 
+        assertEquals(gc.getTime(), _directory.getDate(5, "011", null));
+        assertEquals(gc.getTime(), _directory.getDate(6, "011", pst));
+        assertEquals(gc.getTime(), _directory.getDate(7, "099", null));
+        assertEquals(gc.getTime(), _directory.getDate(8, "099", pst));
+
         gc.set(Calendar.MILLISECOND, 0);
         assertEquals(gc.getTime(), _directory.getDate(7, null));
         assertEquals(gc.getTime(), _directory.getDate(7, gmt));
