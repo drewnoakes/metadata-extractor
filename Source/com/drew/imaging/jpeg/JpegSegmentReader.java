@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -118,13 +118,13 @@ public class JpegSegmentReader
 
             byte segmentIdentifier = reader.getInt8();
             byte segmentType = reader.getInt8();
-            
+
             // Read until we have a 0xFF byte followed by a byte that is not 0xFF or 0x00
             while (segmentIdentifier != SEGMENT_IDENTIFIER || segmentType == SEGMENT_IDENTIFIER || segmentType == 0) {
             	segmentIdentifier = segmentType;
             	segmentType = reader.getInt8();
             }
-            
+
             if (segmentType == SEGMENT_SOS) {
                 // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would
                 // have to search for the two bytes: 0xFF 0xD9 (EOI).
