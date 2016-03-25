@@ -36,7 +36,8 @@ import java.util.TimeZone;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@link ExifSubIFDDirectory}, {@link ExifIFD0Directory}, {@link ExifThumbnailDirectory}.
+ * Unit tests for {@link ExifSubIFDDirectory}, {@link ExifIFD0Directory}, {@link ExifThumbnailDirectory} and
+ * {@link GpsDirectory}.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
