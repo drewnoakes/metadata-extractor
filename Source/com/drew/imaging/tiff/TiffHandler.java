@@ -45,7 +45,7 @@ public interface TiffHandler
      */
     void setTiffMarker(int marker) throws TiffProcessingException;
 
-    boolean isTagIfdPointer(int tagType);
+    boolean isTagIfdPointer(int tagId);
     boolean hasFollowerIfd();
 
     void endingIFD();

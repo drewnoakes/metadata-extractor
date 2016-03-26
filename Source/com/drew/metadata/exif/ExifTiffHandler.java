@@ -65,15 +65,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
     }
 
-    public boolean isTagIfdPointer(int tagType)
+    public boolean isTagIfdPointer(int tagId)
     {
-        if (tagType == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET && _currentDirectory instanceof ExifIFD0Directory) {
+        if (tagId == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET && _currentDirectory instanceof ExifIFD0Directory) {
             pushDirectory(ExifSubIFDDirectory.class);
             return true;
-        } else if (tagType == ExifIFD0Directory.TAG_GPS_INFO_OFFSET && _currentDirectory instanceof ExifIFD0Directory) {
+        } else if (tagId == ExifIFD0Directory.TAG_GPS_INFO_OFFSET && _currentDirectory instanceof ExifIFD0Directory) {
             pushDirectory(GpsDirectory.class);
             return true;
-        } else if (tagType == ExifSubIFDDirectory.TAG_INTEROP_OFFSET && _currentDirectory instanceof ExifSubIFDDirectory) {
+        } else if (tagId == ExifSubIFDDirectory.TAG_INTEROP_OFFSET && _currentDirectory instanceof ExifSubIFDDirectory) {
             pushDirectory(ExifInteropDirectory.class);
             return true;
         }
