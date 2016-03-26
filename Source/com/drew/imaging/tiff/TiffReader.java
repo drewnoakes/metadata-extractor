@@ -157,18 +157,6 @@ public class TiffReader
                 final int formatCode = reader.getUInt16(tagOffset + 2);
                 final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode);
 
-                if (format == null) {
-                    // This error suggests that we are processing at an incorrect index and will generate
-                    // rubbish until we go out of bounds (which may be a while).  Exit now.
-                    handler.error("Invalid TIFF tag format code " + formatCode + " for tag 0x" + Integer.toHexString(tagId));
-                    // TODO specify threshold as a parameter, or provide some other external control over this behaviour
-                    if (++invalidTiffFormatCodeCount > 5) {
-                        handler.error("Stopping processing as too many errors seen in TIFF IFD");
-                        return;
-                    }
-                    continue;
-                }
-
                 // 4 bytes dictate the number of components in this tag's data
                 final int componentCount = reader.getInt32(tagOffset + 4);
                 if (componentCount < 0) {
@@ -176,7 +164,24 @@ public class TiffReader
                     continue;
                 }
 
-                final int byteCount = componentCount * format.getComponentSizeBytes();
+                int byteCount;
+                if (format == null) {
+                    Integer byteCountOverride = handler.tryCustomProcessFormat(tagId, formatCode, componentCount);
+                    if (byteCountOverride == null) {
+                        // This error suggests that we are processing at an incorrect index and will generate
+                        // rubbish until we go out of bounds (which may be a while).  Exit now.
+                        handler.error("Invalid TIFF tag format code " + formatCode + " for tag 0x" + Integer.toHexString(tagId));
+                        // TODO specify threshold as a parameter, or provide some other external control over this behaviour
+                        if (++invalidTiffFormatCodeCount > 5) {
+                            handler.error("Stopping processing as too many errors seen in TIFF IFD");
+                            return;
+                        }
+                        continue;
+                    }
+                    byteCount = byteCountOverride;
+                } else {
+                    byteCount = componentCount * format.getComponentSizeBytes();
+                }
 
                 final int tagValueOffset;
                 if (byteCount > 4) {
@@ -362,7 +367,7 @@ public class TiffReader
                 }
                 break;
             default:
-                handler.error(String.format("Unknown format code %d for tag %d", formatCode, tagId));
+                handler.error(String.format("Invalid TIFF tag format code %d for tag %d", formatCode, tagId));
         }
     }
 

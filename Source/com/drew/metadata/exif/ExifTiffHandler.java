@@ -25,6 +25,7 @@ import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.makernotes.*;
@@ -104,6 +105,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         // This should not happen, as Exif doesn't use follower IFDs apart from that above.
         // NOTE have seen the CanonMakernoteDirectory IFD have a follower pointer, but it points to invalid data.
         return false;
+    }
+
+    @Nullable
+    public Integer tryCustomProcessFormat(final int tagId, final int formatCode, final int componentCount)
+    {
+        if (formatCode == 13)
+            return componentCount * 4;
+
+        return null;
     }
 
     public boolean customProcessTag(final int tagOffset,

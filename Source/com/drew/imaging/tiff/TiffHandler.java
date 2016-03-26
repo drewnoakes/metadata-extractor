@@ -23,6 +23,7 @@ package com.drew.imaging.tiff;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Set;
@@ -51,6 +52,9 @@ public interface TiffHandler
     void endingIFD();
 
     void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset);
+
+    @Nullable
+    Integer tryCustomProcessFormat(int tagId, int formatCode, int componentCount);
 
     boolean customProcessTag(int tagOffset,
                              @NotNull Set<Integer> processedIfdOffsets,
