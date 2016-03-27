@@ -44,6 +44,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class NikonType2MakernoteDirectory extends Directory
 {
     /**

@@ -31,6 +31,7 @@ import java.util.HashMap;
  *
  * @author Yuri Binev, Drew Noakes
  */
+@SuppressWarnings("WeakerAccess")
 public class JfifDirectory extends Directory
 {
     public static final int TAG_VERSION = 5;

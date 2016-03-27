@@ -39,6 +39,7 @@ import java.util.Collections;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class ExifReader implements JpegSegmentMetadataReader
 {
     /** Exif data stored in JPEG files' APP1 segment are preceded by this six character preamble. */

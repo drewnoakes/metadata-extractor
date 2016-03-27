@@ -30,6 +30,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class KyoceraMakernoteDirectory extends Directory
 {
     public static final int TAG_PROPRIETARY_THUMBNAIL = 0x0001;

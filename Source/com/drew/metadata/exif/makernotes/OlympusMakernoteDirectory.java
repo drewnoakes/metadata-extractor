@@ -33,6 +33,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class OlympusMakernoteDirectory extends Directory
 {
     /** Used by Konica / Minolta cameras. */

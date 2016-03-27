@@ -34,6 +34,7 @@ import static com.drew.metadata.exif.makernotes.PentaxMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDirectory>
 {
     public PentaxMakernoteDescriptor(@NotNull PentaxMakernoteDirectory directory)

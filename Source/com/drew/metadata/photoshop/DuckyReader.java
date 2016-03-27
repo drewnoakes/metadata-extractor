@@ -35,6 +35,7 @@ import java.util.Collections;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class DuckyReader implements JpegSegmentMetadataReader
 {
     @NotNull

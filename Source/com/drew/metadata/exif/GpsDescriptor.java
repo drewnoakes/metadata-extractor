@@ -35,6 +35,7 @@ import static com.drew.metadata.exif.GpsDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class GpsDescriptor extends TagDescriptor<GpsDirectory>
 {
     public GpsDescriptor(@NotNull GpsDirectory directory)

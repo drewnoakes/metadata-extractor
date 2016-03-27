@@ -44,6 +44,7 @@ import static com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory.*;
  * @author Drew Noakes https://drewnoakes.com
  * @author Philipp Sandhaus
  */
+@SuppressWarnings("WeakerAccess")
 public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakernoteDirectory>
 {
     public PanasonicMakernoteDescriptor(@NotNull PanasonicMakernoteDirectory directory)

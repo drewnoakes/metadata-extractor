@@ -34,6 +34,7 @@ import static com.drew.metadata.xmp.XmpDirectory.*;
  *
  * @author Torsten Skadell, Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class XmpDescriptor extends TagDescriptor<XmpDirectory>
 {
     // TODO some of these methods look similar to those found in Exif*Descriptor... extract common functionality from both

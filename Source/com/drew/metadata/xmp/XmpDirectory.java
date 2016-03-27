@@ -38,6 +38,7 @@ import java.util.*;
  * @author Torsten Skadell
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class XmpDirectory extends Directory
 {
     public static final int TAG_XMP_VALUE_COUNT = 0xFFFF;

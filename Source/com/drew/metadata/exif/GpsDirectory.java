@@ -36,6 +36,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class GpsDirectory extends ExifDirectoryBase
 {
     /** GPS tag version GPSVersionID 0 0 BYTE 4 */

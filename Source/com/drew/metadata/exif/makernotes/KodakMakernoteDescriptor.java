@@ -31,6 +31,7 @@ import static com.drew.metadata.exif.makernotes.KodakMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class KodakMakernoteDescriptor extends TagDescriptor<KodakMakernoteDirectory>
 {
     public KodakMakernoteDescriptor(@NotNull KodakMakernoteDirectory directory)

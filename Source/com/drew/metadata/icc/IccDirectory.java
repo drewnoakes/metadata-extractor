@@ -29,6 +29,7 @@ import java.util.HashMap;
  * @author Yuri Binev
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class IccDirectory extends Directory
 {
     // These (smaller valued) tags have an integer value that's equal to their offset within the ICC data buffer.

@@ -27,6 +27,7 @@ import com.drew.metadata.TagDescriptor;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class WebpDescriptor extends TagDescriptor<WebpDirectory>
 {
     public WebpDescriptor(@NotNull WebpDirectory directory)

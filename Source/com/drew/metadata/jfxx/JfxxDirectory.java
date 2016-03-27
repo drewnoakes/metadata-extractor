@@ -31,6 +31,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes
  */
+@SuppressWarnings("WeakerAccess")
 public class JfxxDirectory extends Directory
 {
     public static final int TAG_EXTENSION_CODE = 5;

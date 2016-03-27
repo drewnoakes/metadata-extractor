@@ -33,6 +33,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class CasioType1MakernoteDirectory extends Directory
 {
     public static final int TAG_RECORDING_MODE = 0x0001;

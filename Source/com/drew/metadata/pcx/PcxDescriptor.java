@@ -30,6 +30,7 @@ import static com.drew.metadata.pcx.PcxDirectory.*;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class PcxDescriptor extends TagDescriptor<PcxDirectory>
 {
     public PcxDescriptor(@NotNull PcxDirectory directory)

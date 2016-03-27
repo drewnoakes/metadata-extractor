@@ -29,6 +29,7 @@ import java.util.HashMap;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class PngChromaticitiesDirectory extends Directory
 {
     public static final int TAG_WHITE_POINT_X = 1;

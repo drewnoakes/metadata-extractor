@@ -38,6 +38,7 @@ import static com.drew.metadata.exif.makernotes.KyoceraMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class KyoceraMakernoteDescriptor extends TagDescriptor<KyoceraMakernoteDirectory>
 {
     public KyoceraMakernoteDescriptor(@NotNull KyoceraMakernoteDirectory directory)

@@ -27,6 +27,7 @@ import com.drew.lang.annotations.NotNull;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class ExifSubIFDDescriptor extends ExifDescriptorBase<ExifSubIFDDirectory>
 {
     public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory)

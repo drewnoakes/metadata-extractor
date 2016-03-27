@@ -33,6 +33,7 @@ import static com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class LeicaMakernoteDescriptor extends TagDescriptor<LeicaMakernoteDirectory>
 {
     public LeicaMakernoteDescriptor(@NotNull LeicaMakernoteDirectory directory)

@@ -31,6 +31,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class SonyType6MakernoteDirectory extends Directory
 {
     public static final int TAG_MAKERNOTE_THUMB_OFFSET = 0x0513;

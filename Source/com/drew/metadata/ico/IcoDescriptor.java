@@ -30,6 +30,7 @@ import static com.drew.metadata.ico.IcoDirectory.*;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class IcoDescriptor extends TagDescriptor<IcoDirectory>
 {
     public IcoDescriptor(@NotNull IcoDirectory directory)

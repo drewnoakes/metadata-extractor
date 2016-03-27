@@ -30,6 +30,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class RicohMakernoteDirectory extends Directory
 {
     public static final int TAG_MAKERNOTE_DATA_TYPE = 0x0001;

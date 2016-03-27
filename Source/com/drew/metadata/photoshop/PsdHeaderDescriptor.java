@@ -30,6 +30,7 @@ import static com.drew.metadata.photoshop.PsdHeaderDirectory.*;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class PsdHeaderDescriptor extends TagDescriptor<PsdHeaderDirectory>
 {
     public PsdHeaderDescriptor(@NotNull PsdHeaderDirectory directory)

@@ -31,6 +31,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class SanyoMakernoteDirectory extends Directory
 {
     public static final int TAG_MAKERNOTE_OFFSET = 0x00ff;

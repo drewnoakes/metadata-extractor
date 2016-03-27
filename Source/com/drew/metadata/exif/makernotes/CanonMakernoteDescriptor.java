@@ -33,6 +33,7 @@ import static com.drew.metadata.exif.makernotes.CanonMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirectory>
 {
     public CanonMakernoteDescriptor(@NotNull CanonMakernoteDirectory directory)

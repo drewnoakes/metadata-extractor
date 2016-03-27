@@ -39,6 +39,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class NikonType1MakernoteDirectory extends Directory
 {
     public static final int TAG_UNKNOWN_1 = 0x0002;

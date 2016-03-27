@@ -29,6 +29,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class ExifSubIFDDirectory extends ExifDirectoryBase
 {
     /** This tag is a pointer to the Exif Interop IFD. */

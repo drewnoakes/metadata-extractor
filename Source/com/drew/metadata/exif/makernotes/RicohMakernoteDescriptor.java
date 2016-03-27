@@ -32,6 +32,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirectory>
 {
     public RicohMakernoteDescriptor(@NotNull RicohMakernoteDirectory directory)

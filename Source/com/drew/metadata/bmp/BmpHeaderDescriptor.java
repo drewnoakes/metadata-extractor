@@ -29,6 +29,7 @@ import static com.drew.metadata.bmp.BmpHeaderDirectory.*;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
 {
     public BmpHeaderDescriptor(@NotNull BmpHeaderDirectory directory)

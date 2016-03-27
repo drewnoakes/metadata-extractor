@@ -32,6 +32,7 @@ import java.util.HashMap;
  *
  * @author Darrell Silver http://www.darrellsilver.com and Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class JpegDirectory extends Directory
 {
     public static final int TAG_COMPRESSION_TYPE = -3;

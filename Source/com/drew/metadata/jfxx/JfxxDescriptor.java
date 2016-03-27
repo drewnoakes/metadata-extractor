@@ -36,6 +36,7 @@ import static com.drew.metadata.jfxx.JfxxDirectory.*;
  *
  * @author Drew Noakes
  */
+@SuppressWarnings("WeakerAccess")
 public class JfxxDescriptor extends TagDescriptor<JfxxDirectory>
 {
     public JfxxDescriptor(@NotNull JfxxDirectory directory)

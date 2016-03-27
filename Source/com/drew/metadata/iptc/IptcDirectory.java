@@ -37,6 +37,7 @@ import java.util.List;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class IptcDirectory extends Directory
 {
     // IPTC EnvelopeRecord Tags

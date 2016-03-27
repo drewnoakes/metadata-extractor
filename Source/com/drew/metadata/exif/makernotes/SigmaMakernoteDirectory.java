@@ -31,6 +31,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class SigmaMakernoteDirectory extends Directory
 {
     public static final int TAG_SERIAL_NUMBER = 0x2;

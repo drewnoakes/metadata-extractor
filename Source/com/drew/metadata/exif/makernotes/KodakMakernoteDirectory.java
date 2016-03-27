@@ -30,6 +30,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class KodakMakernoteDirectory extends Directory
 {
     public final static int TAG_KODAK_MODEL = 0;

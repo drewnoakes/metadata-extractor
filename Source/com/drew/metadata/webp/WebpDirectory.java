@@ -28,6 +28,7 @@ import java.util.HashMap;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class WebpDirectory extends Directory
 {
     public static final int TAG_IMAGE_HEIGHT = 1;

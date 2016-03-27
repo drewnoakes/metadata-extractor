@@ -40,6 +40,7 @@ import static com.drew.metadata.exif.makernotes.OlympusCameraSettingsMakernoteDi
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<OlympusCameraSettingsMakernoteDirectory>
 {
     public OlympusCameraSettingsMakernoteDescriptor(@NotNull OlympusCameraSettingsMakernoteDirectory directory)

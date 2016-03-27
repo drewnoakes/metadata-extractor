@@ -35,6 +35,7 @@ import static com.drew.metadata.photoshop.PhotoshopDirectory.*;
  * @author Yuri Binev
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
 {
     public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory)

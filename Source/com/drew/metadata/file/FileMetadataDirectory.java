@@ -28,6 +28,7 @@ import java.util.HashMap;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class FileMetadataDirectory extends Directory
 {
     public static final int TAG_FILE_NAME = 1;

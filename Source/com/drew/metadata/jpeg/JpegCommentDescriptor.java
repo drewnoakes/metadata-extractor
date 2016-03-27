@@ -29,6 +29,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class JpegCommentDescriptor extends TagDescriptor<JpegCommentDirectory>
 {
     public JpegCommentDescriptor(@NotNull JpegCommentDirectory directory)
