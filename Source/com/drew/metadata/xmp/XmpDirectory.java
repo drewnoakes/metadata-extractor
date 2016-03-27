@@ -61,6 +61,15 @@ public class XmpDirectory extends Directory
     public static final int TAG_DATETIME_ORIGINAL = 0x000d;
     public static final int TAG_DATETIME_DIGITIZED = 0x000e;
 
+    // Properties in the XMP namespace
+    public static final int TAG_BASE_URL = 0x0201;
+    public static final int TAG_CREATE_DATE = 0x0202;
+    public static final int TAG_CREATOR_TOOL = 0x0203;
+    public static final int TAG_IDENTIFIER = 0x0204;
+    public static final int TAG_METADATA_DATE = 0x0205;
+    public static final int TAG_MODIFY_DATE = 0x0206;
+    public static final int TAG_NICKNAME = 0x0207;
+
     /**
      * A value from 0 to 5, or -1 if the image is rejected.
      */
@@ -124,6 +133,13 @@ public class XmpDirectory extends Directory
         _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
         _tagNameMap.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
 
+        _tagNameMap.put(TAG_BASE_URL, "Base URL");
+        _tagNameMap.put(TAG_CREATE_DATE, "Create Date");
+        _tagNameMap.put(TAG_CREATOR_TOOL, "Creator Tool");
+        _tagNameMap.put(TAG_IDENTIFIER, "Identifier");
+        _tagNameMap.put(TAG_METADATA_DATE, "Metadata Date");
+        _tagNameMap.put(TAG_MODIFY_DATE, "Modify Date");
+        _tagNameMap.put(TAG_NICKNAME, "Nickname");
         _tagNameMap.put(TAG_RATING, "Rating");
         _tagNameMap.put(TAG_LABEL, "Label");
 
@@ -165,6 +181,13 @@ public class XmpDirectory extends Directory
         _tagPropNameMap.put(TAG_DATETIME_ORIGINAL, "exif:DateTimeOriginal");
         _tagPropNameMap.put(TAG_DATETIME_DIGITIZED, "exif:DateTimeDigitized");
 
+        _tagPropNameMap.put(TAG_BASE_URL, "xmp:BaseURL");
+        _tagPropNameMap.put(TAG_CREATE_DATE, "xmp:CreateDate");
+        _tagPropNameMap.put(TAG_CREATOR_TOOL, "xmp:CreatorTool");
+        _tagPropNameMap.put(TAG_IDENTIFIER, "xmp:Identifier");
+        _tagPropNameMap.put(TAG_METADATA_DATE, "xmp:MetadataDate");
+        _tagPropNameMap.put(TAG_MODIFY_DATE, "xmp:ModifyDate");
+        _tagPropNameMap.put(TAG_NICKNAME, "xmp:Nickname");
         _tagPropNameMap.put(TAG_RATING, "xmp:Rating");
         _tagPropNameMap.put(TAG_LABEL, "xmp:Label");
 
@@ -206,6 +229,13 @@ public class XmpDirectory extends Directory
         _tagSchemaMap.put(TAG_DATETIME_ORIGINAL, Schema.EXIF_SPECIFIC_PROPERTIES);
         _tagSchemaMap.put(TAG_DATETIME_DIGITIZED, Schema.EXIF_SPECIFIC_PROPERTIES);
 
+        _tagSchemaMap.put(TAG_BASE_URL, Schema.XMP_PROPERTIES);
+        _tagSchemaMap.put(TAG_CREATE_DATE, Schema.XMP_PROPERTIES);
+        _tagSchemaMap.put(TAG_CREATOR_TOOL, Schema.XMP_PROPERTIES);
+        _tagSchemaMap.put(TAG_IDENTIFIER, Schema.XMP_PROPERTIES);
+        _tagSchemaMap.put(TAG_METADATA_DATE, Schema.XMP_PROPERTIES);
+        _tagSchemaMap.put(TAG_MODIFY_DATE, Schema.XMP_PROPERTIES);
+        _tagSchemaMap.put(TAG_NICKNAME, Schema.XMP_PROPERTIES);
         _tagSchemaMap.put(TAG_RATING, Schema.XMP_PROPERTIES);
         _tagSchemaMap.put(TAG_LABEL, Schema.XMP_PROPERTIES);
 
@@ -480,8 +510,13 @@ public class XmpDirectory extends Directory
 
     public void updateDate(int tagType, Date value)
     {
+        updateDate(tagType, value, TimeZone.getDefault());
+    }
+
+    public void updateDate(int tagType, Date value, TimeZone timeZone)
+    {
         super.setDate(tagType, value);
-        XMPDateTime date = new XMPDateTimeImpl(value, TimeZone.getDefault());
+        XMPDateTime date = new XMPDateTimeImpl(value, timeZone);
         try
         {
             getXMPMeta().setPropertyDate(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), date);
