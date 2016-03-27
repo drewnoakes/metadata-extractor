@@ -31,11 +31,13 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@link ExifSubIFDDirectory}, {@link ExifIFD0Directory}, {@link ExifThumbnailDirectory}.
+ * Unit tests for {@link ExifSubIFDDirectory}, {@link ExifIFD0Directory}, {@link ExifThumbnailDirectory} and
+ * {@link GpsDirectory}.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -58,6 +60,40 @@ public class ExifDirectoryTest
         assertEquals("Exif SubIFD", subIFDDirectory.getName());
         assertEquals("Exif Thumbnail", thumbDirectory.getName());
         assertEquals("GPS", gpsDirectory.getName());
+    }
+
+    @Test
+    public void testDateTime() throws JpegProcessingException, IOException, MetadataException
+    {
+        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2a.jpg.app1");
+
+        ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        ExifSubIFDDirectory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+
+        assertNotNull(exifIFD0Directory);
+        assertNotNull(exifSubIFDDirectory);
+
+        assertEquals("2003:10:15 10:37:08", exifIFD0Directory.getString(ExifIFD0Directory.TAG_DATETIME));
+        assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME));
+        assertEquals("2003:10:15 10:37:08", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+        assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME_ORIGINAL));
+        assertEquals("2003:10:15 10:37:08", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED));
+        assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME_DIGITIZED));
+
+        assertEquals(1066214228800L, exifIFD0Directory.getDate(
+            ExifIFD0Directory.TAG_DATETIME,
+            exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME),
+            null
+        ).getTime());
+        assertEquals(1066210628800L, exifIFD0Directory.getDate(
+            ExifIFD0Directory.TAG_DATETIME,
+            exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME),
+            TimeZone.getTimeZone("GMT+0100")
+        ).getTime());
+        assertEquals(1066214228800L, exifSubIFDDirectory.getDateOriginal().getTime());
+        assertEquals(1066210628800L, exifSubIFDDirectory.getDateOriginal(TimeZone.getTimeZone("GMT+0100")).getTime());
+        assertEquals(1066214228800L, exifSubIFDDirectory.getDateDegitized().getTime());
+        assertEquals(1066210628800L, exifSubIFDDirectory.getDateDegitized(TimeZone.getTimeZone("GMT+0100")).getTime());
     }
 
     @Test

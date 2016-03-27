@@ -729,12 +729,12 @@ public abstract class Directory
      * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
      * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
-     * the current {@link TimeZone}.  If the {@link TimeZone} is known, call the overload that accepts one as an argument.
+     * the GMT {@link TimeZone}.  If the {@link TimeZone} is known, call the overload that accepts one as an argument.
      */
     @Nullable
     public java.util.Date getDate(int tagType)
     {
-        return getDate(tagType, null);
+        return getDate(tagType, null, null);
     }
 
     /**
@@ -742,24 +742,41 @@ public abstract class Directory
      * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
      * the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).  Note that this parameter
-     * is only considered if the underlying value is a string and parsing occurs, otherwise it has no effect.
+     * is only considered if the underlying value is a string and it has no time zone information, otherwise it has no effect.
      */
     @Nullable
     public java.util.Date getDate(int tagType, @Nullable TimeZone timeZone)
     {
-        Object o = getObject(tagType);
+        return getDate(tagType, null, timeZone);
+    }
 
-        if (o == null)
-            return null;
+    /**
+     * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
+     * <p>
+     * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
+     * the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).  Note that this parameter
+     * is only considered if the underlying value is a string and it has no time zone information, otherwise it has no effect.
+     * In addition, the {@code subsecond} parameter, which specifies the number of digits after the decimal point in the seconds,
+     * is set to the returned Date. This parameter is only considered if the underlying value is a string and is has
+     * no subsecond information, otherwise it has no effect.
+     *
+     * @param tagType the tag identifier
+     * @param subsecond the subsecond value for the Date
+     * @param timeZone the time zone to use
+     * @return a Date representing the time value
+     */
+    @Nullable
+    public java.util.Date getDate(int tagType, @Nullable String subsecond, @Nullable TimeZone timeZone)
+    {
+        Object o = getObject(tagType);
 
         if (o instanceof java.util.Date)
             return (java.util.Date)o;
 
         java.util.Date date = null;
-        String subsecond = null;
 
         if (o instanceof String) {
-            // This seems to cover all known Exif date strings
+            // This seems to cover all known Exif and Xmp date strings
             // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
             String datePatterns[] = {
                     "yyyy:MM:dd HH:mm:ss",
@@ -775,6 +792,7 @@ public abstract class Directory
                     "yyyy" };
             String dateString = (String)o;
 
+            // if the date string has subsecond information, it supersedes the subsecond parameter
             Pattern subsecondPattern = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)(\\.\\d+)");
             Matcher subsecondMatcher = subsecondPattern.matcher(dateString);
             if (subsecondMatcher.find()) {

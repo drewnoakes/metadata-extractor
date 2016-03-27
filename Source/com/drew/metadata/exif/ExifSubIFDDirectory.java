@@ -21,8 +21,11 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * Describes Exif tags from the SubIFD directory.
@@ -60,5 +63,61 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
+    }
+
+    /**
+     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
+     * representing the date and time when this image was captured.  Attempts will be made to parse the
+     * values as though it is in the GMT {@link TimeZone}.
+     *
+     * @return A Date object representing when this image was captured, if possible, otherwise null
+     */
+    @Nullable
+    public Date getDateOriginal()
+    {
+        return getDateOriginal(null);
+    }
+
+    /**
+     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
+     * representing the date and time when this image was captured.  Attempts will be made to parse the
+     * values as though it is in the {@link TimeZone} represented by the {@code timeZone} parameter
+     * (if it is non-null).
+     *
+     * @param timeZone the time zone to use
+     * @return A Date object representing when this image was captured, if possible, otherwise null
+     */
+    @Nullable
+    public Date getDateOriginal(TimeZone timeZone)
+    {
+        return getDate(TAG_DATETIME_ORIGINAL, getString(TAG_SUBSECOND_TIME_ORIGINAL), timeZone);
+    }
+
+    /**
+     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
+     * representing the date and time when this image was degitized.  Attempts will be made to parse the
+     * values as though it is in the GMT {@link TimeZone}.
+     *
+     * @return A Date object representing when this image was degitized, if possible, otherwise null
+     */
+    @Nullable
+    public Date getDateDegitized()
+    {
+        return getDateDegitized(null);
+    }
+
+    /**
+     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
+     * representing the date and time when this image was degitized.  Attempts will be made to parse the
+     * values as though it is in the {@link TimeZone} represented by the {@code timeZone} parameter
+     * (if it is non-null).
+     *
+     * @param timeZone the time zone to use
+     * @return A Date object representing when this image was degitized, if possible, otherwise null
+     */
+    @Nullable
+    public Date getDateDegitized(TimeZone timeZone)
+    {
+        return getDate(TAG_DATETIME_DIGITIZED, getString(TAG_SUBSECOND_TIME_DIGITIZED), timeZone);
     }
 }
