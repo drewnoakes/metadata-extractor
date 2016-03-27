@@ -170,7 +170,7 @@ public class TiffReader
                     if (byteCountOverride == null) {
                         // This error suggests that we are processing at an incorrect index and will generate
                         // rubbish until we go out of bounds (which may be a while).  Exit now.
-                        handler.error("Invalid TIFF tag format code " + formatCode + " for tag 0x" + Integer.toHexString(tagId));
+                        handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
                         // TODO specify threshold as a parameter, or provide some other external control over this behaviour
                         if (++invalidTiffFormatCodeCount > 5) {
                             handler.error("Stopping processing as too many errors seen in TIFF IFD");
@@ -367,7 +367,7 @@ public class TiffReader
                 }
                 break;
             default:
-                handler.error(String.format("Invalid TIFF tag format code %d for tag %d", formatCode, tagId));
+                handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
         }
     }
 
