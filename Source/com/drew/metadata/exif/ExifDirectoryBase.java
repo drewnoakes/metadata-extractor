@@ -139,6 +139,10 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_TILE_OFFSETS                      = 0x0144;
     public static final int TAG_TILE_BYTE_COUNTS                  = 0x0145;
 
+    /**
+     * Tag is a pointer to one or more sub-IFDs.
+     + Seems to be used exclusively by raw formats, referencing one or two IFDs.
+     */
     public static final int TAG_SUB_IFD_OFFSET                    = 0x014a;
 
     public static final int TAG_TRANSFER_RANGE                    = 0x0156;

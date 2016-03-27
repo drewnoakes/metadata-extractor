@@ -68,6 +68,11 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
     public boolean tryEnterSubIfd(int tagId)
     {
+        if (tagId == ExifDirectoryBase.TAG_SUB_IFD_OFFSET) {
+            pushDirectory(ExifSubIFDDirectory.class);
+            return true;
+        }
+
         if (_currentDirectory instanceof ExifIFD0Directory) {
             if (tagId == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET) {
                 pushDirectory(ExifSubIFDDirectory.class);
