@@ -87,6 +87,18 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             }
         }
 
+        if (_currentDirectory instanceof OlympusMakernoteDirectory) {
+            if (tagId == OlympusMakernoteDirectory.TAG_EQUIPMENT) {
+                pushDirectory(OlympusEquipmentMakernoteDirectory.class);
+                return true;
+            }
+
+            if (tagId == OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS) {
+                pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
+                return true;
+            }
+        }
+
         return false;
     }
 

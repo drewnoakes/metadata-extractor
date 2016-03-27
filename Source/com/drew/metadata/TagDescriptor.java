@@ -283,6 +283,23 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
+    protected String getRationalOrDoubleString(int tagType)
+    {
+        Rational rational = _directory.getRational(tagType);
+        if (rational != null)
+            return rational.toSimpleString(true);
+
+        Double d = _directory.getDoubleObject(tagType);
+        if (d != null)
+        {
+            DecimalFormat format = new DecimalFormat("0.###");
+            return format.format(d);
+        }
+
+        return null;
+    }
+
+    @Nullable
     protected static String getFStopDescription(double fStop)
     {
         DecimalFormat format = new DecimalFormat("0.0");
