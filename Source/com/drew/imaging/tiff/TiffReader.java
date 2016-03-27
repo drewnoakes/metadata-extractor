@@ -210,16 +210,22 @@ public class TiffReader
                     continue;
                 }
 
-                //
-                // Special handling for tags that point to other IFDs
-                //
-                if (byteCount == 4 && handler.isTagIfdPointer(tagId)) {
-                    final int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset);
-                    processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
-                } else {
-                    if (!handler.customProcessTag(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount)) {
-                        processTag(handler, tagId, tagValueOffset, componentCount, formatCode, reader);
+                // Some tags point to one or more additional IFDs to process
+                boolean isIfdPointer = false;
+                if (byteCount == 4 * componentCount) {
+                    for (int i = 0; i < componentCount; i++) {
+                        if (handler.tryEnterSubIfd(tagId)) {
+                            isIfdPointer = true;
+                            int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset + i * 4);
+                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
+                        }
                     }
+                }
+
+                // If it wasn't an IFD pointer, allow custom tag processing to occur
+                if (!isIfdPointer && !handler.customProcessTag(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount)) {
+                    // If no custom processing occurred, process the tag in the standard fashion
+                    processTag(handler, tagId, tagValueOffset, componentCount, formatCode, reader);
                 }
             }
 

@@ -66,7 +66,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
     }
 
-    public boolean isTagIfdPointer(int tagId)
+    public boolean tryEnterSubIfd(int tagId)
     {
         if (_currentDirectory instanceof ExifIFD0Directory) {
             if (tagId == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET) {
