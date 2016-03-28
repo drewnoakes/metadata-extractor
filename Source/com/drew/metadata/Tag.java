@@ -116,7 +116,7 @@ public class Tag
     }
 
     /**
-     * A basic representation of the tag's type and value.  EG: <code>[FNumber] F2.8</code>.
+     * A basic representation of the tag's type and value.  EG: <code>[FNumber] f/2.8</code>.
      *
      * @return the tag's type and value
      */
