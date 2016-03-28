@@ -63,6 +63,7 @@ public class WebpRiffHandler implements RiffHandler
     {
         return fourCC.equals("VP8X")
             || fourCC.equals("VP8L")
+            || fourCC.equals("VP8 ")
             || fourCC.equals("EXIF")
             || fourCC.equals("ICCP")
             || fourCC.equals("XMP ");
@@ -128,6 +129,31 @@ public class WebpRiffHandler implements RiffHandler
                 WebpDirectory directory = new WebpDirectory();
                 directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, widthMinusOne + 1);
                 directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1);
+
+                _metadata.addDirectory(directory);
+
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
+        } else if (fourCC.equals("VP8 ") && payload.length > 9) {
+            RandomAccessReader reader = new ByteArrayReader(payload);
+            reader.setMotorolaByteOrder(false);
+
+            try {
+                // https://tools.ietf.org/html/rfc6386#section-9.1
+                // https://github.com/webmproject/libwebp/blob/master/src/enc/syntax.c#L115
+
+                // Expect the signature bytes
+                if (reader.getUInt8(3) != 0x9D ||
+                    reader.getUInt8(4) != 0x01 ||
+                    reader.getUInt8(5) != 0x2A)
+                    return;
+                int width = reader.getUInt16(6);
+                int height = reader.getUInt16(8);
+
+                WebpDirectory directory = new WebpDirectory();
+                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, width);
+                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, height);
 
                 _metadata.addDirectory(directory);
 
