@@ -62,6 +62,7 @@ public class WebpRiffHandler implements RiffHandler
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals("VP8X")
+            || fourCC.equals("VP8L")
             || fourCC.equals("EXIF")
             || fourCC.equals("ICCP")
             || fourCC.equals("XMP ");
@@ -99,6 +100,34 @@ public class WebpRiffHandler implements RiffHandler
                 directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1);
                 directory.setBoolean(WebpDirectory.TAG_HAS_ALPHA, hasAlpha);
                 directory.setBoolean(WebpDirectory.TAG_IS_ANIMATION, isAnimation);
+
+                _metadata.addDirectory(directory);
+
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
+        } else if (fourCC.equals("VP8L") && payload.length > 4) {
+            RandomAccessReader reader = new ByteArrayReader(payload);
+            reader.setMotorolaByteOrder(false);
+
+            try {
+                // https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification#2_riff_header
+
+                // Expect the signature byte
+                if (reader.getInt8(0) != 0x2F)
+                    return;
+                int b1 = reader.getUInt8(1);
+                int b2 = reader.getUInt8(2);
+                int b3 = reader.getUInt8(3);
+                int b4 = reader.getUInt8(4);
+                // 14 bits for width
+                int widthMinusOne = (b2 & 0x3F) << 8 | b1;
+                // 14 bits for height
+                int heightMinusOne = (b4 & 0x0F) << 10 | b3 << 2 | (b2 & 0xC0) >> 6;
+
+                WebpDirectory directory = new WebpDirectory();
+                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, widthMinusOne + 1);
+                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1);
 
                 _metadata.addDirectory(directory);
 
