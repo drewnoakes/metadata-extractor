@@ -53,7 +53,7 @@ public class Tag
 
     /**
      * Gets the tag type in hex notation as a String with padded leading
-     * zeroes if necessary (i.e. <code>0x100E</code>).
+     * zeroes if necessary (i.e. <code>0x100e</code>).
      *
      * @return the tag type as a string in hexadecimal notation
      */
@@ -114,7 +114,7 @@ public class Tag
     }
 
     /**
-     * A basic representation of the tag's type and value.  EG: <code>[FNumber] f/2.8</code>.
+     * A basic representation of the tag's type and value.  EG: <code>[Exif IFD0] FNumber - f/2.8</code>.
      *
      * @return the tag's type and value
      */
