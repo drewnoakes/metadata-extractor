@@ -95,28 +95,28 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
 
     /**
      * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
-     * representing the date and time when this image was degitized.  Attempts will be made to parse the
+     * representing the date and time when this image was digitized.  Attempts will be made to parse the
      * values as though it is in the GMT {@link TimeZone}.
      *
-     * @return A Date object representing when this image was degitized, if possible, otherwise null
+     * @return A Date object representing when this image was digitized, if possible, otherwise null
      */
     @Nullable
-    public Date getDateDegitized()
+    public Date getDateDigitized()
     {
-        return getDateDegitized(null);
+        return getDateDigitized(null);
     }
 
     /**
      * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
-     * representing the date and time when this image was degitized.  Attempts will be made to parse the
+     * representing the date and time when this image was digitized.  Attempts will be made to parse the
      * values as though it is in the {@link TimeZone} represented by the {@code timeZone} parameter
      * (if it is non-null).
      *
      * @param timeZone the time zone to use
-     * @return A Date object representing when this image was degitized, if possible, otherwise null
+     * @return A Date object representing when this image was digitized, if possible, otherwise null
      */
     @Nullable
-    public Date getDateDegitized(TimeZone timeZone)
+    public Date getDateDigitized(TimeZone timeZone)
     {
         return getDate(TAG_DATETIME_DIGITIZED, getString(TAG_SUBSECOND_TIME_DIGITIZED), timeZone);
     }

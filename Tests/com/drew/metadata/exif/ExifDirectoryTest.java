@@ -92,8 +92,8 @@ public class ExifDirectoryTest
         ).getTime());
         assertEquals(1066214228800L, exifSubIFDDirectory.getDateOriginal().getTime());
         assertEquals(1066210628800L, exifSubIFDDirectory.getDateOriginal(TimeZone.getTimeZone("GMT+0100")).getTime());
-        assertEquals(1066214228800L, exifSubIFDDirectory.getDateDegitized().getTime());
-        assertEquals(1066210628800L, exifSubIFDDirectory.getDateDegitized(TimeZone.getTimeZone("GMT+0100")).getTime());
+        assertEquals(1066214228800L, exifSubIFDDirectory.getDateDigitized().getTime());
+        assertEquals(1066210628800L, exifSubIFDDirectory.getDateDigitized(TimeZone.getTimeZone("GMT+0100")).getTime());
     }
 
     @Test
