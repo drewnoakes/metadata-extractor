@@ -275,7 +275,7 @@ public class XmpDirectory extends Directory
     @NotNull
     public String getName()
     {
-        return "Xmp";
+        return "XMP";
     }
 
     @Override
