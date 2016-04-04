@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Describes Exif tags that contain Global Positioning System (GPS) data.
@@ -209,7 +210,7 @@ public class GpsDirectory extends ExifDirectoryBase
         if (timeComponents == null || timeComponents.length != 3)
             return null;
 
-        String dateTime = String.format("%s %02d:%02d:%02.3f UTC",
+        String dateTime = String.format(Locale.US, "%s %02d:%02d:%02.3f UTC",
             date, timeComponents[0].intValue(), timeComponents[1].intValue(), timeComponents[2].doubleValue());
         try {
             DateFormat parser = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.S z");
