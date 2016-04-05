@@ -21,6 +21,7 @@
 package com.drew.imaging.tiff;
 
 import com.drew.lang.RandomAccessFileReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -63,9 +64,15 @@ public class TiffMetadataReader
         // InputStream does not support seeking backwards, so we wrap it with RandomAccessStreamReader, which
         // buffers data from the stream as we seek forward.
 
+        return readMetadata(new RandomAccessStreamReader(inputStream));
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull RandomAccessReader reader) throws IOException, TiffProcessingException
+    {
         Metadata metadata = new Metadata();
         ExifTiffHandler handler = new ExifTiffHandler(metadata, false);
-        new TiffReader().processTiff(new RandomAccessStreamReader(inputStream), handler, 0);
+        new TiffReader().processTiff(reader, handler, 0);
         return metadata;
     }
 }
