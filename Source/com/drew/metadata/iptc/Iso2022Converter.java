@@ -20,16 +20,24 @@
  */
 package com.drew.metadata.iptc;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-
 public final class Iso2022Converter
 {
+	/**
+	 * this system parameter can be used to add additional encodings to the guess list
+	 */
+	public static final String ADDITIONAL_ENCODINGS_PARAM = "com.drew.metadata.iptc.additionalEncodings";
+	
     private static final String ISO_8859_1 = "ISO-8859-1";
     private static final String UTF_8 = "UTF-8";
 
@@ -64,6 +72,7 @@ public final class Iso2022Converter
      * <ul>
      *     <li>UTF-8</li>
      *     <li><code>System.getProperty("file.encoding")</code></li>
+     *     <li>list of additional encodings from system parameter {@link Iso2022Converter#ADDITIONAL_ENCODINGS_PARAM} split by comma if any is provided</li>
      *     <li>ISO-8859-1</li>
      * </ul>
      * <p>
@@ -80,16 +89,13 @@ public final class Iso2022Converter
     @Nullable
     static String guessEncoding(@NotNull final byte[] bytes)
     {
-        String[] encodings = { UTF_8, System.getProperty("file.encoding"), ISO_8859_1 };
-
-        for (String encoding : encodings)
+        for (String encoding : getEncodingsToGuess())
         {
-            CharsetDecoder cs = Charset.forName(encoding).newDecoder();
-
             try {
+            	CharsetDecoder cs = Charset.forName(encoding).newDecoder();
                 cs.decode(ByteBuffer.wrap(bytes));
                 return encoding;
-            } catch (CharacterCodingException e) {
+            } catch (Exception e) {
                 // fall through...
             }
         }
@@ -100,4 +106,20 @@ public final class Iso2022Converter
 
     private Iso2022Converter()
     {}
+    
+    private static List<String> getEncodingsToGuess() {
+    	List<String> result = new ArrayList<String>();
+    	result.add(UTF_8);
+    	result.add(System.getProperty("file.encoding"));
+    	result.addAll(getAdditionalEncodings());
+    	result.add(ISO_8859_1);
+    	return result;
+    }
+
+	private static List<String> getAdditionalEncodings() {
+		String param = System.getProperty(ADDITIONAL_ENCODINGS_PARAM);
+		if (param == null || "".equals(param)) return Collections.emptyList();
+		return Arrays.asList(param.split(","));
+	}
+	
 }
