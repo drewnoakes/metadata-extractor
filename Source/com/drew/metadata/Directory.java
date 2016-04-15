@@ -63,6 +63,9 @@ public abstract class Directory
     /** The descriptor used to interpret tag values. */
     protected TagDescriptor _descriptor;
 
+    @Nullable
+    private Directory _parent;
+
 // ABSTRACT METHODS
 
     /**
@@ -175,6 +178,17 @@ public abstract class Directory
     public int getErrorCount()
     {
         return _errorList.size();
+    }
+
+    @Nullable
+    public Directory getParent()
+    {
+        return _parent;
+    }
+
+    public void setParent(@NotNull Directory parent)
+    {
+        _parent = parent;
     }
 
 // TAG SETTERS

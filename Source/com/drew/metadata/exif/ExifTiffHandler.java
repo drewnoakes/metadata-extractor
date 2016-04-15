@@ -48,10 +48,13 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 {
     private final boolean _storeThumbnailBytes;
 
-    public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes)
+    public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes, @Nullable Directory parentDirectory)
     {
         super(metadata, ExifIFD0Directory.class);
         _storeThumbnailBytes = storeThumbnailBytes;
+
+        if (parentDirectory != null)
+            _currentDirectory.setParent(parentDirectory);
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException
@@ -150,15 +153,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // NOTE Adobe sets type 4 for IPTC instead of 7
             if (reader.getInt8(tagOffset) == 0x1c) {
                 final byte[] iptcBytes = reader.getBytes(tagOffset, byteCount);
-                new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), _metadata, iptcBytes.length);
+                new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), _metadata, iptcBytes.length, _currentDirectory);
                 return true;
             }
             return false;
         }
 
         // Custom processing for embedded XMP data
-        if(tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && _currentDirectory instanceof ExifIFD0Directory) {
-            new XmpReader().extract(reader.getNullTerminatedString(tagOffset, byteCount), _metadata);
+        if (tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && _currentDirectory instanceof ExifIFD0Directory) {
+            new XmpReader().extract(reader.getNullTerminatedString(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
         }
 

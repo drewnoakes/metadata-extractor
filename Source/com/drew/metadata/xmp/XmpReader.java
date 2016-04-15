@@ -29,6 +29,8 @@ import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.util.Collections;
@@ -109,7 +111,20 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
+        extract(xmpBytes, metadata, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    {
         XmpDirectory directory = new XmpDirectory();
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
 
         try {
             XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBytes);
@@ -129,7 +144,20 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)
     {
+        extract(xmpString, metadata, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    {
         XmpDirectory directory = new XmpDirectory();
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
 
         try {
             XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmpString);

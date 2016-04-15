@@ -46,7 +46,7 @@ public class TiffMetadataReader
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
         try {
-            ExifTiffHandler handler = new ExifTiffHandler(metadata, false);
+            ExifTiffHandler handler = new ExifTiffHandler(metadata, false, null);
             new TiffReader().processTiff(new RandomAccessFileReader(randomAccessFile), handler, 0);
         } finally {
             randomAccessFile.close();
@@ -71,7 +71,7 @@ public class TiffMetadataReader
     public static Metadata readMetadata(@NotNull RandomAccessReader reader) throws IOException, TiffProcessingException
     {
         Metadata metadata = new Metadata();
-        ExifTiffHandler handler = new ExifTiffHandler(metadata, false);
+        ExifTiffHandler handler = new ExifTiffHandler(metadata, false, null);
         new TiffReader().processTiff(reader, handler, 0);
         return metadata;
     }

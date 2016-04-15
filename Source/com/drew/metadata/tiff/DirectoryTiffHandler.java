@@ -62,7 +62,9 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     {
         _directoryStack.push(_currentDirectory);
         try {
-            _currentDirectory = directoryClass.newInstance();
+            Directory newDirectory = directoryClass.newInstance();
+            newDirectory.setParent(_currentDirectory);
+            _currentDirectory = newDirectory;
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
