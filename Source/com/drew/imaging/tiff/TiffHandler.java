@@ -54,7 +54,7 @@ public interface TiffHandler
     void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset);
 
     @Nullable
-    Integer tryCustomProcessFormat(int tagId, int formatCode, int componentCount);
+    Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);
 
     boolean customProcessTag(int tagOffset,
                              @NotNull Set<Integer> processedIfdOffsets,

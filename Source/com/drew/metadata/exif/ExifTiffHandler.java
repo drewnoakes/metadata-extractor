@@ -125,7 +125,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     }
 
     @Nullable
-    public Integer tryCustomProcessFormat(final int tagId, final int formatCode, final int componentCount)
+    public Long tryCustomProcessFormat(final int tagId, final int formatCode, final long componentCount)
     {
         if (formatCode == 13)
             return componentCount * 4;
