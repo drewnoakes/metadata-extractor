@@ -152,7 +152,7 @@ public class PngMetadataReader
                 int bytesLeft = bytes.length - profileName.length() - 2;
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
                 InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
-                new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata);
+                new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
                 inflateStream.close();
             } else {
                 directory.addError("Invalid compression method value");

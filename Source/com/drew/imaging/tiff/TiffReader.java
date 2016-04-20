@@ -158,15 +158,11 @@ public class TiffReader
                 final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode);
 
                 // 4 bytes dictate the number of components in this tag's data
-                final int componentCount = reader.getInt32(tagOffset + 4);
-                if (componentCount < 0) {
-                    handler.error("Negative TIFF tag component count");
-                    continue;
-                }
+                final long componentCount = reader.getUInt32(tagOffset + 4);
 
-                int byteCount;
+                final long byteCount;
                 if (format == null) {
-                    Integer byteCountOverride = handler.tryCustomProcessFormat(tagId, formatCode, componentCount);
+                    Long byteCountOverride = handler.tryCustomProcessFormat(tagId, formatCode, componentCount);
                     if (byteCountOverride == null) {
                         // This error suggests that we are processing at an incorrect index and will generate
                         // rubbish until we go out of bounds (which may be a while).  Exit now.
@@ -183,10 +179,10 @@ public class TiffReader
                     byteCount = componentCount * format.getComponentSizeBytes();
                 }
 
-                final int tagValueOffset;
+                final long tagValueOffset;
                 if (byteCount > 4) {
                     // If it's bigger than 4 bytes, the dir entry contains an offset.
-                    final int offsetVal = reader.getInt32(tagOffset + 8);
+                    final long offsetVal = reader.getUInt32(tagOffset + 8);
                     if (offsetVal + byteCount > reader.getLength()) {
                         // Bogus pointer offset and / or byteCount value
                         handler.error("Illegal TIFF tag pointer offset");
@@ -216,16 +212,16 @@ public class TiffReader
                     for (int i = 0; i < componentCount; i++) {
                         if (handler.tryEnterSubIfd(tagId)) {
                             isIfdPointer = true;
-                            int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset + i * 4);
+                            int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
                             processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
                         }
                     }
                 }
 
                 // If it wasn't an IFD pointer, allow custom tag processing to occur
-                if (!isIfdPointer && !handler.customProcessTag(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount)) {
+                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
                     // If no custom processing occurred, process the tag in the standard fashion
-                    processTag(handler, tagId, tagValueOffset, componentCount, formatCode, reader);
+                    processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
                 }
             }
 

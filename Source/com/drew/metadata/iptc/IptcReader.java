@@ -25,6 +25,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
@@ -76,8 +77,19 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
     {
+        extract(reader, metadata, length, null);
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory)
+    {
         IptcDirectory directory = new IptcDirectory();
         metadata.addDirectory(directory);
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
 
         int offset = 0;
 

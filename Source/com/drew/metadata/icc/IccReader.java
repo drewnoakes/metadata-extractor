@@ -26,6 +26,7 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.DateUtil;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
@@ -90,9 +91,17 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory)
+    {
         // TODO review whether the 'tagPtr' values below really do require RandomAccessReader or whether SequentialReader may be used instead
 
         IccDirectory directory = new IccDirectory();
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
 
         try {
             int profileByteCount = reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT);

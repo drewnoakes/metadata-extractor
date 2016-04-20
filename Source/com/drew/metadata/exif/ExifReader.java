@@ -27,6 +27,8 @@ import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
@@ -84,11 +86,17 @@ public class ExifReader implements JpegSegmentMetadataReader
     /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset)
     {
+        extract(reader, metadata, readerOffset, null);
+    }
+
+    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory)
+    {
         try {
             // Read the TIFF-formatted Exif data
             new TiffReader().processTiff(
                 reader,
-                new ExifTiffHandler(metadata, _storeThumbnailBytes),
+                new ExifTiffHandler(metadata, _storeThumbnailBytes, parentDirectory),
                 readerOffset
             );
         } catch (TiffProcessingException e) {

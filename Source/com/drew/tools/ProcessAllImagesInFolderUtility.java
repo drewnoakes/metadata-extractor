@@ -317,11 +317,38 @@ public class ProcessAllImagesInFolderUtility
                         if (directory.getTagCount() != 0)
                             writer.write(NEW_LINE);
                     }
+
+                    // Write file structure
+                    writeHierarchyLevel(metadata, writer, null, 0);
+
+                    writer.write(NEW_LINE);
                 } finally {
                     closeWriter(writer);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        private static void writeHierarchyLevel(@NotNull Metadata metadata, @NotNull PrintWriter writer, @Nullable Directory parent, int level)
+        {
+            final int indent = 4;
+
+            for (Directory child : metadata.getDirectories()) {
+                if (parent == null) {
+                    if (child.getParent() != null)
+                        continue;
+                } else if (!parent.equals(child.getParent())) {
+                    continue;
+                }
+
+                for (int i = 0; i < level*indent; i++) {
+                    writer.write(' ');
+                }
+                writer.write("- ");
+                writer.write(child.getName());
+                writer.write(NEW_LINE);
+                writeHierarchyLevel(metadata, writer, child, level + 1);
             }
         }
 
