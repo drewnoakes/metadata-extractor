@@ -672,6 +672,12 @@ public class CanonMakernoteDirectory extends Directory
     {
         // TODO is there some way to drop out 'null' or 'zero' values that are present in the array to reduce the noise?
 
+        if (!(array instanceof int[])) {
+            // no special handling...
+            super.setObjectArray(tagType, array);
+            return;
+        }
+
         // Certain Canon tags contain arrays of values that we split into 'fake' tags as each
         // index in the array has its own meaning and decoding.
         // Pick those tags out here and throw away the original array.
