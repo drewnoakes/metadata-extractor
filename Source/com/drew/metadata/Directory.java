@@ -466,6 +466,10 @@ public abstract class Directory
             int[] ints = (int[])o;
             if (ints.length == 1)
                 return ints[0];
+        } else if (o instanceof short[]) {
+            short[] shorts = (short[])o;
+            if (shorts.length == 1)
+                return (int)shorts[0];
         }
         return null;
     }
