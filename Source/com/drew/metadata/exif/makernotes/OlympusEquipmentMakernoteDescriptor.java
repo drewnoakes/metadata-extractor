@@ -53,48 +53,48 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     {
         switch (tagType) {
             case TAG_EQUIPMENT_VERSION:
-                return GetEquipmentVersionDescription();
+                return getEquipmentVersionDescription();
             case TAG_FOCAL_PLANE_DIAGONAL:
-                return GetFocalPlaneDiagonalDescription();
+                return getFocalPlaneDiagonalDescription();
             case TAG_BODY_FIRMWARE_VERSION:
-                return GetBodyFirmwareVersionDescription();
+                return getBodyFirmwareVersionDescription();
             case TAG_LENS_TYPE:
-                return GetLensTypeDescription();
+                return getLensTypeDescription();
             case TAG_LENS_FIRMWARE_VERSION:
-                return GetLensFirmwareVersionDescription();
+                return getLensFirmwareVersionDescription();
             case TAG_MAX_APERTURE_AT_MIN_FOCAL:
-                return GetMaxApertureAtMinFocalDescription();
+                return getMaxApertureAtMinFocalDescription();
             case TAG_MAX_APERTURE_AT_MAX_FOCAL:
-                return GetMaxApertureAtMaxFocalDescription();
+                return getMaxApertureAtMaxFocalDescription();
             case TAG_MAX_APERTURE:
-                return GetMaxApertureDescription();
+                return getMaxApertureDescription();
             case TAG_LENS_PROPERTIES:
-                return GetLensPropertiesDescription();
+                return getLensPropertiesDescription();
             case TAG_EXTENDER:
-                return GetExtenderDescription();
+                return getExtenderDescription();
             case TAG_FLASH_TYPE:
-                return GetFlashTypeDescription();
+                return getFlashTypeDescription();
             case TAG_FLASH_MODEL:
-                return GetFlashModelDescription();
+                return getFlashModelDescription();
             default:
                 return super.getDescription(tagType);
         }
     }
 
     @Nullable
-    public String GetEquipmentVersionDescription()
+    public String getEquipmentVersionDescription()
     {
         return getVersionBytesDescription(TAG_EQUIPMENT_VERSION, 4);
     }
 
     @Nullable
-    public String GetFocalPlaneDiagonalDescription()
+    public String getFocalPlaneDiagonalDescription()
     {
         return _directory.getString(TAG_FOCAL_PLANE_DIAGONAL) + " mm";
     }
 
     @Nullable
-    public String GetBodyFirmwareVersionDescription()
+    public String getBodyFirmwareVersionDescription()
     {
         Integer value = _directory.getInteger(TAG_BODY_FIRMWARE_VERSION);
         if (value == null)
@@ -107,7 +107,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetLensTypeDescription()
+    public String getLensTypeDescription()
     {
         String str = _directory.getString(TAG_LENS_TYPE);
 
@@ -140,7 +140,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetLensFirmwareVersionDescription()
+    public String getLensFirmwareVersionDescription()
     {
         Integer value = _directory.getInteger(TAG_LENS_FIRMWARE_VERSION);
         if (value == null)
@@ -153,7 +153,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetMaxApertureAtMinFocalDescription()
+    public String getMaxApertureAtMinFocalDescription()
     {
         Integer value = _directory.getInteger(TAG_MAX_APERTURE_AT_MIN_FOCAL);
         if (value == null)
@@ -164,7 +164,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetMaxApertureAtMaxFocalDescription()
+    public String getMaxApertureAtMaxFocalDescription()
     {
         Integer value = _directory.getInteger(TAG_MAX_APERTURE_AT_MAX_FOCAL);
         if (value == null)
@@ -175,7 +175,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetMaxApertureDescription()
+    public String getMaxApertureDescription()
     {
         Integer value = _directory.getInteger(TAG_MAX_APERTURE);
         if (value == null)
@@ -191,7 +191,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetLensPropertiesDescription()
+    public String getLensPropertiesDescription()
     {
         Integer value = _directory.getInteger(TAG_LENS_PROPERTIES);
         if (value == null)
@@ -201,7 +201,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetExtenderDescription()
+    public String getExtenderDescription()
     {
         String str = _directory.getString(TAG_EXTENDER);
 
@@ -234,14 +234,14 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     }
 
     @Nullable
-    public String GetFlashTypeDescription()
+    public String getFlashTypeDescription()
     {
         return getIndexedDescription(TAG_FLASH_TYPE,
             "None", null, "Simple E-System", "E-System");
     }
 
     @Nullable
-    public String GetFlashModelDescription()
+    public String getFlashModelDescription()
     {
         return getIndexedDescription(TAG_FLASH_MODEL,
             "None", "FL-20", "FL-50", "RF-11", "TF-22", "FL-36", "FL-50R", "FL-36R");
