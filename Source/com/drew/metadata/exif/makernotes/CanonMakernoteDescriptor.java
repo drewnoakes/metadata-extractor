@@ -25,6 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 
 import static com.drew.metadata.exif.makernotes.CanonMakernoteDirectory.*;
 
@@ -507,9 +508,9 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         if (value == null)
             return null;
 
-        if (value == 0xFFFF)
-            return "N/A";
-        return Integer.toString(value);
+        return _lensTypeById.containsKey(value)
+            ? _lensTypeById.get(value)
+            : String.format("Unknown (%d)", value);
     }
 
     @Nullable
@@ -935,5 +936,220 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
             frac = 0x40 / 3;
 
         return sign * (val + frac) / (double)0x20;
+    }
+
+    /**
+     *  Map from <see cref="CanonMakernoteDirectory.CameraSettings.TagLensType"/> to string descriptions.
+     *
+     *  Data sourced from http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Canon.html#LensType
+     *
+     *  Note that only Canon lenses are listed. Lenses from other manufacturers may identify themselves to the camera
+     *  as being from this set, but in fact may be quite different. This limits the usefulness of this data,
+     *  unfortunately.
+     */
+    private static final HashMap<Integer, String> _lensTypeById = new HashMap<Integer, String>();
+
+    static {
+        _lensTypeById.put(1, "Canon EF 50mm f/1.8");
+        _lensTypeById.put(2, "Canon EF 28mm f/2.8");
+        _lensTypeById.put(3, "Canon EF 135mm f/2.8 Soft");
+        _lensTypeById.put(4, "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens");
+        _lensTypeById.put(5, "Canon EF 35-70mm f/3.5-4.5");
+        _lensTypeById.put(6, "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens");
+        _lensTypeById.put(7, "Canon EF 100-300mm f/5.6L");
+        _lensTypeById.put(8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens");
+        _lensTypeById.put(9, "Canon EF 70-210mm f/4");
+        _lensTypeById.put(10, "Canon EF 50mm f/2.5 Macro or Sigma Lens");
+        _lensTypeById.put(11, "Canon EF 35mm f/2");
+        _lensTypeById.put(13, "Canon EF 15mm f/2.8 Fisheye");
+        _lensTypeById.put(14, "Canon EF 50-200mm f/3.5-4.5L");
+        _lensTypeById.put(15, "Canon EF 50-200mm f/3.5-4.5");
+        _lensTypeById.put(16, "Canon EF 35-135mm f/3.5-4.5");
+        _lensTypeById.put(17, "Canon EF 35-70mm f/3.5-4.5A");
+        _lensTypeById.put(18, "Canon EF 28-70mm f/3.5-4.5");
+        _lensTypeById.put(20, "Canon EF 100-200mm f/4.5A");
+        _lensTypeById.put(21, "Canon EF 80-200mm f/2.8L");
+        _lensTypeById.put(22, "Canon EF 20-35mm f/2.8L or Tokina Lens");
+        _lensTypeById.put(23, "Canon EF 35-105mm f/3.5-4.5");
+        _lensTypeById.put(24, "Canon EF 35-80mm f/4-5.6 Power Zoom");
+        _lensTypeById.put(25, "Canon EF 35-80mm f/4-5.6 Power Zoom");
+        _lensTypeById.put(26, "Canon EF 100mm f/2.8 Macro or Other Lens");
+        _lensTypeById.put(27, "Canon EF 35-80mm f/4-5.6");
+        _lensTypeById.put(28, "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens");
+        _lensTypeById.put(29, "Canon EF 50mm f/1.8 II");
+        _lensTypeById.put(30, "Canon EF 35-105mm f/4.5-5.6");
+        _lensTypeById.put(31, "Canon EF 75-300mm f/4-5.6 or Tamron Lens");
+        _lensTypeById.put(32, "Canon EF 24mm f/2.8 or Sigma Lens");
+        _lensTypeById.put(33, "Voigtlander or Carl Zeiss Lens");
+        _lensTypeById.put(35, "Canon EF 35-80mm f/4-5.6");
+        _lensTypeById.put(36, "Canon EF 38-76mm f/4.5-5.6");
+        _lensTypeById.put(37, "Canon EF 35-80mm f/4-5.6 or Tamron Lens");
+        _lensTypeById.put(38, "Canon EF 80-200mm f/4.5-5.6");
+        _lensTypeById.put(39, "Canon EF 75-300mm f/4-5.6");
+        _lensTypeById.put(40, "Canon EF 28-80mm f/3.5-5.6");
+        _lensTypeById.put(41, "Canon EF 28-90mm f/4-5.6");
+        _lensTypeById.put(42, "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens");
+        _lensTypeById.put(43, "Canon EF 28-105mm f/4-5.6");
+        _lensTypeById.put(44, "Canon EF 90-300mm f/4.5-5.6");
+        _lensTypeById.put(45, "Canon EF-S 18-55mm f/3.5-5.6 [II]");
+        _lensTypeById.put(46, "Canon EF 28-90mm f/4-5.6");
+        _lensTypeById.put(47, "Zeiss Milvus 35mm f/2 or 50mm f/2");
+        _lensTypeById.put(48, "Canon EF-S 18-55mm f/3.5-5.6 IS");
+        _lensTypeById.put(49, "Canon EF-S 55-250mm f/4-5.6 IS");
+        _lensTypeById.put(50, "Canon EF-S 18-200mm f/3.5-5.6 IS");
+        _lensTypeById.put(51, "Canon EF-S 18-135mm f/3.5-5.6 IS");
+        _lensTypeById.put(52, "Canon EF-S 18-55mm f/3.5-5.6 IS II");
+        _lensTypeById.put(53, "Canon EF-S 18-55mm f/3.5-5.6 III");
+        _lensTypeById.put(54, "Canon EF-S 55-250mm f/4-5.6 IS II");
+        _lensTypeById.put(94, "Canon TS-E 17mm f/4L");
+        _lensTypeById.put(95, "Canon TS-E 24.0mm f/3.5 L II");
+        _lensTypeById.put(124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo");
+        _lensTypeById.put(125, "Canon TS-E 24mm f/3.5L");
+        _lensTypeById.put(126, "Canon TS-E 45mm f/2.8");
+        _lensTypeById.put(127, "Canon TS-E 90mm f/2.8");
+        _lensTypeById.put(129, "Canon EF 300mm f/2.8L");
+        _lensTypeById.put(130, "Canon EF 50mm f/1.0L");
+        _lensTypeById.put(131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens");
+        _lensTypeById.put(132, "Canon EF 1200mm f/5.6L");
+        _lensTypeById.put(134, "Canon EF 600mm f/4L IS");
+        _lensTypeById.put(135, "Canon EF 200mm f/1.8L");
+        _lensTypeById.put(136, "Canon EF 300mm f/2.8L");
+        _lensTypeById.put(137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens");
+        _lensTypeById.put(138, "Canon EF 28-80mm f/2.8-4L");
+        _lensTypeById.put(139, "Canon EF 400mm f/2.8L");
+        _lensTypeById.put(140, "Canon EF 500mm f/4.5L");
+        _lensTypeById.put(141, "Canon EF 500mm f/4.5L");
+        _lensTypeById.put(142, "Canon EF 300mm f/2.8L IS");
+        _lensTypeById.put(143, "Canon EF 500mm f/4L IS or Sigma Lens");
+        _lensTypeById.put(144, "Canon EF 35-135mm f/4-5.6 USM");
+        _lensTypeById.put(145, "Canon EF 100-300mm f/4.5-5.6 USM");
+        _lensTypeById.put(146, "Canon EF 70-210mm f/3.5-4.5 USM");
+        _lensTypeById.put(147, "Canon EF 35-135mm f/4-5.6 USM");
+        _lensTypeById.put(148, "Canon EF 28-80mm f/3.5-5.6 USM");
+        _lensTypeById.put(149, "Canon EF 100mm f/2 USM");
+        _lensTypeById.put(150, "Canon EF 14mm f/2.8L or Sigma Lens");
+        _lensTypeById.put(151, "Canon EF 200mm f/2.8L");
+        _lensTypeById.put(152, "Canon EF 300mm f/4L IS or Sigma Lens");
+        _lensTypeById.put(153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens");
+        _lensTypeById.put(154, "Canon EF 20mm f/2.8 USM or Zeiss Lens");
+        _lensTypeById.put(155, "Canon EF 85mm f/1.8 USM");
+        _lensTypeById.put(156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens");
+        _lensTypeById.put(160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens");
+        _lensTypeById.put(161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens");
+        _lensTypeById.put(162, "Canon EF 200mm f/2.8L");
+        _lensTypeById.put(163, "Canon EF 300mm f/4L");
+        _lensTypeById.put(164, "Canon EF 400mm f/5.6L");
+        _lensTypeById.put(165, "Canon EF 70-200mm f/2.8 L");
+        _lensTypeById.put(166, "Canon EF 70-200mm f/2.8 L + 1.4x");
+        _lensTypeById.put(167, "Canon EF 70-200mm f/2.8 L + 2x");
+        _lensTypeById.put(168, "Canon EF 28mm f/1.8 USM or Sigma Lens");
+        _lensTypeById.put(169, "Canon EF 17-35mm f/2.8L or Sigma Lens");
+        _lensTypeById.put(170, "Canon EF 200mm f/2.8L II");
+        _lensTypeById.put(171, "Canon EF 300mm f/4L");
+        _lensTypeById.put(172, "Canon EF 400mm f/5.6L or Sigma Lens");
+        _lensTypeById.put(173, "Canon EF 180mm Macro f/3.5L or Sigma Lens");
+        _lensTypeById.put(174, "Canon EF 135mm f/2L or Other Lens");
+        _lensTypeById.put(175, "Canon EF 400mm f/2.8L");
+        _lensTypeById.put(176, "Canon EF 24-85mm f/3.5-4.5 USM");
+        _lensTypeById.put(177, "Canon EF 300mm f/4L IS");
+        _lensTypeById.put(178, "Canon EF 28-135mm f/3.5-5.6 IS");
+        _lensTypeById.put(179, "Canon EF 24mm f/1.4L");
+        _lensTypeById.put(180, "Canon EF 35mm f/1.4L or Other Lens");
+        _lensTypeById.put(181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens");
+        _lensTypeById.put(182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens");
+        _lensTypeById.put(183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens");
+        _lensTypeById.put(184, "Canon EF 400mm f/2.8L + 2x");
+        _lensTypeById.put(185, "Canon EF 600mm f/4L IS");
+        _lensTypeById.put(186, "Canon EF 70-200mm f/4L");
+        _lensTypeById.put(187, "Canon EF 70-200mm f/4L + 1.4x");
+        _lensTypeById.put(188, "Canon EF 70-200mm f/4L + 2x");
+        _lensTypeById.put(189, "Canon EF 70-200mm f/4L + 2.8x");
+        _lensTypeById.put(190, "Canon EF 100mm f/2.8 Macro USM");
+        _lensTypeById.put(191, "Canon EF 400mm f/4 DO IS");
+        _lensTypeById.put(193, "Canon EF 35-80mm f/4-5.6 USM");
+        _lensTypeById.put(194, "Canon EF 80-200mm f/4.5-5.6 USM");
+        _lensTypeById.put(195, "Canon EF 35-105mm f/4.5-5.6 USM");
+        _lensTypeById.put(196, "Canon EF 75-300mm f/4-5.6 USM");
+        _lensTypeById.put(197, "Canon EF 75-300mm f/4-5.6 IS USM");
+        _lensTypeById.put(198, "Canon EF 50mm f/1.4 USM or Zeiss Lens");
+        _lensTypeById.put(199, "Canon EF 28-80mm f/3.5-5.6 USM");
+        _lensTypeById.put(200, "Canon EF 75-300mm f/4-5.6 USM");
+        _lensTypeById.put(201, "Canon EF 28-80mm f/3.5-5.6 USM");
+        _lensTypeById.put(202, "Canon EF 28-80mm f/3.5-5.6 USM IV");
+        _lensTypeById.put(208, "Canon EF 22-55mm f/4-5.6 USM");
+        _lensTypeById.put(209, "Canon EF 55-200mm f/4.5-5.6");
+        _lensTypeById.put(210, "Canon EF 28-90mm f/4-5.6 USM");
+        _lensTypeById.put(211, "Canon EF 28-200mm f/3.5-5.6 USM");
+        _lensTypeById.put(212, "Canon EF 28-105mm f/4-5.6 USM");
+        _lensTypeById.put(213, "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens");
+        _lensTypeById.put(214, "Canon EF-S 18-55mm f/3.5-5.6 USM");
+        _lensTypeById.put(215, "Canon EF 55-200mm f/4.5-5.6 II USM");
+        _lensTypeById.put(217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD");
+        _lensTypeById.put(224, "Canon EF 70-200mm f/2.8L IS");
+        _lensTypeById.put(225, "Canon EF 70-200mm f/2.8L IS + 1.4x");
+        _lensTypeById.put(226, "Canon EF 70-200mm f/2.8L IS + 2x");
+        _lensTypeById.put(227, "Canon EF 70-200mm f/2.8L IS + 2.8x");
+        _lensTypeById.put(228, "Canon EF 28-105mm f/3.5-4.5 USM");
+        _lensTypeById.put(229, "Canon EF 16-35mm f/2.8L");
+        _lensTypeById.put(230, "Canon EF 24-70mm f/2.8L");
+        _lensTypeById.put(231, "Canon EF 17-40mm f/4L");
+        _lensTypeById.put(232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM");
+        _lensTypeById.put(233, "Canon EF 28-300mm f/3.5-5.6L IS");
+        _lensTypeById.put(234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens");
+        _lensTypeById.put(235, "Canon EF-S 10-22mm f/3.5-4.5 USM");
+        _lensTypeById.put(236, "Canon EF-S 60mm f/2.8 Macro USM");
+        _lensTypeById.put(237, "Canon EF 24-105mm f/4L IS");
+        _lensTypeById.put(238, "Canon EF 70-300mm f/4-5.6 IS USM");
+        _lensTypeById.put(239, "Canon EF 85mm f/1.2L II");
+        _lensTypeById.put(240, "Canon EF-S 17-55mm f/2.8 IS USM");
+        _lensTypeById.put(241, "Canon EF 50mm f/1.2L");
+        _lensTypeById.put(242, "Canon EF 70-200mm f/4L IS");
+        _lensTypeById.put(243, "Canon EF 70-200mm f/4L IS + 1.4x");
+        _lensTypeById.put(244, "Canon EF 70-200mm f/4L IS + 2x");
+        _lensTypeById.put(245, "Canon EF 70-200mm f/4L IS + 2.8x");
+        _lensTypeById.put(246, "Canon EF 16-35mm f/2.8L II");
+        _lensTypeById.put(247, "Canon EF 14mm f/2.8L II USM");
+        _lensTypeById.put(248, "Canon EF 200mm f/2L IS or Sigma Lens");
+        _lensTypeById.put(249, "Canon EF 800mm f/5.6L IS");
+        _lensTypeById.put(250, "Canon EF 24mm f/1.4L II or Sigma Lens");
+        _lensTypeById.put(251, "Canon EF 70-200mm f/2.8L IS II USM");
+        _lensTypeById.put(252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x");
+        _lensTypeById.put(253, "Canon EF 70-200mm f/2.8L IS II USM + 2x");
+        _lensTypeById.put(254, "Canon EF 100mm f/2.8L Macro IS USM");
+        _lensTypeById.put(255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens");
+        _lensTypeById.put(488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM");
+        _lensTypeById.put(489, "Canon EF 70-300mm f/4-5.6L IS USM");
+        _lensTypeById.put(490, "Canon EF 8-15mm f/4L Fisheye USM");
+        _lensTypeById.put(491, "Canon EF 300mm f/2.8L IS II USM");
+        _lensTypeById.put(492, "Canon EF 400mm f/2.8L IS II USM");
+        _lensTypeById.put(493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM");
+        _lensTypeById.put(494, "Canon EF 600mm f/4.0L IS II USM");
+        _lensTypeById.put(495, "Canon EF 24-70mm f/2.8L II USM");
+        _lensTypeById.put(496, "Canon EF 200-400mm f/4L IS USM");
+        _lensTypeById.put(499, "Canon EF 200-400mm f/4L IS USM + 1.4x");
+        _lensTypeById.put(502, "Canon EF 28mm f/2.8 IS USM");
+        _lensTypeById.put(503, "Canon EF 24mm f/2.8 IS USM");
+        _lensTypeById.put(504, "Canon EF 24-70mm f/4L IS USM");
+        _lensTypeById.put(505, "Canon EF 35mm f/2 IS USM");
+        _lensTypeById.put(506, "Canon EF 400mm f/4 DO IS II USM");
+        _lensTypeById.put(507, "Canon EF 16-35mm f/4L IS USM");
+        _lensTypeById.put(508, "Canon EF 11-24mm f/4L USM");
+        _lensTypeById.put(747, "Canon EF 100-400mm f/4.5-5.6L IS II USM");
+        _lensTypeById.put(750, "Canon EF 35mm f/1.4L II USM");
+        _lensTypeById.put(4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM");
+        _lensTypeById.put(4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens");
+        _lensTypeById.put(4144, "Canon EF 40mm f/2.8 STM");
+        _lensTypeById.put(4145, "Canon EF-M 22mm f/2 STM");
+        _lensTypeById.put(4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM");
+        _lensTypeById.put(4147, "Canon EF-M 11-22mm f/4-5.6 IS STM");
+        _lensTypeById.put(4148, "Canon EF-S 55-250mm f/4-5.6 IS STM");
+        _lensTypeById.put(4149, "Canon EF-M 55-200mm f/4.5-6.3 IS STM");
+        _lensTypeById.put(4150, "Canon EF-S 10-18mm f/4.5-5.6 IS STM");
+        _lensTypeById.put(4152, "Canon EF 24-105mm f/3.5-5.6 IS STM");
+        _lensTypeById.put(4153, "Canon EF-M 15-45mm f/3.5-6.3 IS STM");
+        _lensTypeById.put(4154, "Canon EF-S 24mm f/2.8 STM");
+        _lensTypeById.put(4156, "Canon EF 50mm f/1.8 STM");
+        _lensTypeById.put(36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM");
+        _lensTypeById.put(65535, "N/A");
     }
 }
