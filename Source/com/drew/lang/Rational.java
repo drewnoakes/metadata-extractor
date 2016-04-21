@@ -174,6 +174,12 @@ public class Rational extends java.lang.Number implements Serializable
                 (_denominator == 0 && _numerator == 0);
     }
 
+    /** Checks if either the numerator or denominator are zero. */
+    public boolean isZero()
+    {
+        return _numerator == 0 || _denominator == 0;
+    }
+
     /**
      * Returns a string representation of the object of form <code>numerator/denominator</code>.
      *

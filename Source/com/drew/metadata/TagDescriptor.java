@@ -320,7 +320,7 @@ public class TagDescriptor<T extends Directory>
     {
         Rational[] values = _directory.getRationalArray(tag);
 
-        if (values == null || values.length != 4 || (values[0].doubleValue() == 0 && values[2].doubleValue() == 0))
+        if (values == null || values.length != 4 || (values[0].isZero() && values[2].isZero()))
             return null;
 
         StringBuilder sb = new StringBuilder();
@@ -330,7 +330,7 @@ public class TagDescriptor<T extends Directory>
         else
             sb.append(values[0].toSimpleString(true)).append('-').append(values[1].toSimpleString(true)).append("mm");
 
-        if (values[2].doubleValue() != 0) {
+        if (!values[2].isZero()) {
             sb.append(' ');
 
             DecimalFormat format = new DecimalFormat("0.0");
