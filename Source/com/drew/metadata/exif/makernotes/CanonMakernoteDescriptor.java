@@ -806,7 +806,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     public String getFocusContinuousDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FOCUS_CONTINUOUS, 0,
-            "Single", "Continous", null, null, null, null, null, null, "Manual");
+            "Single", "Continuous", null, null, null, null, null, null, "Manual");
     }
 
     @Nullable
