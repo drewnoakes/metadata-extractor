@@ -159,7 +159,7 @@ public class CanonMakernoteDirectory extends Directory
          */
         public static final int TAG_FOCUS_MODE_1 = OFFSET + 0x07;
         public static final int TAG_UNKNOWN_3 = OFFSET + 0x08;
-        public static final int TAG_UNKNOWN_4 = OFFSET + 0x09;
+        public static final int TAG_RECORD_MODE = OFFSET + 0x09;
         /**
          * 0 = Large
          * 1 = Medium
@@ -249,21 +249,32 @@ public class CanonMakernoteDirectory extends Directory
         public static final int TAG_LONG_FOCAL_LENGTH = OFFSET + 0x17;
         public static final int TAG_SHORT_FOCAL_LENGTH = OFFSET + 0x18;
         public static final int TAG_FOCAL_UNITS_PER_MM = OFFSET + 0x19;
-        public static final int TAG_UNKNOWN_9 = OFFSET + 0x1A;
-        public static final int TAG_UNKNOWN_10 = OFFSET + 0x1B;
+        public static final int TAG_MAX_APERTURE = OFFSET + 0x1A;
+        public static final int TAG_MIN_APERTURE = OFFSET + 0x1B;
         /**
          * 0 = Flash Did Not Fire
          * 1 = Flash Fired
          */
         public static final int TAG_FLASH_ACTIVITY = OFFSET + 0x1C;
         public static final int TAG_FLASH_DETAILS = OFFSET + 0x1D;
-        public static final int TAG_UNKNOWN_12 = OFFSET + 0x1E;
-        public static final int TAG_UNKNOWN_13 = OFFSET + 0x1F;
+        public static final int TAG_FOCUS_CONTINUOUS = OFFSET + 0x1E;
+        public static final int TAG_AE_SETTING = OFFSET + 0x1F;
         /**
          * 0 = Focus Mode: Single
          * 1 = Focus Mode: Continuous
          */
         public static final int TAG_FOCUS_MODE_2 = OFFSET + 0x20;
+
+        public static final int TAG_DISPLAY_APERTURE = OFFSET + 0x21;
+        public static final int TAG_ZOOM_SOURCE_WIDTH = OFFSET + 0x22;
+        public static final int TAG_ZOOM_TARGET_WIDTH = OFFSET + 0x23;
+
+        public static final int TAG_SPOT_METERING_MODE = OFFSET + 0x25;
+        public static final int TAG_PHOTO_EFFECT = OFFSET + 0x26;
+        public static final int TAG_MANUAL_FLASH_OUTPUT = OFFSET + 0x27;
+
+        public static final int TAG_COLOR_TONE = OFFSET + 0x29;
+        public static final int TAG_SRAW_QUALITY = OFFSET + 0x2D;
     }
 
     public final static class FocalLength
@@ -515,16 +526,24 @@ public class CanonMakernoteDirectory extends Directory
         _tagNameMap.put(CameraSettings.TAG_QUALITY, "Quality");
         _tagNameMap.put(CameraSettings.TAG_UNKNOWN_2, "Unknown Camera Setting 2");
         _tagNameMap.put(CameraSettings.TAG_UNKNOWN_3, "Unknown Camera Setting 3");
-        _tagNameMap.put(CameraSettings.TAG_UNKNOWN_4, "Unknown Camera Setting 4");
+        _tagNameMap.put(CameraSettings.TAG_RECORD_MODE, "Record Mode");
         _tagNameMap.put(CameraSettings.TAG_DIGITAL_ZOOM, "Digital Zoom");
         _tagNameMap.put(CameraSettings.TAG_FOCUS_TYPE, "Focus Type");
         _tagNameMap.put(CameraSettings.TAG_UNKNOWN_7, "Unknown Camera Setting 7");
         _tagNameMap.put(CameraSettings.TAG_LENS_TYPE, "Lens Type");
-        _tagNameMap.put(CameraSettings.TAG_UNKNOWN_9, "Unknown Camera Setting 9");
-        _tagNameMap.put(CameraSettings.TAG_UNKNOWN_10, "Unknown Camera Setting 10");
+        _tagNameMap.put(CameraSettings.TAG_MAX_APERTURE, "Max Aperture");
+        _tagNameMap.put(CameraSettings.TAG_MIN_APERTURE, "Min Aperture");
         _tagNameMap.put(CameraSettings.TAG_FLASH_ACTIVITY, "Flash Activity");
-        _tagNameMap.put(CameraSettings.TAG_UNKNOWN_12, "Unknown Camera Setting 12");
-        _tagNameMap.put(CameraSettings.TAG_UNKNOWN_13, "Unknown Camera Setting 13");
+        _tagNameMap.put(CameraSettings.TAG_FOCUS_CONTINUOUS, "Focus Continuous");
+        _tagNameMap.put(CameraSettings.TAG_AE_SETTING, "AE Setting");
+        _tagNameMap.put(CameraSettings.TAG_DISPLAY_APERTURE, "Display Aperture");
+        _tagNameMap.put(CameraSettings.TAG_ZOOM_SOURCE_WIDTH, "Zoom Source Width");
+        _tagNameMap.put(CameraSettings.TAG_ZOOM_TARGET_WIDTH, "Zoom Target Width");
+        _tagNameMap.put(CameraSettings.TAG_SPOT_METERING_MODE, "Spot Metering Mode");
+        _tagNameMap.put(CameraSettings.TAG_PHOTO_EFFECT, "Photo Effect");
+        _tagNameMap.put(CameraSettings.TAG_MANUAL_FLASH_OUTPUT, "Manual Flash Output");
+        _tagNameMap.put(CameraSettings.TAG_COLOR_TONE, "Color Tone");
+        _tagNameMap.put(CameraSettings.TAG_SRAW_QUALITY, "SRAW Quality");
 
         _tagNameMap.put(FocalLength.TAG_WHITE_BALANCE, "White Balance");
         _tagNameMap.put(FocalLength.TAG_SEQUENCE_NUMBER, "Sequence Number");
@@ -576,7 +595,7 @@ public class CanonMakernoteDirectory extends Directory
         _tagNameMap.put(AFInfo.TAG_AF_AREA_HEIGHT, "AF Area Height");
         _tagNameMap.put(AFInfo.TAG_AF_AREA_X_POSITIONS, "AF Area X Positions");
         _tagNameMap.put(AFInfo.TAG_AF_AREA_Y_POSITIONS, "AF Area Y Positions");
-        _tagNameMap.put(AFInfo.TAG_AF_POINTS_IN_FOCUS, "AF Points in Focus Count");
+        _tagNameMap.put(AFInfo.TAG_AF_POINTS_IN_FOCUS, "AF Points in Focus");
         _tagNameMap.put(AFInfo.TAG_PRIMARY_AF_POINT_1, "Primary AF Point 1");
         _tagNameMap.put(AFInfo.TAG_PRIMARY_AF_POINT_2, "Primary AF Point 2");
 
@@ -715,9 +734,59 @@ public class CanonMakernoteDirectory extends Directory
 //                    setInt(subTagTypeBase + i + 1, ints[i] & 0x0F);
 //                break;
             case TAG_AF_INFO_ARRAY: {
-                int[] ints = (int[])array;
-                for (int i = 0; i < ints.length; i++)
-                    setInt(AFInfo.OFFSET + i, ints[i]);
+                // Notes from Exiftool 10.10 by Phil Harvey, lib\Image\Exiftool\Canon.pm:
+                // Auto-focus information used by many older Canon models. The values in this
+                // record are sequential, and some have variable sizes based on the value of
+                // numafpoints (which may be 1,5,7,9,15,45, or 53). The AFArea coordinates are
+                // given in a system where the image has dimensions given by AFImageWidth and
+                // AFImageHeight, and 0,0 is the image center. The direction of the Y axis
+                // depends on the camera model, with positive Y upwards for EOS models, but
+                // apparently downwards for PowerShot models.
+
+                // AFInfo is another array with 'fake' tags. The first int of the array contains
+                // the number of AF points. Iterate through the array one byte at a time, generally
+                // assuming one byte corresponds to one tag UNLESS certain tag numbers are encountered.
+                // For these, read specific subsequent bytes from the array based on the tag type. The
+                // number of bytes read can vary.
+
+                int[] values = (int[])array;
+                int numafpoints = values[0];
+                int tagnumber = 0;
+                for (int i = 0; i < values.length; i++)
+                {
+                    // These two tags store 'numafpoints' bytes of data in the array
+                    if (AFInfo.OFFSET + tagnumber == AFInfo.TAG_AF_AREA_X_POSITIONS ||
+                        AFInfo.OFFSET + tagnumber == AFInfo.TAG_AF_AREA_Y_POSITIONS)
+                    {
+                        // There could be incorrect data in the array, so boundary check
+                        if (values.length - 1 >= (i + numafpoints))
+                        {
+                            short[] areaPositions = new short[numafpoints];
+                            for (int j = 0; j < areaPositions.length; j++)
+                                areaPositions[j] = (short)values[i + j];
+
+                            super.setObjectArray(AFInfo.OFFSET + tagnumber, areaPositions);
+                        }
+                        i += numafpoints - 1;   // assume these bytes are processed and skip
+                    }
+                    else if (AFInfo.OFFSET + tagnumber == AFInfo.TAG_AF_POINTS_IN_FOCUS)
+                    {
+                        short[] pointsInFocus = new short[((numafpoints + 15) / 16)];
+
+                        // There could be incorrect data in the array, so boundary check
+                        if (values.length - 1 >= (i + pointsInFocus.length))
+                        {
+                            for (int j = 0; j < pointsInFocus.length; j++)
+                                pointsInFocus[j] = (short)values[i + j];
+
+                            super.setObjectArray(AFInfo.OFFSET + tagnumber, pointsInFocus);
+                        }
+                        i += pointsInFocus.length - 1;  // assume these bytes are processed and skip
+                    }
+                    else
+                        super.setObjectArray(AFInfo.OFFSET + tagnumber, values[i]);
+                    tagnumber++;
+                }
                 break;
             }
             default: {

@@ -54,6 +54,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return getFocusTypeDescription();
             case CameraSettings.TAG_DIGITAL_ZOOM:
                 return getDigitalZoomDescription();
+            case CameraSettings.TAG_RECORD_MODE:
+                return getRecordModeDescription();
             case CameraSettings.TAG_QUALITY:
                 return getQualityDescription();
             case CameraSettings.TAG_MACRO_MODE:
@@ -102,6 +104,28 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return getAfPointUsedDescription();
             case FocalLength.TAG_FLASH_BIAS:
                 return getFlashBiasDescription();
+            case AFInfo.TAG_AF_POINTS_IN_FOCUS:
+                return getTagAfPointsInFocus();
+            case CameraSettings.TAG_MAX_APERTURE:
+                return getMaxApertureDescription();
+            case CameraSettings.TAG_MIN_APERTURE:
+                return getMinApertureDescription();
+            case CameraSettings.TAG_FOCUS_CONTINUOUS:
+                return getFocusContinuousDescription();
+            case CameraSettings.TAG_AE_SETTING:
+                return getAESettingDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_DISPLAY_APERTURE:
+                return getDisplayApertureDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_SPOT_METERING_MODE:
+                return getSpotMeteringModeDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_PHOTO_EFFECT:
+                return getPhotoEffectDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_MANUAL_FLASH_OUTPUT:
+                return getManualFlashOutputDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_COLOR_TONE:
+                return getColorToneDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_SRAW_QUALITY:
+                return getSRawQualityDescription();
 
             // It turns out that these values are dependent upon the camera model and therefore the below code was
             // incorrect for some Canon models.  This needs to be revisited.
@@ -346,7 +370,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         // not
         //  0, 0.33,  0.5, 0.66,  1
 
-        return ((isNegative) ? "-" : "") + Float.toString(value / 32f) + " EV";
+        return (isNegative ? "-" : "") + Float.toString(value / 32f) + " EV";
     }
 
     @Nullable
@@ -364,6 +388,28 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         } else {
             return "Unknown (" + value + ")";
         }
+    }
+
+    @Nullable
+    public String getTagAfPointsInFocus()
+    {
+        Integer value = _directory.getInteger(AFInfo.TAG_AF_POINTS_IN_FOCUS);
+        if (value == null)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 16; i++)
+        {
+            if ((value & 1 << i) != 0)
+            {
+                if (sb.length() != 0)
+                    sb.append(',');
+                sb.append(i);
+            }
+        }
+
+        return sb.length() == 0 ? "None" : sb.toString();
     }
 
     @Nullable
@@ -393,16 +439,16 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         Integer value = _directory.getInteger(CameraSettings.TAG_FLASH_DETAILS);
         if (value == null)
             return null;
-        if (((value >> 14) & 1) > 0) {
+        if (((value >> 14) & 1) != 0) {
             return "External E-TTL";
         }
-        if (((value >> 13) & 1) > 0) {
+        if (((value >> 13) & 1) != 0) {
             return "Internal flash";
         }
-        if (((value >> 11) & 1) > 0) {
+        if (((value >> 11) & 1) != 0) {
             return "FP sync used";
         }
-        if (((value >> 4) & 1) > 0) {
+        if (((value >> 4) & 1) != 0) {
             return "FP sync enabled";
         }
         return "Unknown (" + value + ")";
@@ -461,7 +507,31 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         if (value == null)
             return null;
 
-        return "Lens type: " + Integer.toString(value);
+        if (value == 0xFFFF)
+            return "N/A";
+        return Integer.toString(value);
+    }
+
+    @Nullable
+    public String getMaxApertureDescription()
+    {
+        Integer value = _directory.getInteger(CameraSettings.TAG_MAX_APERTURE);
+        if (value == null)
+            return null;
+        if (value > 512)
+            return String.format("Unknown (%d)", value);
+        return getFStopDescription(Math.exp(decodeCanonEv(value) * Math.log(2.0) / 2.0));
+    }
+
+    @Nullable
+    public String getMinApertureDescription()
+    {
+        Integer value = _directory.getInteger(CameraSettings.TAG_MIN_APERTURE);
+        if (value == null)
+            return null;
+        if (value > 512)
+            return String.format("Unknown (%d)", value);
+        return getFStopDescription(Math.exp(decodeCanonEv(value) * Math.log(2.0) / 2.0));
     }
 
     @Nullable
@@ -499,7 +569,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
 
         // Canon PowerShot S3 is special
         int canonMask = 0x4000;
-        if ((value & canonMask) > 0)
+        if ((value & canonMask) != 0)
             return "" + (value & ~canonMask);
 
         switch (value) {
@@ -700,6 +770,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     }
 
     @Nullable
+    public String getRecordModeDescription()
+    {
+        return getIndexedDescription(CameraSettings.TAG_RECORD_MODE, 1, "JPEG", "CRW+THM", "AVI+THM", "TIF", "TIF+JPEG", "CR2", "CR2+JPEG", null, "MOV", "MP4");
+    }
+
+    @Nullable
     public String getFocusTypeDescription()
     {
         Integer value = _directory.getInteger(CameraSettings.TAG_FOCUS_TYPE);
@@ -723,5 +799,141 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     public String getFlashActivityDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_FLASH_ACTIVITY, "Flash did not fire", "Flash fired");
+    }
+
+    @Nullable
+    public String getFocusContinuousDescription()
+    {
+        return getIndexedDescription(CameraSettings.TAG_FOCUS_CONTINUOUS, 0,
+            "Single", "Continous", null, null, null, null, null, null, "Manual");
+    }
+
+    @Nullable
+    public String getAESettingDescription()
+    {
+        return getIndexedDescription(CameraSettings.TAG_AE_SETTING, 0,
+            "Normal AE", "Exposure Compensation", "AE Lock", "AE Lock + Exposure Comp.", "No AE");
+    }
+
+    @Nullable
+    public String getDisplayApertureDescription()
+    {
+        Integer value = _directory.getInteger(CameraSettings.TAG_DISPLAY_APERTURE);
+        if (value == null)
+            return null;
+
+        if (value == 0xFFFF)
+            return value.toString();
+        return getFStopDescription(value / 10f);
+    }
+
+    @Nullable
+    public String getSpotMeteringModeDescription()
+    {
+        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_SPOT_METERING_MODE, 0,
+            "Center", "AF Point");
+    }
+
+    @Nullable
+    public String getPhotoEffectDescription()
+    {
+        Integer value = _directory.getInteger(CameraSettings.TAG_PHOTO_EFFECT);
+        if (value == null)
+            return null;
+
+        switch (value)
+        {
+            case 0:
+                return "Off";
+            case 1:
+                return "Vivid";
+            case 2:
+                return "Neutral";
+            case 3:
+                return "Smooth";
+            case 4:
+                return "Sepia";
+            case 5:
+                return "B&W";
+            case 6:
+                return "Custom";
+            case 100:
+                return "My Color Data";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getManualFlashOutputDescription()
+    {
+        Integer value = _directory.getInteger(CameraSettings.TAG_MANUAL_FLASH_OUTPUT);
+        if (value == null)
+            return null;
+
+        switch (value)
+        {
+            case 0:
+                return "n/a";
+            case 0x500:
+                return "Full";
+            case 0x502:
+                return "Medium";
+            case 0x504:
+                return "Low";
+            case 0x7fff:
+                return "n/a";   // (EOS models)
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getColorToneDescription()
+    {
+        Integer value = _directory.getInteger(CameraSettings.TAG_COLOR_TONE);
+        if (value == null)
+            return null;
+
+        return value == 0x7fff ? "n/a" : value.toString();
+    }
+
+    @Nullable
+    public String getSRawQualityDescription()
+    {
+        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_SRAW_QUALITY, 0, "n/a", "sRAW1 (mRAW)", "sRAW2 (sRAW)");
+    }
+
+    /**
+     * Canon hex-based EV (modulo 0x20) to real number.
+     *
+     * Converted from Exiftool version 10.10 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\Canon.pm
+     *
+     *         eg) 0x00 -> 0
+     *             0x0c -> 0.33333
+     *             0x10 -> 0.5
+     *             0x14 -> 0.66666
+     *             0x20 -> 1   ... etc
+     */
+    private double decodeCanonEv(int val)
+    {
+        int sign = 1;
+        if (val < 0)
+        {
+            val = -val;
+            sign = -1;
+        }
+
+        int frac = val & 0x1f;
+        val -= frac;
+
+        if (frac == 0x0c)
+            frac = 0x20 / 3;
+        else if (frac == 0x14)
+            frac = 0x40 / 3;
+
+        return sign * (val + frac) / (double)0x20;
     }
 }
