@@ -196,10 +196,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         // Determine the camera model and makernote format.
         Directory ifd0Directory = _metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
 
-        if (ifd0Directory == null)
-            return false;
-
-        String cameraMake = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
+        String cameraMake = ifd0Directory == null ? null : ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
         final String firstTwoChars = reader.getString(makernoteOffset, 2);
         final String firstThreeChars = reader.getString(makernoteOffset, 3);
