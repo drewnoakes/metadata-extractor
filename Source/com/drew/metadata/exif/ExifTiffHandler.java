@@ -249,7 +249,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                         TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 18, makernoteOffset + 10);
                         break;
                     default:
-                        ifd0Directory.addError("Unsupported Nikon makernote data ignored.");
+                        _currentDirectory.addError("Unsupported Nikon makernote data ignored.");
                         break;
                 }
             } else {
