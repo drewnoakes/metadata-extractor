@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a {@link RicohMakernoteDescriptor}.
+ * Provides human-readable string representations of tag values stored in a {@link RicohMakernoteDirectory}.
  * <p>
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/ricoh_mn.html
