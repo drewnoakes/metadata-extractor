@@ -54,6 +54,7 @@ It will process files of type:
 Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 * Agfa
+* Apple
 * Canon
 * Casio
 * Epson

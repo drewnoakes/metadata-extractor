@@ -352,6 +352,13 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 pushDirectory(RicohMakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
             }
+        } else if (firstTenChars.equals("Apple iOS\0")) {
+            // Always in Motorola byte order
+            boolean orderBefore = reader.isMotorolaByteOrder();
+            reader.setMotorolaByteOrder(true);
+            pushDirectory(AppleMakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 14, makernoteOffset);
+            reader.setMotorolaByteOrder(orderBefore);
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.
