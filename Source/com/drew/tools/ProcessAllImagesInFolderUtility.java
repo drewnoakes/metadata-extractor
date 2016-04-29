@@ -21,6 +21,10 @@
 
 package com.drew.tools;
 
+import com.adobe.xmp.XMPException;
+import com.adobe.xmp.XMPIterator;
+import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.StringUtil;
@@ -33,6 +37,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.drew.metadata.file.FileMetadataDirectory;
+import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.*;
 import java.util.*;
@@ -304,6 +309,7 @@ public class ProcessAllImagesInFolderUtility
                     // Write tag values for each directory
                     for (Directory directory : metadata.getDirectories()) {
                         String directoryName = directory.getName();
+                        // Write the directory's tags
                         for (Tag tag : directory.getTags()) {
                             String tagName = tag.getTagName();
                             String description = tag.getDescription();
@@ -316,6 +322,26 @@ public class ProcessAllImagesInFolderUtility
                         }
                         if (directory.getTagCount() != 0)
                             writer.write(NEW_LINE);
+                        // Special handling for XMP directory data
+                        if (directory instanceof XmpDirectory) {
+                            Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
+                            boolean wrote = false;
+                            for (XmpDirectory xmpDirectory : xmpDirectories) {
+                                XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
+                                try {
+                                    XMPIterator iterator = xmpMeta.iterator();
+                                    while (iterator.hasNext()) {
+                                        XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
+                                        writer.format("[XMPMeta - %s] %s = %s%s", prop.getNamespace(), prop.getPath(), prop.getValue(), NEW_LINE);
+                                        wrote = true;
+                                    }
+                                } catch (XMPException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (wrote)
+                                writer.write(NEW_LINE);
+                        }
                     }
 
                     // Write file structure
