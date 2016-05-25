@@ -73,6 +73,10 @@ Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/GettingStarted) for an introduction to the basics of using this library.
 
+## Installation
+
+The easiest way is to install the library via its [Maven package](http://search.maven.org/#artifactdetails%7Ccom.drewnoakes%7Cmetadata-extractor%7C2.9.1%7C). Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
+
 ## Mailing Lists
 
 * [metadata-extractor-dev](https://groups.google.com/forum/#!forum/metadata-extractor-dev) for discussion about development and notifications of changes to issues and source code
