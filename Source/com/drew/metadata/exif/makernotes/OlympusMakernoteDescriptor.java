@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDirectory>
 {
     // TODO extend support for some offset-encoded byte[] tags: http://www.ozhiker.com/electronics/pjmt/jpeg_info/olympus_mn.html
@@ -385,7 +386,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (!DateUtil.isValidDate(year, month, day))
             return "Invalid date";
 
-        return new GregorianCalendar(year, month, day).getTime().toString();
+        return String.format("%04d-%02d-%02d", year, month + 1, day);
     }
 
     @Nullable

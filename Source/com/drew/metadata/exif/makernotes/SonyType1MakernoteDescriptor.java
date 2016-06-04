@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import static com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1MakernoteDirectory>
 {
     public SonyType1MakernoteDescriptor(@NotNull SonyType1MakernoteDirectory directory)

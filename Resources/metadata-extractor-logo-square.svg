@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   viewBox="0 0 109.88 107.61465"
+   height="109.8683"
+   width="109.8683"
+   id="svg3336"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="metadata-extractor-logo-square.svg"
+   inkscape:export-filename="C:\Users\Drew\Dev\metadata-extractor\Resources\favicon-48px.png"
+   inkscape:export-xdpi="39.319794"
+   inkscape:export-ydpi="39.319794">
+  <metadata
+     id="metadata3352">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3350" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="958"
+     inkscape:window-height="1048"
+     id="namedview3348"
+     showgrid="false"
+     inkscape:zoom="4.5873103"
+     inkscape:cx="54.934151"
+     inkscape:cy="54.934147"
+     inkscape:window-x="-7"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3336"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="px" />
+  <path
+     style="fill:#274c72"
+     inkscape:connector-curvature="0"
+     id="path3340"
+     d="m 0,50.747323 c 0,-13.81 11.21,-25 25.02,-25 1.25,1.25 15.22,15.22 17,17 l -17.05,0 -0.02,0 c -4.42,0 -8,3.58 -8,8 0,4.42 3.58,8 8,8 l 0.02,0 0,0 0.04,0 12.69,0 10.97,0 c 0,0 0,0 0,0 l 9.37,0 17,17 -26.37,0 -10.96,0 -12.69,0 -0.04,0 -0.02,0 c -4.42,0 -8,3.58 -8,8 0,4.42 3.58,8 8,8 l 0.02,0 0,0 0.05,0 23.64,0 c 0,0 0,0 0,0 l 42.36,0 17,17.000007 -83,0 c 0,0 -0.01,0 -0.02,0 -13.81,0 -25,-11.190007 -25,-25.000007 0.01,-6.08 2.23,-11.95 6.25,-16.51 -4.02,-4.56 -6.24,-10.42 -6.25,-16.49 z" />
+  <path
+     style="fill:#404041"
+     inkscape:connector-curvature="0"
+     id="path3342"
+     d="m 51.88,-1.1326776 c -13.81,0 -25,11.2100016 -25,25.0200016 1.25,1.25 15.22,15.22 17,17 l 0,-17.05 0,-0.02 c 0,-4.42 3.58,-8 8,-8 4.42,0 8,3.58 8,8 l 0,0.02 0,0 0,0.04 0,12.69 0,10.97 c 0,0 0,0 0,0 l 0,9.37 17,17 0,-26.37 0,-10.96 0,-12.69 0,-0.04 0,-0.02 c 0,-4.42 3.58,-8 8,-8 4.42,0 8,3.58 8,8 l 0,0.02 0,0 0,0.05 0,23.64 c 0,0 0,0 0,0 l 0,42.36 17,17.000006 0,-83.000006 c 0,0 0,-0.01 0,-0.02 0,-13.81 -11.19,-25.0000016 -25,-25.0000016 -6.08,0.01 -11.95,2.23 -16.51,6.25 -4.55,-4.02 -10.42,-6.24 -16.49,-6.26 z" />
+</svg>

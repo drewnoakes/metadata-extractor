@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -283,6 +283,23 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
+    protected String getRationalOrDoubleString(int tagType)
+    {
+        Rational rational = _directory.getRational(tagType);
+        if (rational != null)
+            return rational.toSimpleString(true);
+
+        Double d = _directory.getDoubleObject(tagType);
+        if (d != null)
+        {
+            DecimalFormat format = new DecimalFormat("0.###");
+            return format.format(d);
+        }
+
+        return null;
+    }
+
+    @Nullable
     protected static String getFStopDescription(double fStop)
     {
         DecimalFormat format = new DecimalFormat("0.0");
@@ -303,7 +320,7 @@ public class TagDescriptor<T extends Directory>
     {
         Rational[] values = _directory.getRationalArray(tag);
 
-        if (values == null || values.length != 4 || (values[0].doubleValue() == 0 && values[2].doubleValue() == 0))
+        if (values == null || values.length != 4 || (values[0].isZero() && values[2].isZero()))
             return null;
 
         StringBuilder sb = new StringBuilder();
@@ -313,7 +330,7 @@ public class TagDescriptor<T extends Directory>
         else
             sb.append(values[0].toSimpleString(true)).append('-').append(values[1].toSimpleString(true)).append("mm");
 
-        if (values[2].doubleValue() != 0) {
+        if (!values[2].isZero()) {
             sb.append(' ');
 
             DecimalFormat format = new DecimalFormat("0.0");

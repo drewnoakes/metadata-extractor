@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -152,7 +152,7 @@ public class PngMetadataReader
                 int bytesLeft = bytes.length - profileName.length() - 2;
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
                 InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
-                new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata);
+                new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
                 inflateStream.close();
             } else {
                 directory.addError("Invalid compression method value");
@@ -212,17 +212,20 @@ public class PngMetadataReader
         } else if (chunkType.equals(PngChunkType.tIME)) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
             int year = reader.getUInt16();
-            int month = reader.getUInt8() - 1;
+            int month = reader.getUInt8();
             int day = reader.getUInt8();
             int hour = reader.getUInt8();
             int minute = reader.getUInt8();
             int second = reader.getUInt8();
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            calendar.setTimeInMillis(0);
-            //noinspection MagicConstant
-            calendar.set(year, month, day, hour, minute, second);
             PngDirectory directory = new PngDirectory(PngChunkType.tIME);
-            directory.setDate(PngDirectory.TAG_LAST_MODIFICATION_TIME, calendar.getTime());
+            if (DateUtil.isValidDate(year, month - 1, day) && DateUtil.isValidTime(hour, minute, second)) {
+                String dateString = String.format("%04d:%02d:%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
+                directory.setString(PngDirectory.TAG_LAST_MODIFICATION_TIME, dateString);
+            } else {
+                directory.addError(String.format(
+                    "PNG tIME data describes an invalid date/time: year=%d month=%d day=%d hour=%d minute=%d second=%d",
+                    year, month, day, hour, minute, second));
+            }
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.pHYs)) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);

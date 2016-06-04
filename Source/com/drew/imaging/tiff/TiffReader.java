@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -157,31 +157,32 @@ public class TiffReader
                 final int formatCode = reader.getUInt16(tagOffset + 2);
                 final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode);
 
-                if (format == null) {
-                    // This error suggests that we are processing at an incorrect index and will generate
-                    // rubbish until we go out of bounds (which may be a while).  Exit now.
-                    handler.error("Invalid TIFF tag format code " + formatCode + " for tag 0x" + Integer.toHexString(tagId));
-                    // TODO specify threshold as a parameter, or provide some other external control over this behaviour
-                    if (++invalidTiffFormatCodeCount > 5) {
-                        handler.error("Stopping processing as too many errors seen in TIFF IFD");
-                        return;
-                    }
-                    continue;
-                }
-
                 // 4 bytes dictate the number of components in this tag's data
-                final int componentCount = reader.getInt32(tagOffset + 4);
-                if (componentCount < 0) {
-                    handler.error("Negative TIFF tag component count");
-                    continue;
+                final long componentCount = reader.getUInt32(tagOffset + 4);
+
+                final long byteCount;
+                if (format == null) {
+                    Long byteCountOverride = handler.tryCustomProcessFormat(tagId, formatCode, componentCount);
+                    if (byteCountOverride == null) {
+                        // This error suggests that we are processing at an incorrect index and will generate
+                        // rubbish until we go out of bounds (which may be a while).  Exit now.
+                        handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
+                        // TODO specify threshold as a parameter, or provide some other external control over this behaviour
+                        if (++invalidTiffFormatCodeCount > 5) {
+                            handler.error("Stopping processing as too many errors seen in TIFF IFD");
+                            return;
+                        }
+                        continue;
+                    }
+                    byteCount = byteCountOverride;
+                } else {
+                    byteCount = componentCount * format.getComponentSizeBytes();
                 }
 
-                final int byteCount = componentCount * format.getComponentSizeBytes();
-
-                final int tagValueOffset;
+                final long tagValueOffset;
                 if (byteCount > 4) {
                     // If it's bigger than 4 bytes, the dir entry contains an offset.
-                    final int offsetVal = reader.getInt32(tagOffset + 8);
+                    final long offsetVal = reader.getUInt32(tagOffset + 8);
                     if (offsetVal + byteCount > reader.getLength()) {
                         // Bogus pointer offset and / or byteCount value
                         handler.error("Illegal TIFF tag pointer offset");
@@ -205,16 +206,22 @@ public class TiffReader
                     continue;
                 }
 
-                //
-                // Special handling for tags that point to other IFDs
-                //
-                if (byteCount == 4 && handler.isTagIfdPointer(tagId)) {
-                    final int subDirOffset = tiffHeaderOffset + reader.getInt32(tagValueOffset);
-                    processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
-                } else {
-                    if (!handler.customProcessTag(tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount)) {
-                        processTag(handler, tagId, tagValueOffset, componentCount, formatCode, reader);
+                // Some tags point to one or more additional IFDs to process
+                boolean isIfdPointer = false;
+                if (byteCount == 4 * componentCount) {
+                    for (int i = 0; i < componentCount; i++) {
+                        if (handler.tryEnterSubIfd(tagId)) {
+                            isIfdPointer = true;
+                            int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
+                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
+                        }
                     }
+                }
+
+                // If it wasn't an IFD pointer, allow custom tag processing to occur
+                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
+                    // If no custom processing occurred, process the tag in the standard fashion
+                    processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
                 }
             }
 
@@ -362,7 +369,7 @@ public class TiffReader
                 }
                 break;
             default:
-                handler.error(String.format("Unknown format code %d for tag %d", formatCode, tagId));
+                handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
         }
     }
 

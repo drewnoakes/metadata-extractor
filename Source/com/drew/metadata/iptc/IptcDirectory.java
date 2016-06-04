@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,7 +24,11 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +37,7 @@ import java.util.List;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class IptcDirectory extends Directory
 {
     // IPTC EnvelopeRecord Tags
@@ -230,9 +235,84 @@ public class IptcDirectory extends Directory
     @Nullable
     public List<String> getKeywords()
     {
-        final String[] array = getStringArray(IptcDirectory.TAG_KEYWORDS);
+        final String[] array = getStringArray(TAG_KEYWORDS);
         if (array==null)
             return null;
         return Arrays.asList(array);
+    }
+
+    /**
+     * Parses the Date Sent tag and the Time Sent tag to obtain a single Date object representing the
+     * date and time when the service sent this image.
+     * @return A Date object representing when the service sent this image, if possible, otherwise null
+     */
+    @Nullable
+    public Date getDateSent()
+    {
+        return getDate(TAG_DATE_SENT, TAG_TIME_SENT);
+    }
+
+    /**
+     * Parses the Release Date tag and the Release Time tag to obtain a single Date object representing the
+     * date and time when this image was released.
+     * @return A Date object representing when this image was released, if possible, otherwise null
+     */
+    @Nullable
+    public Date getReleaseDate()
+    {
+        return getDate(TAG_RELEASE_DATE, TAG_RELEASE_TIME);
+    }
+
+    /**
+     * Parses the Expiration Date tag and the Expiration Time tag to obtain a single Date object representing
+     * that this image should not used after this date and time.
+     * @return A Date object representing when this image was released, if possible, otherwise null
+     */
+    @Nullable
+    public Date getExpirationDate()
+    {
+        return getDate(TAG_EXPIRATION_DATE, TAG_EXPIRATION_TIME);
+    }
+
+    /**
+     * Parses the Date Created tag and the Time Created tag to obtain a single Date object representing the
+     * date and time when this image was captured.
+     * @return A Date object representing when this image was captured, if possible, otherwise null
+     */
+    @Nullable
+    public Date getDateCreated()
+    {
+        return getDate(TAG_DATE_CREATED, TAG_TIME_CREATED);
+    }
+
+    /**
+     * Parses the Digital Date Created tag and the Digital Time Created tag to obtain a single Date object
+     * representing the date and time when the digital representation of this image was created.
+     * @return A Date object representing when the digital representation of this image was created,
+     * if possible, otherwise null
+     */
+    @Nullable
+    public Date getDigitalDateCreated()
+    {
+        return getDate(TAG_DIGITAL_DATE_CREATED, TAG_DIGITAL_TIME_CREATED);
+    }
+
+    @Nullable
+    private Date getDate(int dateTagType, int timeTagType)
+    {
+        String date = getString(dateTagType);
+        String time = getString(timeTagType);
+
+        if (date == null)
+            return null;
+        if (time == null)
+            return null;
+
+        try {
+            DateFormat parser = new SimpleDateFormat("yyyyMMddHHmmssZ");
+            return parser.parse(date + time);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

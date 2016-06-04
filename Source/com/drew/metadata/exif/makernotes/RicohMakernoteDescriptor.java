@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,13 +25,14 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a {@link RicohMakernoteDescriptor}.
+ * Provides human-readable string representations of tag values stored in a {@link RicohMakernoteDirectory}.
  * <p>
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/ricoh_mn.html
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirectory>
 {
     public RicohMakernoteDescriptor(@NotNull RicohMakernoteDirectory directory)

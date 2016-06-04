@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
+import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -86,6 +87,21 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream) throws ImageProcessingException, IOException
     {
+        return readMetadata(inputStream, -1);
+    }
+
+    /**
+     * Reads metadata from an {@link InputStream} of known length.
+     *
+     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     *                    beginning of the file's data.
+     * @param streamLength the length of the stream, if known, otherwise -1.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength) throws ImageProcessingException, IOException
+    {
         BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
             ? (BufferedInputStream)inputStream
             : new BufferedInputStream(inputStream);
@@ -101,7 +117,7 @@ public class ImageMetadataReader
             fileType == FileType.Nef ||
             fileType == FileType.Orf ||
             fileType == FileType.Rw2)
-            return TiffMetadataReader.readMetadata(bufferedInputStream);
+            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(bufferedInputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
 
         if (fileType == FileType.Psd)
             return PsdMetadataReader.readMetadata(bufferedInputStream);
@@ -143,7 +159,7 @@ public class ImageMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(inputStream, file.length());
         } finally {
             inputStream.close();
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.ArrayList;
  */
 public class RandomAccessStreamReader extends RandomAccessReader
 {
-    private final static int DEFAULT_CHUNK_LENGTH = 2 * 1024;
+    public final static int DEFAULT_CHUNK_LENGTH = 2 * 1024;
 
     @NotNull
     private final InputStream _stream;
@@ -41,15 +41,19 @@ public class RandomAccessStreamReader extends RandomAccessReader
     private final ArrayList<byte[]> _chunks = new ArrayList<byte[]>();
 
     private boolean _isStreamFinished;
-    private int _streamLength;
+    private long _streamLength;
 
     public RandomAccessStreamReader(@NotNull InputStream stream)
     {
-        this(stream, DEFAULT_CHUNK_LENGTH);
+        this(stream, DEFAULT_CHUNK_LENGTH, -1);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength)
+    {
+        this(stream, chunkLength, -1);
+    }
+
+    public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength, long streamLength)
     {
         if (stream == null)
             throw new NullPointerException();
@@ -58,6 +62,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
 
         _chunkLength = chunkLength;
         _stream = stream;
+        _streamLength = streamLength;
     }
 
     /**
@@ -69,6 +74,10 @@ public class RandomAccessStreamReader extends RandomAccessReader
     @Override
     public long getLength() throws IOException
     {
+        if (_streamLength != -1) {
+            return _streamLength;
+        }
+
         isValidIndex(Integer.MAX_VALUE, 1);
         assert(_isStreamFinished);
         return _streamLength;
@@ -134,7 +143,12 @@ public class RandomAccessStreamReader extends RandomAccessReader
                 if (bytesRead == -1) {
                     // the stream has ended, which may be ok
                     _isStreamFinished = true;
-                    _streamLength = _chunks.size() * _chunkLength + totalBytesRead;
+                    int observedStreamLength = _chunks.size() * _chunkLength + totalBytesRead;
+                    if (_streamLength == -1) {
+                        _streamLength = observedStreamLength;
+                    } else if (_streamLength != observedStreamLength) {
+                        assert(false);
+                    }
 
                     // check we have enough bytes for the requested index
                     if (endIndex >= _streamLength) {

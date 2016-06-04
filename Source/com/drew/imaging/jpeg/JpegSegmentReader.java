@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,6 +42,11 @@ import java.util.Set;
  */
 public class JpegSegmentReader
 {
+    /**
+     * The 0xFF byte that signals the start of a segment.
+     */
+    private static final byte SEGMENT_IDENTIFIER = (byte) 0xFF;
+
     /**
      * Private, because this segment crashes my algorithm, and searching for it doesn't work (yet).
      */
@@ -111,19 +116,14 @@ public class JpegSegmentReader
             // Find the segment marker. Markers are zero or more 0xFF bytes, followed
             // by a 0xFF and then a byte not equal to 0x00 or 0xFF.
 
-            final short segmentIdentifier = reader.getUInt8();
-
-            // We must have at least one 0xFF byte
-            if (segmentIdentifier != 0xFF)
-                throw new JpegProcessingException("Expected JPEG segment start identifier 0xFF, not 0x" + Integer.toHexString(segmentIdentifier).toUpperCase());
-
-            // Read until we have a non-0xFF byte. This identifies the segment type.
+            byte segmentIdentifier = reader.getInt8();
             byte segmentType = reader.getInt8();
-            while (segmentType == (byte)0xFF)
-                segmentType = reader.getInt8();
 
-            if (segmentType == 0)
-                throw new JpegProcessingException("Expected non-zero byte as part of JPEG marker identifier");
+            // Read until we have a 0xFF byte followed by a byte that is not 0xFF or 0x00
+            while (segmentIdentifier != SEGMENT_IDENTIFIER || segmentType == SEGMENT_IDENTIFIER || segmentType == 0) {
+            	segmentIdentifier = segmentType;
+            	segmentType = reader.getInt8();
+            }
 
             if (segmentType == SEGMENT_SOS) {
                 // The 'Start-Of-Scan' segment's length doesn't include the image data, instead would

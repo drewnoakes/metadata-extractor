@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,14 +26,13 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.DateUtil;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.TimeZone;
 
 /**
  * Reads an ICC profile.
@@ -92,9 +91,17 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory)
+    {
         // TODO review whether the 'tagPtr' values below really do require RandomAccessReader or whether SequentialReader may be used instead
 
         IccDirectory directory = new IccDirectory();
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
 
         try {
             int profileByteCount = reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT);
@@ -184,11 +191,8 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
         if (DateUtil.isValidDate(y, m - 1, d) && DateUtil.isValidTime(h, M, s))
         {
-//          Date value = new Date(Date.UTC(y - 1900, m - 1, d, h, M, s));
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            calendar.setTimeInMillis(0);
-            calendar.set(y, m - 1, d, h, M, s);
-            directory.setDate(tagType, calendar.getTime());
+            String dateString = String.format("%04d:%02d:%02d %02d:%02d:%02d", y, m, d, h, M, s);
+            directory.setString(tagType, dateString);
         }
         else
         {

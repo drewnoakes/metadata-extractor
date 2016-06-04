@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -62,7 +62,9 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     {
         _directoryStack.push(_currentDirectory);
         try {
-            _currentDirectory = directoryClass.newInstance();
+            Directory newDirectory = directoryClass.newInstance();
+            newDirectory.setParent(_currentDirectory);
+            _currentDirectory = newDirectory;
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {

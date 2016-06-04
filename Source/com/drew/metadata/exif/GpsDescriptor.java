@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import static com.drew.metadata.exif.GpsDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class GpsDescriptor extends TagDescriptor<GpsDirectory>
 {
     public GpsDescriptor(@NotNull GpsDirectory directory)
@@ -109,7 +110,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     {
         // time in hour, min, sec
         Rational[] timeComponents = _directory.getRationalArray(TAG_TIME_STAMP);
-        DecimalFormat df = new DecimalFormat("00.00");
+        DecimalFormat df = new DecimalFormat("00.000");
         return timeComponents == null
             ? null
             : String.format("%02d:%02d:%s UTC",
