@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -110,10 +111,28 @@ public class DirectoryTest
         String date2 = "2002:01:30 23:59";
         String date3 = "2002-01-30 23:59:59";
         String date4 = "2002-01-30 23:59";
+        String date5 = "2002-01-30T23:59:59.099-08:00";
+        String date6 = "2002-01-30T23:59:59.099";
+        String date7 = "2002-01-30T23:59:59-08:00";
+        String date8 = "2002-01-30T23:59:59";
+        String date9 = "2002-01-30T23:59-08:00";
+        String date10 = "2002-01-30T23:59";
+        String date11 = "2002-01-30";
+        String date12 = "2002-01";
+        String date13 = "2002";
         _directory.setString(1, date1);
         _directory.setString(2, date2);
         _directory.setString(3, date3);
         _directory.setString(4, date4);
+        _directory.setString(5, date5);
+        _directory.setString(6, date6);
+        _directory.setString(7, date7);
+        _directory.setString(8, date8);
+        _directory.setString(9, date9);
+        _directory.setString(10, date10);
+        _directory.setString(11, date11);
+        _directory.setString(12, date12);
+        _directory.setString(13, date13);
         assertEquals(date1, _directory.getString(1));
 
             // Don't use default timezone
@@ -137,6 +156,39 @@ public class DirectoryTest
 
         gc.set(2002, GregorianCalendar.JANUARY, 30, 23, 59, 0);
         assertEquals(gc.getTime(), _directory.getDate(4, pst));
+
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 23, 59, 59);
+        gc.set(Calendar.MILLISECOND, 99);
+        assertEquals(gc.getTime(), _directory.getDate(5, null));
+        assertEquals(gc.getTime(), _directory.getDate(5, gmt));
+        assertEquals(gc.getTime(), _directory.getDate(6, pst));
+
+        assertEquals(gc.getTime(), _directory.getDate(5, "011", null));
+        assertEquals(gc.getTime(), _directory.getDate(6, "011", pst));
+        assertEquals(gc.getTime(), _directory.getDate(7, "099", null));
+        assertEquals(gc.getTime(), _directory.getDate(8, "099", pst));
+
+        gc.set(Calendar.MILLISECOND, 0);
+        assertEquals(gc.getTime(), _directory.getDate(7, null));
+        assertEquals(gc.getTime(), _directory.getDate(7, gmt));
+        assertEquals(gc.getTime(), _directory.getDate(8, pst));
+
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 23, 59, 0);
+        assertEquals(gc.getTime(), _directory.getDate(9, null));
+        assertEquals(gc.getTime(), _directory.getDate(9, gmt));
+        assertEquals(gc.getTime(), _directory.getDate(10, pst));
+
+        gc = new GregorianCalendar(gmt);
+        gc.setTimeInMillis(0);
+
+        gc.set(2002, GregorianCalendar.JANUARY, 30, 0, 0, 0);
+        assertEquals(gc.getTime(), _directory.getDate(11, null));
+
+        gc.set(2002, GregorianCalendar.JANUARY, 1, 0, 0, 0);
+        assertEquals(gc.getTime(), _directory.getDate(12, null));
+
+        gc.set(2002, GregorianCalendar.JANUARY, 1, 0, 0, 0);
+        assertEquals(gc.getTime(), _directory.getDate(13, null));
     }
 
     @Test

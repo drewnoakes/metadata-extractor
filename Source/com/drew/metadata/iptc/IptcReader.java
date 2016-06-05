@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,16 +22,15 @@ package com.drew.metadata.iptc;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.DateUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 
 /**
  * Decodes IPTC binary data, populating a {@link Metadata} object with tag values in an {@link IptcDirectory}.
@@ -78,8 +77,19 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
     {
+        extract(reader, metadata, length, null);
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory)
+    {
         IptcDirectory directory = new IptcDirectory();
         metadata.addDirectory(directory);
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
 
         int offset = 0;
 
@@ -105,7 +115,7 @@ public class IptcReader implements JpegSegmentMetadataReader
             }
 
             // we need at least five bytes left to read a tag
-            if (offset + 5 >= length) {
+            if (offset + 5 > length) {
                 directory.addError("Too few bytes remain for a valid IPTC tag");
                 return;
             }
@@ -184,31 +194,6 @@ public class IptcReader implements JpegSegmentMetadataReader
                 directory.setInt(tagIdentifier, reader.getUInt8());
                 reader.skip(tagByteCount - 1);
                 return;
-            case IptcDirectory.TAG_RELEASE_DATE:
-            case IptcDirectory.TAG_DATE_CREATED:
-            case IptcDirectory.TAG_DIGITAL_DATE_CREATED:
-                // Date object
-                if (tagByteCount >= 8) {
-                    string = reader.getString(tagByteCount);
-                    assert(string.length() >= 8);
-                    try {
-                        int year = Integer.parseInt(string.substring(0, 4));
-                        int month = Integer.parseInt(string.substring(4, 6)) - 1;
-                        int day = Integer.parseInt(string.substring(6, 8));
-                        if (DateUtil.isValidDate(year, month, day)) {
-                            Date date = new java.util.GregorianCalendar(year, month, day).getTime();
-                            directory.setDate(tagIdentifier, date);
-                            return;
-                        }
-                    } catch (NumberFormatException e) {
-                        // fall through and we'll process the 'string' value below
-                    }
-                } else {
-                    reader.skip(tagByteCount);
-                }
-            case IptcDirectory.TAG_RELEASE_TIME:
-            case IptcDirectory.TAG_TIME_CREATED:
-                // time...
             default:
                 // fall through
         }

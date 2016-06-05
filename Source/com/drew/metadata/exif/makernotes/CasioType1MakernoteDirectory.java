@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class CasioType1MakernoteDirectory extends Directory
 {
     public static final int TAG_RECORDING_MODE = 0x0001;

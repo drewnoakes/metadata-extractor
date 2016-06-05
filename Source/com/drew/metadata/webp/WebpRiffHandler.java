@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -62,6 +62,8 @@ public class WebpRiffHandler implements RiffHandler
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals("VP8X")
+            || fourCC.equals("VP8L")
+            || fourCC.equals("VP8 ")
             || fourCC.equals("EXIF")
             || fourCC.equals("ICCP")
             || fourCC.equals("XMP ");
@@ -99,6 +101,59 @@ public class WebpRiffHandler implements RiffHandler
                 directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1);
                 directory.setBoolean(WebpDirectory.TAG_HAS_ALPHA, hasAlpha);
                 directory.setBoolean(WebpDirectory.TAG_IS_ANIMATION, isAnimation);
+
+                _metadata.addDirectory(directory);
+
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
+        } else if (fourCC.equals("VP8L") && payload.length > 4) {
+            RandomAccessReader reader = new ByteArrayReader(payload);
+            reader.setMotorolaByteOrder(false);
+
+            try {
+                // https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification#2_riff_header
+
+                // Expect the signature byte
+                if (reader.getInt8(0) != 0x2F)
+                    return;
+                int b1 = reader.getUInt8(1);
+                int b2 = reader.getUInt8(2);
+                int b3 = reader.getUInt8(3);
+                int b4 = reader.getUInt8(4);
+                // 14 bits for width
+                int widthMinusOne = (b2 & 0x3F) << 8 | b1;
+                // 14 bits for height
+                int heightMinusOne = (b4 & 0x0F) << 10 | b3 << 2 | (b2 & 0xC0) >> 6;
+
+                WebpDirectory directory = new WebpDirectory();
+                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, widthMinusOne + 1);
+                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1);
+
+                _metadata.addDirectory(directory);
+
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
+        } else if (fourCC.equals("VP8 ") && payload.length > 9) {
+            RandomAccessReader reader = new ByteArrayReader(payload);
+            reader.setMotorolaByteOrder(false);
+
+            try {
+                // https://tools.ietf.org/html/rfc6386#section-9.1
+                // https://github.com/webmproject/libwebp/blob/master/src/enc/syntax.c#L115
+
+                // Expect the signature bytes
+                if (reader.getUInt8(3) != 0x9D ||
+                    reader.getUInt8(4) != 0x01 ||
+                    reader.getUInt8(5) != 0x2A)
+                    return;
+                int width = reader.getUInt16(6);
+                int height = reader.getUInt16(8);
+
+                WebpDirectory directory = new WebpDirectory();
+                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, width);
+                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, height);
 
                 _metadata.addDirectory(directory);
 

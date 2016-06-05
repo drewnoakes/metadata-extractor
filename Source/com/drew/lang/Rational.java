@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -172,6 +172,12 @@ public class Rational extends java.lang.Number implements Serializable
         return _denominator == 1 ||
                 (_denominator != 0 && (_numerator % _denominator == 0)) ||
                 (_denominator == 0 && _numerator == 0);
+    }
+
+    /** Checks if either the numerator or denominator are zero. */
+    public boolean isZero()
+    {
+        return _numerator == 0 || _denominator == 0;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -125,13 +125,13 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 if (signature.equals("8BIM")) {
                     if (tagType == PhotoshopDirectory.TAG_IPTC)
-                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length);
+                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory);
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
-                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata);
+                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
-                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata);
+                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
-                        new XmpReader().extract(tagBytes, metadata);
+                        new XmpReader().extract(tagBytes, metadata, directory);
                     else
                         directory.setByteArray(tagType, tagBytes);
 

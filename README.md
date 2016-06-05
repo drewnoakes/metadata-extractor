@@ -54,6 +54,7 @@ It will process files of type:
 Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 * Agfa
+* Apple
 * Canon
 * Casio
 * Epson
@@ -71,6 +72,10 @@ Camera-specific "makernote" data is decoded for cameras manufactured by:
 * Sony
 
 Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/GettingStarted) for an introduction to the basics of using this library.
+
+## Installation
+
+The easiest way is to install the library via its [Maven package](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.drewnoakes%22%20AND%20a%3A%22metadata-extractor%22). Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
 
 ## Mailing Lists
 

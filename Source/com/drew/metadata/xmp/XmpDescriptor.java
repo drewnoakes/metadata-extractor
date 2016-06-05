@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import static com.drew.metadata.xmp.XmpDirectory.*;
  *
  * @author Torsten Skadell, Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class XmpDescriptor extends TagDescriptor<XmpDirectory>
 {
     // TODO some of these methods look similar to those found in Exif*Descriptor... extract common functionality from both

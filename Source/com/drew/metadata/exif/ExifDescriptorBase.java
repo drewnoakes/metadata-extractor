@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import static com.drew.metadata.exif.ExifDirectoryBase.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class ExifDescriptorBase<T extends Directory> extends TagDescriptor<T>
 {
     /**

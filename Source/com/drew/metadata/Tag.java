@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -53,16 +53,14 @@ public class Tag
 
     /**
      * Gets the tag type in hex notation as a String with padded leading
-     * zeroes if necessary (i.e. <code>0x100E</code>).
+     * zeroes if necessary (i.e. <code>0x100e</code>).
      *
      * @return the tag type as a string in hexadecimal notation
      */
     @NotNull
     public String getTagTypeHex()
     {
-        String hex = Integer.toHexString(_tagType);
-        while (hex.length() < 4) hex = "0" + hex;
-        return "0x" + hex;
+        return String.format("0x%04x", _tagType);
     }
 
     /**
@@ -116,7 +114,7 @@ public class Tag
     }
 
     /**
-     * A basic representation of the tag's type and value.  EG: <code>[FNumber] F2.8</code>.
+     * A basic representation of the tag's type and value.  EG: <code>[Exif IFD0] FNumber - f/2.8</code>.
      *
      * @return the tag's type and value
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ public class IptcReaderTest
         assertEquals("City", directory.getObject(tags[9].getTagType()));
 
         assertEquals(IptcDirectory.TAG_DATE_CREATED, tags[10].getTagType());
-        assertEquals(new java.util.GregorianCalendar(2000, 0, 1).getTime(), directory.getObject(tags[10].getTagType()));
+        assertEquals("20000101", directory.getObject(tags[10].getTagType()));
 
         assertEquals(IptcDirectory.TAG_OBJECT_NAME, tags[11].getTagType());
         assertEquals("ObjectName", directory.getObject(tags[11].getTagType()));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ package com.drew.imaging.tiff;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Set;
@@ -45,12 +46,15 @@ public interface TiffHandler
      */
     void setTiffMarker(int marker) throws TiffProcessingException;
 
-    boolean isTagIfdPointer(int tagType);
+    boolean tryEnterSubIfd(int tagId);
     boolean hasFollowerIfd();
 
     void endingIFD();
 
     void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset);
+
+    @Nullable
+    Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);
 
     boolean customProcessTag(int tagOffset,
                              @NotNull Set<Integer> processedIfdOffsets,

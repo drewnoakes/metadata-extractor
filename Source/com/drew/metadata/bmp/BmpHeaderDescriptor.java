@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import static com.drew.metadata.bmp.BmpHeaderDirectory.*;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
 {
     public BmpHeaderDescriptor(@NotNull BmpHeaderDirectory directory)
