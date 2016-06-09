@@ -31,6 +31,20 @@ import static org.junit.Assert.assertTrue;
 public class RationalTest
 {
     @Test
+    public void testCompare() throws Exception
+    {
+        Rational third1 = new Rational(1, 3);
+        Rational third2 = new Rational(2, 6);
+        assertEquals(0, third1.compareTo(third2));
+
+        Rational half = new Rational(1, 2);
+        assertEquals(-1, third1.compareTo(half));
+
+        Rational negForth = new Rational(-1, 4);
+        assertEquals(1, third1.compareTo(negForth));
+    }
+
+    @Test
     public void testCreateRational() throws Exception
     {
         Rational rational = new Rational(1, 3);

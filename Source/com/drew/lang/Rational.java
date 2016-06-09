@@ -35,7 +35,7 @@ import java.io.Serializable;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class Rational extends java.lang.Number implements Serializable
+public class Rational extends java.lang.Number implements Comparable<Rational>, Serializable
 {
     private static final long serialVersionUID = 510688928138848770L;
 
@@ -227,6 +227,22 @@ public class Rational extends java.lang.Number implements Serializable
         double maxPossibleCalculations = (((double) (Math.min(_denominator, _numerator) - 1) / 5d) + 2);
         final int maxSimplificationCalculations = 1000;
         return maxPossibleCalculations > maxSimplificationCalculations;
+    }
+
+    /**
+     * Compares two {@link Rational} instances, returning true if they are mathematically
+     * equivalent (in consistence with {@link Rational#equals(Object)} method).
+     *
+     * @param that the {@link Rational} to compare this instance to.
+     * @return the value {@code 0} if this {@link Rational} is
+     *         equal to the argument {@link Rational} mathematically; a value less
+     *         than {@code 0} if this {@link Rational} is less
+     *         than the argument {@link Rational}; and a value greater
+     *         than {@code 0} if this {@link Rational} is greater than the argument
+     *         {@link Rational}.
+     */
+    public int compareTo(Rational that) {
+        return this.doubleValue() < that.doubleValue() ? -1 : ((this.doubleValue() == that.doubleValue()) ? 0 : 1);
     }
 
     /**
