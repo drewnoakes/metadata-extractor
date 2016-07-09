@@ -30,9 +30,13 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -65,8 +69,20 @@ public class XmpReader implements JpegSegmentMetadataReader
     private static final String SCHEMA_EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
     @NotNull
     public static final String XMP_JPEG_PREAMBLE = "http://ns.adobe.com/xap/1.0/\0";
+    @NotNull
+    public static final String XMP_EXTENSION_JPEG_PREAMBLE = "http://ns.adobe.com/xmp/extension/\0";
+    @NotNull
+    private static final String SCHEMA_XMP_NOTES = "http://ns.adobe.com/xmp/note/";
+    @NotNull
+    private static final String ATTRIBUTE_EXTENDED_XMP = "xmpNote:HasExtendedXMP";
 //    @NotNull
 //    private static final String SCHEMA_DUBLIN_CORE_SPECIFIC_PROPERTIES = "http://purl.org/dc/elements/1.1/";
+
+    /**
+     * Extended XMP constants
+     */
+    private static final int EXTENDED_XMP_GUID_LENGTH = 32;
+    private static final int EXTENDED_XMP_INT_LENGTH = 4;
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -84,23 +100,41 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        final int preambleLength = XMP_JPEG_PREAMBLE.length();
+        final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
+        String extendedXMPGUID = null;
+        byte[] extendedXMPBuffer = null;
+
         for (byte[] segmentBytes : segments) {
             // XMP in a JPEG file has an identifying preamble which is not valid XML
-            final int preambleLength = XMP_JPEG_PREAMBLE.length();
+            if (segmentBytes.length >= preambleLength) {
+                // NOTE we expect the full preamble here, but some images (such as that reported on GitHub #102)
+                // start with "XMP\0://ns.adobe.com/xap/1.0/" which appears to be an error but is easily recovered
+                // from. In such cases, the actual XMP data begins at the same offset.
+                if (XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)) ||
+                    "XMP".equalsIgnoreCase(new String(segmentBytes, 0, 3))) {
 
-            if (segmentBytes.length < preambleLength)
-                continue;
+                    byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
+                    System.arraycopy(segmentBytes, preambleLength, xmlBytes, 0, xmlBytes.length);
+                    extract(xmlBytes, metadata);
+                    // Check in the Standard XMP if there should be a Extended XMP part in other chunks.
+                    extendedXMPGUID = getExtendedXMPGUID(metadata);
+                    continue;
+                }
+            }
 
-            // NOTE we expect the full preamble here, but some images (such as that reported on GitHub #102)
-            // start with "XMP\0://ns.adobe.com/xap/1.0/" which appears to be an error but is easily recovered
-            // from. In such cases, the actual XMP data begins at the same offset.
-            if (!XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)) &&
-                !"XMP".equalsIgnoreCase(new String(segmentBytes, 0, 3)))
-                continue;
+            // If we know that there's Extended XMP chunks, look for them.
+            if (extendedXMPGUID != null && segmentBytes.length >= extensionPreambleLength) {
+                if (!XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, extensionPreambleLength)))
+                    continue;
 
-            byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
-            System.arraycopy(segmentBytes, preambleLength, xmlBytes, 0, xmlBytes.length);
-            extract(xmlBytes, metadata);
+                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer);
+            }
+        }
+
+        // Now that the Extended XMP chunks have been concatened, let's parse and merge with the Standard XMP.
+        if (extendedXMPBuffer != null) {
+            extract(extendedXMPBuffer, metadata);
         }
     }
 
@@ -296,4 +330,97 @@ public class XmpReader implements JpegSegmentMetadataReader
                 directory.addError(String.format("Unknown format code %d for tag %d", formatCode, tagType));
         }
     }
+
+    /**
+     * Determine if there is an extended XMP section based on the standard XMP part.
+     * The xmpNote:HasExtendedXMP attribute contains the GUID of the Extended XMP chunks.
+     */
+    private static String getExtendedXMPGUID(@NotNull Metadata metadata)
+    {
+        final Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
+
+        if (xmpDirectories == null)
+            return null;
+
+        for (XmpDirectory directory : xmpDirectories) {
+            final XMPMeta xmpMeta = directory.getXMPMeta();
+
+            if (xmpMeta == null)
+                continue;
+
+            try {
+                final XMPIterator itr = xmpMeta.iterator(SCHEMA_XMP_NOTES, null, null);
+                if (itr == null)
+                    continue;
+
+                while (itr.hasNext()) {
+                    final XMPPropertyInfo pi = (XMPPropertyInfo) itr.next();
+                    if (ATTRIBUTE_EXTENDED_XMP.equals(pi.getPath())) {
+                        return pi.getValue();
+                    }
+                }
+            } catch (XMPException e) {
+                // Fail silently here: we had a reading issue, not a decoding issue.
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Process an Extended XMP chunk. It will read the bytes from segmentBytes and validates that the GUID the requested one.
+     * It will progressively fill the buffer with each chunk.
+     * The format is specified in this document:
+     * http://www.adobe.com/content/dam/Adobe/en/devnet/xmp/pdfs/XMPSpecificationPart3.pdf
+     * at page 19
+     */
+    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, byte[] extendedXMPBuffer)
+    {
+        final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
+        final int segmentLength = segmentBytes.length;
+        final int totalOffset = extensionPreambleLength + EXTENDED_XMP_GUID_LENGTH + EXTENDED_XMP_INT_LENGTH + EXTENDED_XMP_INT_LENGTH;
+        XmpDirectory directory = null;
+
+        if (segmentLength >= totalOffset) {
+            try {
+                /**
+                 * The chunk contains:
+                 * - A null-terminated signature string of "http://ns.adobe.com/xmp/extension/".
+                 * - A 128-bit GUID stored as a 32-byte ASCII hex string, capital A-F, no null termination.
+                 *   The GUID is a 128-bit MD5 digest of the full ExtendedXMP serialization.
+                 * - The full length of the ExtendedXMP serialization as a 32-bit unsigned integer
+                 * - The offset of this portion as a 32-bit unsigned integer
+                 * - The portion of the ExtendedXMP
+                 */
+                final SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
+                reader.skip(extensionPreambleLength);
+                final String segmentGUID = reader.getString(EXTENDED_XMP_GUID_LENGTH);
+
+                if (extendedXMPGUID.equals(segmentGUID)) {
+                    final int fullLength = (int)reader.getUInt32();
+                    final int chunkOffset = (int)reader.getUInt32();
+
+                    if (extendedXMPBuffer == null) {
+                        extendedXMPBuffer = new byte[fullLength];
+                    }
+
+                    if (extendedXMPBuffer.length == fullLength) {
+                        System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, segmentLength - totalOffset);
+                    } else {
+                        if (directory == null)
+                            directory = new XmpDirectory();
+                        directory.addError(String.format("Inconsistent length for the Extended XMP buffer: %d instead of %d", fullLength, extendedXMPBuffer.length));
+                    }
+                }
+            } catch (IOException ex) {
+                directory.addError(ex.getMessage());
+            }
+        }
+
+        if (directory != null && !directory.isEmpty())
+            metadata.addDirectory(directory);
+
+        return extendedXMPBuffer;
+    }
+
 }
