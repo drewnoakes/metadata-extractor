@@ -62,7 +62,7 @@ public class JpegMetadataReaderTest
         @Test
     public void testExtractPanasonicMakernoteMetadata() throws Exception
     {
-        Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/P1050007.JPG"));
+        Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/P1050007.jpg"));
         // obtain the Exif directory
         ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
         assertNotNull(directory);
