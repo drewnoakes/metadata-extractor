@@ -22,7 +22,9 @@ package com.drew.imaging.jpeg;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import org.junit.Test;
 
@@ -55,6 +57,45 @@ public class JpegMetadataReaderTest
         Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withXmp.jpg"));
         Directory directory = metadata.getFirstDirectoryOfType(XmpDirectory.class);
         assertNotNull(directory);
+    }
+
+        @Test
+    public void testExtractPanasonicMakernoteMetadata() throws Exception
+    {
+        Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/P1050007.jpg"));
+        // obtain the Exif directory
+        ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+        assertNotNull(directory);
+        // query the tag's value
+        PanasonicMakernoteDirectory pmd = metadata.getFirstDirectoryOfType(PanasonicMakernoteDirectory.class);
+        if (pmd != null) {
+            String country = "";
+            String city = "";
+            String state = "";
+            String landmark = "";
+            for (Tag tag : pmd.getTags()) {
+                if (tag.getTagType() == PanasonicMakernoteDirectory.TAG_COUNTRY) {
+                    country = tag.getDescription();
+                    assertEquals("DENMARK", country);
+                } else if (tag.getTagType() == PanasonicMakernoteDirectory.TAG_STATE) {
+                    
+                    state = tag.getDescription();
+                    assertEquals("SJÆLLAND", state);
+                } else if (tag.getTagType() == PanasonicMakernoteDirectory.TAG_CITY) {
+                    
+                    city = tag.getDescription();
+                    assertEquals("ODSHERRED", city);
+                } else if (tag.getTagType() == PanasonicMakernoteDirectory.TAG_LANDMARK) {
+
+                    landmark = tag.getDescription();
+                    if (!landmark.equals("---")) {
+                        System.out.println(landmark);
+                    }
+                }
+            }
+
+        }
+        
     }
 
     private void validate(Metadata metadata)

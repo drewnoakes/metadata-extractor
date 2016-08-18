@@ -31,6 +31,7 @@ import com.drew.metadata.TagDescriptor;
 import java.io.IOException;
 
 import static com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link PanasonicMakernoteDirectory}.
@@ -281,43 +282,43 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getCountryDescription()
     {
-        return getAsciiStringFromBytes(TAG_COUNTRY);
+        return getAsciiStringFromBytes(TAG_COUNTRY, StandardCharsets.UTF_8);
     }
 
     @Nullable
     public String getStateDescription()
     {
-        return getAsciiStringFromBytes(TAG_STATE);
+        return getAsciiStringFromBytes(TAG_STATE, StandardCharsets.UTF_8);
     }
 
     @Nullable
     public String getCityDescription()
     {
-        return getAsciiStringFromBytes(TAG_CITY);
+        return getAsciiStringFromBytes(TAG_CITY, StandardCharsets.UTF_8);
     }
 
     @Nullable
     public String getLandmarkDescription()
     {
-        return getAsciiStringFromBytes(TAG_LANDMARK);
+        return getAsciiStringFromBytes(TAG_LANDMARK, StandardCharsets.UTF_8);
     }
 
 	@Nullable
     public String getTitleDescription()
     {
-        return getAsciiStringFromBytes(TAG_TITLE);
+        return getAsciiStringFromBytes(TAG_TITLE, StandardCharsets.UTF_8);
     }
 
 	@Nullable
     public String getBabyNameDescription()
     {
-        return getAsciiStringFromBytes(TAG_BABY_NAME);
+        return getAsciiStringFromBytes(TAG_BABY_NAME, StandardCharsets.UTF_8);
     }
 
 	@Nullable
     public String getLocationDescription()
     {
-        return getAsciiStringFromBytes(TAG_LOCATION);
+        return getAsciiStringFromBytes(TAG_LOCATION, StandardCharsets.UTF_8);
     }
 
     @Nullable

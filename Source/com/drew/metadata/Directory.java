@@ -260,7 +260,21 @@ public abstract class Directory
     }
 
     /**
-     * Sets a <code>String</code> value for the specified tag.
+     * Sets a <code>StringValue</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a String
+     */
+    @java.lang.SuppressWarnings({ "ConstantConditions" })
+    public void setStringValue(int tagType, @NotNull StringValue value)
+    {
+        if (value == null)
+            throw new NullPointerException("cannot set a null String");
+        setObject(tagType, value);
+    }
+
+        /**
+     * Sets a <code>StringValue</code> value for the specified tag.
      *
      * @param tagType the tag's value as an int
      * @param value   the value for the specified tag as a String
@@ -454,6 +468,20 @@ public abstract class Directory
                 }
                 return (int)val;
             }
+        } else if (o instanceof StringValue) {
+            try {
+                return Integer.parseInt(((StringValue)o).toString());
+            } catch (NumberFormatException nfe) {
+                // convert the char array to an int
+                String s = ((StringValue)o).toString();
+                byte[] bytes = s.getBytes();
+                long val = 0;
+                for (byte aByte : bytes) {
+                    val = val << 8;
+                    val += (aByte & 0xff);
+                }
+                return (int)val;
+            }
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             if (rationals.length == 1)
@@ -490,7 +518,9 @@ public abstract class Directory
         if (o instanceof String[])
             return (String[])o;
         if (o instanceof String)
-            return new String[] { (String)o };
+            return new String[] {(String)o};
+        if (o instanceof StringValue)
+            return new String[] { ((StringValue)o).toString() };
         if (o instanceof int[]) {
             int[] ints = (int[])o;
             String[] strings = new String[ints.length];
@@ -579,6 +609,8 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null) {
             return null;
+        } else if (o instanceof StringValue) {
+            return ((StringValue) o).bytes;
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             byte[] bytes = new byte[rationals.length];
@@ -641,6 +673,13 @@ public abstract class Directory
                 return null;
             }
         }
+        if (o instanceof StringValue) {
+            try {
+                return Double.parseDouble(((StringValue)o).toString());
+            } catch (NumberFormatException nfe) {
+                return null;
+            }
+        }
         if (o instanceof Number)
             return ((Number)o).doubleValue();
 
@@ -669,6 +708,13 @@ public abstract class Directory
         if (o instanceof String) {
             try {
                 return Float.parseFloat((String)o);
+            } catch (NumberFormatException nfe) {
+                return null;
+            }
+        }
+        if (o instanceof StringValue) {
+            try {
+                return Float.parseFloat(((StringValue)o).toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
@@ -704,6 +750,13 @@ public abstract class Directory
                 return null;
             }
         }
+        if (o instanceof StringValue) {
+            try {
+                return Long.parseLong(((StringValue)o).toString());
+            } catch (NumberFormatException nfe) {
+                return null;
+            }
+        }
         if (o instanceof Number)
             return ((Number)o).longValue();
         return null;
@@ -734,6 +787,13 @@ public abstract class Directory
         if (o instanceof String) {
             try {
                 return Boolean.getBoolean((String)o);
+            } catch (NumberFormatException nfe) {
+                return null;
+            }
+        }
+        if (o instanceof StringValue) {
+            try {
+                return Boolean.getBoolean(((StringValue)o).toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
@@ -793,7 +853,7 @@ public abstract class Directory
 
         java.util.Date date = null;
 
-        if (o instanceof String) {
+        if ((o instanceof String) || (o instanceof StringValue)) {
             // This seems to cover all known Exif and Xmp date strings
             // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
             String datePatterns[] = {
@@ -808,8 +868,12 @@ public abstract class Directory
                     "yyyy-MM-dd",
                     "yyyy-MM",
                     "yyyy" };
-            String dateString = (String)o;
-
+            String dateString;
+            if (o instanceof String) {
+                dateString = (String)o;
+            } else {
+                dateString = ((StringValue)o).toString();
+            }
             // if the date string has subsecond information, it supersedes the subsecond parameter
             Pattern subsecondPattern = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)(\\.\\d+)");
             Matcher subsecondMatcher = subsecondPattern.matcher(dateString);
