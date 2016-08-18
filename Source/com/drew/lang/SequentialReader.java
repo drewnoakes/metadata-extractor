@@ -22,10 +22,12 @@
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.StringValue;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -294,6 +296,20 @@ public abstract class SequentialReader
     @NotNull
     public String getNullTerminatedString(int maxLengthBytes) throws IOException
     {
+       return getNullTerminatedStringValue(maxLengthBytes).toString();
+    }
+    
+        /**
+     * Creates a String from the stream, ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
+     *
+     * @param maxLengthBytes The maximum number of bytes to read.  If a zero-byte is not reached within this limit,
+     *                       reading will stop and the string will be truncated to this length.
+     * @return The read string.
+     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
+     */
+    @NotNull
+    public StringValue getNullTerminatedStringValue(int maxLengthBytes) throws IOException
+    {
         // NOTE currently only really suited to single-byte character strings
 
         byte[] bytes = new byte[maxLengthBytes];
@@ -303,6 +319,12 @@ public abstract class SequentialReader
         while (length < bytes.length && (bytes[length] = getByte()) != '\0')
             length++;
 
-        return new String(bytes, 0, length);
+        if (length != maxLengthBytes)
+             {
+                 byte[] bytesCopy = new byte[length];
+                  bytesCopy = Arrays.copyOf(bytes, length);
+                 bytes = bytesCopy;
+             }
+             return new StringValue(bytes);
     }
 }

@@ -27,9 +27,15 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Age;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Face;
+import com.drew.metadata.StringValue;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Describes tags specific to Panasonic and Leica cameras.
@@ -642,4 +648,30 @@ public class PanasonicMakernoteDirectory extends Directory
             return null;
         return Age.fromPanasonicString(ageString);
 	}
+        
+//            /**
+//     * Sets a <code>byte[]</code> (array) for the specified tag.
+//     *
+//     * @param tagType the tag identifier
+//     * @param bytes   the byte array to store
+//     */
+//    public void setByteArray(int tagType, @NotNull byte[] bytes)
+//    {
+//        try {
+//            String s = new String(bytes, "UTF-8");
+//            //CharSequence cs = new CharSequence ();
+//            if (s.contains("Æ")) {
+//            System.out.println(" Fafa " + new String(bytes, "UTF-8"));
+//            }
+//        } catch (UnsupportedEncodingException ex) {
+//            Logger.getLogger(PanasonicMakernoteDirectory.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        if (tagType == TAG_CITY || tagType == TAG_STATE || tagType == TAG_COUNTRY ||tagType == TAG_LANDMARK) {
+//            int i;
+//            for (i = 0; i < bytes.length && bytes[i] != 0; i++) { }
+//            setStringValue(tagType, new StringValue(Arrays.copyOf(bytes, i),java.nio.charset.Charset.forName("UTF-8")));
+//        } else {
+//            super.setByteArray(tagType, bytes);
+//        }
+//    }
 }

@@ -23,8 +23,10 @@ package com.drew.imaging.tiff;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.StringValue;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -261,10 +263,13 @@ public class TiffReader
         switch (formatCode) {
             case TiffDataFormat.CODE_UNDEFINED:
                 // this includes exif user comments
-                handler.setByteArray(tagId, reader.getBytes(tagValueOffset, componentCount));
+                
+                byte[] b = reader.getBytes(tagValueOffset, componentCount);
+                handler.setByteArray(tagId, b);
                 break;
             case TiffDataFormat.CODE_STRING:
-                handler.setString(tagId, reader.getNullTerminatedString(tagValueOffset, componentCount));
+                StringValue s = reader.getNullTerminatedStringValue(tagValueOffset, componentCount);
+                handler.setString(tagId, s);
                 break;
             case TiffDataFormat.CODE_RATIONAL_S:
                 if (componentCount == 1) {
