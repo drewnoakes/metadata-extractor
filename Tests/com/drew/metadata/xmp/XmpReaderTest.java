@@ -275,7 +275,7 @@ public class XmpReaderTest
     {
         Map<String,String> propertyMap = _directory.getXmpProperties();
 
-        assertEquals(179, propertyMap.size());
+        assertEquals(178, propertyMap.size());
 
         assertTrue(propertyMap.containsKey("photoshop:Country"));
         assertEquals("Deutschland", propertyMap.get("photoshop:Country"));
