@@ -501,7 +501,7 @@ public class ProcessAllImagesInFolderUtility
             // Sanitise the extension
             extension = extension.toLowerCase();
             if (_extensionEquivalence.containsKey(extension))
-                extension =_extensionEquivalence.get(extension);
+                extension = _extensionEquivalence.get(extension);
 
             List<Row> list = _rowListByExtension.get(extension);
             if (list == null) {
