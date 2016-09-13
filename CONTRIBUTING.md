@@ -26,5 +26,7 @@ these guidelines will need to be amended before being accepted.
   the codebase, please discuss that on the mailing list and, if agreed, it will be
   made in a single commit to all code.
 
+* **Run the regression tests.** The process is [described here](https://github.com/drewnoakes/metadata-extractor/wiki/Working-with-test-images).
+
 The goal of these guidelines is to make your contribution clearer to read and review for
 all, both now and in the future.
