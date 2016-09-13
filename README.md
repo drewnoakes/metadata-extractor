@@ -124,3 +124,5 @@ More information about this project is available at:
 ## Other languages
 
 A feature-equivalent .NET implementation, [metadata-extractor-dotnet](https://github.com/drewnoakes/metadata-extractor-dotnet) is now being developed alongside this original Java version.
+
+[`php-metadata-extractor`](https://github.com/gomoob/php-metadata-extractor) wraps this Java project, making it available to users of PHP.
