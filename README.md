@@ -67,6 +67,7 @@ Camera-specific "makernote" data is decoded for cameras manufactured by:
 * Olympus
 * Panasonic
 * Pentax
+* Reconyx
 * Sanyo
 * Sigma/Foveon
 * Sony
