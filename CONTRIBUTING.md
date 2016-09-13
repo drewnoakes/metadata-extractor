@@ -1,7 +1,7 @@
 You want to contribute to _metadata-extractor_? Great!
 
 The easiest way to contribute is to provide test images for the [image database]
-(https://github.com/drewnoakes/metadata-extractor/wiki/ImageDatabase).
+(https://github.com/drewnoakes/metadata-extractor-images/wiki).
 
 There are several coding tasks available to be worked on in the [issues list]
 (https://github.com/drewnoakes/metadata-extractor/issues). If you have something
