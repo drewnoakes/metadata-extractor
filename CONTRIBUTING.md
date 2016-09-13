@@ -3,10 +3,10 @@ You want to contribute to _metadata-extractor_? Great!
 The easiest way to contribute is to provide test images for the [image database]
 (https://github.com/drewnoakes/metadata-extractor-images/wiki).
 
-There are several coding tasks available to be worked on in the [issues list]
-(https://github.com/drewnoakes/metadata-extractor/issues). If you have something
-else in mind, that's great too. If you want to have your pull request merged,
-it's probably best to discuss the idea on the mailing list first.
+Check the [issues list](https://github.com/drewnoakes/metadata-extractor/issues)
+for tasks that need attention. If you have something else in mind, that's great too.
+If you want to have your pull request merged, it's probably best to discuss the idea on
+the mailing list first.
 
 There are a few simple but important guidelines for pull requests. Code not meeting
 these guidelines will need to be amended before being accepted.
