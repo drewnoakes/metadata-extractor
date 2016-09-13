@@ -474,6 +474,7 @@ public class ProcessAllImagesInFolderUtility
                 for (Directory directory : metadata.getDirectories()) {
                     if (directory.getClass().getName().contains("Makernote")) {
                         makernote = directory.getName().replace("Makernote", "").trim();
+                        break;
                     }
                 }
                 if (makernote == null) {
