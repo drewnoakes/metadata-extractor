@@ -21,6 +21,7 @@
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.StringValue;
 
 /**
  * Models a key/value pair, where both are non-null {@link String} objects.
@@ -30,9 +31,9 @@ import com.drew.lang.annotations.NotNull;
 public class KeyValuePair
 {
     private final String _key;
-    private final String _value;
+    private final StringValue _value;
 
-    public KeyValuePair(@NotNull String key, @NotNull String value)
+    public KeyValuePair(@NotNull String key, @NotNull StringValue value)
     {
         _key = key;
         _value = value;
@@ -45,7 +46,7 @@ public class KeyValuePair
     }
 
     @NotNull
-    public String getValue()
+    public StringValue getValue()
     {
         return _value;
     }

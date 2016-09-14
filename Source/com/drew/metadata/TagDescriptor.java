@@ -28,6 +28,7 @@ import com.drew.lang.annotations.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,39 +36,40 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Base class for all tag descriptor classes.  Implementations are responsible for
- * providing the human-readable string representation of tag values stored in a directory.
- * The directory is provided to the tag descriptor via its constructor.
+ * Base class for all tag descriptor classes. Implementations are responsible
+ * for providing the human-readable string representation of tag values stored
+ * in a directory. The directory is provided to the tag descriptor via its
+ * constructor.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class TagDescriptor<T extends Directory>
-{
+public class TagDescriptor<T extends Directory> {
+
     @NotNull
     protected final T _directory;
 
-    public TagDescriptor(@NotNull T directory)
-    {
+    public TagDescriptor(@NotNull T directory) {
         _directory = directory;
     }
 
     /**
-     * Returns a descriptive value of the specified tag for this image.
-     * Where possible, known values will be substituted here in place of the raw
-     * tokens actually kept in the metadata segment.  If no substitution is
-     * available, the value provided by <code>getString(tagType)</code> will be returned.
+     * Returns a descriptive value of the specified tag for this image. Where
+     * possible, known values will be substituted here in place of the raw
+     * tokens actually kept in the metadata segment. If no substitution is
+     * available, the value provided by <code>getString(tagType)</code> will be
+     * returned.
      *
      * @param tagType the tag to find a description for
      * @return a description of the image's value for the specified tag, or
-     *         <code>null</code> if the tag hasn't been defined.
+     * <code>null</code> if the tag hasn't been defined.
      */
     @Nullable
-    public String getDescription(int tagType)
-    {
+    public String getDescription(int tagType) {
         Object object = _directory.getObject(tagType);
 
-        if (object == null)
+        if (object == null) {
             return null;
+        }
 
         // special presentation for long arrays
         if (object.getClass().isArray()) {
@@ -77,12 +79,11 @@ public class TagDescriptor<T extends Directory>
             }
         }
 
-        if (object instanceof Date)
-        {
+        if (object instanceof Date) {
             // Produce a date string having a format that includes the offset in form "+00:00"
             return new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy")
-                .format((Date) object)
-                .replaceAll("([0-9]{2} [^ ]+)$", ":$1");
+                    .format((Date) object)
+                    .replaceAll("([0-9]{2} [^ ]+)$", ":$1");
         }
 
         // no special handling required, so use default conversion to a string
@@ -90,8 +91,8 @@ public class TagDescriptor<T extends Directory>
     }
 
     /**
-     * Takes a series of 4 bytes from the specified offset, and converts these to a
-     * well-known version number, where possible.
+     * Takes a series of 4 bytes from the specified offset, and converts these
+     * to a well-known version number, where possible.
      * <p>
      * Two different formats are processed:
      * <ul>
@@ -99,131 +100,135 @@ public class TagDescriptor<T extends Directory>
      * <li>[0 1 0 0] -&gt; 1.00</li>
      * </ul>
      *
-     * @param components  the four version values
+     * @param components the four version values
      * @param majorDigits the number of components to be
-     * @return the version as a string of form "2.10" or null if the argument cannot be converted
+     * @return the version as a string of form "2.10" or null if the argument
+     * cannot be converted
      */
     @Nullable
-    public static String convertBytesToVersionString(@Nullable int[] components, final int majorDigits)
-    {
-        if (components == null)
+    public static String convertBytesToVersionString(@Nullable int[] components, final int majorDigits) {
+        if (components == null) {
             return null;
+        }
         StringBuilder version = new StringBuilder();
         for (int i = 0; i < 4 && i < components.length; i++) {
-            if (i == majorDigits)
+            if (i == majorDigits) {
                 version.append('.');
-            char c = (char)components[i];
-            if (c < '0')
+            }
+            char c = (char) components[i];
+            if (c < '0') {
                 c += '0';
-            if (i == 0 && c == '0')
+            }
+            if (i == 0 && c == '0') {
                 continue;
+            }
             version.append(c);
         }
         return version.toString();
     }
 
     @Nullable
-    protected String getVersionBytesDescription(final int tagType, int majorDigits)
-    {
+    protected String getVersionBytesDescription(final int tagType, int majorDigits) {
         int[] values = _directory.getIntArray(tagType);
         return values == null ? null : convertBytesToVersionString(values, majorDigits);
     }
 
     @Nullable
-    protected String getIndexedDescription(final int tagType, @NotNull String... descriptions)
-    {
+    protected String getIndexedDescription(final int tagType, @NotNull String... descriptions) {
         return getIndexedDescription(tagType, 0, descriptions);
     }
 
     @Nullable
-    protected String getIndexedDescription(final int tagType, final int baseIndex, @NotNull String... descriptions)
-    {
+    protected String getIndexedDescription(final int tagType, final int baseIndex, @NotNull String... descriptions) {
         final Integer index = _directory.getInteger(tagType);
-        if (index == null)
+        if (index == null) {
             return null;
+        }
         final int arrayIndex = index - baseIndex;
         if (arrayIndex >= 0 && arrayIndex < descriptions.length) {
             String description = descriptions[arrayIndex];
-            if (description != null)
+            if (description != null) {
                 return description;
+            }
         }
         return "Unknown (" + index + ")";
     }
 
     @Nullable
-    protected String getByteLengthDescription(final int tagType)
-    {
+    protected String getByteLengthDescription(final int tagType) {
         byte[] bytes = _directory.getByteArray(tagType);
-        if (bytes == null)
+        if (bytes == null) {
             return null;
+        }
         return String.format("(%d byte%s)", bytes.length, bytes.length == 1 ? "" : "s");
     }
 
     @Nullable
-    protected String getSimpleRational(final int tagType)
-    {
+    protected String getSimpleRational(final int tagType) {
         Rational value = _directory.getRational(tagType);
-        if (value == null)
+        if (value == null) {
             return null;
+        }
         return value.toSimpleString(true);
     }
 
     @Nullable
-    protected String getDecimalRational(final int tagType, final int decimalPlaces)
-    {
+    protected String getDecimalRational(final int tagType, final int decimalPlaces) {
         Rational value = _directory.getRational(tagType);
-        if (value == null)
+        if (value == null) {
             return null;
+        }
         return String.format("%." + decimalPlaces + "f", value.doubleValue());
     }
 
     @Nullable
-    protected String getFormattedInt(final int tagType, @NotNull final String format)
-    {
+    protected String getFormattedInt(final int tagType, @NotNull final String format) {
         Integer value = _directory.getInteger(tagType);
-        if (value == null)
+        if (value == null) {
             return null;
+        }
         return String.format(format, value);
     }
 
     @Nullable
-    protected String getFormattedFloat(final int tagType, @NotNull final String format)
-    {
+    protected String getFormattedFloat(final int tagType, @NotNull final String format) {
         Float value = _directory.getFloatObject(tagType);
-        if (value == null)
+        if (value == null) {
             return null;
+        }
         return String.format(format, value);
     }
 
     @Nullable
-    protected String getFormattedString(final int tagType, @NotNull final String format)
-    {
+    protected String getFormattedString(final int tagType, @NotNull final String format) {
         String value = _directory.getString(tagType);
-        if (value == null)
+        if (value == null) {
             return null;
+        }
         return String.format(format, value);
     }
 
     @Nullable
-    protected String getEpochTimeDescription(final int tagType)
-    {
+    protected String getEpochTimeDescription(final int tagType) {
         // TODO have observed a byte[8] here which is likely some kind of date (ticks as long?)
         Long value = _directory.getLongObject(tagType);
-        if (value==null)
+        if (value == null) {
             return null;
+        }
         return new Date(value).toString();
     }
 
     /**
-     * LSB first. Labels may be null, a String, or a String[2] with (low label,high label) values.
+     * LSB first. Labels may be null, a String, or a String[2] with (low
+     * label,high label) values.
      */
     @Nullable
-    protected String getBitFlagDescription(final int tagType, @NotNull final Object... labels)
-    {
+    protected String getBitFlagDescription(final int tagType, @NotNull final Object... labels) {
         Integer value = _directory.getInteger(tagType);
 
-        if (value == null)
+        if (value == null) {
             return null;
+        }
 
         List<String> parts = new ArrayList<String>();
 
@@ -233,11 +238,11 @@ public class TagDescriptor<T extends Directory>
             if (labelObj != null) {
                 boolean isBitSet = (value & 1) == 1;
                 if (labelObj instanceof String[]) {
-                    String[] labelPair = (String[])labelObj;
-                    assert(labelPair.length == 2);
+                    String[] labelPair = (String[]) labelObj;
+                    assert (labelPair.length == 2);
                     parts.add(labelPair[isBitSet ? 1 : 0]);
                 } else if (isBitSet && labelObj instanceof String) {
-                    parts.add((String)labelObj);
+                    parts.add((String) labelObj);
                 }
             }
             value >>= 1;
@@ -248,12 +253,12 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String get7BitStringFromBytes(final int tagType)
-    {
+    protected String get7BitStringFromBytes(final int tagType) {
         final byte[] bytes = _directory.getByteArray(tagType);
 
-        if (bytes == null)
+        if (bytes == null) {
             return null;
+        }
 
         int length = bytes.length;
         for (int index = 0; index < bytes.length; index++) {
@@ -268,12 +273,12 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getAsciiStringFromBytes(int tag)
-    {
+    protected String getAsciiStringFromBytes(int tag) {
         byte[] values = _directory.getByteArray(tag);
 
-        if (values == null)
+        if (values == null) {
             return null;
+        }
 
         try {
             return new String(values, "ASCII").trim();
@@ -283,15 +288,25 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getRationalOrDoubleString(int tagType)
-    {
+    protected String getAsciiStringFromBytes(int tag, Charset cs) {
+        byte[] values = _directory.getByteArray(tag);
+
+        if (values == null) {
+            return null;
+        }
+
+        return new String(values, cs).trim();
+    }
+
+    @Nullable
+    protected String getRationalOrDoubleString(int tagType) {
         Rational rational = _directory.getRational(tagType);
-        if (rational != null)
+        if (rational != null) {
             return rational.toSimpleString(true);
+        }
 
         Double d = _directory.getDoubleObject(tagType);
-        if (d != null)
-        {
+        if (d != null) {
             DecimalFormat format = new DecimalFormat("0.###");
             return format.format(d);
         }
@@ -300,35 +315,34 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected static String getFStopDescription(double fStop)
-    {
+    protected static String getFStopDescription(double fStop) {
         DecimalFormat format = new DecimalFormat("0.0");
         format.setRoundingMode(RoundingMode.HALF_UP);
         return "f/" + format.format(fStop);
     }
 
     @Nullable
-    protected static String getFocalLengthDescription(double mm)
-    {
+    protected static String getFocalLengthDescription(double mm) {
         DecimalFormat format = new DecimalFormat("0.#");
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(mm) + " mm";
     }
 
     @Nullable
-    protected String getLensSpecificationDescription(int tag)
-    {
+    protected String getLensSpecificationDescription(int tag) {
         Rational[] values = _directory.getRationalArray(tag);
 
-        if (values == null || values.length != 4 || (values[0].isZero() && values[2].isZero()))
+        if (values == null || values.length != 4 || (values[0].isZero() && values[2].isZero())) {
             return null;
+        }
 
         StringBuilder sb = new StringBuilder();
 
-        if (values[0].equals(values[1]))
+        if (values[0].equals(values[1])) {
             sb.append(values[0].toSimpleString(true)).append("mm");
-        else
+        } else {
             sb.append(values[0].toSimpleString(true)).append('-').append(values[1].toSimpleString(true)).append("mm");
+        }
 
         if (!values[2].isZero()) {
             sb.append(' ');
@@ -336,10 +350,11 @@ public class TagDescriptor<T extends Directory>
             DecimalFormat format = new DecimalFormat("0.0");
             format.setRoundingMode(RoundingMode.HALF_UP);
 
-            if (values[2].equals(values[3]))
+            if (values[2].equals(values[3])) {
                 sb.append(getFStopDescription(values[2].doubleValue()));
-            else
+            } else {
                 sb.append("f/").append(format.format(values[2].doubleValue())).append('-').append(format.format(values[3].doubleValue()));
+            }
         }
 
         return sb.toString();

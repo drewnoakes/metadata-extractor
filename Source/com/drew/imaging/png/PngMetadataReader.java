@@ -23,6 +23,7 @@ package com.drew.imaging.png;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
@@ -30,18 +31,20 @@ import com.drew.metadata.png.PngDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.zip.InflaterInputStream;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public class PngMetadataReader
-{
-    private static Set<PngChunkType> _desiredChunkTypes;
+public class PngMetadataReader {
 
-    static
-    {
+    private static Set<PngChunkType> _desiredChunkTypes;
+    // by spec, PNG is generally supposed to use this encoding
+    private static Charset defaultEncoding = java.nio.charset.StandardCharsets.ISO_8859_1;
+
+    static {
         Set<PngChunkType> desiredChunkTypes = new HashSet<PngChunkType>();
 
         desiredChunkTypes.add(PngChunkType.IHDR);
@@ -62,8 +65,7 @@ public class PngMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws PngProcessingException, IOException
-    {
+    public static Metadata readMetadata(@NotNull File file) throws PngProcessingException, IOException {
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
@@ -76,8 +78,7 @@ public class PngMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws PngProcessingException, IOException
-    {
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws PngProcessingException, IOException {
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), _desiredChunkTypes);
 
         Metadata metadata = new Metadata();
@@ -93,10 +94,10 @@ public class PngMetadataReader
         return metadata;
     }
 
-    private static void processChunk(@NotNull Metadata metadata, @NotNull PngChunk chunk) throws PngProcessingException, IOException
-    {
+    private static void processChunk(@NotNull Metadata metadata, @NotNull PngChunk chunk) throws PngProcessingException, IOException {
         PngChunkType chunkType = chunk.getType();
         byte[] bytes = chunk.getBytes();
+            
 
         if (chunkType.equals(PngChunkType.IHDR)) {
             PngHeader header = new PngHeader(bytes);
@@ -142,9 +143,9 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.iCCP)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
-            String profileName = reader.getNullTerminatedString(79);
+            StringValue profileName = reader.getNullTerminatedStringValue(79);
             PngDirectory directory = new PngDirectory(PngChunkType.iCCP);
-            directory.setString(PngDirectory.TAG_ICC_PROFILE_NAME, profileName);
+            directory.setString(PngDirectory.TAG_ICC_PROFILE_NAME, profileName.toString(defaultEncoding));
             byte compressionMethod = reader.getInt8();
             if (compressionMethod == 0) {
                 // Only compression method allowed by the spec is zero: deflate
@@ -164,9 +165,9 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.tEXt)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
-            String keyword = reader.getNullTerminatedString(79);
+            String keyword = reader.getNullTerminatedStringValue(79).toString(defaultEncoding);
             int bytesLeft = bytes.length - keyword.length() - 1;
-            String value = reader.getNullTerminatedString(bytesLeft);
+            StringValue value = reader.getNullTerminatedStringValue(bytesLeft);
             List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
             textPairs.add(new KeyValuePair(keyword, value));
             PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
@@ -180,12 +181,13 @@ public class PngMetadataReader
             String languageTag = reader.getNullTerminatedString(bytes.length);
             String translatedKeyword = reader.getNullTerminatedString(bytes.length);
             int bytesLeft = bytes.length - keyword.length() - 1 - 1 - 1 - languageTag.length() - 1 - translatedKeyword.length() - 1;
-            String text = null;
+            StringValue text = null;
             if (compressionFlag == 0) {
-                text = reader.getNullTerminatedString(bytesLeft);
+                text = reader.getNullTerminatedStringValue(bytesLeft);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    text = StringUtil.fromStream(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    String tmpText = StringUtil.fromStream(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    text = new StringValue(tmpText.getBytes());
                 } else {
                     PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                     directory.addError("Invalid compression method value");
@@ -223,8 +225,8 @@ public class PngMetadataReader
                 directory.setString(PngDirectory.TAG_LAST_MODIFICATION_TIME, dateString);
             } else {
                 directory.addError(String.format(
-                    "PNG tIME data describes an invalid date/time: year=%d month=%d day=%d hour=%d minute=%d second=%d",
-                    year, month, day, hour, minute, second));
+                        "PNG tIME data describes an invalid date/time: year=%d month=%d day=%d hour=%d minute=%d second=%d",
+                        year, month, day, hour, minute, second));
             }
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.pHYs)) {

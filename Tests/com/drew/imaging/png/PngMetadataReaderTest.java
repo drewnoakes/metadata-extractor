@@ -108,7 +108,7 @@ public class PngMetadataReaderTest
             assertNotNull(pairs);
             assertEquals(1, pairs.size());
             assertEquals("Comment", pairs.get(0).getKey());
-            assertEquals("Created with GIMP", pairs.get(0).getValue());
+            assertEquals("Created with GIMP", pairs.get(0).getValue().toString());
         } finally {
             TimeZone.setDefault(timeZone);
         }
