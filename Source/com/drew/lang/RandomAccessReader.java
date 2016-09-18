@@ -417,7 +417,7 @@ public abstract class RandomAccessReader
      * Returns the sequence of bytes punctuated by a <code>\0</code> value.
      *
      * @param index The index within the buffer at which to start reading the string.
-     * @param maxLengthBytes The maximum number of bytes to read. If a <c>\0</c> byte is not reached within this limit,
+     * @param maxLengthBytes The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
      * the returned array will be <code>maxLengthBytes</code> long.
      * @return The read byte array, excluding the null terminator.
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.

@@ -309,9 +309,9 @@ public abstract class SequentialReader
     /**
      * Creates a String from the stream, ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
      *
-     * @param maxLengthBytes The maximum number of bytes to read.  If a <c>\0</c> byte is not reached within this limit,
+     * @param maxLengthBytes The maximum number of bytes to read.  If a <code>\0</code> byte is not reached within this limit,
      *                       reading will stop and the string will be truncated to this length.
-     * @param charset The <c>Charset</c> to register with the returned <c>StringValue</c>, or <c>null</c> if the encoding
+     * @param charset The <code>Charset</code> to register with the returned <code>StringValue</code>, or <code>null</code> if the encoding
      *                is unknown
      * @return The read string.
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
@@ -327,7 +327,7 @@ public abstract class SequentialReader
     /**
      * Returns the sequence of bytes punctuated by a <code>\0</code> value.
      *
-     * @param maxLengthBytes The maximum number of bytes to read. If a <c>\0</c> byte is not reached within this limit,
+     * @param maxLengthBytes The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
      * the returned array will be <code>maxLengthBytes</code> long.
      * @return The read byte array, excluding the null terminator.
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
