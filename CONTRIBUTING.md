@@ -19,7 +19,7 @@ these guidelines will need to be amended before being accepted.
   split them out into separate PRs.
 
 * **Match the existing code style.** This include things like brace placement, indentation
-  (spaces not tabs), and so on.
+  (spaces not tabs), naming conventions and so on.
   
 * **No 'churn'.** If your IDE changes lots of code automatically, turn that feature off or
   use a more friendly IDE. If you think a wide-sweeping change should be applied to
