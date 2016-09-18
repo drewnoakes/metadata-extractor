@@ -22,6 +22,7 @@ package com.drew.metadata.exif;
 
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
+import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
@@ -161,7 +162,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         // Custom processing for embedded XMP data
         if (tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && _currentDirectory instanceof ExifIFD0Directory) {
-            new XmpReader().extract(reader.getNullTerminatedString(tagOffset, byteCount), _metadata, _currentDirectory);
+            new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
         }
 
@@ -198,15 +199,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         String cameraMake = ifd0Directory == null ? null : ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
-        final String firstTwoChars = reader.getString(makernoteOffset, 2);
-        final String firstThreeChars = reader.getString(makernoteOffset, 3);
-        final String firstFourChars = reader.getString(makernoteOffset, 4);
-        final String firstFiveChars = reader.getString(makernoteOffset, 5);
-        final String firstSixChars = reader.getString(makernoteOffset, 6);
-        final String firstSevenChars = reader.getString(makernoteOffset, 7);
-        final String firstEightChars = reader.getString(makernoteOffset, 8);
-        final String firstTenChars = reader.getString(makernoteOffset, 10);
-        final String firstTwelveChars = reader.getString(makernoteOffset, 12);
+        final String firstTwoChars    = reader.getString(makernoteOffset, 2, Charsets.UTF_8);
+        final String firstThreeChars  = reader.getString(makernoteOffset, 3, Charsets.UTF_8);
+        final String firstFourChars   = reader.getString(makernoteOffset, 4, Charsets.UTF_8);
+        final String firstFiveChars   = reader.getString(makernoteOffset, 5, Charsets.UTF_8);
+        final String firstSixChars    = reader.getString(makernoteOffset, 6, Charsets.UTF_8);
+        final String firstSevenChars  = reader.getString(makernoteOffset, 7, Charsets.UTF_8);
+        final String firstEightChars  = reader.getString(makernoteOffset, 8, Charsets.UTF_8);
+        final String firstTenChars    = reader.getString(makernoteOffset, 10, Charsets.UTF_8);
+        final String firstTwelveChars = reader.getString(makernoteOffset, 12, Charsets.UTF_8);
 
         boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
@@ -307,7 +308,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             } else {
                 return false;
             }
-        } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(makernoteOffset, 12))) {
+        } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(makernoteOffset, 12, Charsets.UTF_8))) {
             // NON-Standard TIFF IFD Data using Panasonic Tags. There is no Next-IFD pointer after the IFD
             // Offsets are relative to the start of the TIFF header at the beginning of the EXIF segment
             // more information here: http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html
@@ -374,7 +375,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         // Kodak's makernote is not in IFD format. It has values at fixed offsets.
         int dataOffset = tagValueOffset + 8;
         try {
-            directory.setString(KodakMakernoteDirectory.TAG_KODAK_MODEL, reader.getString(dataOffset, 8));
+            directory.setStringValue(KodakMakernoteDirectory.TAG_KODAK_MODEL, reader.getStringValue(dataOffset, 8, Charsets.UTF_8));
             directory.setInt(KodakMakernoteDirectory.TAG_QUALITY, reader.getUInt8(dataOffset + 9));
             directory.setInt(KodakMakernoteDirectory.TAG_BURST_MODE, reader.getUInt8(dataOffset + 10));
             directory.setInt(KodakMakernoteDirectory.TAG_IMAGE_WIDTH, reader.getUInt16(dataOffset + 12));

@@ -231,13 +231,13 @@ public abstract class SequentialAccessTestBase
 
         // Test max length
         for (int i = 0; i < bytes.length; i++) {
-            assertEquals("ABCDEFG".substring(0, i), createReader(bytes).getNullTerminatedString(i));
+            assertEquals("ABCDEFG".substring(0, i), createReader(bytes).getNullTerminatedString(i, Charsets.UTF_8));
         }
 
-        assertEquals("", createReader(new byte[]{0}).getNullTerminatedString(10));
-        assertEquals("A", createReader(new byte[]{0x41, 0}).getNullTerminatedString(10));
-        assertEquals("AB", createReader(new byte[]{0x41, 0x42, 0}).getNullTerminatedString(10));
-        assertEquals("AB", createReader(new byte[]{0x41, 0x42, 0, 0x43}).getNullTerminatedString(10));
+        assertEquals("", createReader(new byte[]{0}).getNullTerminatedString(10, Charsets.UTF_8));
+        assertEquals("A", createReader(new byte[]{0x41, 0}).getNullTerminatedString(10, Charsets.UTF_8));
+        assertEquals("AB", createReader(new byte[]{0x41, 0x42, 0}).getNullTerminatedString(10, Charsets.UTF_8));
+        assertEquals("AB", createReader(new byte[]{0x41, 0x42, 0, 0x43}).getNullTerminatedString(10, Charsets.UTF_8));
     }
 
     @Test

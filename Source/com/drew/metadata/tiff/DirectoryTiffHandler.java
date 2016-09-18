@@ -25,6 +25,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 
 import java.util.Stack;
 
@@ -88,9 +89,9 @@ public abstract class DirectoryTiffHandler implements TiffHandler
         _currentDirectory.setByteArray(tagId, bytes);
     }
 
-    public void setString(int tagId, @NotNull String string)
+    public void setString(int tagId, @NotNull StringValue string)
     {
-        _currentDirectory.setString(tagId, string);
+        _currentDirectory.setStringValue(tagId, string);
     }
 
     public void setRational(int tagId, @NotNull Rational rational)

@@ -24,6 +24,7 @@ import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.StringValue;
 
 import java.io.IOException;
 import java.util.Set;
@@ -67,7 +68,7 @@ public interface TiffHandler
     void error(@NotNull String message);
 
     void setByteArray(int tagId, @NotNull byte[] bytes);
-    void setString(int tagId, @NotNull String string);
+    void setString(int tagId, @NotNull StringValue string);
     void setRational(int tagId, @NotNull Rational rational);
     void setRationalArray(int tagId, @NotNull Rational[] array);
     void setFloat(int tagId, float float32);

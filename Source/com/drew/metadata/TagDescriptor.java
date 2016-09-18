@@ -28,6 +28,7 @@ import com.drew.lang.annotations.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -268,7 +269,7 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getAsciiStringFromBytes(int tag)
+    protected String getStringFromBytes(int tag, Charset cs)
     {
         byte[] values = _directory.getByteArray(tag);
 
@@ -276,7 +277,7 @@ public class TagDescriptor<T extends Directory>
             return null;
 
         try {
-            return new String(values, "ASCII").trim();
+            return new String(values, cs.name()).trim();
         } catch (UnsupportedEncodingException e) {
             return null;
         }

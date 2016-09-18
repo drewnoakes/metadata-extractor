@@ -20,34 +20,27 @@
  */
 package com.drew.lang;
 
-import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.StringValue;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Models a key/value pair, where both are non-null {@link StringValue} objects.
- *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class KeyValuePair
+public final class StreamUtil
 {
-    private final StringValue _key;
-    private final StringValue _value;
-
-    public KeyValuePair(@NotNull StringValue key, @NotNull StringValue value)
+    public static byte[] readAllBytes(InputStream stream) throws IOException
     {
-        _key = key;
-        _value = value;
-    }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-    @NotNull
-    public StringValue getKey()
-    {
-        return _key;
-    }
+        byte[] buffer = new byte[1024];
+        while (true) {
+            int bytesRead = stream.read(buffer);
+            if (bytesRead == -1)
+                break;
+            outputStream.write(buffer, 0, bytesRead);
+        }
 
-    @NotNull
-    public StringValue getValue()
-    {
-        return _value;
+        return outputStream.toByteArray();
     }
 }

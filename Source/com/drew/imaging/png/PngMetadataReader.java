@@ -23,6 +23,7 @@ package com.drew.imaging.png;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
@@ -30,6 +31,7 @@ import com.drew.metadata.png.PngDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.zip.InflaterInputStream;
 
@@ -39,6 +41,19 @@ import java.util.zip.InflaterInputStream;
 public class PngMetadataReader
 {
     private static Set<PngChunkType> _desiredChunkTypes;
+
+    /**
+     * The PNG spec states that ISO_8859_1 (Latin-1) encoding should be used for:
+     * <ul>
+     *   <li>"tEXt" and "zTXt" chunks, both for keys and values (https://www.w3.org/TR/PNG/#11tEXt)</li>
+     *   <li>"iCCP" chunks, for the profile name (https://www.w3.org/TR/PNG/#11iCCP)</li>
+     *   <li>"sPLT" chunks, for the palette name (https://www.w3.org/TR/PNG/#11sPLT)</li>
+     * </ul>
+     * Note that "iTXt" chunks use UTF-8 encoding (https://www.w3.org/TR/PNG/#11iTXt).
+     * <p/>
+     * For more guidance: http://www.w3.org/TR/PNG-Decoders.html#D.Text-chunk-processing
+     */
+    private static Charset _latin1Encoding = Charsets.ISO_8859_1;
 
     static
     {
@@ -142,14 +157,13 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.iCCP)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
-            String profileName = reader.getNullTerminatedString(79);
+            byte[] profileNameBytes = reader.getNullTerminatedBytes(79);
             PngDirectory directory = new PngDirectory(PngChunkType.iCCP);
-            directory.setString(PngDirectory.TAG_ICC_PROFILE_NAME, profileName);
+            directory.setStringValue(PngDirectory.TAG_ICC_PROFILE_NAME, new StringValue(profileNameBytes, _latin1Encoding));
             byte compressionMethod = reader.getInt8();
             if (compressionMethod == 0) {
                 // Only compression method allowed by the spec is zero: deflate
-                // This assumes 1-byte-per-char, which it is by spec.
-                int bytesLeft = bytes.length - profileName.length() - 2;
+                int bytesLeft = bytes.length - profileNameBytes.length - 2;
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
                 InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
                 new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
@@ -164,9 +178,10 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.tEXt)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
-            String keyword = reader.getNullTerminatedString(79);
-            int bytesLeft = bytes.length - keyword.length() - 1;
-            String value = reader.getNullTerminatedString(bytesLeft);
+            byte[] keywordBytes = reader.getNullTerminatedBytes(79);
+            StringValue keyword = new StringValue(keywordBytes, _latin1Encoding);
+            int bytesLeft = bytes.length - keywordBytes.length - 1;
+            StringValue value = reader.getNullTerminatedStringValue(bytesLeft, _latin1Encoding);
             List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
             textPairs.add(new KeyValuePair(keyword, value));
             PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
@@ -174,18 +189,19 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.iTXt)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
-            String keyword = reader.getNullTerminatedString(79);
+            byte[] keywordBytes = reader.getNullTerminatedBytes(79);
             byte compressionFlag = reader.getInt8();
             byte compressionMethod = reader.getInt8();
-            String languageTag = reader.getNullTerminatedString(bytes.length);
-            String translatedKeyword = reader.getNullTerminatedString(bytes.length);
-            int bytesLeft = bytes.length - keyword.length() - 1 - 1 - 1 - languageTag.length() - 1 - translatedKeyword.length() - 1;
-            String text = null;
+            // TODO we currently ignore languageTagBytes and translatedKeywordBytes
+            byte[] languageTagBytes = reader.getNullTerminatedBytes(bytes.length);
+            byte[] translatedKeywordBytes = reader.getNullTerminatedBytes(bytes.length);
+            int bytesLeft = bytes.length - keywordBytes.length - 1 - 1 - 1 - languageTagBytes.length - 1 - translatedKeywordBytes.length - 1;
+            byte[] textBytes = null;
             if (compressionFlag == 0) {
-                text = reader.getNullTerminatedString(bytesLeft);
+                textBytes = reader.getNullTerminatedBytes(bytesLeft);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    text = StringUtil.fromStream(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
                 } else {
                     PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                     directory.addError("Invalid compression method value");
@@ -197,13 +213,14 @@ public class PngMetadataReader
                 metadata.addDirectory(directory);
             }
 
-            if (text != null) {
-                if (keyword.equals("XML:com.adobe.xmp")) {
+            if (textBytes != null) {
+                StringValue keyword = new StringValue(keywordBytes, _latin1Encoding);
+                if (keyword.toString().equals("XML:com.adobe.xmp")) {
                     // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
-                    new XmpReader().extract(text, metadata);
+                    new XmpReader().extract(textBytes, metadata);
                 } else {
                     List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
-                    textPairs.add(new KeyValuePair(keyword, text));
+                    textPairs.add(new KeyValuePair(keyword, new StringValue(textBytes, _latin1Encoding)));
                     PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                     directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
                     metadata.addDirectory(directory);

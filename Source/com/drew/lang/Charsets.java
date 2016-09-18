@@ -20,34 +20,19 @@
  */
 package com.drew.lang;
 
-import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.StringValue;
+import java.nio.charset.Charset;
 
 /**
- * Models a key/value pair, where both are non-null {@link StringValue} objects.
+ * Holds a set of commonly used character encodings.
+ *
+ * Newer JDKs include java.nio.charset.StandardCharsets, but we cannot use that in this library.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class KeyValuePair
+public final class Charsets
 {
-    private final StringValue _key;
-    private final StringValue _value;
-
-    public KeyValuePair(@NotNull StringValue key, @NotNull StringValue value)
-    {
-        _key = key;
-        _value = value;
-    }
-
-    @NotNull
-    public StringValue getKey()
-    {
-        return _key;
-    }
-
-    @NotNull
-    public StringValue getValue()
-    {
-        return _value;
-    }
+    public static final Charset UTF_8 = Charset.forName("UTF-8");
+    public static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
+    public static final Charset ASCII = Charset.forName("US-ASCII");
+    public static final Charset UTF_16BE = Charset.forName("UTF-16BE");
 }

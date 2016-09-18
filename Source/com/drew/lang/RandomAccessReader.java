@@ -22,9 +22,12 @@
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.StringValue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * Base class for random access data reading operations of common data types.
@@ -364,13 +367,19 @@ public abstract class RandomAccessReader
     }
 
     @NotNull
-    public String getString(int index, int bytesRequested) throws IOException
+    public StringValue getStringValue(int index, int bytesRequested, @Nullable Charset charset) throws IOException
     {
-        return new String(getBytes(index, bytesRequested));
+        return new StringValue(getBytes(index, bytesRequested), charset);
     }
 
     @NotNull
-    public String getString(int index, int bytesRequested, String charset) throws IOException
+    public String getString(int index, int bytesRequested, @NotNull Charset charset) throws IOException
+    {
+        return new String(getBytes(index, bytesRequested), charset.name());
+    }
+
+    @NotNull
+    public String getString(int index, int bytesRequested, @NotNull String charset) throws IOException
     {
         byte[] bytes = getBytes(index, bytesRequested);
         try {
@@ -391,17 +400,44 @@ public abstract class RandomAccessReader
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public String getNullTerminatedString(int index, int maxLengthBytes) throws IOException
+    public String getNullTerminatedString(int index, int maxLengthBytes, @NotNull Charset charset) throws IOException
     {
-        // NOTE currently only really suited to single-byte character strings
+        return new String(getNullTerminatedBytes(index, maxLengthBytes), charset.name());
+    }
 
-        byte[] bytes = getBytes(index, maxLengthBytes);
+    @NotNull
+    public StringValue getNullTerminatedStringValue(int index, int maxLengthBytes, @Nullable Charset charset) throws IOException
+    {
+        byte[] bytes = getNullTerminatedBytes(index, maxLengthBytes);
+
+        return new StringValue(bytes, charset);
+    }
+
+    /**
+     * Returns the sequence of bytes punctuated by a <code>\0</code> value.
+     *
+     * @param index The index within the buffer at which to start reading the string.
+     * @param maxLengthBytes The maximum number of bytes to read. If a <c>\0</c> byte is not reached within this limit,
+     * the returned array will be <code>maxLengthBytes</code> long.
+     * @return The read byte array, excluding the null terminator.
+     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
+     */
+    @NotNull
+    public byte[] getNullTerminatedBytes(int index, int maxLengthBytes) throws IOException
+    {
+        byte[] buffer = getBytes(index, maxLengthBytes);
 
         // Count the number of non-null bytes
         int length = 0;
-        while (length < bytes.length && bytes[length] != '\0')
+        while (length < buffer.length && buffer[length] != 0)
             length++;
 
-        return new String(bytes, 0, length);
+        if (length == maxLengthBytes)
+            return buffer;
+
+        byte[] bytes = new byte[length];
+        if (length > 0)
+            System.arraycopy(buffer, 0, bytes, 0, length);
+        return bytes;
     }
 }

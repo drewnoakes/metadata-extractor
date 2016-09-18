@@ -18,36 +18,59 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.lang;
+package com.drew.metadata;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.StringValue;
+import com.drew.lang.annotations.Nullable;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
- * Models a key/value pair, where both are non-null {@link StringValue} objects.
- *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class KeyValuePair
+public final class StringValue
 {
-    private final StringValue _key;
-    private final StringValue _value;
+    @NotNull
+    private final byte[] _bytes;
 
-    public KeyValuePair(@NotNull StringValue key, @NotNull StringValue value)
+    @Nullable
+    private final Charset _charset;
+
+    public StringValue(@NotNull byte[] bytes, @Nullable Charset charset)
     {
-        _key = key;
-        _value = value;
+        _bytes = bytes;
+        _charset = charset;
     }
 
     @NotNull
-    public StringValue getKey()
+    public byte[] getBytes()
     {
-        return _key;
+        return _bytes;
     }
 
-    @NotNull
-    public StringValue getValue()
+    @Nullable
+    public Charset getCharset()
     {
-        return _value;
+        return _charset;
+    }
+
+    @Override
+    public String toString()
+    {
+        return toString(_charset);
+    }
+
+    public String toString(Charset charset)
+    {
+        if (charset != null) {
+            try {
+                return new String(_bytes, charset.name());
+            } catch (UnsupportedEncodingException ex) {
+                // fall through
+            }
+        }
+
+        return new String(_bytes);
     }
 }

@@ -32,6 +32,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 
 import java.util.Collections;
 
@@ -145,6 +146,16 @@ public class XmpReader implements JpegSegmentMetadataReader
     public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)
     {
         extract(xmpString, metadata, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final StringValue xmpString, @NotNull Metadata metadata)
+    {
+        extract(xmpString.getBytes(), metadata, null);
     }
 
     /**

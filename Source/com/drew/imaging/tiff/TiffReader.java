@@ -264,7 +264,7 @@ public class TiffReader
                 handler.setByteArray(tagId, reader.getBytes(tagValueOffset, componentCount));
                 break;
             case TiffDataFormat.CODE_STRING:
-                handler.setString(tagId, reader.getNullTerminatedString(tagValueOffset, componentCount));
+                handler.setString(tagId, reader.getNullTerminatedStringValue(tagValueOffset, componentCount, null));
                 break;
             case TiffDataFormat.CODE_RATIONAL_S:
                 if (componentCount == 1) {

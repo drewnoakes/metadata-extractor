@@ -21,6 +21,7 @@
 package com.drew.metadata.exif.makernotes;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -281,43 +282,43 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     @Nullable
     public String getCountryDescription()
     {
-        return getAsciiStringFromBytes(TAG_COUNTRY);
+        return getStringFromBytes(TAG_COUNTRY, Charsets.UTF_8).trim();
     }
 
     @Nullable
     public String getStateDescription()
     {
-        return getAsciiStringFromBytes(TAG_STATE);
+        return getStringFromBytes(TAG_STATE, Charsets.UTF_8).trim();
     }
 
     @Nullable
     public String getCityDescription()
     {
-        return getAsciiStringFromBytes(TAG_CITY);
+        return getStringFromBytes(TAG_CITY, Charsets.UTF_8).trim();
     }
 
     @Nullable
     public String getLandmarkDescription()
     {
-        return getAsciiStringFromBytes(TAG_LANDMARK);
+        return getStringFromBytes(TAG_LANDMARK, Charsets.UTF_8).trim();
     }
 
 	@Nullable
     public String getTitleDescription()
     {
-        return getAsciiStringFromBytes(TAG_TITLE);
+        return getStringFromBytes(TAG_TITLE, Charsets.UTF_8).trim();
     }
 
 	@Nullable
     public String getBabyNameDescription()
     {
-        return getAsciiStringFromBytes(TAG_BABY_NAME);
+        return getStringFromBytes(TAG_BABY_NAME, Charsets.UTF_8).trim();
     }
 
 	@Nullable
     public String getLocationDescription()
     {
-        return getAsciiStringFromBytes(TAG_LOCATION);
+        return getStringFromBytes(TAG_LOCATION, Charsets.UTF_8).trim();
     }
 
     @Nullable

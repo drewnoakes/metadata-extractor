@@ -107,8 +107,8 @@ public class PngMetadataReaderTest
             List<KeyValuePair> pairs = (List<KeyValuePair>)dirs[5].getObject(PngDirectory.TAG_TEXTUAL_DATA);
             assertNotNull(pairs);
             assertEquals(1, pairs.size());
-            assertEquals("Comment", pairs.get(0).getKey());
-            assertEquals("Created with GIMP", pairs.get(0).getValue());
+            assertEquals("Comment", pairs.get(0).getKey().toString());
+            assertEquals("Created with GIMP", pairs.get(0).getValue().toString());
         } finally {
             TimeZone.setDefault(timeZone);
         }
