@@ -33,7 +33,7 @@ import java.util.Iterator;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public class StringUtil
+public final class StringUtil
 {
     @NotNull
     public static String join(@NotNull Iterable<? extends CharSequence> strings, @NotNull String delimiter)
