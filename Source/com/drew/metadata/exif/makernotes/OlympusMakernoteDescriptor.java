@@ -27,7 +27,6 @@ import com.drew.metadata.TagDescriptor;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.GregorianCalendar;
 
 import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
 

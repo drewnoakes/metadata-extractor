@@ -24,9 +24,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.ico.IcoDirectory;
-
-import java.io.IOException;
 
 /**
  * Reads PCX image file metadata.

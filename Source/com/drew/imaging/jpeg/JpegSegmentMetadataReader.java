@@ -3,8 +3,6 @@ package com.drew.imaging.jpeg;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
-import java.util.Collection;
-
 /**
  * Defines an object that extracts metadata from in JPEG segments.
  */
