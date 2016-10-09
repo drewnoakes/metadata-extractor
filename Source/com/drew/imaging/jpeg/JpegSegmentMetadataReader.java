@@ -12,7 +12,7 @@ public interface JpegSegmentMetadataReader
      * Gets the set of JPEG segment types that this reader is interested in.
      */
     @NotNull
-    public Iterable<JpegSegmentType> getSegmentTypes();
+    Iterable<JpegSegmentType> getSegmentTypes();
 
     /**
      * Extracts metadata from all instances of a particular JPEG segment type.
@@ -22,5 +22,5 @@ public interface JpegSegmentMetadataReader
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
      */
-    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType);
+    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType);
 }

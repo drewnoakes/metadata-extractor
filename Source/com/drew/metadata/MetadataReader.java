@@ -38,5 +38,5 @@ public interface MetadataReader
      * @param reader   The {@link RandomAccessReader} from which the metadata should be extracted.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
+    void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
 }
