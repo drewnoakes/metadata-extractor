@@ -20,13 +20,13 @@
  */
 package com.drew.metadata.xmp;
 
-import com.adobe.xmp.XMPDateTime;
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.impl.XMPDateTimeImpl;
-import com.adobe.xmp.impl.XMPMetaImpl;
-import com.adobe.xmp.options.PropertyOptions;
-import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.adobe.internal.xmp.XMPDateTime;
+import com.adobe.internal.xmp.XMPException;
+import com.adobe.internal.xmp.XMPMeta;
+import com.adobe.internal.xmp.impl.XMPDateTimeImpl;
+import com.adobe.internal.xmp.impl.XMPMetaImpl;
+import com.adobe.internal.xmp.options.PropertyOptions;
+import com.adobe.internal.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
