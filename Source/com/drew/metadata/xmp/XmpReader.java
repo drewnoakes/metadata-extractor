@@ -390,7 +390,6 @@ public class XmpReader implements JpegSegmentMetadataReader
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         final int segmentLength = segmentBytes.length;
         final int totalOffset = extensionPreambleLength + EXTENDED_XMP_GUID_LENGTH + EXTENDED_XMP_INT_LENGTH + EXTENDED_XMP_INT_LENGTH;
-        XmpDirectory directory = null;
 
         if (segmentLength >= totalOffset) {
             try {
@@ -417,18 +416,17 @@ public class XmpReader implements JpegSegmentMetadataReader
                     if (extendedXMPBuffer.length == fullLength) {
                         System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, segmentLength - totalOffset);
                     } else {
-                        if (directory == null)
-                            directory = new XmpDirectory();
+                        XmpDirectory directory = new XmpDirectory();
                         directory.addError(String.format("Inconsistent length for the Extended XMP buffer: %d instead of %d", fullLength, extendedXMPBuffer.length));
+                        metadata.addDirectory(directory);
                     }
                 }
             } catch (IOException ex) {
+                XmpDirectory directory = new XmpDirectory();
                 directory.addError(ex.getMessage());
+                metadata.addDirectory(directory);
             }
         }
-
-        if (directory != null && !directory.isEmpty())
-            metadata.addDirectory(directory);
 
         return extendedXMPBuffer;
     }
