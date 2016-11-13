@@ -324,20 +324,33 @@ public class ProcessAllImagesInFolderUtility
                             writer.write(NEW_LINE);
                         // Special handling for XMP directory data
                         if (directory instanceof XmpDirectory) {
-                            Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
                             boolean wrote = false;
-                            for (XmpDirectory xmpDirectory : xmpDirectories) {
-                                XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
-                                try {
-                                    XMPIterator iterator = xmpMeta.iterator();
-                                    while (iterator.hasNext()) {
-                                        XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
-                                        writer.format("[XMPMeta - %s] %s = %s%s", prop.getNamespace(), prop.getPath(), prop.getValue(), NEW_LINE);
-                                        wrote = true;
-                                    }
-                                } catch (XMPException e) {
-                                    e.printStackTrace();
+                            XmpDirectory xmpDirectory = (XmpDirectory)directory;
+                            XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
+                            try {
+                                XMPIterator iterator = xmpMeta.iterator();
+                                while (iterator.hasNext()) {
+                                    XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
+                                    String ns = prop.getNamespace();
+                                    String path = prop.getPath();
+                                    String value = prop.getValue();
+
+                                    if (ns == null)
+                                        ns = "";
+                                    if (path == null)
+                                        path = "";
+
+                                    final int MAX_XMP_VALUE_LENGTH = 512;
+                                    if (value == null)
+                                        value = "";
+                                    else if (value.length() > MAX_XMP_VALUE_LENGTH)
+                                        value = String.format("%s <truncated from %d characters>", value.substring(0, MAX_XMP_VALUE_LENGTH), value.length());
+
+                                    writer.format("[XMPMeta - %s] %s = %s%s", ns, path, value, NEW_LINE);
+                                    wrote = true;
                                 }
+                            } catch (XMPException e) {
+                                e.printStackTrace();
                             }
                             if (wrote)
                                 writer.write(NEW_LINE);
