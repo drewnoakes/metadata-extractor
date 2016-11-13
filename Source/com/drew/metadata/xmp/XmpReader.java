@@ -48,6 +48,7 @@ import java.util.Collections;
  *
  * @author Torsten Skadell
  * @author Drew Noakes https://drewnoakes.com
+ * @author https://github.com/bezineb5
  */
 public class XmpReader implements JpegSegmentMetadataReader
 {
