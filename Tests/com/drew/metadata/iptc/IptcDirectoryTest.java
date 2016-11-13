@@ -32,78 +32,78 @@ import java.util.TimeZone;
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("ConstantConditions")
-public class IptcDirectoryTest {
+public class IptcDirectoryTest
+{
+    private IptcDirectory _directory;
 
-  private IptcDirectory _directory;
+    @Before
+    public void setUp()
+    {
+        _directory = new IptcDirectory();
+    }
 
-  @Before
-  public void setUp()
-  {
-    _directory = new IptcDirectory();
-  }
+    @Test
+    public void testGetDateSent()
+    {
+        _directory.setString(IptcDirectory.TAG_DATE_SENT, "20101212");
+        _directory.setString(IptcDirectory.TAG_TIME_SENT, "124135+0100");
+        final Date actual = _directory.getDateSent();
 
-  @Test
-  public void testGetDateSent()
-  {
-    _directory.setString(IptcDirectory.TAG_DATE_SENT, "20101212");
-    _directory.setString(IptcDirectory.TAG_TIME_SENT, "124135+0100");
-    final Date actual = _directory.getDateSent();
+        Calendar calendar = new GregorianCalendar(2010, 12 - 1, 12, 12, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
+    }
 
-    Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 12, 41, 35);
-    calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-    assertEquals(calendar.getTime(), actual);
-    assertEquals(1292154095000L, actual.getTime());
-  }
+    @Test
+    public void testGetReleaseDate()
+    {
+        _directory.setString(IptcDirectory.TAG_RELEASE_DATE, "20101212");
+        _directory.setString(IptcDirectory.TAG_RELEASE_TIME, "124135+0100");
+        final Date actual = _directory.getReleaseDate();
 
-  @Test
-  public void testGetReleaseDate()
-  {
-    _directory.setString(IptcDirectory.TAG_RELEASE_DATE, "20101212");
-    _directory.setString(IptcDirectory.TAG_RELEASE_TIME, "124135+0100");
-    final Date actual = _directory.getReleaseDate();
+        Calendar calendar = new GregorianCalendar(2010, 12 - 1, 12, 12, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
+    }
 
-    Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 12, 41, 35);
-    calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-    assertEquals(calendar.getTime(), actual);
-    assertEquals(1292154095000L, actual.getTime());
-  }
+    @Test
+    public void testGetExpirationDate()
+    {
+        _directory.setString(IptcDirectory.TAG_EXPIRATION_DATE, "20101212");
+        _directory.setString(IptcDirectory.TAG_EXPIRATION_TIME, "124135+0100");
+        final Date actual = _directory.getExpirationDate();
 
-  @Test
-  public void testGetExpirationDate()
-  {
-    _directory.setString(IptcDirectory.TAG_EXPIRATION_DATE, "20101212");
-    _directory.setString(IptcDirectory.TAG_EXPIRATION_TIME, "124135+0100");
-    final Date actual = _directory.getExpirationDate();
+        Calendar calendar = new GregorianCalendar(2010, 12 - 1, 12, 12, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
+    }
 
-    Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 12, 41, 35);
-    calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-    assertEquals(calendar.getTime(), actual);
-    assertEquals(1292154095000L, actual.getTime());
-  }
+    @Test
+    public void testGetDateCreated()
+    {
+        _directory.setString(IptcDirectory.TAG_DATE_CREATED, "20101212");
+        _directory.setString(IptcDirectory.TAG_TIME_CREATED, "124135+0100");
+        final Date actual = _directory.getDateCreated();
 
-  @Test
-  public void testGetDateCreated()
-  {
-    _directory.setString(IptcDirectory.TAG_DATE_CREATED, "20101212");
-    _directory.setString(IptcDirectory.TAG_TIME_CREATED, "124135+0100");
-    final Date actual = _directory.getDateCreated();
+        Calendar calendar = new GregorianCalendar(2010, 12 - 1, 12, 12, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
+    }
 
-    Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 12, 41, 35);
-    calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-    assertEquals(calendar.getTime(), actual);
-    assertEquals(1292154095000L, actual.getTime());
-  }
+    @Test
+    public void testGetDigitalDateCreated()
+    {
+        _directory.setString(IptcDirectory.TAG_DIGITAL_DATE_CREATED, "20101212");
+        _directory.setString(IptcDirectory.TAG_DIGITAL_TIME_CREATED, "124135+0100");
+        final Date actual = _directory.getDigitalDateCreated();
 
-  @Test
-  public void testGetDigitalDateCreated()
-  {
-    _directory.setString(IptcDirectory.TAG_DIGITAL_DATE_CREATED, "20101212");
-    _directory.setString(IptcDirectory.TAG_DIGITAL_TIME_CREATED, "124135+0100");
-    final Date actual = _directory.getDigitalDateCreated();
-
-    Calendar calendar = new GregorianCalendar(2010, 12-1, 12, 12, 41, 35);
-    calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-    assertEquals(calendar.getTime(), actual);
-    assertEquals(1292154095000L, actual.getTime());
-  }
+        Calendar calendar = new GregorianCalendar(2010, 12 - 1, 12, 12, 41, 35);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        assertEquals(calendar.getTime(), actual);
+        assertEquals(1292154095000L, actual.getTime());
+    }
 }

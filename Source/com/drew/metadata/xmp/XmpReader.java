@@ -126,9 +126,9 @@ public class XmpReader implements JpegSegmentMetadataReader
             }
 
             // If we know that there's Extended XMP chunks, look for them.
-            if (extendedXMPGUID != null && segmentBytes.length >= extensionPreambleLength) {
-                if (!XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, extensionPreambleLength)))
-                    continue;
+            if (extendedXMPGUID != null &&
+                segmentBytes.length >= extensionPreambleLength &&
+                XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, extensionPreambleLength))) {
 
                 extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer);
             }
