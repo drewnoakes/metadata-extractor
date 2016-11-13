@@ -394,7 +394,7 @@ public class XmpReader implements JpegSegmentMetadataReader
 
         if (segmentLength >= totalOffset) {
             try {
-                /**
+                /*
                  * The chunk contains:
                  * - A null-terminated signature string of "http://ns.adobe.com/xmp/extension/".
                  * - A 128-bit GUID stored as a 32-byte ASCII hex string, capital A-F, no null termination.
@@ -411,9 +411,8 @@ public class XmpReader implements JpegSegmentMetadataReader
                     final int fullLength = (int)reader.getUInt32();
                     final int chunkOffset = (int)reader.getUInt32();
 
-                    if (extendedXMPBuffer == null) {
+                    if (extendedXMPBuffer == null)
                         extendedXMPBuffer = new byte[fullLength];
-                    }
 
                     if (extendedXMPBuffer.length == fullLength) {
                         System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, segmentLength - totalOffset);
@@ -433,5 +432,4 @@ public class XmpReader implements JpegSegmentMetadataReader
 
         return extendedXMPBuffer;
     }
-
 }
