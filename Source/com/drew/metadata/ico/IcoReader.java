@@ -102,7 +102,6 @@ public class IcoReader
                 directory.setLong(IcoDirectory.TAG_IMAGE_SIZE_BYTES, reader.getUInt32());
                 directory.setLong(IcoDirectory.TAG_IMAGE_OFFSET_BYTES, reader.getUInt32());
             } catch (IOException ex) {
-                assert (directory != null);
                 directory.addError("Exception reading ICO file metadata: " + ex.getMessage());
             }
             metadata.addDirectory(directory);

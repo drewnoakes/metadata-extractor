@@ -31,6 +31,7 @@ import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("ConstantConditions")
 public class IptcDirectoryTest {
 
   private IptcDirectory _directory;

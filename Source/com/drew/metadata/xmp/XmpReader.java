@@ -347,18 +347,13 @@ public class XmpReader implements JpegSegmentMetadataReader
      * Determine if there is an extended XMP section based on the standard XMP part.
      * The xmpNote:HasExtendedXMP attribute contains the GUID of the Extended XMP chunks.
      */
+    @Nullable
     private static String getExtendedXMPGUID(@NotNull Metadata metadata)
     {
         final Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
 
-        if (xmpDirectories == null)
-            return null;
-
         for (XmpDirectory directory : xmpDirectories) {
             final XMPMeta xmpMeta = directory.getXMPMeta();
-
-            if (xmpMeta == null)
-                continue;
 
             try {
                 final XMPIterator itr = xmpMeta.iterator(SCHEMA_XMP_NOTES, null, null);
@@ -386,7 +381,8 @@ public class XmpReader implements JpegSegmentMetadataReader
      * http://www.adobe.com/content/dam/Adobe/en/devnet/xmp/pdfs/XMPSpecificationPart3.pdf
      * at page 19
      */
-    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, byte[] extendedXMPBuffer)
+    @Nullable
+    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer)
     {
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         final int segmentLength = segmentBytes.length;

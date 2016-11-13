@@ -58,6 +58,7 @@ public class ExifReaderTest
         return directory;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testExtractWithNullDataThrows() throws Exception
     {

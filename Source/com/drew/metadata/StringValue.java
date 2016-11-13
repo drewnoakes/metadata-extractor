@@ -61,7 +61,7 @@ public final class StringValue
         return toString(_charset);
     }
 
-    public String toString(Charset charset)
+    public String toString(@Nullable Charset charset)
     {
         if (charset != null) {
             try {

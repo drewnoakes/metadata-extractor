@@ -280,45 +280,51 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
     }
 
     @Nullable
+    private static String trim(@Nullable String s)
+    {
+        return s == null ? null : s.trim();
+    }
+
+    @Nullable
     public String getCountryDescription()
     {
-        return getStringFromBytes(TAG_COUNTRY, Charsets.UTF_8).trim();
+        return trim(getStringFromBytes(TAG_COUNTRY, Charsets.UTF_8));
     }
 
     @Nullable
     public String getStateDescription()
     {
-        return getStringFromBytes(TAG_STATE, Charsets.UTF_8).trim();
+        return trim(getStringFromBytes(TAG_STATE, Charsets.UTF_8));
     }
 
     @Nullable
     public String getCityDescription()
     {
-        return getStringFromBytes(TAG_CITY, Charsets.UTF_8).trim();
+        return trim(getStringFromBytes(TAG_CITY, Charsets.UTF_8));
     }
 
     @Nullable
     public String getLandmarkDescription()
     {
-        return getStringFromBytes(TAG_LANDMARK, Charsets.UTF_8).trim();
+        return trim(getStringFromBytes(TAG_LANDMARK, Charsets.UTF_8));
     }
 
 	@Nullable
     public String getTitleDescription()
     {
-        return getStringFromBytes(TAG_TITLE, Charsets.UTF_8).trim();
+        return trim(getStringFromBytes(TAG_TITLE, Charsets.UTF_8));
     }
 
 	@Nullable
     public String getBabyNameDescription()
     {
-        return getStringFromBytes(TAG_BABY_NAME, Charsets.UTF_8).trim();
+        return trim(getStringFromBytes(TAG_BABY_NAME, Charsets.UTF_8));
     }
 
 	@Nullable
     public String getLocationDescription()
     {
-        return getStringFromBytes(TAG_LOCATION, Charsets.UTF_8).trim();
+        return trim(getStringFromBytes(TAG_LOCATION, Charsets.UTF_8));
     }
 
     @Nullable

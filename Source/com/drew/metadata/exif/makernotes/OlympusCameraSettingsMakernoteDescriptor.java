@@ -1294,6 +1294,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return String.format("%d (min %d, max %d)", values[0], values[1], values[2]);
     }
 
+    @Nullable
     private String getFiltersDescription(int tagId)
     {
         int[] values = _directory.getIntArray(tagId);

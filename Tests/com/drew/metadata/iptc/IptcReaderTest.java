@@ -36,6 +36,7 @@ import static org.junit.Assert.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("ConstantConditions")
 public class IptcReaderTest
 {
     @NotNull

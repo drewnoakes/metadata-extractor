@@ -258,7 +258,7 @@ public class ProcessAllImagesInFolderUtility
                 deleteRecursively(metadataDirectory);
         }
 
-        private static void deleteRecursively(File directory)
+        private static void deleteRecursively(@NotNull File directory)
         {
             if (!directory.isDirectory())
                 throw new IllegalArgumentException("Must be a directory.");
