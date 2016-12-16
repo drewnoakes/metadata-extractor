@@ -279,15 +279,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getOrientationDescription()
     {
-        return getIndexedDescription(TAG_ORIENTATION, 1,
-            "Top, left side (Horizontal / normal)",
-            "Top, right side (Mirror horizontal)",
-            "Bottom, right side (Rotate 180)",
-            "Bottom, left side (Mirror vertical)",
-            "Left side, top (Mirror horizontal and rotate 270 CW)",
-            "Right side, top (Rotate 90 CW)",
-            "Right side, bottom (Mirror horizontal and rotate 90 CW)",
-            "Left side, bottom (Rotate 270 CW)");
+        return super.getOrientationDescription(TAG_ORIENTATION);
     }
 
     @Nullable
@@ -1002,50 +994,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getShutterSpeedDescription()
     {
-        // I believe this method to now be stable, but am leaving some alternative snippets of
-        // code in here, to assist anyone who's looking into this (given that I don't have a public CVS).
-
-//        float apexValue = _directory.getFloat(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
-//        int apexPower = (int)Math.pow(2.0, apexValue);
-//        return "1/" + apexPower + " sec";
-        // TODO test this method
-        // thanks to Mark Edwards for spotting and patching a bug in the calculation of this
-        // description (spotted bug using a Canon EOS 300D)
-        // thanks also to Gli Blr for spotting this bug
-        Float apexValue = _directory.getFloatObject(TAG_SHUTTER_SPEED);
-        if (apexValue == null)
-            return null;
-        if (apexValue <= 1) {
-            float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
-            long apexPower10 = Math.round((double)apexPower * 10.0);
-            float fApexPower = (float)apexPower10 / 10.0f;
-            DecimalFormat format = new DecimalFormat("0.##");
-            format.setRoundingMode(RoundingMode.HALF_UP);
-            return format.format(fApexPower) + " sec";
-        } else {
-            int apexPower = (int)((Math.exp(apexValue * Math.log(2))));
-            return "1/" + apexPower + " sec";
-        }
-
-/*
-        // This alternative implementation offered by Bill Richards
-        // TODO determine which is the correct / more-correct implementation
-        double apexValue = _directory.getDouble(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
-        double apexPower = Math.pow(2.0, apexValue);
-
-        StringBuffer sb = new StringBuffer();
-        if (apexPower > 1)
-            apexPower = Math.floor(apexPower);
-
-        if (apexPower < 1) {
-            sb.append((int)Math.round(1/apexPower));
-        } else {
-            sb.append("1/");
-            sb.append((int)apexPower);
-        }
-        sb.append(" sec");
-        return sb.toString();
-*/
+        return super.getShutterSpeedDescription(TAG_SHUTTER_SPEED);
     }
 
     @Nullable

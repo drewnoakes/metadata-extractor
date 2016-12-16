@@ -54,6 +54,8 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
         switch (tagType) {
             case TAG_EQUIPMENT_VERSION:
                 return getEquipmentVersionDescription();
+            case TAG_CAMERA_TYPE_2:
+                return getCameraType2Description();
             case TAG_FOCAL_PLANE_DIAGONAL:
                 return getFocalPlaneDiagonalDescription();
             case TAG_BODY_FIRMWARE_VERSION:
@@ -85,6 +87,19 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
     public String getEquipmentVersionDescription()
     {
         return getVersionBytesDescription(TAG_EQUIPMENT_VERSION, 4);
+    }
+
+    @Nullable
+    public String getCameraType2Description()
+    {
+        String cameratype = _directory.getString(TAG_CAMERA_TYPE_2);
+        if(cameratype == null)
+            return null;
+
+        if(OlympusMakernoteDirectory.OlympusCameraTypes.containsKey(cameratype))
+            return OlympusMakernoteDirectory.OlympusCameraTypes.get(cameratype);
+
+        return cameratype;
     }
 
     @Nullable

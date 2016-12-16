@@ -143,6 +143,8 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
                 return getToneLevelDescription();
             case TagArtFilterEffect:
                 return getArtFilterEffectDescription();
+            case TagColorCreatorEffect:
+                return getColorCreatorEffectDescription();
 
             case TagDriveMode:
                 return getDriveModeDescription();
@@ -407,8 +409,10 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         int p3 = (int)(values[index + 2].doubleValue() * 100);
         int p4 = (int)(values[index + 3].doubleValue() * 100);
 
-        return String.format("(%d%%,%d%%) (%d%%,%d%%)", p1, p2, p3, p4);
+        if(p1 + p2 + p3 + p4 == 0)
+            return "n/a";
 
+        return String.format("(%d%%,%d%%) (%d%%,%d%%)", p1, p2, p3, p4);
     }
 
     @Nullable
@@ -1019,12 +1023,10 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.length; i++) {
-            if (i == 1)
-                sb.append("Highlights ");
-            else if (i == 5)
-                sb.append("Shadows ");
-
-            sb.append(values[i]).append("; ");
+            if (i == 0 || i == 4 || i == 8 || i == 12 || i == 16 || i == 20 || i == 24)
+                sb.append(_toneLevelType.get(values[i])).append("; ");
+            else
+                sb.append(values[i]).append("; ");
         }
 
         return sb.substring(0, sb.length() - 2);
@@ -1034,13 +1036,15 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
     public String getArtFilterEffectDescription()
     {
         int[] values = _directory.getIntArray(TagArtFilterEffect);
-        if (values == null || values.length == 0)
+        if (values == null)
             return null;
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.length; i++) {
             if (i == 0) {
-                sb.append((_filters.containsKey(values[i]) ? _filters.get(values[i]) : "[unknown]"));
+                sb.append((_filters.containsKey(values[i]) ? _filters.get(values[i]) : "[unknown]")).append("; ");
+            } else if (i == 3) {
+                sb.append("Partial Color ").append(values[i]).append("; ");
             } else if (i == 4) {
                 switch (values[i]) {
                     case 0x0000:
@@ -1068,10 +1072,53 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
                         sb.append("Unknown (").append(values[i]).append(")");
                         break;
                 }
+                sb.append("; ");
+            } else if (i == 6) {
+                switch (values[i]) {
+                    case 0:
+                        sb.append("No Color Filter");
+                        break;
+                    case 1:
+                        sb.append("Yellow Color Filter");
+                        break;
+                    case 2:
+                        sb.append("Orange Color Filter");
+                        break;
+                    case 3:
+                        sb.append("Red Color Filter");
+                        break;
+                    case 4:
+                        sb.append("Green Color Filter");
+                        break;
+                    default:
+                        sb.append("Unknown (").append(values[i]).append(")");
+                        break;
+                }
+                sb.append("; ");
             } else {
-                sb.append(values[i]);
+                sb.append(values[i]).append("; ");
             }
-            sb.append("; ");
+        }
+
+        return sb.substring(0, sb.length() - 2);
+    }
+
+    @Nullable
+    public String getColorCreatorEffectDescription()
+    {
+        int[] values = _directory.getIntArray(TagColorCreatorEffect);
+        if (values == null)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < values.length; i++) {
+            if (i == 0) {
+                sb.append("Color ").append(values[i]).append("; ");
+            } else if (i == 3) {
+                sb.append("Strength ").append(values[i]).append("; ");
+            } else {
+                sb.append(values[i]).append("; ");
+            }
         }
 
         return sb.substring(0, sb.length() - 2);
@@ -1313,6 +1360,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return sb.substring(0, sb.length() - 2);
     }
 
+    private static final HashMap<Integer, String> _toneLevelType = new HashMap<Integer, String>();
     // ArtFilter, ArtFilterEffect and MagicFilter values
     private static final HashMap<Integer, String> _filters = new HashMap<Integer, String>();
 
@@ -1355,5 +1403,10 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         _filters.put(39, "Partial Color");
         _filters.put(40, "Partial Color II");
         _filters.put(41, "Partial Color III");
+
+        _toneLevelType.put(0, "0");
+        _toneLevelType.put(-31999, "Highlights ");
+        _toneLevelType.put(-31998, "Shadows ");
+        _toneLevelType.put(-31997, "Midtones ");
     }
 }
