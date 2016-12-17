@@ -24,7 +24,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import static com.drew.metadata.exif.makernotes.OlympusRawDevelopment2MakernoteDirectory.*;
