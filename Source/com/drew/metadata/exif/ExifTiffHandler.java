@@ -115,6 +115,9 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 case OlympusMakernoteDirectory.TAG_IMAGE_PROCESSING:
                     pushDirectory(OlympusImageProcessingMakernoteDirectory.class);
                     return true;
+                case OlympusMakernoteDirectory.TAG_FOCUS_INFO:
+                    pushDirectory(OlympusFocusInfoMakernoteDirectory.class);
+                    return true;
             }
         }
 
@@ -216,6 +219,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     return true;
                 case OlympusMakernoteDirectory.TAG_IMAGE_PROCESSING:
                     pushDirectory(OlympusImageProcessingMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_FOCUS_INFO:
+                    pushDirectory(OlympusFocusInfoMakernoteDirectory.class);
                     TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
                     return true;
             }
