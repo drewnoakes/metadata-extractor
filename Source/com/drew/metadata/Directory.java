@@ -865,6 +865,7 @@ public abstract class Directory
                     "yyyy-MM-dd'T'HH:mm",
                     "yyyy-MM-dd",
                     "yyyy-MM",
+                    "yyyyMMdd", // as used in IPTC data
                     "yyyy" };
 
             String dateString = o.toString();
