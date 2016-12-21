@@ -104,7 +104,7 @@ public class GifReader
             }
 
         } catch (IOException e) {
-            directory.addError("Unable to read BMP header");
+            directory.addError("Unable to read GIF header");
         }
     }
 }
