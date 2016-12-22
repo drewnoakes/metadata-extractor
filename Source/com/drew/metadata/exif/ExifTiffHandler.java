@@ -97,14 +97,33 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
 
         if (_currentDirectory instanceof OlympusMakernoteDirectory) {
-            if (tagId == OlympusMakernoteDirectory.TAG_EQUIPMENT) {
-                pushDirectory(OlympusEquipmentMakernoteDirectory.class);
-                return true;
-            }
-
-            if (tagId == OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS) {
-                pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
-                return true;
+            // Note: these also appear in customProcessTag because some are IFD pointers while others begin immediately
+            // for the same directories
+            switch(tagId) {
+                case OlympusMakernoteDirectory.TAG_EQUIPMENT:
+                    pushDirectory(OlympusEquipmentMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS:
+                    pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT:
+                    pushDirectory(OlympusRawDevelopmentMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT_2:
+                    pushDirectory(OlympusRawDevelopment2MakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_IMAGE_PROCESSING:
+                    pushDirectory(OlympusImageProcessingMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_FOCUS_INFO:
+                    pushDirectory(OlympusFocusInfoMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_INFO:
+                    pushDirectory(OlympusRawInfoMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_MAIN_INFO:
+                    pushDirectory(OlympusMakernoteDirectory.class);
+                    return true;
             }
         }
 
@@ -134,6 +153,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         if (formatCode == 13)
             return componentCount * 4;
 
+        // an unknown (0) formatCode needs to be potentially handled later as a highly custom directory tag
+        if(formatCode == 0)
+            return 0L;
+
         return null;
     }
 
@@ -144,6 +167,20 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                     final int tagId,
                                     final int byteCount) throws IOException
     {
+        // Some 0x0000 tags have a 0 byteCount. Determine whether it's bad.
+        if (tagId == 0)
+        {
+            if (_currentDirectory.containsTag(tagId))
+            {
+                // Let it go through for now. Some directories handle it, some don't
+                return false;
+            }
+
+            // Skip over 0x0000 tags that don't have any associated bytes. No idea what it contains in this case, if anything.
+            if (byteCount == 0)
+                return true;
+        }
+
         // Custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
             return processMakernote(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader);
@@ -164,6 +201,45 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         if (tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && _currentDirectory instanceof ExifIFD0Directory) {
             new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
+        }
+
+        if(_currentDirectory instanceof OlympusMakernoteDirectory)
+        {
+            switch (tagId)
+            {
+                case OlympusMakernoteDirectory.TAG_EQUIPMENT:
+                    pushDirectory(OlympusEquipmentMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS:
+                    pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT:
+                    pushDirectory(OlympusRawDevelopmentMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT_2:
+                    pushDirectory(OlympusRawDevelopment2MakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_IMAGE_PROCESSING:
+                    pushDirectory(OlympusImageProcessingMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_FOCUS_INFO:
+                    pushDirectory(OlympusFocusInfoMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_INFO:
+                    pushDirectory(OlympusRawInfoMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_MAIN_INFO:
+                    pushDirectory(OlympusMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+            }
         }
 
         return false;
