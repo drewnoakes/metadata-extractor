@@ -134,7 +134,7 @@ public class XmpReader implements JpegSegmentMetadataReader
             }
         }
 
-        // Now that the Extended XMP chunks have been concatened, let's parse and merge with the Standard XMP.
+        // Now that the Extended XMP chunks have been concatenated, let's parse and merge with the Standard XMP.
         if (extendedXMPBuffer != null) {
             extract(extendedXMPBuffer, metadata);
         }
