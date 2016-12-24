@@ -22,6 +22,9 @@ package com.drew.metadata.exif;
 
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
+
 import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
@@ -34,6 +37,7 @@ import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
@@ -52,7 +56,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
     public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes, @Nullable Directory parentDirectory)
     {
-        super(metadata, ExifIFD0Directory.class);
+        super(metadata);
         _storeThumbnailBytes = storeThumbnailBytes;
 
         if (parentDirectory != null)
@@ -66,8 +70,18 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         final int olympusRawTiffMarker2 = 0x5352; // for ORF files
         final int panasonicRawTiffMarker = 0x0055; // for RW2 files
 
-        if (marker != standardTiffMarker && marker != olympusRawTiffMarker && marker != olympusRawTiffMarker2 && marker != panasonicRawTiffMarker) {
-            throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));
+        switch (marker)
+        {
+            case standardTiffMarker:
+            case olympusRawTiffMarker:      // Todo: implement an IFD0, if there is one
+            case olympusRawTiffMarker2:     // Todo: implement an IFD0, if there is one
+                pushDirectory(ExifIFD0Directory.class);
+                break;
+            case panasonicRawTiffMarker:
+                pushDirectory(PanasonicRawIFD0Directory.class);
+                break;
+            default:
+                throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));            
         }
     }
 
@@ -78,7 +92,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             return true;
         }
 
-        if (_currentDirectory instanceof ExifIFD0Directory) {
+        if (_currentDirectory instanceof ExifIFD0Directory || _currentDirectory instanceof PanasonicRawIFD0Directory) {
             if (tagId == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET) {
                 pushDirectory(ExifSubIFDDirectory.class);
                 return true;
@@ -204,6 +218,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             return true;
         }
 
+        // Note: these also appear in tryEnterSubIfd because some are IFD pointers while others begin immediately
+        // for the same directories
         if(_currentDirectory instanceof OlympusMakernoteDirectory)
         {
             switch (tagId)
@@ -240,6 +256,54 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     pushDirectory(OlympusMakernoteDirectory.class);
                     TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
                     return true;
+            }
+        }
+
+        if (_currentDirectory instanceof PanasonicRawIFD0Directory)
+        {
+            // these contain binary data with specific offsets, and can't be processed as regular ifd's.
+            // The binary data is broken into 'fake' tags and there is a pattern.
+            switch (tagId)
+            {
+                case PanasonicRawIFD0Directory.TagWbInfo:
+                    /*var dirWbInfo = new PanasonicRawWbInfoDirectory { Parent = CurrentDirectory };
+                    _metadata.addDirectory(dirWbInfo);
+                    ProcessBinary(dirWbInfo, tagOffset, reader, byteCount, false, 2);
+                    return true;*/
+                    return false;
+                case PanasonicRawIFD0Directory.TagWbInfo2:
+                    /*var dirWbInfo2 = new PanasonicRawWbInfo2Directory { Parent = CurrentDirectory };
+                    _metadata.addDirectory(dirWbInfo2);
+                    ProcessBinary(dirWbInfo2, tagOffset, reader, byteCount, false, 3);
+                    return true;*/
+                    return false;
+                case PanasonicRawIFD0Directory.TagDistortionInfo:
+                    /*var dirDistort = new PanasonicRawDistortionDirectory { Parent = CurrentDirectory };
+                    _metadata.addDirectory(dirDistort);
+                    ProcessBinary(dirDistort, tagOffset, reader, byteCount);
+                    return true;*/
+                    return false;
+            }
+        }
+
+        // Panasonic RAW sometimes contains an embedded version of the data as a JPG file.
+        if (tagId == PanasonicRawIFD0Directory.TagJpgFromRaw && _currentDirectory instanceof PanasonicRawIFD0Directory)
+        {
+            byte[] jpegrawbytes = reader.getBytes(tagOffset, byteCount);
+
+            // Extract information from embedded image since it is metadata-rich
+            ByteArrayInputStream jpegmem = new ByteArrayInputStream(jpegrawbytes);
+            try {
+                Metadata jpegDirectory = JpegMetadataReader.readMetadata(jpegmem);
+                for (Directory directory : jpegDirectory.getDirectories()) {
+                    directory.setParent(_currentDirectory);
+                    _metadata.addDirectory(directory);
+                }
+                return true;
+            } catch (JpegProcessingException e) {
+                _currentDirectory.addError("Error processing JpgFromRaw: " + e.getMessage());
+            } catch (IOException e) {
+                _currentDirectory.addError("Error reading JpgFromRaw: " + e.getMessage());
             }
         }
 

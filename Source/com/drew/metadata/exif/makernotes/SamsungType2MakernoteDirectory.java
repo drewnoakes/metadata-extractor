@@ -77,7 +77,7 @@ public class SamsungType2MakernoteDirectory extends Directory
     @NotNull
     public String getName()
     {
-        return "Sanyo Makernote";
+        return "Samsung Makernote";
     }
 
     @Override

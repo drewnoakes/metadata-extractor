@@ -41,17 +41,9 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     protected Directory _currentDirectory;
     protected final Metadata _metadata;
 
-    protected DirectoryTiffHandler(Metadata metadata, Class<? extends Directory> initialDirectoryClass)
+    protected DirectoryTiffHandler(Metadata metadata)
     {
         _metadata = metadata;
-        try {
-            _currentDirectory = initialDirectoryClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        _metadata.addDirectory(_currentDirectory);
     }
 
     public void endingIFD()
@@ -61,17 +53,27 @@ public abstract class DirectoryTiffHandler implements TiffHandler
 
     protected void pushDirectory(@NotNull Class<? extends Directory> directoryClass)
     {
-        _directoryStack.push(_currentDirectory);
+        Directory newDirectory = null;
+
         try {
-            Directory newDirectory = directoryClass.newInstance();
-            newDirectory.setParent(_currentDirectory);
-            _currentDirectory = newDirectory;
+            newDirectory = directoryClass.newInstance();
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        _metadata.addDirectory(_currentDirectory);
+
+        if (newDirectory != null)
+        {
+            // If this is the first directory, don't add to the stack
+            if (_currentDirectory != null)
+            {
+                _directoryStack.push(_currentDirectory);
+                newDirectory.setParent(_currentDirectory);
+            }
+            _currentDirectory = newDirectory;
+            _metadata.addDirectory(_currentDirectory);
+        }
     }
 
     public void warn(@NotNull String message)
