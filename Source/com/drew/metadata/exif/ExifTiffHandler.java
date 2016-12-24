@@ -35,6 +35,7 @@ import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -334,6 +335,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         } else if ("SONY CAM".equals(firstEightChars) || "SONY DSC".equals(firstEightChars)) {
             pushDirectory(SonyType1MakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, tiffHeaderOffset);
+        // Do this check LAST after most other Sony checks
+        } else if (cameraMake != null && cameraMake.startsWith("SONY") &&
+                !Arrays.equals(reader.getBytes(makernoteOffset, 2), new byte[]{ 0x01, 0x00 }) ) {
+            // The IFD begins with the first Makernote byte (no ASCII name). Used in SR2 and ARW images
+            pushDirectory(SonyType1MakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else if ("SEMC MS\u0000\u0000\u0000\u0000\u0000".equals(firstTwelveChars)) {
             // force MM for this directory
             reader.setMotorolaByteOrder(true);
@@ -374,7 +381,24 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 22, tiffHeaderOffset);
         } else if ("LEICA".equals(firstFiveChars)) {
             reader.setMotorolaByteOrder(false);
-            if ("Leica Camera AG".equals(cameraMake)) {
+
+            // used by the X1/X2/X VARIO/T
+            // (X1 starts with "LEICA\0\x01\0", Make is "LEICA CAMERA AG")
+            // (X2 starts with "LEICA\0\x05\0", Make is "LEICA CAMERA AG")
+            // (X VARIO starts with "LEICA\0\x04\0", Make is "LEICA CAMERA AG")
+            // (T (Typ 701) starts with "LEICA\0\0x6", Make is "LEICA CAMERA AG")
+            // (X (Typ 113) starts with "LEICA\0\0x7", Make is "LEICA CAMERA AG")
+
+            if ("LEICA\0\u0001\0".equals(firstEightChars) ||
+                "LEICA\0\u0004\0".equals(firstEightChars) ||
+                "LEICA\0\u0005\0".equals(firstEightChars) ||
+                "LEICA\0\u0006\0".equals(firstEightChars) ||
+                "LEICA\0\u0007\0".equals(firstEightChars))
+            {
+                pushDirectory(LeicaType5MakernoteDirectory.class);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
+                return false;
+            } else if ("Leica Camera AG".equals(cameraMake)) {
                 pushDirectory(LeicaMakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
             } else if ("LEICA".equals(cameraMake)) {
@@ -436,6 +460,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             pushDirectory(AppleMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 14, makernoteOffset);
             reader.setMotorolaByteOrder(orderBefore);
+        } else if ("SAMSUNG".equals(cameraMake)) {
+            // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
+            pushDirectory(SamsungType2MakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.
