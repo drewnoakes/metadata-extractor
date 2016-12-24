@@ -29,6 +29,7 @@ import com.drew.metadata.Age;
 import com.drew.metadata.Face;
 import com.drew.metadata.TagDescriptor;
 
+import java.text.DecimalFormat;
 import java.io.IOException;
 
 import static com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory.*;
@@ -110,8 +111,8 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return getDetectedFacesDescription();
             case TAG_TRANSFORM:
                 return getTransformDescription();
-			case TAG_TRANSFORM_1:
-	            return getTransform1Description();
+            case TAG_TRANSFORM_1:
+                return getTransform1Description();
             case TAG_INTELLIGENT_EXPOSURE:
                 return getIntelligentExposureDescription();
             case TAG_FLASH_WARNING:
@@ -135,13 +136,13 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
             case TAG_FLASH_FIRED:
                 return getFlashFiredDescription();
             case TAG_TEXT_STAMP:
-		        return getTextStampDescription();
-			case TAG_TEXT_STAMP_1:
-	             return getTextStamp1Description();
-			case TAG_TEXT_STAMP_2:
-		         return getTextStamp2Description();
-			case TAG_TEXT_STAMP_3:
-			     return getTextStamp3Description();
+                return getTextStampDescription();
+            case TAG_TEXT_STAMP_1:
+                return getTextStamp1Description();
+            case TAG_TEXT_STAMP_2:
+                return getTextStamp2Description();
+            case TAG_TEXT_STAMP_3:
+                return getTextStamp3Description();
             case TAG_MAKERNOTE_VERSION:
                 return getMakernoteVersionDescription();
             case TAG_EXIF_VERSION:
@@ -149,16 +150,57 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
             case TAG_INTERNAL_SERIAL_NUMBER:
                 return getInternalSerialNumberDescription();
             case TAG_TITLE:
-	            return getTitleDescription();
-			case TAG_BABY_NAME:
-	            return getBabyNameDescription();
-			case TAG_LOCATION:
-	            return getLocationDescription();
-			case TAG_BABY_AGE:
-		        return getBabyAgeDescription();
-			case TAG_BABY_AGE_1:
-		        return getBabyAge1Description();
-			default:
+                return getTitleDescription();
+            case TAG_BRACKET_SETTINGS:
+                return getBracketSettingsDescription();
+            case TAG_FLASH_CURTAIN:
+                return getFlashCurtainDescription();
+            case TAG_LONG_EXPOSURE_NOISE_REDUCTION:
+                return getLongExposureNoiseReductionDescription();
+            case TAG_BABY_NAME:
+                return getBabyNameDescription();
+            case TAG_LOCATION:
+                return getLocationDescription();
+
+            case TAG_LENS_FIRMWARE_VERSION:
+                return getLensFirmwareVersionDescription();
+            case TAG_INTELLIGENT_D_RANGE:
+                return getIntelligentDRangeDescription();
+            case TAG_CLEAR_RETOUCH:
+                return getClearRetouchDescription();
+            case TAG_PHOTO_STYLE:
+                return getPhotoStyleDescription();
+            case TAG_SHADING_COMPENSATION:
+                return getShadingCompensationDescription();
+
+            case TAG_ACCELEROMETER_Z:
+                return getAccelerometerZDescription();
+            case TAG_ACCELEROMETER_X:
+                return getAccelerometerXDescription();
+            case TAG_ACCELEROMETER_Y:
+                return getAccelerometerYDescription();
+            case TAG_CAMERA_ORIENTATION:
+                return getCameraOrientationDescription();
+            case TAG_ROLL_ANGLE:
+                return getRollAngleDescription();
+            case TAG_PITCH_ANGLE:
+                return getPitchAngleDescription();
+            case TAG_SWEEP_PANORAMA_DIRECTION:
+                return getSweepPanoramaDirectionDescription();
+            case TAG_TIMER_RECORDING:
+                return getTimerRecordingDescription();
+            case TAG_HDR:
+                return getHDRDescription();
+            case TAG_SHUTTER_TYPE:
+                return getShutterTypeDescription();
+            case TAG_TOUCH_AE:
+                return getTouchAeDescription();
+
+            case TAG_BABY_AGE:
+                return getBabyAgeDescription();
+            case TAG_BABY_AGE_1:
+                return getBabyAge1Description();
+            default:
                 return super.getDescription(tagType);
         }
     }
@@ -309,13 +351,202 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         return trim(getStringFromBytes(TAG_LANDMARK, Charsets.UTF_8));
     }
 
-	@Nullable
+    @Nullable
     public String getTitleDescription()
     {
         return trim(getStringFromBytes(TAG_TITLE, Charsets.UTF_8));
     }
 
-	@Nullable
+    @Nullable
+    public String getBracketSettingsDescription()
+    {
+        return getIndexedDescription(TAG_BRACKET_SETTINGS,
+            "No Bracket", "3 Images, Sequence 0/-/+", "3 Images, Sequence -/0/+", "5 Images, Sequence 0/-/+",
+            "5 Images, Sequence -/0/+", "7 Images, Sequence 0/-/+", "7 Images, Sequence -/0/+");
+    }
+
+    @Nullable
+    public String getFlashCurtainDescription()
+    {
+        return getIndexedDescription(TAG_FLASH_CURTAIN,
+            "n/a", "1st", "2nd");
+    }
+
+    @Nullable
+    public String getLongExposureNoiseReductionDescription()
+    {
+        return getIndexedDescription(TAG_LONG_EXPOSURE_NOISE_REDUCTION, 1,
+            "Off", "On");
+    }
+
+    @Nullable
+    public String getLensFirmwareVersionDescription()
+    {
+        // lens version has 4 parts separated by periods
+        byte[] bytes = _directory.getByteArray(TAG_LENS_FIRMWARE_VERSION);
+        if (bytes == null)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(bytes[i]);
+            if (i < bytes.length - 1)
+                sb.append(".");
+        }
+        return sb.toString();
+        //return string.Join(".", bytes.Select(b => b.ToString()).ToArray());
+    }
+
+    @Nullable
+    public String getIntelligentDRangeDescription()
+    {
+        return getIndexedDescription(TAG_INTELLIGENT_D_RANGE,
+            "Off", "Low", "Standard", "High");
+    }
+
+    @Nullable
+    public String getClearRetouchDescription()
+    {
+        return getIndexedDescription(TAG_CLEAR_RETOUCH,
+                "Off", "On");
+
+    }
+
+    @Nullable
+    public String getPhotoStyleDescription()
+    {
+        return getIndexedDescription(TAG_PHOTO_STYLE,
+            "Auto", "Standard or Custom", "Vivid", "Natural", "Monochrome", "Scenery", "Portrait");
+    }
+
+    @Nullable
+    public String getShadingCompensationDescription()
+    {
+        return getIndexedDescription(TAG_SHADING_COMPENSATION,
+            "Off", "On");
+    }
+
+    @Nullable
+    public String getAccelerometerZDescription()
+    {
+        Integer value = _directory.getInteger(TAG_ACCELEROMETER_Z);
+        if (value == null)
+            return null;
+
+        // positive is acceleration upwards
+        return String.valueOf(value.shortValue());
+    }
+
+    @Nullable
+    public String getAccelerometerXDescription()
+    {
+        Integer value = _directory.getInteger(TAG_ACCELEROMETER_X);
+        if (value == null)
+            return null;
+
+        // positive is acceleration to the left
+        return String.valueOf(value.shortValue());
+    }
+
+    @Nullable
+    public String getAccelerometerYDescription()
+    {
+        Integer value = _directory.getInteger(TAG_ACCELEROMETER_Y);
+        if (value == null)
+            return null;
+
+        // positive is acceleration backwards
+        return String.valueOf(value.shortValue());
+    }
+
+    @Nullable
+    public String getCameraOrientationDescription()
+    {
+        return getIndexedDescription(TAG_CAMERA_ORIENTATION,
+                "Normal", "Rotate CW", "Rotate 180", "Rotate CCW", "Tilt Upwards", "Tile Downwards");
+    }
+
+    @Nullable
+    public String getRollAngleDescription()
+    {
+        Integer value = _directory.getInteger(TAG_ROLL_ANGLE);
+        if (value == null)
+            return null;
+
+        DecimalFormat format = new DecimalFormat("0.#");
+        // converted to degrees of clockwise camera rotation
+        return format.format(value.shortValue() / 10.0);
+    }
+
+    @Nullable
+    public String getPitchAngleDescription()
+    {
+        Integer value = _directory.getInteger(TAG_PITCH_ANGLE);
+        if (value == null)
+            return null;
+
+        DecimalFormat format = new DecimalFormat("0.#");
+        // converted to degrees of upward camera tilt
+        return format.format(-value.shortValue() / 10.0);
+    }
+
+    @Nullable
+    public String getSweepPanoramaDirectionDescription()
+    {
+        return getIndexedDescription(TAG_SWEEP_PANORAMA_DIRECTION,
+                "Off", "Left to Right", "Right to Left", "Top to Bottom", "Bottom to Top");
+    }
+
+    @Nullable
+    public String getTimerRecordingDescription()
+    {
+        return getIndexedDescription(TAG_TIMER_RECORDING,
+                "Off", "Time Lapse", "Stop-motion Animation");
+    }
+
+    @Nullable
+    public String getHDRDescription()
+    {
+        Integer value = _directory.getInteger(TAG_HDR);
+        if (value == null)
+            return null;
+
+        switch (value)
+        {
+            case 0:
+                return "Off";
+            case 100:
+                return "1 EV";
+            case 200:
+                return "2 EV";
+            case 300:
+                return "3 EV";
+            case 32868:
+                return "1 EV (Auto)";
+            case 32968:
+                return "2 EV (Auto)";
+            case 33068:
+                return "3 EV (Auto)";
+            default:
+                return String.format("Unknown (%d)", value);
+        }
+    }
+
+    @Nullable
+    public String getShutterTypeDescription()
+    {
+        return getIndexedDescription(TAG_SHUTTER_TYPE,
+                "Mechanical", "Electronic", "Hybrid");
+    }
+
+    @Nullable
+    public String getTouchAeDescription()
+    {
+        return getIndexedDescription(TAG_TOUCH_AE,
+                "Off", "On");
+    }
+
+    @Nullable
     public String getBabyNameDescription()
     {
         return trim(getStringFromBytes(TAG_BABY_NAME, Charsets.UTF_8));

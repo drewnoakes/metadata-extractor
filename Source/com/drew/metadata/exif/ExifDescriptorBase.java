@@ -234,15 +234,22 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getReferenceBlackWhiteDescription()
     {
-        int[] ints = _directory.getIntArray(TAG_REFERENCE_BLACK_WHITE);
+        /*int[] ints = _directory.getIntArray(TAG_REFERENCE_BLACK_WHITE);
         if (ints==null || ints.length < 6)
+            return null;*/
+
+        Object o = _directory.getObject(TAG_REFERENCE_BLACK_WHITE);
+        if (o==null || !(o instanceof long[]))
             return null;
-        int blackR = ints[0];
-        int whiteR = ints[1];
-        int blackG = ints[2];
-        int whiteG = ints[3];
-        int blackB = ints[4];
-        int whiteB = ints[5];
+
+        long[] ints = (long[])o;
+
+        int blackR = (int)ints[0];
+        int whiteR = (int)ints[1];
+        int blackG = (int)ints[2];
+        int whiteG = (int)ints[3];
+        int blackB = (int)ints[4];
+        int whiteB = (int)ints[5];
         return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
     }
 

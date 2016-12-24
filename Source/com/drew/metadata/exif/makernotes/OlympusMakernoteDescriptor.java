@@ -693,12 +693,11 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getWbModeDescription()
     {
-        Object obj = _directory.getObject(TAG_WB_MODE);
-        if (obj == null || !(obj instanceof short[]))
+        int[] obj = _directory.getIntArray(TAG_WB_MODE);
+        if (obj == null)
             return null;
 
-        short[] objshort = (short[])obj;
-        String val = String.format("%d %d", objshort[0], objshort[1]);
+        String val = String.format("%d %d", obj[0], obj[1]);
 
         if(val.equals("1 0"))
             return "Auto";

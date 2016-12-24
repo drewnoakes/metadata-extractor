@@ -325,6 +325,7 @@ public class OlympusMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_WHITE_BALANCE_BRACKET, "White Balance Bracket");
         _tagNameMap.put(TAG_WHITE_BALANCE_BIAS, "White Balance Bias");
         _tagNameMap.put(TAG_SCENE_MODE, "Scene Mode");
+        _tagNameMap.put(TAG_SERIAL_NUMBER_1, "Serial Number");
         _tagNameMap.put(TAG_FIRMWARE, "Firmware");
         _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
         _tagNameMap.put(TAG_DATA_DUMP_1, "Data Dump");
