@@ -433,19 +433,43 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
     @Nullable
     public String getVignettingCorrectionDescription()
     {
-        return getIndexedDescription(TAG_VIGNETTING_CORRECTION, "Off", null, "Auto");
+        Integer value = _directory.getInteger(TAG_VIGNETTING_CORRECTION);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0: return "Off";
+            case 2: return "Auto";
+            case 0xffffffff: return "N/A";
+            default: return String.format("Unknown (%d)", value);
+        }
     }
 
     @Nullable
     public String getLateralChromaticAberrationDescription()
     {
-        return getIndexedDescription(TAG_LATERAL_CHROMATIC_ABERRATION, "Off", null, "Auto");
+        Integer value = _directory.getInteger(TAG_LATERAL_CHROMATIC_ABERRATION);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0: return "Off";
+            case 2: return "Auto";
+            case 0xffffffff: return "N/A";
+            default: return String.format("Unknown (%d)", value);
+        }
     }
 
     @Nullable
     public String getDistortionCorrectionDescription()
     {
-        return getIndexedDescription(TAG_DISTORTION_CORRECTION, "Off", null, "Auto");
+        Integer value = _directory.getInteger(TAG_DISTORTION_CORRECTION);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0: return "Off";
+            case 2: return "Auto";
+            case 0xffffffff: return "N/A";
+            default: return String.format("Unknown (%d)", value);
+        }
     }
 
     @Nullable
