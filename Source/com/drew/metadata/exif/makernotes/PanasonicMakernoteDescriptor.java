@@ -129,8 +129,6 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
                 return getIntelligentResolutionDescription();
             case TAG_FACE_RECOGNITION_INFO:
                 return getRecognizedFacesDescription();
-            case TAG_PRINT_IMAGE_MATCHING_INFO:
-                return getPrintImageMatchingInfoDescription();
             case TAG_SCENE_MODE:
                 return getSceneModeDescription();
             case TAG_FLASH_FIRED:
@@ -203,12 +201,6 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
             default:
                 return super.getDescription(tagType);
         }
-    }
-
-    @Nullable
-    public String getPrintImageMatchingInfoDescription()
-    {
-        return getByteLengthDescription(TAG_PRINT_IMAGE_MATCHING_INFO);
     }
 
     @Nullable

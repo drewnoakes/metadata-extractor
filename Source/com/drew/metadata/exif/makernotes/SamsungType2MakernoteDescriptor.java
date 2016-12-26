@@ -194,20 +194,20 @@ public class SamsungType2MakernoteDescriptor extends TagDescriptor<SamsungType2M
     @Nullable
     private String getCameraTemperatureDescription()
     {
-        return getFormattedInt(SamsungType2MakernoteDirectory.TagCameraTemperature, "%d C");
+        return getFormattedInt(TagCameraTemperature, "%d C");
     }
 
     @Nullable
     public String getFaceDetectDescription()
     {
-        return getIndexedDescription(SamsungType2MakernoteDirectory.TagFaceDetect,
+        return getIndexedDescription(TagFaceDetect,
             "Off", "On");
     }
 
     @Nullable
     public String getFaceRecognitionDescription()
     {
-        return getIndexedDescription(SamsungType2MakernoteDirectory.TagFaceRecognition,
+        return getIndexedDescription(TagFaceRecognition,
             "Off", "On");
     }
 }

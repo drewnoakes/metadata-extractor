@@ -18,24 +18,25 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.metadata.exif.makernotes;
+
+package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.exif.PrintIMDirectory.*;
+
 /**
- * Provides human-readable string representations of tag values stored in a {@link RicohMakernoteDirectory}.
- * <p>
- * Some information about this makernote taken from here:
- * http://www.ozhiker.com/electronics/pjmt/jpeg_info/ricoh_mn.html
- *
+ * Provides human-readable string representations of tag values stored in a {@link PrintIMDirectory}.
+ * 
+ * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
 @SuppressWarnings("WeakerAccess")
-public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirectory>
+public class PrintIMDescriptor extends TagDescriptor<PrintIMDirectory>
 {
-    public RicohMakernoteDescriptor(@NotNull RicohMakernoteDirectory directory)
+    public PrintIMDescriptor(@NotNull PrintIMDirectory directory)
     {
         super(directory);
     }
@@ -45,16 +46,13 @@ public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirect
     public String getDescription(int tagType)
     {
         switch (tagType) {
-//            case TAG_PROPRIETARY_THUMBNAIL:
-//                return getProprietaryThumbnailDataDescription();
-            default:
+            case PrintIMDirectory.TagPrintImVersion:
                 return super.getDescription(tagType);
+            default:
+                Integer value = _directory.getInteger(tagType);
+                if (value == null)
+                    return null;
+                return String.format("0x%08x", value);
         }
     }
-//
-//    @Nullable
-//    public String getProprietaryThumbnailDataDescription()
-//    {
-//        return getByteLengthDescription(TAG_PROPRIETARY_THUMBNAIL);
-//    }
 }
