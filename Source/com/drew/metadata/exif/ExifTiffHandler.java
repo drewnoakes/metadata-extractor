@@ -218,6 +218,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             return true;
         }
 
+        if (HandlePrintIM(_currentDirectory, tagId))
+        {
+            PrintIMDirectory printIMDirectory = new PrintIMDirectory();
+            printIMDirectory.setParent(_currentDirectory);
+            _metadata.addDirectory(printIMDirectory);
+            ProcessPrintIM(printIMDirectory, tagOffset, reader, byteCount);
+            return true;
+        }
+
         // Note: these also appear in tryEnterSubIfd because some are IFD pointers while others begin immediately
         // for the same directories
         if(_currentDirectory instanceof OlympusMakernoteDirectory)
@@ -266,23 +275,23 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             switch (tagId)
             {
                 case PanasonicRawIFD0Directory.TagWbInfo:
-                    /*var dirWbInfo = new PanasonicRawWbInfoDirectory { Parent = CurrentDirectory };
+                    PanasonicRawWbInfoDirectory dirWbInfo = new PanasonicRawWbInfoDirectory();
+                    dirWbInfo.setParent(_currentDirectory);
                     _metadata.addDirectory(dirWbInfo);
                     ProcessBinary(dirWbInfo, tagOffset, reader, byteCount, false, 2);
-                    return true;*/
-                    return false;
+                    return true;
                 case PanasonicRawIFD0Directory.TagWbInfo2:
-                    /*var dirWbInfo2 = new PanasonicRawWbInfo2Directory { Parent = CurrentDirectory };
+                    PanasonicRawWbInfo2Directory dirWbInfo2 = new PanasonicRawWbInfo2Directory();
+                    dirWbInfo2.setParent(_currentDirectory);
                     _metadata.addDirectory(dirWbInfo2);
                     ProcessBinary(dirWbInfo2, tagOffset, reader, byteCount, false, 3);
-                    return true;*/
-                    return false;
+                    return true;
                 case PanasonicRawIFD0Directory.TagDistortionInfo:
-                    /*var dirDistort = new PanasonicRawDistortionDirectory { Parent = CurrentDirectory };
+                    PanasonicRawDistortionDirectory dirDistort = new PanasonicRawDistortionDirectory();
+                    dirDistort.setParent(_currentDirectory);
                     _metadata.addDirectory(dirDistort);
-                    ProcessBinary(dirDistort, tagOffset, reader, byteCount);
-                    return true;*/
-                    return false;
+                    ProcessBinary(dirDistort, tagOffset, reader, byteCount, true, 1);
+                    return true;
             }
         }
 
@@ -325,6 +334,49 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     } catch (IOException ex) {
                         thumbnailDirectory.addError("Invalid thumbnail data specification: " + ex.getMessage());
                     }
+                }
+            }
+        }
+    }
+
+    private static void ProcessBinary(@NotNull final Directory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount, final Boolean issigned, final int arrayLength) throws IOException
+    {
+        // expects signed/unsigned int16 (for now)
+        //int byteSize = issigned ? sizeof(short) : sizeof(ushort);
+        int byteSize = 2;
+
+        // 'directory' is assumed to contain tags that correspond to the byte position unless it's a set of bytes
+        for (int i = 0; i < byteCount; i++)
+        {
+            if (directory.hasTagName(i))
+            {
+                // only process this tag if the 'next' integral tag exists. Otherwise, it's a set of bytes
+                if (i < byteCount - 1 && directory.hasTagName(i + 1))
+                {
+                    if(issigned)
+                        directory.setObject(i, reader.getInt16(tagValueOffset + (i* byteSize)));
+                    else
+                        directory.setObject(i, reader.getUInt16(tagValueOffset + (i* byteSize)));
+                }
+                else
+                {
+                    // the next arrayLength bytes are a multi-byte value
+                    if (issigned)
+                    {
+                        short[] val = new short[arrayLength];
+                        for (int j = 0; j<val.length; j++)
+                            val[j] = reader.getInt16(tagValueOffset + ((i + j) * byteSize));
+                        directory.setObjectArray(i, val);
+                    }
+                    else
+                    {
+                        int[] val = new int[arrayLength];
+                        for (int j = 0; j<val.length; j++)
+                            val[j] = reader.getUInt16(tagValueOffset + ((i + j) * byteSize));
+                        directory.setObjectArray(i, val);
+                    }
+
+                    i += arrayLength - 1;
                 }
             }
         }
@@ -461,7 +513,6 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             {
                 pushDirectory(LeicaType5MakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
-                return false;
             } else if ("Leica Camera AG".equals(cameraMake)) {
                 pushDirectory(LeicaMakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
@@ -536,6 +587,91 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         reader.setMotorolaByteOrder(byteOrderBefore);
         return true;
+    }
+
+    private static Boolean HandlePrintIM(@NotNull final Directory directory, final int tagId)
+    {
+        if (tagId == ExifDirectoryBase.TAG_PRINT_IMAGE_MATCHING_INFO)
+            return true;
+
+        if (tagId == 0x0E00)
+        {
+            // Tempting to say every tagid of 0x0E00 is a PIM tag, but can't be 100% sure
+            if (directory instanceof CasioType2MakernoteDirectory ||
+                directory instanceof KyoceraMakernoteDirectory ||
+                directory instanceof NikonType2MakernoteDirectory ||
+                directory instanceof OlympusMakernoteDirectory ||
+                directory instanceof PanasonicMakernoteDirectory ||
+                directory instanceof PentaxMakernoteDirectory ||
+                directory instanceof RicohMakernoteDirectory ||
+                directory instanceof SanyoMakernoteDirectory ||
+                directory instanceof SonyType1MakernoteDirectory)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Process PrintIM IFD
+    /// </summary>
+    /// <remarks>
+    /// Converted from Exiftool version 10.33 created by Phil Harvey
+    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
+    /// lib\Image\ExifTool\PrintIM.pm
+    /// </remarks>
+    private static void ProcessPrintIM(@NotNull final PrintIMDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount) throws IOException
+    {
+        Boolean resetByteOrder = null;
+
+        if (byteCount == 0)
+        {
+            directory.addError("Empty PrintIM data");
+            return;
+        }
+
+        if (byteCount <= 15)
+        {
+            directory.addError("Bad PrintIM data");
+            return;
+        }
+
+        String header = reader.getString(tagValueOffset, 12, Charsets.UTF_8);
+
+        if (!header.startsWith("PrintIM")) //, StringComparison.Ordinal))
+        {
+            directory.addError("Invalid PrintIM header");
+            return;
+        }
+
+        // check size of PrintIM block
+        int num = reader.getUInt16(tagValueOffset + 14);
+        if (byteCount < 16 + num * 6)
+        {
+            // size is too big, maybe byte ordering is wrong
+            resetByteOrder = reader.isMotorolaByteOrder();
+            reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
+            num = reader.getUInt16(tagValueOffset + 14);
+            if (byteCount < 16 + num * 6)
+            {
+                directory.addError("Bad PrintIM size");
+                return;
+            }
+        }
+
+        directory.setObject(PrintIMDirectory.TagPrintImVersion, header.substring(8, 12));
+
+        for (int n = 0; n < num; n++)
+        {
+            int pos = tagValueOffset + 16 + n * 6;
+            int tag = reader.getUInt16(pos);
+            long val = reader.getUInt32(pos + 2);
+
+            directory.setObject(tag, val);
+        }
+
+        if (resetByteOrder != null)
+            reader.setMotorolaByteOrder(resetByteOrder);
     }
 
     private static void processKodakMakernote(@NotNull final KodakMakernoteDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader)

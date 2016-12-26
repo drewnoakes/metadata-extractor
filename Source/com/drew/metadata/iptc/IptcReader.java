@@ -57,6 +57,7 @@ public class IptcReader implements JpegSegmentMetadataReader
     public static final int DATA_RECORD = 8;
     public static final int POST_DATA_RECORD = 9;
 */
+    private static final byte IptcMarkerByte = 0x1c;
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -68,7 +69,7 @@ public class IptcReader implements JpegSegmentMetadataReader
     {
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the IPTC marker byte
-            if (segmentBytes.length != 0 && segmentBytes[0] == 0x1c) {
+            if (segmentBytes.length != 0 && segmentBytes[0] == IptcMarkerByte) {
                 extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
             }
         }
@@ -108,11 +109,11 @@ public class IptcReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            if (startByte != 0x1c) {
+            if (startByte != IptcMarkerByte) {
                 // NOTE have seen images where there was one extra byte at the end, giving
                 // offset==length at this point, which is not worth logging as an error.
                 if (offset != length)
-                    directory.addError("Invalid IPTC tag marker at offset " + (offset - 1) + ". Expected '0x1c' but got '0x" + Integer.toHexString(startByte) + "'.");
+                    directory.addError("Invalid IPTC tag marker at offset " + (offset - 1) + ". Expected '0x" + Integer.toHexString(IptcMarkerByte) + "' but got '0x" + Integer.toHexString(startByte) + "'.");
                 return;
             }
 

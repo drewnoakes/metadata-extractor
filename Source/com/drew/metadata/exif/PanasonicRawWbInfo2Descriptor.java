@@ -18,24 +18,25 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.metadata.exif.makernotes;
+
+package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.exif.PanasonicRawWbInfo2Directory.*;
+
 /**
- * Provides human-readable string representations of tag values stored in a {@link RicohMakernoteDirectory}.
- * <p>
- * Some information about this makernote taken from here:
- * http://www.ozhiker.com/electronics/pjmt/jpeg_info/ricoh_mn.html
- *
+ * Provides human-readable string representations of tag values stored in a {@link PanasonicRawWbInfo2Directory}.
+ * 
+ * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
 @SuppressWarnings("WeakerAccess")
-public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirectory>
+public class PanasonicRawWbInfo2Descriptor extends TagDescriptor<PanasonicRawWbInfo2Directory>
 {
-    public RicohMakernoteDescriptor(@NotNull RicohMakernoteDirectory directory)
+    public PanasonicRawWbInfo2Descriptor(@NotNull PanasonicRawWbInfo2Directory directory)
     {
         super(directory);
     }
@@ -45,16 +46,26 @@ public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirect
     public String getDescription(int tagType)
     {
         switch (tagType) {
-//            case TAG_PROPRIETARY_THUMBNAIL:
-//                return getProprietaryThumbnailDataDescription();
+            case TagWbType1:
+            case TagWbType2:
+            case TagWbType3:
+            case TagWbType4:
+            case TagWbType5:
+            case TagWbType6:
+            case TagWbType7:
+                return getWbTypeDescription(tagType);
             default:
                 return super.getDescription(tagType);
         }
     }
-//
-//    @Nullable
-//    public String getProprietaryThumbnailDataDescription()
-//    {
-//        return getByteLengthDescription(TAG_PROPRIETARY_THUMBNAIL);
-//    }
+
+    @Nullable
+    public String getWbTypeDescription(int tagType)
+    {
+        Integer wbtype = _directory.getInteger(tagType);
+        if (wbtype == null)
+            return null;
+
+        return super.GetLightSourceDescription(wbtype.shortValue());
+    }
 }

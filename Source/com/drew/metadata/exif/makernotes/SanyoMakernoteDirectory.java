@@ -62,7 +62,7 @@ public class SanyoMakernoteDirectory extends Directory
     public static final int TAG_SEQUENCE_SHOT_INTERVAL = 0x0224;
     public static final int TAG_FLASH_MODE = 0x0225;
 
-    public static final int TAG_PRINT_IM = 0x0e00;
+    public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
     public static final int TAG_DATA_DUMP = 0x0f00;
 
@@ -99,7 +99,7 @@ public class SanyoMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_SEQUENCE_SHOT_INTERVAL, "Sequence Shot Interval");
         _tagNameMap.put(TAG_FLASH_MODE, "Flash Mode");
 
-        _tagNameMap.put(TAG_PRINT_IM, "Print IM");
+        _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print IM");
 
         _tagNameMap.put(TAG_DATA_DUMP, "Data Dump");
     }
