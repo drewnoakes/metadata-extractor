@@ -96,7 +96,7 @@ public class OlympusFocusInfoMakernoteDescriptor extends TagDescriptor<OlympusFo
         Rational value = _directory.getRational(TagFocusDistance);
         if (value == null)
             return "inf";
-        if (value.getNumerator() == 0xFFFFFFFF)
+        if (value.getNumerator() == 0xFFFFFFFFL || value.getNumerator() == 0x00000000L)
             return "inf";
 
         return value.getNumerator() / 1000.0 + " m";
@@ -183,7 +183,7 @@ public class OlympusFocusInfoMakernoteDescriptor extends TagDescriptor<OlympusFo
 
         if ((short)values[1] == 1)
             return "Full";
-        return "On " + 1.0 / (short)values[1] + " strength)";
+        return "On (1/" + (short)values[1] + " strength)";
     }
 
     @Nullable
