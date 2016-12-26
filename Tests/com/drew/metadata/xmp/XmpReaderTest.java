@@ -20,17 +20,27 @@
  */
 package com.drew.metadata.xmp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import com.drew.tools.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -280,7 +290,8 @@ public class XmpReaderTest
     {
         Map<String,String> propertyMap = _directory.getXmpProperties();
 
-        assertEquals(179, propertyMap.size());
+        //we lost exif:DateTimeDigitized, when we upgraded to XMPCore 1.6.10
+        assertEquals(178, propertyMap.size());
 
         assertTrue(propertyMap.containsKey("photoshop:Country"));
         assertEquals("Deutschland", propertyMap.get("photoshop:Country"));
