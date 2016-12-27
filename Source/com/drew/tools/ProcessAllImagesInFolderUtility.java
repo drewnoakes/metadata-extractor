@@ -324,7 +324,7 @@ public class ProcessAllImagesInFolderUtility
                             writer.write(NEW_LINE);
                         // Special handling for XMP directory data
                         if (directory instanceof XmpDirectory) {
-                            boolean wrote = false;
+                            List<String> props = new ArrayList<String>();
                             XmpDirectory xmpDirectory = (XmpDirectory)directory;
                             XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
                             try {
@@ -346,14 +346,20 @@ public class ProcessAllImagesInFolderUtility
                                     else if (value.length() > MAX_XMP_VALUE_LENGTH)
                                         value = String.format("%s <truncated from %d characters>", value.substring(0, MAX_XMP_VALUE_LENGTH), value.length());
 
-                                    writer.format("[XMPMeta - %s] %s = %s%s", ns, path, value, NEW_LINE);
-                                    wrote = true;
+                                    props.add(String.format("[XMPMeta - %s] %s = %s", ns, path, value));
                                 }
                             } catch (XMPException e) {
                                 e.printStackTrace();
                             }
-                            if (wrote)
+                            if (props.size() > 0)
+                            {
+                                // Order alphabetically so that output is stable across invocations
+                                Collections.sort(props);
+                                for (String prop : props) {
+                                    writer.format("%s%s", prop, NEW_LINE);
+                                }
                                 writer.write(NEW_LINE);
+                            }
                         }
                     }
 
