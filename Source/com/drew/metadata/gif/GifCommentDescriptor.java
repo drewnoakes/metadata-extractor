@@ -29,7 +29,7 @@ import static com.drew.metadata.gif.GifCommentDirectory.*;
  * @author Drew Noakes https://drewnoakes.com
  * @author Kevin Mott https://github.com/kwhopper
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class GifCommentDescriptor extends TagDescriptor<GifCommentDirectory>
 {
     public GifCommentDescriptor(@NotNull GifCommentDirectory directory)

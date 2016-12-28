@@ -33,7 +33,7 @@ import static com.drew.metadata.exif.PanasonicRawWbInfo2Directory.*;
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class PanasonicRawWbInfo2Descriptor extends TagDescriptor<PanasonicRawWbInfo2Directory>
 {
     public PanasonicRawWbInfo2Descriptor(@NotNull PanasonicRawWbInfo2Directory directory)

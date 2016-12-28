@@ -29,7 +29,7 @@ import static com.drew.metadata.file.FileMetadataDirectory.*;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class FileMetadataDescriptor extends TagDescriptor<FileMetadataDirectory>
 {
     public FileMetadataDescriptor(@NotNull FileMetadataDirectory directory)

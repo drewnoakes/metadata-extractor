@@ -36,7 +36,7 @@ import static com.drew.metadata.png.PngDirectory.*;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class PngDescriptor extends TagDescriptor<PngDirectory>
 {
     public PngDescriptor(@NotNull PngDirectory directory)

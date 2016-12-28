@@ -32,7 +32,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class LeicaMakernoteDirectory extends Directory
 {
     public static final int TAG_QUALITY = 0x0300;

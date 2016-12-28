@@ -32,7 +32,7 @@ import static com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class SonyType6MakernoteDescriptor extends TagDescriptor<SonyType6MakernoteDirectory>
 {
     public SonyType6MakernoteDescriptor(@NotNull SonyType6MakernoteDirectory directory)

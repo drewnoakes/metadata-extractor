@@ -33,7 +33,7 @@ import java.util.HashMap;
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class PanasonicRawDistortionDirectory extends Directory
 {
     // 0 and 1 are checksums

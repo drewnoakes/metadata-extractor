@@ -37,7 +37,7 @@ import static com.drew.metadata.exif.makernotes.OlympusRawInfoMakernoteDirectory
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class OlympusRawInfoMakernoteDescriptor extends TagDescriptor<OlympusRawInfoMakernoteDirectory>
 {
     public OlympusRawInfoMakernoteDescriptor(@NotNull OlympusRawInfoMakernoteDirectory directory)

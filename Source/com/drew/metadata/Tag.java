@@ -20,6 +20,7 @@
  */
 package com.drew.metadata;
 
+import java.io.Serializable;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
@@ -29,7 +30,8 @@ import com.drew.lang.annotations.Nullable;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class Tag
+@SuppressWarnings("serial")
+public class Tag implements Serializable
 {
     private final int _tagType;
     @NotNull

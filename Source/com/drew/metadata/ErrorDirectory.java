@@ -29,6 +29,7 @@ import java.util.*;
  * @author Drew Noakes https://drewnoakes.com
  */
 
+@SuppressWarnings("serial")
 public final class ErrorDirectory extends Directory
 {
 

@@ -42,7 +42,7 @@ import static com.drew.metadata.exif.ExifDirectoryBase.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public abstract class ExifDescriptorBase<T extends Directory> extends TagDescriptor<T>
 {
     /**

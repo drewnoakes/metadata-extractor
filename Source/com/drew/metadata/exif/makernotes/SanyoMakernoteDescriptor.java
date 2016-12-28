@@ -32,7 +32,7 @@ import static com.drew.metadata.exif.makernotes.SanyoMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class SanyoMakernoteDescriptor extends TagDescriptor<SanyoMakernoteDirectory>
 {
     public SanyoMakernoteDescriptor(@NotNull SanyoMakernoteDirectory directory)

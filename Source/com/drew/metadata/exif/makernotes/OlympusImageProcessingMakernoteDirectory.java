@@ -32,7 +32,7 @@ import java.util.HashMap;
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class OlympusImageProcessingMakernoteDirectory extends Directory
 {
     public static final int TagImageProcessingVersion = 0x0000;

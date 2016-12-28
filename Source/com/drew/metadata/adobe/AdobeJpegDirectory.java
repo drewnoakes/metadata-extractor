@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * Contains image encoding information for DCT filters, as stored by Adobe.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class AdobeJpegDirectory extends Directory {
 
     public static final int TAG_DCT_ENCODE_VERSION = 0;

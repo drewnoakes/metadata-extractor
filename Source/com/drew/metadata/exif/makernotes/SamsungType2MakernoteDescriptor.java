@@ -35,7 +35,7 @@ import static com.drew.metadata.exif.makernotes.SamsungType2MakernoteDirectory.*
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class SamsungType2MakernoteDescriptor extends TagDescriptor<SamsungType2MakernoteDirectory>
 {
     public SamsungType2MakernoteDescriptor(@NotNull SamsungType2MakernoteDirectory directory)

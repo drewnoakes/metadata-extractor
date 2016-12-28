@@ -33,7 +33,7 @@ import java.util.HashMap;
  * @author Drew Noakes https://drewnoakes.com
  * @author Yuri Binev
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class PhotoshopDirectory extends Directory
 {
     public static final int TAG_CHANNELS_ROWS_COLUMNS_DEPTH_MODE                  = 0x03E8;

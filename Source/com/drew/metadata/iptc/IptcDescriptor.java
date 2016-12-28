@@ -34,7 +34,7 @@ import static com.drew.metadata.iptc.IptcDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class IptcDescriptor extends TagDescriptor<IptcDirectory>
 {
     public IptcDescriptor(@NotNull IptcDirectory directory)

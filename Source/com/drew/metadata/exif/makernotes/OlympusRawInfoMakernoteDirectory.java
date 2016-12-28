@@ -31,7 +31,7 @@ import java.util.HashMap;
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class OlympusRawInfoMakernoteDirectory extends Directory
 {
     public static final int TagRawInfoVersion = 0x0000;

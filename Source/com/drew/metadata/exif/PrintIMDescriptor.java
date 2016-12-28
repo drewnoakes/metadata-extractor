@@ -33,7 +33,7 @@ import static com.drew.metadata.exif.PrintIMDirectory.*;
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class PrintIMDescriptor extends TagDescriptor<PrintIMDirectory>
 {
     public PrintIMDescriptor(@NotNull PrintIMDirectory directory)

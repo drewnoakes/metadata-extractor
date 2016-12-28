@@ -39,7 +39,7 @@ import java.lang.reflect.Array;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDirectory>
 {
     // TODO extend support for some offset-encoded byte[] tags: http://www.ozhiker.com/electronics/pjmt/jpeg_info/olympus_mn.html

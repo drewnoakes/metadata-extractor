@@ -22,7 +22,7 @@ package com.drew.metadata;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -33,7 +33,8 @@ import java.util.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public final class Metadata
+@SuppressWarnings("serial")
+public final class Metadata implements Serializable
 {
     /**
      * The list of {@link Directory} instances in this container, in the order they were added.
