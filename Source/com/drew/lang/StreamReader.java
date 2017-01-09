@@ -36,6 +36,15 @@ public class StreamReader extends SequentialReader
     @NotNull
     private final InputStream _stream;
 
+    @NotNull
+    private long _pos;
+
+    @Override
+    public long getPosition()
+    {
+        return _pos;
+    }
+
     @SuppressWarnings("ConstantConditions")
     public StreamReader(@NotNull InputStream stream)
     {
@@ -43,14 +52,16 @@ public class StreamReader extends SequentialReader
             throw new NullPointerException();
 
         _stream = stream;
+        _pos = 0;
     }
 
     @Override
-    protected byte getByte() throws IOException
+    public byte getByte() throws IOException
     {
         int value = _stream.read();
         if (value == -1)
             throw new EOFException("End of data reached.");
+        _pos++;
         return (byte)value;
     }
 
@@ -59,17 +70,24 @@ public class StreamReader extends SequentialReader
     public byte[] getBytes(int count) throws IOException
     {
         byte[] bytes = new byte[count];
-        int totalBytesRead = 0;
+        getBytes(bytes, 0, count);
+        return bytes;
+    }
 
-        while (totalBytesRead != count) {
-            final int bytesRead = _stream.read(bytes, totalBytesRead, count - totalBytesRead);
+    @NotNull
+    @Override
+    public void getBytes(byte[] buffer, int offset, int count) throws IOException
+    {
+        int totalBytesRead = 0;
+        while (totalBytesRead != count)
+        {
+            final int bytesRead = _stream.read(buffer, offset + totalBytesRead, count - totalBytesRead);
             if (bytesRead == -1)
                 throw new EOFException("End of data reached.");
             totalBytesRead += bytesRead;
             assert(totalBytesRead <= count);
         }
-
-        return bytes;
+        _pos += totalBytesRead;
     }
 
     @Override
@@ -109,6 +127,7 @@ public class StreamReader extends SequentialReader
             if (skipped == 0)
                 break;
         }
+        _pos += skippedTotal;
         return skippedTotal;
     }
 }

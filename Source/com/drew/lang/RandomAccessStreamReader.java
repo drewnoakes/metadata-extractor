@@ -167,7 +167,13 @@ public class RandomAccessStreamReader extends RandomAccessReader
     }
 
     @Override
-    protected byte getByte(int index) throws IOException
+    public int toUnshiftedOffset(int localOffset)
+    {
+        return localOffset;
+    }
+
+    @Override
+    public byte getByte(int index) throws IOException
     {
         assert(index >= 0);
 

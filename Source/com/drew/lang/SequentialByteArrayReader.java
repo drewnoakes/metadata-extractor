@@ -36,6 +36,12 @@ public class SequentialByteArrayReader extends SequentialReader
     private final byte[] _bytes;
     private int _index;
 
+    @Override
+    public long getPosition()
+    {
+        return _index;
+    }
+
     public SequentialByteArrayReader(@NotNull byte[] bytes)
     {
         this(bytes, 0);
@@ -52,7 +58,7 @@ public class SequentialByteArrayReader extends SequentialReader
     }
 
     @Override
-    protected byte getByte() throws IOException
+    public byte getByte() throws IOException
     {
         if (_index >= _bytes.length) {
             throw new EOFException("End of data reached.");
@@ -73,6 +79,18 @@ public class SequentialByteArrayReader extends SequentialReader
         _index += count;
 
         return bytes;
+    }
+
+    @NotNull
+    @Override
+    public void getBytes(byte[] buffer, int offset, int count) throws IOException
+    {
+        if (_index + count > _bytes.length) {
+            throw new EOFException("End of data reached.");
+        }
+
+        System.arraycopy(_bytes, _index, buffer, offset, count);
+        _index += count;
     }
 
     @Override
