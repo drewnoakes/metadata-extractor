@@ -38,34 +38,52 @@ public class ByteArrayReader extends RandomAccessReader
 {
     @NotNull
     private final byte[] _buffer;
+    private final int _baseOffset;
 
     @SuppressWarnings({ "ConstantConditions" })
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public ByteArrayReader(@NotNull byte[] buffer)
     {
+        this(buffer, 0);
+    }
+
+    @SuppressWarnings({ "ConstantConditions" })
+    @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
+    public ByteArrayReader(@NotNull byte[] buffer, int baseOffset)
+    {
         if (buffer == null)
             throw new NullPointerException();
+        if (baseOffset < 0)
+            throw new IllegalArgumentException("Must be zero or greater");
 
         _buffer = buffer;
+        _baseOffset = baseOffset;
+    }
+
+    @Override
+    public int toUnshiftedOffset(int localOffset)
+    {
+        return localOffset + _baseOffset;
     }
 
     @Override
     public long getLength()
     {
-        return _buffer.length;
+        return _buffer.length - _baseOffset;
     }
 
     @Override
-    protected byte getByte(int index) throws IOException
+    public byte getByte(int index) throws IOException
     {
-        return _buffer[index];
+        validateIndex(index, 1);
+        return _buffer[index + _baseOffset];
     }
 
     @Override
     protected void validateIndex(int index, int bytesRequested) throws IOException
     {
         if (!isValidIndex(index, bytesRequested))
-            throw new BufferBoundsException(index, bytesRequested, _buffer.length);
+            throw new BufferBoundsException(toUnshiftedOffset(index), bytesRequested, _buffer.length);
     }
 
     @Override
@@ -73,7 +91,7 @@ public class ByteArrayReader extends RandomAccessReader
     {
         return bytesRequested >= 0
             && index >= 0
-            && (long)index + (long)bytesRequested - 1L < (long)_buffer.length;
+            && (long)index + (long)bytesRequested - 1L < getLength(); // (long)_buffer.length;
     }
 
     @Override
@@ -83,7 +101,7 @@ public class ByteArrayReader extends RandomAccessReader
         validateIndex(index, count);
 
         byte[] bytes = new byte[count];
-        System.arraycopy(_buffer, index, bytes, 0, count);
+        System.arraycopy(_buffer, index + _baseOffset, bytes, 0, count);
         return bytes;
     }
 }

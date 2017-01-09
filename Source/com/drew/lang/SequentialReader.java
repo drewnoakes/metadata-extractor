@@ -39,12 +39,14 @@ public abstract class SequentialReader
 
     private boolean _isMotorolaByteOrder = true;
 
+    public abstract long getPosition() throws IOException;
+
     /**
      * Gets the next byte in the sequence.
      *
      * @return The read byte value
      */
-    protected abstract byte getByte() throws IOException;
+    public abstract byte getByte() throws IOException;
 
     /**
      * Returns the required number of bytes from the sequence.
@@ -54,6 +56,14 @@ public abstract class SequentialReader
      */
     @NotNull
     public abstract byte[] getBytes(int count) throws IOException;
+
+    /**
+     * Retrieves bytes, writing them into a caller-provided buffer.
+     * @param buffer The array to write bytes to.
+     * @param offset The starting position within buffer to write to.
+     * @param count The number of bytes to be written.
+     */
+    public abstract void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException;
 
     /**
      * Skips forward in the sequence. If the sequence ends, an {@link EOFException} is thrown.
@@ -284,6 +294,13 @@ public abstract class SequentialReader
         } catch (UnsupportedEncodingException e) {
             return new String(bytes);
         }
+    }
+
+    @NotNull
+    public String getString(int bytesRequested, Charset charset) throws IOException
+    {
+        byte[] bytes = getBytes(bytesRequested);
+        return new String(bytes, charset);
     }
 
     @NotNull

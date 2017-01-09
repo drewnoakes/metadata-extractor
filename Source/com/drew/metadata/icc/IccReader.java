@@ -47,7 +47,7 @@ import java.util.Collections;
  * @author Yuri Binev
  * @author Drew Noakes https://drewnoakes.com
  */
-public class IccReader implements JpegSegmentMetadataReader, MetadataReader
+public class IccReader implements JpegSegmentMetadataReader
 {
     public static final String JPEG_SEGMENT_PREAMBLE = "ICC_PROFILE";
 
@@ -86,22 +86,14 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         }
 
         if (buffer != null)
-            extract(new ByteArrayReader(buffer), metadata);
+            metadata.addDirectory(extract(new ByteArrayReader(buffer)));
     }
 
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
-    {
-        extract(reader, metadata, null);
-    }
-
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory)
+    public IccDirectory extract(@NotNull final RandomAccessReader reader)
     {
         // TODO review whether the 'tagPtr' values below really do require RandomAccessReader or whether SequentialReader may be used instead
 
         IccDirectory directory = new IccDirectory();
-
-        if (parentDirectory != null)
-            directory.setParent(parentDirectory);
 
         try {
             int profileByteCount = reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT);
@@ -154,7 +146,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
             directory.addError("Exception reading ICC profile: " + ex.getMessage());
         }
 
-        metadata.addDirectory(directory);
+        return directory;
     }
 
     private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
