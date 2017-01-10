@@ -25,6 +25,8 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.drew.imaging.FileType;
+import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.StringUtil;
@@ -424,7 +426,19 @@ public class ProcessAllImagesInFolderUtility
                 "UTF-8"
             );
             writer.write("FILE: " + file.getName() + NEW_LINE);
-            writer.write(NEW_LINE);
+
+            // Detect file type
+            BufferedInputStream stream = null;
+            try {
+                stream = new BufferedInputStream(new FileInputStream(file));
+                FileType fileType = FileTypeDetector.detectFileType(stream);
+                writer.write(String.format("TYPE: %s" + NEW_LINE, fileType.toString().toUpperCase()));
+                writer.write(NEW_LINE);
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
 
             return new PrintWriter(writer);
         }
