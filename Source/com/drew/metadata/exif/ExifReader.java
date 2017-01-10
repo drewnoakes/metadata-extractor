@@ -73,8 +73,20 @@ public class ExifReader implements JpegSegmentMetadataReader
             // Filter any segments containing unexpected preambles
             if (segmentBytes.length < JPEG_SEGMENT_PREAMBLE.length() || !new String(segmentBytes, 0, JPEG_SEGMENT_PREAMBLE.length()).equals(JPEG_SEGMENT_PREAMBLE))
                 continue;
-            extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length(), null);
+            extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length());
         }
+    }
+
+    /** Reads TIFF formatted Exif data from start of the specified {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    {
+        extract(reader, metadata, 0);
+    }
+
+    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset)
+    {
+        extract(reader, metadata, readerOffset, null);
     }
 
     /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */

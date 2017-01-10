@@ -26,7 +26,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.icc.IccReader;
-import com.drew.metadata.icc.IccDirectory;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
 import com.drew.metadata.png.PngDirectory;
 import com.drew.metadata.xmp.XmpReader;
@@ -167,9 +166,7 @@ public class PngMetadataReader
                 int bytesLeft = bytes.length - profileNameBytes.length - 2;
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
                 InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
-                IccDirectory iccdirectory = new IccReader().extract(new RandomAccessStreamReader(inflateStream)); //, metadata, directory);
-                iccdirectory.setParent(directory);
-                metadata.addDirectory(iccdirectory);
+                new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
                 inflateStream.close();
             } else {
                 directory.addError("Invalid compression method value");
@@ -220,7 +217,7 @@ public class PngMetadataReader
                 StringValue keyword = new StringValue(keywordBytes, _latin1Encoding);
                 if (keyword.toString().equals("XML:com.adobe.xmp")) {
                     // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
-                    metadata.addDirectory(new XmpReader().extract(textBytes));
+                    new XmpReader().extract(textBytes, metadata);
                 } else {
                     List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
                     textPairs.add(new KeyValuePair(keyword, new StringValue(textBytes, _latin1Encoding)));

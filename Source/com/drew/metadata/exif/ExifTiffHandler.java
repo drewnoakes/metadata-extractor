@@ -36,7 +36,6 @@ import com.drew.metadata.exif.makernotes.*;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
-import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -215,9 +214,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         // Custom processing for embedded XMP data
         if (tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && _currentDirectory instanceof ExifIFD0Directory) {
-            XmpDirectory xmpDirectory = new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount));
-            xmpDirectory.setParent(_currentDirectory);
-            _metadata.addDirectory(xmpDirectory);
+            new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
         }
 

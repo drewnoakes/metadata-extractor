@@ -31,9 +31,11 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.Directory;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -117,9 +119,7 @@ public class XmpReader implements JpegSegmentMetadataReader
 
                     byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
                     System.arraycopy(segmentBytes, preambleLength, xmlBytes, 0, xmlBytes.length);
-                    XmpDirectory directory = extract(xmlBytes);
-                    if (!directory.isEmpty())
-                        metadata.addDirectory(directory);
+                    extract(xmlBytes, metadata);
                     // Check in the Standard XMP if there should be a Extended XMP part in other chunks.
                     extendedXMPGUID = getExtendedXMPGUID(metadata);
                     continue;
@@ -137,8 +137,7 @@ public class XmpReader implements JpegSegmentMetadataReader
 
         // Now that the Extended XMP chunks have been concatenated, let's parse and merge with the Standard XMP.
         if (extendedXMPBuffer != null) {
-            XmpDirectory directory = extract(extendedXMPBuffer);
-            metadata.addDirectory(directory);
+            extract(extendedXMPBuffer, metadata);
         }
     }
 
@@ -147,9 +146,9 @@ public class XmpReader implements JpegSegmentMetadataReader
      * <p>
      * The extraction is done with Adobe's XMPCore library.
      */
-    public XmpDirectory extract(@NotNull final byte[] xmpBytes)
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
-        return extract(xmpBytes, 0, xmpBytes.length);
+        extract(xmpBytes, metadata, null);
     }
 
     /**
@@ -157,9 +156,22 @@ public class XmpReader implements JpegSegmentMetadataReader
      * <p>
      * The extraction is done with Adobe's XMPCore library.
      */
-    public XmpDirectory extract(@NotNull final byte[] xmpBytes, int offset, int length)
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    {
+        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, int offset, int length, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
         XmpDirectory directory = new XmpDirectory();
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
 
         try {
             XMPMeta xmpMeta;
@@ -178,10 +190,51 @@ public class XmpReader implements JpegSegmentMetadataReader
             directory.addError("Error processing XMP data: " + e.getMessage());
         }
 
-        /*if (!directory.isEmpty())
-            metadata.addDirectory(directory);*/
+        if (!directory.isEmpty())
+            metadata.addDirectory(directory);
+    }
 
-        return directory;
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)
+    {
+        extract(xmpString, metadata, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final StringValue xmpString, @NotNull Metadata metadata)
+    {
+        extract(xmpString.getBytes(), metadata, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    {
+        XmpDirectory directory = new XmpDirectory();
+
+        if (parentDirectory != null)
+            directory.setParent(parentDirectory);
+
+        try {
+            XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmpString);
+            processXmpTags(directory, xmpMeta);
+        } catch (XMPException e) {
+            directory.addError("Error processing XMP data: " + e.getMessage());
+        }
+
+        if (!directory.isEmpty())
+            metadata.addDirectory(directory);
     }
 
     private static void processXmpTags(XmpDirectory directory, XMPMeta xmpMeta) throws XMPException

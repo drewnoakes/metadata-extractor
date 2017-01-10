@@ -73,11 +73,11 @@ public class WebpRiffHandler implements RiffHandler
 //        System.out.println("Chunk " + fourCC + " " + payload.length + " bytes");
 
         if (fourCC.equals("EXIF")) {
-            new ExifReader().extract(new ByteArrayReader(payload), _metadata, 0, null);
+            new ExifReader().extract(new ByteArrayReader(payload), _metadata);
         } else if (fourCC.equals("ICCP")) {
-            _metadata.addDirectory(new IccReader().extract(new ByteArrayReader(payload)));
+            new IccReader().extract(new ByteArrayReader(payload), _metadata);
         } else if (fourCC.equals("XMP ")) {
-            _metadata.addDirectory(new XmpReader().extract(payload));
+            new XmpReader().extract(payload, _metadata);
         } else if (fourCC.equals("VP8X") && payload.length == 10) {
             RandomAccessReader reader = new ByteArrayReader(payload);
             reader.setMotorolaByteOrder(false);

@@ -48,7 +48,7 @@ public class IccReaderTest
         byte[] icc = TestHelper.skipBytes(app2Bytes, 14);
 
         Metadata metadata = new Metadata();
-        metadata.addDirectory(new IccReader().extract(new ByteArrayReader(icc)));
+        new IccReader().extract(new ByteArrayReader(icc), metadata);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
