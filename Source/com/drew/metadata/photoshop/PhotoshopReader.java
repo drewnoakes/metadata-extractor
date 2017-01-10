@@ -30,10 +30,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.icc.IccReader;
-import com.drew.metadata.icc.IccDirectory;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.xmp.XmpReader;
-import com.drew.metadata.xmp.XmpDirectory;
 
 import java.util.Collections;
 
@@ -129,19 +127,11 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                     if (tagType == PhotoshopDirectory.TAG_IPTC)
                         new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory);
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
-                    {
-                        IccDirectory iccDirectory = new IccReader().extract(new ByteArrayReader(tagBytes));
-                        iccDirectory.setParent(directory);
-                        metadata.addDirectory(iccDirectory);
-                    }
+                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
                         new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
-                    {
-                        XmpDirectory xmpDirectory = new XmpReader().extract(tagBytes);
-                        xmpDirectory.setParent(directory);
-                        metadata.addDirectory(xmpDirectory);
-                    }
+                        new XmpReader().extract(tagBytes, metadata, directory);
                     else
                         directory.setByteArray(tagType, tagBytes);
 

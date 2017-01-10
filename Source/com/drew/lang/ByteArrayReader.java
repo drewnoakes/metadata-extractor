@@ -91,7 +91,7 @@ public class ByteArrayReader extends RandomAccessReader
     {
         return bytesRequested >= 0
             && index >= 0
-            && (long)index + (long)bytesRequested - 1L < getLength(); // (long)_buffer.length;
+            && (long)index + (long)bytesRequested - 1L < getLength();
     }
 
     @Override
