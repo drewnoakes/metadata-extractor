@@ -32,28 +32,28 @@ import java.util.HashMap;
 @SuppressWarnings("WeakerAccess")
 public class GifImageDirectory extends Directory
 {
-    public static final int TagLeft = 1;
-    public static final int TagTop = 2;
-    public static final int TagWidth = 3;
-    public static final int TagHeight = 4;
-    public static final int TagHasLocalColourTable = 5;
-    public static final int TagIsInterlaced = 6;
-    public static final int TagIsColorTableSorted = 7;
-    public static final int TagLocalColourTableBitsPerPixel = 8;
+    public static final int TAG_LEFT = 1;
+    public static final int TAG_TOP = 2;
+    public static final int TAG_WIDTH = 3;
+    public static final int TAG_HEIGHT = 4;
+    public static final int TAG_HAS_LOCAL_COLOUR_TABLE = 5;
+    public static final int TAG_IS_INTERLACED = 6;
+    public static final int TAG_IS_COLOR_TABLE_SORTED = 7;
+    public static final int TAG_LOCAL_COLOUR_TABLE_BITS_PER_PIXEL = 8;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TagLeft, "Left");
-        _tagNameMap.put(TagTop, "Top");
-        _tagNameMap.put(TagWidth, "Width");
-        _tagNameMap.put(TagHeight, "Height");
-        _tagNameMap.put(TagHasLocalColourTable, "Has Local Colour Table");
-        _tagNameMap.put(TagIsInterlaced, "Is Interlaced");
-        _tagNameMap.put(TagIsColorTableSorted, "Is Local Colour Table Sorted");
-        _tagNameMap.put(TagLocalColourTableBitsPerPixel, "Local Colour Table Bits Per Pixel");
+        _tagNameMap.put(TAG_LEFT, "Left");
+        _tagNameMap.put(TAG_TOP, "Top");
+        _tagNameMap.put(TAG_WIDTH, "Width");
+        _tagNameMap.put(TAG_HEIGHT, "Height");
+        _tagNameMap.put(TAG_HAS_LOCAL_COLOUR_TABLE, "Has Local Colour Table");
+        _tagNameMap.put(TAG_IS_INTERLACED, "Is Interlaced");
+        _tagNameMap.put(TAG_IS_COLOR_TABLE_SORTED, "Is Local Colour Table Sorted");
+        _tagNameMap.put(TAG_LOCAL_COLOUR_TABLE_BITS_PER_PIXEL, "Local Colour Table Bits Per Pixel");
     }
 
     public GifImageDirectory()

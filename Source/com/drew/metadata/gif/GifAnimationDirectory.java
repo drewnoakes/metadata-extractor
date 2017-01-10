@@ -32,14 +32,14 @@ import java.util.HashMap;
 @SuppressWarnings("WeakerAccess")
 public class GifAnimationDirectory extends Directory
 {
-    public static final int TagIterationCount = 1;
+    public static final int TAG_ITERATION_COUNT = 1;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TagIterationCount, "Iteration Count");
+        _tagNameMap.put(TAG_ITERATION_COUNT, "Iteration Count");
     }
 
     public GifAnimationDirectory()

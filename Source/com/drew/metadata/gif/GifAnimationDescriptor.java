@@ -43,7 +43,7 @@ public class GifAnimationDescriptor extends TagDescriptor<GifAnimationDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case TagIterationCount:
+            case TAG_ITERATION_COUNT:
                 return getIterationCountDescription();
             default:
                 return super.getDescription(tagType);
@@ -53,7 +53,7 @@ public class GifAnimationDescriptor extends TagDescriptor<GifAnimationDirectory>
     @Nullable
     public String getIterationCountDescription()
     {
-        Integer count = _directory.getInteger(TagIterationCount);
+        Integer count = _directory.getInteger(TAG_ITERATION_COUNT);
         if (count == null)
             return null;
 

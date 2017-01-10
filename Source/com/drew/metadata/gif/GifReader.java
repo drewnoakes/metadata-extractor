@@ -280,7 +280,7 @@ public class GifReader
             // Skip terminator
             reader.skip(1);
             GifAnimationDirectory animationDirectory = new GifAnimationDirectory();
-            animationDirectory.setInt(GifAnimationDirectory.TagIterationCount, iterationCount);
+            animationDirectory.setInt(GifAnimationDirectory.TAG_ITERATION_COUNT, iterationCount);
             metadata.addDirectory(animationDirectory);
         }
         else
@@ -298,7 +298,7 @@ public class GifReader
 
         reader.skip(1);
 
-        directory.setInt(GifControlDirectory.TagDelay, reader.getUInt16());
+        directory.setInt(GifControlDirectory.TAG_DELAY, reader.getUInt16());
 
         if (blockSizeBytes > 3)
             reader.skip(blockSizeBytes - 3);
@@ -313,25 +313,25 @@ public class GifReader
     {
         GifImageDirectory imageDirectory = new GifImageDirectory();
 
-        imageDirectory.setInt(GifImageDirectory.TagLeft, reader.getUInt16());
-        imageDirectory.setInt(GifImageDirectory.TagTop, reader.getUInt16());
-        imageDirectory.setInt(GifImageDirectory.TagWidth, reader.getUInt16());
-        imageDirectory.setInt(GifImageDirectory.TagHeight, reader.getUInt16());
+        imageDirectory.setInt(GifImageDirectory.TAG_LEFT, reader.getUInt16());
+        imageDirectory.setInt(GifImageDirectory.TAG_TOP, reader.getUInt16());
+        imageDirectory.setInt(GifImageDirectory.TAG_WIDTH, reader.getUInt16());
+        imageDirectory.setInt(GifImageDirectory.TAG_HEIGHT, reader.getUInt16());
 
         byte flags = reader.getByte();
         boolean hasColorTable = (flags & 0x7) != 0;
         boolean isInterlaced = (flags & 0x40) != 0;
         boolean isColorTableSorted = (flags & 0x20) != 0;
 
-        imageDirectory.setBoolean(GifImageDirectory.TagHasLocalColourTable, hasColorTable);
-        imageDirectory.setBoolean(GifImageDirectory.TagIsInterlaced, isInterlaced);
+        imageDirectory.setBoolean(GifImageDirectory.TAG_HAS_LOCAL_COLOUR_TABLE, hasColorTable);
+        imageDirectory.setBoolean(GifImageDirectory.TAG_IS_INTERLACED, isInterlaced);
 
         if (hasColorTable)
         {
-            imageDirectory.setBoolean(GifImageDirectory.TagIsColorTableSorted, isColorTableSorted);
+            imageDirectory.setBoolean(GifImageDirectory.TAG_IS_COLOR_TABLE_SORTED, isColorTableSorted);
 
             int bitsPerPixel = (flags & 0x7) + 1;
-            imageDirectory.setInt(GifImageDirectory.TagLocalColourTableBitsPerPixel, bitsPerPixel);
+            imageDirectory.setInt(GifImageDirectory.TAG_LOCAL_COLOUR_TABLE_BITS_PER_PIXEL, bitsPerPixel);
 
             // skip color table
             reader.skip(3 * (2 << (flags & 0x7)));

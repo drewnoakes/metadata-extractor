@@ -32,14 +32,14 @@ import java.util.HashMap;
 @SuppressWarnings("WeakerAccess")
 public class GifControlDirectory extends Directory
 {
-    public static final int TagDelay = 1;
+    public static final int TAG_DELAY = 1;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TagDelay, "Delay");
+        _tagNameMap.put(TAG_DELAY, "Delay");
     }
 
     public GifControlDirectory()

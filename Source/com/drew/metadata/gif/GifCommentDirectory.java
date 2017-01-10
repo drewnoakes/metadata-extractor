@@ -33,20 +33,20 @@ import java.util.HashMap;
 @SuppressWarnings("WeakerAccess")
 public class GifCommentDirectory extends Directory
 {
-    public static final int TagComment = 1;
+    public static final int TAG_COMMENT = 1;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        _tagNameMap.put(TagComment, "Comment");
+        _tagNameMap.put(TAG_COMMENT, "Comment");
     }
 
     public GifCommentDirectory(StringValue comment)
     {
         this.setDescriptor(new GifCommentDescriptor(this));
-        setStringValue(TagComment, comment);
+        setStringValue(TAG_COMMENT, comment);
     }
 
     @Override
