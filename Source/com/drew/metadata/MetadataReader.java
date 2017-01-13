@@ -22,6 +22,8 @@ package com.drew.metadata;
 
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.filter.MetadataFilter;
 
 /**
  * Defines an object capable of processing a particular type of metadata from a {@link RandomAccessReader}.
@@ -39,4 +41,13 @@ public interface MetadataReader
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      */
     void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
+
+    /**
+     * Extracts metadata from <code>reader</code> and merges it into the specified {@link Metadata} object.
+     *
+     * @param reader   The {@link RandomAccessReader} from which the metadata should be extracted.
+     * @param metadata The {@link Metadata} object into which extracted values should be merged.
+     * @param filter   A {@link MetadataFilter} or <code>null</code>.
+     */
+    void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter);
 }

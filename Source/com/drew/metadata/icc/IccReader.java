@@ -30,6 +30,8 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
+import com.drew.metadata.filter.FilteredDirectory;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -59,6 +61,11 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
         // ICC data can be spread across multiple JPEG segments.
@@ -86,61 +93,74 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         }
 
         if (buffer != null)
-            extract(new ByteArrayReader(buffer), metadata);
+            extract(new ByteArrayReader(buffer), metadata, filter);
     }
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
-        extract(reader, metadata, null);
+        extract(reader, metadata, null, null);
+    }
+
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        extract(reader, metadata, null, filter);
     }
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory)
     {
+        extract(reader, metadata, parentDirectory, null);
+    }
+
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory, @Nullable final MetadataFilter filter)
+    {
         // TODO review whether the 'tagPtr' values below really do require RandomAccessReader or whether SequentialReader may be used instead
+
+        if (filter != null && !filter.directoryFilter(IccDirectory.class))
+            return;
 
         IccDirectory directory = new IccDirectory();
 
         if (parentDirectory != null)
-            directory.setParent(parentDirectory);
+            directory.setParent(parentDirectory instanceof FilteredDirectory ? parentDirectory.getParent() : parentDirectory);
 
         try {
             int profileByteCount = reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT);
-            directory.setInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, profileByteCount);
+            directory.setInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, profileByteCount, filter);
 
             // For these tags, the int value of the tag is in fact it's offset within the buffer.
-            set4ByteString(directory, IccDirectory.TAG_CMM_TYPE, reader);
-            setInt32(directory, IccDirectory.TAG_PROFILE_VERSION, reader);
-            set4ByteString(directory, IccDirectory.TAG_PROFILE_CLASS, reader);
-            set4ByteString(directory, IccDirectory.TAG_COLOR_SPACE, reader);
-            set4ByteString(directory, IccDirectory.TAG_PROFILE_CONNECTION_SPACE, reader);
-            setDate(directory, IccDirectory.TAG_PROFILE_DATETIME, reader);
-            set4ByteString(directory, IccDirectory.TAG_SIGNATURE, reader);
-            set4ByteString(directory, IccDirectory.TAG_PLATFORM, reader);
-            setInt32(directory, IccDirectory.TAG_CMM_FLAGS, reader);
-            set4ByteString(directory, IccDirectory.TAG_DEVICE_MAKE, reader);
+            set4ByteString(directory, IccDirectory.TAG_CMM_TYPE, reader, filter);
+            setInt32(directory, IccDirectory.TAG_PROFILE_VERSION, reader, filter);
+            set4ByteString(directory, IccDirectory.TAG_PROFILE_CLASS, reader, filter);
+            set4ByteString(directory, IccDirectory.TAG_COLOR_SPACE, reader, filter);
+            set4ByteString(directory, IccDirectory.TAG_PROFILE_CONNECTION_SPACE, reader, filter);
+            setDate(directory, IccDirectory.TAG_PROFILE_DATETIME, reader, filter);
+            set4ByteString(directory, IccDirectory.TAG_SIGNATURE, reader, filter);
+            set4ByteString(directory, IccDirectory.TAG_PLATFORM, reader, filter);
+            setInt32(directory, IccDirectory.TAG_CMM_FLAGS, reader, filter);
+            set4ByteString(directory, IccDirectory.TAG_DEVICE_MAKE, reader, filter);
 
             int temp = reader.getInt32(IccDirectory.TAG_DEVICE_MODEL);
             if (temp != 0) {
                 if (temp <= 0x20202020) {
-                    directory.setInt(IccDirectory.TAG_DEVICE_MODEL, temp);
+                    directory.setInt(IccDirectory.TAG_DEVICE_MODEL, temp, filter);
                 } else {
-                    directory.setString(IccDirectory.TAG_DEVICE_MODEL, getStringFromInt32(temp));
+                    directory.setString(IccDirectory.TAG_DEVICE_MODEL, getStringFromInt32(temp), filter);
                 }
             }
 
-            setInt32(directory, IccDirectory.TAG_RENDERING_INTENT, reader);
-            setInt64(directory, IccDirectory.TAG_DEVICE_ATTR, reader);
+            setInt32(directory, IccDirectory.TAG_RENDERING_INTENT, reader, filter);
+            setInt64(directory, IccDirectory.TAG_DEVICE_ATTR, reader, filter);
 
             float[] xyz = new float[]{
                     reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES),
                     reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES + 4),
                     reader.getS15Fixed16(IccDirectory.TAG_XYZ_VALUES + 8)
             };
-            directory.setObject(IccDirectory.TAG_XYZ_VALUES, xyz);
+            directory.setObject(IccDirectory.TAG_XYZ_VALUES, xyz, filter);
 
             // Process 'ICC tags'
             int tagCount = reader.getInt32(IccDirectory.TAG_TAG_COUNT);
-            directory.setInt(IccDirectory.TAG_TAG_COUNT, tagCount);
+            directory.setInt(IccDirectory.TAG_TAG_COUNT, tagCount, filter);
 
             for (int i = 0; i < tagCount; i++) {
                 int pos = IccDirectory.TAG_TAG_COUNT + 4 + i * 12;
@@ -148,7 +168,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
                 int tagPtr = reader.getInt32(pos + 4);
                 int tagLen = reader.getInt32(pos + 8);
                 byte[] b = reader.getBytes(tagPtr, tagLen);
-                directory.setByteArray(tagType, b);
+                directory.setByteArray(tagType, b, filter);
             }
         } catch (IOException ex) {
             directory.addError("Exception reading ICC profile: " + ex.getMessage());
@@ -157,30 +177,30 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         metadata.addDirectory(directory);
     }
 
-    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader, @Nullable final MetadataFilter filter) throws IOException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
-            directory.setString(tagType, getStringFromInt32(i));
+            directory.setString(tagType, getStringFromInt32(i), filter);
     }
 
-    private void setInt32(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void setInt32(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader, @Nullable final MetadataFilter filter) throws IOException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
-            directory.setInt(tagType, i);
+            directory.setInt(tagType, i, filter);
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader, @Nullable final MetadataFilter filter) throws IOException
     {
         long l = reader.getInt64(tagType);
         if (l != 0)
-            directory.setLong(tagType, l);
+            directory.setLong(tagType, l, filter);
     }
 
     @SuppressWarnings({"SameParameterValue", "MagicConstant"})
-    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader, @Nullable final MetadataFilter filter) throws IOException
     {
         final int y = reader.getUInt16(tagType);
         final int m = reader.getUInt16(tagType + 2);
@@ -192,7 +212,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         if (DateUtil.isValidDate(y, m - 1, d) && DateUtil.isValidTime(h, M, s))
         {
             String dateString = String.format("%04d:%02d:%02d %02d:%02d:%02d", y, m, d, h, M, s);
-            directory.setString(tagType, dateString);
+            directory.setString(tagType, dateString, filter);
         }
         else
         {

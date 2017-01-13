@@ -22,7 +22,9 @@ package com.drew.metadata.exif.makernotes;
 
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -464,17 +466,23 @@ public class OlympusMakernoteDirectory extends Directory
         return "Olympus Makernote";
     }
 
-    @Override
+    /*@Override
     public void setByteArray(int tagType, @NotNull byte[] bytes)
     {
+        setByteArray(tagType, bytes, null);
+    }*/
+
+    @Override
+    public void setByteArray(int tagType, @NotNull byte[] bytes, @Nullable final MetadataFilter filter)
+    {
         if (tagType == TAG_CAMERA_SETTINGS_1 || tagType == TAG_CAMERA_SETTINGS_2) {
-            processCameraSettings(bytes);
+            processCameraSettings(bytes, filter);
         } else {
-            super.setByteArray(tagType, bytes);
+            super.setByteArray(tagType, bytes, filter);
         }
     }
 
-    private void processCameraSettings(byte[] bytes)
+    private void processCameraSettings(byte[] bytes, @Nullable final MetadataFilter filter)
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
         reader.setMotorolaByteOrder(true);
@@ -484,7 +492,7 @@ public class OlympusMakernoteDirectory extends Directory
         try {
             for (int i = 0; i < count; i++) {
                 int value = reader.getInt32();
-                setInt(CameraSettings.OFFSET + i, value);
+                setInt(CameraSettings.OFFSET + i, value, filter);
             }
         } catch (IOException e) {
             // Should never happen, given that we check the length of the bytes beforehand.

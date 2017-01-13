@@ -24,8 +24,10 @@ import com.drew.imaging.riff.RiffProcessingException;
 import com.drew.imaging.riff.RiffReader;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.filter.MetadataFilter;
 import com.drew.metadata.webp.WebpRiffHandler;
 
 import java.io.*;
@@ -40,22 +42,34 @@ public class WebpMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException, RiffProcessingException
     {
+        return readMetadata(file, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable final MetadataFilter filter) throws IOException, RiffProcessingException
+    {
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(inputStream, filter);
         } finally {
             inputStream.close();
         }
-        new FileMetadataReader().read(file, metadata);
+        new FileMetadataReader().read(file, metadata, filter);
         return metadata;
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException, RiffProcessingException
     {
+        return readMetadata(inputStream, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable final MetadataFilter filter) throws IOException, RiffProcessingException
+    {
         Metadata metadata = new Metadata();
-        new RiffReader().processRiff(new StreamReader(inputStream), new WebpRiffHandler(metadata));
+        new RiffReader().processRiff(new StreamReader(inputStream), new WebpRiffHandler(metadata), filter);
         return metadata;
     }
 }

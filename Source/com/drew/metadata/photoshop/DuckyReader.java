@@ -26,7 +26,9 @@ import com.drew.lang.Charsets;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -50,6 +52,11 @@ public class DuckyReader implements JpegSegmentMetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
         for (byte[] segmentBytes : segments) {
@@ -59,12 +66,21 @@ public class DuckyReader implements JpegSegmentMetadataReader
 
             extract(
                 new SequentialByteArrayReader(segmentBytes, preambleLength),
-                metadata);
+                metadata,
+                filter);
         }
     }
 
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(DuckyDirectory.class))
+            return;
+
         DuckyDirectory directory = new DuckyDirectory();
         metadata.addDirectory(directory);
 
@@ -89,20 +105,20 @@ public class DuckyReader implements JpegSegmentMetadataReader
                             directory.addError("Unexpected length for the quality tag");
                             return;
                         }
-                        directory.setInt(tag, reader.getInt32());
+                        directory.setInt(tag, reader.getInt32(), filter);
                         break;
                     }
                     case DuckyDirectory.TAG_COMMENT:
                     case DuckyDirectory.TAG_COPYRIGHT:
                     {
                         reader.skip(4);
-                        directory.setStringValue(tag, reader.getStringValue(length - 4, Charsets.UTF_16BE));
+                        directory.setStringValue(tag, reader.getStringValue(length - 4, Charsets.UTF_16BE), filter);
                         break;
                     }
                     default:
                     {
                         // Unexpected tag
-                        directory.setByteArray(tag, reader.getBytes(length));
+                        directory.setByteArray(tag, reader.getBytes(length), filter);
                         break;
                     }
                 }

@@ -29,6 +29,8 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.filter.FilteredDirectory;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -67,10 +69,15 @@ public class IptcReader implements JpegSegmentMetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the IPTC marker byte
             if (segmentBytes.length != 0 && segmentBytes[0] == IptcMarkerByte) {
-                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
+                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length, filter);
             }
         }
     }
@@ -80,7 +87,15 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
     {
-        extract(reader, metadata, length, null);
+        extract(reader, metadata, length, null, null);
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable final MetadataFilter filter)
+    {
+        extract(reader, metadata, length, null, filter);
     }
 
     /**
@@ -88,11 +103,22 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory)
     {
+        extract(reader, metadata, length, parentDirectory, null);
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(IptcDirectory.class))
+            return;
+
         IptcDirectory directory = new IptcDirectory();
         metadata.addDirectory(directory);
 
         if (parentDirectory != null)
-            directory.setParent(parentDirectory);
+            directory.setParent(parentDirectory instanceof FilteredDirectory ? parentDirectory.getParent() : parentDirectory);
 
         int offset = 0;
 
@@ -143,7 +169,7 @@ public class IptcReader implements JpegSegmentMetadataReader
             }
 
             try {
-                processTag(reader, directory, directoryType, tagType, tagByteCount);
+                processTag(reader, directory, directoryType, tagType, tagByteCount, filter);
             } catch (IOException e) {
                 directory.addError("Error processing IPTC tag");
                 return;
@@ -153,7 +179,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         }
     }
 
-    private void processTag(@NotNull SequentialReader reader, @NotNull Directory directory, int directoryType, int tagType, int tagByteCount) throws IOException
+    private void processTag(@NotNull SequentialReader reader, @NotNull Directory directory, int directoryType, int tagType, int tagByteCount, @Nullable final MetadataFilter filter) throws IOException
     {
         int tagIdentifier = tagType | (directoryType << 8);
 
@@ -162,7 +188,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         // anything about the interpretation of this situation.
         // https://raw.githubusercontent.com/wiki/drewnoakes/metadata-extractor/docs/IPTC-IIMV4.2.pdf
         if (tagByteCount == 0) {
-            directory.setString(tagIdentifier, "");
+            directory.setString(tagIdentifier, "", filter);
             return;
         }
 
@@ -174,7 +200,7 @@ public class IptcReader implements JpegSegmentMetadataReader
                     // Unable to determine the charset, so fall through and treat tag as a regular string
                     charsetName = new String(bytes);
                 }
-                directory.setString(tagIdentifier, charsetName);
+                directory.setString(tagIdentifier, charsetName, filter);
                 return;
             case IptcDirectory.TAG_ENVELOPE_RECORD_VERSION:
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
@@ -185,13 +211,13 @@ public class IptcReader implements JpegSegmentMetadataReader
                 if (tagByteCount >= 2) {
                     int shortValue = reader.getUInt16();
                     reader.skip(tagByteCount - 2);
-                    directory.setInt(tagIdentifier, shortValue);
+                    directory.setInt(tagIdentifier, shortValue, filter);
                     return;
                 }
                 break;
             case IptcDirectory.TAG_URGENCY:
                 // byte
-                directory.setInt(tagIdentifier, reader.getUInt8());
+                directory.setInt(tagIdentifier, reader.getUInt8(), filter);
                 reader.skip(tagByteCount - 1);
                 return;
             default:
@@ -229,9 +255,9 @@ public class IptcReader implements JpegSegmentMetadataReader
                 System.arraycopy(oldStrings, 0, newStrings, 0, oldStrings.length);
             }
             newStrings[newStrings.length - 1] = string;
-            directory.setStringValueArray(tagIdentifier, newStrings);
+            directory.setStringValueArray(tagIdentifier, newStrings, filter);
         } else {
-            directory.setStringValue(tagIdentifier, string);
+            directory.setStringValue(tagIdentifier, string, filter);
         }
     }
 }

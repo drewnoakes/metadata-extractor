@@ -21,6 +21,8 @@
 package com.drew.imaging.riff;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.filter.MetadataFilter;
 
 /**
  * Interface of an class capable of handling events raised during the reading of a RIFF file
@@ -62,4 +64,17 @@ public interface RiffHandler
      * @param payload they payload of the chunk as a byte array
      */
     void processChunk(@NotNull String fourCC, @NotNull byte[] payload);
+
+    /**
+     * Perform whatever processing is necessary for the type of chunk with its
+     * payload.
+     *
+     * This is only called if a previous call to {@link RiffHandler#shouldAcceptChunk(String)}
+     * with the same <code>fourCC</code> returned <code>true</code>.
+     *
+     * @param fourCC the four character code of the chunk
+     * @param payload they payload of the chunk as a byte array
+     * @param a {@link MetadataFilter} or <code>null</code>
+     */
+    void processChunk(@NotNull String fourCC, @NotNull byte[] payload, @Nullable final MetadataFilter filter);
 }

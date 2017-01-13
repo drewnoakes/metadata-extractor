@@ -25,8 +25,10 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -53,10 +55,15 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header
             if (segmentBytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
-                extract(new ByteArrayReader(segmentBytes), metadata);
+                extract(new ByteArrayReader(segmentBytes), metadata, filter);
         }
     }
 
@@ -66,18 +73,30 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
      */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    /**
+     * Performs the Jfif data extraction, adding found values to the specified
+     * instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(JfifDirectory.class))
+            return;
+
         JfifDirectory directory = new JfifDirectory();
         metadata.addDirectory(directory);
 
         try {
             // For JFIF, the tag number is also the offset into the segment
 
-            directory.setInt(JfifDirectory.TAG_VERSION,      reader.getUInt16(JfifDirectory.TAG_VERSION));
-            directory.setInt(JfifDirectory.TAG_UNITS,        reader.getUInt8(JfifDirectory.TAG_UNITS));
-            directory.setInt(JfifDirectory.TAG_RESX,         reader.getUInt16(JfifDirectory.TAG_RESX));
-            directory.setInt(JfifDirectory.TAG_RESY,         reader.getUInt16(JfifDirectory.TAG_RESY));
-            directory.setInt(JfifDirectory.TAG_THUMB_WIDTH,  reader.getUInt8(JfifDirectory.TAG_THUMB_WIDTH));
-            directory.setInt(JfifDirectory.TAG_THUMB_HEIGHT, reader.getUInt8(JfifDirectory.TAG_THUMB_HEIGHT));
+            directory.setInt(JfifDirectory.TAG_VERSION,      reader.getUInt16(JfifDirectory.TAG_VERSION), filter);
+            directory.setInt(JfifDirectory.TAG_UNITS,        reader.getUInt8(JfifDirectory.TAG_UNITS), filter);
+            directory.setInt(JfifDirectory.TAG_RESX,         reader.getUInt16(JfifDirectory.TAG_RESX), filter);
+            directory.setInt(JfifDirectory.TAG_RESY,         reader.getUInt16(JfifDirectory.TAG_RESY), filter);
+            directory.setInt(JfifDirectory.TAG_THUMB_WIDTH,  reader.getUInt8(JfifDirectory.TAG_THUMB_WIDTH), filter);
+            directory.setInt(JfifDirectory.TAG_THUMB_HEIGHT, reader.getUInt8(JfifDirectory.TAG_THUMB_HEIGHT), filter);
         } catch (IOException me) {
             directory.addError(me.getMessage());
         }

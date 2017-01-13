@@ -23,7 +23,9 @@ package com.drew.metadata.photoshop;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 
@@ -36,6 +38,14 @@ public class PsdReader
 {
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(PsdHeaderDirectory.class))
+            return;
+
         PsdHeaderDirectory directory = new PsdHeaderDirectory();
         metadata.addDirectory(directory);
 
@@ -60,21 +70,21 @@ public class PsdReader
             reader.skip(6);
 
             final int channelCount = reader.getUInt16();
-            directory.setInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT, channelCount);
+            directory.setInt(PsdHeaderDirectory.TAG_CHANNEL_COUNT, channelCount, filter);
 
             // even though this is probably an unsigned int, the max height in practice is 300,000
             final int imageHeight = reader.getInt32();
-            directory.setInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT, imageHeight);
+            directory.setInt(PsdHeaderDirectory.TAG_IMAGE_HEIGHT, imageHeight, filter);
 
             // even though this is probably an unsigned int, the max width in practice is 300,000
             final int imageWidth = reader.getInt32();
-            directory.setInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH, imageWidth);
+            directory.setInt(PsdHeaderDirectory.TAG_IMAGE_WIDTH, imageWidth, filter);
 
             final int bitsPerChannel = reader.getUInt16();
-            directory.setInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL, bitsPerChannel);
+            directory.setInt(PsdHeaderDirectory.TAG_BITS_PER_CHANNEL, bitsPerChannel, filter);
 
             final int colorMode = reader.getUInt16();
-            directory.setInt(PsdHeaderDirectory.TAG_COLOR_MODE, colorMode);
+            directory.setInt(PsdHeaderDirectory.TAG_COLOR_MODE, colorMode, filter);
         } catch (IOException e) {
             directory.addError("Unable to read PSD header");
             return;
@@ -109,7 +119,7 @@ public class PsdReader
 
             assert(sectionLength <= Integer.MAX_VALUE);
 
-            new PhotoshopReader().extract(reader, (int)sectionLength, metadata);
+            new PhotoshopReader().extract(reader, (int)sectionLength, metadata, filter);
         } catch (IOException e) {
             // ignore
         }

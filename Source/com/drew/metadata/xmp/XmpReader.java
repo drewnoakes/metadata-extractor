@@ -36,6 +36,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.filter.FilteredDirectory;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -103,6 +105,20 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    /**
+     * Version specifically for dealing with XMP found in JPEG segments. This form of XMP has a peculiar preamble, which
+     * must be removed before parsing the XML.
+     *
+     * @param segments The byte array from which the metadata should be extracted.
+     * @param metadata The {@link Metadata} object into which extracted values should be merged.
+     * @param segmentType The {@link JpegSegmentType} being read.
+     * @param filter a {@link MetadataFilter} or <code>null</code>.
+     */
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         final int preambleLength = XMP_JPEG_PREAMBLE.length();
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         String extendedXMPGUID = null;
@@ -119,7 +135,7 @@ public class XmpReader implements JpegSegmentMetadataReader
 
                     byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
                     System.arraycopy(segmentBytes, preambleLength, xmlBytes, 0, xmlBytes.length);
-                    extract(xmlBytes, metadata);
+                    extract(xmlBytes, metadata, filter);
                     // Check in the Standard XMP if there should be a Extended XMP part in other chunks.
                     extendedXMPGUID = getExtendedXMPGUID(metadata);
                     continue;
@@ -131,13 +147,13 @@ public class XmpReader implements JpegSegmentMetadataReader
                 segmentBytes.length >= extensionPreambleLength &&
                 XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, extensionPreambleLength))) {
 
-                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer);
+                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer, filter);
             }
         }
 
         // Now that the Extended XMP chunks have been concatenated, let's parse and merge with the Standard XMP.
         if (extendedXMPBuffer != null) {
-            extract(extendedXMPBuffer, metadata);
+            extract(extendedXMPBuffer, metadata, filter);
         }
     }
 
@@ -148,7 +164,17 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
-        extract(xmpBytes, metadata, null);
+        extract(xmpBytes, metadata, null, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        extract(xmpBytes, metadata, null, filter);
     }
 
     /**
@@ -158,7 +184,17 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
-        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory);
+        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory, @Nullable final MetadataFilter filter)
+    {
+        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory, filter);
     }
 
     /**
@@ -168,10 +204,23 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, int offset, int length, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
+        extract(xmpBytes, offset, length, metadata, parentDirectory, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, int offset, int length, @NotNull Metadata metadata, @Nullable Directory parentDirectory, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(XmpDirectory.class))
+            return;
+
         XmpDirectory directory = new XmpDirectory();
 
         if (parentDirectory != null)
-            directory.setParent(parentDirectory);
+            directory.setParent(parentDirectory instanceof FilteredDirectory ? parentDirectory.getParent() : parentDirectory);
 
         try {
             XMPMeta xmpMeta;
@@ -185,7 +234,7 @@ public class XmpReader implements JpegSegmentMetadataReader
                 xmpMeta = XMPMetaFactory.parse(buffer.getByteStream());
             }
             
-            processXmpTags(directory, xmpMeta);
+            processXmpTags(directory, xmpMeta, filter);
         } catch (XMPException e) {
             directory.addError("Error processing XMP data: " + e.getMessage());
         }
@@ -201,7 +250,17 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)
     {
-        extract(xmpString, metadata, null);
+        extract(xmpString, metadata, null, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        extract(xmpString, metadata, null, filter);
     }
 
     /**
@@ -211,7 +270,17 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final StringValue xmpString, @NotNull Metadata metadata)
     {
-        extract(xmpString.getBytes(), metadata, null);
+        extract(xmpString.getBytes(), metadata, null, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final StringValue xmpString, @NotNull Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        extract(xmpString.getBytes(), metadata, null, filter);
     }
 
     /**
@@ -221,14 +290,27 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final String xmpString, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
+        extract(xmpString, metadata, parentDirectory, null);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata, @Nullable Directory parentDirectory, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(XmpDirectory.class))
+            return;
+
         XmpDirectory directory = new XmpDirectory();
 
         if (parentDirectory != null)
-            directory.setParent(parentDirectory);
+            directory.setParent(parentDirectory instanceof FilteredDirectory ? parentDirectory.getParent() : parentDirectory);
 
         try {
             XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmpString);
-            processXmpTags(directory, xmpMeta);
+            processXmpTags(directory, xmpMeta, filter);
         } catch (XMPException e) {
             directory.addError("Error processing XMP data: " + e.getMessage());
         }
@@ -237,44 +319,44 @@ public class XmpReader implements JpegSegmentMetadataReader
             metadata.addDirectory(directory);
     }
 
-    private static void processXmpTags(XmpDirectory directory, XMPMeta xmpMeta) throws XMPException
+    private static void processXmpTags(XmpDirectory directory, XMPMeta xmpMeta, @Nullable final MetadataFilter filter) throws XMPException
     {
         // store the XMPMeta object on the directory in case others wish to use it
-        directory.setXMPMeta(xmpMeta);
+        directory.setXMPMeta(xmpMeta, filter);
 
         // read all the tags and send them to the directory
         // I've added some popular tags, feel free to add more tags
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LENS_INFO, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LENS, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CAMERA_SERIAL_NUMBER, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_FIRMWARE, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LENS_INFO, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LENS, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CAMERA_SERIAL_NUMBER, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_FIRMWARE, FMT_STRING, filter);
 
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MAKE, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MODEL, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MAKE, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MODEL, FMT_STRING, filter);
 
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_EXPOSURE_TIME, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_EXPOSURE_PROGRAM, FMT_INT);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_APERTURE_VALUE, FMT_RATIONAL);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_F_NUMBER, FMT_RATIONAL);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_FOCAL_LENGTH, FMT_RATIONAL);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_SHUTTER_SPEED, FMT_RATIONAL);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_EXPOSURE_TIME, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_EXPOSURE_PROGRAM, FMT_INT, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_APERTURE_VALUE, FMT_RATIONAL, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_F_NUMBER, FMT_RATIONAL, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_FOCAL_LENGTH, FMT_RATIONAL, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_SHUTTER_SPEED, FMT_RATIONAL, filter);
 
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_ORIGINAL, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_DIGITIZED, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_ORIGINAL, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_DATETIME_DIGITIZED, FMT_STRING, filter);
 
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_BASE_URL, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CREATE_DATE, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CREATOR_TOOL, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_IDENTIFIER, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_METADATA_DATE, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MODIFY_DATE, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_NICKNAME, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_RATING, FMT_DOUBLE);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LABEL, FMT_STRING);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_BASE_URL, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CREATE_DATE, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_CREATOR_TOOL, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_IDENTIFIER, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_METADATA_DATE, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_MODIFY_DATE, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_NICKNAME, FMT_STRING, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_RATING, FMT_DOUBLE, filter);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_LABEL, FMT_STRING, filter);
 
         // this requires further research
         // processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:title", XmpDirectory.TAG_TITLE, FMT_STRING);
-        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_SUBJECT, FMT_STRING_ARRAY);
+        processXmpTag(xmpMeta, directory, XmpDirectory.TAG_SUBJECT, FMT_STRING_ARRAY, filter);
         // processXmpDateTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:date", XmpDirectory.TAG_DATE);
         // processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:type", XmpDirectory.TAG_TYPE, FMT_STRING);
         // processXmpTag(xmpMeta, directory, Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:description", XmpDirectory.TAG_DESCRIPTION, FMT_STRING);
@@ -309,7 +391,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     /**
      * Reads an property value with given namespace URI and property name. Add property value to directory if exists
      */
-    private static void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType, int formatCode) throws XMPException
+    private static void processXmpTag(@NotNull XMPMeta meta, @NotNull XmpDirectory directory, int tagType, int formatCode, @Nullable final MetadataFilter filter) throws XMPException
     {
         String schemaNS = XmpDirectory._tagSchemaMap.get(tagType);
         String propName = XmpDirectory._tagPropNameMap.get(tagType);
@@ -324,7 +406,7 @@ public class XmpReader implements JpegSegmentMetadataReader
                 if (rationalParts.length == 2) {
                     try {
                         Rational rational = new Rational((long) Float.parseFloat(rationalParts[0]), (long) Float.parseFloat(rationalParts[1]));
-                        directory.setRational(tagType, rational);
+                        directory.setRational(tagType, rational, filter);
                     } catch (NumberFormatException ex) {
                         directory.addError(String.format("Unable to parse XMP property %s as a Rational.", propName));
                     }
@@ -334,20 +416,20 @@ public class XmpReader implements JpegSegmentMetadataReader
                 break;
             case FMT_INT:
                 try {
-                    directory.setInt(tagType, Integer.valueOf(property));
+                    directory.setInt(tagType, Integer.valueOf(property), filter);
                 } catch (NumberFormatException ex) {
                     directory.addError(String.format("Unable to parse XMP property %s as an int.", propName));
                 }
                 break;
             case FMT_DOUBLE:
                 try {
-                    directory.setDouble(tagType, Double.valueOf(property));
+                    directory.setDouble(tagType, Double.valueOf(property), filter);
                 } catch (NumberFormatException ex) {
                     directory.addError(String.format("Unable to parse XMP property %s as an double.", propName));
                 }
                 break;
             case FMT_STRING:
-                directory.setString(tagType, property);
+                directory.setString(tagType, property, filter);
                 break;
             case FMT_STRING_ARRAY:
                 //XMP iterators are 1-based
@@ -357,7 +439,7 @@ public class XmpReader implements JpegSegmentMetadataReader
                 {
                     array[i-1] = meta.getArrayItem(schemaNS, propName, i).getValue();
                 }
-                directory.setStringArray(tagType, array);
+                directory.setStringArray(tagType, array, filter);
                 break;
             default:
                 directory.addError(String.format("Unknown format code %d for tag %d", formatCode, tagType));
@@ -403,7 +485,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      * at page 19
      */
     @Nullable
-    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer)
+    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer, @Nullable final MetadataFilter filter)
     {
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         final int segmentLength = segmentBytes.length;
@@ -433,16 +515,18 @@ public class XmpReader implements JpegSegmentMetadataReader
 
                     if (extendedXMPBuffer.length == fullLength) {
                         System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, segmentLength - totalOffset);
-                    } else {
+                    } else if (filter == null || filter.directoryFilter(XmpDirectory.class)) {
                         XmpDirectory directory = new XmpDirectory();
                         directory.addError(String.format("Inconsistent length for the Extended XMP buffer: %d instead of %d", fullLength, extendedXMPBuffer.length));
                         metadata.addDirectory(directory);
                     }
                 }
             } catch (IOException ex) {
-                XmpDirectory directory = new XmpDirectory();
-                directory.addError(ex.getMessage());
-                metadata.addDirectory(directory);
+                if (filter == null || filter.directoryFilter(XmpDirectory.class)) {
+                    XmpDirectory directory = new XmpDirectory();
+                    directory.addError(ex.getMessage());
+                    metadata.addDirectory(directory);
+                }
             }
         }
 

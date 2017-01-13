@@ -23,7 +23,9 @@ package com.drew.metadata.pcx;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 /**
  * Reads PCX image file metadata.
@@ -40,6 +42,14 @@ public class PcxReader
 {
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(PcxDirectory.class))
+            return;
+
         reader.setMotorolaByteOrder(false);
 
         PcxDirectory directory = new PcxDirectory();
@@ -50,35 +60,35 @@ public class PcxReader
             if (identifier != 0x0A)
                 throw new ImageProcessingException("Invalid PCX identifier byte");
 
-            directory.setInt(PcxDirectory.TAG_VERSION, reader.getInt8());
+            directory.setInt(PcxDirectory.TAG_VERSION, reader.getInt8(), filter);
 
             byte encoding = reader.getInt8();
             if (encoding != 0x01)
                 throw new ImageProcessingException("Invalid PCX encoding byte");
 
-            directory.setInt(PcxDirectory.TAG_BITS_PER_PIXEL, reader.getUInt8());
-            directory.setInt(PcxDirectory.TAG_XMIN,           reader.getUInt16());
-            directory.setInt(PcxDirectory.TAG_YMIN,           reader.getUInt16());
-            directory.setInt(PcxDirectory.TAG_XMAX,           reader.getUInt16());
-            directory.setInt(PcxDirectory.TAG_YMAX,           reader.getUInt16());
-            directory.setInt(PcxDirectory.TAG_HORIZONTAL_DPI, reader.getUInt16());
-            directory.setInt(PcxDirectory.TAG_VERTICAL_DPI,   reader.getUInt16());
-            directory.setByteArray(PcxDirectory.TAG_PALETTE,  reader.getBytes(48));
+            directory.setInt(PcxDirectory.TAG_BITS_PER_PIXEL, reader.getUInt8(), filter);
+            directory.setInt(PcxDirectory.TAG_XMIN,           reader.getUInt16(), filter);
+            directory.setInt(PcxDirectory.TAG_YMIN,           reader.getUInt16(), filter);
+            directory.setInt(PcxDirectory.TAG_XMAX,           reader.getUInt16(), filter);
+            directory.setInt(PcxDirectory.TAG_YMAX,           reader.getUInt16(), filter);
+            directory.setInt(PcxDirectory.TAG_HORIZONTAL_DPI, reader.getUInt16(), filter);
+            directory.setInt(PcxDirectory.TAG_VERTICAL_DPI,   reader.getUInt16(), filter);
+            directory.setByteArray(PcxDirectory.TAG_PALETTE,  reader.getBytes(48), filter);
             reader.skip(1);
-            directory.setInt(PcxDirectory.TAG_COLOR_PLANES,   reader.getUInt8());
-            directory.setInt(PcxDirectory.TAG_BYTES_PER_LINE, reader.getUInt16());
+            directory.setInt(PcxDirectory.TAG_COLOR_PLANES,   reader.getUInt8(), filter);
+            directory.setInt(PcxDirectory.TAG_BYTES_PER_LINE, reader.getUInt16(), filter);
 
             int paletteType = reader.getUInt16();
             if (paletteType != 0)
-                directory.setInt(PcxDirectory.TAG_PALETTE_TYPE, paletteType);
+                directory.setInt(PcxDirectory.TAG_PALETTE_TYPE, paletteType, filter);
 
             int hScrSize = reader.getUInt16();
             if (hScrSize != 0)
-                directory.setInt(PcxDirectory.TAG_HSCR_SIZE, hScrSize);
+                directory.setInt(PcxDirectory.TAG_HSCR_SIZE, hScrSize, filter);
 
             int vScrSize = reader.getUInt16();
             if (vScrSize != 0)
-                directory.setInt(PcxDirectory.TAG_VSCR_SIZE, vScrSize);
+                directory.setInt(PcxDirectory.TAG_VSCR_SIZE, vScrSize, filter);
 
         } catch (Exception ex) {
             directory.addError("Exception reading PCX file metadata: " + ex.getMessage());

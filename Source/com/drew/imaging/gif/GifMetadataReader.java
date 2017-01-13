@@ -23,8 +23,10 @@ package com.drew.imaging.gif;
 
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.filter.MetadataFilter;
 import com.drew.metadata.gif.GifReader;
 
 import java.io.File;
@@ -42,22 +44,34 @@ public class GifMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
+        return readMetadata(file, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable final MetadataFilter filter) throws IOException
+    {
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(inputStream, filter);
         } finally {
             inputStream.close();
         }
-        new FileMetadataReader().read(file, metadata);
+        new FileMetadataReader().read(file, metadata, filter);
         return metadata;
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
+        return readMetadata(inputStream, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable final MetadataFilter filter)
+    {
         Metadata metadata = new Metadata();
-        new GifReader().extract(new StreamReader(inputStream), metadata);
+        new GifReader().extract(new StreamReader(inputStream), metadata, filter);
         return metadata;
     }
 }

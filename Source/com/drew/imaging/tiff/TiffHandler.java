@@ -25,6 +25,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Set;
@@ -47,8 +48,21 @@ public interface TiffHandler
      */
     void setTiffMarker(int marker) throws TiffProcessingException;
 
+    /**
+     * Receives the 2-byte marker found in the TIFF header.
+     * <p>
+     * Implementations are not obligated to use this information for any purpose, though it may be useful for
+     * validation or perhaps differentiating the type of mapping to use for observed tags and IFDs.
+     *
+     * @param marker the 2-byte value found at position 2 of the TIFF header
+     */
+    void setTiffMarker(int marker, @Nullable MetadataFilter filter) throws TiffProcessingException;
+
     boolean tryEnterSubIfd(int tagId);
+    boolean tryEnterSubIfd(int tagId, @Nullable MetadataFilter filter);
+
     boolean hasFollowerIfd();
+    boolean hasFollowerIfd(@Nullable MetadataFilter filter);
 
     void endingIFD();
 
@@ -64,27 +78,35 @@ public interface TiffHandler
                              int tagId,
                              int byteCount) throws IOException;
 
+    boolean customProcessTag(int tagOffset,
+                             @NotNull Set<Integer> processedIfdOffsets,
+                             int tiffHeaderOffset,
+                             @NotNull RandomAccessReader reader,
+                             int tagId,
+                             int byteCount,
+                             @Nullable MetadataFilter filter) throws IOException;
+
     void warn(@NotNull String message);
     void error(@NotNull String message);
 
-    void setByteArray(int tagId, @NotNull byte[] bytes);
-    void setString(int tagId, @NotNull StringValue string);
-    void setRational(int tagId, @NotNull Rational rational);
-    void setRationalArray(int tagId, @NotNull Rational[] array);
-    void setFloat(int tagId, float float32);
-    void setFloatArray(int tagId, @NotNull float[] array);
-    void setDouble(int tagId, double double64);
-    void setDoubleArray(int tagId, @NotNull double[] array);
-    void setInt8s(int tagId, byte int8s);
-    void setInt8sArray(int tagId, @NotNull byte[] array);
-    void setInt8u(int tagId, short int8u);
-    void setInt8uArray(int tagId, @NotNull short[] array);
-    void setInt16s(int tagId, int int16s);
-    void setInt16sArray(int tagId, @NotNull short[] array);
-    void setInt16u(int tagId, int int16u);
-    void setInt16uArray(int tagId, @NotNull int[] array);
-    void setInt32s(int tagId, int int32s);
-    void setInt32sArray(int tagId, @NotNull int[] array);
-    void setInt32u(int tagId, long int32u);
-    void setInt32uArray(int tagId, @NotNull long[] array);
+    void setByteArray(int tagId, @NotNull byte[] bytes, @Nullable final MetadataFilter filter);
+    void setString(int tagId, @NotNull StringValue string, @Nullable final MetadataFilter filter);
+    void setRational(int tagId, @NotNull Rational rational, @Nullable final MetadataFilter filter);
+    void setRationalArray(int tagId, @NotNull Rational[] array, @Nullable final MetadataFilter filter);
+    void setFloat(int tagId, float float32, @Nullable final MetadataFilter filter);
+    void setFloatArray(int tagId, @NotNull float[] array, @Nullable final MetadataFilter filter);
+    void setDouble(int tagId, double double64, @Nullable final MetadataFilter filter);
+    void setDoubleArray(int tagId, @NotNull double[] array, @Nullable final MetadataFilter filter);
+    void setInt8s(int tagId, byte int8s, @Nullable final MetadataFilter filter);
+    void setInt8sArray(int tagId, @NotNull byte[] array, @Nullable final MetadataFilter filter);
+    void setInt8u(int tagId, short int8u, @Nullable final MetadataFilter filter);
+    void setInt8uArray(int tagId, @NotNull short[] array, @Nullable final MetadataFilter filter);
+    void setInt16s(int tagId, int int16s, @Nullable final MetadataFilter filter);
+    void setInt16sArray(int tagId, @NotNull short[] array, @Nullable final MetadataFilter filter);
+    void setInt16u(int tagId, int int16u, @Nullable final MetadataFilter filter);
+    void setInt16uArray(int tagId, @NotNull int[] array, @Nullable final MetadataFilter filter);
+    void setInt32s(int tagId, int int32s, @Nullable final MetadataFilter filter);
+    void setInt32sArray(int tagId, @NotNull int[] array, @Nullable final MetadataFilter filter);
+    void setInt32u(int tagId, long int32u, @Nullable final MetadataFilter filter);
+    void setInt32uArray(int tagId, @NotNull long[] array, @Nullable final MetadataFilter filter);
 }

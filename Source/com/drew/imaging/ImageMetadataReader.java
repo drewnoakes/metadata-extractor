@@ -33,6 +33,7 @@ import com.drew.imaging.webp.WebpMetadataReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -40,6 +41,7 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -87,7 +89,22 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream) throws ImageProcessingException, IOException
     {
-        return readMetadata(inputStream, -1);
+        return readMetadata(inputStream, -1, null);
+    }
+
+    /**
+     * Reads metadata from an {@link InputStream}.
+     *
+     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     *                    beginning of the file's data.
+     * @param filter a {@link MetadataFilter} or <code>null</code>.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, @Nullable final MetadataFilter filter) throws ImageProcessingException, IOException
+    {
+        return readMetadata(inputStream, -1, filter);
     }
 
     /**
@@ -102,6 +119,22 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength) throws ImageProcessingException, IOException
     {
+        return readMetadata(inputStream, streamLength, null);
+    }
+
+    /**
+     * Reads metadata from an {@link InputStream} of known length.
+     *
+     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     *                    beginning of the file's data.
+     * @param streamLength the length of the stream, if known, otherwise -1.
+     * @param filter a {@link MetadataFilter} or <code>null</code>.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength, @Nullable final MetadataFilter filter) throws ImageProcessingException, IOException
+    {
         BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
             ? (BufferedInputStream)inputStream
             : new BufferedInputStream(inputStream);
@@ -109,7 +142,7 @@ public class ImageMetadataReader
         FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
 
         if (fileType == FileType.Jpeg)
-            return JpegMetadataReader.readMetadata(bufferedInputStream);
+            return JpegMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Tiff ||
             fileType == FileType.Arw ||
@@ -117,31 +150,31 @@ public class ImageMetadataReader
             fileType == FileType.Nef ||
             fileType == FileType.Orf ||
             fileType == FileType.Rw2)
-            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(bufferedInputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
+            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(bufferedInputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength), filter);
 
         if (fileType == FileType.Psd)
-            return PsdMetadataReader.readMetadata(bufferedInputStream);
+            return PsdMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Png)
-            return PngMetadataReader.readMetadata(bufferedInputStream);
+            return PngMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Bmp)
-            return BmpMetadataReader.readMetadata(bufferedInputStream);
+            return BmpMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Gif)
-            return GifMetadataReader.readMetadata(bufferedInputStream);
+            return GifMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Ico)
-            return IcoMetadataReader.readMetadata(bufferedInputStream);
+            return IcoMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Pcx)
-            return PcxMetadataReader.readMetadata(bufferedInputStream);
+            return PcxMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Riff)
-            return WebpMetadataReader.readMetadata(bufferedInputStream);
+            return WebpMetadataReader.readMetadata(bufferedInputStream, filter);
 
         if (fileType == FileType.Raf)
-            return RafMetadataReader.readMetadata(bufferedInputStream);
+            return RafMetadataReader.readMetadata(bufferedInputStream, filter);
 
         throw new ImageProcessingException("File format is not supported");
     }
@@ -156,14 +189,28 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final File file) throws ImageProcessingException, IOException
     {
+        return readMetadata(file, null);
+    }
+
+    /**
+     * Reads {@link Metadata} from a {@link File} object.
+     *
+     * @param file a file from which the image data may be read.
+     * @param filter a {@link MetadataFilter} or <code>null</code>.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final File file, @Nullable final MetadataFilter filter) throws ImageProcessingException, IOException
+    {
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream, file.length());
+            metadata = readMetadata(inputStream, file.length(), filter);
         } finally {
             inputStream.close();
         }
-        new FileMetadataReader().read(file, metadata);
+        new FileMetadataReader().read(file, metadata, filter);
         return metadata;
     }
 

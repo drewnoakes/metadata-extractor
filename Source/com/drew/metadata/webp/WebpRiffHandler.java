@@ -24,8 +24,10 @@ import com.drew.imaging.riff.RiffHandler;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.filter.MetadataFilter;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -70,15 +72,23 @@ public class WebpRiffHandler implements RiffHandler
 
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
+        processChunk(fourCC, payload, null);
+    }
+
+    public void processChunk(@NotNull String fourCC, @NotNull byte[] payload, @Nullable final MetadataFilter filter)
+    {
 //        System.out.println("Chunk " + fourCC + " " + payload.length + " bytes");
 
         if (fourCC.equals("EXIF")) {
-            new ExifReader().extract(new ByteArrayReader(payload), _metadata);
+            new ExifReader().extract(new ByteArrayReader(payload), _metadata, filter);
         } else if (fourCC.equals("ICCP")) {
-            new IccReader().extract(new ByteArrayReader(payload), _metadata);
+            new IccReader().extract(new ByteArrayReader(payload), _metadata, filter);
         } else if (fourCC.equals("XMP ")) {
-            new XmpReader().extract(payload, _metadata);
+            new XmpReader().extract(payload, _metadata, filter);
         } else if (fourCC.equals("VP8X") && payload.length == 10) {
+            if (filter != null && !filter.directoryFilter(WebpDirectory.class))
+                return;
+
             RandomAccessReader reader = new ByteArrayReader(payload);
             reader.setMotorolaByteOrder(false);
 
@@ -96,10 +106,10 @@ public class WebpRiffHandler implements RiffHandler
                 int heightMinusOne = reader.getInt24(7);
 
                 WebpDirectory directory = new WebpDirectory();
-                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, widthMinusOne + 1);
-                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1);
-                directory.setBoolean(WebpDirectory.TAG_HAS_ALPHA, hasAlpha);
-                directory.setBoolean(WebpDirectory.TAG_IS_ANIMATION, isAnimation);
+                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, widthMinusOne + 1, filter);
+                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1, filter);
+                directory.setBoolean(WebpDirectory.TAG_HAS_ALPHA, hasAlpha, filter);
+                directory.setBoolean(WebpDirectory.TAG_IS_ANIMATION, isAnimation, filter);
 
                 _metadata.addDirectory(directory);
 
@@ -107,6 +117,9 @@ public class WebpRiffHandler implements RiffHandler
                 e.printStackTrace(System.err);
             }
         } else if (fourCC.equals("VP8L") && payload.length > 4) {
+            if (filter != null && !filter.directoryFilter(WebpDirectory.class))
+                return;
+
             RandomAccessReader reader = new ByteArrayReader(payload);
             reader.setMotorolaByteOrder(false);
 
@@ -126,8 +139,8 @@ public class WebpRiffHandler implements RiffHandler
                 int heightMinusOne = (b4 & 0x0F) << 10 | b3 << 2 | (b2 & 0xC0) >> 6;
 
                 WebpDirectory directory = new WebpDirectory();
-                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, widthMinusOne + 1);
-                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1);
+                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, widthMinusOne + 1, filter);
+                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, heightMinusOne + 1, filter);
 
                 _metadata.addDirectory(directory);
 
@@ -135,6 +148,9 @@ public class WebpRiffHandler implements RiffHandler
                 e.printStackTrace(System.err);
             }
         } else if (fourCC.equals("VP8 ") && payload.length > 9) {
+            if (filter != null && !filter.directoryFilter(WebpDirectory.class))
+                return;
+
             RandomAccessReader reader = new ByteArrayReader(payload);
             reader.setMotorolaByteOrder(false);
 
@@ -151,8 +167,8 @@ public class WebpRiffHandler implements RiffHandler
                 int height = reader.getUInt16(8);
 
                 WebpDirectory directory = new WebpDirectory();
-                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, width);
-                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, height);
+                directory.setInt(WebpDirectory.TAG_IMAGE_WIDTH, width, filter);
+                directory.setInt(WebpDirectory.TAG_IMAGE_HEIGHT, height, filter);
 
                 _metadata.addDirectory(directory);
 

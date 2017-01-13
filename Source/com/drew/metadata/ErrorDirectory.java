@@ -21,6 +21,8 @@
 package com.drew.metadata;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.filter.MetadataFilter;
 import java.util.*;
 
 /**
@@ -74,4 +76,11 @@ public final class ErrorDirectory extends Directory
         throw new UnsupportedOperationException(String.format("Cannot add value to %s.", ErrorDirectory.class.getName()));
     }
     
+    @Override
+    @NotNull
+    public void setObject(int tagType, @NotNull Object value, @Nullable MetadataFilter filter)
+    {
+        throw new UnsupportedOperationException(String.format("Cannot add value to %s.", ErrorDirectory.class.getName()));
+    }
+
 }

@@ -25,7 +25,9 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -64,27 +66,40 @@ public class JpegReader implements JpegSegmentMetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         for (byte[] segmentBytes : segments) {
-            extract(segmentBytes, metadata, segmentType);
+            extract(segmentBytes, metadata, segmentType, filter);
         }
     }
 
     public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType)
     {
+        extract(segmentBytes, metadata, segmentType, null);
+    }
+
+    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(JpegDirectory.class))
+            return;
+
         JpegDirectory directory = new JpegDirectory();
         metadata.addDirectory(directory);
 
         // The value of TAG_COMPRESSION_TYPE is determined by the segment type found
-        directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);
+        directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue, filter);
 
         SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
 
         try {
-            directory.setInt(JpegDirectory.TAG_DATA_PRECISION, reader.getUInt8());
-            directory.setInt(JpegDirectory.TAG_IMAGE_HEIGHT, reader.getUInt16());
-            directory.setInt(JpegDirectory.TAG_IMAGE_WIDTH, reader.getUInt16());
+            directory.setInt(JpegDirectory.TAG_DATA_PRECISION, reader.getUInt8(), filter);
+            directory.setInt(JpegDirectory.TAG_IMAGE_HEIGHT, reader.getUInt16(), filter);
+            directory.setInt(JpegDirectory.TAG_IMAGE_WIDTH, reader.getUInt16(), filter);
             short componentCount = reader.getUInt8();
-            directory.setInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS, componentCount);
+            directory.setInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS, componentCount, filter);
 
             // for each component, there are three bytes of data:
             // 1 - Component ID: 1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q
@@ -95,7 +110,7 @@ public class JpegReader implements JpegSegmentMetadataReader
                 final int samplingFactorByte = reader.getUInt8();
                 final int quantizationTableNumber = reader.getUInt8();
                 final JpegComponent component = new JpegComponent(componentId, samplingFactorByte, quantizationTableNumber);
-                directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_1 + i, component);
+                directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_1 + i, component, filter);
             }
         } catch (IOException ex) {
             directory.addError(ex.getMessage());

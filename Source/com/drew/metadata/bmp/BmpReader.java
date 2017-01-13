@@ -22,7 +22,9 @@ package com.drew.metadata.bmp;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 
@@ -33,6 +35,14 @@ public class BmpReader
 {
     public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(BmpHeaderDirectory.class))
+            return;
+
         BmpHeaderDirectory directory = new BmpHeaderDirectory();
         metadata.addDirectory(directory);
 
@@ -97,27 +107,27 @@ public class BmpReader
 
             int headerSize = reader.getInt32();
 
-            directory.setInt(BmpHeaderDirectory.TAG_HEADER_SIZE, headerSize);
+            directory.setInt(BmpHeaderDirectory.TAG_HEADER_SIZE, headerSize, filter);
 
             // We expect the header size to be either 40 (BITMAPINFOHEADER) or 12 (BITMAPCOREHEADER)
             if (headerSize == 40) {
                 // BITMAPINFOHEADER
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_COMPRESSION, reader.getInt32());
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt32(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getInt32(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getInt16(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getInt16(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_COMPRESSION, reader.getInt32(), filter);
                 // skip the pixel data length
                 reader.skip(4);
-                directory.setInt(BmpHeaderDirectory.TAG_X_PIXELS_PER_METER, reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_Y_PIXELS_PER_METER, reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_PALETTE_COLOUR_COUNT, reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_IMPORTANT_COLOUR_COUNT, reader.getInt32());
+                directory.setInt(BmpHeaderDirectory.TAG_X_PIXELS_PER_METER, reader.getInt32(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_Y_PIXELS_PER_METER, reader.getInt32(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_PALETTE_COLOUR_COUNT, reader.getInt32(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_IMPORTANT_COLOUR_COUNT, reader.getInt32(), filter);
             } else if (headerSize == 12) {
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getInt16());
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt16(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getInt16(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getInt16(), filter);
+                directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getInt16(), filter);
             } else {
                 directory.addError("Unexpected DIB header size: " + headerSize);
             }

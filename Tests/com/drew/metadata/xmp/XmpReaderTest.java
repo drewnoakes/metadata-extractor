@@ -22,7 +22,9 @@ package com.drew.metadata.xmp;
 
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 import com.drew.tools.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +57,47 @@ public class XmpReaderTest
         _directory = xmpDirectories.iterator().next();
 
         assertFalse(_directory.hasErrors());
+    }
+
+    @Test
+    public void testExtractFilteredMetadata() throws Exception {
+        Metadata metadata = new Metadata();
+        List<byte[]> jpegSegments = new ArrayList<byte[]>();
+        jpegSegments.add(FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1"));
+        new XmpReader().readJpegSegments(jpegSegments, metadata, JpegSegmentType.APP1, new MetadataFilter() {
+
+            @Override
+            public boolean tagFilter(Directory directory, int tagType) {
+                return tagType != XmpDirectory.TAG_MODEL;
+            }
+
+            @Override
+            public boolean directoryFilter(Class<? extends Directory> directory) {
+                return true;
+            }
+        });
+
+        assertEquals(1, metadata.getDirectoryCount());
+        XmpDirectory xmpDirectory = metadata.getFirstDirectoryOfType(XmpDirectory.class);
+        assertFalse(xmpDirectory.containsTag(XmpDirectory.TAG_MODEL));
+        assertTrue(xmpDirectory.containsTag(XmpDirectory.TAG_MAKE));
+        assertEquals("Canon", xmpDirectory.getString(XmpDirectory.TAG_MAKE));
+
+        metadata = new Metadata();
+        new XmpReader().readJpegSegments(jpegSegments, metadata, JpegSegmentType.APP1, new MetadataFilter() {
+
+            @Override
+            public boolean tagFilter(Directory directory, int tagType) {
+                return true;
+            }
+
+            @Override
+            public boolean directoryFilter(Class<? extends Directory> directory) {
+                return directory != XmpDirectory.class;
+            }
+        });
+
+        assertEquals(0, metadata.getDirectoryCount());
     }
 
     /*

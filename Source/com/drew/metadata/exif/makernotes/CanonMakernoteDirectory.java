@@ -21,7 +21,9 @@
 package com.drew.metadata.exif.makernotes;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.util.HashMap;
 
@@ -689,11 +691,17 @@ public class CanonMakernoteDirectory extends Directory
     @Override
     public void setObjectArray(int tagType, @NotNull Object array)
     {
+        setObjectArray(tagType, array, null);
+    }
+
+    @Override
+    public void setObjectArray(int tagType, @NotNull Object array, @Nullable final MetadataFilter filter)
+    {
         // TODO is there some way to drop out 'null' or 'zero' values that are present in the array to reduce the noise?
 
         if (!(array instanceof int[])) {
             // no special handling...
-            super.setObjectArray(tagType, array);
+            super.setObjectArray(tagType, array, filter);
             return;
         }
 
@@ -705,25 +713,25 @@ public class CanonMakernoteDirectory extends Directory
             case TAG_CAMERA_SETTINGS_ARRAY: {
                 int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
-                    setInt(CameraSettings.OFFSET + i, ints[i]);
+                    setInt(CameraSettings.OFFSET + i, ints[i], filter);
                 break;
             }
             case TAG_FOCAL_LENGTH_ARRAY: {
                 int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
-                    setInt(FocalLength.OFFSET + i, ints[i]);
+                    setInt(FocalLength.OFFSET + i, ints[i], filter);
                 break;
             }
             case TAG_SHOT_INFO_ARRAY: {
                 int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
-                    setInt(ShotInfo.OFFSET + i, ints[i]);
+                    setInt(ShotInfo.OFFSET + i, ints[i], filter);
                 break;
             }
             case TAG_PANORAMA_ARRAY: {
                 int[] ints = (int[])array;
                 for (int i = 0; i < ints.length; i++)
-                    setInt(Panorama.OFFSET + i, ints[i]);
+                    setInt(Panorama.OFFSET + i, ints[i], filter);
                 break;
             }
             // TODO the interpretation of the custom functions tag depends upon the camera model
@@ -765,7 +773,7 @@ public class CanonMakernoteDirectory extends Directory
                             for (int j = 0; j < areaPositions.length; j++)
                                 areaPositions[j] = (short)values[i + j];
 
-                            super.setObjectArray(AFInfo.OFFSET + tagnumber, areaPositions);
+                            super.setObjectArray(AFInfo.OFFSET + tagnumber, areaPositions, filter);
                         }
                         i += numafpoints - 1;   // assume these bytes are processed and skip
                     }
@@ -779,19 +787,19 @@ public class CanonMakernoteDirectory extends Directory
                             for (int j = 0; j < pointsInFocus.length; j++)
                                 pointsInFocus[j] = (short)values[i + j];
 
-                            super.setObjectArray(AFInfo.OFFSET + tagnumber, pointsInFocus);
+                            super.setObjectArray(AFInfo.OFFSET + tagnumber, pointsInFocus, filter);
                         }
                         i += pointsInFocus.length - 1;  // assume these bytes are processed and skip
                     }
                     else
-                        super.setObjectArray(AFInfo.OFFSET + tagnumber, values[i]);
+                        super.setObjectArray(AFInfo.OFFSET + tagnumber, values[i], filter);
                     tagnumber++;
                 }
                 break;
             }
             default: {
                 // no special handling...
-                super.setObjectArray(tagType, array);
+                super.setObjectArray(tagType, array, filter);
                 break;
             }
         }

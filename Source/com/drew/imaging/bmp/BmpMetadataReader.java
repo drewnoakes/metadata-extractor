@@ -23,8 +23,10 @@ package com.drew.imaging.bmp;
 
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.bmp.BmpReader;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.*;
 
@@ -38,10 +40,16 @@ public class BmpMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
+        return readMetadata(file, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable final MetadataFilter filter) throws IOException
+    {
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(file);
-            return readMetadata(stream);
+            return readMetadata(stream, filter);
         } finally {
             if (stream != null) {
                 stream.close();
@@ -52,8 +60,14 @@ public class BmpMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
+        return readMetadata(inputStream, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable final MetadataFilter filter)
+    {
         Metadata metadata = new Metadata();
-        new BmpReader().extract(new StreamReader(inputStream), metadata);
+        new BmpReader().extract(new StreamReader(inputStream), metadata, filter);
         return metadata;
     }
 }

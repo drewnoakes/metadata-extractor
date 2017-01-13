@@ -24,8 +24,10 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 import com.drew.tools.FileUtil;
 import org.junit.Test;
 
@@ -42,18 +44,21 @@ import static org.junit.Assert.*;
 public class ExifReaderTest
 {
     @NotNull
-    public static Metadata processBytes(@NotNull String filePath) throws IOException
+    public static Metadata processBytes(@Nullable MetadataFilter filter, @NotNull String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
         byte[] bytes = FileUtil.readBytes(filePath);
-        new ExifReader().extract(new ByteArrayReader(bytes), metadata, ExifReader.JPEG_SEGMENT_PREAMBLE.length(), null);
+        if (filter == null)
+            new ExifReader().extract(new ByteArrayReader(bytes), metadata, ExifReader.JPEG_SEGMENT_PREAMBLE.length(), (Directory) null);
+        else
+            new ExifReader().extract(new ByteArrayReader(bytes), metadata, ExifReader.JPEG_SEGMENT_PREAMBLE.length(), null, filter);
         return metadata;
     }
 
     @NotNull
     public static <T extends Directory> T processBytes(@NotNull String filePath, @NotNull Class<T> directoryClass) throws IOException
     {
-        T directory = processBytes(filePath).getFirstDirectoryOfType(directoryClass);
+        T directory = processBytes(null, filePath).getFirstDirectoryOfType(directoryClass);
         assertNotNull(directory);
         return directory;
     }
@@ -80,6 +85,70 @@ public class ExifReaderTest
         assertEquals("80", description);
         // TODO decide if this should still be returned -- it was being calculated upon setting of a related tag
 //      assertEquals("F9", directory.getDescription(ExifSubIFDDirectory.TAG_APERTURE));
+    }
+
+    @Test
+    public void testExtractFilteredMetadata() throws Exception {
+        Metadata metadata = processBytes(new MetadataFilter() {
+
+            @Override
+            public boolean tagFilter(Directory directory, int tagType) {
+                return
+                    directory instanceof ExifSubIFDDirectory && tagType != ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM && tagType != ExifSubIFDDirectory.TAG_WHITE_BALANCE ||
+                    directory instanceof ExifInteropDirectory && tagType != ExifInteropDirectory.TAG_INTEROP_INDEX ||
+                    directory instanceof ExifThumbnailDirectory;
+            }
+
+            @Override
+            public boolean directoryFilter(Class<? extends Directory> directory) {
+                return directory == ExifSubIFDDirectory.class || directory == ExifInteropDirectory.class || directory == ExifThumbnailDirectory.class;
+            }
+        }, "Tests/Data/withExif.jpg.app1");
+
+        assertEquals(3, metadata.getDirectoryCount());
+        Directory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+        assertNotNull(directory);
+        assertEquals(19, directory.getTagCount());
+        assertFalse(directory.containsTag(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM));
+        assertFalse(directory.containsTag(ExifSubIFDDirectory.TAG_WHITE_BALANCE));
+        assertTrue(directory.containsTag(ExifSubIFDDirectory.TAG_EXIF_VERSION));
+        assertTrue(directory.containsTag(ExifSubIFDDirectory.TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL));
+        assertEquals("2.10", directory.getDescription(ExifSubIFDDirectory.TAG_EXIF_VERSION));
+        assertEquals(2, directory.getInt(ExifSubIFDDirectory.TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL));
+        assertNull(metadata.getFirstDirectoryOfType(ExifIFD0Directory.class));
+
+        metadata = processBytes(new MetadataFilter() {
+
+            @Override
+            public boolean tagFilter(Directory directory, int tagType) {
+                return false;
+            }
+
+            @Override
+            public boolean directoryFilter(Class<? extends Directory> directory) {
+                return true;
+            }
+
+        }, "Tests/Data/withExif.jpg.app1");
+        assertEquals(4, metadata.getDirectoryCount());
+        for (Directory dir : metadata.getDirectories()) {
+            assertEquals(0, dir.getTagCount());
+        }
+
+        metadata = processBytes(new MetadataFilter() {
+
+            @Override
+            public boolean tagFilter(Directory directory, int tagType) {
+                return true;
+            }
+
+            @Override
+            public boolean directoryFilter(Class<? extends Directory> directory) {
+                return false;
+            }
+
+        }, "Tests/Data/withExif.jpg.app1");
+        assertEquals(0, metadata.getDirectoryCount());
     }
 
     @Test
@@ -176,7 +245,7 @@ public class ExifReaderTest
         // repeatedly.  Thanks to Alistair Dickie for providing the sample data used in this
         // unit test.
 
-        Metadata metadata = processBytes("Tests/Data/recursiveDirectories.jpg.app1");
+        Metadata metadata = processBytes(null, "Tests/Data/recursiveDirectories.jpg.app1");
 
         // Mostly we're just happy at this point that we didn't get stuck in an infinite loop.
 
@@ -189,7 +258,7 @@ public class ExifReaderTest
         // This metadata contains different orientations for the thumbnail and the main image.
         // These values used to be merged into a single directory, causing errors.
         // This unit test demonstrates correct behaviour.
-        Metadata metadata = processBytes("Tests/Data/repeatedOrientationTagWithDifferentValues.jpg.app1");
+        Metadata metadata = processBytes(null, "Tests/Data/repeatedOrientationTagWithDifferentValues.jpg.app1");
         ExifIFD0Directory ifd0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
         ExifThumbnailDirectory thumbnailDirectory = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
 

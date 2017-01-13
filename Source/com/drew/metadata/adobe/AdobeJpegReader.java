@@ -26,8 +26,10 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -50,14 +52,27 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         for (byte[] bytes : segments) {
             if (bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(bytes, 0, PREAMBLE.length())))
-                extract(new SequentialByteArrayReader(bytes), metadata);
+                extract(new SequentialByteArrayReader(bytes), metadata, filter);
         }
     }
 
     public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(AdobeJpegDirectory.class))
+            return;
+
         Directory directory = new AdobeJpegDirectory();
         metadata.addDirectory(directory);
 
@@ -69,10 +84,10 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            directory.setInt(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION, reader.getUInt16());
-            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS0, reader.getUInt16());
-            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS1, reader.getUInt16());
-            directory.setInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM, reader.getInt8());
+            directory.setInt(AdobeJpegDirectory.TAG_DCT_ENCODE_VERSION, reader.getUInt16(), filter);
+            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS0, reader.getUInt16(), filter);
+            directory.setInt(AdobeJpegDirectory.TAG_APP14_FLAGS1, reader.getUInt16(), filter);
+            directory.setInt(AdobeJpegDirectory.TAG_COLOR_TRANSFORM, reader.getInt8(), filter);
         } catch (IOException ex) {
             directory.addError("IO exception processing data: " + ex.getMessage());
         }

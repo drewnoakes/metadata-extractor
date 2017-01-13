@@ -22,6 +22,8 @@ package com.drew.imaging.riff;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 
@@ -49,6 +51,23 @@ public class RiffReader
      */
     public void processRiff(@NotNull final SequentialReader reader,
                             @NotNull final RiffHandler handler) throws RiffProcessingException, IOException
+    {
+        processRiff(reader, handler, null);
+    }
+
+    /**
+     * Processes a RIFF data sequence.
+     *
+     * @param reader the {@link SequentialReader} from which the data should be read
+     * @param handler the {@link RiffHandler} that will coordinate processing and accept read values
+     * @param a {@link MetadataFilter} or <code>null</code>
+     * @throws RiffProcessingException if an error occurred during the processing of RIFF data that could not be
+     *                                 ignored or recovered from
+     * @throws IOException an error occurred while accessing the required data
+     */
+    public void processRiff(@NotNull final SequentialReader reader,
+                            @NotNull final RiffHandler handler,
+                            @Nullable final MetadataFilter filter) throws RiffProcessingException, IOException
     {
         // RIFF files are always little-endian
         reader.setMotorolaByteOrder(false);
@@ -84,7 +103,7 @@ public class RiffReader
 
             if (handler.shouldAcceptChunk(chunkFourCC)) {
                 // TODO is it feasible to avoid copying the chunk here, and to pass the sequential reader to the handler?
-                handler.processChunk(chunkFourCC, reader.getBytes(chunkSize));
+                handler.processChunk(chunkFourCC, reader.getBytes(chunkSize), filter);
             } else {
                 reader.skip(chunkSize);
             }

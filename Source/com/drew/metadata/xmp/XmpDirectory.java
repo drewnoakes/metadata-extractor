@@ -31,6 +31,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Schema;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.util.*;
 
@@ -304,6 +305,11 @@ public class XmpDirectory extends Directory
 
     public void setXMPMeta(@NotNull XMPMeta xmpMeta)
     {
+        setXMPMeta(xmpMeta, null);
+    }
+
+    public void setXMPMeta(@NotNull XMPMeta xmpMeta, @Nullable final MetadataFilter filter)
+    {
         _xmpMeta = xmpMeta;
 
         try {
@@ -315,7 +321,7 @@ public class XmpDirectory extends Directory
                     valueCount++;
                 }
             }
-            setInt(TAG_XMP_VALUE_COUNT, valueCount);
+            setInt(TAG_XMP_VALUE_COUNT, valueCount, filter);
         } catch (XMPException ignored) {
         }
     }
@@ -339,7 +345,12 @@ public class XmpDirectory extends Directory
 
     public void updateInt(int tagType, int value)
     {
-        super.setInt(tagType, value);
+        updateInt(tagType, value, null);
+    }
+
+    public void updateInt(int tagType, int value, @Nullable final MetadataFilter filter)
+    {
+        super.setInt(tagType, value, filter);
         try
         {
             getXMPMeta().setPropertyInteger(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
@@ -352,7 +363,12 @@ public class XmpDirectory extends Directory
 
     public void updateIntArray(int tagType, int[] ints)
     {
-        super.setIntArray(tagType, ints);
+        updateIntArray(tagType, ints, null);
+    }
+
+    public void updateIntArray(int tagType, int[] ints, @Nullable final MetadataFilter filter)
+    {
+        super.setIntArray(tagType, ints, filter);
         try
         {
             String schemaNS = _tagSchemaMap.get(tagType);
@@ -374,7 +390,12 @@ public class XmpDirectory extends Directory
 
     public void updateFloat(int tagType, float value)
     {
-        super.setFloat(tagType, value);
+        updateFloat(tagType, value, null);
+    }
+
+    public void updateFloat(int tagType, float value, @Nullable final MetadataFilter filter)
+    {
+        super.setFloat(tagType, value, filter);
         try
         {
             getXMPMeta().setPropertyDouble(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
@@ -387,7 +408,12 @@ public class XmpDirectory extends Directory
 
     public void updateFloatArray(int tagType, float[] floats)
     {
-        super.setFloatArray(tagType, floats);
+        updateFloatArray(tagType, floats, null);
+    }
+
+    public void updateFloatArray(int tagType, float[] floats, @Nullable final MetadataFilter filter)
+    {
+        super.setFloatArray(tagType, floats, filter);
         try
         {
             String schemaNS = _tagSchemaMap.get(tagType);
@@ -409,7 +435,12 @@ public class XmpDirectory extends Directory
 
     public void updateDouble(int tagType, double value)
     {
-        super.setDouble(tagType, value);
+        updateDouble(tagType, value, null);
+    }
+
+    public void updateDouble(int tagType, double value, @Nullable final MetadataFilter filter)
+    {
+        super.setDouble(tagType, value, filter);
         try
         {
             getXMPMeta().setPropertyDouble(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
@@ -422,7 +453,12 @@ public class XmpDirectory extends Directory
 
     public void updateDoubleArray(int tagType, double[] doubles)
     {
-        super.setDoubleArray(tagType, doubles);
+        updateDoubleArray(tagType, doubles, null);
+    }
+
+    public void updateDoubleArray(int tagType, double[] doubles, @Nullable final MetadataFilter filter)
+    {
+        super.setDoubleArray(tagType, doubles, filter);
         try
         {
             String schemaNS = _tagSchemaMap.get(tagType);
@@ -444,7 +480,12 @@ public class XmpDirectory extends Directory
 
     public void updateString(int tagType, String value)
     {
-        super.setString(tagType, value);
+        updateString(tagType, value, null);
+    }
+
+    public void updateString(int tagType, String value, @Nullable final MetadataFilter filter)
+    {
+        super.setString(tagType, value, filter);
         try
         {
             getXMPMeta().setProperty(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
@@ -462,7 +503,12 @@ public class XmpDirectory extends Directory
 
     public void updateStringArray(int tagType, String[] strings)
     {
-        super.setStringArray(tagType, strings);
+        updateStringArray(tagType, strings, null);
+    }
+
+    public void updateStringArray(int tagType, String[] strings, @Nullable final MetadataFilter filter)
+    {
+        super.setStringArray(tagType, strings, filter);
         try
         {
             String schemaNS = _tagSchemaMap.get(tagType);
@@ -484,7 +530,12 @@ public class XmpDirectory extends Directory
 
     public void updateBoolean(int tagType, boolean value)
     {
-        super.setBoolean(tagType, value);
+        updateBoolean(tagType, value, null);
+    }
+
+    public void updateBoolean(int tagType, boolean value, @Nullable final MetadataFilter filter)
+    {
+        super.setBoolean(tagType, value, filter);
         try
         {
             getXMPMeta().setPropertyBoolean(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
@@ -497,7 +548,12 @@ public class XmpDirectory extends Directory
 
     public void updateLong(int tagType, long value)
     {
-        super.setLong(tagType, value);
+        updateLong(tagType, value, null);
+    }
+
+    public void updateLong(int tagType, long value, @Nullable final MetadataFilter filter)
+    {
+        super.setLong(tagType, value, filter);
         try
         {
             getXMPMeta().setPropertyLong(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
@@ -510,12 +566,22 @@ public class XmpDirectory extends Directory
 
     public void updateDate(int tagType, Date value)
     {
-        updateDate(tagType, value, TimeZone.getDefault());
+        updateDate(tagType, value, TimeZone.getDefault(), null);
+    }
+
+    public void updateDate(int tagType, Date value, @Nullable final MetadataFilter filter)
+    {
+        updateDate(tagType, value, TimeZone.getDefault(), filter);
     }
 
     public void updateDate(int tagType, Date value, TimeZone timeZone)
     {
-        super.setDate(tagType, value);
+        updateDate(tagType, value, timeZone, null);
+    }
+
+    public void updateDate(int tagType, Date value, TimeZone timeZone, @Nullable final MetadataFilter filter)
+    {
+        super.setDate(tagType, value, filter);
         XMPDateTime date = new XMPDateTimeImpl(value, timeZone);
         try
         {

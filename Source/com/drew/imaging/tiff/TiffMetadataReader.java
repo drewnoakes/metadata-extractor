@@ -24,9 +24,11 @@ import com.drew.lang.RandomAccessFileReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.*;
 
@@ -42,17 +44,23 @@ public class TiffMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException, TiffProcessingException
     {
+        return readMetadata(file, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable final MetadataFilter filter) throws IOException, TiffProcessingException
+    {
         Metadata metadata = new Metadata();
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
         try {
             ExifTiffHandler handler = new ExifTiffHandler(metadata, false, null);
-            new TiffReader().processTiff(new RandomAccessFileReader(randomAccessFile), handler, 0);
+            new TiffReader().processTiff(new RandomAccessFileReader(randomAccessFile), handler, 0, filter);
         } finally {
             randomAccessFile.close();
         }
 
-        new FileMetadataReader().read(file, metadata);
+        new FileMetadataReader().read(file, metadata, filter);
 
         return metadata;
     }
@@ -60,19 +68,31 @@ public class TiffMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException, TiffProcessingException
     {
+        return readMetadata(inputStream, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable final MetadataFilter filter) throws IOException, TiffProcessingException
+    {
         // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
         // InputStream does not support seeking backwards, so we wrap it with RandomAccessStreamReader, which
         // buffers data from the stream as we seek forward.
 
-        return readMetadata(new RandomAccessStreamReader(inputStream));
+        return readMetadata(new RandomAccessStreamReader(inputStream), filter);
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull RandomAccessReader reader) throws IOException, TiffProcessingException
     {
+        return readMetadata(reader, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull RandomAccessReader reader, @Nullable final MetadataFilter filter) throws IOException, TiffProcessingException
+    {
         Metadata metadata = new Metadata();
         ExifTiffHandler handler = new ExifTiffHandler(metadata, false, null);
-        new TiffReader().processTiff(reader, handler, 0);
+        new TiffReader().processTiff(reader, handler, 0, filter);
         return metadata;
     }
 }

@@ -23,6 +23,8 @@ package com.drew.imaging.tiff;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -49,6 +51,25 @@ public class TiffReader
                             @NotNull final TiffHandler handler,
                             final int tiffHeaderOffset) throws TiffProcessingException, IOException
     {
+        processTiff(reader, handler, tiffHeaderOffset, null);
+    }
+
+    /**
+     * Processes a TIFF data sequence.
+     *
+     * @param reader the {@link RandomAccessReader} from which the data should be read
+     * @param handler the {@link TiffHandler} that will coordinate processing and accept read values
+     * @param tiffHeaderOffset the offset within <code>reader</code> at which the TIFF header starts
+     * @param filter a {@link MetadataFilter} or <code>null</code>
+     * @throws TiffProcessingException if an error occurred during the processing of TIFF data that could not be
+     *                                 ignored or recovered from
+     * @throws IOException an error occurred while accessing the required data
+     */
+    public void processTiff(@NotNull final RandomAccessReader reader,
+                            @NotNull final TiffHandler handler,
+                            final int tiffHeaderOffset,
+                            @Nullable final MetadataFilter filter) throws TiffProcessingException, IOException
+    {
         // This must be either "MM" or "II".
         short byteOrderIdentifier = reader.getInt16(tiffHeaderOffset);
 
@@ -62,7 +83,7 @@ public class TiffReader
 
         // Check the next two values for correctness.
         final int tiffMarker = reader.getUInt16(2 + tiffHeaderOffset);
-        handler.setTiffMarker(tiffMarker);
+        handler.setTiffMarker(tiffMarker, filter);
 
         int firstIfdOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
 
@@ -75,7 +96,7 @@ public class TiffReader
         }
 
         Set<Integer> processedIfdOffsets = new HashSet<Integer>();
-        processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset);
+        processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset, filter);
 
         handler.completed(reader, tiffHeaderOffset);
     }
@@ -108,6 +129,40 @@ public class TiffReader
                                   @NotNull final Set<Integer> processedIfdOffsets,
                                   final int ifdOffset,
                                   final int tiffHeaderOffset) throws IOException
+    {
+        processIfd(handler, reader, processedIfdOffsets, ifdOffset, tiffHeaderOffset, null);
+    }
+
+    /**
+     * Processes a TIFF IFD.
+     *
+     * IFD Header:
+     * <ul>
+     *     <li><b>2 bytes</b> number of tags</li>
+     * </ul>
+     * Tag structure:
+     * <ul>
+     *     <li><b>2 bytes</b> tag type</li>
+     *     <li><b>2 bytes</b> format code (values 1 to 12, inclusive)</li>
+     *     <li><b>4 bytes</b> component count</li>
+     *     <li><b>4 bytes</b> inline value, or offset pointer if too large to fit in four bytes</li>
+     * </ul>
+     *
+     *
+     * @param handler the {@link com.drew.imaging.tiff.TiffHandler} that will coordinate processing and accept read values
+     * @param reader the {@link com.drew.lang.RandomAccessReader} from which the data should be read
+     * @param processedIfdOffsets the set of visited IFD offsets, to avoid revisiting the same IFD in an endless loop
+     * @param ifdOffset the offset within <code>reader</code> at which the IFD data starts
+     * @param tiffHeaderOffset the offset within <code>reader</code> at which the TIFF header starts
+     * @param filter a {@link MetadataFilter} or <code>null</code>
+     * @throws IOException an error occurred while accessing the required data
+     */
+    public static void processIfd(@NotNull final TiffHandler handler,
+                                  @NotNull final RandomAccessReader reader,
+                                  @NotNull final Set<Integer> processedIfdOffsets,
+                                  final int ifdOffset,
+                                  final int tiffHeaderOffset,
+                                  @Nullable final MetadataFilter filter) throws IOException
     {
         Boolean resetByteOrder = null;
         try {
@@ -210,18 +265,18 @@ public class TiffReader
                 boolean isIfdPointer = false;
                 if (byteCount == 4 * componentCount) {
                     for (int i = 0; i < componentCount; i++) {
-                        if (handler.tryEnterSubIfd(tagId)) {
+                        if (handler.tryEnterSubIfd(tagId, filter)) {
                             isIfdPointer = true;
                             int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
-                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
+                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset, filter);
                         }
                     }
                 }
 
                 // If it wasn't an IFD pointer, allow custom tag processing to occur
-                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
+                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount, filter)) {
                     // If no custom processing occurred, process the tag in the standard fashion
-                    processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
+                    processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader, filter);
                 }
             }
 
@@ -240,8 +295,8 @@ public class TiffReader
                     return;
                 }
 
-                if (handler.hasFollowerIfd()) {
-                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, tiffHeaderOffset);
+                if (handler.hasFollowerIfd(filter)) {
+                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, tiffHeaderOffset, filter);
                 }
             }
         } finally {
@@ -256,116 +311,117 @@ public class TiffReader
                                    final int tagValueOffset,
                                    final int componentCount,
                                    final int formatCode,
-                                   @NotNull final RandomAccessReader reader) throws IOException
+                                   @NotNull final RandomAccessReader reader,
+                                   @Nullable final MetadataFilter filter) throws IOException
     {
         switch (formatCode) {
             case TiffDataFormat.CODE_UNDEFINED:
                 // this includes exif user comments
-                handler.setByteArray(tagId, reader.getBytes(tagValueOffset, componentCount));
+                handler.setByteArray(tagId, reader.getBytes(tagValueOffset, componentCount), filter);
                 break;
             case TiffDataFormat.CODE_STRING:
-                handler.setString(tagId, reader.getNullTerminatedStringValue(tagValueOffset, componentCount, null));
+                handler.setString(tagId, reader.getNullTerminatedStringValue(tagValueOffset, componentCount, null), filter);
                 break;
             case TiffDataFormat.CODE_RATIONAL_S:
                 if (componentCount == 1) {
-                    handler.setRational(tagId, new Rational(reader.getInt32(tagValueOffset), reader.getInt32(tagValueOffset + 4)));
+                    handler.setRational(tagId, new Rational(reader.getInt32(tagValueOffset), reader.getInt32(tagValueOffset + 4)), filter);
                 } else if (componentCount > 1) {
                     Rational[] array = new Rational[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = new Rational(reader.getInt32(tagValueOffset + (8 * i)), reader.getInt32(tagValueOffset + 4 + (8 * i)));
-                    handler.setRationalArray(tagId, array);
+                    handler.setRationalArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_RATIONAL_U:
                 if (componentCount == 1) {
-                    handler.setRational(tagId, new Rational(reader.getUInt32(tagValueOffset), reader.getUInt32(tagValueOffset + 4)));
+                    handler.setRational(tagId, new Rational(reader.getUInt32(tagValueOffset), reader.getUInt32(tagValueOffset + 4)), filter);
                 } else if (componentCount > 1) {
                     Rational[] array = new Rational[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = new Rational(reader.getUInt32(tagValueOffset + (8 * i)), reader.getUInt32(tagValueOffset + 4 + (8 * i)));
-                    handler.setRationalArray(tagId, array);
+                    handler.setRationalArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_SINGLE:
                 if (componentCount == 1) {
-                    handler.setFloat(tagId, reader.getFloat32(tagValueOffset));
+                    handler.setFloat(tagId, reader.getFloat32(tagValueOffset), filter);
                 } else {
                     float[] array = new float[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getFloat32(tagValueOffset + (i * 4));
-                    handler.setFloatArray(tagId, array);
+                    handler.setFloatArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_DOUBLE:
                 if (componentCount == 1) {
-                    handler.setDouble(tagId, reader.getDouble64(tagValueOffset));
+                    handler.setDouble(tagId, reader.getDouble64(tagValueOffset), filter);
                 } else {
                     double[] array = new double[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getDouble64(tagValueOffset + (i * 4));
-                    handler.setDoubleArray(tagId, array);
+                    handler.setDoubleArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_INT8_S:
                 if (componentCount == 1) {
-                    handler.setInt8s(tagId, reader.getInt8(tagValueOffset));
+                    handler.setInt8s(tagId, reader.getInt8(tagValueOffset), filter);
                 } else {
                     byte[] array = new byte[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getInt8(tagValueOffset + i);
-                    handler.setInt8sArray(tagId, array);
+                    handler.setInt8sArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_INT8_U:
                 if (componentCount == 1) {
-                    handler.setInt8u(tagId, reader.getUInt8(tagValueOffset));
+                    handler.setInt8u(tagId, reader.getUInt8(tagValueOffset), filter);
                 } else {
                     short[] array = new short[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getUInt8(tagValueOffset + i);
-                    handler.setInt8uArray(tagId, array);
+                    handler.setInt8uArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_INT16_S:
                 if (componentCount == 1) {
-                    handler.setInt16s(tagId, (int)reader.getInt16(tagValueOffset));
+                    handler.setInt16s(tagId, (int)reader.getInt16(tagValueOffset), filter);
                 } else {
                     short[] array = new short[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getInt16(tagValueOffset + (i * 2));
-                    handler.setInt16sArray(tagId, array);
+                    handler.setInt16sArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_INT16_U:
                 if (componentCount == 1) {
-                    handler.setInt16u(tagId, reader.getUInt16(tagValueOffset));
+                    handler.setInt16u(tagId, reader.getUInt16(tagValueOffset), filter);
                 } else {
                     int[] array = new int[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getUInt16(tagValueOffset + (i * 2));
-                    handler.setInt16uArray(tagId, array);
+                    handler.setInt16uArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_INT32_S:
                 // NOTE 'long' in this case means 32 bit, not 64
                 if (componentCount == 1) {
-                    handler.setInt32s(tagId, reader.getInt32(tagValueOffset));
+                    handler.setInt32s(tagId, reader.getInt32(tagValueOffset), filter);
                 } else {
                     int[] array = new int[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getInt32(tagValueOffset + (i * 4));
-                    handler.setInt32sArray(tagId, array);
+                    handler.setInt32sArray(tagId, array, filter);
                 }
                 break;
             case TiffDataFormat.CODE_INT32_U:
                 // NOTE 'long' in this case means 32 bit, not 64
                 if (componentCount == 1) {
-                    handler.setInt32u(tagId, reader.getUInt32(tagValueOffset));
+                    handler.setInt32u(tagId, reader.getUInt32(tagValueOffset), filter);
                 } else {
                     long[] array = new long[componentCount];
                     for (int i = 0; i < componentCount; i++)
                         array[i] = reader.getUInt32(tagValueOffset + (i * 4));
-                    handler.setInt32uArray(tagId, array);
+                    handler.setInt32uArray(tagId, array, filter);
                 }
                 break;
             default:

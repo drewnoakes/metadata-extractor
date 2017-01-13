@@ -21,8 +21,10 @@
 package com.drew.metadata.gif;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.Directory;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.util.HashMap;
 
@@ -45,8 +47,13 @@ public class GifCommentDirectory extends Directory
 
     public GifCommentDirectory(StringValue comment)
     {
+        this(comment, null);
+    }
+
+    public GifCommentDirectory(StringValue comment, @Nullable final MetadataFilter filter)
+    {
         this.setDescriptor(new GifCommentDescriptor(this));
-        setStringValue(TAG_COMMENT, comment);
+        setStringValue(TAG_COMMENT, comment, filter);
     }
 
     @Override

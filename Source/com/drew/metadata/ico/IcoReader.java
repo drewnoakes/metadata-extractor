@@ -22,7 +22,9 @@ package com.drew.metadata.ico;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 
@@ -38,6 +40,14 @@ public class IcoReader
 {
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
+        extract(reader, metadata, null);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(IcoDirectory.class))
+            return;
+
         reader.setMotorolaByteOrder(false);
 
         int type;
@@ -83,24 +93,24 @@ public class IcoReader
         for (int imageIndex = 0; imageIndex < imageCount; imageIndex++) {
             IcoDirectory directory = new IcoDirectory();
             try {
-                directory.setInt(IcoDirectory.TAG_IMAGE_TYPE, type);
+                directory.setInt(IcoDirectory.TAG_IMAGE_TYPE, type, filter);
 
-                directory.setInt(IcoDirectory.TAG_IMAGE_WIDTH, reader.getUInt8());
-                directory.setInt(IcoDirectory.TAG_IMAGE_HEIGHT, reader.getUInt8());
-                directory.setInt(IcoDirectory.TAG_COLOUR_PALETTE_SIZE, reader.getUInt8());
+                directory.setInt(IcoDirectory.TAG_IMAGE_WIDTH, reader.getUInt8(), filter);
+                directory.setInt(IcoDirectory.TAG_IMAGE_HEIGHT, reader.getUInt8(), filter);
+                directory.setInt(IcoDirectory.TAG_COLOUR_PALETTE_SIZE, reader.getUInt8(), filter);
                 // Ignore this byte (normally zero, though .NET's System.Drawing.Icon.Save method writes 255)
                 reader.getUInt8();
                 if (type == 1) {
                     // Icon
-                    directory.setInt(IcoDirectory.TAG_COLOUR_PLANES, reader.getUInt16());
-                    directory.setInt(IcoDirectory.TAG_BITS_PER_PIXEL, reader.getUInt16());
+                    directory.setInt(IcoDirectory.TAG_COLOUR_PLANES, reader.getUInt16(), filter);
+                    directory.setInt(IcoDirectory.TAG_BITS_PER_PIXEL, reader.getUInt16(), filter);
                 } else {
                     // Cursor
-                    directory.setInt(IcoDirectory.TAG_CURSOR_HOTSPOT_X, reader.getUInt16());
-                    directory.setInt(IcoDirectory.TAG_CURSOR_HOTSPOT_Y, reader.getUInt16());
+                    directory.setInt(IcoDirectory.TAG_CURSOR_HOTSPOT_X, reader.getUInt16(), filter);
+                    directory.setInt(IcoDirectory.TAG_CURSOR_HOTSPOT_Y, reader.getUInt16(), filter);
                 }
-                directory.setLong(IcoDirectory.TAG_IMAGE_SIZE_BYTES, reader.getUInt32());
-                directory.setLong(IcoDirectory.TAG_IMAGE_OFFSET_BYTES, reader.getUInt32());
+                directory.setLong(IcoDirectory.TAG_IMAGE_SIZE_BYTES, reader.getUInt32(), filter);
+                directory.setLong(IcoDirectory.TAG_IMAGE_OFFSET_BYTES, reader.getUInt32(), filter);
             } catch (IOException ex) {
                 directory.addError("Exception reading ICO file metadata: " + ex.getMessage());
             }

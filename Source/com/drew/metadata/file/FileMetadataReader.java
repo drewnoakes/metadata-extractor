@@ -21,7 +21,9 @@
 package com.drew.metadata.file;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +33,14 @@ public class FileMetadataReader
 {
     public void read(@NotNull File file, @NotNull Metadata metadata) throws IOException
     {
+        read(file, metadata, null);
+    }
+
+    public void read(@NotNull File file, @NotNull Metadata metadata, @Nullable final MetadataFilter filter) throws IOException
+    {
+        if (filter != null && !filter.directoryFilter(FileMetadataDirectory.class))
+            return;
+
         if (!file.isFile())
             throw new IOException("File object must reference a file");
         if (!file.exists())
@@ -40,9 +50,9 @@ public class FileMetadataReader
 
         FileMetadataDirectory directory = new FileMetadataDirectory();
 
-        directory.setString(FileMetadataDirectory.TAG_FILE_NAME, file.getName());
-        directory.setLong(FileMetadataDirectory.TAG_FILE_SIZE, file.length());
-        directory.setDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
+        directory.setString(FileMetadataDirectory.TAG_FILE_NAME, file.getName(), filter);
+        directory.setLong(FileMetadataDirectory.TAG_FILE_SIZE, file.length(), filter);
+        directory.setDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()), filter);
 
         metadata.addDirectory(directory);
     }

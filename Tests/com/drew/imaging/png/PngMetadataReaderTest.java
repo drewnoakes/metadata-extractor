@@ -22,7 +22,10 @@ package com.drew.imaging.png;
 
 import com.drew.lang.KeyValuePair;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 import com.drew.metadata.png.PngDirectory;
 import org.junit.Test;
 
@@ -42,12 +45,12 @@ import static org.junit.Assert.*;
 public class PngMetadataReaderTest
 {
     @NotNull
-    private static Metadata processFile(@NotNull String filePath) throws PngProcessingException, IOException
+    private static Metadata processFile(@NotNull String filePath, @Nullable MetadataFilter filter) throws PngProcessingException, IOException
     {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(filePath);
-            return PngMetadataReader.readMetadata(inputStream);
+            return filter == null ? PngMetadataReader.readMetadata(inputStream) : PngMetadataReader.readMetadata(inputStream, filter);
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -63,7 +66,7 @@ public class PngMetadataReaderTest
         try {
             TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
 
-            Metadata metadata = processFile("Tests/Data/gimp-8x12-greyscale-alpha-time-background.png");
+            Metadata metadata = processFile("Tests/Data/gimp-8x12-greyscale-alpha-time-background.png", null);
             Collection<PngDirectory> directories = metadata.getDirectoriesOfType(PngDirectory.class);
 
             assertNotNull(directories);
@@ -112,6 +115,44 @@ public class PngMetadataReaderTest
             assertEquals("Created with GIMP", pairs.get(0).getValue().toString());
         } finally {
             TimeZone.setDefault(timeZone);
+        }
+    }
+
+    @Test
+    public void testExtractFilteredMetadata() throws Exception {
+        Metadata metadata = processFile("Tests/Data/gimp-8x12-greyscale-alpha-time-background.png", new MetadataFilter() {
+
+            @Override
+            public boolean tagFilter(Directory directory, int tagType) {
+                return tagType == PngDirectory.TAG_COLOR_TYPE || tagType == PngDirectory.TAG_GAMMA || tagType == PngDirectory.TAG_BACKGROUND_COLOR;
+            }
+
+            @Override
+            public boolean directoryFilter(Class<? extends Directory> directory) {
+                return directory == PngDirectory.class;
+            }
+        });
+
+        assertFalse(metadata.getDirectoriesOfType(PngDirectory.class).isEmpty());
+        Collection<PngDirectory> directories = metadata.getDirectoriesOfType(PngDirectory.class);
+        assertNotNull(directories);
+        assertEquals(6, directories.size());
+        for (PngDirectory directory : directories) {
+            if (PngChunkType.IHDR.equals(directory.getPngChunkType())) {
+                assertEquals(1, directory.getTagCount());
+                assertTrue(directory.containsTag(PngDirectory.TAG_COLOR_TYPE));
+                assertEquals("Greyscale with Alpha", directory.getDescription(PngDirectory.TAG_COLOR_TYPE));
+            } else if (PngChunkType.gAMA.equals(directory.getPngChunkType())) {
+                assertEquals(1, directory.getTagCount());
+                assertTrue(directory.containsTag(PngDirectory.TAG_GAMMA));
+                assertEquals(0.45455d, directory.getDouble(PngDirectory.TAG_GAMMA), 0);
+            } else if (PngChunkType.bKGD.equals(directory.getPngChunkType())) {
+                assertEquals(1, directory.getTagCount());
+                assertTrue(directory.containsTag(PngDirectory.TAG_BACKGROUND_COLOR));
+                assertEquals(52, directory.getByteArray(PngDirectory.TAG_BACKGROUND_COLOR)[1]);
+            } else {
+                assertEquals(0, directory.getTagCount());
+            }
         }
     }
 }

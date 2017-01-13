@@ -66,7 +66,7 @@ public class ExifDirectoryTest
     @Test
     public void testDateTime() throws JpegProcessingException, IOException, MetadataException
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2a.jpg.app1");
+        Metadata metadata = ExifReaderTest.processBytes(null, "Tests/Data/nikonMakernoteType2a.jpg.app1");
 
         ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
         ExifSubIFDDirectory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
@@ -146,7 +146,7 @@ public class ExifDirectoryTest
     @Test
     public void testResolution() throws JpegProcessingException, IOException, MetadataException
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/withUncompressedRGBThumbnail.jpg.app1");
+        Metadata metadata = ExifReaderTest.processBytes(null, "Tests/Data/withUncompressedRGBThumbnail.jpg.app1");
 
         ExifThumbnailDirectory thumbnailDirectory = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
         assertNotNull(thumbnailDirectory);
@@ -160,7 +160,7 @@ public class ExifDirectoryTest
     @Test
     public void testGeoLocation() throws IOException, MetadataException
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/withExifAndIptc.jpg.app1.0");
+        Metadata metadata = ExifReaderTest.processBytes(null, "Tests/Data/withExifAndIptc.jpg.app1.0");
 
         GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
         assertNotNull(gpsDirectory);
@@ -172,7 +172,7 @@ public class ExifDirectoryTest
     @Test
     public void testGpsDate() throws IOException, MetadataException
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/withPanasonicFaces.jpg.app1");
+        Metadata metadata = ExifReaderTest.processBytes(null, "Tests/Data/withPanasonicFaces.jpg.app1");
 
         GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
         assertNotNull(gpsDirectory);

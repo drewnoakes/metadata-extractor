@@ -30,6 +30,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -67,37 +68,61 @@ public class ExifReader implements JpegSegmentMetadataReader
 
     public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         assert(segmentType == JpegSegmentType.APP1);
 
         for (byte[] segmentBytes : segments) {
             // Filter any segments containing unexpected preambles
             if (segmentBytes.length < JPEG_SEGMENT_PREAMBLE.length() || !new String(segmentBytes, 0, JPEG_SEGMENT_PREAMBLE.length()).equals(JPEG_SEGMENT_PREAMBLE))
                 continue;
-            extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length());
+            extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length(), filter);
         }
     }
 
     /** Reads TIFF formatted Exif data from start of the specified {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
-        extract(reader, metadata, 0);
+        extract(reader, metadata, 0, null, null);
+    }
+
+    /** Reads TIFF formatted Exif data from start of the specified {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        extract(reader, metadata, 0, filter);
     }
 
     /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset)
     {
-        extract(reader, metadata, readerOffset, null);
+        extract(reader, metadata, readerOffset, null, null);
+    }
+
+    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable final MetadataFilter filter)
+    {
+        extract(reader, metadata, readerOffset, null, filter);
     }
 
     /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory)
+    {
+        extract(reader, metadata, readerOffset, parentDirectory, null);
+    }
+
+    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory, @Nullable final MetadataFilter filter)
     {
         try {
             // Read the TIFF-formatted Exif data
             new TiffReader().processTiff(
                 reader,
                 new ExifTiffHandler(metadata, _storeThumbnailBytes, parentDirectory),
-                readerOffset
+                readerOffset,
+                filter
             );
         } catch (TiffProcessingException e) {
             // TODO what do to with this error state?

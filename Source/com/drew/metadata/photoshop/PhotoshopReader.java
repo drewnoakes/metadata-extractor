@@ -27,8 +27,10 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.filter.MetadataFilter;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.xmp.XmpReader;
@@ -56,6 +58,11 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
         for (byte[] segmentBytes : segments) {
@@ -66,12 +73,21 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
             extract(
                 new SequentialByteArrayReader(segmentBytes, preambleLength + 1),
                 segmentBytes.length - preambleLength - 1,
-                metadata);
+                metadata,
+                filter);
         }
     }
 
     public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata)
     {
+        extract(reader, length, metadata, null);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(PhotoshopDirectory.class))
+            return;
+
         PhotoshopDirectory directory = new PhotoshopDirectory();
         metadata.addDirectory(directory);
 
@@ -125,15 +141,15 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 if (signature.equals("8BIM")) {
                     if (tagType == PhotoshopDirectory.TAG_IPTC)
-                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory);
+                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory, filter);
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
-                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
+                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory, filter);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
-                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
+                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory, filter);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
-                        new XmpReader().extract(tagBytes, metadata, directory);
+                        new XmpReader().extract(tagBytes, metadata, directory, filter);
                     else
-                        directory.setByteArray(tagType, tagBytes);
+                        directory.setByteArray(tagType, tagBytes, filter);
 
                     if (tagType >= 0x0fa0 && tagType <= 0x1387)
                         PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));

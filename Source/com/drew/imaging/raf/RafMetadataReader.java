@@ -23,7 +23,9 @@ package com.drew.imaging.raf;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +40,12 @@ public class RafMetadataReader
 {
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
+    {
+        return readMetadata(inputStream, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable final MetadataFilter filter) throws JpegProcessingException, IOException
     {
         if (!inputStream.markSupported())
             throw new IOException("Stream must support mark/reset");
@@ -62,7 +70,7 @@ public class RafMetadataReader
             }
         }
 
-        return JpegMetadataReader.readMetadata(inputStream);
+        return JpegMetadataReader.readMetadata(inputStream, filter);
     }
 
     private RafMetadataReader() throws Exception

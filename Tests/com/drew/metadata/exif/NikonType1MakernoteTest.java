@@ -53,7 +53,7 @@ public class NikonType1MakernoteTest
     @Before
     public void setUp() throws Exception
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType1.jpg.app1");
+        Metadata metadata = ExifReaderTest.processBytes(null, "Tests/Data/nikonMakernoteType1.jpg.app1");
 
         _nikonDirectory = metadata.getFirstDirectoryOfType(NikonType1MakernoteDirectory.class);
         _exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);

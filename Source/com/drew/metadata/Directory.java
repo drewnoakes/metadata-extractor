@@ -24,6 +24,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.lang.annotations.SuppressWarnings;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
@@ -201,7 +202,19 @@ public abstract class Directory
      */
     public void setInt(int tagType, int value)
     {
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets an <code>int</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as an int
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setInt(int tagType, int value, @Nullable MetadataFilter filter)
+    {
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -212,7 +225,19 @@ public abstract class Directory
      */
     public void setIntArray(int tagType, @NotNull int[] ints)
     {
-        setObjectArray(tagType, ints);
+        setObjectArray(tagType, ints, null);
+    }
+
+    /**
+     * Sets an <code>int[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param ints    the int array to store
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setIntArray(int tagType, @NotNull int[] ints, @Nullable MetadataFilter filter)
+    {
+        setObjectArray(tagType, ints, filter);
     }
 
     /**
@@ -223,7 +248,19 @@ public abstract class Directory
      */
     public void setFloat(int tagType, float value)
     {
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>float</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a float
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setFloat(int tagType, float value, @Nullable MetadataFilter filter)
+    {
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -234,7 +271,19 @@ public abstract class Directory
      */
     public void setFloatArray(int tagType, @NotNull float[] floats)
     {
-        setObjectArray(tagType, floats);
+        setObjectArray(tagType, floats, null);
+    }
+
+    /**
+     * Sets a <code>float[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param floats  the float array to store
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setFloatArray(int tagType, @NotNull float[] floats, @Nullable MetadataFilter filter)
+    {
+        setObjectArray(tagType, floats, filter);
     }
 
     /**
@@ -245,7 +294,19 @@ public abstract class Directory
      */
     public void setDouble(int tagType, double value)
     {
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>double</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a double
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setDouble(int tagType, double value, @Nullable MetadataFilter filter)
+    {
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -256,7 +317,19 @@ public abstract class Directory
      */
     public void setDoubleArray(int tagType, @NotNull double[] doubles)
     {
-        setObjectArray(tagType, doubles);
+        setObjectArray(tagType, doubles, null);
+    }
+
+    /**
+     * Sets a <code>double[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param doubles the double array to store
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setDoubleArray(int tagType, @NotNull double[] doubles, @Nullable MetadataFilter filter)
+    {
+        setObjectArray(tagType, doubles, filter);
     }
 
     /**
@@ -270,7 +343,22 @@ public abstract class Directory
     {
         if (value == null)
             throw new NullPointerException("cannot set a null StringValue");
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>StringValue</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a StringValue
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    @java.lang.SuppressWarnings({ "ConstantConditions" })
+    public void setStringValue(int tagType, @NotNull StringValue value, @Nullable MetadataFilter filter)
+    {
+        if (value == null)
+            throw new NullPointerException("cannot set a null StringValue");
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -284,7 +372,22 @@ public abstract class Directory
     {
         if (value == null)
             throw new NullPointerException("cannot set a null String");
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>String</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a String
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    @java.lang.SuppressWarnings({ "ConstantConditions" })
+    public void setString(int tagType, @NotNull String value, @Nullable MetadataFilter filter)
+    {
+        if (value == null)
+            throw new NullPointerException("cannot set a null String");
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -295,7 +398,19 @@ public abstract class Directory
      */
     public void setStringArray(int tagType, @NotNull String[] strings)
     {
-        setObjectArray(tagType, strings);
+        setObjectArray(tagType, strings, null);
+    }
+
+    /**
+     * Sets a <code>String[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param strings the String array to store
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setStringArray(int tagType, @NotNull String[] strings, @Nullable MetadataFilter filter)
+    {
+        setObjectArray(tagType, strings, filter);
     }
 
     /**
@@ -306,7 +421,19 @@ public abstract class Directory
      */
     public void setStringValueArray(int tagType, @NotNull StringValue[] strings)
     {
-        setObjectArray(tagType, strings);
+        setObjectArray(tagType, strings, null);
+    }
+
+    /**
+     * Sets a <code>StringValue[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param strings the StringValue array to store
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setStringValueArray(int tagType, @NotNull StringValue[] strings, @Nullable MetadataFilter filter)
+    {
+        setObjectArray(tagType, strings, filter);
     }
 
     /**
@@ -317,7 +444,19 @@ public abstract class Directory
      */
     public void setBoolean(int tagType, boolean value)
     {
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>boolean</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a boolean
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setBoolean(int tagType, boolean value, @Nullable MetadataFilter filter)
+    {
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -328,7 +467,19 @@ public abstract class Directory
      */
     public void setLong(int tagType, long value)
     {
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>long</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a long
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setLong(int tagType, long value, @Nullable MetadataFilter filter)
+    {
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -339,7 +490,19 @@ public abstract class Directory
      */
     public void setDate(int tagType, @NotNull java.util.Date value)
     {
-        setObject(tagType, value);
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>java.util.Date</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a java.util.Date
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setDate(int tagType, @NotNull java.util.Date value, @Nullable MetadataFilter filter)
+    {
+        setObject(tagType, value, filter);
     }
 
     /**
@@ -350,7 +513,19 @@ public abstract class Directory
      */
     public void setRational(int tagType, @NotNull Rational rational)
     {
-        setObject(tagType, rational);
+        setObject(tagType, rational, null);
+    }
+
+    /**
+     * Sets a <code>Rational</code> value for the specified tag.
+     *
+     * @param tagType  the tag's value as an int
+     * @param rational rational number
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setRational(int tagType, @NotNull Rational rational, @Nullable MetadataFilter filter)
+    {
+        setObject(tagType, rational, filter);
     }
 
     /**
@@ -361,7 +536,19 @@ public abstract class Directory
      */
     public void setRationalArray(int tagType, @NotNull Rational[] rationals)
     {
-        setObjectArray(tagType, rationals);
+        setObjectArray(tagType, rationals, null);
+    }
+
+    /**
+     * Sets a <code>Rational[]</code> (array) for the specified tag.
+     *
+     * @param tagType   the tag identifier
+     * @param rationals the Rational array to store
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setRationalArray(int tagType, @NotNull Rational[] rationals, @Nullable MetadataFilter filter)
+    {
+        setObjectArray(tagType, rationals, filter);
     }
 
     /**
@@ -372,7 +559,19 @@ public abstract class Directory
      */
     public void setByteArray(int tagType, @NotNull byte[] bytes)
     {
-        setObjectArray(tagType, bytes);
+        setObjectArray(tagType, bytes, null);
+    }
+
+    /**
+     * Sets a <code>byte[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param bytes   the byte array to store
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setByteArray(int tagType, @NotNull byte[] bytes, @Nullable MetadataFilter filter)
+    {
+        setObjectArray(tagType, bytes, filter);
     }
 
     /**
@@ -385,6 +584,23 @@ public abstract class Directory
     @java.lang.SuppressWarnings( { "ConstantConditions", "UnnecessaryBoxing" })
     public void setObject(int tagType, @NotNull Object value)
     {
+        setObject(tagType, value, null);
+    }
+
+    /**
+     * Sets a <code>Object</code> for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     * @throws NullPointerException if value is <code>null</code>
+     */
+    @java.lang.SuppressWarnings( { "ConstantConditions", "UnnecessaryBoxing" })
+    public void setObject(int tagType, @NotNull Object value, @Nullable MetadataFilter filter)
+    {
+        if (filter != null && !filter.tagFilter(this, tagType))
+            return;
+
         if (value == null)
             throw new NullPointerException("cannot set a null object");
 
@@ -408,7 +624,20 @@ public abstract class Directory
     public void setObjectArray(int tagType, @NotNull Object array)
     {
         // for now, we don't do anything special -- this method might be a candidate for removal once the dust settles
-        setObject(tagType, array);
+        setObject(tagType, array, null);
+    }
+
+    /**
+     * Sets an array <code>Object</code> for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param array   the array of values for the specified tag
+     * @param filter  the {@link MetadataFilter} or <code>null</code>
+     */
+    public void setObjectArray(int tagType, @NotNull Object array, @Nullable MetadataFilter filter)
+    {
+        // for now, we don't do anything special -- this method might be a candidate for removal once the dust settles
+        setObject(tagType, array, filter);
     }
 
 // TAG GETTERS

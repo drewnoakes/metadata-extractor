@@ -23,8 +23,10 @@ package com.drew.metadata.jpeg;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.filter.MetadataFilter;
 
 import java.util.Collections;
 
@@ -44,12 +46,20 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
 
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
+        readJpegSegments(segments, metadata, segmentType, null);
+    }
+
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable final MetadataFilter filter)
+    {
+        if (filter != null && !filter.directoryFilter(JpegCommentDirectory.class))
+            return;
+
         for (byte[] segmentBytes : segments) {
             JpegCommentDirectory directory = new JpegCommentDirectory();
             metadata.addDirectory(directory);
 
             // The entire contents of the directory are the comment
-            directory.setStringValue(JpegCommentDirectory.TAG_COMMENT, new StringValue(segmentBytes, null));
+            directory.setStringValue(JpegCommentDirectory.TAG_COMMENT, new StringValue(segmentBytes, null), filter);
         }
     }
 }
