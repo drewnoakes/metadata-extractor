@@ -217,19 +217,6 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     }
 
     /**
-     * Decides whether a brute-force simplification calculation should be avoided
-     * by comparing the maximum number of possible calculations with some threshold.
-     *
-     * @return true if the simplification should be performed, otherwise false
-     */
-    private boolean tooComplexForSimplification()
-    {
-        double maxPossibleCalculations = (((double) (Math.min(_denominator, _numerator) - 1) / 5d) + 2);
-        final int maxSimplificationCalculations = 1000;
-        return maxPossibleCalculations > maxSimplificationCalculations;
-    }
-
-    /**
      * Compares two {@link Rational} instances, returning true if they are mathematically
      * equivalent (in consistence with {@link Rational#equals(Object)} method).
      *
@@ -243,6 +230,34 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      */
     public int compareTo(Rational that) {
         return this.doubleValue() < that.doubleValue() ? -1 : ((this.doubleValue() == that.doubleValue()) ? 0 : 1);
+    }
+
+    /**
+     * Indicates whether this instance and <code>other</code> are numerically equal,
+     * even if their representations differ.
+     *
+     * For example, 1/2 is equal to 10/20 by this method.
+     * Similarly, 1/0 is equal to 100/0 by this method.
+     * To test equal representations, use EqualsExact.
+     *
+     * @param other
+     */
+    public boolean equals(Rational other) {
+        return other.doubleValue() == doubleValue();
+    }
+
+    /**
+     * Indicates whether this instance and <code>other</code> have identical
+     * Numerator and Denominator.
+     * <p>
+     * For example, 1/2 is not equal to 10/20 by this method.
+     * Similarly, 1/0 is not equal to 100/0 by this method.
+     * To test numerically equivalence, use Equals(Rational).</p>
+     *
+     * @param other
+     */
+    public boolean equalsExact(Rational other) {
+        return getDenominator() == other.getDenominator() && getNumerator() == other.getNumerator();
     }
 
     /**
@@ -270,49 +285,33 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
 
     /**
      * <p>
-     * Simplifies the {@link Rational} number.</p>
+     * Simplifies the representation of this {@link Rational} number.</p>
      * <p>
-     * Prime number series: 1, 2, 3, 5, 7, 9, 11, 13, 17</p>
+     * For example, 5/10 simplifies to 1/2 because both Numerator
+     * and Denominator share a common factor of 5.</p>
      * <p>
-     * To reduce a rational, need to see if both numerator and denominator are divisible
-     * by a common factor.  Using the prime number series in ascending order guarantees
-     * the minimum number of checks required.</p>
-     * <p>
-     * However, generating the prime number series seems to be a hefty task.  Perhaps
-     * it's simpler to check if both d &amp; n are divisible by all numbers from 2 {@literal ->}
-     * (Math.min(denominator, numerator) / 2).  In doing this, one can check for 2
-     * and 5 once, then ignore all even numbers, and all numbers ending in 0 or 5.
-     * This leaves four numbers from every ten to check.</p>
-     * <p>
-     * Therefore, the max number of pairs of modulus divisions required will be:</p>
-     * <pre><code>
-     *    4   Math.min(denominator, numerator) - 1
-     *   -- * ------------------------------------ + 2
-     *   10                    2
+     * Uses the Euclidean Algorithm to find the greatest common divisor.</p>
      *
-     *   Math.min(denominator, numerator) - 1
-     * = ------------------------------------ + 2
-     *                  5
-     * </code></pre>
-     *
-     * @return a simplified instance, or if the Rational could not be simplified,
-     *         returns itself (unchanged)
+     * @return A simplified instance if one exists, otherwise a copy of the original value.
      */
     @NotNull
     public Rational getSimplifiedInstance()
     {
-        if (tooComplexForSimplification()) {
-            return this;
+        long gcd = GCD(Math.abs(_numerator), Math.abs(_denominator));
+
+        return new Rational(_numerator / gcd, _denominator / gcd);
+    }
+
+    private static long GCD(long a, long b)
+    {
+        while (a != 0 && b != 0)
+        {
+            if (a > b)
+                a %= b;
+            else
+                b %= a;
         }
-        for (int factor = 2; factor <= Math.min(_denominator, _numerator); factor++) {
-            if ((factor % 2 == 0 && factor > 2) || (factor % 5 == 0 && factor > 5)) {
-                continue;
-            }
-            if (_denominator % factor == 0 && _numerator % factor == 0) {
-                // found a common factor
-                return new Rational(_numerator / factor, _denominator / factor);
-            }
-        }
-        return this;
+
+        return a == 0 ? b : a;
     }
 }
