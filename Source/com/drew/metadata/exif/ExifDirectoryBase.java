@@ -644,7 +644,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_RELATED_IMAGE_HEIGHT, "Related Image Height");
         map.put(TAG_RATING, "Rating");
         map.put(TAG_CFA_REPEAT_PATTERN_DIM, "CFA Repeat Pattern Dim");
-        map.put(TAG_CFA_PATTERN_2, "CFA Pattern 2");
+        map.put(TAG_CFA_PATTERN_2, "CFA Pattern");
         map.put(TAG_BATTERY_LEVEL, "Battery Level");
         map.put(TAG_COPYRIGHT, "Copyright");
         map.put(TAG_EXPOSURE_TIME, "Exposure Time");

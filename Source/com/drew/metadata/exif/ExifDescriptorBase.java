@@ -124,6 +124,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getThresholdingDescription();
             case TAG_FILL_ORDER:
                 return getFillOrderDescription();
+            case TAG_CFA_PATTERN_2:
+                return getCfaPattern2Description();
             case TAG_EXPOSURE_TIME:
                 return getExposureTimeDescription();
             case TAG_SHUTTER_SPEED:
@@ -710,35 +712,83 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     /// Converted from Exiftool version 10.33 created by Phil Harvey
     /// http://www.sno.phy.queensu.ca/~phil/exiftool/
     /// lib\Image\ExifTool\Exif.pm
+    ///
+    /// Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
+    /// It does not apply to all sensing methods.
     /// </remarks>
     @Nullable
     public String getCfaPatternDescription()
     {
-        int[] intpattern = decodeCfaPattern(TAG_CFA_PATTERN);
+        return formatCFAPattern(decodeCfaPattern(TAG_CFA_PATTERN));
+    }
 
-        if (intpattern.length < 2)
+    /// <summary>
+    /// String description of CFA Pattern
+    /// </summary>
+    /// <remarks>
+    /// Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
+    /// It does not apply to all sensing methods.
+    ///
+    /// ExifDirectoryBase.TAG_CFA_PATTERN_2 holds only the pixel pattern. ExifDirectoryBase.TAG_CFA_REPEAT_PATTERN_DIM is expected to exist and pass
+    /// some conditional tests.
+    /// </remarks>
+    @Nullable
+    public String getCfaPattern2Description()
+    {
+        byte[] values = _directory.getByteArray(TAG_CFA_PATTERN_2);
+        if (values == null)
+            return null;
+
+        int[] repeatPattern = _directory.getIntArray(TAG_CFA_REPEAT_PATTERN_DIM);
+        if (repeatPattern == null)
+            return String.format("Repeat Pattern not found for CFAPattern (%s)", super.getDescription(TAG_CFA_PATTERN_2));
+
+        if (repeatPattern.length == 2 && values.length == (repeatPattern[0] * repeatPattern[1]))
+        {
+            int[] intpattern = new int[2 + values.length];
+            intpattern[0] = repeatPattern[0];
+            intpattern[1] = repeatPattern[1];
+
+            for (int i = 0; i < values.length; i++)
+                intpattern[i + 2] = values[i] & 0xFF;   // convert the values[i] byte to unsigned
+
+            return formatCFAPattern(intpattern);
+        }
+
+        return String.format("Unknown Pattern (%s)", super.getDescription(TAG_CFA_PATTERN_2));
+    }
+
+    @Nullable
+    private static String formatCFAPattern(int[] pattern)
+    {
+        if (pattern.length < 2)
             return "<truncated data>";
-        else if (intpattern[0] == 0 && intpattern[1] == 0)
+        if (pattern[0] == 0 && pattern[1] == 0)
             return "<zero pattern size>";
 
-        int end = 2 + intpattern[0] * intpattern[1];
-        if (end > intpattern.length)
+        int end = 2 + pattern[0] * pattern[1];
+        if (end > pattern.length)
             return "<invalid pattern size>";
 
         String[] cfaColors = { "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow", "White" };
 
-        String ret = "[";
-        for(int pos = 2; pos < end; pos++)
+        StringBuilder ret = new StringBuilder();
+        ret.append("[");
+        for (int pos = 2; pos < end; pos++)
         {
-            ret += cfaColors[intpattern[pos]];
-            if ((pos - 2) % intpattern[1] == 0)
-                ret += ",";
-            else if(pos != end - 1)
-                ret += "][";
-        }
-        ret += "]";
+            if (pattern[pos] <= cfaColors.length - 1)
+                ret.append(cfaColors[pattern[pos]]);
+            else
+                ret.append("Unknown");      // indicated pattern position is outside the array bounds
 
-        return ret;
+            if ((pos - 2) % pattern[1] == 0)
+                ret.append(",");
+            else if(pos != end - 1)
+                ret.append("][");
+        }
+        ret.append("]");
+
+        return ret.toString();
     }
 
     /// <summary>
@@ -748,6 +798,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     /// Converted from Exiftool version 10.33 created by Phil Harvey
     /// http://www.sno.phy.queensu.ca/~phil/exiftool/
     /// lib\Image\ExifTool\Exif.pm
+    ///
+    /// The value consists of:
+    /// - Two short, being the grid width and height of the repeated pattern.
+    /// - Next, for every pixel in that pattern, an identification code.
     /// </remarks>
     private int[] decodeCfaPattern(int tagType)
     {

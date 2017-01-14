@@ -347,7 +347,7 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    public String getOrientationDescription(int tag)
+    protected String getOrientationDescription(int tag)
     {
         return getIndexedDescription(tag, 1,
             "Top, left side (Horizontal / normal)",
@@ -361,7 +361,7 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    public String getShutterSpeedDescription(int tag)
+    protected String getShutterSpeedDescription(int tag)
     {
         // I believe this method to now be stable, but am leaving some alternative snippets of
         // code in here, to assist anyone who's looking into this (given that I don't have a public CVS).
@@ -411,7 +411,7 @@ public class TagDescriptor<T extends Directory>
 
     // EXIF LightSource
     @Nullable
-    public String GetLightSourceDescription(short wbtype)
+    protected String GetLightSourceDescription(short wbtype)
     {
         switch (wbtype)
         {
