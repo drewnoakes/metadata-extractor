@@ -25,6 +25,8 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.drew.imaging.FileType;
+import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.StringUtil;
@@ -258,7 +260,7 @@ public class ProcessAllImagesInFolderUtility
                 deleteRecursively(metadataDirectory);
         }
 
-        private static void deleteRecursively(File directory)
+        private static void deleteRecursively(@NotNull File directory)
         {
             if (!directory.isDirectory())
                 throw new IllegalArgumentException("Must be a directory.");
@@ -324,20 +326,33 @@ public class ProcessAllImagesInFolderUtility
                             writer.write(NEW_LINE);
                         // Special handling for XMP directory data
                         if (directory instanceof XmpDirectory) {
-                            Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
                             boolean wrote = false;
-                            for (XmpDirectory xmpDirectory : xmpDirectories) {
-                                XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
-                                try {
-                                    XMPIterator iterator = xmpMeta.iterator();
-                                    while (iterator.hasNext()) {
-                                        XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
-                                        writer.format("[XMPMeta - %s] %s = %s%s", prop.getNamespace(), prop.getPath(), prop.getValue(), NEW_LINE);
-                                        wrote = true;
-                                    }
-                                } catch (XMPException e) {
-                                    e.printStackTrace();
+                            XmpDirectory xmpDirectory = (XmpDirectory)directory;
+                            XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
+                            try {
+                                XMPIterator iterator = xmpMeta.iterator();
+                                while (iterator.hasNext()) {
+                                    XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
+                                    String ns = prop.getNamespace();
+                                    String path = prop.getPath();
+                                    String value = prop.getValue();
+
+                                    if (ns == null)
+                                        ns = "";
+                                    if (path == null)
+                                        path = "";
+
+                                    final int MAX_XMP_VALUE_LENGTH = 512;
+                                    if (value == null)
+                                        value = "";
+                                    else if (value.length() > MAX_XMP_VALUE_LENGTH)
+                                        value = String.format("%s <truncated from %d characters>", value.substring(0, MAX_XMP_VALUE_LENGTH), value.length());
+
+                                    writer.format("[XMPMeta - %s] %s = %s%s", ns, path, value, NEW_LINE);
+                                    wrote = true;
                                 }
+                            } catch (XMPException e) {
+                                e.printStackTrace();
                             }
                             if (wrote)
                                 writer.write(NEW_LINE);
@@ -411,7 +426,19 @@ public class ProcessAllImagesInFolderUtility
                 "UTF-8"
             );
             writer.write("FILE: " + file.getName() + NEW_LINE);
-            writer.write(NEW_LINE);
+
+            // Detect file type
+            BufferedInputStream stream = null;
+            try {
+                stream = new BufferedInputStream(new FileInputStream(file));
+                FileType fileType = FileTypeDetector.detectFileType(stream);
+                writer.write(String.format("TYPE: %s" + NEW_LINE, fileType.toString().toUpperCase()));
+                writer.write(NEW_LINE);
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
 
             return new PrintWriter(writer);
         }
@@ -474,6 +501,7 @@ public class ProcessAllImagesInFolderUtility
                 for (Directory directory : metadata.getDirectories()) {
                     if (directory.getClass().getName().contains("Makernote")) {
                         makernote = directory.getName().replace("Makernote", "").trim();
+                        break;
                     }
                 }
                 if (makernote == null) {
@@ -501,7 +529,7 @@ public class ProcessAllImagesInFolderUtility
             // Sanitise the extension
             extension = extension.toLowerCase();
             if (_extensionEquivalence.containsKey(extension))
-                extension =_extensionEquivalence.get(extension);
+                extension = _extensionEquivalence.get(extension);
 
             List<Row> list = _rowListByExtension.get(extension);
             if (list == null) {

@@ -190,6 +190,7 @@ public class XmpReaderTest
 
         // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
 
+        assertNotNull(actual);
         assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
 //        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
 
@@ -206,6 +207,7 @@ public class XmpReaderTest
 
         // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
 
+        assertNotNull(actual);
         assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
 //        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
 
@@ -222,6 +224,7 @@ public class XmpReaderTest
 
         // Underlying string value (in XMP data) is: 2010-12-12T12:41:35.00+01:00
 
+        assertNotNull(actual);
         assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("11:41:35 12 12 2010 +0000"), actual);
 //        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("12:41:35 12 Dec 2010 +0100"), actual);
 
@@ -244,6 +247,7 @@ public class XmpReaderTest
 
         // Underlying string value (in XMP data) is: 2011-01-09T21:31:56.078-01:00
 
+        assertNotNull(actual);
         assertEquals(new SimpleDateFormat("hh:mm:ss.S dd MM yyyy Z").parse("22:31:56.078 09 01 2011 +0000"), actual);
 //        assertEquals(new SimpleDateFormat("HH:mm:ss.S dd MMM yyyy Z").parse("21:31:56.078 09 Jan 2011 -0100"), actual);
 
@@ -261,6 +265,7 @@ public class XmpReaderTest
 
         // Underlying string value (in XMP data) is: 2011-01-10T21:09+01:00
 
+        assertNotNull(actual);
         assertEquals(new SimpleDateFormat("hh:mm:ss dd MM yyyy Z").parse("20:09:00 10 01 2011 +0000"), actual);
 //        assertEquals(new SimpleDateFormat("HH:mm:ss dd MMM yyyy Z").parse("21:09:00 10 Jan 2011 +0100"), actual);
 

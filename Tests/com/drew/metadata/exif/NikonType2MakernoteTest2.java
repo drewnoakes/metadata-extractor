@@ -29,11 +29,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
 public class NikonType2MakernoteTest2
 {
+    private Metadata _metadata;
     private NikonType2MakernoteDirectory _nikonDirectory;
     private ExifIFD0Directory _exifIFD0Directory;
     private ExifSubIFDDirectory _exifSubIFDDirectory;
@@ -42,12 +45,12 @@ public class NikonType2MakernoteTest2
     @Before
     public void setUp() throws Exception
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2b.jpg.app1");
+        _metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2b.jpg.app1");
 
-        _nikonDirectory = metadata.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class);
-        _exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-        _exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-        _thumbDirectory = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
+        _nikonDirectory = _metadata.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class);
+        _exifIFD0Directory = _metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        _exifSubIFDDirectory = _metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+        _thumbDirectory = _metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
 
         assertNotNull(_nikonDirectory);
         assertNotNull(_exifSubIFDDirectory);
@@ -97,7 +100,35 @@ public class NikonType2MakernoteTest2
         assertEquals("                ", _nikonDirectory.getString(0x008f));
         assertEquals(0, _nikonDirectory.getInt(0x0094));
         assertEquals("FPNR", _nikonDirectory.getString(0x0095));
-        assertEquals("80 114 105 110 116 73 77 0 48 49 48 48 0 0 13 0 1 0 22 0 22 0 2 0 1 0 0 0 3 0 94 0 0 0 7 0 0 0 0 0 8 0 0 0 0 0 9 0 0 0 0 0 10 0 0 0 0 0 11 0 166 0 0 0 12 0 0 0 0 0 13 0 0 0 0 0 14 0 190 0 0 0 0 1 5 0 0 0 1 1 1 0 0 0 9 17 0 0 16 39 0 0 11 15 0 0 16 39 0 0 151 5 0 0 16 39 0 0 176 8 0 0 16 39 0 0 1 28 0 0 16 39 0 0 94 2 0 0 16 39 0 0 139 0 0 0 16 39 0 0 203 3 0 0 16 39 0 0 229 27 0 0 16 39 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", _nikonDirectory.getString(0x0e00));
+
+        // PrintIM
+        HashMap<Integer, String> _expectedData = new HashMap<Integer, String>();                        
+        _expectedData.put(0x0000, "0100");
+        _expectedData.put(0x0001, "0x00160016");
+        _expectedData.put(0x0002, "0x00000001");
+        _expectedData.put(0x0003, "0x0000005e");
+        _expectedData.put(0x0007, "0x00000000");
+        _expectedData.put(0x0008, "0x00000000");
+        _expectedData.put(0x0009, "0x00000000");
+        _expectedData.put(0x000A, "0x00000000");
+        _expectedData.put(0x000B, "0x000000a6");
+        _expectedData.put(0x000C, "0x00000000");
+        _expectedData.put(0x000D, "0x00000000");
+        _expectedData.put(0x000E, "0x000000be");
+        _expectedData.put(0x0100, "0x00000005");
+        _expectedData.put(0x0101, "0x00000001");
+
+        PrintIMDirectory nikonPrintImDirectory = _metadata.getFirstDirectoryOfType(PrintIMDirectory.class);
+
+        assertNotNull(nikonPrintImDirectory);
+
+        assertEquals(_expectedData.size(), nikonPrintImDirectory.getTagCount());
+        for (Map.Entry<Integer, String> _expected : _expectedData.entrySet()) 
+        {
+            assertEquals(_expected.getValue(), nikonPrintImDirectory.getDescription(_expected.getKey()));
+        }
+
+//        assertEquals("80 114 105 110 116 73 77 0 48 49 48 48 0 0 13 0 1 0 22 0 22 0 2 0 1 0 0 0 3 0 94 0 0 0 7 0 0 0 0 0 8 0 0 0 0 0 9 0 0 0 0 0 10 0 0 0 0 0 11 0 166 0 0 0 12 0 0 0 0 0 13 0 0 0 0 0 14 0 190 0 0 0 0 1 5 0 0 0 1 1 1 0 0 0 9 17 0 0 16 39 0 0 11 15 0 0 16 39 0 0 151 5 0 0 16 39 0 0 176 8 0 0 16 39 0 0 1 28 0 0 16 39 0 0 94 2 0 0 16 39 0 0 139 0 0 0 16 39 0 0 203 3 0 0 16 39 0 0 229 27 0 0 16 39 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", _nikonDirectory.getString(0x0e00));
 //        assertEquals("PrintIM", _nikonDirectory.getString(0x0e00));
         assertEquals(1394, _nikonDirectory.getInt(0x0e10));
     }

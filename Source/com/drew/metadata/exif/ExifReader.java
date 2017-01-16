@@ -89,20 +89,24 @@ public class ExifReader implements JpegSegmentMetadataReader
         extract(reader, metadata, readerOffset, null);
     }
 
-    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory)
     {
+        ExifTiffHandler exifTiffHandler = new ExifTiffHandler(metadata, _storeThumbnailBytes, parentDirectory);
+
         try {
             // Read the TIFF-formatted Exif data
             new TiffReader().processTiff(
                 reader,
-                new ExifTiffHandler(metadata, _storeThumbnailBytes, parentDirectory),
+                exifTiffHandler,
                 readerOffset
             );
         } catch (TiffProcessingException e) {
+            exifTiffHandler.error("Exception processing TIFF data: " + e.getMessage());
             // TODO what do to with this error state?
             e.printStackTrace(System.err);
         } catch (IOException e) {
+            exifTiffHandler.error("Exception processing TIFF data: " + e.getMessage());
             // TODO what do to with this error state?
             e.printStackTrace(System.err);
         }

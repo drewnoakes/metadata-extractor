@@ -45,20 +45,12 @@ public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirect
     public String getDescription(int tagType)
     {
         switch (tagType) {
-//            case TAG_PRINT_IMAGE_MATCHING_INFO:
-//                return getPrintImageMatchingInfoDescription();
 //            case TAG_PROPRIETARY_THUMBNAIL:
 //                return getProprietaryThumbnailDataDescription();
             default:
                 return super.getDescription(tagType);
         }
     }
-
-//    @Nullable
-//    public String getPrintImageMatchingInfoDescription()
-//    {
-//        return getByteLengthDescription(TAG_PRINT_IMAGE_MATCHING_INFO);
-//    }
 //
 //    @Nullable
 //    public String getProprietaryThumbnailDataDescription()

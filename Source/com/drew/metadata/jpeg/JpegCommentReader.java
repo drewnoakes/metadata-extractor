@@ -24,6 +24,7 @@ import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 
 import java.util.Collections;
 
@@ -48,7 +49,7 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
             metadata.addDirectory(directory);
 
             // The entire contents of the directory are the comment
-            directory.setString(JpegCommentDirectory.TAG_COMMENT, new String(segmentBytes));
+            directory.setStringValue(JpegCommentDirectory.TAG_COMMENT, new StringValue(segmentBytes, null));
         }
     }
 }

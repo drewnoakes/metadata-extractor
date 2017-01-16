@@ -52,7 +52,7 @@ public final class Metadata
         return _directories;
     }
 
-    @Nullable
+    @NotNull
     @SuppressWarnings("unchecked")
     public <T extends Directory> Collection<T> getDirectoriesOfType(Class<T> type)
     {

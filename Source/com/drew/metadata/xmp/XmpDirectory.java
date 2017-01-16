@@ -324,7 +324,7 @@ public class XmpDirectory extends Directory
      * Gets the XMPMeta object used to populate this directory. It can be used for more XMP-oriented operations. If one does not exist it will be
      * created.
      */
-    @Nullable
+    @NotNull
     public XMPMeta getXMPMeta()
     {
         if (_xmpMeta == null)

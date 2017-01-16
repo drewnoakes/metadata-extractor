@@ -579,7 +579,7 @@ public abstract class ExifDirectoryBase extends Directory
     /** Rational64u. */
     public static final int TAG_GAMMA                             = 0xA500;
 
-    public static final int TAG_PRINT_IM                          = 0xC4A5;
+    public static final int TAG_PRINT_IMAGE_MATCHING_INFO         = 0xC4A5;
 
     public static final int TAG_PANASONIC_TITLE                   = 0xC6D2;
     public static final int TAG_PANASONIC_TITLE_2                 = 0xC6D3;
@@ -735,7 +735,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_LENS_MODEL, "Lens Model");
         map.put(TAG_LENS_SERIAL_NUMBER, "Lens Serial Number");
         map.put(TAG_GAMMA, "Gamma");
-        map.put(TAG_PRINT_IM, "Print IM");
+        map.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
         map.put(TAG_PANASONIC_TITLE, "Panasonic Title");
         map.put(TAG_PANASONIC_TITLE_2, "Panasonic Title (2)");
         map.put(TAG_PADDING, "Padding");

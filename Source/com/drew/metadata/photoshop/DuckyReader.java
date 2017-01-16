@@ -22,6 +22,7 @@ package com.drew.metadata.photoshop;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.lang.Charsets;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
@@ -95,7 +96,7 @@ public class DuckyReader implements JpegSegmentMetadataReader
                     case DuckyDirectory.TAG_COPYRIGHT:
                     {
                         reader.skip(4);
-                        directory.setString(tag, reader.getString(length - 4, "UTF-16BE"));
+                        directory.setStringValue(tag, reader.getStringValue(length - 4, Charsets.UTF_16BE));
                         break;
                     }
                     default:

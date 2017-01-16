@@ -28,6 +28,7 @@ import com.drew.lang.annotations.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -268,7 +269,7 @@ public class TagDescriptor<T extends Directory>
     }
 
     @Nullable
-    protected String getAsciiStringFromBytes(int tag)
+    protected String getStringFromBytes(int tag, Charset cs)
     {
         byte[] values = _directory.getByteArray(tag);
 
@@ -276,7 +277,7 @@ public class TagDescriptor<T extends Directory>
             return null;
 
         try {
-            return new String(values, "ASCII").trim();
+            return new String(values, cs.name()).trim();
         } catch (UnsupportedEncodingException e) {
             return null;
         }
@@ -343,5 +344,123 @@ public class TagDescriptor<T extends Directory>
         }
 
         return sb.toString();
+    }
+
+    @Nullable
+    protected String getOrientationDescription(int tag)
+    {
+        return getIndexedDescription(tag, 1,
+            "Top, left side (Horizontal / normal)",
+            "Top, right side (Mirror horizontal)",
+            "Bottom, right side (Rotate 180)",
+            "Bottom, left side (Mirror vertical)",
+            "Left side, top (Mirror horizontal and rotate 270 CW)",
+            "Right side, top (Rotate 90 CW)",
+            "Right side, bottom (Mirror horizontal and rotate 90 CW)",
+            "Left side, bottom (Rotate 270 CW)");
+    }
+
+    @Nullable
+    protected String getShutterSpeedDescription(int tag)
+    {
+        // I believe this method to now be stable, but am leaving some alternative snippets of
+        // code in here, to assist anyone who's looking into this (given that I don't have a public CVS).
+
+//        float apexValue = _directory.getFloat(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
+//        int apexPower = (int)Math.pow(2.0, apexValue);
+//        return "1/" + apexPower + " sec";
+        // TODO test this method
+        // thanks to Mark Edwards for spotting and patching a bug in the calculation of this
+        // description (spotted bug using a Canon EOS 300D)
+        // thanks also to Gli Blr for spotting this bug
+        Float apexValue = _directory.getFloatObject(tag);
+        if (apexValue == null)
+            return null;
+        if (apexValue <= 1) {
+            float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
+            long apexPower10 = Math.round((double)apexPower * 10.0);
+            float fApexPower = (float)apexPower10 / 10.0f;
+            DecimalFormat format = new DecimalFormat("0.##");
+            format.setRoundingMode(RoundingMode.HALF_UP);
+            return format.format(fApexPower) + " sec";
+        } else {
+            int apexPower = (int)((Math.exp(apexValue * Math.log(2))));
+            return "1/" + apexPower + " sec";
+        }
+
+/*
+        // This alternative implementation offered by Bill Richards
+        // TODO determine which is the correct / more-correct implementation
+        double apexValue = _directory.getDouble(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
+        double apexPower = Math.pow(2.0, apexValue);
+
+        StringBuffer sb = new StringBuffer();
+        if (apexPower > 1)
+            apexPower = Math.floor(apexPower);
+
+        if (apexPower < 1) {
+            sb.append((int)Math.round(1/apexPower));
+        } else {
+            sb.append("1/");
+            sb.append((int)apexPower);
+        }
+        sb.append(" sec");
+        return sb.toString();
+*/
+    }
+
+    // EXIF LightSource
+    @Nullable
+    protected String GetLightSourceDescription(short wbtype)
+    {
+        switch (wbtype)
+        {
+            case 0:
+                return "Unknown";
+            case 1:
+                return "Daylight";
+            case 2:
+                return "Fluorescent";
+            case 3:
+                return "Tungsten (Incandescent)";
+            case 4:
+                return "Flash";
+            case 9:
+                return "Fine Weather";
+            case 10:
+                return "Cloudy";
+            case 11:
+                return "Shade";
+            case 12:
+                return "Daylight Fluorescent";    // (D 5700 - 7100K)
+            case 13:
+                return "Day White Fluorescent";   // (N 4600 - 5500K)
+            case 14:
+                return "Cool White Fluorescent";  // (W 3800 - 4500K)
+            case 15:
+                return "White Fluorescent";       // (WW 3250 - 3800K)
+            case 16:
+                return "Warm White Fluorescent";  // (L 2600 - 3250K)
+            case 17:
+                return "Standard Light A";
+            case 18:
+                return "Standard Light B";
+            case 19:
+                return "Standard Light C";
+            case 20:
+                return "D55";
+            case 21:
+                return "D65";
+            case 22:
+                return "D75";
+            case 23:
+                return "D50";
+            case 24:
+                return "ISO Studio Tungsten";
+            case 255:
+                return "Other";
+        }
+
+        return getDescription(wbtype);
     }
 }

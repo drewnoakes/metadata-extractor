@@ -25,6 +25,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 
 import java.util.Stack;
 
@@ -40,17 +41,9 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     protected Directory _currentDirectory;
     protected final Metadata _metadata;
 
-    protected DirectoryTiffHandler(Metadata metadata, Class<? extends Directory> initialDirectoryClass)
+    protected DirectoryTiffHandler(Metadata metadata)
     {
         _metadata = metadata;
-        try {
-            _currentDirectory = initialDirectoryClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        _metadata.addDirectory(_currentDirectory);
     }
 
     public void endingIFD()
@@ -60,17 +53,27 @@ public abstract class DirectoryTiffHandler implements TiffHandler
 
     protected void pushDirectory(@NotNull Class<? extends Directory> directoryClass)
     {
-        _directoryStack.push(_currentDirectory);
+        Directory newDirectory = null;
+
         try {
-            Directory newDirectory = directoryClass.newInstance();
-            newDirectory.setParent(_currentDirectory);
-            _currentDirectory = newDirectory;
+            newDirectory = directoryClass.newInstance();
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        _metadata.addDirectory(_currentDirectory);
+
+        if (newDirectory != null)
+        {
+            // If this is the first directory, don't add to the stack
+            if (_currentDirectory != null)
+            {
+                _directoryStack.push(_currentDirectory);
+                newDirectory.setParent(_currentDirectory);
+            }
+            _currentDirectory = newDirectory;
+            _metadata.addDirectory(_currentDirectory);
+        }
     }
 
     public void warn(@NotNull String message)
@@ -88,9 +91,9 @@ public abstract class DirectoryTiffHandler implements TiffHandler
         _currentDirectory.setByteArray(tagId, bytes);
     }
 
-    public void setString(int tagId, @NotNull String string)
+    public void setString(int tagId, @NotNull StringValue string)
     {
-        _currentDirectory.setString(tagId, string);
+        _currentDirectory.setStringValue(tagId, string);
     }
 
     public void setRational(int tagId, @NotNull Rational rational)

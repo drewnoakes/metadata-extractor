@@ -20,14 +20,34 @@
  */
 package com.drew.metadata.gif;
 
+import com.drew.lang.ByteArrayReader;
+import com.drew.lang.Charsets;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Metadata;
+import com.drew.lang.annotations.Nullable;
 
+import com.drew.metadata.Directory;
+import com.drew.metadata.ErrorDirectory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
+import com.drew.metadata.icc.IccReader;
+import com.drew.metadata.xmp.XmpReader;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
+ * Reader of GIF encoded data.
+ *
+ * Resources:
+ * <ul>
+ *     <li>https://wiki.whatwg.org/wiki/GIF</li>
+ *     <li>https://www.w3.org/Graphics/GIF/spec-gif89a.txt</li>
+ *     <li>http://web.archive.org/web/20100929230301/http://www.etsimo.uniovi.es/gifanim/gif87a.txt</li>
+ * </ul>
+ *
  * @author Drew Noakes https://drewnoakes.com
+ * @author Kevin Mott https://github.com/kwhopper
  */
 public class GifReader
 {
@@ -36,9 +56,75 @@ public class GifReader
 
     public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata)
     {
-        GifHeaderDirectory directory = new GifHeaderDirectory();
-        metadata.addDirectory(directory);
+        reader.setMotorolaByteOrder(false);
 
+        GifHeaderDirectory header;
+        try {
+            header = readGifHeader(reader);
+            metadata.addDirectory(header);
+        } catch (IOException ex) {
+            metadata.addDirectory(new ErrorDirectory("IOException processing GIF data"));
+            return;
+        }
+
+        if(header.hasErrors())
+            return;
+
+        try {
+            // Skip over any global colour table
+            Integer globalColorTableSize = header.getInteger(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE);
+            if (globalColorTableSize != null)
+            {
+                // Colour table has R/G/B byte triplets
+                reader.skip(3 * globalColorTableSize);
+            }
+
+            // After the header comes a sequence of blocks
+            while (true)
+            {
+                byte marker;
+                try {
+                    marker = reader.getInt8();
+                } catch (IOException ex) {
+                    return;
+                }
+
+                switch (marker)
+                {
+                    case (byte)'!': // 0x21
+                    {
+                        readGifExtensionBlock(reader, metadata);
+                        break;
+                    }
+                    case (byte)',': // 0x2c
+                    {
+                        metadata.addDirectory(readImageBlock(reader));
+
+                        // skip image data blocks
+                        skipBlocks(reader);
+                        break;
+                    }
+                    case (byte)';': // 0x3b
+                    {
+                        // terminator
+                        return;
+                    }
+                    default:
+                    {
+                        // Anything other than these types is unexpected.
+                        // GIF87a spec says to keep reading until a separator is found.
+                        // GIF89a spec says file is corrupt.
+                        return;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            metadata.addDirectory(new ErrorDirectory("IOException processing GIF data"));
+        }
+    }
+
+    private static GifHeaderDirectory readGifHeader(@NotNull final SequentialReader reader) throws IOException
+    {
         // FILE HEADER
         //
         // 3 - signature: "GIF"
@@ -56,55 +142,252 @@ public class GifReader
         // 1 - background color index
         // 1 - pixel aspect ratio
 
-        reader.setMotorolaByteOrder(false);
+        GifHeaderDirectory headerDirectory = new GifHeaderDirectory();
 
-        try {
-            String signature = reader.getString(3);
+        String signature = reader.getString(3);
 
-            if (!signature.equals("GIF"))
-            {
-                directory.addError("Invalid GIF file signature");
+        if (!signature.equals("GIF"))
+        {
+            headerDirectory.addError("Invalid GIF file signature");
+            return headerDirectory;
+        }
+
+        String version = reader.getString(3);
+
+        if (!version.equals(GIF_87A_VERSION_IDENTIFIER) && !version.equals(GIF_89A_VERSION_IDENTIFIER)) {
+            headerDirectory.addError("Unexpected GIF version");
+            return headerDirectory;
+        }
+
+        headerDirectory.setString(GifHeaderDirectory.TAG_GIF_FORMAT_VERSION, version);
+
+        // LOGICAL SCREEN DESCRIPTOR
+
+        headerDirectory.setInt(GifHeaderDirectory.TAG_IMAGE_WIDTH, reader.getUInt16());
+        headerDirectory.setInt(GifHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getUInt16());
+
+        short flags = reader.getUInt8();
+
+        // First three bits = (BPP - 1)
+        int colorTableSize = 1 << ((flags & 7) + 1);
+        int bitsPerPixel = ((flags & 0x70) >> 4) + 1;
+        boolean hasGlobalColorTable = (flags & 0xf) != 0;
+
+        headerDirectory.setInt(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE, colorTableSize);
+
+        if (version.equals(GIF_89A_VERSION_IDENTIFIER)) {
+            boolean isColorTableSorted = (flags & 8) != 0;
+            headerDirectory.setBoolean(GifHeaderDirectory.TAG_IS_COLOR_TABLE_SORTED, isColorTableSorted);
+        }
+
+        headerDirectory.setInt(GifHeaderDirectory.TAG_BITS_PER_PIXEL, bitsPerPixel);
+        headerDirectory.setBoolean(GifHeaderDirectory.TAG_HAS_GLOBAL_COLOR_TABLE, hasGlobalColorTable);
+
+        headerDirectory.setInt(GifHeaderDirectory.TAG_BACKGROUND_COLOR_INDEX, reader.getUInt8());
+
+        int aspectRatioByte = reader.getUInt8();
+        if (aspectRatioByte != 0) {
+            float pixelAspectRatio = (float)((aspectRatioByte + 15d) / 64d);
+            headerDirectory.setFloat(GifHeaderDirectory.TAG_PIXEL_ASPECT_RATIO, pixelAspectRatio);
+        }
+
+        return headerDirectory;
+    }
+
+    private static void readGifExtensionBlock(SequentialReader reader, Metadata metadata) throws IOException
+    {
+        byte extensionLabel = reader.getInt8();
+        short blockSizeBytes = reader.getUInt8();
+        long blockStartPos = reader.getPosition();
+
+        switch (extensionLabel)
+        {
+            case (byte) 0x01:
+                metadata.addDirectory(readPlainTextBlock(reader, blockSizeBytes));
+                break;
+            case (byte) 0xf9:
+                metadata.addDirectory(readControlBlock(reader, blockSizeBytes));
+                break;
+            case (byte) 0xfe:
+                metadata.addDirectory(readCommentBlock(reader, blockSizeBytes));
+                break;
+            case (byte) 0xff:
+                readApplicationExtensionBlock(reader, blockSizeBytes, metadata);
+                break;
+            default:
+                metadata.addDirectory(new ErrorDirectory(String.format("Unsupported GIF extension block with type 0x%02X.", extensionLabel)));
+                break;
+        }
+
+        long skipCount = blockStartPos + blockSizeBytes - reader.getPosition();
+        if (skipCount > 0)
+            reader.skip(skipCount);
+    }
+
+    private static Directory readPlainTextBlock(SequentialReader reader, int blockSizeBytes) throws IOException
+    {
+        // It seems this extension is deprecated. If somebody finds an image with this in it, could implement here.
+        // Just skip the entire block for now.
+
+        if (blockSizeBytes != 12)
+            return new ErrorDirectory(String.format("Invalid GIF plain text block size. Expected 12, got %d.", blockSizeBytes));
+
+        // skip 'blockSizeBytes' bytes
+        reader.skip(12);
+
+        // keep reading and skipping until a 0 byte is reached
+        skipBlocks(reader);
+
+        return null;
+    }
+
+    private static GifCommentDirectory readCommentBlock(SequentialReader reader, int blockSizeBytes) throws IOException
+    {
+        byte[] buffer = gatherBytes(reader, blockSizeBytes);
+        return new GifCommentDirectory(new StringValue(buffer, Charsets.ASCII));
+    }
+
+    @Nullable
+    private static void readApplicationExtensionBlock(SequentialReader reader, int blockSizeBytes, Metadata metadata) throws IOException
+    {
+        if (blockSizeBytes != 11)
+        {
+            metadata.addDirectory(new ErrorDirectory(String.format("Invalid GIF application extension block size. Expected 11, got %d.", blockSizeBytes)));
+            return;
+        }
+
+        String extensionType = reader.getString(blockSizeBytes, Charsets.UTF_8);
+
+        if (extensionType.equals("XMP DataXMP"))
+        {
+            // XMP data extension
+            byte[] xmpBytes = gatherBytes(reader);
+            new XmpReader().extract(xmpBytes, 0, xmpBytes.length - 257, metadata, null);
+        }
+        else if (extensionType.equals("ICCRGBG1012"))
+        {
+            // ICC profile extension
+            byte[] iccBytes = gatherBytes(reader, reader.getByte());
+            if (iccBytes.length != 0)
+                new IccReader().extract(new ByteArrayReader(iccBytes), metadata);
+        }
+        else if (extensionType.equals("NETSCAPE2.0"))
+        {
+            reader.skip(2);
+            // Netscape's animated GIF extension
+            // Iteration count (0 means infinite)
+            int iterationCount = reader.getUInt16();
+            // Skip terminator
+            reader.skip(1);
+            GifAnimationDirectory animationDirectory = new GifAnimationDirectory();
+            animationDirectory.setInt(GifAnimationDirectory.TAG_ITERATION_COUNT, iterationCount);
+            metadata.addDirectory(animationDirectory);
+        }
+        else
+        {
+            skipBlocks(reader);
+        }
+    }
+
+    private static GifControlDirectory readControlBlock(SequentialReader reader, int blockSizeBytes) throws IOException
+    {
+        if (blockSizeBytes < 4)
+            blockSizeBytes = 4;
+
+        GifControlDirectory directory = new GifControlDirectory();
+
+        reader.skip(1);
+
+        directory.setInt(GifControlDirectory.TAG_DELAY, reader.getUInt16());
+
+        if (blockSizeBytes > 3)
+            reader.skip(blockSizeBytes - 3);
+
+        // skip 0x0 block terminator
+        reader.getByte();
+
+        return directory;
+    }
+
+    private static GifImageDirectory readImageBlock(SequentialReader reader) throws IOException
+    {
+        GifImageDirectory imageDirectory = new GifImageDirectory();
+
+        imageDirectory.setInt(GifImageDirectory.TAG_LEFT, reader.getUInt16());
+        imageDirectory.setInt(GifImageDirectory.TAG_TOP, reader.getUInt16());
+        imageDirectory.setInt(GifImageDirectory.TAG_WIDTH, reader.getUInt16());
+        imageDirectory.setInt(GifImageDirectory.TAG_HEIGHT, reader.getUInt16());
+
+        byte flags = reader.getByte();
+        boolean hasColorTable = (flags & 0x7) != 0;
+        boolean isInterlaced = (flags & 0x40) != 0;
+        boolean isColorTableSorted = (flags & 0x20) != 0;
+
+        imageDirectory.setBoolean(GifImageDirectory.TAG_HAS_LOCAL_COLOUR_TABLE, hasColorTable);
+        imageDirectory.setBoolean(GifImageDirectory.TAG_IS_INTERLACED, isInterlaced);
+
+        if (hasColorTable)
+        {
+            imageDirectory.setBoolean(GifImageDirectory.TAG_IS_COLOR_TABLE_SORTED, isColorTableSorted);
+
+            int bitsPerPixel = (flags & 0x7) + 1;
+            imageDirectory.setInt(GifImageDirectory.TAG_LOCAL_COLOUR_TABLE_BITS_PER_PIXEL, bitsPerPixel);
+
+            // skip color table
+            reader.skip(3 * (2 << (flags & 0x7)));
+        }
+
+        // skip "LZW Minimum Code Size" byte
+        reader.getByte();
+
+        return imageDirectory;
+    }
+
+    private static byte[] gatherBytes(SequentialReader reader) throws IOException
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        byte[] buffer = new byte[257];
+
+        while (true)
+        {
+            byte b = reader.getByte();
+            if (b == 0)
+                return bytes.toByteArray();
+
+            int bInt = (int)(b & 0xFF);
+
+            buffer[0] = b;
+            reader.getBytes(buffer, 1, bInt);
+            bytes.write(buffer, 0, bInt + 1);
+        }
+    }
+
+    private static byte[] gatherBytes(SequentialReader reader, int firstLength) throws IOException
+    {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        int length = firstLength;
+
+        while (length > 0)
+        {
+            buffer.write(reader.getBytes(length), 0, length);
+
+            length = reader.getByte();
+        }
+
+        return buffer.toByteArray();
+    }
+
+    private static void skipBlocks(SequentialReader reader) throws IOException
+    {
+        while (true)
+        {
+            short length = reader.getUInt8();
+
+            if (length == 0)
                 return;
-            }
 
-            String version = reader.getString(3);
-
-            if (!version.equals(GIF_87A_VERSION_IDENTIFIER) && !version.equals(GIF_89A_VERSION_IDENTIFIER)) {
-                directory.addError("Unexpected GIF version");
-                return;
-            }
-
-            directory.setString(GifHeaderDirectory.TAG_GIF_FORMAT_VERSION, version);
-            directory.setInt(GifHeaderDirectory.TAG_IMAGE_WIDTH, reader.getUInt16());
-            directory.setInt(GifHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getUInt16());
-
-            short flags = reader.getUInt8();
-
-            // First three bits = (BPP - 1)
-            int colorTableSize = 1 << ((flags & 7) + 1);
-            directory.setInt(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE, colorTableSize);
-
-            if (version.equals(GIF_89A_VERSION_IDENTIFIER)) {
-                boolean isColorTableSorted = (flags & 8) != 0;
-                directory.setBoolean(GifHeaderDirectory.TAG_IS_COLOR_TABLE_SORTED, isColorTableSorted);
-            }
-
-            int bitsPerPixel = ((flags & 0x70) >> 4) + 1;
-            directory.setInt(GifHeaderDirectory.TAG_BITS_PER_PIXEL, bitsPerPixel);
-
-            boolean hasGlobalColorTable = (flags & 0xf) != 0;
-            directory.setBoolean(GifHeaderDirectory.TAG_HAS_GLOBAL_COLOR_TABLE, hasGlobalColorTable);
-
-            directory.setInt(GifHeaderDirectory.TAG_BACKGROUND_COLOR_INDEX, reader.getUInt8());
-
-            int aspectRatioByte = reader.getUInt8();
-            if (aspectRatioByte != 0) {
-                float pixelAspectRatio = (float)((aspectRatioByte + 15d) / 64d);
-                directory.setFloat(GifHeaderDirectory.TAG_PIXEL_ASPECT_RATIO, pixelAspectRatio);
-            }
-
-        } catch (IOException e) {
-            directory.addError("Unable to read BMP header");
+            reader.skip(length);
         }
     }
 }

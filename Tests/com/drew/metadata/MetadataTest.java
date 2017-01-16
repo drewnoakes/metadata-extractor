@@ -84,6 +84,7 @@ public class MetadataTest
 
         Collection<ExifSubIFDDirectory> directories = metadata.getDirectoriesOfType(ExifSubIFDDirectory.class);
 
+        assertNotNull(directories);
         assertEquals(3, directories.size());
         assertSame(directory1, directories.toArray()[0]);
         assertSame(directory2, directories.toArray()[1]);
