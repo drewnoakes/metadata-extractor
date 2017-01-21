@@ -457,9 +457,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getNewSubfileTypeDescription()
     {
-        return getIndexedDescription(TAG_NEW_SUBFILE_TYPE, 1,
+        return getIndexedDescription(TAG_NEW_SUBFILE_TYPE, 0,
             "Full-resolution image",
             "Reduced-resolution image",
+            "Single page of multi-page image",
             "Single page of multi-page reduced-resolution image",
             "Transparency mask",
             "Transparency mask of reduced-resolution image",

@@ -126,6 +126,8 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_PAGE_NAME                         = 0x011D;
 
     public static final int TAG_RESOLUTION_UNIT                   = 0x0128;
+    public static final int TAG_PAGE_NUMBER                       = 0x0129;
+
     public static final int TAG_TRANSFER_FUNCTION                 = 0x012D;
     public static final int TAG_SOFTWARE                          = 0x0131;
     public static final int TAG_DATETIME                          = 0x0132;
@@ -149,6 +151,15 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_TRANSFER_RANGE                    = 0x0156;
     public static final int TAG_JPEG_TABLES                       = 0x015B;
     public static final int TAG_JPEG_PROC                         = 0x0200;
+
+    // 0x0201 can have all kinds of descriptions for thumbnail starting index
+    // 0x0202 can have all kinds of descriptions for thumbnail length
+    public static final int TAG_JPEG_RESTART_INTERVAL = 0x0203;
+    public static final int TAG_JPEG_LOSSLESS_PREDICTORS = 0x0205;
+    public static final int TAG_JPEG_POINT_TRANSFORMS = 0x0206;
+    public static final int TAG_JPEG_Q_TABLES = 0x0207;
+    public static final int TAG_JPEG_DC_TABLES = 0x0208;
+    public static final int TAG_JPEG_AC_TABLES = 0x0209;
 
     public static final int TAG_YCBCR_COEFFICIENTS                = 0x0211;
     public static final int TAG_YCBCR_SUBSAMPLING                 = 0x0212;
@@ -617,6 +628,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
         map.put(TAG_PAGE_NAME, "Page Name");
         map.put(TAG_RESOLUTION_UNIT, "Resolution Unit");
+        map.put(TAG_PAGE_NUMBER, "Page Number");
         map.put(TAG_TRANSFER_FUNCTION, "Transfer Function");
         map.put(TAG_SOFTWARE, "Software");
         map.put(TAG_DATETIME, "Date/Time");
@@ -633,6 +645,14 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_TRANSFER_RANGE, "Transfer Range");
         map.put(TAG_JPEG_TABLES, "JPEG Tables");
         map.put(TAG_JPEG_PROC, "JPEG Proc");
+
+        map.put(TAG_JPEG_RESTART_INTERVAL, "JPEG Restart Interval");
+        map.put(TAG_JPEG_LOSSLESS_PREDICTORS, "JPEG Lossless Predictors");
+        map.put(TAG_JPEG_POINT_TRANSFORMS, "JPEG Point Transforms");
+        map.put(TAG_JPEG_Q_TABLES, "JPEGQ Tables");
+        map.put(TAG_JPEG_DC_TABLES, "JPEGDC Tables");
+        map.put(TAG_JPEG_AC_TABLES, "JPEGAC Tables");
+
         map.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
         map.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
         map.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
