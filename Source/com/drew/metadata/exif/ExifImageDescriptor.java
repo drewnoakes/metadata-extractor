@@ -18,36 +18,20 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.lang;
+package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.StringValue;
 
 /**
- * Models a key/value pair, where both are non-null {@link StringValue} objects.
+ * Provides human-readable string representations of tag values stored in a {@link ExifImageDirectory}.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class KeyValuePair
+@SuppressWarnings("WeakerAccess")
+public class ExifImageDescriptor extends ExifDescriptorBase<ExifImageDirectory>
 {
-    private final String _key;
-    private final StringValue _value;
-
-    public KeyValuePair(@NotNull String key, @NotNull StringValue value)
+    public ExifImageDescriptor(@NotNull ExifImageDirectory directory)
     {
-        _key = key;
-        _value = value;
-    }
-
-    @NotNull
-    public String getKey()
-    {
-        return _key;
-    }
-
-    @NotNull
-    public StringValue getValue()
-    {
-        return _value;
+        super(directory);
     }
 }

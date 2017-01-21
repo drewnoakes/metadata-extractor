@@ -150,8 +150,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     public boolean hasFollowerIfd()
     {
         // In Exif, the only known 'follower' IFD is the thumbnail one, however this may not be the case.
-        if (_currentDirectory instanceof ExifIFD0Directory) {
-            pushDirectory(ExifThumbnailDirectory.class);
+        // UPDATE: In multipage TIFFs, the 'follower' IFD points to the next image in the set
+        if (_currentDirectory instanceof ExifIFD0Directory || _currentDirectory instanceof ExifImageDirectory) {
+            // If the PageNumber tag is defined, assume this is a multipage TIFF or similar
+            // TODO: Find better ways to know which follower Directory should be used
+            if (_currentDirectory.containsTag(ExifDirectoryBase.TAG_PAGE_NUMBER))
+                pushDirectory(ExifImageDirectory.class);
+            else
+                pushDirectory(ExifThumbnailDirectory.class);
             return true;
         }
 

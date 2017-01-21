@@ -18,36 +18,47 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.lang;
+package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.StringValue;
+
+import java.util.HashMap;
 
 /**
- * Models a key/value pair, where both are non-null {@link StringValue} objects.
+ * Describes One of several Exif directories.
+ *
+ * Holds information about image IFD's in a chain after the first. The first page is stored in IFD0.
+ * Currently, this only applied to multi-page TIFF images
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class KeyValuePair
+@SuppressWarnings("WeakerAccess")
+public class ExifImageDirectory extends ExifDirectoryBase
 {
-    private final String _key;
-    private final StringValue _value;
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-    public KeyValuePair(@NotNull String key, @NotNull StringValue value)
+    static
     {
-        _key = key;
-        _value = value;
+        addExifTagNames(_tagNameMap);
     }
 
-    @NotNull
-    public String getKey()
+    public ExifImageDirectory()
     {
-        return _key;
+        this.setDescriptor(new ExifImageDescriptor(this));
     }
 
+    @Override
     @NotNull
-    public StringValue getValue()
+    public String getName()
     {
-        return _value;
+        return "Exif Image";
+    }
+
+    @Override
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
+    {
+        return _tagNameMap;
     }
 }

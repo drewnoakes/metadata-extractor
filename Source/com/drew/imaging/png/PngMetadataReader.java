@@ -33,6 +33,7 @@ import com.drew.metadata.xmp.XmpReader;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -68,6 +69,7 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.iCCP);
         desiredChunkTypes.add(PngChunkType.bKGD);
         desiredChunkTypes.add(PngChunkType.tEXt);
+        desiredChunkTypes.add(PngChunkType.zTXt);
         desiredChunkTypes.add(PngChunkType.iTXt);
         desiredChunkTypes.add(PngChunkType.tIME);
         desiredChunkTypes.add(PngChunkType.pHYs);
@@ -165,7 +167,10 @@ public class PngMetadataReader
                 // Only compression method allowed by the spec is zero: deflate
                 int bytesLeft = bytes.length - profileNameBytes.length - 2;
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
-                InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
+                // Creates a new decompressor. If the parameter 'nowrap' is true then the ZLIB header and checksum fields will not be used.
+                // This provides compatibility with the compression format used by both GZIP and PKZIP.
+                Inflater inf = new Inflater(true);
+                InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile), inf);
                 new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
                 inflateStream.close();
             } else {
@@ -178,30 +183,69 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.tEXt)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
-            byte[] keywordBytes = reader.getNullTerminatedBytes(79);
-            StringValue keyword = new StringValue(keywordBytes, _latin1Encoding);
-            int bytesLeft = bytes.length - keywordBytes.length - 1;
+            String keyword = reader.getNullTerminatedStringValue(79, _latin1Encoding).toString();
+            int bytesLeft = bytes.length - keyword.length() - 1;
             StringValue value = reader.getNullTerminatedStringValue(bytesLeft, _latin1Encoding);
             List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
             textPairs.add(new KeyValuePair(keyword, value));
             PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
             directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
             metadata.addDirectory(directory);
+        } else if (chunkType.equals(PngChunkType.zTXt)) {
+            SequentialReader reader = new SequentialByteArrayReader(bytes);
+            String keyword = reader.getNullTerminatedStringValue(79, _latin1Encoding).toString();
+            byte compressionMethod = reader.getInt8();
+
+            int bytesLeft = bytes.length - keyword.length() - 1 - 1 - 1 - 1;
+            byte[] textBytes = null;
+            if (compressionMethod == 0) {
+                try {
+                    // Creates a new decompressor. If the parameter 'nowrap' is true then the ZLIB header and checksum fields will not be used.
+                    // This provides compatibility with the compression format used by both GZIP and PKZIP.
+                    Inflater inf = new Inflater(true);
+                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft), inf));
+                } catch(java.util.zip.ZipException zex) {
+                    textBytes = null;
+                    // TODO: should zlib/deflate errors be returned?
+                    //PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
+                    //directory.addError("PNG zTXt error: " + zex.getMessage());
+                    //metadata.addDirectory(directory);
+                }
+            } else {
+                PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
+                directory.addError("Invalid compression method value");
+                metadata.addDirectory(directory);
+            }
+            if (textBytes != null) {
+                if (keyword.equals("XML:com.adobe.xmp")) {
+                    // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
+                    new XmpReader().extract(textBytes, metadata);
+                } else {
+                    List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
+                    textPairs.add(new KeyValuePair(keyword, new StringValue(textBytes, _latin1Encoding)));
+                    PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
+                    directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
+                    metadata.addDirectory(directory);
+                }
+            }
         } else if (chunkType.equals(PngChunkType.iTXt)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
-            byte[] keywordBytes = reader.getNullTerminatedBytes(79);
+            String keyword = reader.getNullTerminatedStringValue(79, _latin1Encoding).toString();
             byte compressionFlag = reader.getInt8();
             byte compressionMethod = reader.getInt8();
             // TODO we currently ignore languageTagBytes and translatedKeywordBytes
             byte[] languageTagBytes = reader.getNullTerminatedBytes(bytes.length);
             byte[] translatedKeywordBytes = reader.getNullTerminatedBytes(bytes.length);
-            int bytesLeft = bytes.length - keywordBytes.length - 1 - 1 - 1 - languageTagBytes.length - 1 - translatedKeywordBytes.length - 1;
+            int bytesLeft = bytes.length - keyword.length() - 1 - 1 - 1 - languageTagBytes.length - 1 - translatedKeywordBytes.length - 1;
             byte[] textBytes = null;
             if (compressionFlag == 0) {
                 textBytes = reader.getNullTerminatedBytes(bytesLeft);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    // Creates a new decompressor. If the parameter 'nowrap' is true then the ZLIB header and checksum fields will not be used.
+                    // This provides compatibility with the compression format used by both GZIP and PKZIP.
+                    Inflater inf = new Inflater(true);
+                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft), inf));
                 } else {
                     PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                     directory.addError("Invalid compression method value");
@@ -214,8 +258,7 @@ public class PngMetadataReader
             }
 
             if (textBytes != null) {
-                StringValue keyword = new StringValue(keywordBytes, _latin1Encoding);
-                if (keyword.toString().equals("XML:com.adobe.xmp")) {
+                if (keyword.equals("XML:com.adobe.xmp")) {
                     // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
                     new XmpReader().extract(textBytes, metadata);
                 } else {
