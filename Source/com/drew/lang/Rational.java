@@ -297,13 +297,18 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     @NotNull
     public Rational getSimplifiedInstance()
     {
-        long gcd = GCD(Math.abs(_numerator), Math.abs(_denominator));
+        long gcd = GCD(_numerator, _denominator);
 
         return new Rational(_numerator / gcd, _denominator / gcd);
     }
 
     private static long GCD(long a, long b)
     {
+        if (a < 0)
+            a = -a;
+        if (b < 0)
+            b = -b;
+
         while (a != 0 && b != 0)
         {
             if (a > b)
