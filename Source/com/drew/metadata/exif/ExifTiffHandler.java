@@ -83,7 +83,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 pushDirectory(PanasonicRawIFD0Directory.class);
                 break;
             default:
-                throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));            
+                throw new TiffProcessingException(String.format("Unexpected TIFF marker: 0x%X", marker));
         }
     }
 
