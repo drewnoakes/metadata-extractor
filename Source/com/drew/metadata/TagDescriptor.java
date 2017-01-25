@@ -74,7 +74,7 @@ public class TagDescriptor<T extends Directory>
         if (object.getClass().isArray()) {
             final int length = Array.getLength(object);
             if (length > 16) {
-                return String.format("[%d %s]", length, length == 1 ? "value" : "values");
+                return String.format("[%d values]", length);
             }
         }
 
