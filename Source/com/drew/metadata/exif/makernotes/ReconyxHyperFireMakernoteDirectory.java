@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.util.HashMap;
 
 /**
  * Describes tags specific to Reconyx HyperFire cameras.
- * 
+ *
  * Reconyx uses a fixed makernote block.  Tag values are the byte index of the tag within the makernote.
  * @author Todd West http://cascadescarnivoreproject.blogspot.com
  */
