@@ -73,7 +73,7 @@ public class PanasonicRawDistortionDescriptor extends TagDescriptor<PanasonicRaw
         if (wbtype == null)
             return null;
 
-        return super.GetLightSourceDescription(wbtype.shortValue());
+        return super.getLightSourceDescription(wbtype.shortValue());
     }
 
     @Nullable

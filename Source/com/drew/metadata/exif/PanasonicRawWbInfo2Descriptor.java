@@ -66,6 +66,6 @@ public class PanasonicRawWbInfo2Descriptor extends TagDescriptor<PanasonicRawWbI
         if (wbtype == null)
             return null;
 
-        return super.GetLightSourceDescription(wbtype.shortValue());
+        return super.getLightSourceDescription(wbtype.shortValue());
     }
 }

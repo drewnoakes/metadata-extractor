@@ -411,7 +411,7 @@ public class TagDescriptor<T extends Directory>
 
     // EXIF LightSource
     @Nullable
-    protected String GetLightSourceDescription(short wbtype)
+    protected String getLightSourceDescription(short wbtype)
     {
         switch (wbtype)
         {
