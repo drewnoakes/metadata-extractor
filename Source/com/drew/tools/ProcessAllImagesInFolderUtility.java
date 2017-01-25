@@ -462,7 +462,7 @@ public class ProcessAllImagesInFolderUtility
         private final Map<String, String> _extensionEquivalence = new HashMap<String, String>();
         private final Map<String, List<Row>> _rowListByExtension = new HashMap<String, List<Row>>();
 
-        class Row
+        static class Row
         {
             final File file;
             final Metadata metadata;
