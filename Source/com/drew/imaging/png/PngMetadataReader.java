@@ -167,12 +167,15 @@ public class PngMetadataReader
                 // Only compression method allowed by the spec is zero: deflate
                 int bytesLeft = bytes.length - profileNameBytes.length - 2;
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
-                // Creates a new decompressor. If the parameter 'nowrap' is true then the ZLIB header and checksum fields will not be used.
-                // This provides compatibility with the compression format used by both GZIP and PKZIP.
-                Inflater inf = new Inflater(true);
-                InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile), inf);
-                new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
-                inflateStream.close();
+
+                try {
+                    InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
+                    new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
+                    inflateStream.close();
+                } catch(java.util.zip.ZipException zex) {
+                    directory.addError(String.format("Exception decompressing PNG iCCP chunk : %s", zex.getMessage()));
+                    metadata.addDirectory(directory);
+                }
             } else {
                 directory.addError("Invalid compression method value");
             }
@@ -188,7 +191,7 @@ public class PngMetadataReader
             StringValue value = reader.getNullTerminatedStringValue(bytesLeft, _latin1Encoding);
             List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
             textPairs.add(new KeyValuePair(keyword, value));
-            PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
+            PngDirectory directory = new PngDirectory(PngChunkType.tEXt);
             directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.zTXt)) {
@@ -200,16 +203,12 @@ public class PngMetadataReader
             byte[] textBytes = null;
             if (compressionMethod == 0) {
                 try {
-                    // Creates a new decompressor. If the parameter 'nowrap' is true then the ZLIB header and checksum fields will not be used.
-                    // This provides compatibility with the compression format used by both GZIP and PKZIP.
-                    Inflater inf = new Inflater(true);
-                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft), inf));
+                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
                 } catch(java.util.zip.ZipException zex) {
                     textBytes = null;
-                    // TODO: should zlib/deflate errors be returned?
-                    //PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
-                    //directory.addError("PNG zTXt error: " + zex.getMessage());
-                    //metadata.addDirectory(directory);
+                    PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
+                    directory.addError(String.format("Exception decompressing PNG zTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
+                    metadata.addDirectory(directory);
                 }
             } else {
                 PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
@@ -242,10 +241,14 @@ public class PngMetadataReader
                 textBytes = reader.getNullTerminatedBytes(bytesLeft);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    // Creates a new decompressor. If the parameter 'nowrap' is true then the ZLIB header and checksum fields will not be used.
-                    // This provides compatibility with the compression format used by both GZIP and PKZIP.
-                    Inflater inf = new Inflater(true);
-                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft), inf));
+                    try {
+                        textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    } catch(java.util.zip.ZipException zex) {
+                        textBytes = null;
+                        PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
+                        directory.addError(String.format("Exception decompressing PNG iTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
+                        metadata.addDirectory(directory);
+                    }
                 } else {
                     PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                     directory.addError("Invalid compression method value");
