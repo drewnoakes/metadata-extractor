@@ -52,8 +52,6 @@ public interface TiffHandler
 
     void endingIFD();
 
-    void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset);
-
     @Nullable
     Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);
 

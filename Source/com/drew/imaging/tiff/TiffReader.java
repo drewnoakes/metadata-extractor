@@ -76,8 +76,6 @@ public class TiffReader
 
         Set<Integer> processedIfdOffsets = new HashSet<Integer>();
         processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset);
-
-        handler.completed(reader, tiffHeaderOffset);
     }
 
     /**

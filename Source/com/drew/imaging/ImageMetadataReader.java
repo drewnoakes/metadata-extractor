@@ -38,7 +38,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.ExifThumbnailDirectory;
 import com.drew.metadata.file.FileMetadataReader;
 
 import java.io.*;
@@ -188,7 +187,6 @@ public class ImageMetadataReader
     public static void main(@NotNull String[] args) throws MetadataException, IOException
     {
         Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
-        boolean thumbRequested = argList.remove("-thumb");
         boolean markdownFormat = argList.remove("-markdown");
         boolean showHex = argList.remove("-hex");
 
@@ -269,16 +267,6 @@ public class ImageMetadataReader
                 // print out any errors
                 for (String error : directory.getErrors())
                     System.err.println("ERROR: " + error);
-            }
-
-            if (args.length > 1 && thumbRequested) {
-                ExifThumbnailDirectory directory = metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
-                if (directory!=null && directory.hasThumbnailData()) {
-                    System.out.println("Writing thumbnail...");
-                    directory.writeThumbnail(args[0].trim() + ".thumb.jpg");
-                } else {
-                    System.out.println("No thumbnail data exists in this image");
-                }
             }
         }
     }

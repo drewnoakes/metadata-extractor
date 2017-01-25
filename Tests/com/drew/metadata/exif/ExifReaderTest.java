@@ -152,15 +152,6 @@ public class ExifReaderTest
     }
 
     @Test
-    public void testThumbnailData() throws Exception
-    {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
-        byte[] thumbnailData = directory.getThumbnailData();
-        assertNotNull(thumbnailData);
-        assertEquals(2970, thumbnailData.length);
-    }
-
-    @Test
     public void testCompression() throws Exception
     {
         ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);

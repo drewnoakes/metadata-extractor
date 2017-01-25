@@ -21,15 +21,12 @@
 package com.drew.metadata.exif;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.lang.GeoLocation;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.TimeZone;
 
@@ -96,52 +93,6 @@ public class ExifDirectoryTest
         assertEquals(1066214228800L, exifSubIFDDirectory.getDateDigitized().getTime());
         assertEquals(1066210628800L, exifSubIFDDirectory.getDateDigitized(TimeZone.getTimeZone("GMT+0100")).getTime());
     }
-
-    @Test
-    public void testGetThumbnailData() throws Exception
-    {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/withExif.jpg.app1", ExifThumbnailDirectory.class);
-
-        byte[] thumbData = directory.getThumbnailData();
-        assertNotNull(thumbData);
-        try {
-            // attempt to read the thumbnail -- it should be a legal Jpeg file
-            JpegSegmentReader.readSegments(new SequentialByteArrayReader(thumbData), null);
-        } catch (JpegProcessingException e) {
-            fail("Unable to construct JpegSegmentReader from thumbnail data");
-        }
-    }
-
-    @Test
-    public void testWriteThumbnail() throws Exception
-    {
-        ExifThumbnailDirectory directory = ExifReaderTest.processBytes("Tests/Data/manuallyAddedThumbnail.jpg.app1", ExifThumbnailDirectory.class);
-
-        assertTrue(directory.hasThumbnailData());
-
-        File thumbnailFile = File.createTempFile("thumbnail", ".jpg");
-        try {
-            directory.writeThumbnail(thumbnailFile.getAbsolutePath());
-            File file = new File(thumbnailFile.getAbsolutePath());
-            assertEquals(2970, file.length());
-            assertTrue(file.exists());
-        } finally {
-            if (!thumbnailFile.delete())
-                fail("Unable to delete temp thumbnail file.");
-        }
-    }
-
-//    @Test
-//    public void testContainsThumbnail()
-//    {
-//        ExifSubIFDDirectory exifDirectory = new ExifSubIFDDirectory();
-//
-//        assertTrue(!exifDirectory.hasThumbnailData());
-//
-//        exifDirectory.setObject(ExifSubIFDDirectory.TAG_THUMBNAIL_DATA, "foo");
-//
-//        assertTrue(exifDirectory.hasThumbnailData());
-//    }
 
     @Test
     public void testResolution() throws JpegProcessingException, IOException, MetadataException
