@@ -29,6 +29,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("serial")
 public class MockDirectory extends Directory
 {
     private final HashMap<Integer, String> _tagNameMap;

@@ -25,20 +25,23 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.impl.XMPDateTimeImpl;
 import com.adobe.xmp.impl.XMPMetaImpl;
+import com.adobe.xmp.impl.XMPMetaParser;
+import com.adobe.xmp.impl.XMPSerializerHelper;
 import com.adobe.xmp.options.PropertyOptions;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Schema;
-
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
  * @author Torsten Skadell
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class XmpDirectory extends Directory
 {
     public static final int TAG_XMP_VALUE_COUNT = 0xFFFF;
@@ -264,7 +267,9 @@ public class XmpDirectory extends Directory
     }
 
     @Nullable
-    private XMPMeta _xmpMeta;
+    private transient XMPMeta _xmpMeta;
+    @Nullable
+    private byte[] serializedXmpMeta = null;
 
     public XmpDirectory()
     {
@@ -548,4 +553,27 @@ public class XmpDirectory extends Directory
     // // TODO Auto-generated method stub
     // super.setByteArray(tagType, bytes);
     // }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (_xmpMeta instanceof XMPMetaImpl) {
+            try {
+                serializedXmpMeta = XMPSerializerHelper.serializeToBuffer((XMPMetaImpl) _xmpMeta, null);
+            } catch (XMPException e) {
+                throw new IOException("Serialization failed with: " + e.getMessage(), e);
+            }
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (serializedXmpMeta != null) {
+            try {
+                _xmpMeta = XMPMetaParser.parse(serializedXmpMeta, null);
+                serializedXmpMeta = null;
+            } catch (XMPException e) {
+                throw new IOException("Deserialization failed with: " + e.getMessage(), e);
+            }
+        }
+    }
 }

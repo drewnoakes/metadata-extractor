@@ -21,7 +21,7 @@
 package com.drew.imaging.png;
 
 import com.drew.lang.annotations.NotNull;
-
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,7 +30,8 @@ import java.util.Set;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public class PngChunkType
+@SuppressWarnings("serial")
+public class PngChunkType implements Serializable
 {
     private static final Set<String> _identifiersAllowingMultiples
         = new HashSet<String>(Arrays.asList("IDAT", "sPLT", "iTXt", "tEXt", "zTXt"));

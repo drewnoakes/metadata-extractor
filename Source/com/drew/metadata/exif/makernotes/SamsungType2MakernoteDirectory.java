@@ -34,7 +34,7 @@ import java.util.HashMap;
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class SamsungType2MakernoteDirectory extends Directory
 {
     // This list is incomplete

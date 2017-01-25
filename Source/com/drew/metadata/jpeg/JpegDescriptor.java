@@ -32,7 +32,7 @@ import static com.drew.metadata.jpeg.JpegDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class JpegDescriptor extends TagDescriptor<JpegDirectory>
 {
     public JpegDescriptor(@NotNull JpegDirectory directory)

@@ -32,7 +32,7 @@ import static com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class SigmaMakernoteDescriptor extends TagDescriptor<SigmaMakernoteDirectory>
 {
     public SigmaMakernoteDescriptor(@NotNull SigmaMakernoteDirectory directory)

@@ -31,7 +31,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class AppleMakernoteDescriptor extends TagDescriptor<AppleMakernoteDirectory>
 {
     public AppleMakernoteDescriptor(@NotNull AppleMakernoteDirectory directory)

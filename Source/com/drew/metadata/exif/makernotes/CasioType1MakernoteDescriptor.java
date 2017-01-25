@@ -31,7 +31,7 @@ import static com.drew.metadata.exif.makernotes.CasioType1MakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1MakernoteDirectory>
 {
     public CasioType1MakernoteDescriptor(@NotNull CasioType1MakernoteDirectory directory)

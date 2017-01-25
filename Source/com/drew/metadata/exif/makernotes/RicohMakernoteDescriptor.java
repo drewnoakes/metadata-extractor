@@ -32,7 +32,7 @@ import com.drew.metadata.TagDescriptor;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class RicohMakernoteDescriptor extends TagDescriptor<RicohMakernoteDirectory>
 {
     public RicohMakernoteDescriptor(@NotNull RicohMakernoteDirectory directory)

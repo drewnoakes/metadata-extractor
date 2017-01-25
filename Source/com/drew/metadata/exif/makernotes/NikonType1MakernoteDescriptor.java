@@ -43,7 +43,7 @@ import static com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class NikonType1MakernoteDescriptor extends TagDescriptor<NikonType1MakernoteDirectory>
 {
     public NikonType1MakernoteDescriptor(@NotNull NikonType1MakernoteDirectory directory)

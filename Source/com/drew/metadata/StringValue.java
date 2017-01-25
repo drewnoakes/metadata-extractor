@@ -22,25 +22,31 @@ package com.drew.metadata;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-
+import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public final class StringValue
+@SuppressWarnings("serial")
+public final class StringValue implements Serializable
 {
     @NotNull
     private final byte[] _bytes;
 
     @Nullable
-    private final Charset _charset;
+    private transient Charset _charset;
+
+    @Nullable
+    private String _charsetName;
 
     public StringValue(@NotNull byte[] bytes, @Nullable Charset charset)
     {
         _bytes = bytes;
         _charset = charset;
+        _charsetName = charset != null ? charset.name() : null;
     }
 
     @NotNull
@@ -73,4 +79,12 @@ public final class StringValue
 
         return new String(_bytes);
     }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (_charsetName != null) {
+            _charset = Charset.forName(_charsetName);
+        }
+    }
+
 }

@@ -37,7 +37,7 @@ import static com.drew.metadata.icc.IccDirectory.*;
  * @author Yuri Binev
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class IccDescriptor extends TagDescriptor<IccDirectory>
 {
     public IccDescriptor(@NotNull IccDirectory directory)

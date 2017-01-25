@@ -24,7 +24,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.lang.annotations.SuppressWarnings;
-
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
@@ -41,7 +41,8 @@ import java.util.regex.Pattern;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public abstract class Directory
+@java.lang.SuppressWarnings("serial")
+public abstract class Directory implements Serializable
 {
     private static final DecimalFormat _floatFormat = new DecimalFormat("0.###");
 

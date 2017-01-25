@@ -30,7 +30,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class ExifIFD0Directory extends ExifDirectoryBase
 {
     /** This tag is a pointer to the Exif SubIFD. */

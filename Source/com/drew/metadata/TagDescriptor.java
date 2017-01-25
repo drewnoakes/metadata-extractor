@@ -24,7 +24,7 @@ import com.drew.lang.Rational;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.RoundingMode;
@@ -42,7 +42,8 @@ import java.util.List;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class TagDescriptor<T extends Directory>
+@SuppressWarnings("serial")
+public class TagDescriptor<T extends Directory> implements Serializable
 {
     @NotNull
     protected final T _directory;

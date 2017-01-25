@@ -29,7 +29,7 @@ import static com.drew.metadata.adobe.AdobeJpegDirectory.*;
 /**
  * Provides human-readable string versions of the tags stored in an AdobeJpegDirectory.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
 {
     public AdobeJpegDescriptor(AdobeJpegDirectory directory)

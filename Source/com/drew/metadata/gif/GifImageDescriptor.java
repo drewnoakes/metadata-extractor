@@ -27,7 +27,7 @@ import com.drew.metadata.TagDescriptor;
  * @author Drew Noakes https://drewnoakes.com
  * @author Kevin Mott https://github.com/kwhopper
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class GifImageDescriptor extends TagDescriptor<GifImageDirectory>
 {
     public GifImageDescriptor(@NotNull GifImageDirectory directory)

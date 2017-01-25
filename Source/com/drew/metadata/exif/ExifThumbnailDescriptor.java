@@ -31,7 +31,7 @@ import static com.drew.metadata.exif.ExifThumbnailDirectory.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class ExifThumbnailDescriptor extends ExifDescriptorBase<ExifThumbnailDirectory>
 {
     public ExifThumbnailDescriptor(@NotNull ExifThumbnailDirectory directory)

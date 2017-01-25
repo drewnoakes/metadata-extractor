@@ -29,7 +29,7 @@ import java.util.HashMap;
  * @author Drew Noakes https://drewnoakes.com
  * @author Kevin Mott https://github.com/kwhopper
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class GifAnimationDirectory extends Directory
 {
     public static final int TAG_ITERATION_COUNT = 1;

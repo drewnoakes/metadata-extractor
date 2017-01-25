@@ -34,7 +34,7 @@ import java.util.HashMap;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class CanonMakernoteDirectory extends Directory
 {
     // These TAG_*_ARRAY Exif tags map to arrays of int16 values which are split out into separate 'fake' tags.

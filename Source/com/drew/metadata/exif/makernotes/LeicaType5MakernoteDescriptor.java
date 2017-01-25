@@ -34,7 +34,7 @@ import static com.drew.metadata.exif.makernotes.LeicaType5MakernoteDirectory.*;
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class LeicaType5MakernoteDescriptor extends TagDescriptor<LeicaType5MakernoteDirectory>
 {
     public LeicaType5MakernoteDescriptor(@NotNull LeicaType5MakernoteDirectory directory)

@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class GifHeaderDirectory extends Directory
 {
     public static final int TAG_GIF_FORMAT_VERSION = 1;

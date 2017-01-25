@@ -30,7 +30,7 @@ import static com.drew.metadata.gif.GifAnimationDirectory.*;
  * @author Drew Noakes https://drewnoakes.com
  * @author Kevin Mott https://github.com/kwhopper
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class GifAnimationDescriptor extends TagDescriptor<GifAnimationDirectory>
 {
     public GifAnimationDescriptor(@NotNull GifAnimationDirectory directory)

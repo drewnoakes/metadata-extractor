@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class BmpHeaderDirectory extends Directory
 {
     public static final int TAG_HEADER_SIZE = -1;

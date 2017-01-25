@@ -36,7 +36,7 @@ import static com.drew.metadata.jfif.JfifDirectory.*;
  *
  * @author Yuri Binev, Drew Noakes
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class JfifDescriptor extends TagDescriptor<JfifDirectory>
 {
     public JfifDescriptor(@NotNull JfifDirectory directory)

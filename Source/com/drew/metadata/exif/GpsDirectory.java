@@ -37,7 +37,7 @@ import java.util.Locale;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class GpsDirectory extends ExifDirectoryBase
 {
     /** GPS tag version GPSVersionID 0 0 BYTE 4 */

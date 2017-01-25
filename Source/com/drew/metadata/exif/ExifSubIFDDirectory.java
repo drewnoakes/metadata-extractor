@@ -32,7 +32,7 @@ import java.util.TimeZone;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({ "WeakerAccess", "serial" })
 public class ExifSubIFDDirectory extends ExifDirectoryBase
 {
     /** This tag is a pointer to the Exif Interop IFD. */
