@@ -203,7 +203,7 @@ public class ImageMetadataReader
             File file = new File(filePath);
 
             if (!markdownFormat && argList.size()>1)
-                System.out.printf("\n***** PROCESSING: %s\n%n", filePath);
+                System.out.printf("\n***** PROCESSING: %s%n%n", filePath);
 
             Metadata metadata = null;
             try {

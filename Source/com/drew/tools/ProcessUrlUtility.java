@@ -67,7 +67,7 @@ public class ProcessUrlUtility
         } catch (ImageProcessingException e) {
             // this is an error in the Jpeg segment structure.  we're looking for bad handling of
             // metadata segments.  in this case, we didn't even get a segment.
-            System.err.printf("%s: %s [Error Extracting Metadata]\n\t%s%n", e.getClass().getName(), url, e.getMessage()); return;
+            System.err.printf("%s: %s [Error Extracting Metadata]%n\t%s%n", e.getClass().getName(), url, e.getMessage()); return;
         } catch (Throwable t) {
             // general, uncaught exception during processing of jpeg segments
             System.err.printf("%s: %s [Error Extracting Metadata]%n", t.getClass().getName(), url);
