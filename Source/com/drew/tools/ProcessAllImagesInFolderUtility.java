@@ -570,12 +570,14 @@ public class ProcessAllImagesInFolderUtility
             Writer writer = new OutputStreamWriter(stream);
             writer.write("# Image Database Summary\n\n");
 
-            for (String extension : _rowListByExtension.keySet()) {
+            for (Map.Entry<String, List<Row>> entry : _rowListByExtension.entrySet()) {
+                String extension = entry.getKey();
                 writer.write("## " + extension.toUpperCase() + " Files\n\n");
 
                 writer.write("File|Manufacturer|Model|Dir Count|Exif?|Makernote|Thumbnail|All Data\n");
                 writer.write("----|------------|-----|---------|-----|---------|---------|--------\n");
-                List<Row> rows = _rowListByExtension.get(extension);
+
+                List<Row> rows = entry.getValue();
 
                 // Order by manufacturer, then model
                 Collections.sort(rows, new Comparator<Row>() {
