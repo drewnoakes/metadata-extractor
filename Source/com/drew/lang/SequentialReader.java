@@ -297,7 +297,7 @@ public abstract class SequentialReader
     }
 
     @NotNull
-    public String getString(int bytesRequested, Charset charset) throws IOException
+    public String getString(int bytesRequested, @NotNull Charset charset) throws IOException
     {
         byte[] bytes = getBytes(bytesRequested);
         return new String(bytes, charset);
