@@ -23,8 +23,6 @@ package com.drew.metadata.gif;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.TagDescriptor;
 
-import static com.drew.metadata.gif.GifControlDirectory.*;
-
 /**
  * @author Drew Noakes https://drewnoakes.com
  * @author Kevin Mott https://github.com/kwhopper

@@ -33,7 +33,6 @@ import com.drew.metadata.xmp.XmpReader;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 /**

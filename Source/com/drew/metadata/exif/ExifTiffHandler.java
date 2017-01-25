@@ -41,7 +41,6 @@ import com.drew.metadata.xmp.XmpReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -779,7 +778,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             (day >= 1 && day < 32) &&
             (year >= 1 && year <= 9999))
         {
-            directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL, 
+            directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL,
                     String.format("%4d:%2d:%2d %2d:%2d:%2d", year, month, day, hour, minutes, seconds));
         }
         else

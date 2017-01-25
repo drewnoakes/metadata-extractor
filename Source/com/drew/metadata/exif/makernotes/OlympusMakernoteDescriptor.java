@@ -23,7 +23,6 @@ package com.drew.metadata.exif.makernotes;
 import com.drew.imaging.PhotographicConversions;
 import com.drew.lang.Rational;
 import com.drew.lang.DateUtil;
-import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -32,7 +31,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
-import java.lang.reflect.Array;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link OlympusMakernoteDirectory}.
