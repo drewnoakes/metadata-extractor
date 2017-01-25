@@ -21,6 +21,7 @@
 
 package com.drew.lang;
 
+import com.drew.tools.FileUtil;
 import org.junit.After;
 import org.junit.Test;
 
@@ -48,9 +49,7 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
             deleteTempFile();
 
             _tempFile = File.createTempFile("metadata-extractor-test-", ".tmp");
-            FileOutputStream stream = new FileOutputStream(_tempFile);
-            stream.write(bytes);
-            stream.close();
+            FileUtil.saveBytes(_tempFile, bytes);
             _randomAccessFile = new RandomAccessFile(_tempFile, "r");
             return new RandomAccessFileReader(_randomAccessFile);
         } catch (IOException e) {
