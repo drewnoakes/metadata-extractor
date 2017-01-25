@@ -78,6 +78,18 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <directory>Output/maven</directory>
         <outputDirectory>Output/maven/classes</outputDirectory>
@@ -145,7 +157,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.1</version>
                 <configuration>
-                    <!--<additionalparam>-Xdoclint:none</additionalparam>-->
+                    <additionalparam>${javadoc.opts}</additionalparam>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>public</show>
                     <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from
