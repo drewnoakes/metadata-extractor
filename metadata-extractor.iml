@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Source" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/Output" />
+      <excludeFolder url="file://$MODULE_DIR$/Output/maven" />
       <excludeFolder url="file://$MODULE_DIR$/Releases" />
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
