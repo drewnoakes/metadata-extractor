@@ -229,7 +229,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      *         {@link Rational}.
      */
     public int compareTo(Rational that) {
-        return this.doubleValue() < that.doubleValue() ? -1 : ((this.doubleValue() == that.doubleValue()) ? 0 : 1);
+        return Double.compare(this.doubleValue(), that.doubleValue());
     }
 
     /**
