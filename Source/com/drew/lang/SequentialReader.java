@@ -84,6 +84,24 @@ public abstract class SequentialReader
     public abstract boolean trySkip(long n) throws IOException;
 
     /**
+     * Returns an estimate of the number of bytes that can be read (or skipped
+     * over) from this {@link SequentialReader} without blocking by the next
+     * invocation of a method for this input stream. A single read or skip of
+     * this many bytes will not block, but may read or skip fewer bytes.
+     * <p>
+     * Note that while some implementations of {@link SequentialReader} like
+     * {@link SequentialByteArrayReader} will return the total remaining number
+     * of bytes in the stream, others will not. It is never correct to use the
+     * return value of this method to allocate a buffer intended to hold all
+     * data in this stream.
+     *
+     * @return an estimate of the number of bytes that can be read (or skipped
+     *         over) from this {@link SequentialReader} without blocking or
+     *         {@code 0} when it reaches the end of the input stream.
+     */
+    public abstract int available();
+
+    /**
      * Sets the endianness of this reader.
      * <ul>
      * <li><code>true</code> for Motorola (or big) endianness (also known as network byte order), with MSB before LSB.</li>

@@ -51,7 +51,7 @@ public class JpegReader implements JpegSegmentMetadataReader
             JpegSegmentType.SOF5,
             JpegSegmentType.SOF6,
             JpegSegmentType.SOF7,
-            JpegSegmentType.SOF8,
+//            JpegSegmentType.JPG,
             JpegSegmentType.SOF9,
             JpegSegmentType.SOF10,
             JpegSegmentType.SOF11,
