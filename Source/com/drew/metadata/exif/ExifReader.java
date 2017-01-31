@@ -47,18 +47,6 @@ public class ExifReader implements JpegSegmentMetadataReader
     /** Exif data stored in JPEG files' APP1 segment are preceded by this six character preamble. */
     public static final String JPEG_SEGMENT_PREAMBLE = "Exif\0\0";
 
-    private boolean _storeThumbnailBytes = true;
-
-    public boolean isStoreThumbnailBytes()
-    {
-        return _storeThumbnailBytes;
-    }
-
-    public void setStoreThumbnailBytes(boolean storeThumbnailBytes)
-    {
-        _storeThumbnailBytes = storeThumbnailBytes;
-    }
-
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
