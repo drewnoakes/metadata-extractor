@@ -175,7 +175,7 @@ public class OlympusRawDevelopment2MakernoteDescriptor extends TagDescriptor<Oly
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.length; i++) {
             if (i == 0)
-                sb.append(_filters.containsKey((short)values[i]) ? _filters.get((short)values[i]) : "[unknown]");
+                sb.append(_filters.containsKey(values[i]) ? _filters.get(values[i]) : "[unknown]");
             else
                 sb.append(values[i]).append("; ");
             sb.append("; ");
