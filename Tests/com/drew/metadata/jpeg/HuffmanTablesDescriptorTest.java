@@ -45,15 +45,15 @@ public class HuffmanTablesDescriptorTest
     @Test
     public void testGetNumberOfTablesDescription() throws Exception
     {
-        assertNull(_descriptor.getNumerOfTablesDescription());
+        assertNull(_descriptor.getNumberOfTablesDescription());
         _directory.setInt(TAG_NUMBER_OF_TABLES, 0);
-        assertEquals("0 Huffman tables", _descriptor.getNumerOfTablesDescription());
+        assertEquals("0 Huffman tables", _descriptor.getNumberOfTablesDescription());
         assertEquals("0 Huffman tables", _descriptor.getDescription(TAG_NUMBER_OF_TABLES));
         _directory.setInt(TAG_NUMBER_OF_TABLES, 1);
-        assertEquals("1 Huffman table", _descriptor.getNumerOfTablesDescription());
+        assertEquals("1 Huffman table", _descriptor.getNumberOfTablesDescription());
         assertEquals("1 Huffman table", _descriptor.getDescription(TAG_NUMBER_OF_TABLES));
         _directory.setInt(TAG_NUMBER_OF_TABLES, 3);
-        assertEquals("3 Huffman tables", _descriptor.getNumerOfTablesDescription());
+        assertEquals("3 Huffman tables", _descriptor.getNumberOfTablesDescription());
         assertEquals("3 Huffman tables", _descriptor.getDescription(TAG_NUMBER_OF_TABLES));
 
     }

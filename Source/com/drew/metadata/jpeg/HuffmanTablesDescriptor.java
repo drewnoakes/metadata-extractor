@@ -50,14 +50,14 @@ public class HuffmanTablesDescriptor extends TagDescriptor<HuffmanTablesDirector
     {
         switch (tagType) {
             case TAG_NUMBER_OF_TABLES:
-                return getNumerOfTablesDescription();
+                return getNumberOfTablesDescription();
             default:
                 return super.getDescription(tagType);
         }
     }
 
     @Nullable
-    public String getNumerOfTablesDescription()
+    public String getNumberOfTablesDescription()
     {
         Integer value = _directory.getInteger(TAG_NUMBER_OF_TABLES);
         if (value==null)
