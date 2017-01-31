@@ -123,4 +123,9 @@ public class SequentialByteArrayReader extends SequentialReader
 
         return true;
     }
+
+    @Override
+    public int available() {
+        return _bytes.length - _index;
+    }
 }

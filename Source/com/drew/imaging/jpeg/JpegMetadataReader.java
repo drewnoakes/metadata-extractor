@@ -32,6 +32,7 @@ import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.jfif.JfifReader;
 import com.drew.metadata.jfxx.JfxxReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
+import com.drew.metadata.jpeg.JpegDhtReader;
 import com.drew.metadata.jpeg.JpegReader;
 import com.drew.metadata.photoshop.DuckyReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
@@ -63,7 +64,8 @@ public class JpegMetadataReader
             new PhotoshopReader(),
             new DuckyReader(),
             new IptcReader(),
-            new AdobeJpegReader()
+            new AdobeJpegReader(),
+            new JpegDhtReader()
     );
 
     @NotNull

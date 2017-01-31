@@ -111,6 +111,15 @@ public class StreamReader extends SequentialReader
         return skipInternal(n) == n;
     }
 
+    @Override
+    public int available() {
+        try {
+            return _stream.available();
+        } catch (IOException e) {
+            return 0;
+        }
+    }
+
     private long skipInternal(long n) throws IOException
     {
         // It seems that for some streams, such as BufferedInputStream, that skip can return
