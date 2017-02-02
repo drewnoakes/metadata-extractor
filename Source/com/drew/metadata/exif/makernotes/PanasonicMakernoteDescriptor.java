@@ -465,7 +465,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         if (value == null)
             return null;
 
-        DecimalFormat format = new DecimalFormat("0.#");
+        DecimalFormat format = new DecimalFormat("0.#", formatSymbols);
         // converted to degrees of clockwise camera rotation
         return format.format(value.shortValue() / 10.0);
     }
@@ -477,7 +477,7 @@ public class PanasonicMakernoteDescriptor extends TagDescriptor<PanasonicMakerno
         if (value == null)
             return null;
 
-        DecimalFormat format = new DecimalFormat("0.#");
+        DecimalFormat format = new DecimalFormat("0.#", formatSymbols);
         // converted to degrees of upward camera tilt
         return format.format(-value.shortValue() / 10.0);
     }

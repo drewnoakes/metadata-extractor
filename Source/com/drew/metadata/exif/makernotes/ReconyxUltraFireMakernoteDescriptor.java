@@ -91,7 +91,7 @@ public class ReconyxUltraFireMakernoteDescriptor extends TagDescriptor<ReconyxUl
                 return getIndexedDescription(tagType, "Off", "On");
             case TAG_BATTERY_VOLTAGE:
                 Double value = _directory.getDoubleObject(tagType);
-                DecimalFormat formatter = new DecimalFormat("0.000");
+                DecimalFormat formatter = new DecimalFormat("0.000", formatSymbols);
                 return value == null ? null : formatter.format(value);
             case TAG_SERIAL_NUMBER:
                 // default is UTF_8

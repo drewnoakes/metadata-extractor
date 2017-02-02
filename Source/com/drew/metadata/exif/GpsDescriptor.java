@@ -110,7 +110,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     {
         // time in hour, min, sec
         Rational[] timeComponents = _directory.getRationalArray(TAG_TIME_STAMP);
-        DecimalFormat df = new DecimalFormat("00.000");
+        DecimalFormat df = new DecimalFormat("00.000", formatSymbols);
         return timeComponents == null
             ? null
             : String.format("%02d:%02d:%s UTC",
@@ -143,7 +143,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         Rational angle = _directory.getRational(tagType);
         // provide a decimal version of rational numbers in the description, to avoid strings like "35334/199 degrees"
         String value = angle != null
-            ? new DecimalFormat("0.##").format(angle.doubleValue())
+            ? new DecimalFormat("0.##", formatSymbols).format(angle.doubleValue())
             : _directory.getString(tagType);
         return value == null || value.trim().length() == 0 ? null : value.trim() + " degrees";
     }

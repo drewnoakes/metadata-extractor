@@ -1253,7 +1253,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         if (value == null)
             return null;
 
-        return String.format("%s kPa", new DecimalFormat("#.##").format(value / 10.0));
+        return String.format("%s kPa", new DecimalFormat("#.##", formatSymbols).format(value / 10.0));
     }
 
     /// <remarks>
@@ -1267,7 +1267,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         if (values == null || values.length < 2)
             return null;
 
-        DecimalFormat format = new DecimalFormat("#.##");
+        DecimalFormat format = new DecimalFormat("#.##", formatSymbols);
         return String.format("%s m, %s ft",
             format.format(values[0] / 10.0),
             format.format(values[1] / 10.0));

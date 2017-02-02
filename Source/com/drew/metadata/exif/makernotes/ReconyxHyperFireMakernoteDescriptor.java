@@ -66,7 +66,7 @@ public class ReconyxHyperFireMakernoteDescriptor extends TagDescriptor<ReconyxHy
                 return String.format("%d", _directory.getInteger(tagType));
             case TAG_BATTERY_VOLTAGE:
                 Double value = _directory.getDoubleObject(tagType);
-                DecimalFormat formatter = new DecimalFormat("0.000");
+                DecimalFormat formatter = new DecimalFormat("0.000", formatSymbols);
                 return value == null ? null : formatter.format(value);
             case TAG_DATE_TIME_ORIGINAL:
                 String date = _directory.getString(tagType);

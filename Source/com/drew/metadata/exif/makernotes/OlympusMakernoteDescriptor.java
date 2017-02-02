@@ -286,7 +286,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double iso = Math.pow((value / 8d) - 1, 2) * 3.125;
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(iso);
     }
@@ -304,7 +304,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double shutterSpeed = Math.pow((49-value) / 8d, 2);
-        DecimalFormat format = new DecimalFormat("0.###");
+        DecimalFormat format = new DecimalFormat("0.###", formatSymbols);
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(shutterSpeed) + " sec";
     }
@@ -340,7 +340,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getExposureCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_EXPOSURE_COMPENSATION);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
         return value == null ? null : format.format((value / 3d) - 2) + " EV";
     }
 
@@ -466,7 +466,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getWhiteBalanceRedDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_RED);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
         return value == null ? null : format.format(value/256d);
     }
 
@@ -474,7 +474,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getWhiteBalanceGreenDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_GREEN);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
         return value == null ? null : format.format(value/256d);
     }
 
@@ -482,7 +482,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getWhiteBalanceBlueDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_WHITE_BALANCE_BLUE);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
         return value == null ? null : format.format(value / 256d);
     }
 
@@ -516,7 +516,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getFlashCompensationDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FLASH_COMPENSATION);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
         return value == null ? null : format.format((value-6)/3d) + " EV";
     }
 
@@ -581,7 +581,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getApexBrightnessDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_APEX_BRIGHTNESS_VALUE);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
         return value == null ? null : format.format((value/8d)-6);
     }
 
@@ -793,7 +793,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (value == null)
             return null;
 
-        DecimalFormat format = new DecimalFormat("0.###");
+        DecimalFormat format = new DecimalFormat("0.###", formatSymbols);
         return format.format(value.doubleValue()) + " mm";
     }
 

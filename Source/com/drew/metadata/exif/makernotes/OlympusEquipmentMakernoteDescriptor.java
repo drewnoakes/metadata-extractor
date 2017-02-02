@@ -174,7 +174,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
         if (value == null)
             return null;
 
-        DecimalFormat format = new DecimalFormat("0.#");
+        DecimalFormat format = new DecimalFormat("0.#", formatSymbols);
         return format.format(CalcMaxAperture(value));
     }
 
@@ -185,7 +185,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
         if (value == null)
             return null;
 
-        DecimalFormat format = new DecimalFormat("0.#");
+        DecimalFormat format = new DecimalFormat("0.#", formatSymbols);
         return format.format(CalcMaxAperture(value));
     }
 
@@ -196,7 +196,7 @@ public class OlympusEquipmentMakernoteDescriptor extends TagDescriptor<OlympusEq
         if (value == null)
             return null;
 
-        DecimalFormat format = new DecimalFormat("0.#");
+        DecimalFormat format = new DecimalFormat("0.#", formatSymbols);
         return format.format(CalcMaxAperture(value));
     }
 
