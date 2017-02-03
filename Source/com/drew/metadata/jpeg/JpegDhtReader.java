@@ -69,12 +69,12 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
                 HuffmanTableClass tableClass = HuffmanTableClass.typeOf((header & 0xF0) >> 4);
                 int tableDestinationId = header & 0xF;
 
-                byte[] lBytes = reader.getBytes(16);
+                byte[] lBytes = getBytes(reader, 16);
                 int vCount = 0;
                 for (byte b : lBytes) {
                     vCount += b;
                 }
-                byte[] vBytes = reader.getBytes(vCount);
+                byte[] vBytes = getBytes(reader, vCount);
                 directory.getTables().add(new HuffmanTable(tableClass, tableDestinationId, lBytes, vBytes));
             }
         } catch (IOException me) {
@@ -82,5 +82,20 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
         }
 
         directory.setInt(HuffmanTablesDirectory.TAG_NUMBER_OF_TABLES, directory.getTables().size());
+    }
+
+    private byte[] getBytes(@NotNull final SequentialReader reader, int count) throws IOException {
+        byte[] bytes = new byte[count];
+        for (int i = 0; i < count; i++) {
+            byte b = reader.getByte();
+            if (b == 0xFF) {
+                byte stuffing = reader.getByte();
+                if (stuffing != 0x00) {
+                    throw new IOException("Marker " + JpegSegmentType.fromByte(stuffing) + " found inside DHT segment");
+                }
+            }
+            bytes[i] = b;
+        }
+        return bytes;
     }
 }

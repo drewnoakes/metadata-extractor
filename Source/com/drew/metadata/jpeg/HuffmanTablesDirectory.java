@@ -200,7 +200,7 @@ public class HuffmanTablesDirectory extends Directory {
      *         Huffman tables.
      */
     public boolean isTypical() {
-        if (tables.size() != 4) {
+        if (tables.size() == 0) {
             return false;
         }
         for (HuffmanTable table : tables) {
