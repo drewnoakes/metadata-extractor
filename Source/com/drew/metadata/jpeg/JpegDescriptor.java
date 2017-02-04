@@ -124,8 +124,6 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
         if (value==null)
             return null;
 
-        return value.getComponentName() + " component: Quantization table " + value.getQuantizationTableNumber()
-            + ", Sampling factors " + value.getHorizontalSamplingFactor()
-            + " horiz/" + value.getVerticalSamplingFactor() + " vert";
+        return value.getComponentName() + " component: " + value;
     }
 }
