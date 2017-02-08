@@ -88,4 +88,15 @@ public class JpegComponent implements Serializable
     {
         return _samplingFactorByte & 0x0F;
     }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return String.format(
+            "Quantization table %d, Sampling factors %d horiz/%d vert",
+            _quantizationTableNumber,
+            getHorizontalSamplingFactor(),
+            getVerticalSamplingFactor()
+        );
+    }
 }
