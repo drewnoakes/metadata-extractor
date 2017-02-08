@@ -30,10 +30,12 @@ import java.lang.reflect.Array;
 import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Base class for all tag descriptor classes.  Implementations are responsible for
@@ -44,6 +46,8 @@ import java.util.List;
  */
 public class TagDescriptor<T extends Directory>
 {
+    protected static DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.ROOT);
+
     @NotNull
     protected final T _directory;
 
@@ -293,7 +297,7 @@ public class TagDescriptor<T extends Directory>
         Double d = _directory.getDoubleObject(tagType);
         if (d != null)
         {
-            DecimalFormat format = new DecimalFormat("0.###");
+            DecimalFormat format = new DecimalFormat("0.###", formatSymbols);
             return format.format(d);
         }
 
@@ -303,7 +307,7 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFStopDescription(double fStop)
     {
-        DecimalFormat format = new DecimalFormat("0.0");
+        DecimalFormat format = new DecimalFormat("0.0", formatSymbols);
         format.setRoundingMode(RoundingMode.HALF_UP);
         return "f/" + format.format(fStop);
     }
@@ -311,7 +315,7 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFocalLengthDescription(double mm)
     {
-        DecimalFormat format = new DecimalFormat("0.#");
+        DecimalFormat format = new DecimalFormat("0.#", formatSymbols);
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(mm) + " mm";
     }
@@ -334,7 +338,7 @@ public class TagDescriptor<T extends Directory>
         if (!values[2].isZero()) {
             sb.append(' ');
 
-            DecimalFormat format = new DecimalFormat("0.0");
+            DecimalFormat format = new DecimalFormat("0.0", formatSymbols);
             format.setRoundingMode(RoundingMode.HALF_UP);
 
             if (values[2].equals(values[3]))
@@ -380,7 +384,7 @@ public class TagDescriptor<T extends Directory>
             float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
             long apexPower10 = Math.round((double)apexPower * 10.0);
             float fApexPower = (float)apexPower10 / 10.0f;
-            DecimalFormat format = new DecimalFormat("0.##");
+            DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
             format.setRoundingMode(RoundingMode.HALF_UP);
             return format.format(fApexPower) + " sec";
         } else {

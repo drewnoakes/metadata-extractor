@@ -29,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,7 +44,7 @@ import java.util.regex.Pattern;
  */
 public abstract class Directory
 {
-    private static final DecimalFormat _floatFormat = new DecimalFormat("0.###");
+    private static final DecimalFormat _floatFormat = new DecimalFormat("0.###", new DecimalFormatSymbols(Locale.ROOT));
 
     /** Map of values hashed by type identifiers. */
     @NotNull

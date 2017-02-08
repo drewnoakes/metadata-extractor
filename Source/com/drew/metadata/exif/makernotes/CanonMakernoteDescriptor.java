@@ -747,7 +747,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         if (value == 0) {
             return "Self timer not used";
         } else {
-            DecimalFormat format = new DecimalFormat("0.##");
+            DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
             return format.format((double)value * 0.1d) + " sec";
         }
     }

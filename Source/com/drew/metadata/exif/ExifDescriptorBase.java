@@ -52,7 +52,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     private final boolean _allowDecimalRepresentationOfRationals = true;
 
     @NotNull
-    private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
+    private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#", formatSymbols);
 
     // Note for the potential addition of brightness presentation in eV:
     // Brightness of taken subject. To calculate Exposure(Ev) from BrightnessValue(Bv),
@@ -1144,7 +1144,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_SUBJECT_DISTANCE);
         if (value == null)
             return null;
-        DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##", formatSymbols);
         return formatter.format(value.doubleValue()) + " metres";
     }
 

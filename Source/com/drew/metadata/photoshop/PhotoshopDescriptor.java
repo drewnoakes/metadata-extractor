@@ -202,7 +202,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             RandomAccessReader reader = new ByteArrayReader(bytes);
             float resX = reader.getS15Fixed16(0);
             float resY = reader.getS15Fixed16(8); // is this the correct offset? it's only reading 4 bytes each time
-            DecimalFormat format = new DecimalFormat("0.##");
+            DecimalFormat format = new DecimalFormat("0.##", formatSymbols);
             return format.format(resX) + "x" + format.format(resY) + " DPI";
         } catch (Exception e) {
             return null;

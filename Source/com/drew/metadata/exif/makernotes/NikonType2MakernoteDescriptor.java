@@ -310,7 +310,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
             return null;
         if (values.length < 3 || values[2] == 0)
             return null;
-        final DecimalFormat decimalFormat = new DecimalFormat("0.##");
+        final DecimalFormat decimalFormat = new DecimalFormat("0.##", formatSymbols);
         double ev = values[0] * values[1] / (double)values[2];
         return decimalFormat.format(ev) + " EV";
     }
