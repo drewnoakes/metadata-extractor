@@ -25,6 +25,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable;
+import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable.HuffmanTableClass;
+
 /**
  * @author Nadahar
  */
@@ -62,5 +65,30 @@ public class HuffmanTablesDirectoryTest
         _directory.setInt(HuffmanTablesDirectory.TAG_NUMBER_OF_TABLES, 9);
         assertEquals(9,_directory.getNumberOfTables());
         assertEquals("9 Huffman tables", _directory.getDescription(HuffmanTablesDirectory.TAG_NUMBER_OF_TABLES));
+    }
+
+    @Test
+    public void testIsTypical() throws Exception
+    {
+        _directory.tables.add(new HuffmanTable(
+            HuffmanTableClass.AC,
+            0,
+            HuffmanTablesDirectory.TYPICAL_CHROMINANCE_AC_LENGTHS,
+            HuffmanTablesDirectory.TYPICAL_CHROMINANCE_AC_VALUES
+        ));
+        _directory.tables.add(new HuffmanTable(
+            HuffmanTableClass.DC,
+            0,
+            HuffmanTablesDirectory.TYPICAL_LUMINANCE_DC_LENGTHS,
+            HuffmanTablesDirectory.TYPICAL_LUMINANCE_DC_VALUES
+        ));
+
+        assertTrue(_directory.getTable(0).isTypical());
+        assertFalse(_directory.getTable(0).isOptimized());
+        assertTrue(_directory.getTable(1).isTypical());
+        assertFalse(_directory.getTable(1).isOptimized());
+
+        assertTrue(_directory.isTypical());
+        assertFalse(_directory.isOptimized());
     }
 }

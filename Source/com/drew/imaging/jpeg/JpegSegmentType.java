@@ -92,6 +92,18 @@ public enum JpegSegmentType
     /** Define Quantization Table segment identifier. */
     DQT((byte)0xDB, false),
 
+    /** Define Number of Lines segment identifier. */
+    DNL((byte)0xDC, false),
+
+    /** Define Restart Interval segment identifier. */
+    DRI((byte)0xDD, false),
+
+    /** Define Hierarchical Progression segment identifier. */
+    DHP((byte)0xDE, false),
+
+    /** EXPand reference component(s) segment identifier. */
+    EXP((byte)0xDF, false),
+
     /** Define Huffman Table segment identifier. */
     DHT((byte)0xC4, false),
 
