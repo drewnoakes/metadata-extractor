@@ -241,7 +241,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      * Similarly, 1/0 is equal to 100/0 by this method.
      * To test equal representations, use EqualsExact.
      *
-     * @param other
+     * @param other The rational value to compare with
      */
     public boolean equals(Rational other) {
         return other.doubleValue() == doubleValue();
@@ -255,7 +255,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      * Similarly, 1/0 is not equal to 100/0 by this method.
      * To test numerically equivalence, use Equals(Rational).</p>
      *
-     * @param other
+     * @param other The rational value to compare with
      */
     public boolean equalsExact(Rational other) {
         return getDenominator() == other.getDenominator() && getNumerator() == other.getNumerator();
