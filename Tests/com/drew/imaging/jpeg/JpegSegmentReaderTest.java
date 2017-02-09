@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -133,7 +134,7 @@ public class JpegSegmentReaderTest
     {
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(
             new File("Tests/Data/withExifAndIptc.jpg"),
-            Arrays.asList(JpegSegmentType.DHT));
+            Collections.singletonList(JpegSegmentType.DHT));
 
         assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP0));
         assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP1));

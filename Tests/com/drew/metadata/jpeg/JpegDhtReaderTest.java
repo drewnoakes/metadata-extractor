@@ -31,6 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.Assert.*;
 
 /**
@@ -44,7 +46,7 @@ public class JpegDhtReaderTest
         Metadata metadata = new Metadata();
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(
             new File(filePath),
-            Arrays.asList(JpegSegmentType.DHT));
+            Collections.singletonList(JpegSegmentType.DHT));
 
         Iterable<byte[]> segments = segmentData.getSegments(JpegSegmentType.DHT);
         for (byte[] segment : segments) {
