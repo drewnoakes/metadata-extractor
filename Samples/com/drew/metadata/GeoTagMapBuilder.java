@@ -66,6 +66,12 @@ public class GeoTagMapBuilder
             }
         });
 
+        if (files == null)
+        {
+            System.err.println("No matching files found.");
+            System.exit(1);
+        }
+
         Collection<PhotoLocation> photoLocations = new ArrayList<PhotoLocation>();
         for (File file : files)
         {

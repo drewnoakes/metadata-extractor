@@ -226,6 +226,7 @@ public class GifReader
             reader.skip(skipCount);
     }
 
+    @Nullable
     private static Directory readPlainTextBlock(SequentialReader reader, int blockSizeBytes) throws IOException
     {
         // It seems this extension is deprecated. If somebody finds an image with this in it, could implement here.
