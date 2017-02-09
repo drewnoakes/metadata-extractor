@@ -250,7 +250,6 @@ public class GifReader
         return new GifCommentDirectory(new StringValue(buffer, Charsets.ASCII));
     }
 
-    @Nullable
     private static void readApplicationExtensionBlock(SequentialReader reader, int blockSizeBytes, Metadata metadata) throws IOException
     {
         if (blockSizeBytes != 11)
