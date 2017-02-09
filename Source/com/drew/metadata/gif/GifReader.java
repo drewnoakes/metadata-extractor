@@ -356,7 +356,7 @@ public class GifReader
             if (b == 0)
                 return bytes.toByteArray();
 
-            int bInt = (int)(b & 0xFF);
+            int bInt = b & 0xFF;
 
             buffer[0] = b;
             reader.getBytes(buffer, 1, bInt);
