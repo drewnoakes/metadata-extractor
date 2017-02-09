@@ -38,6 +38,7 @@ import java.util.Collections;
  * @author Philip
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class AdobeJpegReader implements JpegSegmentMetadataReader
 {
     public static final String PREAMBLE = "Adobe";

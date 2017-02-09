@@ -29,6 +29,7 @@ import com.drew.lang.annotations.Nullable;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("unused")
 public class Tag
 {
     private final int _tagType;
