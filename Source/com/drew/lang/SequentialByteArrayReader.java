@@ -82,7 +82,7 @@ public class SequentialByteArrayReader extends SequentialReader
     }
 
     @Override
-    public void getBytes(byte[] buffer, int offset, int count) throws IOException
+    public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
     {
         if (_index + count > _bytes.length) {
             throw new EOFException("End of data reached.");

@@ -74,7 +74,7 @@ public class StreamReader extends SequentialReader
     }
 
     @Override
-    public void getBytes(byte[] buffer, int offset, int count) throws IOException
+    public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
     {
         int totalBytesRead = 0;
         while (totalBytesRead != count)

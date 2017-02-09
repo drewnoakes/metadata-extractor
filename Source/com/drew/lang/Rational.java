@@ -228,7 +228,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      *         than {@code 0} if this {@link Rational} is greater than the argument
      *         {@link Rational}.
      */
-    public int compareTo(Rational that) {
+    public int compareTo(@NotNull Rational that) {
         return Double.compare(this.doubleValue(), that.doubleValue());
     }
 
