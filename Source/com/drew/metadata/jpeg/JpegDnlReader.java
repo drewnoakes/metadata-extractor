@@ -67,7 +67,7 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
         try {
             // Only set height from DNL if it's not already defined
             Integer i = directory.getInteger(JpegDirectory.TAG_IMAGE_HEIGHT);
-            if (i == null || i.intValue() == 0) {
+            if (i == null || i == 0) {
                 directory.setInt(JpegDirectory.TAG_IMAGE_HEIGHT, reader.getUInt16());
             }
         } catch (IOException ex) {
