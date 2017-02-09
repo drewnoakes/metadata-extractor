@@ -68,10 +68,8 @@ public final class ErrorDirectory extends Directory
     }
 
     @Override
-    @NotNull
     public void setObject(int tagType, @NotNull Object value)
     {
         throw new UnsupportedOperationException(String.format("Cannot add value to %s.", ErrorDirectory.class.getName()));
     }
-
 }

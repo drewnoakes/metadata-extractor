@@ -81,7 +81,6 @@ public class SequentialByteArrayReader extends SequentialReader
         return bytes;
     }
 
-    @NotNull
     @Override
     public void getBytes(byte[] buffer, int offset, int count) throws IOException
     {

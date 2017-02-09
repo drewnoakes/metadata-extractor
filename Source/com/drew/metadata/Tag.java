@@ -83,7 +83,6 @@ public class Tag
      *
      * @return whether this tag has a name
      */
-    @NotNull
     public boolean hasTagName()
     {
         return _directory.hasTagName(_tagType);

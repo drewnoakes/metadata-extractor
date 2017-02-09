@@ -36,7 +36,6 @@ public class StreamReader extends SequentialReader
     @NotNull
     private final InputStream _stream;
 
-    @NotNull
     private long _pos;
 
     @Override
@@ -74,7 +73,6 @@ public class StreamReader extends SequentialReader
         return bytes;
     }
 
-    @NotNull
     @Override
     public void getBytes(byte[] buffer, int offset, int count) throws IOException
     {
