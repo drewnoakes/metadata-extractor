@@ -73,8 +73,6 @@ public class GeoTagMapBuilder
             Metadata metadata = ImageMetadataReader.readMetadata(file);
             // See whether it has GPS data
             Collection<GpsDirectory> gpsDirectories = metadata.getDirectoriesOfType(GpsDirectory.class);
-            if (gpsDirectories == null)
-                continue;
             for (GpsDirectory gpsDirectory : gpsDirectories) {
                 // Try to read out the location, making sure it's non-zero
                 GeoLocation geoLocation = gpsDirectory.getGeoLocation();
