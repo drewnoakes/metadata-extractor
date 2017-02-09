@@ -88,7 +88,7 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
         byte[] bytes = new byte[count];
         for (int i = 0; i < count; i++) {
             byte b = reader.getByte();
-            if (b == 0xFF) {
+            if ((b & 0xFF) == 0xFF) {
                 byte stuffing = reader.getByte();
                 if (stuffing != 0x00) {
                     throw new IOException("Marker " + JpegSegmentType.fromByte(stuffing) + " found inside DHT segment");
