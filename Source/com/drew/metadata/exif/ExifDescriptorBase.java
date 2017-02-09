@@ -760,8 +760,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     }
 
     @Nullable
-    private static String formatCFAPattern(int[] pattern)
+    private static String formatCFAPattern(@Nullable int[] pattern)
     {
+        if (pattern == null)
+            return null;
         if (pattern.length < 2)
             return "<truncated data>";
         if (pattern[0] == 0 && pattern[1] == 0)
@@ -804,6 +806,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     /// - Two short, being the grid width and height of the repeated pattern.
     /// - Next, for every pixel in that pattern, an identification code.
     /// </remarks>
+    @Nullable
     private int[] decodeCfaPattern(int tagType)
     {
         int[] ret;
