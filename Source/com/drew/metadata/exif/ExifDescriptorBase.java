@@ -51,9 +51,6 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
      */
     private final boolean _allowDecimalRepresentationOfRationals = true;
 
-    @NotNull
-    private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
-
     // Note for the potential addition of brightness presentation in eV:
     // Brightness of taken subject. To calculate Exposure(Ev) from BrightnessValue(Bv),
     // you must add SensitivityValue(Sv).
@@ -602,7 +599,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             ? null
             : value.getNumerator() == 0
                 ? "Digital zoom not used"
-                : SimpleDecimalFormatter.format(value.doubleValue());
+                : new DecimalFormat("0.#").format(value.doubleValue());
     }
 
     @Nullable

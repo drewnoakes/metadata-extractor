@@ -41,9 +41,10 @@ import java.util.regex.Pattern;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@java.lang.SuppressWarnings("WeakerAccess")
 public abstract class Directory
 {
-    private static final DecimalFormat _floatFormat = new DecimalFormat("0.###");
+    private static final String _floatFormatPattern = "0.###";
 
     /** Map of values hashed by type identifiers. */
     @NotNull
@@ -1010,13 +1011,13 @@ public abstract class Directory
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(_floatFormat.format(Array.getFloat(o, i)));
+                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getFloat(o, i)));
                 }
             } else if (componentType.getName().equals("double")) {
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(_floatFormat.format(Array.getDouble(o, i)));
+                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getDouble(o, i)));
                 }
             } else if (componentType.getName().equals("byte")) {
                 for (int i = 0; i < arrayLength; i++) {
@@ -1032,10 +1033,10 @@ public abstract class Directory
         }
 
         if (o instanceof Double)
-            return _floatFormat.format(((Double)o).doubleValue());
+            return new DecimalFormat(_floatFormatPattern).format(((Double)o).doubleValue());
 
         if (o instanceof Float)
-            return _floatFormat.format(((Float)o).floatValue());
+            return new DecimalFormat(_floatFormatPattern).format(((Float)o).floatValue());
 
         // Note that several cameras leave trailing spaces (Olympus, Nikon) but this library is intended to show
         // the actual data within the file.  It is not inconceivable that whitespace may be significant here, so we
