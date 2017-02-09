@@ -266,12 +266,15 @@ public class ProcessAllImagesInFolderUtility
                 throw new IllegalArgumentException("Must be a directory.");
 
             if (directory.exists()) {
-                for (String item : directory.list()) {
-                    File file = new File(item);
-                    if (file.isDirectory())
-                        deleteRecursively(file);
-                    else
-                        file.delete();
+                String[] list = directory.list();
+                if (list != null) {
+                    for (String item : list) {
+                        File file = new File(item);
+                        if (file.isDirectory())
+                            deleteRecursively(file);
+                        else
+                            file.delete();
+                    }
                 }
             }
 
