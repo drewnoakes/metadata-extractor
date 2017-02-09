@@ -69,6 +69,8 @@ public class ReconyxUltraFireMakernoteDescriptor extends TagDescriptor<ReconyxUl
                 return _directory.getString(tagType);
             case TAG_SEQUENCE:
                 int[] sequence = _directory.getIntArray(tagType);
+                if (sequence == null)
+                    return null;
                 return String.format("%d/%d", sequence[0], sequence[1]);
             case TAG_EVENT_NUMBER:
                 return String.format("%d", _directory.getInteger(tagType));
