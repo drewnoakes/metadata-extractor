@@ -35,6 +35,7 @@ import java.io.Serializable;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class Rational extends java.lang.Number implements Comparable<Rational>, Serializable
 {
     private static final long serialVersionUID = 510688928138848770L;
