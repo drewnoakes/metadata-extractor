@@ -730,9 +730,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (values == null)
             return null;
 
-        Short uintvalue = (short)values[0];
+        short value = (short)values[0];
 
-        return uintvalue == null ? null : String.valueOf((float)uintvalue/256d);
+        return String.valueOf((float)value/256d);
     }
 
     @Nullable
@@ -742,9 +742,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (values == null)
             return null;
 
-        Short uintvalue = (short)values[0];
+        short value = (short)values[0];
 
-        return uintvalue == null ? null : String.valueOf((float)uintvalue/256d);
+        return String.valueOf((float)value/256d);
     }
 
     @Nullable
