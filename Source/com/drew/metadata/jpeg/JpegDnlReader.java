@@ -59,6 +59,7 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
             ErrorDirectory errorDirectory = new ErrorDirectory();
             metadata.addDirectory(errorDirectory);
             errorDirectory.addError("DNL segment found without SOFx - illegal JPEG format");
+            return;
         }
 
         SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
