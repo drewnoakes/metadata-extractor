@@ -203,7 +203,9 @@ public class GifReader
         switch (extensionLabel)
         {
             case (byte) 0x01:
-                metadata.addDirectory(readPlainTextBlock(reader, blockSizeBytes));
+                Directory plainTextBlock = readPlainTextBlock(reader, blockSizeBytes);
+                if (plainTextBlock != null)
+                    metadata.addDirectory(plainTextBlock);
                 break;
             case (byte) 0xf9:
                 metadata.addDirectory(readControlBlock(reader, blockSizeBytes));
