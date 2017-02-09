@@ -148,7 +148,7 @@ public class HuffmanTablesDirectory extends Directory {
 
     /**
      * @param tableNumber The zero-based index of the table. This number is normally between 0 and 3.
-     *                    Use {@link #getNumberOfComponents} for bounds-checking.
+     *                    Use {@link #getNumberOfTables} for bounds-checking.
      * @return The {@link HuffmanTable} having the specified number.
      */
     @NotNull
