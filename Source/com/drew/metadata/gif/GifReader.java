@@ -30,6 +30,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.gif.GifControlDirectory.DisposalMethod;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -298,15 +299,15 @@ public class GifReader
 
         GifControlDirectory directory = new GifControlDirectory();
 
-        reader.skip(1);
-
+        short packedFields = reader.getUInt8();
+        directory.setObject(GifControlDirectory.TAG_DISPOSAL_METHOD, DisposalMethod.typeOf((packedFields >> 2) & 7));
+        directory.setBoolean(GifControlDirectory.TAG_USER_INPUT_FLAG, (packedFields & 2) >> 1 == 1 ? true : false);
+        directory.setBoolean(GifControlDirectory.TAG_TRANSPARENT_COLOR_FLAG, (packedFields & 1) == 1 ? true : false);
         directory.setInt(GifControlDirectory.TAG_DELAY, reader.getUInt16());
-
-        if (blockSizeBytes > 3)
-            reader.skip(blockSizeBytes - 3);
+        directory.setInt(GifControlDirectory.TAG_TRANSPARENT_COLOR_INDEX, reader.getUInt8());
 
         // skip 0x0 block terminator
-        reader.getByte();
+        reader.skip(1);
 
         return directory;
     }
