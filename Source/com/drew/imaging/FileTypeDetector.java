@@ -64,6 +64,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Orf, "IIRS".getBytes(), new byte[]{(byte)0x08, 0x00});
         _root.addPath(FileType.Raf, "FUJIFILMCCD-RAW".getBytes());
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
+        _root.addPath(FileType.X3f, "FOVb".getBytes());
     }
 
     private FileTypeDetector() throws Exception

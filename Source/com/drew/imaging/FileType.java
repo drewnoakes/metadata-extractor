@@ -49,5 +49,7 @@ public enum FileType
     /** FujiFilm camera raw. */
     Raf,
     /** Panasonic camera raw. */
-    Rw2
+    Rw2,
+    /** Foveon b (Sigma) camera raw. */
+    X3f
 }
