@@ -30,7 +30,7 @@ import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
-import com.drew.lang.RandomAccessStreamReader;
+import com.drew.imaging.x3f.X3fMetadataReader;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -40,7 +40,11 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.file.FileMetadataReader;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -107,42 +111,49 @@ public class ImageMetadataReader
 
         FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
 
-        if (fileType == FileType.Jpeg)
-            return JpegMetadataReader.readMetadata(bufferedInputStream);
+        switch (fileType)
+        {
+            case Jpeg:
+                return JpegMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Tiff ||
-            fileType == FileType.Arw ||
-            fileType == FileType.Cr2 ||
-            fileType == FileType.Nef ||
-            fileType == FileType.Orf ||
-            fileType == FileType.Rw2)
-            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(bufferedInputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
+            case Tiff:
+            case Arw:
+            case Cr2:
+            case Nef:
+            case Orf:
+            case Rw2:
+                return TiffMetadataReader.readMetadata(bufferedInputStream, streamLength);
 
-        if (fileType == FileType.Psd)
-            return PsdMetadataReader.readMetadata(bufferedInputStream);
+            case Psd:
+                return PsdMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Png)
-            return PngMetadataReader.readMetadata(bufferedInputStream);
+            case Png:
+                return PngMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Bmp)
-            return BmpMetadataReader.readMetadata(bufferedInputStream);
+            case Bmp:
+                return BmpMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Gif)
-            return GifMetadataReader.readMetadata(bufferedInputStream);
+            case Gif:
+                return GifMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Ico)
-            return IcoMetadataReader.readMetadata(bufferedInputStream);
+            case Ico:
+                return IcoMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Pcx)
-            return PcxMetadataReader.readMetadata(bufferedInputStream);
+            case Pcx:
+                return PcxMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Riff)
-            return WebpMetadataReader.readMetadata(bufferedInputStream);
+            case Riff:
+                return WebpMetadataReader.readMetadata(bufferedInputStream);
 
-        if (fileType == FileType.Raf)
-            return RafMetadataReader.readMetadata(bufferedInputStream);
+            case Raf:
+                return RafMetadataReader.readMetadata(bufferedInputStream);
 
-        throw new ImageProcessingException("File format is not supported");
+            case X3f:
+                return X3fMetadataReader.readMetadata(bufferedInputStream);
+
+            default:
+                throw new ImageProcessingException("File format is not supported");
+        }
     }
 
     /**
@@ -268,6 +279,6 @@ public class ImageMetadataReader
                 for (String error : directory.getErrors())
                     System.err.println("ERROR: " + error);
             }
-        }
-    }
+                }
+            }
 }
