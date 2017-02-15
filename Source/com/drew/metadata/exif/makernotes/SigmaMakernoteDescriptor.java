@@ -24,6 +24,7 @@ package com.drew.metadata.exif.makernotes;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
+import com.drew.metadata.x3f.SigmaPropertyKeys;
 
 import static com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory.*;
 
@@ -48,8 +49,20 @@ public class SigmaMakernoteDescriptor extends TagDescriptor<SigmaMakernoteDirect
                 return getExposureModeDescription();
             case TAG_METERING_MODE:
                 return getMeteringModeDescription();
+            case TAG_LENS_TYPE:
+                return getLensDescription();
         }
         return super.getDescription(tagType);
+    }
+
+    @Nullable
+    private String getLensDescription()
+    {
+        String lensId = _directory.getString(TAG_LENS_TYPE);
+        if (lensId == null)
+            return null;
+
+        return SigmaPropertyKeys.getLens(lensId);
     }
 
     @Nullable

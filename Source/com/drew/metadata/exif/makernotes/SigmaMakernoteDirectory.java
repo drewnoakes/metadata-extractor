@@ -57,6 +57,13 @@ public class SigmaMakernoteDirectory extends Directory
     public static final int TAG_FIRMWARE = 0x17;
     public static final int TAG_SOFTWARE = 0x18;
     public static final int TAG_AUTO_BRACKET = 0x19;
+    public static final int TAG_LENS_TYPE = 0x27;
+
+    //AJM: Exposure time is in the jpeg subifd in my test images, no need to implement this atm, leaving the keys just in case
+//    public static final int TAG_EXPOSURE_TIME = 0x32;   // double other than sd1, quattro
+//    public static final int TAG_EXPOSURE_TIME2 = 0x33;  // string other than sd1, sd9, sd15, quattro
+//    public static final int TAG_EXPOSURE_TIME3 = 0x4a;  // double sd1, quattro
+//    public static final int TAG_EXPOSURE_TIME4 = 0x32;  // string sd1, quattro
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
