@@ -73,7 +73,7 @@ public class X3fReader
 //        8 FLOAT32 Color adjust green.
 //        9 FLOAT32 Color adjust blue.
 //        10 FLOAT32 X3 Fill Light adjust
-        if (versionMajor > 2 || versionMajor == 2 && versionMinor > 1)
+        if (versionMajor == 2 && versionMinor == 2 || versionMinor == 1)    //extended was only 2.1, 2.2?
         {
             final String whiteBalance = reader.getNullTerminatedString(40 + x3fHeaderOffset, 32, Charsets.ASCII);
 
@@ -116,24 +116,30 @@ public class X3fReader
                 int propCount = reader.getInt32(8 + dir.Offset);
                 int charFormat = reader.getInt32(12 + dir.Offset); // 0=char16 uni
 //                int reserved = reader.getInt32(16 + dir.Offset); // for posterity
-                int propLength = reader.getInt32(20 + dir.Offset);
-                int propIndexOffset = 20 + dir.Offset;
+                int propLength = reader.getInt32(20 + dir.Offset);  // property data size in char (16bit)
+                int propIndexOffset = 24 + dir.Offset;
 
                 final List<Property> properties = new ArrayList<Property>();
+                int propPairOffset = 0;
                 for (int i = 0; i < propCount; i++)
                 {
-                    int propPairOffset = i * 8 + propIndexOffset;
-                    int propNameOffset = reader.getInt32(propPairOffset);
-                    int propValueOffset = reader.getInt32(4 + propPairOffset);
+                    propPairOffset = i * 8 + propIndexOffset;
 
                     Property p = new Property();
-
-                    // 16-bit null-terminated Unicode character strings (is propLength name AND value?)
-                    p.Name = reader.getNullTerminatedString(propNameOffset, propLength, Charsets.UTF_16);
-                    p.Value = reader.getNullTerminatedString(propValueOffset, propLength, Charsets.UTF_16);
+                    p.NameOffset = reader.getInt32(propPairOffset);
+                    p.ValueOffset = reader.getInt32(4 + propPairOffset);
 
                     properties.add(p);
                 }
+
+                int endOfPropHeader = propPairOffset + 8;
+                for (Property p : properties)
+                {
+                    // 16-bit null-terminated Unicode character strings (is propLength name AND value?)
+                    p.Name = reader.getNullTerminatedString(endOfPropHeader + 2 * p.NameOffset, 20, Charsets.UTF_16);
+                    p.Value = reader.getNullTerminatedString(endOfPropHeader + 2 * p.ValueOffset, propLength, Charsets.UTF_16);
+                }
+                String name = properties.get(0).Name;
             }
         }
     }
@@ -149,6 +155,8 @@ public class X3fReader
     // quick dirty pojo
     class Property
     {
+        int NameOffset;
+        int ValueOffset;
         String Name;
         String Value;
     }
