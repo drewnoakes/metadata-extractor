@@ -14,7 +14,7 @@ The easiest way is to install the library via its [Maven package](http://search.
     <dependency>
       <groupId>com.drewnoakes</groupId>
       <artifactId>metadata-extractor</artifactId>
-      <version>2.10.0</version>
+      <version>2.10.1</version>
     </dependency>
 
 Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
