@@ -20,6 +20,8 @@
  */
 package com.drew.imaging.x3f;
 
+import android.util.ArrayMap;
+
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
@@ -28,6 +30,7 @@ import com.drew.metadata.Directory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -133,11 +136,13 @@ public class X3fReader
                 }
 
                 int endOfPropHeader = propPairOffset + 8;
+                HashMap<String, String> propMap = new HashMap<String, String>();
                 for (Property p : properties)
                 {
                     // 16-bit null-terminated Unicode character strings (is propLength name AND value?)
-                    p.Name = reader.getNullTerminatedString(endOfPropHeader + 2 * p.NameOffset, 20, Charsets.UTF_16);
-                    p.Value = reader.getNullTerminatedString(endOfPropHeader + 2 * p.ValueOffset, propLength, Charsets.UTF_16);
+                    p.Name = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.NameOffset, propLength, Charsets.UTF_16LE); // TODO: using propLength is NOT ideal here
+                    p.Value = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.ValueOffset, propLength, Charsets.UTF_16LE);
+                    propMap.put(p.Name, p.Value);
                 }
                 String name = properties.get(0).Name;
             }
