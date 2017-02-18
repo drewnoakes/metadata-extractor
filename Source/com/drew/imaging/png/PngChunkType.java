@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class PngChunkType
      *     <li><b>interlace method</b> 1 byte, indicates the transmission order of image data, currently only 0 (no interlace) and 1 (Adam7 interlace) are in the standard</li>
      * </ul>
      */
-    public static final PngChunkType IHDR = new PngChunkType("IHDR");
+    public static final PngChunkType IHDR;
 
     /**
      * Denotes a critical {@link PngChunk} that contains palette entries.
@@ -68,25 +68,25 @@ public class PngChunkType
      * </ul>
      * The number of entries is determined by the chunk length. A chunk length indivisible by three is an error.
      */
-    public static final PngChunkType PLTE = new PngChunkType("PLTE");
-    public static final PngChunkType IDAT = new PngChunkType("IDAT", true);
-    public static final PngChunkType IEND = new PngChunkType("IEND");
+    public static final PngChunkType PLTE;
+    public static final PngChunkType IDAT;
+    public static final PngChunkType IEND;
 
     //
     // Standard ancillary chunks
     //
-    public static final PngChunkType cHRM = new PngChunkType("cHRM");
-    public static final PngChunkType gAMA = new PngChunkType("gAMA");
-    public static final PngChunkType iCCP = new PngChunkType("iCCP");
-    public static final PngChunkType sBIT = new PngChunkType("sBIT");
-    public static final PngChunkType sRGB = new PngChunkType("sRGB");
-    public static final PngChunkType bKGD = new PngChunkType("bKGD");
-    public static final PngChunkType hIST = new PngChunkType("hIST");
-    public static final PngChunkType tRNS = new PngChunkType("tRNS");
-    public static final PngChunkType pHYs = new PngChunkType("pHYs");
-    public static final PngChunkType sPLT = new PngChunkType("sPLT", true);
-    public static final PngChunkType tIME = new PngChunkType("tIME");
-    public static final PngChunkType iTXt = new PngChunkType("iTXt", true);
+    public static final PngChunkType cHRM;
+    public static final PngChunkType gAMA;
+    public static final PngChunkType iCCP;
+    public static final PngChunkType sBIT;
+    public static final PngChunkType sRGB;
+    public static final PngChunkType bKGD;
+    public static final PngChunkType hIST;
+    public static final PngChunkType tRNS;
+    public static final PngChunkType pHYs;
+    public static final PngChunkType sPLT;
+    public static final PngChunkType tIME;
+    public static final PngChunkType iTXt;
 
     /**
      * Denotes an ancillary {@link PngChunk} that contains textual data, having first a keyword and then a value.
@@ -101,18 +101,43 @@ public class PngChunkType
      * Text is interpreted according to the Latin-1 character set [ISO-8859-1].
      * Newlines should be represented by a single linefeed character (0x9).
      */
-    public static final PngChunkType tEXt = new PngChunkType("tEXt", true);
-    public static final PngChunkType zTXt = new PngChunkType("zTXt", true);
+    public static final PngChunkType tEXt;
+    public static final PngChunkType zTXt;
+
+    static {
+        try {
+            IHDR = new PngChunkType("IHDR");
+            PLTE = new PngChunkType("PLTE");
+            IDAT = new PngChunkType("IDAT", true);
+            IEND = new PngChunkType("IEND");
+            cHRM = new PngChunkType("cHRM");
+            gAMA = new PngChunkType("gAMA");
+            iCCP = new PngChunkType("iCCP");
+            sBIT = new PngChunkType("sBIT");
+            sRGB = new PngChunkType("sRGB");
+            bKGD = new PngChunkType("bKGD");
+            hIST = new PngChunkType("hIST");
+            tRNS = new PngChunkType("tRNS");
+            pHYs = new PngChunkType("pHYs");
+            sPLT = new PngChunkType("sPLT", true);
+            tIME = new PngChunkType("tIME");
+            iTXt = new PngChunkType("iTXt", true);
+            tEXt = new PngChunkType("tEXt", true);
+            zTXt = new PngChunkType("zTXt", true);
+        } catch (PngProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
     private final byte[] _bytes;
     private final boolean _multipleAllowed;
 
-    public PngChunkType(@NotNull String identifier)
+    public PngChunkType(@NotNull String identifier) throws PngProcessingException
     {
         this(identifier, false);
     }
 
-    public PngChunkType(@NotNull String identifier, boolean multipleAllowed)
+    public PngChunkType(@NotNull String identifier, boolean multipleAllowed) throws PngProcessingException
     {
         _multipleAllowed = multipleAllowed;
 
@@ -125,22 +150,22 @@ public class PngChunkType
         }
     }
 
-    public PngChunkType(@NotNull byte[] bytes)
+    public PngChunkType(@NotNull byte[] bytes) throws PngProcessingException
     {
         validateBytes(bytes);
         _bytes = bytes;
         _multipleAllowed = _identifiersAllowingMultiples.contains(getIdentifier());
     }
 
-    private static void validateBytes(byte[] bytes)
+    private static void validateBytes(byte[] bytes) throws PngProcessingException
     {
         if (bytes.length != 4) {
-            throw new IllegalArgumentException("PNG chunk type identifier must be four bytes in length");
+            throw new PngProcessingException("PNG chunk type identifier must be four bytes in length");
         }
 
         for (byte b : bytes) {
             if (!isValidByte(b)) {
-                throw new IllegalArgumentException("PNG chunk type identifier may only contain alphabet characters");
+                throw new PngProcessingException("PNG chunk type identifier may only contain alphabet characters");
             }
         }
     }

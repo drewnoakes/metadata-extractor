@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -76,8 +76,6 @@ public class TiffReader
 
         Set<Integer> processedIfdOffsets = new HashSet<Integer>();
         processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset);
-
-        handler.completed(reader, tiffHeaderOffset);
     }
 
     /**
@@ -264,7 +262,7 @@ public class TiffReader
                 handler.setByteArray(tagId, reader.getBytes(tagValueOffset, componentCount));
                 break;
             case TiffDataFormat.CODE_STRING:
-                handler.setString(tagId, reader.getNullTerminatedString(tagValueOffset, componentCount));
+                handler.setString(tagId, reader.getNullTerminatedStringValue(tagValueOffset, componentCount, null));
                 break;
             case TiffDataFormat.CODE_RATIONAL_S:
                 if (componentCount == 1) {

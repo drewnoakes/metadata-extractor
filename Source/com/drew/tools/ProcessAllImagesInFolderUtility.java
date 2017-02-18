@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.drew.imaging.FileType;
+import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.StringUtil;
@@ -258,18 +260,21 @@ public class ProcessAllImagesInFolderUtility
                 deleteRecursively(metadataDirectory);
         }
 
-        private static void deleteRecursively(File directory)
+        private static void deleteRecursively(@NotNull File directory)
         {
             if (!directory.isDirectory())
                 throw new IllegalArgumentException("Must be a directory.");
 
             if (directory.exists()) {
-                for (String item : directory.list()) {
-                    File file = new File(item);
-                    if (file.isDirectory())
-                        deleteRecursively(file);
-                    else
-                        file.delete();
+                String[] list = directory.list();
+                if (list != null) {
+                    for (String item : list) {
+                        File file = new File(item);
+                        if (file.isDirectory())
+                            deleteRecursively(file);
+                        else
+                            file.delete();
+                    }
                 }
             }
 
@@ -324,20 +329,33 @@ public class ProcessAllImagesInFolderUtility
                             writer.write(NEW_LINE);
                         // Special handling for XMP directory data
                         if (directory instanceof XmpDirectory) {
-                            Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
                             boolean wrote = false;
-                            for (XmpDirectory xmpDirectory : xmpDirectories) {
-                                XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
-                                try {
-                                    XMPIterator iterator = xmpMeta.iterator();
-                                    while (iterator.hasNext()) {
-                                        XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
-                                        writer.format("[XMPMeta - %s] %s = %s%s", prop.getNamespace(), prop.getPath(), prop.getValue(), NEW_LINE);
-                                        wrote = true;
-                                    }
-                                } catch (XMPException e) {
-                                    e.printStackTrace();
+                            XmpDirectory xmpDirectory = (XmpDirectory)directory;
+                            XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
+                            try {
+                                XMPIterator iterator = xmpMeta.iterator();
+                                while (iterator.hasNext()) {
+                                    XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
+                                    String ns = prop.getNamespace();
+                                    String path = prop.getPath();
+                                    String value = prop.getValue();
+
+                                    if (ns == null)
+                                        ns = "";
+                                    if (path == null)
+                                        path = "";
+
+                                    final int MAX_XMP_VALUE_LENGTH = 512;
+                                    if (value == null)
+                                        value = "";
+                                    else if (value.length() > MAX_XMP_VALUE_LENGTH)
+                                        value = String.format("%s <truncated from %d characters>", value.substring(0, MAX_XMP_VALUE_LENGTH), value.length());
+
+                                    writer.format("[XMPMeta - %s] %s = %s%s", ns, path, value, NEW_LINE);
+                                    wrote = true;
                                 }
+                            } catch (XMPException e) {
+                                e.printStackTrace();
                             }
                             if (wrote)
                                 writer.write(NEW_LINE);
@@ -411,7 +429,19 @@ public class ProcessAllImagesInFolderUtility
                 "UTF-8"
             );
             writer.write("FILE: " + file.getName() + NEW_LINE);
-            writer.write(NEW_LINE);
+
+            // Detect file type
+            BufferedInputStream stream = null;
+            try {
+                stream = new BufferedInputStream(new FileInputStream(file));
+                FileType fileType = FileTypeDetector.detectFileType(stream);
+                writer.write(String.format("TYPE: %s" + NEW_LINE, fileType.toString().toUpperCase()));
+                writer.write(NEW_LINE);
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
 
             return new PrintWriter(writer);
         }
@@ -435,7 +465,7 @@ public class ProcessAllImagesInFolderUtility
         private final Map<String, String> _extensionEquivalence = new HashMap<String, String>();
         private final Map<String, List<Row>> _rowListByExtension = new HashMap<String, List<Row>>();
 
-        class Row
+        static class Row
         {
             final File file;
             final Metadata metadata;
@@ -474,6 +504,7 @@ public class ProcessAllImagesInFolderUtility
                 for (Directory directory : metadata.getDirectories()) {
                     if (directory.getClass().getName().contains("Makernote")) {
                         makernote = directory.getName().replace("Makernote", "").trim();
+                        break;
                     }
                 }
                 if (makernote == null) {
@@ -501,7 +532,7 @@ public class ProcessAllImagesInFolderUtility
             // Sanitise the extension
             extension = extension.toLowerCase();
             if (_extensionEquivalence.containsKey(extension))
-                extension =_extensionEquivalence.get(extension);
+                extension = _extensionEquivalence.get(extension);
 
             List<Row> list = _rowListByExtension.get(extension);
             if (list == null) {
@@ -542,12 +573,14 @@ public class ProcessAllImagesInFolderUtility
             Writer writer = new OutputStreamWriter(stream);
             writer.write("# Image Database Summary\n\n");
 
-            for (String extension : _rowListByExtension.keySet()) {
+            for (Map.Entry<String, List<Row>> entry : _rowListByExtension.entrySet()) {
+                String extension = entry.getKey();
                 writer.write("## " + extension.toUpperCase() + " Files\n\n");
 
                 writer.write("File|Manufacturer|Model|Dir Count|Exif?|Makernote|Thumbnail|All Data\n");
                 writer.write("----|------------|-----|---------|-----|---------|---------|--------\n");
-                List<Row> rows = _rowListByExtension.get(extension);
+
+                List<Row> rows = entry.getValue();
 
                 // Order by manufacturer, then model
                 Collections.sort(rows, new Comparator<Row>() {

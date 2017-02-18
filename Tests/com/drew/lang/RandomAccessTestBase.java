@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -246,19 +246,19 @@ public abstract class RandomAccessTestBase
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47};
         RandomAccessReader reader = createReader(bytes);
 
-        assertEquals("", reader.getNullTerminatedString(0, 0));
-        assertEquals("A", reader.getNullTerminatedString(0, 1));
-        assertEquals("AB", reader.getNullTerminatedString(0, 2));
-        assertEquals("ABC", reader.getNullTerminatedString(0, 3));
-        assertEquals("ABCD", reader.getNullTerminatedString(0, 4));
-        assertEquals("ABCD", reader.getNullTerminatedString(0, 5));
-        assertEquals("ABCD", reader.getNullTerminatedString(0, 6));
+        assertEquals("", reader.getNullTerminatedString(0, 0, Charsets.UTF_8));
+        assertEquals("A", reader.getNullTerminatedString(0, 1, Charsets.UTF_8));
+        assertEquals("AB", reader.getNullTerminatedString(0, 2, Charsets.UTF_8));
+        assertEquals("ABC", reader.getNullTerminatedString(0, 3, Charsets.UTF_8));
+        assertEquals("ABCD", reader.getNullTerminatedString(0, 4, Charsets.UTF_8));
+        assertEquals("ABCD", reader.getNullTerminatedString(0, 5, Charsets.UTF_8));
+        assertEquals("ABCD", reader.getNullTerminatedString(0, 6, Charsets.UTF_8));
 
-        assertEquals("BCD", reader.getNullTerminatedString(1, 3));
-        assertEquals("BCD", reader.getNullTerminatedString(1, 4));
-        assertEquals("BCD", reader.getNullTerminatedString(1, 5));
+        assertEquals("BCD", reader.getNullTerminatedString(1, 3, Charsets.UTF_8));
+        assertEquals("BCD", reader.getNullTerminatedString(1, 4, Charsets.UTF_8));
+        assertEquals("BCD", reader.getNullTerminatedString(1, 5, Charsets.UTF_8));
 
-        assertEquals("", reader.getNullTerminatedString(4, 3));
+        assertEquals("", reader.getNullTerminatedString(4, 3, Charsets.UTF_8));
     }
 
     @Test
@@ -267,19 +267,19 @@ public abstract class RandomAccessTestBase
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47};
         RandomAccessReader reader = createReader(bytes);
 
-        assertEquals("", reader.getString(0, 0));
-        assertEquals("A", reader.getString(0, 1));
-        assertEquals("AB", reader.getString(0, 2));
-        assertEquals("ABC", reader.getString(0, 3));
-        assertEquals("ABCD", reader.getString(0, 4));
-        assertEquals("ABCD\0", reader.getString(0, 5));
-        assertEquals("ABCD\0E", reader.getString(0, 6));
+        assertEquals("", reader.getString(0, 0, Charsets.UTF_8));
+        assertEquals("A", reader.getString(0, 1, Charsets.UTF_8));
+        assertEquals("AB", reader.getString(0, 2, Charsets.UTF_8));
+        assertEquals("ABC", reader.getString(0, 3, Charsets.UTF_8));
+        assertEquals("ABCD", reader.getString(0, 4, Charsets.UTF_8));
+        assertEquals("ABCD\0", reader.getString(0, 5, Charsets.UTF_8));
+        assertEquals("ABCD\0E", reader.getString(0, 6, Charsets.UTF_8));
 
-        assertEquals("BCD", reader.getString(1, 3));
-        assertEquals("BCD\0", reader.getString(1, 4));
-        assertEquals("BCD\0E", reader.getString(1, 5));
+        assertEquals("BCD", reader.getString(1, 3, Charsets.UTF_8));
+        assertEquals("BCD\0", reader.getString(1, 4, Charsets.UTF_8));
+        assertEquals("BCD\0E", reader.getString(1, 5, Charsets.UTF_8));
 
-        assertEquals("\0EF", reader.getString(4, 3));
+        assertEquals("\0EF", reader.getString(4, 3, Charsets.UTF_8));
     }
 
     @Test

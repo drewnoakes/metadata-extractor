@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -84,6 +84,7 @@ public class MetadataTest
 
         Collection<ExifSubIFDDirectory> directories = metadata.getDirectoriesOfType(ExifSubIFDDirectory.class);
 
+        assertNotNull(directories);
         assertEquals(3, directories.size());
         assertSame(directory1, directories.toArray()[0]);
         assertSame(directory2, directories.toArray()[1]);

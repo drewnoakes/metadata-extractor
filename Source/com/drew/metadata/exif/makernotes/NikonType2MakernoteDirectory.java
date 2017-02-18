@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -760,7 +760,7 @@ public class NikonType2MakernoteDirectory extends Directory
     public static final int TAG_UNKNOWN_49 = 0x00BB;
     public static final int TAG_UNKNOWN_50 = 0x00BD;
     public static final int TAG_UNKNOWN_51 = 0x0103;
-    public static final int TAG_PRINT_IM = 0x0E00;
+    public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
     /**
      * Data about changes set by Nikon Capture Editor.
@@ -893,7 +893,7 @@ public class NikonType2MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_UNKNOWN_49, "Unknown 49");
         _tagNameMap.put(TAG_UNKNOWN_50, "Unknown 50");
         _tagNameMap.put(TAG_UNKNOWN_51, "Unknown 51");
-        _tagNameMap.put(TAG_PRINT_IM, "Print IM");
+        _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print IM");
         _tagNameMap.put(TAG_UNKNOWN_52, "Unknown 52");
         _tagNameMap.put(TAG_UNKNOWN_53, "Unknown 53");
         _tagNameMap.put(TAG_NIKON_CAPTURE_VERSION, "Nikon Capture Version");

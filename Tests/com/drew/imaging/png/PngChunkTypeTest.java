@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class PngChunkTypeTest
         try {
             new PngChunkType("TooLong");
             fail("Expecting exception");
-        } catch (IllegalArgumentException ex) {
+        } catch (PngProcessingException ex) {
             assertEquals("PNG chunk type identifier must be four bytes in length", ex.getMessage());
         }
     }
@@ -46,7 +46,7 @@ public class PngChunkTypeTest
         try {
             new PngChunkType("foo");
             fail("Expecting exception");
-        } catch (IllegalArgumentException ex) {
+        } catch (PngProcessingException ex) {
             assertEquals("PNG chunk type identifier must be four bytes in length", ex.getMessage());
         }
     }
@@ -60,7 +60,7 @@ public class PngChunkTypeTest
             try {
                 new PngChunkType(invalidString);
                 fail("Expecting exception");
-            } catch (IllegalArgumentException ex) {
+            } catch (PngProcessingException ex) {
                 assertEquals("PNG chunk type identifier may only contain alphabet characters", ex.getMessage());
             }
         }

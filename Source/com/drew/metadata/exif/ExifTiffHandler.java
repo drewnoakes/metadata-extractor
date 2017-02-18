@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,18 +22,25 @@ package com.drew.metadata.exif;
 
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
+
+import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 import com.drew.metadata.exif.makernotes.*;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -46,12 +53,9 @@ import java.util.Set;
  */
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
-    private final boolean _storeThumbnailBytes;
-
-    public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes, @Nullable Directory parentDirectory)
+    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
-        super(metadata, ExifIFD0Directory.class);
-        _storeThumbnailBytes = storeThumbnailBytes;
+        super(metadata);
 
         if (parentDirectory != null)
             _currentDirectory.setParent(parentDirectory);
@@ -64,8 +68,18 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         final int olympusRawTiffMarker2 = 0x5352; // for ORF files
         final int panasonicRawTiffMarker = 0x0055; // for RW2 files
 
-        if (marker != standardTiffMarker && marker != olympusRawTiffMarker && marker != olympusRawTiffMarker2 && marker != panasonicRawTiffMarker) {
-            throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));
+        switch (marker)
+        {
+            case standardTiffMarker:
+            case olympusRawTiffMarker:      // Todo: implement an IFD0, if there is one
+            case olympusRawTiffMarker2:     // Todo: implement an IFD0, if there is one
+                pushDirectory(ExifIFD0Directory.class);
+                break;
+            case panasonicRawTiffMarker:
+                pushDirectory(PanasonicRawIFD0Directory.class);
+                break;
+            default:
+                throw new TiffProcessingException(String.format("Unexpected TIFF marker: 0x%X", marker));
         }
     }
 
@@ -76,7 +90,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             return true;
         }
 
-        if (_currentDirectory instanceof ExifIFD0Directory) {
+        if (_currentDirectory instanceof ExifIFD0Directory || _currentDirectory instanceof PanasonicRawIFD0Directory) {
             if (tagId == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET) {
                 pushDirectory(ExifSubIFDDirectory.class);
                 return true;
@@ -96,14 +110,33 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
 
         if (_currentDirectory instanceof OlympusMakernoteDirectory) {
-            if (tagId == OlympusMakernoteDirectory.TAG_EQUIPMENT) {
-                pushDirectory(OlympusEquipmentMakernoteDirectory.class);
-                return true;
-            }
-
-            if (tagId == OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS) {
-                pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
-                return true;
+            // Note: these also appear in customProcessTag because some are IFD pointers while others begin immediately
+            // for the same directories
+            switch(tagId) {
+                case OlympusMakernoteDirectory.TAG_EQUIPMENT:
+                    pushDirectory(OlympusEquipmentMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS:
+                    pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT:
+                    pushDirectory(OlympusRawDevelopmentMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT_2:
+                    pushDirectory(OlympusRawDevelopment2MakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_IMAGE_PROCESSING:
+                    pushDirectory(OlympusImageProcessingMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_FOCUS_INFO:
+                    pushDirectory(OlympusFocusInfoMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_INFO:
+                    pushDirectory(OlympusRawInfoMakernoteDirectory.class);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_MAIN_INFO:
+                    pushDirectory(OlympusMakernoteDirectory.class);
+                    return true;
             }
         }
 
@@ -113,8 +146,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     public boolean hasFollowerIfd()
     {
         // In Exif, the only known 'follower' IFD is the thumbnail one, however this may not be the case.
-        if (_currentDirectory instanceof ExifIFD0Directory) {
-            pushDirectory(ExifThumbnailDirectory.class);
+        // UPDATE: In multipage TIFFs, the 'follower' IFD points to the next image in the set
+        if (_currentDirectory instanceof ExifIFD0Directory || _currentDirectory instanceof ExifImageDirectory) {
+            // If the PageNumber tag is defined, assume this is a multipage TIFF or similar
+            // TODO: Find better ways to know which follower Directory should be used
+            if (_currentDirectory.containsTag(ExifDirectoryBase.TAG_PAGE_NUMBER))
+                pushDirectory(ExifImageDirectory.class);
+            else
+                pushDirectory(ExifThumbnailDirectory.class);
             return true;
         }
 
@@ -133,6 +172,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         if (formatCode == 13)
             return componentCount * 4;
 
+        // an unknown (0) formatCode needs to be potentially handled later as a highly custom directory tag
+        if(formatCode == 0)
+            return 0L;
+
         return null;
     }
 
@@ -143,6 +186,20 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                     final int tagId,
                                     final int byteCount) throws IOException
     {
+        // Some 0x0000 tags have a 0 byteCount. Determine whether it's bad.
+        if (tagId == 0)
+        {
+            if (_currentDirectory.containsTag(tagId))
+            {
+                // Let it go through for now. Some directories handle it, some don't
+                return false;
+            }
+
+            // Skip over 0x0000 tags that don't have any associated bytes. No idea what it contains in this case, if anything.
+            if (byteCount == 0)
+                return true;
+        }
+
         // Custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
             return processMakernote(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader);
@@ -161,28 +218,149 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         // Custom processing for embedded XMP data
         if (tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && _currentDirectory instanceof ExifIFD0Directory) {
-            new XmpReader().extract(reader.getNullTerminatedString(tagOffset, byteCount), _metadata, _currentDirectory);
+            new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
+        }
+
+        if (HandlePrintIM(_currentDirectory, tagId))
+        {
+            PrintIMDirectory printIMDirectory = new PrintIMDirectory();
+            printIMDirectory.setParent(_currentDirectory);
+            _metadata.addDirectory(printIMDirectory);
+            ProcessPrintIM(printIMDirectory, tagOffset, reader, byteCount);
+            return true;
+        }
+
+        // Note: these also appear in tryEnterSubIfd because some are IFD pointers while others begin immediately
+        // for the same directories
+        if(_currentDirectory instanceof OlympusMakernoteDirectory)
+        {
+            switch (tagId)
+            {
+                case OlympusMakernoteDirectory.TAG_EQUIPMENT:
+                    pushDirectory(OlympusEquipmentMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS:
+                    pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT:
+                    pushDirectory(OlympusRawDevelopmentMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT_2:
+                    pushDirectory(OlympusRawDevelopment2MakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_IMAGE_PROCESSING:
+                    pushDirectory(OlympusImageProcessingMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_FOCUS_INFO:
+                    pushDirectory(OlympusFocusInfoMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_RAW_INFO:
+                    pushDirectory(OlympusRawInfoMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+                case OlympusMakernoteDirectory.TAG_MAIN_INFO:
+                    pushDirectory(OlympusMakernoteDirectory.class);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    return true;
+            }
+        }
+
+        if (_currentDirectory instanceof PanasonicRawIFD0Directory)
+        {
+            // these contain binary data with specific offsets, and can't be processed as regular ifd's.
+            // The binary data is broken into 'fake' tags and there is a pattern.
+            switch (tagId)
+            {
+                case PanasonicRawIFD0Directory.TagWbInfo:
+                    PanasonicRawWbInfoDirectory dirWbInfo = new PanasonicRawWbInfoDirectory();
+                    dirWbInfo.setParent(_currentDirectory);
+                    _metadata.addDirectory(dirWbInfo);
+                    ProcessBinary(dirWbInfo, tagOffset, reader, byteCount, false, 2);
+                    return true;
+                case PanasonicRawIFD0Directory.TagWbInfo2:
+                    PanasonicRawWbInfo2Directory dirWbInfo2 = new PanasonicRawWbInfo2Directory();
+                    dirWbInfo2.setParent(_currentDirectory);
+                    _metadata.addDirectory(dirWbInfo2);
+                    ProcessBinary(dirWbInfo2, tagOffset, reader, byteCount, false, 3);
+                    return true;
+                case PanasonicRawIFD0Directory.TagDistortionInfo:
+                    PanasonicRawDistortionDirectory dirDistort = new PanasonicRawDistortionDirectory();
+                    dirDistort.setParent(_currentDirectory);
+                    _metadata.addDirectory(dirDistort);
+                    ProcessBinary(dirDistort, tagOffset, reader, byteCount, true, 1);
+                    return true;
+            }
+        }
+
+        // Panasonic RAW sometimes contains an embedded version of the data as a JPG file.
+        if (tagId == PanasonicRawIFD0Directory.TagJpgFromRaw && _currentDirectory instanceof PanasonicRawIFD0Directory)
+        {
+            byte[] jpegrawbytes = reader.getBytes(tagOffset, byteCount);
+
+            // Extract information from embedded image since it is metadata-rich
+            ByteArrayInputStream jpegmem = new ByteArrayInputStream(jpegrawbytes);
+            try {
+                Metadata jpegDirectory = JpegMetadataReader.readMetadata(jpegmem);
+                for (Directory directory : jpegDirectory.getDirectories()) {
+                    directory.setParent(_currentDirectory);
+                    _metadata.addDirectory(directory);
+                }
+                return true;
+            } catch (JpegProcessingException e) {
+                _currentDirectory.addError("Error processing JpgFromRaw: " + e.getMessage());
+            } catch (IOException e) {
+                _currentDirectory.addError("Error reading JpgFromRaw: " + e.getMessage());
+            }
         }
 
         return false;
     }
 
-    public void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset)
+    private static void ProcessBinary(@NotNull final Directory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount, final Boolean issigned, final int arrayLength) throws IOException
     {
-        if (_storeThumbnailBytes) {
-            // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
-            ExifThumbnailDirectory thumbnailDirectory = _metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
-            if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_COMPRESSION)) {
-                Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
-                Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
-                if (offset != null && length != null) {
-                    try {
-                        byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
-                        thumbnailDirectory.setThumbnailData(thumbnailData);
-                    } catch (IOException ex) {
-                        thumbnailDirectory.addError("Invalid thumbnail data specification: " + ex.getMessage());
+        // expects signed/unsigned int16 (for now)
+        //int byteSize = issigned ? sizeof(short) : sizeof(ushort);
+        int byteSize = 2;
+
+        // 'directory' is assumed to contain tags that correspond to the byte position unless it's a set of bytes
+        for (int i = 0; i < byteCount; i++)
+        {
+            if (directory.hasTagName(i))
+            {
+                // only process this tag if the 'next' integral tag exists. Otherwise, it's a set of bytes
+                if (i < byteCount - 1 && directory.hasTagName(i + 1))
+                {
+                    if(issigned)
+                        directory.setObject(i, reader.getInt16(tagValueOffset + (i* byteSize)));
+                    else
+                        directory.setObject(i, reader.getUInt16(tagValueOffset + (i* byteSize)));
+                }
+                else
+                {
+                    // the next arrayLength bytes are a multi-byte value
+                    if (issigned)
+                    {
+                        short[] val = new short[arrayLength];
+                        for (int j = 0; j<val.length; j++)
+                            val[j] = reader.getInt16(tagValueOffset + ((i + j) * byteSize));
+                        directory.setObjectArray(i, val);
                     }
+                    else
+                    {
+                        int[] val = new int[arrayLength];
+                        for (int j = 0; j<val.length; j++)
+                            val[j] = reader.getUInt16(tagValueOffset + ((i + j) * byteSize));
+                        directory.setObjectArray(i, val);
+                    }
+
+                    i += arrayLength - 1;
                 }
             }
         }
@@ -198,15 +376,16 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         String cameraMake = ifd0Directory == null ? null : ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
-        final String firstTwoChars = reader.getString(makernoteOffset, 2);
-        final String firstThreeChars = reader.getString(makernoteOffset, 3);
-        final String firstFourChars = reader.getString(makernoteOffset, 4);
-        final String firstFiveChars = reader.getString(makernoteOffset, 5);
-        final String firstSixChars = reader.getString(makernoteOffset, 6);
-        final String firstSevenChars = reader.getString(makernoteOffset, 7);
-        final String firstEightChars = reader.getString(makernoteOffset, 8);
-        final String firstTenChars = reader.getString(makernoteOffset, 10);
-        final String firstTwelveChars = reader.getString(makernoteOffset, 12);
+        final String firstTwoChars    = reader.getString(makernoteOffset, 2, Charsets.UTF_8);
+        final String firstThreeChars  = reader.getString(makernoteOffset, 3, Charsets.UTF_8);
+        final String firstFourChars   = reader.getString(makernoteOffset, 4, Charsets.UTF_8);
+        final String firstFiveChars   = reader.getString(makernoteOffset, 5, Charsets.UTF_8);
+        final String firstSixChars    = reader.getString(makernoteOffset, 6, Charsets.UTF_8);
+        final String firstSevenChars  = reader.getString(makernoteOffset, 7, Charsets.UTF_8);
+        final String firstEightChars  = reader.getString(makernoteOffset, 8, Charsets.UTF_8);
+        final String firstNineChars   = reader.getString(makernoteOffset, 9, Charsets.UTF_8);
+        final String firstTenChars    = reader.getString(makernoteOffset, 10, Charsets.UTF_8);
+        final String firstTwelveChars = reader.getString(makernoteOffset, 12, Charsets.UTF_8);
 
         boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
@@ -257,6 +436,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         } else if ("SONY CAM".equals(firstEightChars) || "SONY DSC".equals(firstEightChars)) {
             pushDirectory(SonyType1MakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, tiffHeaderOffset);
+        // Do this check LAST after most other Sony checks
+        } else if (cameraMake != null && cameraMake.startsWith("SONY") &&
+                !Arrays.equals(reader.getBytes(makernoteOffset, 2), new byte[]{ 0x01, 0x00 }) ) {
+            // The IFD begins with the first Makernote byte (no ASCII name). Used in SR2 and ARW images
+            pushDirectory(SonyType1MakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else if ("SEMC MS\u0000\u0000\u0000\u0000\u0000".equals(firstTwelveChars)) {
             // force MM for this directory
             reader.setMotorolaByteOrder(true);
@@ -297,7 +482,23 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 22, tiffHeaderOffset);
         } else if ("LEICA".equals(firstFiveChars)) {
             reader.setMotorolaByteOrder(false);
-            if ("Leica Camera AG".equals(cameraMake)) {
+
+            // used by the X1/X2/X VARIO/T
+            // (X1 starts with "LEICA\0\x01\0", Make is "LEICA CAMERA AG")
+            // (X2 starts with "LEICA\0\x05\0", Make is "LEICA CAMERA AG")
+            // (X VARIO starts with "LEICA\0\x04\0", Make is "LEICA CAMERA AG")
+            // (T (Typ 701) starts with "LEICA\0\0x6", Make is "LEICA CAMERA AG")
+            // (X (Typ 113) starts with "LEICA\0\0x7", Make is "LEICA CAMERA AG")
+
+            if ("LEICA\0\u0001\0".equals(firstEightChars) ||
+                "LEICA\0\u0004\0".equals(firstEightChars) ||
+                "LEICA\0\u0005\0".equals(firstEightChars) ||
+                "LEICA\0\u0006\0".equals(firstEightChars) ||
+                "LEICA\0\u0007\0".equals(firstEightChars))
+            {
+                pushDirectory(LeicaType5MakernoteDirectory.class);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
+            } else if ("Leica Camera AG".equals(cameraMake)) {
                 pushDirectory(LeicaMakernoteDirectory.class);
                 TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
             } else if ("LEICA".equals(cameraMake)) {
@@ -307,7 +508,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             } else {
                 return false;
             }
-        } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(makernoteOffset, 12))) {
+        } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(makernoteOffset, 12, Charsets.UTF_8))) {
             // NON-Standard TIFF IFD Data using Panasonic Tags. There is no Next-IFD pointer after the IFD
             // Offsets are relative to the start of the TIFF header at the beginning of the EXIF segment
             // more information here: http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html
@@ -359,6 +560,18 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             pushDirectory(AppleMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 14, makernoteOffset);
             reader.setMotorolaByteOrder(orderBefore);
+        } else if (reader.getUInt16(makernoteOffset) == ReconyxHyperFireMakernoteDirectory.MAKERNOTE_VERSION) {
+            ReconyxHyperFireMakernoteDirectory directory = new ReconyxHyperFireMakernoteDirectory();
+            _metadata.addDirectory(directory);
+            processReconyxHyperFireMakernote(directory, makernoteOffset, reader);
+        } else if (firstNineChars.equalsIgnoreCase("RECONYXUF")) {
+            ReconyxUltraFireMakernoteDirectory directory = new ReconyxUltraFireMakernoteDirectory();
+            _metadata.addDirectory(directory);
+            processReconyxUltraFireMakernote(directory, makernoteOffset, reader);
+        } else if ("SAMSUNG".equals(cameraMake)) {
+            // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
+            pushDirectory(SamsungType2MakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.
@@ -369,12 +582,97 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return true;
     }
 
+    private static Boolean HandlePrintIM(@NotNull final Directory directory, final int tagId)
+    {
+        if (tagId == ExifDirectoryBase.TAG_PRINT_IMAGE_MATCHING_INFO)
+            return true;
+
+        if (tagId == 0x0E00)
+        {
+            // Tempting to say every tagid of 0x0E00 is a PIM tag, but can't be 100% sure
+            if (directory instanceof CasioType2MakernoteDirectory ||
+                directory instanceof KyoceraMakernoteDirectory ||
+                directory instanceof NikonType2MakernoteDirectory ||
+                directory instanceof OlympusMakernoteDirectory ||
+                directory instanceof PanasonicMakernoteDirectory ||
+                directory instanceof PentaxMakernoteDirectory ||
+                directory instanceof RicohMakernoteDirectory ||
+                directory instanceof SanyoMakernoteDirectory ||
+                directory instanceof SonyType1MakernoteDirectory)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Process PrintIM IFD
+    /// </summary>
+    /// <remarks>
+    /// Converted from Exiftool version 10.33 created by Phil Harvey
+    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
+    /// lib\Image\ExifTool\PrintIM.pm
+    /// </remarks>
+    private static void ProcessPrintIM(@NotNull final PrintIMDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount) throws IOException
+    {
+        Boolean resetByteOrder = null;
+
+        if (byteCount == 0)
+        {
+            directory.addError("Empty PrintIM data");
+            return;
+        }
+
+        if (byteCount <= 15)
+        {
+            directory.addError("Bad PrintIM data");
+            return;
+        }
+
+        String header = reader.getString(tagValueOffset, 12, Charsets.UTF_8);
+
+        if (!header.startsWith("PrintIM")) //, StringComparison.Ordinal))
+        {
+            directory.addError("Invalid PrintIM header");
+            return;
+        }
+
+        // check size of PrintIM block
+        int num = reader.getUInt16(tagValueOffset + 14);
+        if (byteCount < 16 + num * 6)
+        {
+            // size is too big, maybe byte ordering is wrong
+            resetByteOrder = reader.isMotorolaByteOrder();
+            reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
+            num = reader.getUInt16(tagValueOffset + 14);
+            if (byteCount < 16 + num * 6)
+            {
+                directory.addError("Bad PrintIM size");
+                return;
+            }
+        }
+
+        directory.setObject(PrintIMDirectory.TagPrintImVersion, header.substring(8, 12));
+
+        for (int n = 0; n < num; n++)
+        {
+            int pos = tagValueOffset + 16 + n * 6;
+            int tag = reader.getUInt16(pos);
+            long val = reader.getUInt32(pos + 2);
+
+            directory.setObject(tag, val);
+        }
+
+        if (resetByteOrder != null)
+            reader.setMotorolaByteOrder(resetByteOrder);
+    }
+
     private static void processKodakMakernote(@NotNull final KodakMakernoteDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader)
     {
         // Kodak's makernote is not in IFD format. It has values at fixed offsets.
         int dataOffset = tagValueOffset + 8;
         try {
-            directory.setString(KodakMakernoteDirectory.TAG_KODAK_MODEL, reader.getString(dataOffset, 8));
+            directory.setStringValue(KodakMakernoteDirectory.TAG_KODAK_MODEL, reader.getStringValue(dataOffset, 8, Charsets.UTF_8));
             directory.setInt(KodakMakernoteDirectory.TAG_QUALITY, reader.getUInt8(dataOffset + 9));
             directory.setInt(KodakMakernoteDirectory.TAG_BURST_MODE, reader.getUInt8(dataOffset + 10));
             directory.setInt(KodakMakernoteDirectory.TAG_IMAGE_WIDTH, reader.getUInt16(dataOffset + 12));
@@ -403,6 +701,149 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         } catch (IOException ex) {
             directory.addError("Error processing Kodak makernote data: " + ex.getMessage());
         }
+    }
+
+    private static void processReconyxHyperFireMakernote(@NotNull final ReconyxHyperFireMakernoteDirectory directory, final int makernoteOffset, @NotNull final RandomAccessReader reader) throws IOException
+    {
+        directory.setObject(ReconyxHyperFireMakernoteDirectory.TAG_MAKERNOTE_VERSION, reader.getUInt16(makernoteOffset));
+
+        int major = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION);
+        int minor = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION + 2);
+        int revision = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION + 4);
+        String buildYear = String.format("%04X", reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION + 6));
+        String buildDate = String.format("%04X", reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION + 8));
+        String buildYearAndDate = buildYear + buildDate;
+        Integer build;
+        try {
+            build = Integer.parseInt(buildYearAndDate);
+        } catch (NumberFormatException e) {
+            build = null;
+        }
+        if (build != null)
+        {
+            directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION, String.format("%d.%d.%d.%s", major, minor, revision, build));
+        }
+        else
+        {
+            directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION, String.format("%d.%d.%d", major, minor, revision));
+            directory.addError("Error processing Reconyx HyperFire makernote data: build '" + buildYearAndDate + "' is not in the expected format and will be omitted from Firmware Version.");
+        }
+
+        directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_TRIGGER_MODE, String.valueOf((char)reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_TRIGGER_MODE)));
+        directory.setIntArray(ReconyxHyperFireMakernoteDirectory.TAG_SEQUENCE,
+                      new int[]
+                      {
+                          reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_SEQUENCE),
+                          reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_SEQUENCE + 2)
+                      });
+
+        int eventNumberHigh = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_EVENT_NUMBER);
+        int eventNumberLow = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_EVENT_NUMBER + 2);
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_EVENT_NUMBER, (eventNumberHigh << 16) + eventNumberLow);
+
+        int seconds = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL);
+        int minutes = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 2);
+        int hour = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 4);
+        int month = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 6);
+        int day = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 8);
+        int year = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 10);
+
+        if ((seconds >= 0 && seconds < 60) &&
+            (minutes >= 0 && minutes < 60) &&
+            (hour >= 0 && hour < 24) &&
+            (month >= 1 && month < 13) &&
+            (day >= 1 && day < 32) &&
+            (year >= 1 && year <= 9999))
+        {
+            directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL,
+                    String.format("%4d:%2d:%2d %2d:%2d:%2d", year, month, day, hour, minutes, seconds));
+        }
+        else
+        {
+            directory.addError("Error processing Reconyx HyperFire makernote data: Date/Time Original " + year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds + " is not a valid date/time.");
+        }
+
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_MOON_PHASE, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_MOON_PHASE));
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_AMBIENT_TEMPERATURE_FAHRENHEIT, reader.getInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_AMBIENT_TEMPERATURE_FAHRENHEIT));
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_AMBIENT_TEMPERATURE, reader.getInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_AMBIENT_TEMPERATURE));
+        //directory.setByteArray(ReconyxHyperFireMakernoteDirectory.TAG_SERIAL_NUMBER, reader.getBytes(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_SERIAL_NUMBER, 28));
+        directory.setStringValue(ReconyxHyperFireMakernoteDirectory.TAG_SERIAL_NUMBER, new StringValue(reader.getBytes(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_SERIAL_NUMBER, 28), Charsets.UTF_16LE));
+        // two unread bytes: the serial number's terminating null
+
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_CONTRAST, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_CONTRAST));
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_BRIGHTNESS, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_BRIGHTNESS));
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_SHARPNESS, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_SHARPNESS));
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_SATURATION, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_SATURATION));
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_INFRARED_ILLUMINATOR, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_INFRARED_ILLUMINATOR));
+        directory.setInt(ReconyxHyperFireMakernoteDirectory.TAG_MOTION_SENSITIVITY, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_MOTION_SENSITIVITY));
+        directory.setDouble(ReconyxHyperFireMakernoteDirectory.TAG_BATTERY_VOLTAGE, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_BATTERY_VOLTAGE) / 1000.0);
+        directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_USER_LABEL, reader.getNullTerminatedString(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_USER_LABEL, 44, Charsets.UTF_8));
+    }
+
+    private static void processReconyxUltraFireMakernote(@NotNull final ReconyxUltraFireMakernoteDirectory directory, final int makernoteOffset, @NotNull final RandomAccessReader reader) throws IOException
+    {
+        directory.setString(ReconyxUltraFireMakernoteDirectory.TAG_LABEL, reader.getString(makernoteOffset, 9, Charsets.UTF_8));
+        /*uint makernoteID = ByteConvert.FromBigEndianToNative(reader.GetUInt32(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagMakernoteID));
+        directory.Set(ReconyxUltraFireMakernoteDirectory.TagMakernoteID, makernoteID);
+        if (makernoteID != ReconyxUltraFireMakernoteDirectory.MAKERNOTE_ID)
+        {
+            directory.addError("Error processing Reconyx UltraFire makernote data: unknown Makernote ID 0x" + makernoteID.ToString("x8"));
+            return;
+        }
+        directory.Set(ReconyxUltraFireMakernoteDirectory.TagMakernoteSize, ByteConvert.FromBigEndianToNative(reader.GetUInt32(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagMakernoteSize)));
+        uint makernotePublicID = ByteConvert.FromBigEndianToNative(reader.GetUInt32(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagMakernotePublicID));
+        directory.Set(ReconyxUltraFireMakernoteDirectory.TagMakernotePublicID, makernotePublicID);
+        if (makernotePublicID != ReconyxUltraFireMakernoteDirectory.MAKERNOTE_PUBLIC_ID)
+        {
+            directory.addError("Error processing Reconyx UltraFire makernote data: unknown Makernote Public ID 0x" + makernotePublicID.ToString("x8"));
+            return;
+        }*/
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagMakernotePublicSize, ByteConvert.FromBigEndianToNative(reader.GetUInt16(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagMakernotePublicSize)));
+
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagCameraVersion, ProcessReconyxUltraFireVersion(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagCameraVersion, reader));
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagUibVersion, ProcessReconyxUltraFireVersion(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagUibVersion, reader));
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagBtlVersion, ProcessReconyxUltraFireVersion(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagBtlVersion, reader));
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagPexVersion, ProcessReconyxUltraFireVersion(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagPexVersion, reader));
+
+        directory.setString(ReconyxUltraFireMakernoteDirectory.TAG_EVENT_TYPE, reader.getString(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_EVENT_TYPE, 1, Charsets.UTF_8));
+        directory.setIntArray(ReconyxUltraFireMakernoteDirectory.TAG_SEQUENCE,
+                      new int[]
+                      {
+                          reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_SEQUENCE),
+                          reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_SEQUENCE + 1)
+                      });
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagEventNumber, ByteConvert.FromBigEndianToNative(reader.GetUInt32(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagEventNumber)));
+
+        byte seconds = reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL);
+        byte minutes = reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 1);
+        byte hour = reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 2);
+        byte day = reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 3);
+        byte month = reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 4);
+        /*ushort year = ByteConvert.FromBigEndianToNative(reader.GetUInt16(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagDateTimeOriginal + 5));
+        if ((seconds >= 0 && seconds < 60) &&
+            (minutes >= 0 && minutes < 60) &&
+            (hour >= 0 && hour < 24) &&
+            (month >= 1 && month < 13) &&
+            (day >= 1 && day < 32) &&
+            (year >= 1 && year <= 9999))
+        {
+            directory.Set(ReconyxUltraFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL, new DateTime(year, month, day, hour, minutes, seconds, DateTimeKind.Unspecified));
+        }
+        else
+        {
+            directory.addError("Error processing Reconyx UltraFire makernote data: Date/Time Original " + year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds + " is not a valid date/time.");
+        }*/
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagDayOfWeek, reader.GetByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagDayOfWeek));
+
+        directory.setInt(ReconyxUltraFireMakernoteDirectory.TAG_MOON_PHASE, reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_MOON_PHASE));
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagAmbientTemperatureFahrenheit, ByteConvert.FromBigEndianToNative(reader.GetInt16(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagAmbientTemperatureFahrenheit)));
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagAmbientTemperature, ByteConvert.FromBigEndianToNative(reader.GetInt16(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagAmbientTemperature)));
+
+        directory.setInt(ReconyxUltraFireMakernoteDirectory.TAG_FLASH, reader.getByte(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_FLASH));
+        //directory.Set(ReconyxUltraFireMakernoteDirectory.TagBatteryVoltage, ByteConvert.FromBigEndianToNative(reader.GetUInt16(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TagBatteryVoltage)) / 1000.0);
+        directory.setStringValue(ReconyxUltraFireMakernoteDirectory.TAG_SERIAL_NUMBER, new StringValue(reader.getBytes(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_SERIAL_NUMBER, 14), Charsets.UTF_8));
+        // unread byte: the serial number's terminating null
+        directory.setString(ReconyxUltraFireMakernoteDirectory.TAG_USER_LABEL, reader.getNullTerminatedString(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_USER_LABEL, 20, Charsets.UTF_8));
     }
 }
 

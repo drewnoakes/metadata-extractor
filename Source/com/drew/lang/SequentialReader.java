@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,26 +22,32 @@
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.StringValue;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class SequentialReader
 {
     // TODO review whether the masks are needed (in both this and RandomAccessReader)
 
     private boolean _isMotorolaByteOrder = true;
 
+    public abstract long getPosition() throws IOException;
+
     /**
      * Gets the next byte in the sequence.
      *
      * @return The read byte value
      */
-    protected abstract byte getByte() throws IOException;
+    public abstract byte getByte() throws IOException;
 
     /**
      * Returns the required number of bytes from the sequence.
@@ -51,6 +57,14 @@ public abstract class SequentialReader
      */
     @NotNull
     public abstract byte[] getBytes(int count) throws IOException;
+
+    /**
+     * Retrieves bytes, writing them into a caller-provided buffer.
+     * @param buffer The array to write bytes to.
+     * @param offset The starting position within buffer to write to.
+     * @param count The number of bytes to be written.
+     */
+    public abstract void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException;
 
     /**
      * Skips forward in the sequence. If the sequence ends, an {@link EOFException} is thrown.
@@ -69,6 +83,24 @@ public abstract class SequentialReader
      * @throws IOException an error occurred reading from the underlying source.
      */
     public abstract boolean trySkip(long n) throws IOException;
+
+    /**
+     * Returns an estimate of the number of bytes that can be read (or skipped
+     * over) from this {@link SequentialReader} without blocking by the next
+     * invocation of a method for this input stream. A single read or skip of
+     * this many bytes will not block, but may read or skip fewer bytes.
+     * <p>
+     * Note that while some implementations of {@link SequentialReader} like
+     * {@link SequentialByteArrayReader} will return the total remaining number
+     * of bytes in the stream, others will not. It is never correct to use the
+     * return value of this method to allocate a buffer intended to hold all
+     * data in this stream.
+     *
+     * @return an estimate of the number of bytes that can be read (or skipped
+     *         over) from this {@link SequentialReader} without blocking or
+     *         {@code 0} when it reaches the end of the input stream.
+     */
+    public abstract int available();
 
     /**
      * Sets the endianness of this reader.
@@ -283,6 +315,19 @@ public abstract class SequentialReader
         }
     }
 
+    @NotNull
+    public String getString(int bytesRequested, @NotNull Charset charset) throws IOException
+    {
+        byte[] bytes = getBytes(bytesRequested);
+        return new String(bytes, charset);
+    }
+
+    @NotNull
+    public StringValue getStringValue(int bytesRequested, @Nullable Charset charset) throws IOException
+    {
+        return new StringValue(getBytes(bytesRequested), charset);
+    }
+
     /**
      * Creates a String from the stream, ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
      *
@@ -292,17 +337,53 @@ public abstract class SequentialReader
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public String getNullTerminatedString(int maxLengthBytes) throws IOException
+    public String getNullTerminatedString(int maxLengthBytes, Charset charset) throws IOException
     {
-        // NOTE currently only really suited to single-byte character strings
+       return getNullTerminatedStringValue(maxLengthBytes, charset).toString();
+    }
 
-        byte[] bytes = new byte[maxLengthBytes];
+    /**
+     * Creates a String from the stream, ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
+     *
+     * @param maxLengthBytes The maximum number of bytes to read.  If a <code>\0</code> byte is not reached within this limit,
+     *                       reading will stop and the string will be truncated to this length.
+     * @param charset The <code>Charset</code> to register with the returned <code>StringValue</code>, or <code>null</code> if the encoding
+     *                is unknown
+     * @return The read string.
+     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
+     */
+    @NotNull
+    public StringValue getNullTerminatedStringValue(int maxLengthBytes, Charset charset) throws IOException
+    {
+        byte[] bytes = getNullTerminatedBytes(maxLengthBytes);
+
+        return new StringValue(bytes, charset);
+    }
+
+    /**
+     * Returns the sequence of bytes punctuated by a <code>\0</code> value.
+     *
+     * @param maxLengthBytes The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
+     * the returned array will be <code>maxLengthBytes</code> long.
+     * @return The read byte array, excluding the null terminator.
+     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
+     */
+    @NotNull
+    public byte[] getNullTerminatedBytes(int maxLengthBytes) throws IOException
+    {
+        byte[] buffer = new byte[maxLengthBytes];
 
         // Count the number of non-null bytes
         int length = 0;
-        while (length < bytes.length && (bytes[length] = getByte()) != '\0')
+        while (length < buffer.length && (buffer[length] = getByte()) != 0)
             length++;
 
-        return new String(bytes, 0, length);
+        if (length == maxLengthBytes)
+            return buffer;
+
+        byte[] bytes = new byte[length];
+        if (length > 0)
+            System.arraycopy(buffer, 0, bytes, 0, length);
+        return bytes;
     }
 }

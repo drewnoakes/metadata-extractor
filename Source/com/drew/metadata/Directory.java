@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -41,9 +41,10 @@ import java.util.regex.Pattern;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@java.lang.SuppressWarnings("WeakerAccess")
 public abstract class Directory
 {
-    private static final DecimalFormat _floatFormat = new DecimalFormat("0.###");
+    private static final String _floatFormatPattern = "0.###";
 
     /** Map of values hashed by type identifiers. */
     @NotNull
@@ -260,6 +261,20 @@ public abstract class Directory
     }
 
     /**
+     * Sets a <code>StringValue</code> value for the specified tag.
+     *
+     * @param tagType the tag's value as an int
+     * @param value   the value for the specified tag as a StringValue
+     */
+    @java.lang.SuppressWarnings({ "ConstantConditions" })
+    public void setStringValue(int tagType, @NotNull StringValue value)
+    {
+        if (value == null)
+            throw new NullPointerException("cannot set a null StringValue");
+        setObject(tagType, value);
+    }
+
+    /**
      * Sets a <code>String</code> value for the specified tag.
      *
      * @param tagType the tag's value as an int
@@ -280,6 +295,17 @@ public abstract class Directory
      * @param strings the String array to store
      */
     public void setStringArray(int tagType, @NotNull String[] strings)
+    {
+        setObjectArray(tagType, strings);
+    }
+
+    /**
+     * Sets a <code>StringValue[]</code> (array) for the specified tag.
+     *
+     * @param tagType the tag identifier
+     * @param strings the StringValue array to store
+     */
+    public void setStringValueArray(int tagType, @NotNull StringValue[] strings)
     {
         setObjectArray(tagType, strings);
     }
@@ -440,12 +466,12 @@ public abstract class Directory
 
         if (o instanceof Number) {
             return ((Number)o).intValue();
-        } else if (o instanceof String) {
+        } else if (o instanceof String || o instanceof StringValue) {
             try {
-                return Integer.parseInt((String)o);
+                return Integer.parseInt(o.toString());
             } catch (NumberFormatException nfe) {
                 // convert the char array to an int
-                String s = (String)o;
+                String s = o.toString();
                 byte[] bytes = s.getBytes();
                 long val = 0;
                 for (byte aByte : bytes) {
@@ -476,7 +502,7 @@ public abstract class Directory
 
     /**
      * Gets the specified tag's value as a String array, if possible.  Only supported
-     * where the tag is set as String[], String, int[], byte[] or Rational[].
+     * where the tag is set as StringValue[], String[], StringValue, String, int[], byte[] or Rational[].
      *
      * @param tagType the tag identifier
      * @return the tag's value as an array of Strings. If the value is unset or cannot be converted, <code>null</code> is returned.
@@ -491,25 +517,56 @@ public abstract class Directory
             return (String[])o;
         if (o instanceof String)
             return new String[] { (String)o };
+        if (o instanceof StringValue)
+            return new String[] { o.toString() };
+        if (o instanceof StringValue[]) {
+            StringValue[] stringValues = (StringValue[])o;
+            String[] strings = new String[stringValues.length];
+            for (int i = 0; i < strings.length; i++)
+                strings[i] = stringValues[i].toString();
+            return strings;
+        }
         if (o instanceof int[]) {
             int[] ints = (int[])o;
             String[] strings = new String[ints.length];
             for (int i = 0; i < strings.length; i++)
                 strings[i] = Integer.toString(ints[i]);
             return strings;
-        } else if (o instanceof byte[]) {
+        }
+        if (o instanceof byte[]) {
             byte[] bytes = (byte[])o;
             String[] strings = new String[bytes.length];
             for (int i = 0; i < strings.length; i++)
                 strings[i] = Byte.toString(bytes[i]);
             return strings;
-        } else if (o instanceof Rational[]) {
+        }
+        if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             String[] strings = new String[rationals.length];
             for (int i = 0; i < strings.length; i++)
                 strings[i] = rationals[i].toSimpleString(false);
             return strings;
         }
+        return null;
+    }
+
+    /**
+     * Gets the specified tag's value as a StringValue array, if possible.
+     * Only succeeds if the tag is set as StringValue[], or StringValue.
+     *
+     * @param tagType the tag identifier
+     * @return the tag's value as an array of StringValues. If the value is unset or cannot be converted, <code>null</code> is returned.
+     */
+    @Nullable
+    public StringValue[] getStringValueArray(int tagType)
+    {
+        Object o = getObject(tagType);
+        if (o == null)
+            return null;
+        if (o instanceof StringValue[])
+            return (StringValue[])o;
+        if (o instanceof StringValue)
+            return new StringValue[] {(StringValue) o};
         return null;
     }
 
@@ -579,6 +636,8 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null) {
             return null;
+        } else if (o instanceof StringValue) {
+            return ((StringValue)o).getBytes();
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             byte[] bytes = new byte[rationals.length];
@@ -634,9 +693,9 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null)
             return null;
-        if (o instanceof String) {
+        if (o instanceof String || o instanceof StringValue) {
             try {
-                return Double.parseDouble((String)o);
+                return Double.parseDouble(o.toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
@@ -666,9 +725,9 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null)
             return null;
-        if (o instanceof String) {
+        if (o instanceof String || o instanceof StringValue) {
             try {
-                return Float.parseFloat((String)o);
+                return Float.parseFloat(o.toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
@@ -682,7 +741,7 @@ public abstract class Directory
     public long getLong(int tagType) throws MetadataException
     {
         Long value = getLongObject(tagType);
-        if (value!=null)
+        if (value != null)
             return value;
         Object o = getObject(tagType);
         if (o == null)
@@ -697,9 +756,9 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null)
             return null;
-        if (o instanceof String) {
+        if (o instanceof String || o instanceof StringValue) {
             try {
-                return Long.parseLong((String)o);
+                return Long.parseLong(o.toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
@@ -713,7 +772,7 @@ public abstract class Directory
     public boolean getBoolean(int tagType) throws MetadataException
     {
         Boolean value = getBooleanObject(tagType);
-        if (value!=null)
+        if (value != null)
             return value;
         Object o = getObject(tagType);
         if (o == null)
@@ -731,9 +790,9 @@ public abstract class Directory
             return null;
         if (o instanceof Boolean)
             return (Boolean)o;
-        if (o instanceof String) {
+        if (o instanceof String || o instanceof StringValue) {
             try {
-                return Boolean.getBoolean((String)o);
+                return Boolean.getBoolean(o.toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
@@ -793,7 +852,7 @@ public abstract class Directory
 
         java.util.Date date = null;
 
-        if (o instanceof String) {
+        if ((o instanceof String) || (o instanceof StringValue)) {
             // This seems to cover all known Exif and Xmp date strings
             // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
             String datePatterns[] = {
@@ -807,8 +866,10 @@ public abstract class Directory
                     "yyyy-MM-dd'T'HH:mm",
                     "yyyy-MM-dd",
                     "yyyy-MM",
+                    "yyyyMMdd", // as used in IPTC data
                     "yyyy" };
-            String dateString = (String)o;
+
+            String dateString = o.toString();
 
             // if the date string has subsecond information, it supersedes the subsecond parameter
             Pattern subsecondPattern = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)(\\.\\d+)");
@@ -950,13 +1011,13 @@ public abstract class Directory
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(_floatFormat.format(Array.getFloat(o, i)));
+                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getFloat(o, i)));
                 }
             } else if (componentType.getName().equals("double")) {
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(_floatFormat.format(Array.getDouble(o, i)));
+                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getDouble(o, i)));
                 }
             } else if (componentType.getName().equals("byte")) {
                 for (int i = 0; i < arrayLength; i++) {
@@ -972,10 +1033,10 @@ public abstract class Directory
         }
 
         if (o instanceof Double)
-            return _floatFormat.format(((Double)o).doubleValue());
+            return new DecimalFormat(_floatFormatPattern).format(((Double)o).doubleValue());
 
         if (o instanceof Float)
-            return _floatFormat.format(((Float)o).floatValue());
+            return new DecimalFormat(_floatFormatPattern).format(((Float)o).floatValue());
 
         // Note that several cameras leave trailing spaces (Olympus, Nikon) but this library is intended to show
         // the actual data within the file.  It is not inconceivable that whitespace may be significant here, so we
@@ -995,6 +1056,15 @@ public abstract class Directory
         } catch (UnsupportedEncodingException e) {
             return null;
         }
+    }
+
+    @Nullable
+    public StringValue getStringValue(int tagType)
+    {
+        Object o = getObject(tagType);
+        if (o instanceof StringValue)
+            return (StringValue)o;
+        return null;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,9 +50,6 @@ public class Age
     @Nullable
     public static Age fromPanasonicString(@NotNull String s)
     {
-        if (s == null)
-            throw new NullPointerException();
-
         if (s.length() != 19 || s.startsWith("9999:99:99"))
             return null;
 
@@ -142,7 +139,7 @@ public class Age
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(@Nullable Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

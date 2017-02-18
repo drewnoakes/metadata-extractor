@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
  */
 package com.drew.metadata.exif.makernotes;
 
+import com.drew.imaging.PhotographicConversions;
+import com.drew.lang.Rational;
 import com.drew.lang.DateUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -27,7 +29,6 @@ import com.drew.metadata.TagDescriptor;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.GregorianCalendar;
 
 import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
 
@@ -67,10 +68,22 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
                 return getMacroModeDescription();
             case TAG_BW_MODE:
                 return getBWModeDescription();
-            case TAG_DIGI_ZOOM_RATIO:
-                return getDigiZoomRatioDescription();
+            case TAG_DIGITAL_ZOOM:
+                return getDigitalZoomDescription();
+            case TAG_FOCAL_PLANE_DIAGONAL:
+                return getFocalPlaneDiagonalDescription();
+            case TAG_CAMERA_TYPE:
+                return getCameraTypeDescription();
             case TAG_CAMERA_ID:
                 return getCameraIdDescription();
+            case TAG_ONE_TOUCH_WB:
+                return getOneTouchWbDescription();
+            case TAG_SHUTTER_SPEED_VALUE:
+                return getShutterSpeedDescription();
+            case TAG_ISO_VALUE:
+                return getIsoValueDescription();
+            case TAG_APERTURE_VALUE:
+                return getApertureValueDescription();
             case TAG_FLASH_MODE:
                 return getFlashModeDescription();
             case TAG_FOCUS_RANGE:
@@ -79,6 +92,18 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
                 return getFocusModeDescription();
             case TAG_SHARPNESS:
                 return getSharpnessDescription();
+            case TAG_COLOUR_MATRIX:
+                return getColorMatrixDescription();
+            case TAG_WB_MODE:
+                return getWbModeDescription();
+            case TAG_RED_BALANCE:
+                return getRedBalanceDescription();
+            case TAG_BLUE_BALANCE:
+                return getBlueBalanceDescription();
+            case TAG_CONTRAST:
+                return getContrastDescription();
+            case TAG_PREVIEW_IMAGE_VALID:
+                return getPreviewImageValidDescription();
 
             case CameraSettings.TAG_EXPOSURE_MODE:
                 return getExposureModeDescription();
@@ -103,7 +128,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             case CameraSettings.TAG_MACRO_MODE:
                 return getMacroModeCameraSettingDescription();
             case CameraSettings.TAG_DIGITAL_ZOOM:
-                return getDigitalZoomDescription();
+                return getDigitalZoomCameraSettingDescription();
             case CameraSettings.TAG_EXPOSURE_COMPENSATION:
                 return getExposureCompensationDescription();
             case CameraSettings.TAG_BRACKET_STEP:
@@ -139,7 +164,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             case CameraSettings.TAG_SATURATION:
                 return getSaturationDescription();
             case CameraSettings.TAG_CONTRAST:
-                return getContrastDescription();
+                return getContrastCameraSettingDescription();
             case CameraSettings.TAG_SHARPNESS:
                 return getSharpnessCameraSettingDescription();
             case CameraSettings.TAG_SUBJECT_PROGRAM:
@@ -306,7 +331,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String getDigitalZoomDescription()
+    public String getDigitalZoomCameraSettingDescription()
     {
         return getIndexedDescription(CameraSettings.TAG_DIGITAL_ZOOM, "Off", "Electronic magnification", "Digital zoom 2x");
     }
@@ -469,7 +494,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String getContrastDescription()
+    public String getContrastCameraSettingDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_CONTRAST);
         return value == null ? null : Long.toString(value-3);
@@ -648,6 +673,93 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
+    public String getColorMatrixDescription()
+    {
+        int[] obj = _directory.getIntArray(TAG_COLOUR_MATRIX);
+        if (obj == null)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < obj.length; i++) {
+            sb.append((short)obj[i]);
+            if (i < obj.length - 1)
+                sb.append(" ");
+        }
+        return sb.length() == 0 ? null : sb.toString();
+    }
+
+    @Nullable
+    public String getWbModeDescription()
+    {
+        int[] obj = _directory.getIntArray(TAG_WB_MODE);
+        if (obj == null)
+            return null;
+
+        String val = String.format("%d %d", obj[0], obj[1]);
+
+        if(val.equals("1 0"))
+            return "Auto";
+        else if(val.equals("1 2"))
+            return "Auto (2)";
+        else if(val.equals("1 4"))
+            return "Auto (4)";
+        else if(val.equals("2 2"))
+            return "3000 Kelvin";
+        else if(val.equals("2 3"))
+            return "3700 Kelvin";
+        else if(val.equals("2 4"))
+            return "4000 Kelvin";
+        else if(val.equals("2 5"))
+            return "4500 Kelvin";
+        else if(val.equals("2 6"))
+            return "5500 Kelvin";
+        else if(val.equals("2 7"))
+            return "6500 Kelvin";
+        else if(val.equals("2 8"))
+            return "7500 Kelvin";
+        else if(val.equals("3 0"))
+            return "One-touch";
+        else
+            return "Unknown " + val;
+    }
+
+    @Nullable
+    public String getRedBalanceDescription()
+    {
+        int[] values = _directory.getIntArray(TAG_RED_BALANCE);
+        if (values == null)
+            return null;
+
+        short value = (short)values[0];
+
+        return String.valueOf((double)value/256d);
+    }
+
+    @Nullable
+    public String getBlueBalanceDescription()
+    {
+        int[] values = _directory.getIntArray(TAG_BLUE_BALANCE);
+        if (values == null)
+            return null;
+
+        short value = (short)values[0];
+
+        return String.valueOf((double)value/256d);
+    }
+
+    @Nullable
+    public String getContrastDescription()
+    {
+        return getIndexedDescription(TAG_CONTRAST, "High", "Normal", "Low");
+    }
+
+    @Nullable
+    public String getPreviewImageValidDescription()
+    {
+        return getIndexedDescription(TAG_PREVIEW_IMAGE_VALID, "No", "Yes");
+    }
+
+    @Nullable
     public String getFocusModeDescription()
     {
         return getIndexedDescription(TAG_FOCUS_MODE, "Auto", "Manual");
@@ -666,9 +778,36 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     }
 
     @Nullable
-    public String getDigiZoomRatioDescription()
+    public String getDigitalZoomDescription()
     {
-        return getIndexedDescription(TAG_DIGI_ZOOM_RATIO, "Normal", null, "Digital 2x Zoom");
+        Rational value = _directory.getRational(TAG_DIGITAL_ZOOM);
+        if (value == null)
+            return null;
+        return value.toSimpleString(false);
+    }
+
+    @Nullable
+    public String getFocalPlaneDiagonalDescription()
+    {
+        Rational value = _directory.getRational(TAG_FOCAL_PLANE_DIAGONAL);
+        if (value == null)
+            return null;
+
+        DecimalFormat format = new DecimalFormat("0.###");
+        return format.format(value.doubleValue()) + " mm";
+    }
+
+    @Nullable
+    public String getCameraTypeDescription()
+    {
+        String cameratype = _directory.getString(TAG_CAMERA_TYPE);
+        if(cameratype == null)
+            return null;
+
+        if(OlympusMakernoteDirectory.OlympusCameraTypes.containsKey(cameratype))
+            return OlympusMakernoteDirectory.OlympusCameraTypes.get(cameratype);
+
+        return cameratype;
     }
 
     @Nullable
@@ -678,6 +817,38 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (bytes == null)
             return null;
         return new String(bytes);
+    }
+
+    @Nullable
+    public String getOneTouchWbDescription()
+    {
+        return getIndexedDescription(TAG_ONE_TOUCH_WB, "Off", "On", "On (Preset)");
+    }
+
+    @Nullable
+    public String getShutterSpeedDescription()
+    {
+        return super.getShutterSpeedDescription(TAG_SHUTTER_SPEED_VALUE);
+    }
+
+    @Nullable
+    public String getIsoValueDescription()
+    {
+        Rational value = _directory.getRational(TAG_ISO_VALUE);
+        if (value == null)
+            return null;
+
+        return String.valueOf(Math.round(Math.pow(2, value.doubleValue() - 5) * 100));
+    }
+
+    @Nullable
+    public String getApertureValueDescription()
+    {
+        Double aperture = _directory.getDoubleObject(TAG_APERTURE_VALUE);
+        if (aperture == null)
+            return null;
+        double fStop = PhotographicConversions.apertureToFStop(aperture);
+        return getFStopDescription(fStop);
     }
 
     @Nullable
@@ -695,7 +866,56 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getJpegQualityDescription()
     {
-        return getIndexedDescription(TAG_JPEG_QUALITY,
+        String cameratype = _directory.getString(TAG_CAMERA_TYPE);
+
+        if(cameratype != null)
+        {
+            Integer value = _directory.getInteger(TAG_JPEG_QUALITY);
+            if(value == null)
+                return null;
+
+            if((cameratype.startsWith("SX") && !cameratype.startsWith("SX151"))
+                || cameratype.startsWith("D4322"))
+            {
+                switch (value)
+                {
+                    case 0:
+                        return "Standard Quality (Low)";
+                    case 1:
+                        return "High Quality (Normal)";
+                    case 2:
+                        return "Super High Quality (Fine)";
+                    case 6:
+                        return "RAW";
+                    default:
+                        return "Unknown (" + value.toString() + ")";
+                }
+            }
+            else
+            {
+                switch (value)
+                {
+                    case 0:
+                        return "Standard Quality (Low)";
+                    case 1:
+                        return "High Quality (Normal)";
+                    case 2:
+                        return "Super High Quality (Fine)";
+                    case 4:
+                        return "RAW";
+                    case 5:
+                        return "Medium-Fine";
+                    case 6:
+                        return "Small-Fine";
+                    case 33:
+                        return "Uncompressed";
+                    default:
+                        return "Unknown (" + value.toString() + ")";
+                }
+            }
+        }
+        else
+            return getIndexedDescription(TAG_JPEG_QUALITY,
             1,
             "Standard Quality",
             "High Quality",

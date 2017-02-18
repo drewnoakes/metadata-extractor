@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.util.Iterator;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public class StringUtil
+public final class StringUtil
 {
     @NotNull
     public static String join(@NotNull Iterable<? extends CharSequence> strings, @NotNull String delimiter)

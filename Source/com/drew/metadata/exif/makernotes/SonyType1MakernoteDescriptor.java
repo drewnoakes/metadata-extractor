@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -433,19 +433,43 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
     @Nullable
     public String getVignettingCorrectionDescription()
     {
-        return getIndexedDescription(TAG_VIGNETTING_CORRECTION, "Off", null, "Auto");
+        Integer value = _directory.getInteger(TAG_VIGNETTING_CORRECTION);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0: return "Off";
+            case 2: return "Auto";
+            case 0xffffffff: return "N/A";
+            default: return String.format("Unknown (%d)", value);
+        }
     }
 
     @Nullable
     public String getLateralChromaticAberrationDescription()
     {
-        return getIndexedDescription(TAG_LATERAL_CHROMATIC_ABERRATION, "Off", null, "Auto");
+        Integer value = _directory.getInteger(TAG_LATERAL_CHROMATIC_ABERRATION);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0: return "Off";
+            case 2: return "Auto";
+            case 0xffffffff: return "N/A";
+            default: return String.format("Unknown (%d)", value);
+        }
     }
 
     @Nullable
     public String getDistortionCorrectionDescription()
     {
-        return getIndexedDescription(TAG_DISTORTION_CORRECTION, "Off", null, "Auto");
+        Integer value = _directory.getInteger(TAG_DISTORTION_CORRECTION);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0: return "Off";
+            case 2: return "Auto";
+            case 0xffffffff: return "N/A";
+            default: return String.format("Unknown (%d)", value);
+        }
     }
 
     @Nullable

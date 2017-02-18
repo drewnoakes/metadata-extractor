@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -68,8 +68,6 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
                 return getContrastDescription();
             case TAG_SHARPNESS:
                 return getSharpnessDescription();
-            case TAG_PRINT_IMAGE_MATCHING_INFO:
-                return getPrintImageMatchingInfoDescription();
             case TAG_PREVIEW_THUMBNAIL:
                 return getCasioPreviewThumbnailDescription();
             case TAG_WHITE_BALANCE_BIAS:
@@ -209,13 +207,6 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
         if (bytes == null)
             return null;
         return "<" + bytes.length + " bytes of image data>";
-    }
-
-    @Nullable
-    public String getPrintImageMatchingInfoDescription()
-    {
-        // TODO research PIM specification http://www.ozhiker.com/electronics/pjmt/jpeg_info/pim.html
-        return _directory.getString(TAG_PRINT_IMAGE_MATCHING_INFO);
     }
 
     @Nullable

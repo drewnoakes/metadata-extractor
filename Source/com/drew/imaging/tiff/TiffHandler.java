@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.StringValue;
 
 import java.io.IOException;
 import java.util.Set;
@@ -51,8 +52,6 @@ public interface TiffHandler
 
     void endingIFD();
 
-    void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset);
-
     @Nullable
     Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);
 
@@ -67,7 +66,7 @@ public interface TiffHandler
     void error(@NotNull String message);
 
     void setByteArray(int tagId, @NotNull byte[] bytes);
-    void setString(int tagId, @NotNull String string);
+    void setString(int tagId, @NotNull StringValue string);
     void setRational(int tagId, @NotNull Rational rational);
     void setRationalArray(int tagId, @NotNull Rational[] array);
     void setFloat(int tagId, float float32);

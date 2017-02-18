@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -38,5 +38,5 @@ public interface MetadataReader
      * @param reader   The {@link RandomAccessReader} from which the metadata should be extracted.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
+    void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
 }

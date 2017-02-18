@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -58,16 +58,16 @@ public final class Iso2022Converter
     }
 
     /**
-     * Attempts to guess the encoding of a string provided as a byte array.
+     * Attempts to guess the {@link Charset} of a string provided as a byte array.
      * <p>
-     * Encodings trialled are, in order:
+     * Charsets trialled are, in order:
      * <ul>
      *     <li>UTF-8</li>
      *     <li><code>System.getProperty("file.encoding")</code></li>
      *     <li>ISO-8859-1</li>
      * </ul>
      * <p>
-     * Its only purpose is to guess the encoding if and only if iptc tag coded character set is not set. If the
+     * Its only purpose is to guess the Charset if and only if IPTC tag coded character set is not set. If the
      * encoding is not UTF-8, the tag should be set. Otherwise it is bad practice. This method tries to
      * workaround this issue since some metadata manipulating tools do not prevent such bad practice.
      * <p>
@@ -78,17 +78,18 @@ public final class Iso2022Converter
      * @return the name of the encoding or null if none could be guessed
      */
     @Nullable
-    static String guessEncoding(@NotNull final byte[] bytes)
+    static Charset guessCharSet(@NotNull final byte[] bytes)
     {
         String[] encodings = { UTF_8, System.getProperty("file.encoding"), ISO_8859_1 };
 
         for (String encoding : encodings)
         {
-            CharsetDecoder cs = Charset.forName(encoding).newDecoder();
+            Charset charset = Charset.forName(encoding);
+            CharsetDecoder cs = charset.newDecoder();
 
             try {
                 cs.decode(ByteBuffer.wrap(bytes));
-                return encoding;
+                return charset;
             } catch (CharacterCodingException e) {
                 // fall through...
             }

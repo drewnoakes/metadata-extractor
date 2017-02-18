@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -39,15 +39,31 @@ public class RandomAccessFileReader extends RandomAccessReader
     private final long _length;
     private int _currentIndex;
 
+    private final int _baseOffset;
+
     @SuppressWarnings({ "ConstantConditions" })
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public RandomAccessFileReader(@NotNull RandomAccessFile file) throws IOException
+    {
+        this(file, 0);
+    }
+
+    @SuppressWarnings({ "ConstantConditions" })
+    @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
+    public RandomAccessFileReader(@NotNull RandomAccessFile file, int baseOffset) throws IOException
     {
         if (file == null)
             throw new NullPointerException();
 
         _file = file;
+        _baseOffset = baseOffset;
         _length = _file.length();
+    }
+
+    @Override
+    public int toUnshiftedOffset(int localOffset)
+    {
+        return localOffset + _baseOffset;
     }
 
     @Override
@@ -57,7 +73,7 @@ public class RandomAccessFileReader extends RandomAccessReader
     }
 
     @Override
-    protected byte getByte(int index) throws IOException
+    public byte getByte(int index) throws IOException
     {
         if (index != _currentIndex)
             seek(index);

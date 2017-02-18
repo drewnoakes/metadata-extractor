@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,6 +36,12 @@ public class SequentialByteArrayReader extends SequentialReader
     private final byte[] _bytes;
     private int _index;
 
+    @Override
+    public long getPosition()
+    {
+        return _index;
+    }
+
     public SequentialByteArrayReader(@NotNull byte[] bytes)
     {
         this(bytes, 0);
@@ -52,7 +58,7 @@ public class SequentialByteArrayReader extends SequentialReader
     }
 
     @Override
-    protected byte getByte() throws IOException
+    public byte getByte() throws IOException
     {
         if (_index >= _bytes.length) {
             throw new EOFException("End of data reached.");
@@ -73,6 +79,17 @@ public class SequentialByteArrayReader extends SequentialReader
         _index += count;
 
         return bytes;
+    }
+
+    @Override
+    public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
+    {
+        if (_index + count > _bytes.length) {
+            throw new EOFException("End of data reached.");
+        }
+
+        System.arraycopy(_bytes, _index, buffer, offset, count);
+        _index += count;
     }
 
     @Override
@@ -104,5 +121,10 @@ public class SequentialByteArrayReader extends SequentialReader
         }
 
         return true;
+    }
+
+    @Override
+    public int available() {
+        return _bytes.length - _index;
     }
 }

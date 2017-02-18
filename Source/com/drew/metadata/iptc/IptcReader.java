@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,8 +28,10 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 
 /**
@@ -55,6 +57,7 @@ public class IptcReader implements JpegSegmentMetadataReader
     public static final int DATA_RECORD = 8;
     public static final int POST_DATA_RECORD = 9;
 */
+    private static final byte IptcMarkerByte = 0x1c;
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -66,7 +69,7 @@ public class IptcReader implements JpegSegmentMetadataReader
     {
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the IPTC marker byte
-            if (segmentBytes.length != 0 && segmentBytes[0] == 0x1c) {
+            if (segmentBytes.length != 0 && segmentBytes[0] == IptcMarkerByte) {
                 extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
             }
         }
@@ -106,11 +109,11 @@ public class IptcReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            if (startByte != 0x1c) {
+            if (startByte != IptcMarkerByte) {
                 // NOTE have seen images where there was one extra byte at the end, giving
                 // offset==length at this point, which is not worth logging as an error.
                 if (offset != length)
-                    directory.addError("Invalid IPTC tag marker at offset " + (offset - 1) + ". Expected '0x1c' but got '0x" + Integer.toHexString(startByte) + "'.");
+                    directory.addError("Invalid IPTC tag marker at offset " + (offset - 1) + ". Expected '0x" + Integer.toHexString(IptcMarkerByte) + "' but got '0x" + Integer.toHexString(startByte) + "'.");
                 return;
             }
 
@@ -163,18 +166,15 @@ public class IptcReader implements JpegSegmentMetadataReader
             return;
         }
 
-        String string = null;
-
         switch (tagIdentifier) {
             case IptcDirectory.TAG_CODED_CHARACTER_SET:
                 byte[] bytes = reader.getBytes(tagByteCount);
-                String charset = Iso2022Converter.convertISO2022CharsetToJavaCharset(bytes);
-                if (charset == null) {
+                String charsetName = Iso2022Converter.convertISO2022CharsetToJavaCharset(bytes);
+                if (charsetName == null) {
                     // Unable to determine the charset, so fall through and treat tag as a regular string
-                    string = new String(bytes);
-                    break;
+                    charsetName = new String(bytes);
                 }
-                directory.setString(tagIdentifier, charset);
+                directory.setString(tagIdentifier, charsetName);
                 return;
             case IptcDirectory.TAG_ENVELOPE_RECORD_VERSION:
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
@@ -200,32 +200,38 @@ public class IptcReader implements JpegSegmentMetadataReader
 
         // If we haven't returned yet, treat it as a string
         // NOTE that there's a chance we've already loaded the value as a string above, but failed to parse the value
-        if (string == null) {
-            String encoding = directory.getString(IptcDirectory.TAG_CODED_CHARACTER_SET);
-            if (encoding != null) {
-                string = reader.getString(tagByteCount, encoding);
-            } else {
-                byte[] bytes = reader.getBytes(tagByteCount);
-                encoding = Iso2022Converter.guessEncoding(bytes);
-                string = encoding != null ? new String(bytes, encoding) : new String(bytes);
-            }
+        String charSetName = directory.getString(IptcDirectory.TAG_CODED_CHARACTER_SET);
+        Charset charset = null;
+        try {
+            if (charSetName != null)
+                charset = Charset.forName(charSetName);
+        } catch (Throwable ignored) {
+        }
+
+        StringValue string;
+        if (charSetName != null) {
+            string = reader.getStringValue(tagByteCount, charset);
+        } else {
+            byte[] bytes = reader.getBytes(tagByteCount);
+            Charset charSet = Iso2022Converter.guessCharSet(bytes);
+            string = charSet != null ? new StringValue(bytes, charSet) : new StringValue(bytes, null);
         }
 
         if (directory.containsTag(tagIdentifier)) {
-            // this fancy string[] business avoids using an ArrayList for performance reasons
-            String[] oldStrings = directory.getStringArray(tagIdentifier);
-            String[] newStrings;
+            // this fancy StringValue[] business avoids using an ArrayList for performance reasons
+            StringValue[] oldStrings = directory.getStringValueArray(tagIdentifier);
+            StringValue[] newStrings;
             if (oldStrings == null) {
                 // TODO hitting this block means any prior value(s) are discarded
-                newStrings = new String[1];
+                newStrings = new StringValue[1];
             } else {
-                newStrings = new String[oldStrings.length + 1];
+                newStrings = new StringValue[oldStrings.length + 1];
                 System.arraycopy(oldStrings, 0, newStrings, 0, oldStrings.length);
             }
             newStrings[newStrings.length - 1] = string;
-            directory.setStringArray(tagIdentifier, newStrings);
+            directory.setStringValueArray(tagIdentifier, newStrings);
         } else {
-            directory.setString(tagIdentifier, string);
+            directory.setStringValue(tagIdentifier, string);
         }
     }
 }

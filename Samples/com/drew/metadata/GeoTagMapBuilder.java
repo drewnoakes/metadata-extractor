@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -66,6 +66,12 @@ public class GeoTagMapBuilder
             }
         });
 
+        if (files == null)
+        {
+            System.err.println("No matching files found.");
+            System.exit(1);
+        }
+
         Collection<PhotoLocation> photoLocations = new ArrayList<PhotoLocation>();
         for (File file : files)
         {
@@ -73,8 +79,6 @@ public class GeoTagMapBuilder
             Metadata metadata = ImageMetadataReader.readMetadata(file);
             // See whether it has GPS data
             Collection<GpsDirectory> gpsDirectories = metadata.getDirectoriesOfType(GpsDirectory.class);
-            if (gpsDirectories == null)
-                continue;
             for (GpsDirectory gpsDirectory : gpsDirectories) {
                 // Try to read out the location, making sure it's non-zero
                 GeoLocation geoLocation = gpsDirectory.getGeoLocation();

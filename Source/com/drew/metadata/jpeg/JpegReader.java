@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class JpegReader implements JpegSegmentMetadataReader
             JpegSegmentType.SOF5,
             JpegSegmentType.SOF6,
             JpegSegmentType.SOF7,
-            JpegSegmentType.SOF8,
+//            JpegSegmentType.JPG,
             JpegSegmentType.SOF9,
             JpegSegmentType.SOF10,
             JpegSegmentType.SOF11,

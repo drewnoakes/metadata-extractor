@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -85,6 +86,7 @@ public class JpegSegmentReaderTest
         assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPC));
         assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPF));
         assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.COM));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.DAC));
         assertEquals(4, segmentData.getSegmentCount(JpegSegmentType.DHT));
         assertEquals(2, segmentData.getSegmentCount(JpegSegmentType.DQT));
         assertEquals(1, segmentData.getSegmentCount(JpegSegmentType.SOF0));
@@ -125,6 +127,34 @@ public class JpegSegmentReaderTest
         assertArrayEquals(
                 FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2"),
                 segmentData.getSegment(JpegSegmentType.APP2));
+    }
+
+    @Test
+    public void testReadDhtSegment() throws Exception
+    {
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(
+            new File("Tests/Data/withExifAndIptc.jpg"),
+            Collections.singletonList(JpegSegmentType.DHT));
+
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP0));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP1));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP2));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPD));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPE));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP3));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP4));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP5));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP6));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP7));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP8));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APP9));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPA));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPB));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPC));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.APPF));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.COM));
+        assertEquals(4, segmentData.getSegmentCount(JpegSegmentType.DHT));
+        assertEquals(0, segmentData.getSegmentCount(JpegSegmentType.SOF0));
     }
 
     @Test

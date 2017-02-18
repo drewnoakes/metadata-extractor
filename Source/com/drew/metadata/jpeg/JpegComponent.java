@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -87,5 +87,16 @@ public class JpegComponent implements Serializable
     public int getVerticalSamplingFactor()
     {
         return _samplingFactorByte & 0x0F;
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return String.format(
+            "Quantization table %d, Sampling factors %d horiz/%d vert",
+            _quantizationTableNumber,
+            getHorizontalSamplingFactor(),
+            getVerticalSamplingFactor()
+        );
     }
 }

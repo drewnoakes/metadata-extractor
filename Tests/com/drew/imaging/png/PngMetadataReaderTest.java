@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -100,6 +100,7 @@ public class PngMetadataReaderTest
             SimpleDateFormat formatter = new SimpleDateFormat("EE MMM DD HH:mm:ss z yyyy", Locale.US);
             formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
             assertEquals("Tue Jan 01 04:08:30 GMT 2013", formatter.format(modTime));
+            assertNotNull(modTime);
             assertEquals(1357013310000L, modTime.getTime());
 
             assertEquals(PngChunkType.iTXt, dirs[5].getPngChunkType());
@@ -107,8 +108,8 @@ public class PngMetadataReaderTest
             List<KeyValuePair> pairs = (List<KeyValuePair>)dirs[5].getObject(PngDirectory.TAG_TEXTUAL_DATA);
             assertNotNull(pairs);
             assertEquals(1, pairs.size());
-            assertEquals("Comment", pairs.get(0).getKey());
-            assertEquals("Created with GIMP", pairs.get(0).getValue());
+            assertEquals("Comment", pairs.get(0).getKey().toString());
+            assertEquals("Created with GIMP", pairs.get(0).getValue().toString());
         } finally {
             TimeZone.setDefault(timeZone);
         }

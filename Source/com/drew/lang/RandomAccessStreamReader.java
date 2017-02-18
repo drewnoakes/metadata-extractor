@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -167,7 +167,13 @@ public class RandomAccessStreamReader extends RandomAccessReader
     }
 
     @Override
-    protected byte getByte(int index) throws IOException
+    public int toUnshiftedOffset(int localOffset)
+    {
+        return localOffset;
+    }
+
+    @Override
+    public byte getByte(int index) throws IOException
     {
         assert(index >= 0);
 

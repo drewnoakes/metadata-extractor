@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -124,8 +124,6 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
         if (value==null)
             return null;
 
-        return value.getComponentName() + " component: Quantization table " + value.getQuantizationTableNumber()
-            + ", Sampling factors " + value.getHorizontalSamplingFactor()
-            + " horiz/" + value.getVerticalSamplingFactor() + " vert";
+        return value.getComponentName() + " component: " + value;
     }
 }

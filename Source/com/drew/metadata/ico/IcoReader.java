@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -102,7 +102,6 @@ public class IcoReader
                 directory.setLong(IcoDirectory.TAG_IMAGE_SIZE_BYTES, reader.getUInt32());
                 directory.setLong(IcoDirectory.TAG_IMAGE_OFFSET_BYTES, reader.getUInt32());
             } catch (IOException ex) {
-                assert (directory != null);
                 directory.addError("Exception reading ICO file metadata: " + ex.getMessage());
             }
             metadata.addDirectory(directory);

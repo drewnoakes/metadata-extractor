@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,6 +36,14 @@ public class StreamReader extends SequentialReader
     @NotNull
     private final InputStream _stream;
 
+    private long _pos;
+
+    @Override
+    public long getPosition()
+    {
+        return _pos;
+    }
+
     @SuppressWarnings("ConstantConditions")
     public StreamReader(@NotNull InputStream stream)
     {
@@ -43,14 +51,16 @@ public class StreamReader extends SequentialReader
             throw new NullPointerException();
 
         _stream = stream;
+        _pos = 0;
     }
 
     @Override
-    protected byte getByte() throws IOException
+    public byte getByte() throws IOException
     {
         int value = _stream.read();
         if (value == -1)
             throw new EOFException("End of data reached.");
+        _pos++;
         return (byte)value;
     }
 
@@ -59,17 +69,23 @@ public class StreamReader extends SequentialReader
     public byte[] getBytes(int count) throws IOException
     {
         byte[] bytes = new byte[count];
-        int totalBytesRead = 0;
+        getBytes(bytes, 0, count);
+        return bytes;
+    }
 
-        while (totalBytesRead != count) {
-            final int bytesRead = _stream.read(bytes, totalBytesRead, count - totalBytesRead);
+    @Override
+    public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
+    {
+        int totalBytesRead = 0;
+        while (totalBytesRead != count)
+        {
+            final int bytesRead = _stream.read(buffer, offset + totalBytesRead, count - totalBytesRead);
             if (bytesRead == -1)
                 throw new EOFException("End of data reached.");
             totalBytesRead += bytesRead;
             assert(totalBytesRead <= count);
         }
-
-        return bytes;
+        _pos += totalBytesRead;
     }
 
     @Override
@@ -93,6 +109,15 @@ public class StreamReader extends SequentialReader
         return skipInternal(n) == n;
     }
 
+    @Override
+    public int available() {
+        try {
+            return _stream.available();
+        } catch (IOException e) {
+            return 0;
+        }
+    }
+
     private long skipInternal(long n) throws IOException
     {
         // It seems that for some streams, such as BufferedInputStream, that skip can return
@@ -109,6 +134,7 @@ public class StreamReader extends SequentialReader
             if (skipped == 0)
                 break;
         }
+        _pos += skippedTotal;
         return skippedTotal;
     }
 }

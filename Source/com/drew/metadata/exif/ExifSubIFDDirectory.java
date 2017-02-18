@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
      * @return A Date object representing when this image was captured, if possible, otherwise null
      */
     @Nullable
-    public Date getDateOriginal(TimeZone timeZone)
+    public Date getDateOriginal(@Nullable TimeZone timeZone)
     {
         return getDate(TAG_DATETIME_ORIGINAL, getString(TAG_SUBSECOND_TIME_ORIGINAL), timeZone);
     }
@@ -116,7 +116,7 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
      * @return A Date object representing when this image was digitized, if possible, otherwise null
      */
     @Nullable
-    public Date getDateDigitized(TimeZone timeZone)
+    public Date getDateDigitized(@Nullable TimeZone timeZone)
     {
         return getDate(TAG_DATETIME_DIGITIZED, getString(TAG_SUBSECOND_TIME_DIGITIZED), timeZone);
     }

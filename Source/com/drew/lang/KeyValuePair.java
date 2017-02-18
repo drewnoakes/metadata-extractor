@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,18 +21,19 @@
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.StringValue;
 
 /**
- * Models a key/value pair, where both are non-null {@link String} objects.
+ * Models a key/value pair, where both are non-null {@link StringValue} objects.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
 public class KeyValuePair
 {
     private final String _key;
-    private final String _value;
+    private final StringValue _value;
 
-    public KeyValuePair(@NotNull String key, @NotNull String value)
+    public KeyValuePair(@NotNull String key, @NotNull StringValue value)
     {
         _key = key;
         _value = value;
@@ -45,7 +46,7 @@ public class KeyValuePair
     }
 
     @NotNull
-    public String getValue()
+    public StringValue getValue()
     {
         return _value;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
 
 import java.util.Collections;
 
@@ -48,7 +49,7 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
             metadata.addDirectory(directory);
 
             // The entire contents of the directory are the comment
-            directory.setString(JpegCommentDirectory.TAG_COMMENT, new String(segmentBytes));
+            directory.setStringValue(JpegCommentDirectory.TAG_COMMENT, new StringValue(segmentBytes, null));
         }
     }
 }

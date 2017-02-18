@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ public class SonyType1MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_WHITE_BALANCE, "White Balance");
         _tagNameMap.put(TAG_EXTRA_INFO, "Extra Info");
 
-        _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching Info");
+        _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
 
         _tagNameMap.put(TAG_MULTI_BURST_MODE, "Multi Burst Mode");
         _tagNameMap.put(TAG_MULTI_BURST_IMAGE_WIDTH, "Multi Burst Image Width");

@@ -89,6 +89,7 @@ public class OlympusCameraSettingsMakernoteDirectory extends Directory
     public static final int TagPictureModeEffect = 0x52d;
     public static final int TagToneLevel = 0x52e;
     public static final int TagArtFilterEffect = 0x52f;
+    public static final int TagColorCreatorEffect = 0x532;
 
     public static final int TagDriveMode = 0x600;
     public static final int TagPanoramaMode = 0x601;
@@ -162,6 +163,7 @@ public class OlympusCameraSettingsMakernoteDirectory extends Directory
         _tagNameMap.put(TagPictureModeEffect, "Picture Mode Effect");
         _tagNameMap.put(TagToneLevel, "Tone Level");
         _tagNameMap.put(TagArtFilterEffect, "Art Filter Effect");
+        _tagNameMap.put(TagColorCreatorEffect, "Color Creator Effect");
 
         _tagNameMap.put(TagDriveMode, "Drive Mode");
         _tagNameMap.put(TagPanoramaMode, "Panorama Mode");
