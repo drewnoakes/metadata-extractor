@@ -1,11 +1,12 @@
 apply plugin: 'java'
-apply plugin: 'idea'
+//apply plugin: 'idea'
 
 version = '2.1.1'
 jar {
     manifest {
         attributes 'Implementation-Title': 'metadata-extractor',
-                'Implementation-Version': version
+                'Implementation-Version': version,
+                'Main-Class': 'com.drew.imaging.ImageMetadataReader'
     }
 }
 
@@ -15,7 +16,7 @@ sourceSets {
         resources.srcDirs = ['Resources']
     }
     test {
-        java.srcDirs = ["Test"]
+        java.srcDirs = ["Tests"]
     }
 }
 
