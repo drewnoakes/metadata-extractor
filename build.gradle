@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+version = '2.1.1'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'metadata-extractor',
+                'Implementation-Version': version
+    }
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['Source']
+        resources.srcDirs = ['Resources']
+    }
+    test {
+        java.srcDirs = ["Test"]
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    sourceCompatibility = '1.6'
+    targetCompatibility = '1.6'
+
+    options.encoding = 'UTF-8'
+}
+
+
+dependencies {
+    compile 'com.adobe.xmp:xmpcore:5.1.3'
+    testCompile 'junit:junit:4.12'
+}
