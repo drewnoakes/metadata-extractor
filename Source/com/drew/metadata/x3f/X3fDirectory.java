@@ -20,33 +20,21 @@
  */
 package com.drew.metadata.x3f;
 
-import com.adobe.xmp.XMPDateTime;
-import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.impl.XMPDateTimeImpl;
-import com.adobe.xmp.impl.XMPMetaImpl;
-import com.adobe.xmp.options.PropertyOptions;
-import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
- * @author Anthony Mandra
+ * @author Anthony Mandra http://anthonymandra.com
  * @author Drew Noakes https://drewnoakes.com
  */
 @SuppressWarnings("WeakerAccess")
 public class X3fDirectory extends Directory
 {
-    public static final int TAG_XMP_VALUE_COUNT = 0xFFFF;
-
     // These are some tags, belonging to x3f properties major versions 2 and 3.
     // In version 4 x3f moved to exif only.
     // The numeration is more like enums. The real tags are strings.
@@ -84,12 +72,12 @@ public class X3fDirectory extends Directory
     public static final int TAG_SHOOTING_MODE           = 31;   // "P"rogram, "A"perture, "S"hutter, "M"anual
     public static final int TAG_RESOLUTION_SETTING      = 32;   // "LOW", "MED", "HI"
     public static final int TAG_ROTATION                = 33;   // unsure of the model they're using for orientation
-    public static final int TAG_SATU_DESC   = 34;
+    public static final int TAG_SATU_DESC               = 34;
     public static final int TAG_SENSOR_ID               = 35;
-    public static final int TAG_SHARP_DESC  = 36;
+    public static final int TAG_SHARP_DESC              = 36;
     public static final int TAG_SHUTTER_EXACT           = 37;   // exact shutter speed
     public static final int TAG_SHUTTER_SIMPLE          = 38;   // rounded shutter speed
-    public static final int TAG_TELECONV    = 39;
+    public static final int TAG_TELECONV                = 39;
     public static final int TAG_TIME                    = 40;   // Unix UTC
     public static final int TAG_WHITE_BALANCE           = 41;
 
@@ -102,48 +90,48 @@ public class X3fDirectory extends Directory
 
     static
     {
-        _tagNameMap.put(TAG_AUTO_EXPOSURE_MODE, "AEMODE");
-        _tagNameMap.put(TAG_AUTO_FOCUS_MODE, "AFMODE");
-        _tagNameMap.put(TAG_APERTURE_EXACT, "APERTURE");
-        _tagNameMap.put(TAG_APERTURE_SIMPLE, "AP_DESC");
-        _tagNameMap.put(TAG_BRACKET_INDEX, "BRACKET");
-        _tagNameMap.put(TAG_BURST_INDEX, "BURST");
-        _tagNameMap.put(TAG_MAKE, "CAMMANUF");
-        _tagNameMap.put(TAG_MODEL, "CAMMODEL");
-        _tagNameMap.put(TAG_NAME, "CAMNAME");
-        _tagNameMap.put(TAG_SERIAL, "CAMSERIAL");
-        _tagNameMap.put(TAG_CM_DESC, "CM_DESC");
-        _tagNameMap.put(TAG_COLORSPACE, "COLORSPACE");
-        _tagNameMap.put(TAG_CONT_DESC, "CONT_DESC");
-        _tagNameMap.put(TAG_DARKTEMP, "DARKTEMP");
-        _tagNameMap.put(TAG_DRIVE, "DRIVE");
-        _tagNameMap.put(TAG_EXPOSURE_COMP, "EXPCOMP");
-        _tagNameMap.put(TAG_EXPOSURE_COMP_NET, "EXPNET");
-        _tagNameMap.put(TAG_EXPOSURE_TIME, "EXPTIME");
-        _tagNameMap.put(TAG_FIRMWARE_VER, "FIRMVERS");
-        _tagNameMap.put(TAG_FLASH, "FLASH");
-        _tagNameMap.put(TAG_FLASHPOWER, "FLASHPOWER");
-        _tagNameMap.put(TAG_FOCAL_LENGTH, "FLENGTH");
-        _tagNameMap.put(TAG_FOCAL_LENGTH_35EQ, "FLEQ35MM");
-        _tagNameMap.put(TAG_FOCUS, "FOCUS");
-        _tagNameMap.put(TAG_FPGAVERS, "FPGAVERS");
-        _tagNameMap.put(TAG_IMAGER_BOARD_ID, "IDIMAGEBOARDID");
-        _tagNameMap.put(TAG_IMAGER_TEMP, "IMAGERTEMP");
-        _tagNameMap.put(TAG_ISO, " ISO");
-        _tagNameMap.put(TAG_LENS_APERTURE_RANGE, "LENSARANGE");
-        _tagNameMap.put(TAG_LENS_FOCAL_RANGE, "LENSFRANGE");
-        _tagNameMap.put(TAG_LENS_MODEL, "LENSMODEL");
-        _tagNameMap.put(TAG_SHOOTING_MODE, "PMODE");
-        _tagNameMap.put(TAG_RESOLUTION_SETTING, "RESOLUTION");
-        _tagNameMap.put(TAG_ROTATION, "ROTATION");
-        _tagNameMap.put(TAG_SATU_DESC, "SATU_DESC");
-        _tagNameMap.put(TAG_SENSOR_ID, "SENSORID");
-        _tagNameMap.put(TAG_SHARP_DESC, "SHARP_DESC");
-        _tagNameMap.put(TAG_SHUTTER_EXACT, "SHUTTER");
-        _tagNameMap.put(TAG_SHUTTER_SIMPLE, "SH_DESC");
-        _tagNameMap.put(TAG_TELECONV, "TELECONV");
-        _tagNameMap.put(TAG_TIME, "TIME");
-        _tagNameMap.put(TAG_WHITE_BALANCE, "WB_DESC");
+        _tagNameMap.put(TAG_AUTO_EXPOSURE_MODE,                                                                                                  "Auto Exposure Mode");
+        _tagNameMap.put(TAG_AUTO_FOCUS_MODE,                                                                                                  "Auto Focus Mode");
+        _tagNameMap.put(TAG_APERTURE_EXACT,                                                                                                  "Exact Aperture");
+        _tagNameMap.put(TAG_APERTURE_SIMPLE,                                                                                                  "Simplified Aperture");
+        _tagNameMap.put(TAG_BRACKET_INDEX,                                                                                                  "Bracket Index");
+        _tagNameMap.put(TAG_BURST_INDEX,                                                                                                  "Burst Index");
+        _tagNameMap.put(TAG_MAKE,                                                                                                  "Camera Make");
+        _tagNameMap.put(TAG_MODEL,                                                                                                  "Camera Model");
+        _tagNameMap.put(TAG_NAME,                                                                                                  "Camera Name");
+        _tagNameMap.put(TAG_SERIAL,                                                                                                  "Camera Serial");
+        _tagNameMap.put(TAG_CM_DESC,                                                                                                  "CM_DESC");
+        _tagNameMap.put(TAG_COLORSPACE,                                                                                                  "Color space");
+        _tagNameMap.put(TAG_CONT_DESC,                                                                                                  "CONT_DESC");
+        _tagNameMap.put(TAG_DARKTEMP,                                                                                                  "DARKTEMP");
+        _tagNameMap.put(TAG_DRIVE,                                                                                                  "Drive Mode");
+        _tagNameMap.put(TAG_EXPOSURE_COMP,                                                                                                  "Exposure Compensation");
+        _tagNameMap.put(TAG_EXPOSURE_COMP_NET,                                                                                                  "Total Exposure Compensation");
+        _tagNameMap.put(TAG_EXPOSURE_TIME,                                                                                                  "Exposure Time");
+        _tagNameMap.put(TAG_FIRMWARE_VER,                                                                                                  "Firmware Version");
+        _tagNameMap.put(TAG_FLASH,                                                                                                  "Flash");
+        _tagNameMap.put(TAG_FLASHPOWER,                                                                                                  "Flash Power");
+        _tagNameMap.put(TAG_FOCAL_LENGTH,                                                                                                  "Focal Length");
+        _tagNameMap.put(TAG_FOCAL_LENGTH_35EQ,                                                                                                  "35mm Equivalent Focal Length");
+        _tagNameMap.put(TAG_FOCUS,                                                                                                  "Focus Mode");
+        _tagNameMap.put(TAG_FPGAVERS,                                                                                                  "FPGAVERS");
+        _tagNameMap.put(TAG_IMAGER_BOARD_ID,                                                                                                  "Imager Board ID");
+        _tagNameMap.put(TAG_IMAGER_TEMP,                                                                                                  "Imager Board Temperature");
+        _tagNameMap.put(TAG_ISO,                                                                                                  " ISO");
+        _tagNameMap.put(TAG_LENS_APERTURE_RANGE,                                                                                                  "Lens Aperture Range");
+        _tagNameMap.put(TAG_LENS_FOCAL_RANGE,                                                                                                  "Lens Focal Range");
+        _tagNameMap.put(TAG_LENS_MODEL,                                                                                                  "Lens Model");
+        _tagNameMap.put(TAG_SHOOTING_MODE,                                                                                                  "Shooting Mode");
+        _tagNameMap.put(TAG_RESOLUTION_SETTING,                                                                                                  "Resolution Setting");
+        _tagNameMap.put(TAG_ROTATION,                                                                                                  "Rotation");
+        _tagNameMap.put(TAG_SATU_DESC,                                                                                                  "Saturation");
+        _tagNameMap.put(TAG_SENSOR_ID,                                                                                                  "Sensor ID");
+        _tagNameMap.put(TAG_SHARP_DESC,                                                                                                  "Sharpness Setting");
+        _tagNameMap.put(TAG_SHUTTER_EXACT,                                                                                                  "Exact Shutter Speed");
+        _tagNameMap.put(TAG_SHUTTER_SIMPLE,                                                                                                  "Simplified Shutter speed");
+        _tagNameMap.put(TAG_TELECONV,                                                                                                  "TELECONV");
+        _tagNameMap.put(TAG_TIME,                                                                                                  "Capture Time (Unix UTC)");
+        _tagNameMap.put(TAG_WHITE_BALANCE,                                                                                                  "White Balance Mode");
 
         // Map the tag to the actual key
         _tagPropNameMap.put(TAG_AUTO_EXPOSURE_MODE, "AEMODE");
@@ -211,268 +199,4 @@ public class X3fDirectory extends Directory
     {
         return _tagNameMap;
     }
-
-    void addProperty(@NotNull String path, @NotNull String value)
-    {
-        _propertyValueByPath.put(path, value);
-    }
-
-    /**
-     * Gets a map of all XMP properties in this directory, not just the known ones.
-     * <p>
-     * This is required because XMP properties are represented as strings, whereas the rest of this library
-     * uses integers for keys.
-     */
-    @NotNull
-    public Map<String, String> getXmpProperties()
-    {
-        return Collections.unmodifiableMap(_propertyValueByPath);
-    }
-
-    public void setXMPMeta(@NotNull XMPMeta xmpMeta)
-    {
-        _xmpMeta = xmpMeta;
-
-        try {
-            int valueCount = 0;
-            for (Iterator i = _xmpMeta.iterator(); i.hasNext(); ) {
-                XMPPropertyInfo prop = (XMPPropertyInfo)i.next();
-                if (prop.getPath() != null) {
-                    //System.out.printf("%s = %s\n", prop.getPath(), prop.getValue());
-                    valueCount++;
-                }
-            }
-            setInt(TAG_XMP_VALUE_COUNT, valueCount);
-        } catch (XMPException ignored) {
-        }
-    }
-
-    /**
-     * Gets the XMPMeta object used to populate this directory. It can be used for more XMP-oriented operations. If one does not exist it will be
-     * created.
-     */
-    @NotNull
-    public XMPMeta getXMPMeta()
-    {
-        if (_xmpMeta == null)
-            _xmpMeta = new XMPMetaImpl();
-        return _xmpMeta;
-    }
-
-    // TODO: Might consider returning a boolean in the super to allow for exception handling. Failing to set is sufficient for now.
-    // TODO: update[Type] avoids rewriting the whole _xmpMeta on processXmpTags(),
-    // but with sets exposed this is still less than ideal...
-    // At the very least document this carefully!
-
-    public void updateInt(int tagType, int value)
-    {
-        super.setInt(tagType, value);
-        try
-        {
-            getXMPMeta().setPropertyInteger(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateIntArray(int tagType, int[] ints)
-    {
-        super.setIntArray(tagType, ints);
-        try
-        {
-            String schemaNS = _tagSchemaMap.get(tagType);
-            String propName = _tagPropNameMap.get(tagType);
-
-            getXMPMeta().deleteProperty(schemaNS, propName);
-
-            PropertyOptions po = new PropertyOptions().setArray(true);
-            for (int item : ints)
-            {
-                getXMPMeta().appendArrayItem(schemaNS, propName, po, String.valueOf(item), null);
-            }
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateFloat(int tagType, float value)
-    {
-        super.setFloat(tagType, value);
-        try
-        {
-            getXMPMeta().setPropertyDouble(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateFloatArray(int tagType, float[] floats)
-    {
-        super.setFloatArray(tagType, floats);
-        try
-        {
-            String schemaNS = _tagSchemaMap.get(tagType);
-            String propName = _tagPropNameMap.get(tagType);
-
-            getXMPMeta().deleteProperty(schemaNS, propName);
-
-            PropertyOptions po = new PropertyOptions().setArray(true);
-            for (float item : floats)
-            {
-                getXMPMeta().appendArrayItem(schemaNS, propName, po, String.valueOf(item), null);
-            }
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateDouble(int tagType, double value)
-    {
-        super.setDouble(tagType, value);
-        try
-        {
-            getXMPMeta().setPropertyDouble(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateDoubleArray(int tagType, double[] doubles)
-    {
-        super.setDoubleArray(tagType, doubles);
-        try
-        {
-            String schemaNS = _tagSchemaMap.get(tagType);
-            String propName = _tagPropNameMap.get(tagType);
-
-            getXMPMeta().deleteProperty(schemaNS, propName);
-
-            PropertyOptions po = new PropertyOptions().setArray(true);
-            for (double item : doubles)
-            {
-                getXMPMeta().appendArrayItem(schemaNS, propName, po, String.valueOf(item), null);
-            }
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateString(int tagType, String value)
-    {
-        super.setString(tagType, value);
-        try
-        {
-            getXMPMeta().setProperty(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteProperty(int tagType)
-    {
-        getXMPMeta().deleteProperty(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType));
-    }
-
-    public void updateStringArray(int tagType, String[] strings)
-    {
-        super.setStringArray(tagType, strings);
-        try
-        {
-            String schemaNS = _tagSchemaMap.get(tagType);
-            String propName = _tagPropNameMap.get(tagType);
-
-            getXMPMeta().deleteProperty(schemaNS, propName);
-
-            PropertyOptions po = new PropertyOptions().setArray(true);
-            for (String item : strings)
-            {
-                getXMPMeta().appendArrayItem(schemaNS, propName, po, item, null);
-            }
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateBoolean(int tagType, boolean value)
-    {
-        super.setBoolean(tagType, value);
-        try
-        {
-            getXMPMeta().setPropertyBoolean(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateLong(int tagType, long value)
-    {
-        super.setLong(tagType, value);
-        try
-        {
-            getXMPMeta().setPropertyLong(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), value);
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateDate(int tagType, Date value)
-    {
-        updateDate(tagType, value, TimeZone.getDefault());
-    }
-
-    public void updateDate(int tagType, Date value, TimeZone timeZone)
-    {
-        super.setDate(tagType, value);
-        XMPDateTime date = new XMPDateTimeImpl(value, timeZone);
-        try
-        {
-            getXMPMeta().setPropertyDate(_tagSchemaMap.get(tagType), _tagPropNameMap.get(tagType), date);
-        }
-        catch (XMPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    // TODO: Ignoring rationals for now, not sure their relevance to XMP (rational/floating storage)
-    // @Override
-    // public void setRational(int tagType, Rational rational)
-    // {
-    // super.setRational(tagType, rational);
-    // }
-    //
-    // @Override
-    // public void setRationalArray(int tagType, Rational[] rationals)
-    // {
-    // // TODO Auto-generated method stub
-    // super.setRationalArray(tagType, rationals);
-    // }
-
-    // TODO: Not sure the intention of the byte array, probably store like the other arrays.
-    // @Override
-    // public void setByteArray(int tagType, byte[] bytes)
-    // {
-    // // TODO Auto-generated method stub
-    // super.setByteArray(tagType, bytes);
-    // }
 }

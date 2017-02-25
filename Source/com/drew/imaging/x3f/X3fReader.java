@@ -20,13 +20,10 @@
  */
 package com.drew.imaging.x3f;
 
-import android.util.ArrayMap;
-
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 
 import java.io.IOException;
 import java.util.ArrayList;
