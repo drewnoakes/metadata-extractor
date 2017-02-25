@@ -14,7 +14,7 @@ The easiest way is to install the library via its [Maven package](http://search.
     <dependency>
       <groupId>com.drewnoakes</groupId>
       <artifactId>metadata-extractor</artifactId>
-      <version>2.9.1</version>
+      <version>2.10.1</version>
     </dependency>
 
 Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
@@ -117,6 +117,7 @@ Wherever possible, they have been credited in the source code and commit logs.
 
 - .NET  [metadata-extractor-dotnet](https://github.com/drewnoakes/metadata-extractor-dotnet) is a complete port to C#, maintained alongside this library
 - PHP [php-metadata-extractor](https://github.com/gomoob/php-metadata-extractor) wraps this Java project, making it available to users of PHP
+- Clojure [exif-processor](https://github.com/joshuamiller/exif-processor) wraps this Java project, returning a subset of data
 
 ---
 

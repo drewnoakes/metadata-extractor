@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ package com.drew.metadata.gif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.TagDescriptor;
-
-import static com.drew.metadata.gif.GifControlDirectory.*;
 
 /**
  * @author Drew Noakes https://drewnoakes.com

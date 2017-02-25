@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -47,18 +47,6 @@ public class ExifReader implements JpegSegmentMetadataReader
     /** Exif data stored in JPEG files' APP1 segment are preceded by this six character preamble. */
     public static final String JPEG_SEGMENT_PREAMBLE = "Exif\0\0";
 
-    private boolean _storeThumbnailBytes = true;
-
-    public boolean isStoreThumbnailBytes()
-    {
-        return _storeThumbnailBytes;
-    }
-
-    public void setStoreThumbnailBytes(boolean storeThumbnailBytes)
-    {
-        _storeThumbnailBytes = storeThumbnailBytes;
-    }
-
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
@@ -92,7 +80,7 @@ public class ExifReader implements JpegSegmentMetadataReader
     /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory)
     {
-        ExifTiffHandler exifTiffHandler = new ExifTiffHandler(metadata, _storeThumbnailBytes, parentDirectory);
+        ExifTiffHandler exifTiffHandler = new ExifTiffHandler(metadata, parentDirectory);
 
         try {
             // Read the TIFF-formatted Exif data

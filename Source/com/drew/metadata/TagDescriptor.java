@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class TagDescriptor<T extends Directory>
         if (object.getClass().isArray()) {
             final int length = Array.getLength(object);
             if (length > 16) {
-                return String.format("[%d %s]", length, length == 1 ? "value" : "values");
+                return String.format("[%d values]", length);
             }
         }
 
@@ -411,7 +411,7 @@ public class TagDescriptor<T extends Directory>
 
     // EXIF LightSource
     @Nullable
-    protected String GetLightSourceDescription(short wbtype)
+    protected String getLightSourceDescription(short wbtype)
     {
         switch (wbtype)
         {

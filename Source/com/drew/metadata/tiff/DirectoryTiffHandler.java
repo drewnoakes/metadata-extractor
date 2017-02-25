@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.drew.imaging.tiff.TiffHandler;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 
@@ -78,12 +79,24 @@ public abstract class DirectoryTiffHandler implements TiffHandler
 
     public void warn(@NotNull String message)
     {
-        _currentDirectory.addError(message);
+        getCurrentOrErrorDirectory().addError(message);
     }
 
     public void error(@NotNull String message)
     {
-        _currentDirectory.addError(message);
+        getCurrentOrErrorDirectory().addError(message);
+    }
+
+    @NotNull
+    private Directory getCurrentOrErrorDirectory()
+    {
+        if (_currentDirectory != null)
+            return _currentDirectory;
+        ErrorDirectory error = _metadata.getFirstDirectoryOfType(ErrorDirectory.class);
+        if (error != null)
+            return error;
+        pushDirectory(ErrorDirectory.class);
+        return _currentDirectory;
     }
 
     public void setByteArray(int tagId, @NotNull byte[] bytes)

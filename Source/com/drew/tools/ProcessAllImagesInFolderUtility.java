@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -266,12 +266,15 @@ public class ProcessAllImagesInFolderUtility
                 throw new IllegalArgumentException("Must be a directory.");
 
             if (directory.exists()) {
-                for (String item : directory.list()) {
-                    File file = new File(item);
-                    if (file.isDirectory())
-                        deleteRecursively(file);
-                    else
-                        file.delete();
+                String[] list = directory.list();
+                if (list != null) {
+                    for (String item : list) {
+                        File file = new File(item);
+                        if (file.isDirectory())
+                            deleteRecursively(file);
+                        else
+                            file.delete();
+                    }
                 }
             }
 
@@ -462,7 +465,7 @@ public class ProcessAllImagesInFolderUtility
         private final Map<String, String> _extensionEquivalence = new HashMap<String, String>();
         private final Map<String, List<Row>> _rowListByExtension = new HashMap<String, List<Row>>();
 
-        class Row
+        static class Row
         {
             final File file;
             final Metadata metadata;
@@ -570,12 +573,14 @@ public class ProcessAllImagesInFolderUtility
             Writer writer = new OutputStreamWriter(stream);
             writer.write("# Image Database Summary\n\n");
 
-            for (String extension : _rowListByExtension.keySet()) {
+            for (Map.Entry<String, List<Row>> entry : _rowListByExtension.entrySet()) {
+                String extension = entry.getKey();
                 writer.write("## " + extension.toUpperCase() + " Files\n\n");
 
                 writer.write("File|Manufacturer|Model|Dir Count|Exif?|Makernote|Thumbnail|All Data\n");
                 writer.write("----|------------|-----|---------|-----|---------|---------|--------\n");
-                List<Row> rows = _rowListByExtension.get(extension);
+
+                List<Row> rows = entry.getValue();
 
                 // Order by manufacturer, then model
                 Collections.sort(rows, new Comparator<Row>() {

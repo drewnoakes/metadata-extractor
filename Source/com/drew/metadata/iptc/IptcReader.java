@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -201,11 +201,11 @@ public class IptcReader implements JpegSegmentMetadataReader
         // If we haven't returned yet, treat it as a string
         // NOTE that there's a chance we've already loaded the value as a string above, but failed to parse the value
         String charSetName = directory.getString(IptcDirectory.TAG_CODED_CHARACTER_SET);
-        Charset charset;
+        Charset charset = null;
         try {
-            charset = Charset.forName(charSetName);
-        } catch (Throwable t) {
-            charset = null;
+            if (charSetName != null)
+                charset = Charset.forName(charSetName);
+        } catch (Throwable ignored) {
         }
 
         StringValue string;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ public class NikonType2MakernoteTest2
         assertEquals("FPNR", _nikonDirectory.getString(0x0095));
 
         // PrintIM
-        HashMap<Integer, String> _expectedData = new HashMap<Integer, String>();                        
+        HashMap<Integer, String> _expectedData = new HashMap<Integer, String>();
         _expectedData.put(0x0000, "0100");
         _expectedData.put(0x0001, "0x00160016");
         _expectedData.put(0x0002, "0x00000001");
@@ -123,7 +123,7 @@ public class NikonType2MakernoteTest2
         assertNotNull(nikonPrintImDirectory);
 
         assertEquals(_expectedData.size(), nikonPrintImDirectory.getTagCount());
-        for (Map.Entry<Integer, String> _expected : _expectedData.entrySet()) 
+        for (Map.Entry<Integer, String> _expected : _expectedData.entrySet())
         {
             assertEquals(_expected.getValue(), nikonPrintImDirectory.getDescription(_expected.getKey()));
         }

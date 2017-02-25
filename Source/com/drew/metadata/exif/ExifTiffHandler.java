@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import com.drew.metadata.xmp.XmpReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -54,12 +53,9 @@ import java.util.Set;
  */
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
-    private final boolean _storeThumbnailBytes;
-
-    public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes, @Nullable Directory parentDirectory)
+    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
         super(metadata);
-        _storeThumbnailBytes = storeThumbnailBytes;
 
         if (parentDirectory != null)
             _currentDirectory.setParent(parentDirectory);
@@ -83,7 +79,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 pushDirectory(PanasonicRawIFD0Directory.class);
                 break;
             default:
-                throw new TiffProcessingException("Unexpected TIFF marker: 0x" + Integer.toHexString(marker));            
+                throw new TiffProcessingException(String.format("Unexpected TIFF marker: 0x%X", marker));
         }
     }
 
@@ -150,8 +146,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     public boolean hasFollowerIfd()
     {
         // In Exif, the only known 'follower' IFD is the thumbnail one, however this may not be the case.
-        if (_currentDirectory instanceof ExifIFD0Directory) {
-            pushDirectory(ExifThumbnailDirectory.class);
+        // UPDATE: In multipage TIFFs, the 'follower' IFD points to the next image in the set
+        if (_currentDirectory instanceof ExifIFD0Directory || _currentDirectory instanceof ExifImageDirectory) {
+            // If the PageNumber tag is defined, assume this is a multipage TIFF or similar
+            // TODO: Find better ways to know which follower Directory should be used
+            if (_currentDirectory.containsTag(ExifDirectoryBase.TAG_PAGE_NUMBER))
+                pushDirectory(ExifImageDirectory.class);
+            else
+                pushDirectory(ExifThumbnailDirectory.class);
             return true;
         }
 
@@ -319,26 +321,6 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
 
         return false;
-    }
-
-    public void completed(@NotNull final RandomAccessReader reader, final int tiffHeaderOffset)
-    {
-        if (_storeThumbnailBytes) {
-            // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
-            ExifThumbnailDirectory thumbnailDirectory = _metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
-            if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_COMPRESSION)) {
-                Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
-                Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
-                if (offset != null && length != null) {
-                    try {
-                        byte[] thumbnailData = reader.getBytes(tiffHeaderOffset + offset, length);
-                        thumbnailDirectory.setThumbnailData(thumbnailData);
-                    } catch (IOException ex) {
-                        thumbnailDirectory.addError("Invalid thumbnail data specification: " + ex.getMessage());
-                    }
-                }
-            }
-        }
     }
 
     private static void ProcessBinary(@NotNull final Directory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount, final Boolean issigned, final int arrayLength) throws IOException
@@ -773,7 +755,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             (day >= 1 && day < 32) &&
             (year >= 1 && year <= 9999))
         {
-            directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL, 
+            directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_DATE_TIME_ORIGINAL,
                     String.format("%4d:%2d:%2d %2d:%2d:%2d", year, month, day, hour, minutes, seconds));
         }
         else

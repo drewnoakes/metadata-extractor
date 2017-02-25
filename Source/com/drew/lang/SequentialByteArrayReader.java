@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -81,9 +81,8 @@ public class SequentialByteArrayReader extends SequentialReader
         return bytes;
     }
 
-    @NotNull
     @Override
-    public void getBytes(byte[] buffer, int offset, int count) throws IOException
+    public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
     {
         if (_index + count > _bytes.length) {
             throw new EOFException("End of data reached.");
@@ -122,5 +121,10 @@ public class SequentialByteArrayReader extends SequentialReader
         }
 
         return true;
+    }
+
+    @Override
+    public int available() {
+        return _bytes.length - _index;
     }
 }

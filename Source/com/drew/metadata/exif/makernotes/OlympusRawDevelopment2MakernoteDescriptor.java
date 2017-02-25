@@ -83,7 +83,7 @@ public class OlympusRawDevelopment2MakernoteDescriptor extends TagDescriptor<Oly
     @Nullable
     public String getRawDevExposureBiasValueDescription()
     {
-        return getIndexedDescription(TagRawDevExposureBiasValue, 
+        return getIndexedDescription(TagRawDevExposureBiasValue,
                 1, "Color Temperature", "Gray Point");
     }
 
@@ -120,7 +120,7 @@ public class OlympusRawDevelopment2MakernoteDescriptor extends TagDescriptor<Oly
         return getIndexedDescription(TagRawDevEngine,
             "High Speed", "High Function", "Advanced High Speed", "Advanced High Function");
     }
-    
+
     @Nullable
     public String getRawDevPictureModeDescription()
     {
@@ -151,7 +151,7 @@ public class OlympusRawDevelopment2MakernoteDescriptor extends TagDescriptor<Oly
         return getIndexedDescription(TagRawDevPmBwFilter,
             "Neutral", "Yellow", "Orange", "Red", "Green");
     }
-    
+
     @Nullable
     public String getRawDevPmPictureToneDescription()
     {
@@ -164,7 +164,7 @@ public class OlympusRawDevelopment2MakernoteDescriptor extends TagDescriptor<Oly
     {
         return getFilterDescription(TagRawDevArtFilter);
     }
-    
+
     @Nullable
     public String getFilterDescription(int tag)
     {
@@ -175,7 +175,7 @@ public class OlympusRawDevelopment2MakernoteDescriptor extends TagDescriptor<Oly
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.length; i++) {
             if (i == 0)
-                sb.append(_filters.containsKey((short)values[i]) ? _filters.get((short)values[i]) : "[unknown]");
+                sb.append(_filters.containsKey(values[i]) ? _filters.get(values[i]) : "[unknown]");
             else
                 sb.append(values[i]).append("; ");
             sb.append("; ");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ package com.drew.metadata.exif.makernotes;
 import com.drew.imaging.PhotographicConversions;
 import com.drew.lang.Rational;
 import com.drew.lang.DateUtil;
-import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -32,7 +31,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 import static com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory.*;
-import java.lang.reflect.Array;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link OlympusMakernoteDirectory}.
@@ -732,9 +730,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (values == null)
             return null;
 
-        Short uintvalue = (short)values[0];
+        short value = (short)values[0];
 
-        return uintvalue == null ? null : String.valueOf((float)uintvalue/256d);
+        return String.valueOf((double)value/256d);
     }
 
     @Nullable
@@ -744,9 +742,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (values == null)
             return null;
 
-        Short uintvalue = (short)values[0];
+        short value = (short)values[0];
 
-        return uintvalue == null ? null : String.valueOf((float)uintvalue/256d);
+        return String.valueOf((double)value/256d);
     }
 
     @Nullable

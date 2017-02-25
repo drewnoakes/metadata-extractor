@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,9 +50,6 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
      * where decimal notation is elegant (such as 1/2 -> 0.5, but not 1/3).
      */
     private final boolean _allowDecimalRepresentationOfRationals = true;
-
-    @NotNull
-    private static final java.text.DecimalFormat SimpleDecimalFormatter = new DecimalFormat("0.#");
 
     // Note for the potential addition of brightness presentation in eV:
     // Brightness of taken subject. To calculate Exposure(Ev) from BrightnessValue(Bv),
@@ -457,9 +454,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getNewSubfileTypeDescription()
     {
-        return getIndexedDescription(TAG_NEW_SUBFILE_TYPE, 1,
+        return getIndexedDescription(TAG_NEW_SUBFILE_TYPE, 0,
             "Full-resolution image",
             "Reduced-resolution image",
+            "Single page of multi-page image",
             "Single page of multi-page reduced-resolution image",
             "Transparency mask",
             "Transparency mask of reduced-resolution image",
@@ -601,7 +599,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             ? null
             : value.getNumerator() == 0
                 ? "Digital zoom not used"
-                : SimpleDecimalFormatter.format(value.doubleValue());
+                : new DecimalFormat("0.#").format(value.doubleValue());
     }
 
     @Nullable
@@ -759,8 +757,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     }
 
     @Nullable
-    private static String formatCFAPattern(int[] pattern)
+    private static String formatCFAPattern(@Nullable int[] pattern)
     {
+        if (pattern == null)
+            return null;
         if (pattern.length < 2)
             return "<truncated data>";
         if (pattern[0] == 0 && pattern[1] == 0)
@@ -803,6 +803,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     /// - Two short, being the grid width and height of the repeated pattern.
     /// - Next, for every pixel in that pattern, an identification code.
     /// </remarks>
+    @Nullable
     private int[] decodeCfaPattern(int tagType)
     {
         int[] ret;

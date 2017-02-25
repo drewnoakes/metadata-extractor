@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import java.io.Serializable;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
+@SuppressWarnings("WeakerAccess")
 public class Rational extends java.lang.Number implements Comparable<Rational>, Serializable
 {
     private static final long serialVersionUID = 510688928138848770L;
@@ -228,8 +229,8 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      *         than {@code 0} if this {@link Rational} is greater than the argument
      *         {@link Rational}.
      */
-    public int compareTo(Rational that) {
-        return this.doubleValue() < that.doubleValue() ? -1 : ((this.doubleValue() == that.doubleValue()) ? 0 : 1);
+    public int compareTo(@NotNull Rational that) {
+        return Double.compare(this.doubleValue(), that.doubleValue());
     }
 
     /**
@@ -240,7 +241,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      * Similarly, 1/0 is equal to 100/0 by this method.
      * To test equal representations, use EqualsExact.
      *
-     * @param other
+     * @param other The rational value to compare with
      */
     public boolean equals(Rational other) {
         return other.doubleValue() == doubleValue();
@@ -254,7 +255,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
      * Similarly, 1/0 is not equal to 100/0 by this method.
      * To test numerically equivalence, use Equals(Rational).</p>
      *
-     * @param other
+     * @param other The rational value to compare with
      */
     public boolean equalsExact(Rational other) {
         return getDenominator() == other.getDenominator() && getNumerator() == other.getNumerator();
@@ -297,13 +298,18 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     @NotNull
     public Rational getSimplifiedInstance()
     {
-        long gcd = GCD(Math.abs(_numerator), Math.abs(_denominator));
+        long gcd = GCD(_numerator, _denominator);
 
         return new Rational(_numerator / gcd, _denominator / gcd);
     }
 
     private static long GCD(long a, long b)
     {
+        if (a < 0)
+            a = -a;
+        if (b < 0)
+            b = -b;
+
         while (a != 0 && b != 0)
         {
             if (a > b)

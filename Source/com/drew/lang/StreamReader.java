@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ public class StreamReader extends SequentialReader
     @NotNull
     private final InputStream _stream;
 
-    @NotNull
     private long _pos;
 
     @Override
@@ -74,9 +73,8 @@ public class StreamReader extends SequentialReader
         return bytes;
     }
 
-    @NotNull
     @Override
-    public void getBytes(byte[] buffer, int offset, int count) throws IOException
+    public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
     {
         int totalBytesRead = 0;
         while (totalBytesRead != count)
@@ -109,6 +107,15 @@ public class StreamReader extends SequentialReader
             throw new IllegalArgumentException("n must be zero or greater.");
 
         return skipInternal(n) == n;
+    }
+
+    @Override
+    public int available() {
+        try {
+            return _stream.available();
+        } catch (IOException e) {
+            return 0;
+        }
     }
 
     private long skipInternal(long n) throws IOException

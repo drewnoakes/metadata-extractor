@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import static com.drew.metadata.exif.PrintIMDirectory.*;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link PrintIMDirectory}.
- * 
+ *
  * @author Kevin Mott https://github.com/kwhopper
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -46,7 +46,7 @@ public class PrintIMDescriptor extends TagDescriptor<PrintIMDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case PrintIMDirectory.TagPrintImVersion:
+            case TagPrintImVersion:
                 return super.getDescription(tagType);
             default:
                 Integer value = _directory.getInteger(tagType);

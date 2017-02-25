@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -59,6 +59,8 @@ public class ReconyxHyperFireMakernoteDescriptor extends TagDescriptor<ReconyxHy
                 return _directory.getString(tagType);
             case TAG_SEQUENCE:
                 int[] sequence = _directory.getIntArray(tagType);
+                if (sequence == null)
+                    return null;
                 return String.format("%d/%d", sequence[0], sequence[1]);
             case TAG_EVENT_NUMBER:
                 return String.format("%d", _directory.getInteger(tagType));
@@ -69,7 +71,7 @@ public class ReconyxHyperFireMakernoteDescriptor extends TagDescriptor<ReconyxHy
                 DecimalFormat formatter = new DecimalFormat("0.000");
                 return value == null ? null : formatter.format(value);
             case TAG_DATE_TIME_ORIGINAL:
-                String date = _directory.getString(tagType);                
+                String date = _directory.getString(tagType);
                 try {
                     DateFormat parser = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
                     return parser.format(parser.parse(date));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.gif.GifControlDirectory.DisposalMethod;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -203,7 +204,9 @@ public class GifReader
         switch (extensionLabel)
         {
             case (byte) 0x01:
-                metadata.addDirectory(readPlainTextBlock(reader, blockSizeBytes));
+                Directory plainTextBlock = readPlainTextBlock(reader, blockSizeBytes);
+                if (plainTextBlock != null)
+                    metadata.addDirectory(plainTextBlock);
                 break;
             case (byte) 0xf9:
                 metadata.addDirectory(readControlBlock(reader, blockSizeBytes));
@@ -224,6 +227,7 @@ public class GifReader
             reader.skip(skipCount);
     }
 
+    @Nullable
     private static Directory readPlainTextBlock(SequentialReader reader, int blockSizeBytes) throws IOException
     {
         // It seems this extension is deprecated. If somebody finds an image with this in it, could implement here.
@@ -247,7 +251,6 @@ public class GifReader
         return new GifCommentDirectory(new StringValue(buffer, Charsets.ASCII));
     }
 
-    @Nullable
     private static void readApplicationExtensionBlock(SequentialReader reader, int blockSizeBytes, Metadata metadata) throws IOException
     {
         if (blockSizeBytes != 11)
@@ -296,15 +299,15 @@ public class GifReader
 
         GifControlDirectory directory = new GifControlDirectory();
 
-        reader.skip(1);
-
+        short packedFields = reader.getUInt8();
+        directory.setObject(GifControlDirectory.TAG_DISPOSAL_METHOD, DisposalMethod.typeOf((packedFields >> 2) & 7));
+        directory.setBoolean(GifControlDirectory.TAG_USER_INPUT_FLAG, (packedFields & 2) >> 1 == 1 ? true : false);
+        directory.setBoolean(GifControlDirectory.TAG_TRANSPARENT_COLOR_FLAG, (packedFields & 1) == 1 ? true : false);
         directory.setInt(GifControlDirectory.TAG_DELAY, reader.getUInt16());
-
-        if (blockSizeBytes > 3)
-            reader.skip(blockSizeBytes - 3);
+        directory.setInt(GifControlDirectory.TAG_TRANSPARENT_COLOR_INDEX, reader.getUInt8());
 
         // skip 0x0 block terminator
-        reader.getByte();
+        reader.skip(1);
 
         return directory;
     }
@@ -354,7 +357,7 @@ public class GifReader
             if (b == 0)
                 return bytes.toByteArray();
 
-            int bInt = (int)(b & 0xFF);
+            int bInt = b & 0xFF;
 
             buffer[0] = b;
             reader.getBytes(buffer, 1, bInt);

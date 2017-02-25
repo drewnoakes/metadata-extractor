@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ import com.drew.metadata.StringValue;
  */
 public class KeyValuePair
 {
-    private final StringValue _key;
+    private final String _key;
     private final StringValue _value;
 
-    public KeyValuePair(@NotNull StringValue key, @NotNull StringValue value)
+    public KeyValuePair(@NotNull String key, @NotNull StringValue value)
     {
         _key = key;
         _value = value;
     }
 
     @NotNull
-    public StringValue getKey()
+    public String getKey()
     {
         return _key;
     }

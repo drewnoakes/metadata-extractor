@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class TiffMetadataReader
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 
         try {
-            ExifTiffHandler handler = new ExifTiffHandler(metadata, false, null);
+            ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
             new TiffReader().processTiff(new RandomAccessFileReader(randomAccessFile), handler, 0);
         } finally {
             randomAccessFile.close();
@@ -71,7 +71,7 @@ public class TiffMetadataReader
     public static Metadata readMetadata(@NotNull RandomAccessReader reader) throws IOException, TiffProcessingException
     {
         Metadata metadata = new Metadata();
-        ExifTiffHandler handler = new ExifTiffHandler(metadata, false, null);
+        ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
         new TiffReader().processTiff(reader, handler, 0);
         return metadata;
     }

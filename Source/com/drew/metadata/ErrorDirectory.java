@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ public final class ErrorDirectory extends Directory
 
     public ErrorDirectory()
     {}
-    
+
     public ErrorDirectory(String error)
     {
         super.addError(error);
     }
-    
+
     @Override
     @NotNull
     public String getName()
@@ -53,25 +53,23 @@ public final class ErrorDirectory extends Directory
     {
         return new HashMap<Integer, String>();
     }
-    
+
     @Override
     @NotNull
     public String getTagName(int tagType)
     {
         return "";
     }
-    
+
     @Override
     public boolean hasTagName(int tagType)
     {
         return false;
     }
-    
+
     @Override
-    @NotNull
     public void setObject(int tagType, @NotNull Object value)
     {
         throw new UnsupportedOperationException(String.format("Cannot add value to %s.", ErrorDirectory.class.getName()));
     }
-    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 Drew Noakes
+ * Copyright 2002-2017 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -92,58 +92,73 @@ public enum JpegSegmentType
     /** Define Quantization Table segment identifier. */
     DQT((byte)0xDB, false),
 
+    /** Define Number of Lines segment identifier. */
+    DNL((byte)0xDC, false),
+
+    /** Define Restart Interval segment identifier. */
+    DRI((byte)0xDD, false),
+
+    /** Define Hierarchical Progression segment identifier. */
+    DHP((byte)0xDE, false),
+
+    /** EXPand reference component(s) segment identifier. */
+    EXP((byte)0xDF, false),
+
     /** Define Huffman Table segment identifier. */
     DHT((byte)0xC4, false),
 
-    /** Start-of-Frame (0) segment identifier. */
+    /** Define Arithmetic Coding conditioning segment identifier. */
+    DAC((byte)0xCC, false),
+
+    /** Start-of-Frame (0) segment identifier for Baseline DCT. */
     SOF0((byte)0xC0, true),
 
-    /** Start-of-Frame (1) segment identifier. */
+    /** Start-of-Frame (1) segment identifier for Extended sequential DCT. */
     SOF1((byte)0xC1, true),
 
-    /** Start-of-Frame (2) segment identifier. */
+    /** Start-of-Frame (2) segment identifier for Progressive DCT. */
     SOF2((byte)0xC2, true),
 
-    /** Start-of-Frame (3) segment identifier. */
+    /** Start-of-Frame (3) segment identifier for Lossless (sequential). */
     SOF3((byte)0xC3, true),
 
 //    /** Start-of-Frame (4) segment identifier. */
 //    SOF4((byte)0xC4, true),
 
-    /** Start-of-Frame (5) segment identifier. */
+    /** Start-of-Frame (5) segment identifier for Differential sequential DCT. */
     SOF5((byte)0xC5, true),
 
-    /** Start-of-Frame (6) segment identifier. */
+    /** Start-of-Frame (6) segment identifier for Differential progressive DCT. */
     SOF6((byte)0xC6, true),
 
-    /** Start-of-Frame (7) segment identifier. */
+    /** Start-of-Frame (7) segment identifier for Differential lossless (sequential). */
     SOF7((byte)0xC7, true),
 
-    /** Start-of-Frame (8) segment identifier. */
-    SOF8((byte)0xC8, true),
+    /** Reserved for JPEG extensions. */
+    JPG((byte)0xC8, true),
 
-    /** Start-of-Frame (9) segment identifier. */
+    /** Start-of-Frame (9) segment identifier for Extended sequential DCT. */
     SOF9((byte)0xC9, true),
 
-    /** Start-of-Frame (10) segment identifier. */
+    /** Start-of-Frame (10) segment identifier for Progressive DCT. */
     SOF10((byte)0xCA, true),
 
-    /** Start-of-Frame (11) segment identifier. */
+    /** Start-of-Frame (11) segment identifier for Lossless (sequential). */
     SOF11((byte)0xCB, true),
 
 //    /** Start-of-Frame (12) segment identifier. */
 //    SOF12((byte)0xCC, true),
 
-    /** Start-of-Frame (13) segment identifier. */
+    /** Start-of-Frame (13) segment identifier for Differential sequential DCT. */
     SOF13((byte)0xCD, true),
 
-    /** Start-of-Frame (14) segment identifier. */
+    /** Start-of-Frame (14) segment identifier for Differential progressive DCT. */
     SOF14((byte)0xCE, true),
 
-    /** Start-of-Frame (15) segment identifier. */
+    /** Start-of-Frame (15) segment identifier for Differential lossless (sequential). */
     SOF15((byte)0xCF, true),
 
-    /** JPEG comment segment identifier. */
+    /** JPEG comment segment identifier for comments. */
     COM((byte)0xFE, true);
 
     public static final Collection<JpegSegmentType> canContainMetadataTypes;
