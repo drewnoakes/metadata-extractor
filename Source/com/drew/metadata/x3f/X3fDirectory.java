@@ -38,7 +38,7 @@ public class X3fDirectory extends Directory
     // These are some tags, belonging to x3f properties major versions 2 and 3.
     // In version 4 x3f moved to exif only.
     // The numeration is more like enums. The real tags are strings.
-    public static final int TAG_AUTO_EXPOSURE_MODE      = 1;    //"8" segement, "C"enter-weighted, "A"vereage-weighted
+    public static final int TAG_AUTO_EXPOSURE_MODE      = 1;    //"8" segment, "C"enter-weighted, "A"vereage-weighted
     public static final int TAG_AUTO_FOCUS_MODE         = 2;    //"AF-S" single, "AF-C" continuous, "MF" manual
     public static final int TAG_APERTURE_EXACT          = 3;    // exact aperture
     public static final int TAG_APERTURE_SIMPLE         = 4;    // rounded aperture
