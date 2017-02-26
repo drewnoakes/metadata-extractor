@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Anthony Mandra http://anthonymandra.com
  * @author Drew Noakes https://drewnoakes.com
  */
-public enum X3fKeys implements Key
+public enum SigmaKeys implements Key
 {
     TAG_AUTO_EXPOSURE_MODE("AEMODE", 1, "Auto Exposure Mode")
         {
@@ -204,7 +204,7 @@ public enum X3fKeys implements Key
     private final String key;
     private final String summary;
 
-    X3fKeys(String key, int index, String summary)
+    SigmaKeys(String key, int index, String summary)
     {
         this.index = index;
         this.key = key;
@@ -212,10 +212,10 @@ public enum X3fKeys implements Key
     }
 
     //TODO: Use a sparse array trie, or FastUtil
-    private static final Map<Integer, X3fKeys> lookup = new HashMap<Integer, X3fKeys>();
+    private static final Map<Integer, SigmaKeys> intLookup = new HashMap<Integer, SigmaKeys>();
     static {
-        for (X3fKeys type : values())
-            lookup.put(type.getInt(), type);
+        for (SigmaKeys type : values())
+            intLookup.put(type.getInt(), type);
     }
 
     @Override
@@ -248,6 +248,7 @@ public enum X3fKeys implements Key
         return index;
     }
 
+    //TODO: Would be cleaner to have a meta class
     private static final HashMap<Integer, String> _lensTypeById = new HashMap<Integer, String>();
 
     static

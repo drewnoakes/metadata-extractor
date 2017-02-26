@@ -22,20 +22,72 @@ package com.drew.imaging.x3f;
 
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.lang.Charsets;
+import com.drew.lang.RandomAccessFileReader;
 import com.drew.lang.RandomAccessReader;
+import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.x3f.SigmaDirectory;
+import com.drew.metadata.x3f.SigmaKeys;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.drew.lang.RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH;
+
 /**
- *
  * @author Anthony Mandra http://anthonymandra.com
  */
 public class X3fReader
 {
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file) throws IOException, TiffProcessingException
+    {
+        Metadata metadata = new Metadata();
+        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+
+        try {
+            process(new RandomAccessFileReader(randomAccessFile), metadata, 0);
+        } finally {
+            randomAccessFile.close();
+        }
+
+        return metadata;
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException, TiffProcessingException
+    {
+        // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
+        // InputStream does not support seeking backwards, so we wrap it with RandomAccessStreamReader, which
+        // buffers data from the stream as we seek forward.
+
+        return readMetadata(new RandomAccessStreamReader(inputStream));
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, long streamLength) throws IOException, TiffProcessingException
+    {
+        // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
+        // InputStream does not support seeking backwards, so we wrap it with RandomAccessStreamReader, which
+        // buffers data from the stream as we seek forward.
+
+        return readMetadata(new RandomAccessStreamReader(inputStream, DEFAULT_CHUNK_LENGTH, streamLength));
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull RandomAccessReader reader) throws IOException, TiffProcessingException
+    {
+        Metadata metadata = new Metadata();
+        process(reader, metadata, 0);
+        return metadata;
+    }
+
     /**
      * Processes a X3F data sequence.
      *
@@ -45,7 +97,7 @@ public class X3fReader
      *                                 ignored or recovered from
      * @throws IOException an error occurred while accessing the required data
      */
-    public void processX3f(@NotNull final RandomAccessReader reader,
+    public static void process(@NotNull final RandomAccessReader reader, Metadata metadata,
                            final int x3fHeaderOffset) throws IOException
     {
         reader.setMotorolaByteOrder(false); // little endian
@@ -88,6 +140,7 @@ public class X3fReader
                 extendedDatums[i] = reader.getFloat32(i * 4 + extendedDatumOffset);
             }
         }
+        //TODO: header directory if needed
 
         // Max 2G file
         final int directoryPosition = reader.getInt32((int)reader.getLength() - 4);     // TODO: took a notable time (debug), unattached was unnoticeable,  may need optimization
@@ -111,6 +164,7 @@ public class X3fReader
         {
             if ("PROP".equals(dir.Type)) //PROP, IMAG, IMA2, CAMF, (One was garbage)
             {
+                SigmaDirectory directory = new SigmaDirectory();    // TODO: This should be SigmaPropDirectory...or can we consolidate directories?
                 String propId = reader.getString(dir.Offset, 4, Charsets.ASCII);  // "Should be "SECp"
                 int propVersion = reader.getInt32(4 + dir.Offset);
                 int propCount = reader.getInt32(8 + dir.Offset);
@@ -136,18 +190,34 @@ public class X3fReader
                 HashMap<String, String> propMap = new HashMap<String, String>();
                 for (Property p : properties)
                 {
-                    // 16-bit null-terminated Unicode character strings (is propLength name AND value?)
-                    p.Name = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.NameOffset, propLength, Charsets.UTF_16LE); // TODO: using propLength is NOT ideal here
-                    p.Value = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.ValueOffset, propLength, Charsets.UTF_16LE);
+                    // 16-bit null-terminated Unicode character strings
+                    String name = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.NameOffset, propLength, Charsets.UTF_16LE); // TODO: using propLength is NOT ideal here
+                    String value = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.ValueOffset, propLength, Charsets.UTF_16LE);
+                    p.Name = name;
+                    p.Value = value;
                     propMap.put(p.Name, p.Value);
+                    //TODO: The propmap was just for testing
+
+                    try
+                    {
+                        SigmaKeys key = SigmaKeys.valueOf(name);
+                        directory.setString(key.getInt(), value);
+                    }
+                    catch(Exception e)
+                    {
+                        directory.addError(name + " was not recognized.");
+                    }
                 }
-                String name = properties.get(0).Name;
+            }
+            else if ("IMAG".equals(dir.Type))
+            {
+
             }
         }
     }
 
     // quick dirty pojo
-    class DirectoryIndex
+    private static class DirectoryIndex
     {
         int Offset;
         int Length;
@@ -155,7 +225,7 @@ public class X3fReader
     }
 
     // quick dirty pojo
-    class Property
+    private static class Property
     {
         int NameOffset;
         int ValueOffset;

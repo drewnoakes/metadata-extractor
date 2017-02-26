@@ -31,6 +31,7 @@ import java.io.IOException;
  */
 public class BmpReader
 {
+    //FIXME: AJM: Why isn't this static?
     public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata)
     {
         BmpHeaderDirectory directory = new BmpHeaderDirectory();

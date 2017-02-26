@@ -111,6 +111,7 @@ public class ImageMetadataReader
 
         FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
 
+        // TODO: AJM, Why are the *MetadataReader(s) primarily a two method static class???  Why not implement directly in the reader?
         switch (fileType)
         {
             case Jpeg:

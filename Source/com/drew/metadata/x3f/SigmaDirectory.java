@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Drew Noakes https://drewnoakes.com
  */
 @SuppressWarnings("WeakerAccess")
-public class X3fDirectory extends Directory
+public class SigmaDirectory extends Directory
 {
     // These are some tags, belonging to x3f properties major versions 2 and 3.
     // In version 4 x3f moved to exif only.
@@ -181,9 +181,9 @@ public class X3fDirectory extends Directory
     @Nullable
     private XMPMeta _xmpMeta;
 
-    public X3fDirectory()
+    public SigmaDirectory()
     {
-        this.setDescriptor(new X3fDescriptor(this));
+        this.setDescriptor(new SigmaDescriptor(this));
     }
 
     @Override
