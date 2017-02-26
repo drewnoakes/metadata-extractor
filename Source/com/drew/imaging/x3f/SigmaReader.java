@@ -20,16 +20,20 @@
  */
 package com.drew.imaging.x3f;
 
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessFileReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.x3f.SigmaDirectory;
-import com.drew.metadata.x3f.SigmaKeys;
+import com.drew.metadata.x3f.SigmaPropertyKeys;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +47,7 @@ import static com.drew.lang.RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH;
 /**
  * @author Anthony Mandra http://anthonymandra.com
  */
-public class X3fReader
+public class SigmaReader
 {
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException, TiffProcessingException
@@ -170,7 +174,7 @@ public class X3fReader
                 int propCount = reader.getInt32(8 + dir.Offset);
                 int charFormat = reader.getInt32(12 + dir.Offset); // 0=char16 uni
 //                int reserved = reader.getInt32(16 + dir.Offset); // for posterity
-                int propLength = reader.getInt32(20 + dir.Offset);  // property data size in char (16bit)
+                int propLength = reader.getInt32(20 + dir.Offset);  // complete property chunk size in char (16bit)
                 int propIndexOffset = 24 + dir.Offset;
 
                 final List<Property> properties = new ArrayList<Property>();
@@ -200,7 +204,7 @@ public class X3fReader
 
                     try
                     {
-                        SigmaKeys key = SigmaKeys.valueOf(name);
+                        SigmaPropertyKeys key = SigmaPropertyKeys.valueOf(name);
                         directory.setString(key.getInt(), value);
                     }
                     catch(Exception e)
@@ -209,9 +213,32 @@ public class X3fReader
                     }
                 }
             }
-            else if ("IMAG".equals(dir.Type))
+            else if ("IMAG".equals(dir.Type) || "IMA2".equals(dir.Type))
             {
+                String imageId = reader.getString(dir.Offset, 4, Charsets.ASCII);  // "Should be "SECi"
+                int imageVersion = reader.getInt32(4 + dir.Offset);
+                int imageType = reader.getInt32(8 + dir.Offset);    //2 = processed for preview
+                int imageFormat = reader.getInt32(12 + dir.Offset); //3 = uncompressed 24-bit 8/8/8 RGB, 11 = Huffman-encoded DPCM 8/8/8 RGB, 18 = JPEG-compressed 8/8/8 RGB
+                int imageWidth = reader.getInt32(16 + dir.Offset);
+                int imageHeight = reader.getInt32(20 + dir.Offset);
+                int rowSize = reader.getInt32(24 + dir.Offset);  // Will always be a multiple of 4 (32-bit aligned). A value of zero here means that rows are variable-length (as in Huffman data).
+                int imageStart = 28 + dir.Offset;
 
+                //TODO: We're being lazy here, will we end up with empty folders?
+                //TODO: Are formats other than jpeg able to be processed by the jpeg exif reader?
+                //TODO: I'm doubtful this row image size calc will reliably grab the whole image
+                byte[] image = reader.getBytes(imageStart, rowSize * imageHeight);
+                ByteArrayInputStream jpegmem = new ByteArrayInputStream(image);
+                try {
+                    Metadata jpegDirectory = JpegMetadataReader.readMetadata(jpegmem);
+                    for (Directory directory : jpegDirectory.getDirectories()) {
+                        metadata.addDirectory(directory);
+                    }
+                } catch (JpegProcessingException e) {
+//                    _currentDirectory.addError("Error processing JpgFromRaw: " + e.getMessage());
+                } catch (IOException e) {
+//                    _currentDirectory.addError("Error reading JpgFromRaw: " + e.getMessage());
+                }
             }
         }
     }

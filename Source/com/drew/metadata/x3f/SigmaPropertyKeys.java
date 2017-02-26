@@ -10,9 +10,8 @@ import java.util.Map;
 
 /**
  * @author Anthony Mandra http://anthonymandra.com
- * @author Drew Noakes https://drewnoakes.com
  */
-public enum SigmaKeys implements Key
+public enum SigmaPropertyKeys implements Key
 {
     TAG_AUTO_EXPOSURE_MODE("AEMODE", 1, "Auto Exposure Mode")
         {
@@ -204,7 +203,7 @@ public enum SigmaKeys implements Key
     private final String key;
     private final String summary;
 
-    SigmaKeys(String key, int index, String summary)
+    SigmaPropertyKeys(String key, int index, String summary)
     {
         this.index = index;
         this.key = key;
@@ -212,9 +211,9 @@ public enum SigmaKeys implements Key
     }
 
     //TODO: Use a sparse array trie, or FastUtil
-    private static final Map<Integer, SigmaKeys> intLookup = new HashMap<Integer, SigmaKeys>();
+    private static final Map<Integer, SigmaPropertyKeys> intLookup = new HashMap<Integer, SigmaPropertyKeys>();
     static {
-        for (SigmaKeys type : values())
+        for (SigmaPropertyKeys type : values())
             intLookup.put(type.getInt(), type);
     }
 

@@ -30,7 +30,7 @@ import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
-import com.drew.imaging.x3f.X3fMetadataReader;
+import com.drew.imaging.x3f.SigmaReader;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -150,7 +150,7 @@ public class ImageMetadataReader
                 return RafMetadataReader.readMetadata(bufferedInputStream);
 
             case X3f:
-                return X3fMetadataReader.readMetadata(bufferedInputStream);
+                return SigmaReader.readMetadata(bufferedInputStream);
 
             default:
                 throw new ImageProcessingException("File format is not supported");

@@ -4,8 +4,8 @@ import com.drew.metadata.TagDescriptor;
 
 class SigmaDescriptor extends TagDescriptor
 {
-    public SigmaDescriptor(SigmaDirectory x3fDirectory)
+    public SigmaDescriptor(SigmaDirectory sigmaDirectory)
     {
-        super();
+        super(sigmaDirectory);
     }
 }
