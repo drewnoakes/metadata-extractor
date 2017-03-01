@@ -211,10 +211,32 @@ public enum SigmaPropertyKeys implements Key
     }
 
     //TODO: Use a sparse array trie, or FastUtil
-    private static final Map<Integer, SigmaPropertyKeys> intLookup = new HashMap<Integer, SigmaPropertyKeys>();
+    private static final Map<Integer, SigmaPropertyKeys> intLookup = new HashMap<Integer, SigmaPropertyKeys>(); // FIXME: only for back compat
+    //FIXME: This is entirely for backwards compatibility, not only is this just used for .contains, but it could be entirely eliminated with Enum model
+    private static final HashMap<Integer, String> tagNameMap = new HashMap<Integer, String>();
+    //TODO: using the value as enum name allows .valueOf, but is harder to read, this wouldn't work for int keys anyway, so probably best to keep things uniform, this lookup would likely remain
+    private static final HashMap<String, SigmaPropertyKeys> stringLookup = new HashMap<String, SigmaPropertyKeys>();
     static {
         for (SigmaPropertyKeys type : values())
+        {
+            tagNameMap.put(type.getInt(), type.getName());
             intLookup.put(type.getInt(), type);
+            stringLookup.put(type.key, type);
+        }
+    }
+
+    public static SigmaPropertyKeys fromValue(String value)
+    {
+        return stringLookup.get(value);
+    }
+    public static SigmaPropertyKeys fromValue(Integer value)
+    {
+        return intLookup.get(value);
+    }
+
+    public static HashMap<Integer, String> getTagNameMap()
+    {
+        return tagNameMap;
     }
 
     @Override
@@ -232,7 +254,7 @@ public enum SigmaPropertyKeys implements Key
     @Override
     public String getDescription(Directory directory)
     {
-        return directory.getDescription(getInt());
+        return directory.getString(getInt());
     }
 
     @Override
