@@ -45,7 +45,12 @@ public class FileTypeDetector
         _root.addPath(FileType.Tiff, "MM".getBytes(), new byte[]{0x00, 0x2a});
         _root.addPath(FileType.Psd, "8BPS".getBytes());
         _root.addPath(FileType.Png, new byte[]{(byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52});
-        _root.addPath(FileType.Bmp, "BM".getBytes()); // TODO technically there are other very rare magic numbers for OS/2 BMP files...
+        _root.addPath(FileType.Bmp, "BM".getBytes()); // Standard Bitmap Windows and OS/2
+        _root.addPath(FileType.Bmp, "BA".getBytes()); // OS/2 Bitmap Array
+        _root.addPath(FileType.Bmp, "CI".getBytes()); // OS/2 Color Icon
+        _root.addPath(FileType.Bmp, "CP".getBytes()); // OS/2 Color Pointer
+        _root.addPath(FileType.Bmp, "IC".getBytes()); // OS/2 Icon
+        _root.addPath(FileType.Bmp, "PT".getBytes()); // OS/2 Pointer
         _root.addPath(FileType.Gif, "GIF87a".getBytes());
         _root.addPath(FileType.Gif, "GIF89a".getBytes());
         _root.addPath(FileType.Ico, new byte[]{0x00, 0x00, 0x01, 0x00});
