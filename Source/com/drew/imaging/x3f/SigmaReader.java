@@ -37,6 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,7 +148,7 @@ public class SigmaReader
         //TODO: header directory if needed
 
         // Max 2G file
-        final int directoryPosition = reader.getInt32((int)reader.getLength() - 4);     // TODO: took a notable time (debug), unattached was unnoticeable,  may need optimization
+        final int directoryPosition = reader.getInt32((int)reader.getLength() - 4);
         final String directoryId = reader.getString(directoryPosition, 4, Charsets.ASCII);  // "Should be "SECd"
         final int version = reader.getInt32(4 + directoryPosition);
         final int directoryCount = reader.getInt32(8 + directoryPosition);
@@ -168,7 +169,7 @@ public class SigmaReader
         {
             if ("PROP".equals(dir.Type)) //PROP, IMAG, IMA2, CAMF, (One was garbage)
             {
-                SigmaPropertyDirectory directory = new SigmaPropertyDirectory();    // TODO: This should be SigmaPropDirectory...or can we consolidate directories?
+                SigmaPropertyDirectory directory = new SigmaPropertyDirectory();
                 String propId = reader.getString(dir.Offset, 4, Charsets.ASCII);  // "Should be "SECp"
                 int propVersion = reader.getInt32(4 + dir.Offset);
                 int propCount = reader.getInt32(8 + dir.Offset);
@@ -191,20 +192,16 @@ public class SigmaReader
                 }
 
                 int endOfPropHeader = propPairOffset + 8;
-                HashMap<String, String> propMap = new HashMap<String, String>();
+                byte[] propertyChunk = reader.getBytes(endOfPropHeader, propLength * 2);
                 for (Property p : properties)
                 {
                     // 16-bit null-terminated Unicode character strings
-                    String name = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.NameOffset, propLength, Charsets.UTF_16LE); // TODO: using propLength is NOT ideal here
-                    String value = reader.getNullTerminatedString16(endOfPropHeader + 2 * p.ValueOffset, propLength, Charsets.UTF_16LE);
-                    p.Name = name;
-                    p.Value = value;
-                    propMap.put(p.Name, p.Value);
-                    //TODO: The propmap was just for testing
+                    String name = getUtf16String(propertyChunk, endOfPropHeader + 2 * p.NameOffset);
+                    String value = getUtf16String(propertyChunk, endOfPropHeader + 2 * p.ValueOffset);
 
                     try
                     {
-                        SigmaPropertyKeys key = SigmaPropertyKeys.fromValue(p.Name);
+                        SigmaPropertyKeys key = SigmaPropertyKeys.fromValue(name);
                         if (key == null)
                             directory.addError(key + " is unknown.");
                         else
@@ -217,37 +214,60 @@ public class SigmaReader
                 }
                 metadata.addDirectory(directory);
             }
-//            else if ("IMAG".equals(dir.Type) || "IMA2".equals(dir.Type))
-//            {
-//                String imageId = reader.getString(dir.Offset, 4, Charsets.ASCII);  // "Should be "SECi"
-//                int imageVersion = reader.getInt32(4 + dir.Offset);
-//                int imageType = reader.getInt32(8 + dir.Offset);    //2 = processed for preview
-//                int imageFormat = reader.getInt32(12 + dir.Offset); //3 = uncompressed 24-bit 8/8/8 RGB, 11 = Huffman-encoded DPCM 8/8/8 RGB, 18 = JPEG-compressed 8/8/8 RGB
-//                int imageWidth = reader.getInt32(16 + dir.Offset);
-//                int imageHeight = reader.getInt32(20 + dir.Offset);
-//                int rowSize = reader.getInt32(24 + dir.Offset);  // Will always be a multiple of 4 (32-bit aligned). A value of zero here means that rows are variable-length (as in Huffman data).
-//                int imageStart = 28 + dir.Offset;
-//
-//                //TODO: We're being lazy here, will we end up with empty folders?
-//                //TODO: Are formats other than jpeg able to be processed by the jpeg exif reader?
-//                //TODO: I'm doubtful this row image size calc will reliably grab the whole image
-//                byte[] image = reader.getBytes(imageStart, rowSize * imageHeight);
-//                ByteArrayInputStream jpegmem = new ByteArrayInputStream(image);
-//                try {
-//                    Metadata jpegDirectory = JpegMetadataReader.readMetadata(jpegmem);
-//                    for (Directory directory : jpegDirectory.getDirectories()) {
-//                        metadata.addDirectory(directory);
-//                    }
-//                } catch (JpegProcessingException e) {
-////                    _currentDirectory.addError("Error processing JpgFromRaw: " + e.getMessage());
-//                } catch (IOException e) {
-////                    _currentDirectory.addError("Error reading JpgFromRaw: " + e.getMessage());
-//                }
-//            }
+            else if ("IMAG".equals(dir.Type) || "IMA2".equals(dir.Type))
+            {
+                String imageId = reader.getString(dir.Offset, 4, Charsets.ASCII);  // "Should be "SECi"
+                int imageVersion = reader.getInt32(4 + dir.Offset);
+                int imageType = reader.getInt32(8 + dir.Offset);    //2 = processed for preview
+
+                if (imageType != 2)     //TODO: Anything but 2 is raw?
+                    continue;
+
+                // We will just lazily throw this to the jpeg reader, which so far has worked perfectly.  It's possible we'd need to switch processing based on format.
+                int imageFormat = reader.getInt32(12 + dir.Offset); //3 = uncompressed 24-bit 8/8/8 RGB, 11 = Huffman-encoded DPCM 8/8/8 RGB, 18 = JPEG-compressed 8/8/8 RGB
+                int imageWidth = reader.getInt32(16 + dir.Offset);
+                int imageHeight = reader.getInt32(20 + dir.Offset);
+                int rowSize = reader.getInt32(24 + dir.Offset);  // Will always be a multiple of 4 (32-bit aligned). A value of zero here means that rows are variable-length (as in Huffman data).
+                int imageStart = 28 + dir.Offset;
+
+                byte[] image = reader.getBytes(imageStart, dir.Length - 28 /*header*/);
+                ByteArrayInputStream jpegmem = new ByteArrayInputStream(image);
+                try {
+                    Metadata jpegDirectory = JpegMetadataReader.readMetadata(jpegmem);
+                    for (Directory directory : jpegDirectory.getDirectories()) {
+                        metadata.addDirectory(directory);
+                    }
+                } catch (JpegProcessingException e) {
+//                    _currentDirectory.addError("Error processing JpgFromRaw: " + e.getMessage());
+                } catch (IOException e) {
+//                    _currentDirectory.addError("Error reading JpgFromRaw: " + e.getMessage());
+                }
+            }
         }
     }
 
-    // quick dirty pojo
+    /**
+     * Returns the sequence of byte pairs punctuated by a <code>\0</code> value that represent a 16 bit string.
+     *
+     * @param index The index within the buffer at which to start reading the string.
+     * the returned array will be <code>maxLengthChar</code> long (2 * maxLengthChar bytes).
+     * @return UTF16 string.
+     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
+     */
+    @NotNull
+    private static String getUtf16String(byte[] buffer, int index) throws IOException
+    {
+        final StringBuilder str = new StringBuilder();
+        final ByteArrayInputStream is = new ByteArrayInputStream(buffer, index, buffer.length - index);
+        final InputStreamReader reader = new InputStreamReader(is, "UTF-16LE");
+        int c;
+        while ((c = reader.read()) > 0)
+        {
+            str.append((char) c);
+        }
+        return str.toString();
+    }
+
     private static class DirectoryIndex
     {
         int Offset;
@@ -255,12 +275,9 @@ public class SigmaReader
         String Type;
     }
 
-    // quick dirty pojo
     private static class Property
     {
         int NameOffset;
         int ValueOffset;
-        String Name;
-        String Value;
     }
 }

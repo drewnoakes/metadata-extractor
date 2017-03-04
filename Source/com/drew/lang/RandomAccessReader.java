@@ -396,28 +396,6 @@ public abstract class RandomAccessReader
      * and ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
      *
      * @param index          The index within the buffer at which to start reading the string.
-     * @param maxLengthChar  The maximum number of characters to read.  If a zero-byte is not reached within this limit,
-     *                       reading will stop and the string will be truncated to this length.
-     * @return The read string.
-     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
-     */
-    @NotNull
-    public String getNullTerminatedString16(int index, int maxLengthChar, @NotNull Charset charset) throws IOException
-    {
-        return new String(getNullTerminated16(index, maxLengthChar), charset.name());
-    }
-
-    @NotNull
-    public StringValue getNullTerminatedStringValue16(int index, int maxLengthChar, @Nullable Charset charset) throws IOException
-    {
-        return new StringValue(getNullTerminated16(index, maxLengthChar), charset);
-    }
-
-    /**
-     * Creates a String from the _data buffer starting at the specified index,
-     * and ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
-     *
-     * @param index          The index within the buffer at which to start reading the string.
      * @param maxLengthBytes The maximum number of bytes to read.  If a zero-byte is not reached within this limit,
      *                       reading will stop and the string will be truncated to this length.
      * @return The read string.
@@ -426,19 +404,19 @@ public abstract class RandomAccessReader
     @NotNull
     public String getNullTerminatedString(int index, int maxLengthBytes, @NotNull Charset charset) throws IOException
     {
-        return new String(getNullTerminated8(index, maxLengthBytes), charset.name());
+        return new String(getNullTerminatedBytes(index, maxLengthBytes), charset.name());
     }
 
     @NotNull
     public StringValue getNullTerminatedStringValue(int index, int maxLengthBytes, @Nullable Charset charset) throws IOException
     {
-        byte[] bytes = getNullTerminated8(index, maxLengthBytes);
+        byte[] bytes = getNullTerminatedBytes(index, maxLengthBytes);
 
         return new StringValue(bytes, charset);
     }
 
     /**
-     * Returns the sequence of bytes punctuated by a <code>\0</code> value that represent an 8 bit string.
+     * Returns the sequence of bytes punctuated by a <code>\0</code> value.
      *
      * @param index The index within the buffer at which to start reading the string.
      * @param maxLengthBytes The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
@@ -447,7 +425,7 @@ public abstract class RandomAccessReader
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public byte[] getNullTerminated8(int index, int maxLengthBytes) throws IOException
+    public byte[] getNullTerminatedBytes(int index, int maxLengthBytes) throws IOException
     {
         byte[] buffer = getBytes(index, maxLengthBytes);
 
@@ -457,34 +435,6 @@ public abstract class RandomAccessReader
             length++;
 
         if (length == maxLengthBytes)
-            return buffer;
-
-        byte[] bytes = new byte[length];
-        if (length > 0)
-            System.arraycopy(buffer, 0, bytes, 0, length);
-        return bytes;
-    }
-
-    /**
-     * Returns the sequence of byte pairs punctuated by a <code>\0</code> value that represent a 16 bit string.
-     *
-     * @param index The index within the buffer at which to start reading the string.
-     * @param maxLengthChar The maximum number of characters to read. If a <code>\0</code> byte is not reached within this limit,
-     * the returned array will be <code>maxLengthChar</code> long (2 * maxLengthChar bytes).
-     * @return UTF16 string.
-     * @throws IOException The buffer does not contain enough bytes to satisfy this request.
-     */
-    @NotNull
-    public byte[] getNullTerminated16(int index, int maxLengthChar) throws IOException
-    {
-        byte[] buffer = getBytes(index, maxLengthChar * 2);
-
-        // Count the number of non-null bytes (stride = 2, 16 bit)
-        int length = 0;
-        while (length < buffer.length && !(buffer[length] == 0 && buffer[length + 1] == 0))
-            length+=2;
-
-        if (length == maxLengthChar * 2)
             return buffer;
 
         byte[] bytes = new byte[length];

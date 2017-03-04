@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public enum SigmaPropertyKeys implements Key
 {
+    // TODO: We could simplify things a bit by using SigmaMakernoteDirectory ids when applicable
     TAG_AUTO_EXPOSURE_MODE("AEMODE", 1, "Auto Exposure Mode")
         {
             @Override
@@ -141,11 +142,7 @@ public enum SigmaPropertyKeys implements Key
             public String getDescription(Directory directory)
             {
                 String hexId = directory.getString(this.getInt());
-                if (!hexId.startsWith("0x"))
-                    hexId = "0x" + hexId;
-                Integer id = Integer.decode(hexId);
-                String lens = getLens(id);
-                return lens == null ? "Unknown lens" : lens;
+                return getLens(hexId);
             }
         },
     TAG_SHOOTING_MODE("PMODE", 31, "Shooting Mode")
@@ -460,8 +457,12 @@ public enum SigmaPropertyKeys implements Key
         // 'FFFF' - seen this for a 28-70mm F2.8 lens - PH
     }
 
-    public String getLens(Integer id)
+    public static String getLens(String hexId)
     {
-        return _lensTypeById.get(id);
+        if (!hexId.startsWith("0x"))
+            hexId = "0x" + hexId;
+        Integer id = Integer.decode(hexId);
+        String lens = _lensTypeById.get(id);
+        return lens == null ? "Unknown lens" : lens;
     }
 }
