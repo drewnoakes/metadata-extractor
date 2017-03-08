@@ -147,7 +147,7 @@ public class SigmaReader
         }
         //TODO: header directory if needed
 
-        // Max 2G file
+        // Max 2G file (reader limit)
         final int directoryPosition = reader.getInt32((int)reader.getLength() - 4);
         final String directoryId = reader.getString(directoryPosition, 4, Charsets.ASCII);  // "Should be "SECd"
         final int version = reader.getInt32(4 + directoryPosition);
@@ -159,9 +159,9 @@ public class SigmaReader
         {
             int directoryIndexOffset = i * 12;
             DirectoryIndex d = new DirectoryIndex();
-            d.Offset = reader.getInt32(directoryIndexOffset + directoryPosition);
-            d.Length = reader.getInt32(4 + directoryIndexOffset + directoryPosition);
-            d.Type = reader.getString(8 + directoryIndexOffset + directoryPosition, 4, Charsets.ASCII);
+            d.Offset = reader.getInt32(directoryIndexOffset + indexPosition);
+            d.Length = reader.getInt32(4 + directoryIndexOffset + indexPosition);
+            d.Type = reader.getString(8 + directoryIndexOffset + indexPosition, 4, Charsets.ASCII);
             directoryIndices[i] = d;
         }
 
