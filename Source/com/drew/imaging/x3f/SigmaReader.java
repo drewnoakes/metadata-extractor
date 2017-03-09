@@ -40,7 +40,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.drew.lang.RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH;
@@ -167,7 +166,7 @@ public class SigmaReader
 
         for (DirectoryIndex dir : directoryIndices)
         {
-            if ("PROP".equals(dir.Type)) //PROP, IMAG, IMA2, CAMF, (One was garbage)
+            if ("PROP".equals(dir.Type)) //PROP, IMAG, IMA2, CAMF
             {
                 SigmaPropertyDirectory directory = new SigmaPropertyDirectory();
                 String propId = reader.getString(dir.Offset, 4, Charsets.ASCII);  // "Should be "SECp"
@@ -195,7 +194,6 @@ public class SigmaReader
                 byte[] propertyChunk = reader.getBytes(endOfPropHeader, propLength * 2);
                 for (Property p : properties)
                 {
-                    // 16-bit null-terminated Unicode character strings
                     String name = getUtf16String(propertyChunk, endOfPropHeader + 2 * p.NameOffset);
                     String value = getUtf16String(propertyChunk, endOfPropHeader + 2 * p.ValueOffset);
 
@@ -203,7 +201,7 @@ public class SigmaReader
                     {
                         SigmaPropertyKeys key = SigmaPropertyKeys.fromValue(name);
                         if (key == null)
-                            directory.addError(key + " is unknown.");
+                            directory.addError(name + " is unknown.");
                         else
                             directory.setString(key.getInt(), value);
                     }
