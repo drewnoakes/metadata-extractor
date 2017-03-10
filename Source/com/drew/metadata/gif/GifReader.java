@@ -172,7 +172,7 @@ public class GifReader
         // First three bits = (BPP - 1)
         int colorTableSize = 1 << ((flags & 7) + 1);
         int bitsPerPixel = ((flags & 0x70) >> 4) + 1;
-        boolean hasGlobalColorTable = (flags & 0xf) != 0;
+        boolean hasGlobalColorTable = (flags >> 7) != 0;
 
         headerDirectory.setInt(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE, colorTableSize);
 
