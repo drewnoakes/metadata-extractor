@@ -270,7 +270,7 @@ public class GifReader
         else if (extensionType.equals("ICCRGBG1012"))
         {
             // ICC profile extension
-            byte[] iccBytes = gatherBytes(reader, reader.getByte());
+            byte[] iccBytes = gatherBytes(reader, ((int) reader.getByte()) & 0xff);
             if (iccBytes.length != 0)
                 new IccReader().extract(new ByteArrayReader(iccBytes), metadata);
         }
@@ -375,7 +375,7 @@ public class GifReader
         {
             buffer.write(reader.getBytes(length), 0, length);
 
-            length = reader.getByte();
+            length = reader.getByte() & 0xff;
         }
 
         return buffer.toByteArray();
