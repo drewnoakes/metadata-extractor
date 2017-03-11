@@ -328,15 +328,15 @@ public class GifReader
         imageDirectory.setInt(GifImageDirectory.TAG_HEIGHT, reader.getUInt16());
 
         byte flags = reader.getByte();
-        boolean hasColorTable = (flags & 0x7) != 0;
+        boolean hasColorTable = (flags >> 7) != 0;
         boolean isInterlaced = (flags & 0x40) != 0;
-        boolean isColorTableSorted = (flags & 0x20) != 0;
 
         imageDirectory.setBoolean(GifImageDirectory.TAG_HAS_LOCAL_COLOUR_TABLE, hasColorTable);
         imageDirectory.setBoolean(GifImageDirectory.TAG_IS_INTERLACED, isInterlaced);
 
         if (hasColorTable)
         {
+            boolean isColorTableSorted = (flags & 0x20) != 0;
             imageDirectory.setBoolean(GifImageDirectory.TAG_IS_COLOR_TABLE_SORTED, isColorTableSorted);
 
             int bitsPerPixel = (flags & 0x7) + 1;
