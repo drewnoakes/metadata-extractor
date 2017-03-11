@@ -26,10 +26,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import com.drew.metadata.Directory;
-import com.drew.metadata.ErrorDirectory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.StringValue;
+import com.drew.metadata.*;
 import com.drew.metadata.gif.GifControlDirectory.DisposalMethod;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.xmp.XmpReader;
@@ -72,8 +69,17 @@ public class GifReader
             return;
 
         try {
-            // Skip over any global colour table
-            Integer globalColorTableSize = header.getInteger(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE);
+            // Skip over any global colour table if GlobalColorTable is present.
+            Integer globalColorTableSize = null;
+            try {
+                boolean hasGlobalColorTable = header.getBoolean(GifHeaderDirectory.TAG_HAS_GLOBAL_COLOR_TABLE);
+                if(hasGlobalColorTable) {
+                    globalColorTableSize = header.getInteger(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE);
+                }
+            } catch (MetadataException e) {
+                // This exception should never occur here.
+                metadata.addDirectory(new ErrorDirectory("GIF did not had hasGlobalColorTable bit."));
+            }
             if (globalColorTableSize != null)
             {
                 // Colour table has R/G/B byte triplets
