@@ -129,7 +129,7 @@ public class SigmaReader
 //        8 FLOAT32 Color adjust green.
 //        9 FLOAT32 Color adjust blue.
 //        10 FLOAT32 X3 Fill Light adjust
-        if (versionMajor == 2 && versionMinor == 2 || versionMinor == 1)    //extended was only 2.1, 2.2?
+        if (versionMajor == 2 && (versionMinor == 2 || versionMinor == 1))    //extended was only 2.1, 2.2?
         {
             final String whiteBalance = reader.getNullTerminatedString(40 + x3fHeaderOffset, 32, Charsets.ASCII);
 
