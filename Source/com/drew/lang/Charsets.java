@@ -37,4 +37,5 @@ public final class Charsets
     public static final Charset ASCII = Charset.forName("US-ASCII");
     public static final Charset UTF_16BE = Charset.forName("UTF-16BE");
     public static final Charset UTF_16LE = Charset.forName("UTF-16LE");
+    public static final Charset WINDOWS_1252 = Charset.forName("Cp1252");
 }
