@@ -107,42 +107,51 @@ public class ImageMetadataReader
 
         FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
 
-        if (fileType == FileType.Jpeg)
-            return JpegMetadataReader.readMetadata(bufferedInputStream);
+        return readMetadata(bufferedInputStream, streamLength, fileType);
+    }
 
-        if (fileType == FileType.Tiff ||
-            fileType == FileType.Arw ||
-            fileType == FileType.Cr2 ||
-            fileType == FileType.Nef ||
-            fileType == FileType.Orf ||
-            fileType == FileType.Rw2)
-            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(bufferedInputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
-
-        if (fileType == FileType.Psd)
-            return PsdMetadataReader.readMetadata(bufferedInputStream);
-
-        if (fileType == FileType.Png)
-            return PngMetadataReader.readMetadata(bufferedInputStream);
-
-        if (fileType == FileType.Bmp)
-            return BmpMetadataReader.readMetadata(bufferedInputStream);
-
-        if (fileType == FileType.Gif)
-            return GifMetadataReader.readMetadata(bufferedInputStream);
-
-        if (fileType == FileType.Ico)
-            return IcoMetadataReader.readMetadata(bufferedInputStream);
-
-        if (fileType == FileType.Pcx)
-            return PcxMetadataReader.readMetadata(bufferedInputStream);
-
-        if (fileType == FileType.Riff)
-            return WebpMetadataReader.readMetadata(bufferedInputStream);
-
-        if (fileType == FileType.Raf)
-            return RafMetadataReader.readMetadata(bufferedInputStream);
-
-        throw new ImageProcessingException("File format is not supported");
+    /**
+     * Reads metadata from an {@link InputStream} of known length and file type.
+     *
+     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     *                    beginning of the file's data.
+     * @param streamLength the length of the stream, if known, otherwise -1.
+     * @param fileType the file type of the data stream.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength, final FileType fileType) throws IOException, ImageProcessingException
+    {
+        switch (fileType) {
+            case Jpeg:
+                return JpegMetadataReader.readMetadata(inputStream);
+            case Tiff:
+            case Arw:
+            case Cr2:
+            case Nef:
+            case Orf:
+            case Rw2:
+                return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
+            case Psd:
+                return PsdMetadataReader.readMetadata(inputStream);
+            case Png:
+                return PngMetadataReader.readMetadata(inputStream);
+            case Bmp:
+                return BmpMetadataReader.readMetadata(inputStream);
+            case Gif:
+                return GifMetadataReader.readMetadata(inputStream);
+            case Ico:
+                return IcoMetadataReader.readMetadata(inputStream);
+            case Pcx:
+                return PcxMetadataReader.readMetadata(inputStream);
+            case Riff:
+                return WebpMetadataReader.readMetadata(inputStream);
+            case Raf:
+                return RafMetadataReader.readMetadata(inputStream);
+            default:
+                throw new ImageProcessingException("File format is not supported");
+        }
     }
 
     /**
