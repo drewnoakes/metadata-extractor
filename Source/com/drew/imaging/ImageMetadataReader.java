@@ -123,42 +123,35 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength, final FileType fileType) throws IOException, ImageProcessingException
     {
-        if (fileType == FileType.Jpeg)
-            return JpegMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Tiff ||
-            fileType == FileType.Arw ||
-            fileType == FileType.Cr2 ||
-            fileType == FileType.Nef ||
-            fileType == FileType.Orf ||
-            fileType == FileType.Rw2)
-            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
-
-        if (fileType == FileType.Psd)
-            return PsdMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Png)
-            return PngMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Bmp)
-            return BmpMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Gif)
-            return GifMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Ico)
-            return IcoMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Pcx)
-            return PcxMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Riff)
-            return WebpMetadataReader.readMetadata(inputStream);
-
-        if (fileType == FileType.Raf)
-            return RafMetadataReader.readMetadata(inputStream);
-
-        throw new ImageProcessingException("File format is not supported");
+        switch (fileType) {
+            case Jpeg:
+                return JpegMetadataReader.readMetadata(inputStream);
+            case Tiff:
+            case Arw:
+            case Cr2:
+            case Nef:
+            case Orf:
+            case Rw2:
+                return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
+            case Psd:
+                return PsdMetadataReader.readMetadata(inputStream);
+            case Png:
+                return PngMetadataReader.readMetadata(inputStream);
+            case Bmp:
+                return BmpMetadataReader.readMetadata(inputStream);
+            case Gif:
+                return GifMetadataReader.readMetadata(inputStream);
+            case Ico:
+                return IcoMetadataReader.readMetadata(inputStream);
+            case Pcx:
+                return PcxMetadataReader.readMetadata(inputStream);
+            case Riff:
+                return WebpMetadataReader.readMetadata(inputStream);
+            case Raf:
+                return RafMetadataReader.readMetadata(inputStream);
+            default:
+                throw new ImageProcessingException("File format is not supported");
+        }
     }
 
     /**
