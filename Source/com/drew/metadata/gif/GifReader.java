@@ -26,10 +26,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import com.drew.metadata.Directory;
-import com.drew.metadata.ErrorDirectory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.StringValue;
+import com.drew.metadata.*;
 import com.drew.metadata.gif.GifControlDirectory.DisposalMethod;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.xmp.XmpReader;
@@ -72,8 +69,17 @@ public class GifReader
             return;
 
         try {
-            // Skip over any global colour table
-            Integer globalColorTableSize = header.getInteger(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE);
+            // Skip over any global colour table if GlobalColorTable is present.
+            Integer globalColorTableSize = null;
+            try {
+                boolean hasGlobalColorTable = header.getBoolean(GifHeaderDirectory.TAG_HAS_GLOBAL_COLOR_TABLE);
+                if(hasGlobalColorTable) {
+                    globalColorTableSize = header.getInteger(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE);
+                }
+            } catch (MetadataException e) {
+                // This exception should never occur here.
+                metadata.addDirectory(new ErrorDirectory("GIF did not had hasGlobalColorTable bit."));
+            }
             if (globalColorTableSize != null)
             {
                 // Colour table has R/G/B byte triplets
@@ -172,7 +178,7 @@ public class GifReader
         // First three bits = (BPP - 1)
         int colorTableSize = 1 << ((flags & 7) + 1);
         int bitsPerPixel = ((flags & 0x70) >> 4) + 1;
-        boolean hasGlobalColorTable = (flags & 0xf) != 0;
+        boolean hasGlobalColorTable = (flags >> 7) != 0;
 
         headerDirectory.setInt(GifHeaderDirectory.TAG_COLOR_TABLE_SIZE, colorTableSize);
 
@@ -322,15 +328,15 @@ public class GifReader
         imageDirectory.setInt(GifImageDirectory.TAG_HEIGHT, reader.getUInt16());
 
         byte flags = reader.getByte();
-        boolean hasColorTable = (flags & 0x7) != 0;
+        boolean hasColorTable = (flags >> 7) != 0;
         boolean isInterlaced = (flags & 0x40) != 0;
-        boolean isColorTableSorted = (flags & 0x20) != 0;
 
         imageDirectory.setBoolean(GifImageDirectory.TAG_HAS_LOCAL_COLOUR_TABLE, hasColorTable);
         imageDirectory.setBoolean(GifImageDirectory.TAG_IS_INTERLACED, isInterlaced);
 
         if (hasColorTable)
         {
+            boolean isColorTableSorted = (flags & 0x20) != 0;
             imageDirectory.setBoolean(GifImageDirectory.TAG_IS_COLOR_TABLE_SORTED, isColorTableSorted);
 
             int bitsPerPixel = (flags & 0x7) + 1;
