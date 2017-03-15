@@ -107,8 +107,24 @@ public class ImageMetadataReader
 
         FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
 
+        return readMetadata(bufferedInputStream, streamLength, fileType);
+    }
+
+    /**
+     * Reads metadata from an {@link InputStream} of known length and file type.
+     *
+     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     *                    beginning of the file's data.
+     * @param streamLength the length of the stream, if known, otherwise -1.
+     * @param fileType the file type of the data stream.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength, final FileType fileType) throws IOException, ImageProcessingException
+    {
         if (fileType == FileType.Jpeg)
-            return JpegMetadataReader.readMetadata(bufferedInputStream);
+            return JpegMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Tiff ||
             fileType == FileType.Arw ||
@@ -116,31 +132,31 @@ public class ImageMetadataReader
             fileType == FileType.Nef ||
             fileType == FileType.Orf ||
             fileType == FileType.Rw2)
-            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(bufferedInputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
+            return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
 
         if (fileType == FileType.Psd)
-            return PsdMetadataReader.readMetadata(bufferedInputStream);
+            return PsdMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Png)
-            return PngMetadataReader.readMetadata(bufferedInputStream);
+            return PngMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Bmp)
-            return BmpMetadataReader.readMetadata(bufferedInputStream);
+            return BmpMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Gif)
-            return GifMetadataReader.readMetadata(bufferedInputStream);
+            return GifMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Ico)
-            return IcoMetadataReader.readMetadata(bufferedInputStream);
+            return IcoMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Pcx)
-            return PcxMetadataReader.readMetadata(bufferedInputStream);
+            return PcxMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Riff)
-            return WebpMetadataReader.readMetadata(bufferedInputStream);
+            return WebpMetadataReader.readMetadata(inputStream);
 
         if (fileType == FileType.Raf)
-            return RafMetadataReader.readMetadata(bufferedInputStream);
+            return RafMetadataReader.readMetadata(inputStream);
 
         throw new ImageProcessingException("File format is not supported");
     }
