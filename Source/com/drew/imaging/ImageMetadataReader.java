@@ -123,7 +123,7 @@ public class ImageMetadataReader
             case Nef:
             case Orf:
             case Rw2:
-                return TiffMetadataReader.readMetadata(bufferedInputStream, streamLength);
+                return TiffMetadataReader.readMetadata(bufferedInputStream);
 
             case Psd:
                 return PsdMetadataReader.readMetadata(bufferedInputStream);
