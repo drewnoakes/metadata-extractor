@@ -121,6 +121,7 @@ public class GifReader
                         // Anything other than these types is unexpected.
                         // GIF87a spec says to keep reading until a separator is found.
                         // GIF89a spec says file is corrupt.
+                        metadata.addDirectory(new ErrorDirectory("Unknown gif block marker found."));
                         return;
                     }
                 }
