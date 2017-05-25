@@ -157,6 +157,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
                 <configuration>
+                    <additionalparam>--allow-script-in-comments</additionalparam>
                     <additionalparam>${javadoc.opts}</additionalparam>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>public</show>

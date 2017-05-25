@@ -28,11 +28,14 @@ import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -40,8 +43,9 @@ import java.util.Collections;
  * Note that IPTC data may be stored within this segment, in which case this reader will
  * create both a {@link PhotoshopDirectory} and a {@link com.drew.metadata.iptc.IptcDirectory}.
  *
- * @author Yuri Binev
  * @author Drew Noakes https://drewnoakes.com
+ * @author Yuri Binev
+ * @author Payton Garland
  */
 public class PhotoshopReader implements JpegSegmentMetadataReader
 {
@@ -102,9 +106,17 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                 // Some basic bounds checking
                 if (descriptionLength < 0 || descriptionLength + pos > length)
                     throw new ImageProcessingException("Invalid string length");
-                // We don't use the string value here
-                reader.skip(descriptionLength);
-                pos += descriptionLength;
+
+                // Get name (important for paths)
+                StringBuilder description = new StringBuilder();
+                descriptionLength += pos;
+                // Loop through each byte and append to string
+                while (pos < descriptionLength) {
+                    description.append((char)reader.getUInt8());
+                    pos ++;
+                }
+
+
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
                 if (pos % 2 != 0) {
                     reader.skip(1);
@@ -132,6 +144,17 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                         new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
                         new XmpReader().extract(tagBytes, metadata, directory);
+                    else if (tagType >= PhotoshopDirectory.TAG_PATH_INFO_1 && tagType <= PhotoshopDirectory.TAG_PATH_INFO_999) {
+                        tagBytes = Arrays.copyOf(tagBytes, tagBytes.length + description.length() + 1);
+                        // Append description(name) to end of byte array with 1 byte before the description representing the length
+                        for (int i = tagBytes.length - description.length() - 1; i < tagBytes.length; i++) {
+                            if (i % (tagBytes.length - description.length() - 1 + description.length()) == 0)
+                                tagBytes[i] = (byte)description.length();
+                            else
+                                tagBytes[i] = (byte)description.charAt(i - (tagBytes.length - description.length() - 1));
+                        }
+                        directory.setByteArray(tagType, tagBytes);
+                    }
                     else
                         directory.setByteArray(tagType, tagBytes);
 
