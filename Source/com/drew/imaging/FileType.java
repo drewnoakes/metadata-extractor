@@ -47,6 +47,7 @@ public enum FileType
     Mov("MOV", "QuickTime Movie", "video/quicktime", "mov", "qt"),
     Mp4("MP4", "MPEG-4 Part 14", "video/mp4", "mp4", "m4a", "m4p", "m4b", "m4r", "m4v"),
     Heif("HEIF", "High Efficiency Image File Format", "image/heif", "heif", "heic"),
+    Eps("EPS", "Encapsulated PostScript", "application/postscript", "eps", "epsf", "epsi"),
 
     /** Sony camera raw. */
     Arw("ARW", "Sony Camera Raw", null, "arw"),
