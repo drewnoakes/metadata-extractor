@@ -1,18 +1,19 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.RandomAccessReader;
+import com.drew.lang.SequentialReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class QtDataSource {
-    protected byte[] data;
-    protected ByteArrayInputStream inStream;
+    protected RandomAccessReader reader;
 
-    public QtDataSource(File file) throws IOException
+    public QtDataSource(RandomAccessReader reader) throws IOException
     {
-        data = getData(file);
-        inStream = new ByteArrayInputStream(data);
+        this.reader = reader;
     }
 
     protected QtDataSource()
@@ -30,7 +31,7 @@ public class QtDataSource {
             qtFile.seek(0);
 
             qtFile.read(buffer);
-            int atomSize = ByteUtil.getInt32(buffer, 0, true);
+            int atomSize = reader.getInt32(0);
 
             qtFile.read(buffer);
             String atomType = new String(buffer);

@@ -1,5 +1,7 @@
 package com.drew.imaging.mov;
 
+import com.drew.lang.RandomAccessReader;
+import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
@@ -19,7 +21,7 @@ public class QtMetadataReader {
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream, file);
+            metadata = readMetadata(inputStream);
         } finally {
             inputStream.close();
         }
@@ -28,10 +30,10 @@ public class QtMetadataReader {
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream, @NotNull File file)
+    public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
-        new QtReader().extract(new StreamReader(inputStream), metadata, file);
+        new QtReader().extract(new RandomAccessStreamReader(inputStream), metadata);
         return metadata;
     }
 }

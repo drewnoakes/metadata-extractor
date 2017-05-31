@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -14,11 +15,11 @@ import java.util.zip.DataFormatException;
 public class QtReader {
     private QtDataSource source;
 
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @NotNull final File file) throws IOException, DataFormatException
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata) throws IOException, DataFormatException
     {
         QtDirectory directory = new QtDirectory();
         metadata.addDirectory(directory);
-        this.source = new QtDataSource(file);
+        this.source = new QtDataSource(reader);
 
         try
         {
