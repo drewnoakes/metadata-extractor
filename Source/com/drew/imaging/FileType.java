@@ -35,6 +35,7 @@ public enum FileType
     Ico,
     Pcx,
     Riff,
+    Mov,
 
     /** Sony camera raw. */
     Arw,

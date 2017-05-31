@@ -1,19 +1,24 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
-public class QtParser implements MetadataParser {
+public class QtReader {
     private QtDataSource source;
-    private FileInfo fileId;
 
-    public void parseMetadata(FileInfo fileId, DataStream stream) throws IOException, DataFormatException
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @NotNull final File file) throws IOException, DataFormatException
     {
-        this.fileId = fileId;
-        this.source = new QtDataSource(stream.getStreamFile());
+        QtDirectory directory = new QtDirectory();
+        metadata.addDirectory(directory);
+        this.source = new QtDataSource(file);
 
         try
         {
@@ -43,13 +48,13 @@ public class QtParser implements MetadataParser {
                 if (atomExists(mediaHeader))
                 {
                     mediaHeader.getMetadata(source);
-                    mediaHeader.populateMetadata(fileId);
+                    mediaHeader.populateMetadata(metadata);
                 }
                 QtTimeToSampleAtom videoTimeSampleTable = (QtTimeToSampleAtom)getTrackTimeToSampleTable(videoTrack);
                 if (atomExists(videoTimeSampleTable))
                 {
                     videoTimeSampleTable.getMetadata(source);
-                    videoTimeSampleTable.populateMetadata(fileId);
+                    videoTimeSampleTable.populateMetadata(metadata);
                 }
             }
             metadataAtoms.addAll(atomTree.getAtoms(QtAtomTypes.MOVIE_HEADER_ATOM));
@@ -88,7 +93,7 @@ public class QtParser implements MetadataParser {
             QtLeafAtom atom = (QtLeafAtom)iterator.next();
             if (atom != null)
             {
-                atom.populateMetadata(fileId);
+                atom.populateMetadata(metadata);
             }
         }
     }
