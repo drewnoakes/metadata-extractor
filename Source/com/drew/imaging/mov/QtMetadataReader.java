@@ -9,10 +9,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.mov.QtReader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class QtMetadataReader {
     @NotNull
@@ -33,7 +30,7 @@ public class QtMetadataReader {
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
-        new QtReader().extract(new RandomAccessStreamReader(inputStream), metadata);
+        new QtReader().extract(metadata, new DataInputStream(inputStream));
         return metadata;
     }
 }

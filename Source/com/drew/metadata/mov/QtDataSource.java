@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class QtDataSource {
-    protected RandomAccessReader reader;
+    protected byte[] data;
+    protected ByteArrayInputStream inStream;
 
-    public QtDataSource(RandomAccessReader reader) throws IOException
+    public QtDataSource(File file) throws IOException
     {
-        this.reader = reader;
+        data = getData(file);
+        inStream = new ByteArrayInputStream(data);
     }
 
     protected QtDataSource()
@@ -31,7 +33,7 @@ public class QtDataSource {
             qtFile.seek(0);
 
             qtFile.read(buffer);
-            int atomSize = reader.getInt32(0);
+            int atomSize = ByteUtil.getInt32(buffer, 0, true);
 
             qtFile.read(buffer);
             String atomType = new String(buffer);

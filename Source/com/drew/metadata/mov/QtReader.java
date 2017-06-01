@@ -14,12 +14,12 @@ import java.util.zip.DataFormatException;
 
 public class QtReader {
     private QtDataSource source;
+    private Metadata metadata;
 
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata) throws IOException, DataFormatException
+    public void extract(Metadata metadata, DataStream stream) throws IOException, DataFormatException
     {
-        QtDirectory directory = new QtDirectory();
-        metadata.addDirectory(directory);
-        this.source = new QtDataSource(reader);
+        this.metadata = metadata;
+        this.source = new QtDataSource(stream.getStreamFile());
 
         try
         {
@@ -49,13 +49,13 @@ public class QtReader {
                 if (atomExists(mediaHeader))
                 {
                     mediaHeader.getMetadata(source);
-                    mediaHeader.populateMetadata(metadata);
+                    mediaHeader.populateMetadata(fileId);
                 }
                 QtTimeToSampleAtom videoTimeSampleTable = (QtTimeToSampleAtom)getTrackTimeToSampleTable(videoTrack);
                 if (atomExists(videoTimeSampleTable))
                 {
                     videoTimeSampleTable.getMetadata(source);
-                    videoTimeSampleTable.populateMetadata(metadata);
+                    videoTimeSampleTable.populateMetadata(fileId);
                 }
             }
             metadataAtoms.addAll(atomTree.getAtoms(QtAtomTypes.MOVIE_HEADER_ATOM));
@@ -94,7 +94,7 @@ public class QtReader {
             QtLeafAtom atom = (QtLeafAtom)iterator.next();
             if (atom != null)
             {
-                atom.populateMetadata(metadata);
+                atom.populateMetadata(fileId);
             }
         }
     }
