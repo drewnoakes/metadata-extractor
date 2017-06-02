@@ -9,6 +9,7 @@ import com.drew.metadata.MetadataException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,10 +20,10 @@ public class QtReader {
     private Metadata metadata;
     private Directory directory;
 
-    public void extract(Metadata metadata, File file) throws IOException, DataFormatException
+    public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
     {
         this.metadata = metadata;
-        this.source = new QtDataSource(file);
+        this.source = new QtDataSource(inputStream);
         this.directory = new QtDirectory();
         metadata.addDirectory(directory);
 

@@ -40,6 +40,11 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_AUDIO_CODEC, "Audio Codec");
     }
 
+    public QtDirectory()
+    {
+        this.setDescriptor(new QtDescriptor(this));
+    }
+
     @Override
     @NotNull
     public String getName() { return "Quicktime"; }

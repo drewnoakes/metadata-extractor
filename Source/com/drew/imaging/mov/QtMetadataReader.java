@@ -10,22 +10,19 @@ import com.drew.metadata.file.FileMetadataReader;
 import com.drew.metadata.mov.QtReader;
 
 import java.io.*;
+import java.util.zip.DataFormatException;
 
 public class QtMetadataReader {
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
-        InputStream inputStream = new FileInputStream(file);
-        Metadata metadata = readMetadata(file, inputStream);
-        new FileMetadataReader().read(file, metadata);
-        return metadata;
-    }
-
-    @NotNull
-    public static Metadata readMetadata(@NotNull File file, @NotNull InputStream inputStream) throws IOException
-    {
-        Metadata metadata = new Metadata();
-        new QtReader().extract(metadata, file);
-        return metadata;
+        try {
+            Metadata metadata = new Metadata();
+            new QtReader().extract(metadata, inputStream);
+            return metadata;
+        } catch (DataFormatException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
