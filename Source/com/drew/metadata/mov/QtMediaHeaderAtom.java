@@ -1,5 +1,8 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+import com.drew.metadata.Directory;
+
 import java.io.IOException;
 
 public class QtMediaHeaderAtom extends QtAtom implements QtLeafAtom {
@@ -21,9 +24,9 @@ public class QtMediaHeaderAtom extends QtAtom implements QtLeafAtom {
         mediaTimescale = ByteUtil.getInt32(buffer, 0, true);
     }
 
-    public void populateMetadata(FileInfo fileId)
+    public void populateMetadata(Directory directory)
     {
-        fileId.addMetadata(StandardMetadata.MEDIA_TIMESCALE, mediaTimescale);
+        directory.setInt(QtDirectory.TAG_MEDIA_TIME_SCALE, mediaTimescale);
     }
 
     public int getMediaTimescale()

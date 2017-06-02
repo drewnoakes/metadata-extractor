@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialReader;
 

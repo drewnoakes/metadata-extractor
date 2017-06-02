@@ -1,5 +1,9 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataException;
+
 import java.io.IOException;
 
 public class QtSampleDescriptionAtom extends QtAtom implements QtLeafAtom {
@@ -63,7 +67,7 @@ public class QtSampleDescriptionAtom extends QtAtom implements QtLeafAtom {
 
     }
 
-    public void populateMetadata(FileInfo fileId)
+    public void populateMetadata(Directory directory) throws MetadataException
     {
         // do nothing - we aren't interested in any of these values
     }

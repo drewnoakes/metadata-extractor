@@ -1,5 +1,7 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.zip.DataFormatException;

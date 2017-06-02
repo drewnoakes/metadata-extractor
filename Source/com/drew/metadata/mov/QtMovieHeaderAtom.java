@@ -1,5 +1,9 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataException;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,12 +47,12 @@ public class QtMovieHeaderAtom extends QtAtom implements QtLeafAtom {
 
     }
 
-    public void populateMetadata(FileInfo fileId)
+    public void populateMetadata(Directory directory) throws MetadataException
     {
-        fileId.addMetadata(StandardMetadata.MEDIA_TIMESCALE, timescale);
-        fileId.addMetadata(StandardMetadata.DURATION, duration);
-        fileId.addMetadata(StandardMetadata.CREATION_TIMESTAMP, creationTimestamp);
-        fileId.addMetadata(StandardMetadata.MODIFICATION_TIMESTAMP, modificationTimestamp);
+        directory.setInt(QtDirectory.TAG_MEDIA_TIME_SCALE, timescale);
+        directory.setFloat(QtDirectory.TAG_DURATION, duration);
+        directory.setString(QtDirectory.TAG_CREATION_TIMESTAMP, creationTimestamp);
+        directory.setString(QtDirectory.TAG_MODIFICATION_TIMESTAMP, modificationTimestamp);
     }
 
     private void calculateTimestamps()

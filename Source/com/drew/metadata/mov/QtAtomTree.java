@@ -1,5 +1,7 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

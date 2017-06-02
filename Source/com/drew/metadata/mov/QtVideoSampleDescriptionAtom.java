@@ -1,5 +1,9 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataException;
+
 import java.io.IOException;
 
 public class QtVideoSampleDescriptionAtom extends QtSampleDescriptionAtom {
@@ -121,11 +125,11 @@ public class QtVideoSampleDescriptionAtom extends QtSampleDescriptionAtom {
         }
     }
 
-    public void populateMetadata(FileInfo fileId)
+    public void populateMetadata(Directory directory) throws MetadataException
     {
-        fileId.addMetadata(StandardMetadata.SCREEN_WIDTH_PIX, frameWidth);
-        fileId.addMetadata(StandardMetadata.SCREEN_HEIGHT_PIX, frameHeight);
-        fileId.addMetadata(StandardMetadata.VIDEO_CODEC, videoCodec);
+        directory.setInt(QtDirectory.TAG_SCREEN_WIDTH_PX, frameWidth);
+        directory.setInt(QtDirectory.TAG_SCREEN_HEIGHT_PX, frameHeight);
+        directory.setString(QtDirectory.TAG_VIDEO_CODEC, videoCodec);
     }
 
     public String toString()

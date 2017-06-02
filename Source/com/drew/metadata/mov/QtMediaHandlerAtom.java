@@ -1,5 +1,8 @@
 package com.drew.metadata.mov;
 
+import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataException;
+
 import java.io.IOException;
 
 public class QtMediaHandlerAtom extends QtAtom implements QtLeafAtom {
@@ -21,7 +24,7 @@ public class QtMediaHandlerAtom extends QtAtom implements QtLeafAtom {
         handlerType = new String(buffer);
     }
 
-    public void populateMetadata(FileInfo fileId)
+    public void populateMetadata(Directory directory) throws MetadataException
     {
         // do nothing
     }

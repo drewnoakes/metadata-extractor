@@ -3,7 +3,9 @@ package com.drew.metadata.mov;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +17,14 @@ import java.util.zip.DataFormatException;
 public class QtReader {
     private QtDataSource source;
     private Metadata metadata;
+    private Directory directory;
 
-    public void extract(Metadata metadata, DataStream stream) throws IOException, DataFormatException
+    public void extract(Metadata metadata, File file) throws IOException, DataFormatException
     {
         this.metadata = metadata;
-        this.source = new QtDataSource(stream.getStreamFile());
+        this.source = new QtDataSource(file);
+        this.directory = new QtDirectory();
+        metadata.addDirectory(directory);
 
         try
         {
@@ -49,13 +54,13 @@ public class QtReader {
                 if (atomExists(mediaHeader))
                 {
                     mediaHeader.getMetadata(source);
-                    mediaHeader.populateMetadata(fileId);
+                    mediaHeader.populateMetadata(directory);
                 }
                 QtTimeToSampleAtom videoTimeSampleTable = (QtTimeToSampleAtom)getTrackTimeToSampleTable(videoTrack);
                 if (atomExists(videoTimeSampleTable))
                 {
                     videoTimeSampleTable.getMetadata(source);
-                    videoTimeSampleTable.populateMetadata(fileId);
+                    videoTimeSampleTable.populateMetadata(directory);
                 }
             }
             metadataAtoms.addAll(atomTree.getAtoms(QtAtomTypes.MOVIE_HEADER_ATOM));
@@ -74,6 +79,10 @@ public class QtReader {
             source.close();
             throw new IOException("Error reading quicktime file: " + ioe.getMessage());
         }
+        catch (MetadataException e)
+        {
+
+        }
     }
 
 
@@ -88,13 +97,13 @@ public class QtReader {
         }
     }
 
-    private void populateMetadata(List<QtAtom> atoms)
+    private void populateMetadata(List<QtAtom> atoms) throws MetadataException
     {
         for (Iterator<QtAtom> iterator = atoms.iterator(); iterator.hasNext();) {
             QtLeafAtom atom = (QtLeafAtom)iterator.next();
             if (atom != null)
             {
-                atom.populateMetadata(fileId);
+                atom.populateMetadata(directory);
             }
         }
     }

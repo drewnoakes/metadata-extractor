@@ -1,5 +1,9 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataException;
+
 import java.io.IOException;
 
 public class QtTimeToSampleAtom extends QtAtom implements QtLeafAtom {
@@ -30,21 +34,21 @@ public class QtTimeToSampleAtom extends QtAtom implements QtLeafAtom {
         sampleDuration = ByteUtil.getInt32(buffer, 0, true);
     }
 
-    public void populateMetadata(FileInfo fileId)
+    public void populateMetadata(Directory directory) throws MetadataException
     {
         double timeScale = 0;
 
-        IntegerValue mediaTimeScale = (IntegerValue)fileId.getMetadata(StandardMetadata.MEDIA_TIMESCALE);
+        int mediaTimeScale = (int) directory.getInt(QtDirectory.TAG_MEDIA_TIME_SCALE);
 
-        if (mediaTimeScale != null)
+        if (mediaTimeScale != 0)
         {
-            timeScale = mediaTimeScale.getValue();
+            timeScale = mediaTimeScale;
         }
 
         if (sampleDuration != 0)
         {
             double frameRate = timeScale/sampleDuration;
-            fileId.addMetadata(StandardMetadata.FRAME_RATE, frameRate);
+            directory.setDouble(QtDirectory.TAG_FRAME_RATE, frameRate);
         }
     }
 

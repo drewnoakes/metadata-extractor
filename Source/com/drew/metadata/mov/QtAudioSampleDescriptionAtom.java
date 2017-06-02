@@ -1,8 +1,12 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
+import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataException;
+
 import java.io.IOException;
 
-public class QtAudioSampleDescriptionAtom {
+public class QtAudioSampleDescriptionAtom extends QtSampleDescriptionAtom {
     private int channels;
     private int sampleSize;
     private int compressionId;
@@ -83,12 +87,12 @@ public class QtAudioSampleDescriptionAtom {
         }
     }
 
-    public void populateMetadata(FileInfo fileId)
+    public void populateMetadata(Directory directory) throws MetadataException
     {
-        fileId.addMetadata(StandardMetadata.CHANNELS, channels);
-        fileId.addMetadata(StandardMetadata.SAMPLE_SIZE, sampleSize);
-        fileId.addMetadata(StandardMetadata.SAMPLE_RATE, sampleRate);
-        fileId.addMetadata(StandardMetadata.AUDIO_CODEC, audioCodec);
+        directory.setInt(QtDirectory.TAG_CHANNELS, channels);
+        directory.setInt(QtDirectory.TAG_SAMPLE_SIZE, sampleSize);
+        directory.setLong(QtDirectory.TAG_SAMPLE_RATE, sampleRate);
+        directory.setString(QtDirectory.TAG_AUDIO_CODEC, audioCodec);
     }
 
 

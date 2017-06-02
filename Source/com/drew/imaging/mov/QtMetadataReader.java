@@ -16,21 +16,16 @@ public class QtMetadataReader {
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
         InputStream inputStream = new FileInputStream(file);
-        Metadata metadata;
-        try {
-            metadata = readMetadata(inputStream);
-        } finally {
-            inputStream.close();
-        }
+        Metadata metadata = readMetadata(file, inputStream);
         new FileMetadataReader().read(file, metadata);
         return metadata;
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull File file, @NotNull InputStream inputStream) throws IOException
     {
         Metadata metadata = new Metadata();
-        new QtReader().extract(metadata, new DataInputStream(inputStream));
+        new QtReader().extract(metadata, file);
         return metadata;
     }
 }
