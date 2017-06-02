@@ -106,7 +106,7 @@ public class ImageMetadataReader
             ? (BufferedInputStream)inputStream
             : new BufferedInputStream(inputStream);
 
-        FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
+        FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream, 0);
 
         return readMetadata(bufferedInputStream, streamLength, fileType);
     }
