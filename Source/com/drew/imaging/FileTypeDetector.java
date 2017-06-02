@@ -114,7 +114,7 @@ public class FileTypeDetector
 
         //noinspection ConstantConditions
         FileType fileType = _root.find(bytes);
-        if (fileType == FileType.Unknown) {
+        if (fileType == FileType.Unknown && offset != 4) {
             fileType = detectFileType(inputStream, 4);
         }
 
