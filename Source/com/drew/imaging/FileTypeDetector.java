@@ -59,7 +59,6 @@ public class FileTypeDetector
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x05, 0x01});
         _root.addPath(FileType.Riff, "RIFF".getBytes());
-
         _root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
         _root.addPath(FileType.Crw, "II".getBytes(), new byte[]{0x1a, 0x00, 0x00, 0x00}, "HEAPCCDR".getBytes());
         _root.addPath(FileType.Cr2, "II".getBytes(), new byte[]{0x2a, 0x00, 0x10, 0x00, 0x00, 0x00, 0x43, 0x52});
@@ -69,7 +68,6 @@ public class FileTypeDetector
         _root.addPath(FileType.Orf, "IIRS".getBytes(), new byte[]{(byte)0x08, 0x00});
         _root.addPath(FileType.Raf, "FUJIFILMCCD-RAW".getBytes());
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
-
         _root.addPath(FileType.Eps, "%!PS".getBytes());
         _root.addPath(FileType.Eps, new byte[]{(byte)0xC5, (byte)0xD0, (byte)0xD3, (byte)0xC6});
     }
