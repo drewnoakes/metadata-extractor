@@ -42,7 +42,6 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
-import com.drew.metadata.eps.EpsReader;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.file.FileTypeDirectory;
@@ -174,7 +173,7 @@ public class ImageMetadataReader
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);
             case Eps:
-                return EpsMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream));
+                return EpsMetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
             case Riff:

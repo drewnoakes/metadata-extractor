@@ -1,6 +1,5 @@
 package com.drew.imaging.eps;
 
-import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.eps.EpsReader;
@@ -21,22 +20,19 @@ public class EpsMetadataReader {
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
         Metadata metadata = new Metadata();
-        InputStream stream = new FileInputStream(file);
-        try {
-            new EpsReader().extract(new RandomAccessStreamReader(stream), metadata);
-        } finally {
-            stream.close();
-        }
+
+        new EpsReader().extract(new FileInputStream(file), metadata);
+
         new FileSystemMetadataReader().read(file, metadata);
         return metadata;
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull RandomAccessStreamReader stream)
+    public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
         try {
-            new EpsReader().extract(stream, metadata);
+            new EpsReader().extract(inputStream, metadata);
         } catch (IOException e) {
 
         }
