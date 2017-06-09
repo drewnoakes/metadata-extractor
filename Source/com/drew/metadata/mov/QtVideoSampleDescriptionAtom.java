@@ -130,6 +130,16 @@ public class QtVideoSampleDescriptionAtom extends QtSampleDescriptionAtom {
         directory.setInt(QtDirectory.TAG_SCREEN_WIDTH_PX, frameWidth);
         directory.setInt(QtDirectory.TAG_SCREEN_HEIGHT_PX, frameHeight);
         directory.setString(QtDirectory.TAG_VIDEO_CODEC, videoCodec);
+        directory.setInt(QtDirectory.TAG_VIDEO_SAMPLE_TEMPORAL_QUALITY, temporalQuality);
+        directory.setInt(QtDirectory.TAG_VIDEO_SAMPLE_SPATIAL_QUALITY, spatialQuality);
+        directory.setInt(QtDirectory.TAG_VIDEO_SAMPLE_WIDTH, frameWidth);
+        directory.setInt(QtDirectory.TAG_VIDEO_SAMPLE_HEIGHT, frameHeight);
+        directory.setFloat(QtDirectory.TAG_VIDEO_SAMPLE_HORIZONTAL_RES, resolutionX);
+        directory.setFloat(QtDirectory.TAG_VIDEO_SAMPLE_VERICAL_RES, resolutionY);
+        directory.setInt(QtDirectory.TAG_VIDEO_SAMPLE_DATA_SIZE, dataSize);
+        directory.setInt(QtDirectory.TAG_VIDEO_SAMPLE_FRAME_COUNT, frameCount);
+        directory.setString(QtDirectory.TAG_VIDEO_SAMPLE_COMPRESSOR_NAME, compressorName);
+        directory.setInt(QtDirectory.TAG_VIDEO_SAMPLE_DEPTH, pixelColorDepth);
     }
 
     public String toString()

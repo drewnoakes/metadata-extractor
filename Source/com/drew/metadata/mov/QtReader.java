@@ -64,6 +64,22 @@ public class QtReader {
                     videoTimeSampleTable.populateMetadata(directory);
                 }
             }
+
+            QtAtom userData = getUserData(atomTree, QtAtomTypes.USER_DATA_ATOM);
+            if (atomExists(userData))
+            {
+                metadataAtoms.add(userData);
+                for (QtAtom item : userData.getChildren()) {
+                }
+                for (String udtaType : QtAtomTypes.ATOM_UDTA_TYPES) {
+                    QtUserDataItemAtom userDataItem = (QtUserDataItemAtom)getUserData(atomTree, udtaType);
+                    if (atomExists(userDataItem)) {
+                        userDataItem.getMetadata(source);
+                        userDataItem.populateMetadata(directory);
+                    }
+                }
+            }
+
             metadataAtoms.addAll(atomTree.getAtoms(QtAtomTypes.MOVIE_HEADER_ATOM));
 
             getMetadata(metadataAtoms);
@@ -164,6 +180,22 @@ public class QtReader {
         if (atomExists(ttsAtom))
         {
             return ttsAtom;
+        }
+        return null;
+    }
+
+    public QtAtom getUserData(QtAtomTree atomTree, String atomType) throws IOException
+    {
+        List<QtAtom> userData = atomTree.getAtoms(QtAtomTypes.USER_DATA_ATOM);
+
+        for (QtAtom data : userData)
+        {
+            QtAtomTree userDataTree = new QtAtomTree(data.getChildren());
+            QtUserDataAtom userDataAtom = (QtUserDataAtom)userDataTree.getAtom(QtAtomTypes.USER_DATA_ATOM);
+            if (atomExists(userDataAtom))
+            {
+                return userDataAtom;
+            }
         }
         return null;
     }
