@@ -115,7 +115,16 @@ public class CodecTypes {
         {"mx5p","MPEG2 IMX 635/50 50mb/s"},
         {"mx3n","MPEG2 IMX 635/50 30mb/s"},
         {"dv5p","DVCPRO50"},
-        {"hdv3","HDV Final Cut Pro"}
+        {"hdv3","HDV Final Cut Pro"},
+        {"rle ","Animation"},
+        {"rle ","Animation"},
+        {"2vuY","Uncompressed Y'CbCr, 8-bit-per-component 4:2:2"},
+        {"v308","Uncompressed Y'CbCr, 8-bit-per-component 4:4:4"},
+        {"v408","Uncompressed Y'CbCr, 8-bit-per-component 4:4:4:4"},
+        {"v216","Uncompressed Y'CbCr, 10, 12, 14, or 16-bit-per-component 4:2:2"},
+        {"v410","Uncompressed Y'CbCr, 10-bit-per-component 4:4:4"},
+        {"v210","Uncompressed Y'CbCr, 10-bit-per-component 4:2:2"}
+
     };
 
     public static Map<String, String> audioCodecs = new HashMap<String, String>();
