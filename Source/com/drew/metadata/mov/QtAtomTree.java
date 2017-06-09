@@ -68,7 +68,7 @@ public class QtAtomTree {
                 source.skip(8);
                 source.read(buffer);
                 if (ByteUtil.getInt32(buffer, 0, true) == 0) {
-                    List<QtAtom> children = buildAtomTree(offset + 12, offset + atomSize);
+                    List<QtAtom> children = buildAtomTree(offset + 12, offset + atomSize - 4);
                     newAtom = QtAtomFactory.createAtom(atomSize, atomType, offset, children);
                 } else {
                     List<QtAtom> children = buildAtomTree(offset + 8, offset + atomSize);

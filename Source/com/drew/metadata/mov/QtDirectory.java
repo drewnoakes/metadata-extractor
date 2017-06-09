@@ -53,6 +53,8 @@ public class QtDirectory extends Directory {
     public static final int TAG_VIDEO_SAMPLE_DEPTH                = 0x020C;
     public static final int TAG_VIDEO_SAMPLE_COLOR_TABLE_ID       = 0x020D;
 
+    public static final int TAG_USER_DATA_TEXT                    = 0x0301;
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -102,6 +104,8 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_VIDEO_SAMPLE_COMPRESSOR_NAME, "Compressor Name");
         _tagNameMap.put(TAG_VIDEO_SAMPLE_DEPTH, "Depth");
         _tagNameMap.put(TAG_VIDEO_SAMPLE_COLOR_TABLE_ID, "Color Table ID");
+
+        _tagNameMap.put(TAG_USER_DATA_TEXT, "Text");
     }
 
     public QtDirectory()

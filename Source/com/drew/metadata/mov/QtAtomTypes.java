@@ -23,7 +23,7 @@ public class QtAtomTypes {
     public static final String[] ATOM_UDTA_TYPES = new String[]{"©arg", "©ark", "©cok", "©com", "©cpy", "©day", "©dir",
         "©ed1' to '©ed9", "©fmt", "©inf", "©isr", "©lab", "©lal", "©mak", "©mal", "©nak", "©nam", "©pdk", "©phg",
         "©prd", "©prf", "©prk", "©prl", "©req", "©snk", "©snm", "©src", "©swf", "©swk", "©swr", "©wrt", "AllF",
-        "hinf", "hnti", "name", "tnam", "tagc", "LOOP", "ptv ", "SelO", "WLOC"};
+        "hinf", "hnti", "name", "tnam", "tagc", "LOOP", "ptv ", "SelO", "WLOC", "desc"};
 
     public static String ATOM_META_KEYS = "keys";
     public static String ATOM_META_HEADER = "mhdr";

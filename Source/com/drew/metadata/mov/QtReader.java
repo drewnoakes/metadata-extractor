@@ -69,14 +69,13 @@ public class QtReader {
             if (atomExists(userData))
             {
                 metadataAtoms.add(userData);
-                for (QtAtom item : userData.getChildren()) {
-                }
-                for (String udtaType : QtAtomTypes.ATOM_UDTA_TYPES) {
-                    QtUserDataItemAtom userDataItem = (QtUserDataItemAtom)getUserData(atomTree, udtaType);
-                    if (atomExists(userDataItem)) {
-                        userDataItem.getMetadata(source);
-                        userDataItem.populateMetadata(directory);
-                    }
+            }
+            for (String udtaType : QtAtomTypes.ATOM_UDTA_TYPES) {
+                QtUserDataItemAtom userDataItem = (QtUserDataItemAtom)getUserData(atomTree, udtaType);
+                if (atomExists(userDataItem)) {
+                    userDataItem.getMetadata(source);
+                    userDataItem.populateMetadata(directory);
+                    metadataAtoms.add(userDataItem);
                 }
             }
 
