@@ -27,6 +27,10 @@ public class QtAtomFactory {
         {
             return new QtMediaHeaderAtom(size, type, offset);
         }
+        else if (QtAtomTypes.META_ATOM.equals(type))
+        {
+            return new QtMetadataAtom(size, type, offset);
+        }
         else if (QtAtomTypes.CONTAINER_TYPES.contains(type))
         {
             return new QtAtom(size, type, offset, children);

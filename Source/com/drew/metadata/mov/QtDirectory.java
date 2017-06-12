@@ -53,12 +53,52 @@ public class QtDirectory extends Directory {
     public static final int TAG_VIDEO_SAMPLE_DEPTH                = 0x020C;
     public static final int TAG_VIDEO_SAMPLE_COLOR_TABLE_ID       = 0x020D;
 
-    public static final int TAG_USER_DATA_TEXT                    = 0x0301;
+    // Metadata
+    public static final int TAG_QUICKTIME_ALBUM                   = "com.apple.quicktime.album".hashCode();
+    public static final int TAG_QUICKTIME_ARTIST                  = "com.apple.quicktime.artist".hashCode();
+    public static final int TAG_QUICKTIME_ARTWORK                 = "com.apple.quicktime.artwork".hashCode();
+    public static final int TAG_QUICKTIME_AUTHOR                  = "com.apple.quicktime.author".hashCode();
+    public static final int TAG_QUICKTIME_COMMENT                 = "com.apple.quicktime.comment".hashCode();
+    public static final int TAG_QUICKTIME_COPYRIGHT               = "com.apple.quicktime.copyright".hashCode();
+    public static final int TAG_QUICKTIME_CREATIONDATE            = "com.apple.quicktime.creationdate".hashCode();
+    public static final int TAG_QUICKTIME_DESCRIPTION             = "com.apple.quicktime.description".hashCode();
+    public static final int TAG_QUICKTIME_DIRECTOR                = "com.apple.quicktime.director".hashCode();
+    public static final int TAG_QUICKTIME_TITLE                   = "com.apple.quicktime.title".hashCode();
+    public static final int TAG_QUICKTIME_GENRE                   = "com.apple.quicktime.genre".hashCode();
+    public static final int TAG_QUICKTIME_INFORMATION             = "com.apple.quicktime.information".hashCode();
+    public static final int TAG_QUICKTIME_KEYWORDS                = "com.apple.quicktime.keywords".hashCode();
+    public static final int TAG_QUICKTIME_LOCATION                = "com.apple.quicktime.location".hashCode();
+    public static final int TAG_QUICKTIME_PRODUCER                = "com.apple.quicktime.producer".hashCode();
+    public static final int TAG_QUICKTIME_PUBLISHER               = "com.apple.quicktime.publisher".hashCode();
+    public static final int TAG_QUICKTIME_SOFTWARE                = "com.apple.quicktime.software".hashCode();
+    public static final int TAG_QUICKTIME_YEAR                    = "com.apple.quicktime.year".hashCode();
+    public static final int TAG_QUICKTIME_COLLECTION              = "com.apple.quicktime.collection.user".hashCode();
+    public static final int TAG_QUICKTIME_RATING                  = "com.apple.quicktime.rating.user".hashCode();
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
+        _tagNameMap.put(TAG_QUICKTIME_ALBUM, "Album");
+        _tagNameMap.put(TAG_QUICKTIME_ARTIST, "Artist");
+        _tagNameMap.put(TAG_QUICKTIME_ARTWORK, "Artwork");
+        _tagNameMap.put(TAG_QUICKTIME_AUTHOR, "Author");
+        _tagNameMap.put(TAG_QUICKTIME_COMMENT, "Comment");
+        _tagNameMap.put(TAG_QUICKTIME_COPYRIGHT, "Copyright");
+        _tagNameMap.put(TAG_QUICKTIME_CREATIONDATE, "Creation Date");
+        _tagNameMap.put(TAG_QUICKTIME_DESCRIPTION, "Description");
+        _tagNameMap.put(TAG_QUICKTIME_DIRECTOR, "Director");
+        _tagNameMap.put(TAG_QUICKTIME_TITLE, "Title");
+        _tagNameMap.put(TAG_QUICKTIME_GENRE, "Genre");
+        _tagNameMap.put(TAG_QUICKTIME_INFORMATION, "Information");
+        _tagNameMap.put(TAG_QUICKTIME_KEYWORDS, "Keywords");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION, "Location");
+        _tagNameMap.put(TAG_QUICKTIME_PRODUCER, "Producer");
+        _tagNameMap.put(TAG_QUICKTIME_PUBLISHER, "Publisher");
+        _tagNameMap.put(TAG_QUICKTIME_SOFTWARE, "Software");
+        _tagNameMap.put(TAG_QUICKTIME_YEAR, "Year");
+        _tagNameMap.put(TAG_QUICKTIME_COLLECTION, "Collection");
+        _tagNameMap.put(TAG_QUICKTIME_RATING, "Rating");
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
         _tagNameMap.put(TAG_FRAME_RATE, "Frame Rate");
         _tagNameMap.put(TAG_SCREEN_WIDTH_PX, "Frame Width (px)");
@@ -77,7 +117,7 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_MOOV_MVHD_CREATE_DATE, "Create Date");
         _tagNameMap.put(TAG_MOOV_MVHD_MODIFY_DATE, "Modify Date");
         _tagNameMap.put(TAG_MOOV_MVHD_TIME_SCALE, "Time Scale");
-        _tagNameMap.put(TAG_MOOV_MVHD_DURATION, "Duration");
+        _tagNameMap.put(TAG_MOOV_MVHD_DURATION, "Preview Duration");
         _tagNameMap.put(TAG_MOOV_MVHD_PREFERRED_RATE, "Preferred Rate");
         _tagNameMap.put(TAG_MOOV_MVHD_PREFERRED_VOLUME, "Preferred Volume");
         _tagNameMap.put(TAG_MOOV_MVHD_MATRIX_STRUCTURE, "Matrix Structure");
@@ -105,7 +145,6 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_VIDEO_SAMPLE_DEPTH, "Depth");
         _tagNameMap.put(TAG_VIDEO_SAMPLE_COLOR_TABLE_ID, "Color Table ID");
 
-        _tagNameMap.put(TAG_USER_DATA_TEXT, "Text");
     }
 
     public QtDirectory()

@@ -65,19 +65,7 @@ public class QtReader {
                 }
             }
 
-            QtAtom userData = getUserData(atomTree, QtAtomTypes.USER_DATA_ATOM);
-            if (atomExists(userData))
-            {
-                metadataAtoms.add(userData);
-            }
-            for (String udtaType : QtAtomTypes.ATOM_UDTA_TYPES) {
-                QtUserDataItemAtom userDataItem = (QtUserDataItemAtom)getUserData(atomTree, udtaType);
-                if (atomExists(userDataItem)) {
-                    userDataItem.getMetadata(source);
-                    userDataItem.populateMetadata(directory);
-                    metadataAtoms.add(userDataItem);
-                }
-            }
+            metadataAtoms.add(atomTree.getAtom(QtAtomTypes.META_ATOM));
 
             metadataAtoms.addAll(atomTree.getAtoms(QtAtomTypes.MOVIE_HEADER_ATOM));
 
@@ -85,7 +73,7 @@ public class QtReader {
 
             populateMetadata(metadataAtoms);
 
-//			atomTree.printTree();
+			//atomTree.printTree();
 
             source.close();
 
@@ -161,6 +149,17 @@ public class QtReader {
         return null;
     }
 
+    public QtAtom getMetadataAtom(QtAtom movie, String metaType)
+    {
+        QtAtomTree metaTree = new QtAtomTree(movie.getChildren());
+        QtMetadataAtom metaAtom = (QtMetadataAtom)metaTree.getAtom(QtAtomTypes.META_ATOM);
+        if (atomExists(metaAtom))
+        {
+            return QtAtomFactory.createAtom(metaAtom.size, metaAtom.getType(), metaAtom.getOffset(), metaAtom.getChildren());
+        }
+        return null;
+    }
+
     public QtAtom getTrackMediaHeader(QtAtom track)
     {
         QtAtomTree trackTree = new QtAtomTree(track.getChildren());
@@ -183,18 +182,13 @@ public class QtReader {
         return null;
     }
 
-    public QtAtom getUserData(QtAtomTree atomTree, String atomType) throws IOException
+    public QtAtom getMeta(QtAtom meta)
     {
-        List<QtAtom> userData = atomTree.getAtoms(QtAtomTypes.USER_DATA_ATOM);
-
-        for (QtAtom data : userData)
+        QtAtomTree trackTree = new QtAtomTree(meta.getChildren());
+        QtMediaHeaderAtom mhAtom = (QtMediaHeaderAtom)trackTree.getAtom(QtAtomTypes.MEDIA_HEADER_ATOM);
+        if (atomExists(mhAtom))
         {
-            QtAtomTree userDataTree = new QtAtomTree(data.getChildren());
-            QtUserDataAtom userDataAtom = (QtUserDataAtom)userDataTree.getAtom(QtAtomTypes.USER_DATA_ATOM);
-            if (atomExists(userDataAtom))
-            {
-                return userDataAtom;
-            }
+            return mhAtom;
         }
         return null;
     }

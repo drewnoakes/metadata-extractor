@@ -95,16 +95,19 @@ public class QtDataSource {
 
     public void read(byte[] buffer) throws IOException
     {
+        pos += buffer.length;
         inStream.read(buffer);
     }
 
     public int readByte()
     {
+        pos += 1;
         return inStream.read();
     }
 
     public void reset()
     {
+        pos = 0;
         inStream.reset();
     }
 
@@ -120,6 +123,7 @@ public class QtDataSource {
 
     public long skip(long index)
     {
+        pos += index;
         return inStream.skip(index);
     }
 }

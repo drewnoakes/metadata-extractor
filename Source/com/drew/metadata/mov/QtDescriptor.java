@@ -10,6 +10,12 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
     @Override
     public String getDescription(int tagType)
     {
+
         return _directory.getString(tagType);
+    }
+
+    public String getQtTimeToSampleDescription(int tagType)
+    {
+        return null;
     }
 }
