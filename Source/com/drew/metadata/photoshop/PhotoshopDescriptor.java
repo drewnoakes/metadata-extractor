@@ -81,7 +81,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             case TAG_CLIPPING_PATH_NAME:
                 return getClippingpathNameString(tagType);
             default:
-                if (tagType >= TAG_PATH_INFO_1 && tagType <= TAG_PATH_INFO_999)
+                if (tagType >= 0x07D0 && tagType <= 0x0BB6)
                     return getPathString(tagType);
                 return super.getDescription(tagType);
         }
