@@ -69,6 +69,13 @@ public class FileTypeDetector
         _root.addPath(FileType.Orf, "IIRS".getBytes(), new byte[]{(byte)0x08, 0x00});
         _root.addPath(FileType.Raf, "FUJIFILMCCD-RAW".getBytes());
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
+        _root.addPath(FileType.Mov, new byte[]{0x6D, 0x6F, 0x6F, 0x76}); // MOOV
+        _root.addPath(FileType.Mov, new byte[]{0x66, 0x74, 0x79, 0x70}); // FTYP
+        _root.addPath(FileType.Mov, new byte[]{0x66, 0x74, 0x79, 0x70, 0x71, 0x74}); // FTYPQT
+        _root.addPath(FileType.Mov, new byte[]{0x77, 0x69, 0x64, 0x65}); // Wide
+        _root.addPath(FileType.Mov, new byte[]{0x6D, 0x64, 0x61, 0x74}); // Mdat
+        _root.addPath(FileType.Mov, new byte[]{0x66, 0x72, 0x65, 0x65}); // Free
+
     }
 
     private FileTypeDetector() throws Exception
@@ -87,7 +94,7 @@ public class FileTypeDetector
      * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
      */
     @NotNull
-    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
+    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream, @NotNull final int offset) throws IOException
     {
         if (!inputStream.markSupported())
             throw new IOException("Stream must support mark/reset");
@@ -97,6 +104,7 @@ public class FileTypeDetector
         inputStream.mark(maxByteCount);
 
         byte[] bytes = new byte[maxByteCount];
+        inputStream.skip(offset);
         int bytesRead = inputStream.read(bytes);
 
         if (bytesRead == -1)
@@ -127,7 +135,7 @@ public class FileTypeDetector
         switch (fileType) {
             case Riff:
                 inputStream.skip(8);
-                return detectFileType(inputStream);
+                return detectFileType(inputStream, 0);
             case Tiff:
             default:
                 return fileType;
