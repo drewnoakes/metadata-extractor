@@ -65,7 +65,10 @@ public class QtReader {
                 }
             }
 
-            metadataAtoms.add(atomTree.getAtom(QtAtomTypes.META_ATOM));
+            QtAtom metadataAtom = atomTree.getAtom(QtAtomTypes.META_ATOM);
+            if (atomExists(metadataAtom)) {
+                metadataAtoms.add(metadataAtom);
+            }
 
             metadataAtoms.addAll(atomTree.getAtoms(QtAtomTypes.MOVIE_HEADER_ATOM));
 
@@ -149,17 +152,6 @@ public class QtReader {
         return null;
     }
 
-    public QtAtom getMetadataAtom(QtAtom movie, String metaType)
-    {
-        QtAtomTree metaTree = new QtAtomTree(movie.getChildren());
-        QtMetadataAtom metaAtom = (QtMetadataAtom)metaTree.getAtom(QtAtomTypes.META_ATOM);
-        if (atomExists(metaAtom))
-        {
-            return QtAtomFactory.createAtom(metaAtom.size, metaAtom.getType(), metaAtom.getOffset(), metaAtom.getChildren());
-        }
-        return null;
-    }
-
     public QtAtom getTrackMediaHeader(QtAtom track)
     {
         QtAtomTree trackTree = new QtAtomTree(track.getChildren());
@@ -178,17 +170,6 @@ public class QtReader {
         if (atomExists(ttsAtom))
         {
             return ttsAtom;
-        }
-        return null;
-    }
-
-    public QtAtom getMeta(QtAtom meta)
-    {
-        QtAtomTree trackTree = new QtAtomTree(meta.getChildren());
-        QtMediaHeaderAtom mhAtom = (QtMediaHeaderAtom)trackTree.getAtom(QtAtomTypes.MEDIA_HEADER_ATOM);
-        if (atomExists(mhAtom))
-        {
-            return mhAtom;
         }
         return null;
     }

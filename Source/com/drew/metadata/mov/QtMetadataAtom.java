@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class QtMetadataAtom extends QtAtom implements QtLeafAtom {
 
-    private String[] keys;
+    private String[] keyNames;
     private String[] keyValues;
 
     public QtMetadataAtom(long size, String type, long offset)
@@ -49,27 +49,21 @@ public class QtMetadataAtom extends QtAtom implements QtLeafAtom {
             source.skip(offset + 8 + totalLength);
         }
 
-        for (int i = 1; i < keys.length; i++) {
-            System.out.println(keys[i] + ": " + keyValues[i]);
+        for (int i = 1; i < keyNames.length; i++) {
+            System.out.println(keyNames[i] + ": " + keyValues[i]);
         }
-
 
         System.out.println("Meta get source");
     }
 
     @Override
     public void populateMetadata(Directory directory) throws MetadataException {
-        if (keys.length != 0) {
-            for (int i = 1; i < keys.length; i++) {
-                directory.setString(keys[i].hashCode(), keyValues[i]);
+        if (keyNames.length != 0) {
+            for (int i = 1; i < keyNames.length; i++) {
+                directory.setString(keyNames[i].hashCode(), keyValues[i]);
             }
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return "test";
     }
 
     public void data(QtDataSource source, int length, int index) throws IOException {
@@ -86,7 +80,7 @@ public class QtMetadataAtom extends QtAtom implements QtLeafAtom {
         System.out.println(keyValues[index]);
     }
 
-    public void list(QtDataSource source, int length, long offset) throws IOException {
+    public void list(QtDataSource source, long length, long offset) throws IOException {
         byte[] buffer = new byte[4];
 
         while (source.pos < (length + offset)) {
@@ -104,14 +98,14 @@ public class QtMetadataAtom extends QtAtom implements QtLeafAtom {
 
     }
 
-    public void keys(QtDataSource source, int length) throws IOException {
+    public void keys(QtDataSource source, long length) throws IOException {
         byte[] buffer = new byte[4];
         source.skip(4);
 
         source.read(buffer);
         int entryCount = ByteUtil.getInt32(buffer, 0, true);
 
-        keys = new String[entryCount + 1];
+        keyNames = new String[entryCount + 1];
         keyValues = new String[entryCount + 1];
 
         for (int i = 0; i < entryCount; i++) {
@@ -125,7 +119,7 @@ public class QtMetadataAtom extends QtAtom implements QtLeafAtom {
             buffer = new byte[keySize - 8];
             source.read(buffer);
             String namespace = new String(buffer);
-            keys[i + 1] = namespace;
+            keyNames[i + 1] = namespace;
         }
     }
 }

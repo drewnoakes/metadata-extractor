@@ -20,6 +20,10 @@ public class QtAtomTypes {
     public static String PROFILE_ATOM = "prfl";
     public static String MOVIE_CLIPPING_ATOM = "clip";
     public static String META_ATOM = "meta";
+    public static String META_HDLR_ATOM = "hdlr";
+    public static String META_MHDR_ATOM = "mhdr";
+    public static String META_KEYS_ATOM = "keys";
+    public static String META_ILST_ATOM = "ilst";
 
     public static final HashMap<String, String> _atomTypeMap = new HashMap<String, String>();
 
