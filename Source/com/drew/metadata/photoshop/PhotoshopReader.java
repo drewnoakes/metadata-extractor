@@ -90,6 +90,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         // http://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
 
         int pos = 0;
+        int clippingPathCount = 0;
         while (pos < length) {
             try {
                 // 4 bytes for the signature ("8BIM", "PHUT", etc.)
@@ -144,7 +145,8 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                         new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
                         new XmpReader().extract(tagBytes, metadata, directory);
-                    else if (tagType >= PhotoshopDirectory.TAG_PATH_INFO_1 && tagType <= PhotoshopDirectory.TAG_PATH_INFO_999) {
+                    else if (tagType >= 0x07D0 && tagType <= 0x0BB6) {
+                        clippingPathCount++;
                         tagBytes = Arrays.copyOf(tagBytes, tagBytes.length + description.length() + 1);
                         // Append description(name) to end of byte array with 1 byte before the description representing the length
                         for (int i = tagBytes.length - description.length() - 1; i < tagBytes.length; i++) {
@@ -153,7 +155,8 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                             else
                                 tagBytes[i] = (byte)description.charAt(i - (tagBytes.length - description.length() - 1));
                         }
-                        directory.setByteArray(tagType, tagBytes);
+                        PhotoshopDirectory._tagNameMap.put(0x07CF + clippingPathCount, "Path Info " + clippingPathCount);
+                        directory.setByteArray(0x07CF + clippingPathCount, tagBytes);
                     }
                     else
                         directory.setByteArray(tagType, tagBytes);
