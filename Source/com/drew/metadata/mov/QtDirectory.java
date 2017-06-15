@@ -62,6 +62,7 @@ public class QtDirectory extends Directory {
     public static final int TAG_QUICKTIME_COPYRIGHT               = "com.apple.quicktime.copyright".hashCode();
     public static final int TAG_QUICKTIME_CREATIONDATE            = "com.apple.quicktime.creationdate".hashCode();
     public static final int TAG_QUICKTIME_DESCRIPTION             = "com.apple.quicktime.description".hashCode();
+    public static final int TAG_QUICKTIME_DISPLAYNAME             = "com.apple.quicktime.displayname".hashCode();
     public static final int TAG_QUICKTIME_DIRECTOR                = "com.apple.quicktime.director".hashCode();
     public static final int TAG_QUICKTIME_TITLE                   = "com.apple.quicktime.title".hashCode();
     public static final int TAG_QUICKTIME_GENRE                   = "com.apple.quicktime.genre".hashCode();
@@ -75,10 +76,26 @@ public class QtDirectory extends Directory {
     public static final int TAG_QUICKTIME_COLLECTION              = "com.apple.quicktime.collection.user".hashCode();
     public static final int TAG_QUICKTIME_RATING                  = "com.apple.quicktime.rating.user".hashCode();
 
+    public static final int TAG_QUICKTIME_LOCATION_NAME           = "com.apple.quicktime.location.name".hashCode();
+    public static final int TAG_QUICKTIME_LOCATION_BODY           = "com.apple.quicktime.location.name".hashCode();
+    public static final int TAG_QUICKTIME_LOCATION_NOTE           = "com.apple.quicktime.location.note".hashCode();
+    public static final int TAG_QUICKTIME_LOCATION_ROLE           = "com.apple.quicktime.location.role".hashCode();
+    public static final int TAG_QUICKTIME_LOCATION_DATE           = "com.apple.quicktime.location.date".hashCode();
+    public static final int TAG_QUICKTIME_LOCATION_FACING         = "com.apple.quicktime.direction.facing".hashCode();
+    public static final int TAG_QUICKTIME_LOCATION_MOTION         = "com.apple.quicktime.direction.motion".hashCode();
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
+        _tagNameMap.put(TAG_QUICKTIME_DISPLAYNAME, "Display Name");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION_NAME, "Location Name");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION_BODY, "Location Body");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION_NOTE, "Location Note");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION_ROLE, "Location Role");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION_DATE, "Location Date");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION_FACING, "Location Facing");
+        _tagNameMap.put(TAG_QUICKTIME_LOCATION_MOTION, "Location Motion");
         _tagNameMap.put(TAG_QUICKTIME_ALBUM, "Album");
         _tagNameMap.put(TAG_QUICKTIME_ARTIST, "Artist");
         _tagNameMap.put(TAG_QUICKTIME_ARTWORK, "Artwork");
