@@ -81,7 +81,6 @@ public class QtMetadataAtom extends QtAtom implements QtLeafAtom {
         byte[] buffer = buffer = new byte[length - 16];
         source.read(buffer);
         keyValues[index] = new String(buffer);
-        System.out.println(keyValues[index]);
     }
 
     /**

@@ -50,7 +50,7 @@ public class QtMovieHeaderAtom extends QtAtom implements QtLeafAtom {
 
         source.read(buffer);
         duration = ByteUtil.getInt32(buffer, 0, true);
-        duration = duration/timescale/60;
+        duration = duration/timescale;
 
         source.read(buffer);
         preferredRate = (buffer[0] * (float)Math.pow(16, 1)) + buffer[1] + (buffer[2] * (float)Math.pow(16, -1)) + (buffer[3] * (float)Math.pow(16, -2));
@@ -92,6 +92,7 @@ public class QtMovieHeaderAtom extends QtAtom implements QtLeafAtom {
         directory.setInt(QtDirectory.TAG_MEDIA_TIME_SCALE, timescale);
         directory.setFloat(QtDirectory.TAG_DURATION, duration);
         directory.setString(QtDirectory.TAG_CREATION_TIMESTAMP, creationTimestamp);
+        directory.setString(QtDirectory.TAG_MODIFICATION_TIMESTAMP, modificationTimestamp);
         directory.setFloat(QtDirectory.TAG_MOOV_MVHD_PREFERRED_RATE, preferredRate);
         directory.setFloat(QtDirectory.TAG_MOOV_MVHD_PREFERRED_VOLUME, preferredVolume);
         directory.setFloat(QtDirectory.TAG_MOOV_MVHD_PREVIEW_TIME, previewTime);
