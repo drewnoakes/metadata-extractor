@@ -32,6 +32,7 @@ import java.io.IOException;
 public class FileTypeDetector
 {
     private final static ByteTrie<FileType> _root;
+    private final static int[] offsets = new int[]{0, 4};
 
     static
     {
@@ -59,6 +60,8 @@ public class FileTypeDetector
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x05, 0x01});
         _root.addPath(FileType.Riff, "RIFF".getBytes());
+        _root.addPath(FileType.Mp3, new byte[]{(byte)0xFF, (byte)0xFB});
+        _root.addPath(FileType.Mp3, new byte[]{0x49, 0x44, 0x43});
 
         _root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
         _root.addPath(FileType.Crw, "II".getBytes(), new byte[]{0x1a, 0x00, 0x00, 0x00}, "HEAPCCDR".getBytes());
@@ -89,22 +92,31 @@ public class FileTypeDetector
     @NotNull
     public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
     {
-        if (!inputStream.markSupported())
-            throw new IOException("Stream must support mark/reset");
+        for (int offset : offsets) {
+            if (!inputStream.markSupported())
+                throw new IOException("Stream must support mark/reset");
 
-        int maxByteCount = _root.getMaxDepth();
+            inputStream.skip(offset);
 
-        inputStream.mark(maxByteCount);
+            int maxByteCount = _root.getMaxDepth();
 
-        byte[] bytes = new byte[maxByteCount];
-        int bytesRead = inputStream.read(bytes);
+            inputStream.mark(maxByteCount);
 
-        if (bytesRead == -1)
-            throw new IOException("Stream ended before file's magic number could be determined.");
+            byte[] bytes = new byte[maxByteCount];
+            int bytesRead = inputStream.read(bytes);
 
-        inputStream.reset();
+            if (bytesRead == -1)
+                throw new IOException("Stream ended before file's magic number could be determined.");
+
+            inputStream.reset();
+
+            FileType fileType = _root.find(bytes);
+            if (fileType instanceof FileType) {
+                return fileType;
+            }
+        }
 
         //noinspection ConstantConditions
-        return _root.find(bytes);
+        return null;
     }
 }

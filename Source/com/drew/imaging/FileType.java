@@ -35,19 +35,30 @@ public enum FileType
     Ico,
     Pcx,
     Riff,
+    Mp3,
 
     /** Sony camera raw. */
-    Arw,
+    Arw("Arw"),
     /** Canon camera raw, version 1. */
-    Crw,
+    Crw("Crw"),
     /** Canon camera raw, version 2. */
-    Cr2,
+    Cr2("Cr2"),
     /** Nikon camera raw. */
-    Nef,
+    Nef("Nef"),
     /** Olympus camera raw. */
-    Orf,
+    Orf("Orf"),
     /** FujiFilm camera raw. */
-    Raf,
+    Raf("Raf"),
     /** Panasonic camera raw. */
-    Rw2
+    Rw2("Rw2");
+
+    private final String name;
+
+    FileType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }
