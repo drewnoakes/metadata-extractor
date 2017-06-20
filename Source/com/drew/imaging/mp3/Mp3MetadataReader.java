@@ -1,8 +1,11 @@
 package com.drew.imaging.mp3;
 
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.mp3.Mp3Reader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +37,7 @@ public class Mp3MetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
+        new Mp3Reader().extract(new StreamReader(inputStream), metadata);
         return metadata;
     }
 }
