@@ -21,10 +21,12 @@
 package com.drew.imaging;
 
 import com.drew.lang.ByteTrie;
+import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Examines the a file's first bytes and estimates the file's type.
@@ -102,9 +104,9 @@ public class FileTypeDetector
 
         FileType fileType = _root.find(bytes);
 
-        //noinspection ConstantConditions
+    //noinspection ConstantConditions
         return fileType;
-    }
+}
 
     /**
      * Examines the file's bytes and estimates the file's type.
