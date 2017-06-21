@@ -19,8 +19,15 @@ public class AviDescriptor extends TagDescriptor<AviDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            default:
-                return super.getDescription(tagType);
+            case (AviDirectory.TAG_WIDTH):
+            case (AviDirectory.TAG_HEIGHT):
+                return getSizeDescription(tagType);
         }
+        return super.getDescription(tagType);
+    }
+
+    public String getSizeDescription(int tagType)
+    {
+        return _directory.getString(tagType) + " pixels";
     }
 }

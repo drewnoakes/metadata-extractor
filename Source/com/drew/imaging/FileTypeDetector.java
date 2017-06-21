@@ -23,6 +23,9 @@ package com.drew.imaging;
 import com.drew.lang.ByteTrie;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.avi.AviDirectory;
+import com.drew.metadata.wav.WavDirectory;
+import com.drew.metadata.webp.WebpDirectory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
