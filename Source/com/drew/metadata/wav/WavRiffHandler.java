@@ -33,6 +33,11 @@ public class WavRiffHandler implements RiffHandler
         return fourCC.equals("fmt ");
     }
 
+    @Override
+    public boolean shouldAcceptList(String fourCC) {
+        return false;
+    }
+
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
         WavDirectory directory = new WavDirectory();

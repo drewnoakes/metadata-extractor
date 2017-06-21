@@ -1,7 +1,11 @@
 package com.drew.imaging.avi;
 
+import com.drew.imaging.riff.RiffProcessingException;
+import com.drew.imaging.riff.RiffReader;
+import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.avi.AviRiffHandler;
 import com.drew.metadata.file.FileSystemMetadataReader;
 
 import java.io.File;
@@ -24,9 +28,10 @@ public class AviMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException, RiffProcessingException
     {
         Metadata metadata = new Metadata();
+        new RiffReader().processRiff(new StreamReader(inputStream), new AviRiffHandler(metadata));
         return metadata;
     }
 }

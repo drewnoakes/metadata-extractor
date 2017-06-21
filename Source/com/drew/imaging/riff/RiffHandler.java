@@ -52,6 +52,16 @@ public interface RiffHandler
     boolean shouldAcceptChunk(@NotNull String fourCC);
 
     /**
+     * Gets whether this handler is interested in the specific list type.
+     * Returns <code>true</code> if the chunks should continue being processed,
+     * or <code>false</code> to avoid any unknown chunks within the list.
+     *
+     * @param fourCC the four character code of this chunk
+     * @return true if {@link RiffHandler#processChunk(String, byte[])} should be called, otherwise false
+     */
+    boolean shouldAcceptList(@NotNull String fourCC);
+
+    /**
      * Perform whatever processing is necessary for the type of chunk with its
      * payload.
      *
