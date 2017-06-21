@@ -10,7 +10,6 @@ import java.util.HashMap;
  */
 public class WavDirectory extends Directory
 {
-
     public static final int TAG_FORMAT = 1;
     public static final int TAG_CHANNELS = 2;
     public static final int TAG_SAMPLES_PER_SEC = 3;

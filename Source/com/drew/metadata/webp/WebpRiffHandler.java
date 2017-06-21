@@ -68,6 +68,11 @@ public class WebpRiffHandler implements RiffHandler
             || fourCC.equals("XMP ");
     }
 
+    @Override
+    public boolean shouldAcceptList(String fourCC) {
+        return false;
+    }
+
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
 //        System.out.println("Chunk " + fourCC + " " + payload.length + " bytes");
