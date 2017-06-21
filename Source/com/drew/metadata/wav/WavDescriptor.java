@@ -18,9 +18,6 @@ public class WavDescriptor extends TagDescriptor<WavDirectory>
     @Nullable
     public String getDescription(int tagType)
     {
-        switch (tagType) {
-            default:
-                return super.getDescription(tagType);
-        }
+        return super.getDescription(tagType);
     }
 }

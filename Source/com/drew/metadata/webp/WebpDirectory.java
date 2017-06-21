@@ -36,6 +36,15 @@ public class WebpDirectory extends Directory
     public static final int TAG_HAS_ALPHA = 3;
     public static final int TAG_IS_ANIMATION = 4;
 
+    public static final String CHUNK_VP8X = "VP8X";
+    public static final String CHUNK_VP8L = "VP8L";
+    public static final String CHUNK_VP8 = "VP8 ";
+    public static final String CHUNK_EXIF = "EXIF";
+    public static final String CHUNK_ICCP = "ICCP";
+    public static final String CHUNK_XMP = "XMP ";
+
+    public static final String FORMAT = "WEBP";
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
