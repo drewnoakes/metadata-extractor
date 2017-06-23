@@ -1,39 +1,22 @@
 package com.drew.metadata.mov;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-public class QtAtomTypes {
-    public static String ROOT_ATOM = "root";
-    public static String SAMPLE_DESCRIPTION_ATOM = "stsd";
-    public static String MOVIE_HEADER_ATOM = "mvhd";
-    public static String HANDLER_REFERENCE_ATOM = "hdlr";
-    public static String TRACK_ATOM = "trak";
-    public static String USER_DATA_ATOM = "udta";
-    public static String SOUND_HANDLER_TYPE = "soun";
-    public static String VIDEO_HANDLER_TYPE = "vide";
-    public static String COMPRESSED_MOVIE_ATOM = "cmov";
-    public static String MOVIE_ATOM = "moov";
-    public static String TIME_TO_SAMPLE_ATOM = "stts";
-    public static String MEDIA_HEADER_ATOM = "mdhd";
-    public static String PROFILE_ATOM = "prfl";
-    public static String MOVIE_CLIPPING_ATOM = "clip";
-    public static String META_ATOM = "meta";
-    public static String META_HDLR_ATOM = "hdlr";
-    public static String META_MHDR_ATOM = "mhdr";
-    public static String META_KEYS_ATOM = "keys";
-    public static String META_ILST_ATOM = "ilst";
+/**
+ * @author Payton Garland
+ */
+public class QtAtomTypes
+{
+    public static final String ATOM_MOVIE_HEADER = "mvhd";
 
-    public static final HashMap<String, String> _atomTypeMap = new HashMap<String, String>();
+    public static ArrayList<String> _atomList = new ArrayList<String>();
 
-    private static String[] CONTAINER_TYPES_LIST = {"moov", "trak", "udta", "tref", "imap", "mdia", "minf", "stbl", "edts", "mdra", "rmra", "imag", "vnrp", "dinf", "prfl", "clip", "meta", "hdlr", "mhdr", "keys", "ilst" };
-    public static List<String> CONTAINER_TYPES = new ArrayList<String>();
-    static
+    static {
+        _atomList.add(ATOM_MOVIE_HEADER);
+    }
+
+    public static boolean isAccepted(String fourCC)
     {
-        for (int i=0; i<CONTAINER_TYPES_LIST.length; i++)
-        {
-            CONTAINER_TYPES.add(CONTAINER_TYPES_LIST[i]);
-        }
+        return _atomList.contains(fourCC);
     }
 }
