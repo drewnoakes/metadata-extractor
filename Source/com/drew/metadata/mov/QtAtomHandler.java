@@ -3,6 +3,7 @@ package com.drew.metadata.mov;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.MetadataException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -90,6 +91,27 @@ public class QtAtomHandler
                     directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
                     break;
                 default:
+            }
+        } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
+            int numberOfEntries = reader.getInt32(4);
+            int numberOfSamples = reader.getInt32(8);
+            int sampleDuration = reader.getInt32(12);
+
+            double timeScale = 0;
+
+            try {
+                int mediaTimeScale = directory.getInt(QtDirectory.TAG_MEDIA_TIME_SCALE);
+
+                if (mediaTimeScale != 0) {
+                    timeScale = mediaTimeScale;
+                }
+
+                if (sampleDuration != 0) {
+                    double frameRate = timeScale / sampleDuration;
+                    directory.setDouble(QtDirectory.TAG_FRAME_RATE, frameRate);
+                }
+            } catch (MetadataException e) {
+                e.printStackTrace();
             }
         }
     }
