@@ -36,7 +36,6 @@ public class QtReader {
     public void processAtoms(RandomAccessStreamReader reader, long atomSize, QtDirectory directory, int pos)
     {
         try {
-            int offset = pos;
             while (pos < atomSize) {
                 long size = reader.getInt32(pos);
                 pos += 4;
