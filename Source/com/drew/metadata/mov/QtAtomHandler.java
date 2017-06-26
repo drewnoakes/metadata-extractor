@@ -50,6 +50,47 @@ public class QtAtomHandler
             Integer seconds = (int)Math.ceil((duration / (Math.pow(60, 0))) - (minutes * 60));
             String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
             directory.setString(QtDirectory.TAG_DURATION, time);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
+            int mediaTimescale = reader.getInt32(12);
+            directory.setInt(QtDirectory.TAG_MEDIA_TIME_SCALE, mediaTimescale);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_VIDEO_INFO)) {
+            int version = reader.getByte(0);
+            int flags = reader.getInt24(1);
+            int graphicsMode = reader.getInt16(4);
+            int opcolorRed = reader.getInt16(6);
+            int opcolorGreen = reader.getInt16(8);
+            int opcolorBlue = reader.getInt16(10);
+
+            switch (graphicsMode) {
+                case (0x00):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Copy");
+                    break;
+                case (0x40):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Dither copy");
+                    break;
+                case (0x20):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Blend");
+                    break;
+                case (0x24):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Transparent");
+                    break;
+                case (0x100):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Straight alpha");
+                    break;
+                case (0x101):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Premul white alpha");
+                    break;
+                case (0x102):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Premul black alpha");
+                    break;
+                case (0x104):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Straight alpha blend");
+                    break;
+                case (0x103):
+                    directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
+                    break;
+                default:
+            }
         }
     }
 }
