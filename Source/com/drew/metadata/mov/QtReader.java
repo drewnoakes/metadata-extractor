@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StreamReader;
 import com.drew.metadata.Directory;
@@ -7,52 +8,57 @@ import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.DataFormatException;
 
 public class QtReader {
-    private Metadata metadata;
-    private RandomAccessStreamReader reader;
+    private StreamReader reader;
     private QtDirectory directory;
     private QtContainerHandler qtContainerHandler;
     private QtAtomHandler qtAtomHandler;
-    private QtAtomTree qtAtomTree;
+    private ArrayList<String> history = new ArrayList<String>();
 
     public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
     {
-        this.metadata = metadata;
-        this.reader = new RandomAccessStreamReader(inputStream);
-        this.directory = new QtDirectory();
-        this.qtContainerHandler = new QtContainerHandler();
-        this.qtAtomHandler = new QtAtomHandler();
-        this.qtAtomTree = new QtAtomTree();
+        metadata = metadata;
+        reader = new StreamReader(inputStream);
+        directory = new QtDirectory();
+        qtContainerHandler = new QtContainerHandler();
+        qtAtomHandler = new QtAtomHandler();
         metadata.addDirectory(directory);
         reader.setMotorolaByteOrder(true);
 
-        processAtoms(reader, reader.getLength(), directory, 0);
+        processAtoms(reader, -1, directory);
     }
 
-    public void processAtoms(RandomAccessStreamReader reader, long atomSize, QtDirectory directory, int pos)
+    public void processAtoms(StreamReader reader, long atomSize, QtDirectory directory)
     {
         try {
-            while (pos < atomSize) {
-                long size = reader.getInt32(pos);
-                pos += 4;
-                String fourCC = new String(reader.getBytes(pos, 4));
-                pos += 4;
-                if (qtContainerHandler.shouldAcceptContainer(fourCC)) {
-                    pos += qtContainerHandler.processContainer(fourCC, size, reader, pos);
-                    processAtoms(reader, size, directory, pos);
-                } else if (qtAtomHandler.shouldAcceptAtom(fourCC)){
-                    qtAtomHandler.processAtom(fourCC, reader.getBytes(pos, (int)size - 8), directory);
-                    pos += size - 8;
-                } else {
-                    pos += size - 8;
+            while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
+                long size = reader.getInt32() - 8;
+                if (size == 1) {
+                    size = reader.getInt64();
                 }
-                System.out.println(fourCC);
+
+                String fourCC = new String(reader.getBytes(4));
+
+                if (qtContainerHandler.shouldAcceptContainer(fourCC)) {
+                    history.add(fourCC);
+                    processAtoms(reader, reader.getPosition() + size, directory);
+                    history.remove(history.size() - 1);
+                } else if (qtAtomHandler.shouldAcceptAtom(fourCC)) {
+                    qtAtomHandler.processAtom(fourCC, reader.getBytes((int)size), directory, history);
+                } else {
+                     if (size > 0)
+                        reader.skip(size);
+                }
             }
         } catch (IOException e) {
+            System.out.println("End of data reached");
+        } catch (ImageProcessingException e) {
             e.printStackTrace();
         }
     }
