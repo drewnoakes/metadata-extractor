@@ -59,8 +59,6 @@ public class FileTypeDetector
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x05, 0x01});
         _root.addPath(FileType.Riff, "RIFF".getBytes());
-
-        // File magic byte is 3-bytes long, but 3rd byte depends on mpeg version and layer
         _root.addPath(FileType.Mp3, new byte[]{(byte)0xFF, (byte)0xFB});
 
         _root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
