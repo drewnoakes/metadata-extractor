@@ -44,6 +44,7 @@ The library understands several formats of metadata, many of which may be presen
 * [GIF](http://en.wikipedia.org/wiki/Graphics_Interchange_Format) properties
 * [ICO](https://en.wikipedia.org/wiki/ICO_(file_format)) properties
 * [PCX](http://en.wikipedia.org/wiki/PCX) properties
+* [MP3](https://en.wikipedia.org/wiki/MP3) properties
 
 It will process files of type:
 
@@ -56,6 +57,7 @@ It will process files of type:
 * GIF
 * ICO
 * PCX
+* MP3
 * Camera Raw
   * NEF (Nikon)
   * CR2 (Canon)
