@@ -369,7 +369,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 int recordSpacer = 26 * i;
                 int selector = reader.getInt16(recordSpacer);
 
-                /**
+                /*
                  * Subpath resource blocks come in 26-byte segments with 9 possible selectors - some selectors
                  * are formatted different from others
                  *
