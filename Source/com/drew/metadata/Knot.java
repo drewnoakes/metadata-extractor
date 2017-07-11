@@ -13,13 +13,12 @@ package com.drew.metadata;
  */
 public class Knot
 {
-    private double[] points;
-    private String type;
+    private final double[] _points = new double[6];
+    private final String _type;
 
     public Knot(String type)
     {
-        this.points = new double[6];
-        this.type = type;
+        _type = type;
     }
 
     /**
@@ -29,8 +28,9 @@ public class Knot
      * @param index location of point to be added in points
      * @param point coordinate value to be added to points
      */
-    public void insert(int index, double point) {
-        points[index] = point;
+    public void insert(int index, double point)
+    {
+        _points[index] = point;
     }
 
     /**
@@ -38,8 +38,9 @@ public class Knot
      *
      * @return an individual coordinate value
      */
-    public double getPoint(int index) {
-        return points[index];
+    public double getPoint(int index)
+    {
+        return _points[index];
     }
 
     /**
@@ -47,7 +48,8 @@ public class Knot
      *
      * @return the type of knot
      */
-    public String getType() {
-        return this.type;
+    public String getType()
+    {
+        return this._type;
     }
 }
