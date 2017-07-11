@@ -11,11 +11,13 @@ _metadata-extractor_ is a straightforward Java library for reading metadata from
 
 The easiest way is to install the library via its [Maven package](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.drewnoakes%22%20AND%20a%3A%22metadata-extractor%22).
 
-    <dependency>
-      <groupId>com.drewnoakes</groupId>
-      <artifactId>metadata-extractor</artifactId>
-      <version>2.10.1</version>
-    </dependency>
+```xml
+<dependency>
+  <groupId>com.drewnoakes</groupId>
+  <artifactId>metadata-extractor</artifactId>
+  <version>2.10.1</version>
+</dependency>
+```
 
 Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
 
