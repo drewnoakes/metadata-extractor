@@ -66,14 +66,14 @@ public class Subpath
     {
         StringBuilder description = new StringBuilder();
 
-        description.append(_type).append("(").append(_knots.size()).append(" knots): ");
+        description.append(_type).append("(").append(_knots.size()).append(" knots):");
 
         for (Knot knot : _knots) {
+            description.append(" ");
             description.append(knot.getType()).append("[ ");
             description.append("(").append(knot.getPoint(0)).append(", ").append(knot.getPoint(1)).append(") ");
             description.append("(").append(knot.getPoint(2)).append(", ").append(knot.getPoint(3)).append(") ");
             description.append("(").append(knot.getPoint(4)).append(", ").append(knot.getPoint(5)).append(") ]");
-            description.append(" ");
         }
 
         return description.toString();
