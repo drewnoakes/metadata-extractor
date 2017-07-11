@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * Represents a subpath created by Photoshop:
  *  Closed Bezier knot, linked
- *  Closed Bezier knot, unliked
+ *  Closed Bezier knot, unlinked
  *  Open Bezier knot, linked
  *  Open Bezier knot, unlinked
  *
