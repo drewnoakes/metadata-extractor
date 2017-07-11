@@ -335,8 +335,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 return null;
             RandomAccessReader reader = new ByteArrayReader(bytes);
             int length = reader.getByte(0);
-            String name = new String(reader.getBytes(1, length), "UTF-8");
-            return name;
+            return new String(reader.getBytes(1, length), "UTF-8");
         } catch (Exception e) {
             return null;
         }
