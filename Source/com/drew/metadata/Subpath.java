@@ -17,13 +17,11 @@ public class Subpath
 
     private ArrayList<Knot> knots;
     private String type;
-    private int length;
 
     public Subpath()
     {
         this.knots = new ArrayList<Knot>();
         this.type = "";
-        this.length = 0;
     }
 
     public Subpath(String type)
