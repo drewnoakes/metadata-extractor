@@ -5,10 +5,12 @@ import java.util.ArrayList;
 
 /**
  * Represents a subpath created by Photoshop:
- *  Closed Bezier knot, linked
- *  Closed Bezier knot, unlinked
- *  Open Bezier knot, linked
- *  Open Bezier knot, unlinked
+ * <ul>
+ *   <li>Closed Bezier knot, linked</li>
+ *   <li>Closed Bezier knot, unlinked</li>
+ *   <li>Open Bezier knot, linked</li>
+ *   <li>Open Bezier knot, unlinked</li>
+ * </ul>
  *
  * @author Payton Garland
  */
