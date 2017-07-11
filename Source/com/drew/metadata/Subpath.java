@@ -16,19 +16,19 @@ import java.util.ArrayList;
  */
 public class Subpath
 {
-    private ArrayList<Knot> knots;
-    private String type;
+    private ArrayList<Knot> _knots;
+    private String _type;
 
     public Subpath()
     {
-        this.knots = new ArrayList<Knot>();
-        this.type = "";
+        _knots = new ArrayList<Knot>();
+        _type = "";
     }
 
     public Subpath(String type)
     {
-        this.knots = new ArrayList<Knot>();
-        this.type = type;
+        _knots = new ArrayList<Knot>();
+        _type = type;
     }
 
     /**
@@ -36,7 +36,7 @@ public class Subpath
      */
     public void insert(Knot knot)
     {
-        knots.add(knot);
+        _knots.add(knot);
     }
 
     /**
@@ -46,7 +46,7 @@ public class Subpath
      */
     public int size()
     {
-        return knots.size();
+        return _knots.size();
     }
 
     /**
@@ -56,9 +56,9 @@ public class Subpath
      */
     public Subpath copy()
     {
-        Subpath copy = new Subpath(type);
-        for (int i = 0; i < knots.size(); i++) {
-            copy.insert(knots.get(i));
+        Subpath copy = new Subpath(_type);
+        for (int i = 0; i < _knots.size(); i++) {
+            copy.insert(_knots.get(i));
         }
         return copy;
     }
@@ -66,12 +66,12 @@ public class Subpath
     @Override
     public String toString()
     {
-        String description = type + "(" + knots.size() + " knots): ";
-        for (int i = 0; i < knots.size(); i++) {
-            description += knots.get(i).getType() + "[ ";
-            description += "(" + knots.get(i).getPoint(0) + ", " + knots.get(i).getPoint(1) + ")(";
-            description += "(" + knots.get(i).getPoint(2) + ", " + knots.get(i).getPoint(3) + ")(";
-            description += "(" + knots.get(i).getPoint(4) + ", " + knots.get(i).getPoint(5) + ") ]";
+        String description = _type + "(" + _knots.size() + " knots): ";
+        for (int i = 0; i < _knots.size(); i++) {
+            description += _knots.get(i).getType() + "[ ";
+            description += "(" + _knots.get(i).getPoint(0) + ", " + _knots.get(i).getPoint(1) + ")(";
+            description += "(" + _knots.get(i).getPoint(2) + ", " + _knots.get(i).getPoint(3) + ")(";
+            description += "(" + _knots.get(i).getPoint(4) + ", " + _knots.get(i).getPoint(5) + ") ]";
             description += " ";
         }
         return description;
