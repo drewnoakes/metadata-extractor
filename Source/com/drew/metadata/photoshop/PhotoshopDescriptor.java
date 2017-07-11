@@ -453,8 +453,8 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 paths.add(oSubpath.copy());
 
             // Format subpaths for display
-            for (int j = 0; j < paths.size(); j++) {
-                subpaths += paths.get(j).toString() + "\n               ";
+            for (Subpath path : paths) {
+                subpaths += path.toString() + "\n               ";
             }
 
             // Extract name (previously appended to end of byte array)
