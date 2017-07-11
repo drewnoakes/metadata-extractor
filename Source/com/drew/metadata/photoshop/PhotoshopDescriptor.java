@@ -21,6 +21,7 @@
 package com.drew.metadata.photoshop;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -455,16 +456,13 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 paths.add(oSubpath.copy());
 
             // Extract name (previously appended to end of byte array)
-            int nameLength = reader.getByte((int)reader.getLength() - 1) + 1;
-            StringBuilder name = new StringBuilder();
-            for (int i = (int)reader.getLength() - nameLength; i < reader.getLength() - 1; i++) {
-                name.append((char)reader.getByte(i));
-            }
+            int nameLength = reader.getByte((int)reader.getLength() - 1);
+            String name = reader.getString((int)reader.getLength() - nameLength - 1, nameLength, Charsets.ASCII);
 
             // Build description
             StringBuilder str = new StringBuilder();
 
-            str.append('"').append(name.toString()).append('"')
+            str.append('"').append(name).append('"')
                 .append(" having ");
 
             if (fillRecord != null)
