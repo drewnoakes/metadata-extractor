@@ -460,9 +460,9 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
 
             // Format subpaths for display
             StringBuilder subpaths = new StringBuilder();
-            subpaths.append(name.toString()).append(" - Subpaths(").append(paths.size()).append("): \n               ");
+            subpaths.append(name.toString()).append(" - ").append(paths.size()).append(paths.size() == 1 ? " subpath:" : " subpaths:");
             for (Subpath path : paths) {
-                subpaths.append(path.toString()).append("\n               ");
+                subpaths.append("\n- ").append(path.toString());
             }
 
             subpaths.append("Initial fill rule record: ").append(fillRecord);
