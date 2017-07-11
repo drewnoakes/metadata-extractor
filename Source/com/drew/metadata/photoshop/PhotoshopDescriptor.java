@@ -361,7 +361,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             Knot knot;
 
             ArrayList<Subpath> paths = new ArrayList<Subpath>();
-            String subpaths = "";
 
             // Loop through each path resource block segment (26-bytes)
             for (int i = 0; i < length; i++) {
@@ -452,11 +451,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             if (oSubpath.size() != 0)
                 paths.add(oSubpath.copy());
 
-            // Format subpaths for display
-            for (Subpath path : paths) {
-                subpaths += path.toString() + "\n               ";
-            }
-
             // Extract name (previously appended to end of byte array)
             int nameLength = reader.getByte((int)reader.getLength() - 1) + 1;
             StringBuilder name = new StringBuilder();
@@ -464,7 +458,16 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 name.append((char)reader.getByte(i));
             }
 
-            return name.toString() + " - Subpaths(" + paths.size() + "): \n               " + subpaths + "Initial fill rule record: " + fillRecord + "";
+            // Format subpaths for display
+            StringBuilder subpaths = new StringBuilder();
+            subpaths.append(name.toString()).append(" - Subpaths(").append(paths.size()).append("): \n               ");
+            for (Subpath path : paths) {
+                subpaths.append(path.toString()).append("\n               ");
+            }
+
+            subpaths.append("Initial fill rule record: ").append(fillRecord);
+
+            return subpaths.toString();
         } catch (Exception e) {
             return null;
         }
