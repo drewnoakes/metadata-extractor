@@ -55,8 +55,8 @@ public class Subpath
     public Subpath copy()
     {
         Subpath copy = new Subpath(_type);
-        for (int i = 0; i < _knots.size(); i++) {
-            copy.insert(_knots.get(i));
+        for (Knot knot : _knots) {
+            copy.insert(knot);
         }
         return copy;
     }
@@ -65,11 +65,11 @@ public class Subpath
     public String toString()
     {
         String description = _type + "(" + _knots.size() + " knots): ";
-        for (int i = 0; i < _knots.size(); i++) {
-            description += _knots.get(i).getType() + "[ ";
-            description += "(" + _knots.get(i).getPoint(0) + ", " + _knots.get(i).getPoint(1) + ")(";
-            description += "(" + _knots.get(i).getPoint(2) + ", " + _knots.get(i).getPoint(3) + ")(";
-            description += "(" + _knots.get(i).getPoint(4) + ", " + _knots.get(i).getPoint(5) + ") ]";
+        for (Knot knot : _knots) {
+            description += knot.getType() + "[ ";
+            description += "(" + knot.getPoint(0) + ", " + knot.getPoint(1) + ")(";
+            description += "(" + knot.getPoint(2) + ", " + knot.getPoint(3) + ")(";
+            description += "(" + knot.getPoint(4) + ", " + knot.getPoint(5) + ") ]";
             description += " ";
         }
         return description;
