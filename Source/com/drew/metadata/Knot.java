@@ -3,8 +3,11 @@ package com.drew.metadata;
 
 /**
  * Represents a knot created by Photoshop:
- *  Linked knot
- *  Unlinked knot
+ *
+ * <ul>
+ *   <li>Linked knot</li>
+ *   <li>Unlinked knot</li>
+ * </ul>
  *
  * @author Payton Garland
  */
