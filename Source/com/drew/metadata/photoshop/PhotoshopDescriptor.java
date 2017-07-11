@@ -351,7 +351,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             RandomAccessReader reader = new ByteArrayReader(bytes);
             int length = (int) (reader.getLength() - reader.getByte((int)reader.getLength() - 1) - 1) / 26;
 
-            String fillRecord = "";
+            String fillRecord = null;
 
             // Possible subpaths
             Subpath cSubpath = new Subpath();
@@ -461,16 +461,29 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 name.append((char)reader.getByte(i));
             }
 
-            // Format subpaths for display
-            StringBuilder subpaths = new StringBuilder();
-            subpaths.append(name.toString()).append(" - ").append(paths.size()).append(paths.size() == 1 ? " subpath:" : " subpaths:");
+            // Build description
+            StringBuilder str = new StringBuilder();
+
+            str.append('"').append(name.toString()).append('"')
+                .append(" having ");
+
+            if (fillRecord != null)
+                str.append("initial fill rule \"").append(fillRecord).append("\" and ");
+
+            str.append(paths.size()).append(paths.size() == 1 ? " subpath:" : " subpaths:");
+
             for (Subpath path : paths) {
-                subpaths.append("\n- ").append(path.toString());
+                str.append("\n- ").append(path.getType()).append(" with ").append(paths.size()).append(paths.size() == 1 ? " knot:" : " knots:");
+
+                for (Knot knot : path.getKnots()) {
+                    str.append("\n  - ").append(knot.getType());
+                    str.append(" (").append(knot.getPoint(0)).append(",").append(knot.getPoint(1)).append(")");
+                    str.append(" (").append(knot.getPoint(2)).append(",").append(knot.getPoint(3)).append(")");
+                    str.append(" (").append(knot.getPoint(4)).append(",").append(knot.getPoint(5)).append(")");
+                }
             }
 
-            subpaths.append("Initial fill rule record: ").append(fillRecord);
-
-            return subpaths.toString();
+            return str.toString();
         } catch (Exception e) {
             return null;
         }

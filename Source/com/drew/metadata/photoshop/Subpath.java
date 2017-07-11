@@ -1,6 +1,5 @@
 package com.drew.metadata.photoshop;
 
-
 import java.util.ArrayList;
 
 /**
@@ -47,6 +46,16 @@ public class Subpath
         return _knots.size();
     }
 
+    public Iterable<Knot> getKnots()
+    {
+        return _knots;
+    }
+
+    public String getType()
+    {
+        return _type;
+    }
+
     /**
      * Create a copy of this Subpath
      *
@@ -59,23 +68,5 @@ public class Subpath
             copy.add(knot);
         }
         return copy;
-    }
-
-    @Override
-    public String toString()
-    {
-        StringBuilder description = new StringBuilder();
-
-        description.append(_type).append("(").append(_knots.size()).append(" knots):");
-
-        for (Knot knot : _knots) {
-            description.append(" ");
-            description.append(knot.getType()).append("[ ");
-            description.append("(").append(knot.getPoint(0)).append(", ").append(knot.getPoint(1)).append(") ");
-            description.append("(").append(knot.getPoint(2)).append(", ").append(knot.getPoint(3)).append(") ");
-            description.append("(").append(knot.getPoint(4)).append(", ").append(knot.getPoint(5)).append(") ]");
-        }
-
-        return description.toString();
     }
 }
