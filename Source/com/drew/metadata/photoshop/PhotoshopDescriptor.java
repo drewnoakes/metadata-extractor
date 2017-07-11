@@ -77,7 +77,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             case TAG_PIXEL_ASPECT_RATIO:
                 return getPixelAspectRatioString();
             case TAG_CLIPPING_PATH_NAME:
-                return getClippingpathNameString(tagType);
+                return getClippingPathNameString(tagType);
             default:
                 if (tagType >= 0x07D0 && tagType <= 0x0BB6)
                     return getPathString(tagType);
@@ -327,7 +327,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
     }
 
     @Nullable
-    public String getClippingpathNameString(int tagType)
+    public String getClippingPathNameString(int tagType)
     {
         try {
             byte[] bytes = _directory.getByteArray(tagType);
