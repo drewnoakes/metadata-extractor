@@ -16,7 +16,6 @@ import java.util.ArrayList;
  */
 public class Subpath
 {
-
     private ArrayList<Knot> knots;
     private String type;
 
@@ -35,7 +34,8 @@ public class Subpath
     /**
      * Insert a knot (set of 3 points) into the list
      */
-    public void insert(Knot knot) {
+    public void insert(Knot knot)
+    {
         knots.add(knot);
     }
 
@@ -44,7 +44,10 @@ public class Subpath
      *
      * @return size of knots ArrayList
      */
-    public int size() { return knots.size(); }
+    public int size()
+    {
+        return knots.size();
+    }
 
     /**
      * Create a copy of this Subpath
@@ -73,8 +76,4 @@ public class Subpath
         }
         return description;
     }
-
 }
-
-
-
