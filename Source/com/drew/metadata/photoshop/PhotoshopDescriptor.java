@@ -411,7 +411,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         for (int j = 0; j < 6; j++) {
                             knot.setPoint(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
                         }
-                        cSubpath.insert(knot);
+                        cSubpath.add(knot);
                         pos += 6;
                         break;
                     case 3:
@@ -434,7 +434,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         for (int j = 0; j < 6; j++) {
                             knot.setPoint(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
                         }
-                        oSubpath.insert(knot);
+                        oSubpath.add(knot);
                         pos += 6;
                         break;
                     case 6:

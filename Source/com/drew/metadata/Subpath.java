@@ -30,9 +30,9 @@ public class Subpath
     }
 
     /**
-     * Insert a knot (set of 3 points) into the list
+     * Appends a knot (set of 3 points) into the list
      */
-    public void insert(Knot knot)
+    public void add(Knot knot)
     {
         _knots.add(knot);
     }
@@ -56,7 +56,7 @@ public class Subpath
     {
         Subpath copy = new Subpath(_type);
         for (Knot knot : _knots) {
-            copy.insert(knot);
+            copy.add(knot);
         }
         return copy;
     }
