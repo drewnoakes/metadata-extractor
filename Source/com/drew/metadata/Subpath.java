@@ -70,8 +70,8 @@ public class Subpath
 
         for (Knot knot : _knots) {
             description.append(knot.getType()).append("[ ");
-            description.append("(").append(knot.getPoint(0)).append(", ").append(knot.getPoint(1)).append(")(");
-            description.append("(").append(knot.getPoint(2)).append(", ").append(knot.getPoint(3)).append(")(");
+            description.append("(").append(knot.getPoint(0)).append(", ").append(knot.getPoint(1)).append(") ");
+            description.append("(").append(knot.getPoint(2)).append(", ").append(knot.getPoint(3)).append(") ");
             description.append("(").append(knot.getPoint(4)).append(", ").append(knot.getPoint(5)).append(") ]");
             description.append(" ");
         }
