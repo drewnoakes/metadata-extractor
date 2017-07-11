@@ -352,7 +352,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             int length = (int) (reader.getLength() - reader.getByte((int)reader.getLength() - 1) - 1) / 26;
 
             String fillRecord = "";
-            byte[] clipboardRecord = new byte[24];
 
             // Possible subpaths
             Subpath cSubpath = new Subpath();
@@ -362,7 +361,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             Knot knot;
 
             ArrayList<Subpath> paths = new ArrayList<Subpath>();
-            int pos = 0;
             String subpaths = "";
 
             // Loop through each path resource block segment (26-bytes)
@@ -393,7 +391,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         if (cSubpath.size() != 0) {
                             paths.add(cSubpath.copy());
                         }
-                        pos = 0;
 
                         // Make path size accordingly
                         cSubpath = new Subpath("Closed Subpath");
@@ -409,14 +406,12 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                             knot.setPoint(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
                         }
                         cSubpath.add(knot);
-                        pos += 6;
                         break;
                     case 3:
                         // Insert previous Paths if there are any
                         if (oSubpath.size() != 0) {
                             paths.add(oSubpath.copy());
                         }
-                        pos = 0;
 
                         // Make path size accordingly
                         oSubpath = new Subpath("Open Subpath");
@@ -432,7 +427,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                             knot.setPoint(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
                         }
                         oSubpath.add(knot);
-                        pos += 6;
                         break;
                     case 6:
                         break;
