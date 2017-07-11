@@ -445,7 +445,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         else
                             fillRecord = "without all pixels";
                         break;
-                    default:
                 }
             }
 
