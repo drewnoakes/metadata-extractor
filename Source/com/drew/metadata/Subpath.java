@@ -16,18 +16,16 @@ import java.util.ArrayList;
  */
 public class Subpath
 {
-    private ArrayList<Knot> _knots;
-    private String _type;
+    private final ArrayList<Knot> _knots = new ArrayList<Knot>();
+    private final String _type;
 
     public Subpath()
     {
-        _knots = new ArrayList<Knot>();
-        _type = "";
+        this("");
     }
 
     public Subpath(String type)
     {
-        _knots = new ArrayList<Knot>();
         _type = type;
     }
 
