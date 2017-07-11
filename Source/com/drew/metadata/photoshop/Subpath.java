@@ -1,4 +1,4 @@
-package com.drew.metadata;
+package com.drew.metadata.photoshop;
 
 
 import java.util.ArrayList;

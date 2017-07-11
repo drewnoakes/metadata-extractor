@@ -24,9 +24,7 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.Subpath;
 import com.drew.metadata.TagDescriptor;
-import com.drew.metadata.Knot;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
