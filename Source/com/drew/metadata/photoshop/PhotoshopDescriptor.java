@@ -409,7 +409,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                             knot = new Knot("Unlinked");
                         // Insert each point into cSubpath - points are 32-bit signed, fixed point numbers and have 8-bits before the point
                         for (int j = 0; j < 6; j++) {
-                            knot.insert(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
+                            knot.setPoint(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
                         }
                         cSubpath.insert(knot);
                         pos += 6;
@@ -432,7 +432,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                             knot = new Knot("Unlinked");
                         // Insert each point into oSubpath - points are 32-bit signed, fixed point numbers and have 8-bits before the point
                         for (int j = 0; j < 6; j++) {
-                            knot.insert(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
+                            knot.setPoint(j, reader.getInt8((j * 4) + 2 + recordSpacer) + (reader.getInt24((j * 4) + 3 + recordSpacer) / Math.pow(2.0, 24.0)));
                         }
                         oSubpath.insert(knot);
                         pos += 6;

@@ -28,7 +28,7 @@ public class Knot
      * @param index location of point to be added in points
      * @param point coordinate value to be added to points
      */
-    public void insert(int index, double point)
+    public void setPoint(int index, double point)
     {
         _points[index] = point;
     }
