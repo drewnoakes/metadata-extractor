@@ -55,18 +55,4 @@ public class Subpath
     {
         return _type;
     }
-
-    /**
-     * Create a copy of this Subpath
-     *
-     * @return a new, duplicate Subpath
-     */
-    public Subpath copy()
-    {
-        Subpath copy = new Subpath(_type);
-        for (Knot knot : _knots) {
-            copy.add(knot);
-        }
-        return copy;
-    }
 }

@@ -386,7 +386,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                     case 0:
                         // Insert previous Paths if there are any
                         if (cSubpath.size() != 0) {
-                            paths.add(cSubpath.copy());
+                            paths.add(cSubpath);
                         }
 
                         // Make path size accordingly
@@ -410,7 +410,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                     case 3:
                         // Insert previous Paths if there are any
                         if (oSubpath.size() != 0) {
-                            paths.add(oSubpath.copy());
+                            paths.add(oSubpath);
                         }
 
                         // Make path size accordingly
@@ -451,9 +451,9 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
 
             // Add any more paths that were not added already
             if (cSubpath.size() != 0)
-                paths.add(cSubpath.copy());
+                paths.add(cSubpath);
             if (oSubpath.size() != 0)
-                paths.add(oSubpath.copy());
+                paths.add(oSubpath);
 
             // Extract name (previously appended to end of byte array)
             int nameLength = reader.getByte((int)reader.getLength() - 1);
