@@ -357,9 +357,6 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             Subpath cSubpath = new Subpath();
             Subpath oSubpath = new Subpath();
 
-            // Knot used to temporarily hold all knots along with knot types
-            Knot knot;
-
             ArrayList<Subpath> paths = new ArrayList<Subpath>();
 
             // Loop through each path resource block segment (26-bytes)
@@ -396,6 +393,8 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         break;
                     case 1:
                     case 2:
+                    {
+                        Knot knot;
                         if (selector == 1)
                             knot = new Knot("Linked");
                         else
@@ -406,6 +405,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         }
                         cSubpath.add(knot);
                         break;
+                    }
                     case 3:
                         // Insert previous Paths if there are any
                         if (oSubpath.size() != 0) {
@@ -417,6 +417,8 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         break;
                     case 4:
                     case 5:
+                    {
+                        Knot knot;
                         if (selector == 4)
                             knot = new Knot("Linked");
                         else
@@ -427,6 +429,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                         }
                         oSubpath.add(knot);
                         break;
+                    }
                     case 6:
                         break;
                     case 7:
