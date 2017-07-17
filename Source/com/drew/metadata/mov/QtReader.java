@@ -18,6 +18,7 @@ public class QtReader {
     private QtContainerHandler qtContainerHandler;
     private QtAtomHandler qtAtomHandler;
     private QtAtomTree qtAtomTree;
+    private int depth;
 
     public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
     {
@@ -30,6 +31,7 @@ public class QtReader {
         metadata.addDirectory(directory);
         reader.setMotorolaByteOrder(true);
 
+        depth = 0;
         processAtoms(reader, reader.getLength(), directory, 0);
     }
 
@@ -43,14 +45,23 @@ public class QtReader {
                 pos += 4;
                 if (qtContainerHandler.shouldAcceptContainer(fourCC)) {
                     pos += qtContainerHandler.processContainer(fourCC, size, reader, pos);
+                    for (int i = 0; i < depth; i++) {
+                        System.out.print("  ");
+                    }
+                    System.out.println(fourCC);
+                    depth++;
                     processAtoms(reader, size, directory, pos);
+                    depth--;
                 } else if (qtAtomHandler.shouldAcceptAtom(fourCC)){
+                    for (int i = 0; i < depth; i++) {
+                        System.out.print("  ");
+                    }
+                    System.out.println(fourCC);
                     qtAtomHandler.processAtom(fourCC, reader.getBytes(pos, (int)size - 8), directory);
                     pos += size - 8;
                 } else {
                     pos += size - 8;
                 }
-                System.out.println(fourCC);
             }
         } catch (IOException e) {
             e.printStackTrace();
