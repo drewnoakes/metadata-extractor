@@ -25,6 +25,7 @@ public class QtContainerTypes
         _containerList.add(ATOM_TRAK_MDIA);
         _containerList.add(ATOM_MDIA_MINF);
         _containerList.add(ATOM_MINF_STBL);
+        _containerList.add(ATOM_MOVIE_META);
     }
 
     public static boolean isContainer(String fourCC)

@@ -1,17 +1,10 @@
 package com.drew.metadata.mov;
 
 import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.MetadataException;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Payton Garland
@@ -123,11 +116,15 @@ public class QtAtomHandler
         String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
         directory.setString(QtDirectory.TAG_DURATION, time);
 
-        System.out.println(creationTime);
-        System.out.println(modificationTime);
+//        ZonedDateTime epoch = ZonedDateTime.of(1904, 1, 1, 0, 0, 0 ,0, ZoneId.of("UTC"));
+//        epoch = epoch.plusSeconds(creationTime);
+//        System.out.println(epoch);
 
-        directory.setDate(QtDirectory.TAG_CREATION_TIMESTAMP, new Date(creationTime));
-        directory.setDate(QtDirectory.TAG_MODIFICATION_TIMESTAMP, new Date(modificationTime));
+//        System.out.println(creationTime);
+//        System.out.println(modificationTime);
+//
+//        directory.setDate(QtDirectory.TAG_CREATION_TIMESTAMP, new Date(creationTime));
+//        directory.setDate(QtDirectory.TAG_MODIFICATION_TIMESTAMP, new Date(modificationTime));
 
     }
 }
