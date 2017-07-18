@@ -20,34 +20,62 @@
  */
 package com.drew.imaging;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 /**
  * Enumeration of supported image file formats.
+ *
+ * MIME Type Source: https://www.freeformatter.com/mime-types-list.html
+ *                   https://www.iana.org/assignments/media-types/media-types.xhtml
  */
 public enum FileType
 {
-    Unknown,
-    Jpeg,
-    Tiff,
-    Psd,
-    Png,
-    Bmp,
-    Gif,
-    Ico,
-    Pcx,
-    Riff,
+    Unknown("Unknown", null),
+    Jpeg("Jpeg", "image/jpeg"),
+    Tiff("Tiff", "image/tiff"),
+    Psd("Psd", "image/vnd.adobe.photoshop"),
+    Png("Png", "image/png"),
+    Bmp("Bmp", "image/bmp"),
+    Gif("Gif", "image/gif"),
+    Ico("Ico", "image/x-icon"),
+    Pcx("Pcx", "image/x-pcx"),
+    Riff("Riff", null),
 
     /** Sony camera raw. */
-    Arw,
+    Arw("Arw", null),
     /** Canon camera raw, version 1. */
-    Crw,
+    Crw("Crw", null),
     /** Canon camera raw, version 2. */
-    Cr2,
+    Cr2("Cr2", null),
     /** Nikon camera raw. */
-    Nef,
+    Nef("Nef", null),
     /** Olympus camera raw. */
-    Orf,
+    Orf("Orf", null),
     /** FujiFilm camera raw. */
-    Raf,
+    Raf("Raf", null),
     /** Panasonic camera raw. */
-    Rw2
+    Rw2("Rw2", null);
+
+    private final String _name;
+
+    private final String _mimeType;
+
+    FileType(String name, String mimeType)
+    {
+        _name = name;
+        _mimeType = mimeType;
+    }
+
+    @NotNull
+    public String getName()
+    {
+        return _name;
+    }
+
+    @Nullable
+    public String getMimeType()
+    {
+        return _mimeType;
+    }
 }
