@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StreamReader;
 import com.drew.metadata.Directory;
@@ -64,6 +65,8 @@ public class QtReader {
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ImageProcessingException e) {
             e.printStackTrace();
         }
     }

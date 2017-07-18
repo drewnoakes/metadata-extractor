@@ -1,10 +1,13 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.MetadataException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Payton Garland
@@ -16,7 +19,7 @@ public class QtAtomHandler
         return QtAtomTypes._atomList.contains(fourCC);
     }
 
-    public void processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException {
+    public void processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException, ImageProcessingException {
         ByteArrayReader reader = new ByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
             processMovieHeader(directory, reader);
@@ -26,26 +29,56 @@ public class QtAtomHandler
         } else if (fourCC.equals(QtAtomTypes.ATOM_VIDEO_INFO)) {
             processVideoInfo(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
-            int numberOfEntries = reader.getInt32(4);
-            int numberOfSamples = reader.getInt32(8);
-            int sampleDuration = reader.getInt32(12);
+            processTimeToSample(directory, reader);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
+            processFileType(payload, reader);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_PREVIEW)) {
+            processPreview(reader);
+        }
+    }
 
-            double timeScale = 0;
+    private void processPreview(ByteArrayReader reader) throws IOException, ImageProcessingException {
+        long modificationDate = reader.getInt32(8);
+        int versionNumber = reader.getInt16(12);
+        if (versionNumber != 0) {
+            throw new ImageProcessingException("Version number should be 0, corrupt file");
+        }
+        String atomType = new String(reader.getBytes(14, 4));
+        int atomIndex = reader.getInt16(18);
+    }
 
-            try {
-                int mediaTimeScale = directory.getInt(QtDirectory.TAG_MEDIA_TIME_SCALE);
+    private void processFileType(@NotNull byte[] payload, ByteArrayReader reader) throws IOException, ImageProcessingException {
+        String majorBrand = new String(reader.getBytes(8, 4));
+        List<String> compatibleBrands = new ArrayList<String>();
+        int brandsCount = (payload.length - 8) / 4;
+        for (int i = 8; i < (brandsCount * 4) + 8; i += 4) {
+            compatibleBrands.add(new String(reader.getBytes(i, 4)));
+        }
+        if (!compatibleBrands.contains("qt  ")) {
+            throw new ImageProcessingException("Not a QuickTime movie file");
+        }
+    }
 
-                if (mediaTimeScale != 0) {
-                    timeScale = mediaTimeScale;
-                }
+    private void processTimeToSample(@NotNull QtDirectory directory, ByteArrayReader reader) throws IOException {
+        int numberOfEntries = reader.getInt32(4);
+        int numberOfSamples = reader.getInt32(8);
+        int sampleDuration = reader.getInt32(12);
 
-                if (sampleDuration != 0) {
-                    double frameRate = timeScale / sampleDuration;
-                    directory.setDouble(QtDirectory.TAG_FRAME_RATE, frameRate);
-                }
-            } catch (MetadataException e) {
-                e.printStackTrace();
+        double timeScale = 0;
+
+        try {
+            int mediaTimeScale = directory.getInt(QtDirectory.TAG_MEDIA_TIME_SCALE);
+
+            if (mediaTimeScale != 0) {
+                timeScale = mediaTimeScale;
             }
+
+            if (sampleDuration != 0) {
+                double frameRate = timeScale / sampleDuration;
+                directory.setDouble(QtDirectory.TAG_FRAME_RATE, frameRate);
+            }
+        } catch (MetadataException e) {
+            e.printStackTrace();
         }
     }
 
