@@ -20,10 +20,14 @@
  */
 package com.drew.metadata.file;
 
+import com.drew.imaging.FileType;
+import com.drew.imaging.FileTypeDetector;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -39,10 +43,17 @@ public class FileMetadataReader
             throw new IOException("File is not readable");
 
         FileMetadataDirectory directory = new FileMetadataDirectory();
+        FileInputStream inputStream = new FileInputStream(file);
+        FileType fileType = FileTypeDetector.detectFileType(new BufferedInputStream(inputStream));
+        inputStream.close();
 
         directory.setString(FileMetadataDirectory.TAG_FILE_NAME, file.getName());
         directory.setLong(FileMetadataDirectory.TAG_FILE_SIZE, file.length());
         directory.setDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
+        directory.setString(FileMetadataDirectory.TAG_FILE_TYPE, fileType.getName());
+        if (fileType.getMimeType() != null) {
+            directory.setString(FileMetadataDirectory.TAG_FILE_MIME_TYPE, fileType.getMimeType());
+        }
 
         metadata.addDirectory(directory);
     }
