@@ -25,10 +25,7 @@ import com.drew.imaging.FileTypeDetector;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 
 public class FileMetadataReader
@@ -42,14 +39,22 @@ public class FileMetadataReader
         if (!file.canRead())
             throw new IOException("File is not readable");
 
-        FileMetadataDirectory directory = new FileMetadataDirectory();
-        FileInputStream inputStream = new FileInputStream(file);
-        FileType fileType = FileTypeDetector.detectFileType(new BufferedInputStream(inputStream));
-        inputStream.close();
+        FileMetadataDirectory directory = metadata.getFirstDirectoryOfType(FileMetadataDirectory.class);
+
+        if (directory == null) {
+            directory = new FileMetadataDirectory();
+            metadata.addDirectory(directory);
+        }
 
         directory.setString(FileMetadataDirectory.TAG_FILE_NAME, file.getName());
         directory.setLong(FileMetadataDirectory.TAG_FILE_SIZE, file.length());
         directory.setDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
+    }
+
+    public void read(@NotNull Metadata metadata, @NotNull FileType fileType) throws IOException
+    {
+        FileMetadataDirectory directory = new FileMetadataDirectory();
+
         directory.setString(FileMetadataDirectory.TAG_FILE_TYPE, fileType.getName());
         if (fileType.getMimeType() != null) {
             directory.setString(FileMetadataDirectory.TAG_FILE_MIME_TYPE, fileType.getMimeType());
