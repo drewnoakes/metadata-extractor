@@ -40,11 +40,20 @@ public class QtDirectory extends Directory {
     public static final int TAG_SAMPLE_SIZE = 0x0303;
     public static final int TAG_SAMPLE_RATE = 0x0304;
 
+    // Video Media Information Header Atom
+    public static final int TAG_GRAPHICS_MODE = 0x0311;
+    public static final int TAG_OPCOLOR = 0x0312;
+
+    public static final int TAG_MAJOR_BRAND = 0x0001;
+    public static final int TAG_COMPATIBLE_BRANDS = 0x0003;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
+        _tagNameMap.put(TAG_MAJOR_BRAND, "Major Brand");
+        _tagNameMap.put(TAG_COMPATIBLE_BRANDS, "Compatible Brands");
+
         _tagNameMap.put(TAG_CREATION_TIME, "Creation Time");
         _tagNameMap.put(TAG_MODIFICATION_TIME, "Modification Time");
         _tagNameMap.put(TAG_TIME_SCALE, "Time Scale");
@@ -74,6 +83,9 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_NUMBER_OF_CHANNELS, "Number of Channels");
         _tagNameMap.put(TAG_SAMPLE_SIZE, "Sample Size");
         _tagNameMap.put(TAG_SAMPLE_RATE, "Sample Rate");
+
+        _tagNameMap.put(TAG_GRAPHICS_MODE, "Graphics Mode");
+        _tagNameMap.put(TAG_OPCOLOR, "Opcolor");
     }
 
     public QtDirectory()
