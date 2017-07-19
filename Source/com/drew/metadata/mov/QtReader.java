@@ -8,6 +8,8 @@ import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.DataFormatException;
@@ -19,7 +21,11 @@ public class QtReader {
     private QtContainerHandler qtContainerHandler;
     private QtAtomHandler qtAtomHandler;
     private QtAtomTree qtAtomTree;
-    private int depth;
+
+    private QtContainerAtom current;
+    private boolean shouldContain;
+
+    public ArrayList<QtContainerAtom> atomsToHandle = new ArrayList<QtContainerAtom>();
 
     public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
     {
@@ -31,9 +37,10 @@ public class QtReader {
         this.qtAtomTree = new QtAtomTree();
         metadata.addDirectory(directory);
         reader.setMotorolaByteOrder(true);
+        shouldContain = false;
 
-        depth = 0;
         processAtoms(reader, reader.getLength(), directory, 0);
+        System.out.println("here");
     }
 
     public void processAtoms(RandomAccessStreamReader reader, long atomSize, QtDirectory directory, int pos)
@@ -46,19 +53,25 @@ public class QtReader {
                 pos += 4;
                 if (qtContainerHandler.shouldAcceptContainer(fourCC)) {
                     pos += qtContainerHandler.processContainer(fourCC, size, reader, pos);
-                    for (int i = 0; i < depth; i++) {
-                        System.out.print("  ");
+                    if (true) {
+                        shouldContain = true;
+                        current = new QtContainerAtom(size, fourCC);
+                        processAtoms(reader, size + pos, directory, pos);
+                        atomsToHandle.add(current);
+                        current = null;
+                        shouldContain = false;
+                    } else {
+                        if (shouldContain == true) {
+                            current.addContainer(new QtContainerAtom(size, fourCC));
+                        }
+                        processAtoms(reader, size + pos, directory, pos);
                     }
-                    System.out.println(fourCC);
-                    depth++;
-                    processAtoms(reader, size, directory, pos);
-                    depth--;
                 } else if (qtAtomHandler.shouldAcceptAtom(fourCC)){
-                    for (int i = 0; i < depth; i++) {
-                        System.out.print("  ");
+                    byte[] payload = reader.getBytes(pos, (int)size - 8);
+                    if (shouldContain == true) {
+                        current.addLeaf(new QtAtom(size, fourCC, payload));
                     }
-                    System.out.println(fourCC);
-                    qtAtomHandler.processAtom(fourCC, reader.getBytes(pos, (int)size - 8), directory);
+                    qtAtomHandler.processAtom(fourCC, payload, directory);
                     pos += size - 8;
                 } else {
                     pos += size - 8;

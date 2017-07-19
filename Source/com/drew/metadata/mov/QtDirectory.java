@@ -20,6 +20,7 @@ public class QtDirectory extends Directory {
     public static final int TAG_SAMPLE_RATE                       = 11;
     public static final int TAG_AUDIO_CODEC                       = 12;
     public static final int TAG_GRAPHICS_MODE                     = 13;
+    public static final int TAG_SOUND_BALANCE                     = 14;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -38,6 +39,7 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_SAMPLE_RATE, "Sample Rate");
         _tagNameMap.put(TAG_AUDIO_CODEC, "Audio Codec");
         _tagNameMap.put(TAG_GRAPHICS_MODE, "Graphics Mode");
+        _tagNameMap.put(TAG_SOUND_BALANCE, "Sound Balance");
 
     }
 

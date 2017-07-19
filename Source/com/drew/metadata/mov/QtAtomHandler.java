@@ -26,8 +26,15 @@ public class QtAtomHandler
         } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
             int mediaTimescale = reader.getInt32(12);
             directory.setInt(QtDirectory.TAG_MEDIA_TIME_SCALE, mediaTimescale);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_VIDEO_INFO)) {
-            processVideoInfo(directory, reader);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_VIDEO_MEDIA_HEADER)) {
+            processVideoMediaHeader(directory, reader);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_SOUND_MEDIA_HEADER)) {
+            if (payload.length == 8) {
+                int balance = reader.getInt16(4);
+                double integerPortion = balance & 0xFFFF0000;
+                double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
+                directory.setDouble(QtDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
+            }
         } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
             processTimeToSample(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
@@ -82,7 +89,7 @@ public class QtAtomHandler
         }
     }
 
-    private void processVideoInfo(@NotNull QtDirectory directory, ByteArrayReader reader) throws IOException {
+    private void processVideoMediaHeader(@NotNull QtDirectory directory, ByteArrayReader reader) throws IOException {
         int version = reader.getByte(0);
         int flags = reader.getInt24(1);
         int graphicsMode = reader.getInt16(4);
@@ -148,16 +155,6 @@ public class QtAtomHandler
         Integer seconds = (int)Math.ceil((duration / (Math.pow(60, 0))) - (minutes * 60));
         String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
         directory.setString(QtDirectory.TAG_DURATION, time);
-
-//        ZonedDateTime epoch = ZonedDateTime.of(1904, 1, 1, 0, 0, 0 ,0, ZoneId.of("UTC"));
-//        epoch = epoch.plusSeconds(creationTime);
-//        System.out.println(epoch);
-
-//        System.out.println(creationTime);
-//        System.out.println(modificationTime);
-//
-//        directory.setDate(QtDirectory.TAG_CREATION_TIMESTAMP, new Date(creationTime));
-//        directory.setDate(QtDirectory.TAG_MODIFICATION_TIMESTAMP, new Date(modificationTime));
 
     }
 }
