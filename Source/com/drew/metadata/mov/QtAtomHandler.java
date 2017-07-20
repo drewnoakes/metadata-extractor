@@ -188,13 +188,18 @@ public class QtAtomHandler
         directory.setString(QtDirectory.TAG_DURATION, time);
         directory.setInt(QtDirectory.TAG_TIME_SCALE, timeScale);
 
-        directory.setInt(QtDirectory.TAG_PREFERRED_RATE, reader.getInt32());
+        // Calculate preferred rate fixed point
+        int preferredRate = reader.getInt32();
+        double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
+        double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
+        directory.setDouble(QtDirectory.TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
 
+        // Calculate preferred volume fixed point
         int preferredVolume = reader.getInt16();
         double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
         double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
         directory.setDouble(QtDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
-        
+
         // 10-byte reserved space at index 26
         reader.skip(10);
         // 36-byte matrix structure at index 36
