@@ -53,6 +53,7 @@ public class QtUserDataTypes
     public static final String TAG_PRINT_TO_VIDEO = "ptv ";
     public static final String TAG_PLAY_SELECTION_ONLY = "SelO";
     public static final String TAG_WINDOW_LOCATION = "WLOC";
+    public static final String TAG_DESCRIPTION = "desc";
 
     public static HashMap<String, String> _userDataTypes = new HashMap<String, String>();
 
@@ -97,5 +98,6 @@ public class QtUserDataTypes
         _userDataTypes.put(TAG_SOFTWARE, "Software");
         _userDataTypes.put(TAG_WRITER_NAME, "Writer Name");
         _userDataTypes.put(TAG_PLAY_ALL_FRAMES, "Play All Frames");
+        _userDataTypes.put(TAG_DESCRIPTION, "Description");
     }
 }

@@ -38,23 +38,34 @@ public class QtReader {
     {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
-                long size = reader.getInt32() - 8;
+                long size = reader.getInt32();
                 if (size == 1) {
                     size = reader.getInt64();
+                }
+
+                if (size == 0 && history.get(history.size() - 1).equals("meta")) {
+                    // This is free space for future metadata additions
+                    size = reader.getInt32();
                 }
 
                 String fourCC = new String(reader.getBytes(4));
 
                 if (qtContainerHandler.shouldAcceptContainer(fourCC)) {
                     history.add(fourCC);
-                    processAtoms(reader, reader.getPosition() + size, directory);
+                    if (size == 0) {
+                        processAtoms(reader, -1, directory);
+                    } else {
+                        processAtoms(reader, reader.getPosition() + size - 8, directory);
+                    }
                     history.remove(history.size() - 1);
                 } else if (qtAtomHandler.shouldAcceptAtom(fourCC)) {
-                    qtAtomHandler.processAtom(fourCC, reader.getBytes((int)size), directory, history);
+                    qtAtomHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory, history);
                 } else {
-                     if (size > 0)
-                        reader.skip(size);
+                     if (size > 1)
+                        reader.skip(size - 8);
                 }
+                System.out.println(Arrays.toString(history.toArray()) + ": " + fourCC);
+
             }
         } catch (IOException e) {
             System.out.println("End of data reached");

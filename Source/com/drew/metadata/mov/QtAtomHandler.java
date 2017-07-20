@@ -35,10 +35,12 @@ public class QtAtomHandler
         } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
             processSampleDescription(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
-            if (history.get(history.size() - 1).equals(QtContainerTypes.ATOM_MEDIA)) {
-                reader.skip(8);
-                currentHandler = new String(reader.getBytes(4));
-            }
+            reader.skip(8);
+            currentHandler = new String(reader.getBytes(4));
+        } else if (QtUserDataTypes._userDataTypes.containsKey(fourCC)) {
+            directory.setString(fourCC.hashCode(), new String(reader.getBytes(payload.length - 8)));
+        } else {
+            System.out.println(fourCC);
         }
     }
 

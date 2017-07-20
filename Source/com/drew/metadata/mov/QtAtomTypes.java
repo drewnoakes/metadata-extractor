@@ -35,6 +35,9 @@ public class QtAtomTypes
         _atomList.add(ATOM_SOUND_MEDIA_INFO);
         _atomList.add(ATOM_SAMPLE_DESCRIPTION);
         _atomList.add(ATOM_HANDLER);
+        for (String s : QtUserDataTypes._userDataTypes.keySet()) {
+            _atomList.add(s);
+        }
     }
 
     public static boolean isAtom(String fourCC)
