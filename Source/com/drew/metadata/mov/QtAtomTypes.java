@@ -18,6 +18,7 @@ public class QtAtomTypes
     public static final String ATOM_VIDEO_MEDIA_INFO = "vmhd";
     public static final String ATOM_SOUND_MEDIA_INFO = "smhd";
     public static final String ATOM_HANDLER = "hdlr";
+    public static final String ATOM_KEYS = "keys";
 
     public static final String ATOM_SAMPLE_DESCRIPTION = "stsd";
 

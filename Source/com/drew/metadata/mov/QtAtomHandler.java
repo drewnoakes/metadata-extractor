@@ -3,6 +3,7 @@ package com.drew.metadata.mov;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class QtAtomHandler
             currentHandler = new String(reader.getBytes(4));
         } else if (QtUserDataTypes._userDataTypes.containsKey(fourCC)) {
             directory.setString(fourCC.hashCode(), new String(reader.getBytes(payload.length - 8)));
+        } else if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
+            System.out.println(currentHandler);
         } else {
             System.out.println(fourCC);
         }
