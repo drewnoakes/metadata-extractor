@@ -19,6 +19,7 @@ public class QtAtomTypes
     public static final String ATOM_SOUND_MEDIA_INFO = "smhd";
     public static final String ATOM_HANDLER = "hdlr";
     public static final String ATOM_KEYS = "keys";
+    public static final String ATOM_DATA = "data";
 
     public static final String ATOM_SAMPLE_DESCRIPTION = "stsd";
 
@@ -36,9 +37,8 @@ public class QtAtomTypes
         _atomList.add(ATOM_SOUND_MEDIA_INFO);
         _atomList.add(ATOM_SAMPLE_DESCRIPTION);
         _atomList.add(ATOM_HANDLER);
-        for (String s : QtUserDataTypes._userDataTypes.keySet()) {
-            _atomList.add(s);
-        }
+        _atomList.add(ATOM_KEYS);
+        _atomList.add(ATOM_DATA);
     }
 
     public static boolean isAtom(String fourCC)

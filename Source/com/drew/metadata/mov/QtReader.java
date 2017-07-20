@@ -19,7 +19,7 @@ public class QtReader {
     private QtDirectory directory;
     private QtContainerHandler qtContainerHandler;
     private QtAtomHandler qtAtomHandler;
-    private ArrayList<String> history = new ArrayList<String>();
+    public static ArrayList<String> history = new ArrayList<String>();
 
     public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
     {
@@ -50,6 +50,10 @@ public class QtReader {
 
                 String fourCC = new String(reader.getBytes(4));
 
+                if (history.size() > 0 && history.get(history.size() - 1).equals("ilst")) {
+                    QtContainerTypes._containerList.add(fourCC);
+                }
+
                 if (qtContainerHandler.shouldAcceptContainer(fourCC)) {
                     history.add(fourCC);
                     if (size == 0) {
@@ -64,6 +68,7 @@ public class QtReader {
                      if (size > 1)
                         reader.skip(size - 8);
                 }
+                System.out.println(Arrays.toString(history.toArray()) + ": " + fourCC);
             }
         } catch (IOException e) {
             System.out.println("End of data reached");

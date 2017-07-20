@@ -16,6 +16,8 @@ import java.util.List;
 public class QtAtomHandler
 {
     public String currentHandler = "";
+    public ArrayList<String> keys = new ArrayList<String>();
+    public int keyCount = 0;
 
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
@@ -38,12 +40,28 @@ public class QtAtomHandler
         } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
             reader.skip(8);
             currentHandler = new String(reader.getBytes(4));
-        } else if (QtUserDataTypes._userDataTypes.containsKey(fourCC)) {
-            directory.setString(fourCC.hashCode(), new String(reader.getBytes(payload.length - 8)));
         } else if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
+            // Version 1-byte and Flags 3-bytes
+            reader.skip(4);
+            int entryCount = reader.getInt32();
+            for (int i = 0; i < entryCount; i++) {
+                int keySize = reader.getInt32();
+                String keyNamespace = new String(reader.getBytes(4));
+                String keyValue = new String(reader.getBytes(keySize - 8));
+                keys.add(keyValue);
+            }
             System.out.println(currentHandler);
-        } else {
-            System.out.println(fourCC);
+        } else if (history.get(history.size() - 1).equals(QtContainerTypes.ATOM_METADATA_LIST)) {
+            String name = new String(reader.getBytes(4));
+            int countryIndicator = reader.getInt16();
+            int languageIndicator = reader.getInt16();
+        } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)) {
+            reader.skip(8);
+            System.out.println(currentHandler);
+            if (currentHandler.equals("mdir") && QtDirectory._tagIntegerMap.get(history.get(history.size() - 1)) != null) {
+                directory.setString(QtDirectory._tagIntegerMap.get(history.get(history.size() - 1)), new String(reader.getBytes(payload.length - 8)));
+            }
+//            directory.setString(history.get(history.size() - 1).hashCode(), new String(reader.getBytes(payload.length - 8)));
         }
     }
 

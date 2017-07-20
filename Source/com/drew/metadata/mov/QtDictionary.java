@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 public class QtDictionary
 {
-    // Convert to hashmap of hashmaps
     private static HashMap<Integer, HashMap<String, String>> _dictionary = new HashMap<Integer, HashMap<String, String>>();
 
     private static HashMap<String, String> _majorBrands = new HashMap<String, String>();
@@ -13,9 +12,9 @@ public class QtDictionary
 
     private static HashMap<String, String> _soundAudioFormats = new HashMap<String, String>();
 
-    private static HashMap<String, String> _userDataTypes = new HashMap<String, String>();
+    public static HashMap<String, String> _userDataTypes = new HashMap<String, String>();
 
-    private static HashMap<String, String> _metadataKeys = new HashMap<String, String>();
+    public static HashMap<String, String> _metadataKeys = new HashMap<String, String>();
 
     static {
         _dictionary.put(QtDirectory.TAG_MAJOR_BRAND, _majorBrands);
@@ -236,6 +235,7 @@ public class QtDictionary
         _metadataKeys.put("com.apple.quicktime.location.date", "Location Date");
         _metadataKeys.put("com.apple.quicktime.direction.facing", "Direction Facing");
         _metadataKeys.put("com.apple.quicktime.direction.motion", "Direction Motion");
+        _metadataKeys.put("com.apple.quicktime.displayname", "Display Name");
     }
 
     public static String lookup(Integer scope, String lookup)
