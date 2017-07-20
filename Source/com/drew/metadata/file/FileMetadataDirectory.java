@@ -36,6 +36,7 @@ public class FileMetadataDirectory extends Directory
     public static final int TAG_FILE_MODIFIED_DATE = 3;
     public static final int TAG_FILE_TYPE = 4;
     public static final int TAG_FILE_MIME_TYPE = 5;
+    public static final int TAG_FILE_EXTENSION = 6;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -46,6 +47,7 @@ public class FileMetadataDirectory extends Directory
         _tagNameMap.put(TAG_FILE_MODIFIED_DATE, "File Modified Date");
         _tagNameMap.put(TAG_FILE_TYPE, "File Type");
         _tagNameMap.put(TAG_FILE_MIME_TYPE, "MIME Type");
+        _tagNameMap.put(TAG_FILE_EXTENSION, "File Extensions");
     }
 
     public FileMetadataDirectory()

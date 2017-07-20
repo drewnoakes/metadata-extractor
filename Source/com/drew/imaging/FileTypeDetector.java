@@ -104,7 +104,33 @@ public class FileTypeDetector
 
         inputStream.reset();
 
+        FileType fileType = _root.find(bytes);
+
+        if (fileType.getIsContainer()) {
+            fileType = handleContainer(inputStream, fileType);
+        }
+
         //noinspection ConstantConditions
-        return _root.find(bytes);
+        return fileType;
+    }
+
+    /**
+     * Skips to identifier location for potential container file types and calls detectFileType on new inputStream
+     * location.  In the case of fileTypes without magic bytes to identify with (Zip), the fileType will be
+     * found within this method alone.
+     *
+     * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
+     */
+    @NotNull
+    public static FileType handleContainer(@NotNull final BufferedInputStream inputStream, @NotNull FileType fileType) throws IOException
+    {
+        switch (fileType) {
+            case Riff:
+                inputStream.skip(8);
+                return detectFileType(inputStream);
+            case Tiff:
+            default:
+                return fileType;
+        }
     }
 }
