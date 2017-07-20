@@ -64,8 +64,6 @@ public class QtReader {
                      if (size > 1)
                         reader.skip(size - 8);
                 }
-                System.out.println(Arrays.toString(history.toArray()) + ": " + fourCC);
-
             }
         } catch (IOException e) {
             System.out.println("End of data reached");
