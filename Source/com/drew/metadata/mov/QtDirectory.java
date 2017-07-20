@@ -40,6 +40,8 @@ public class QtDirectory extends Directory {
     public static final int TAG_SAMPLE_SIZE = 0x0303;
     public static final int TAG_SAMPLE_RATE = 0x0304;
 
+    public static final int TAG_SOUND_BALANCE = 0x0305;
+
     // Video Media Information Header Atom
     public static final int TAG_GRAPHICS_MODE = 0x0311;
     public static final int TAG_OPCOLOR = 0x0312;
@@ -85,6 +87,8 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_NUMBER_OF_CHANNELS, "Number of Channels");
         _tagNameMap.put(TAG_SAMPLE_SIZE, "Sample Size");
         _tagNameMap.put(TAG_SAMPLE_RATE, "Sample Rate");
+
+        _tagNameMap.put(TAG_SOUND_BALANCE, "Sound Balance");
 
         _tagNameMap.put(TAG_GRAPHICS_MODE, "Graphics Mode");
         _tagNameMap.put(TAG_OPCOLOR, "Opcolor");

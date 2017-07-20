@@ -6,6 +6,7 @@ import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -26,13 +27,7 @@ public class QtAtomHandler
         if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
             processMovieHeader(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_SOUND_MEDIA_INFO)) {
-            if (payload.length == 8) {
-                reader.skip(4);
-                int balance = reader.getInt16();
-                double integerPortion = balance & 0xFFFF0000;
-                double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
-//                directory.setDouble(QtDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
-            }
+            processSoundMediaInfo(directory, payload, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
             processFileType(directory, payload, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_VIDEO_MEDIA_INFO)) {
@@ -44,6 +39,16 @@ public class QtAtomHandler
                 reader.skip(8);
                 currentHandler = new String(reader.getBytes(4));
             }
+        }
+    }
+
+    private void processSoundMediaInfo(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException {
+        if (payload.length == 8) {
+            reader.skip(4);
+            int balance = reader.getInt16();
+            double integerPortion = balance & 0xFFFF0000;
+            double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
+            directory.setDouble(QtDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
         }
     }
 
@@ -119,7 +124,9 @@ public class QtAtomHandler
 
     private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException, ImageProcessingException {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(4));
+
         directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4));
+
         ArrayList<String> compatibleBrands = new ArrayList<String>();
         int brandsCount = (payload.length - 8) / 4;
         for (int i = 8; i < (brandsCount * 4) + 8; i += 4) {
