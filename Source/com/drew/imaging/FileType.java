@@ -31,51 +31,66 @@ import com.drew.lang.annotations.Nullable;
  */
 public enum FileType
 {
-    Unknown("Unknown", null),
-    Jpeg("Jpeg", "image/jpeg"),
-    Tiff("Tiff", "image/tiff"),
-    Psd("Psd", "image/vnd.adobe.photoshop"),
-    Png("Png", "image/png"),
-    Bmp("Bmp", "image/bmp"),
-    Gif("Gif", "image/gif"),
-    Ico("Ico", "image/x-icon"),
-    Pcx("Pcx", "image/x-pcx"),
-    Riff("Riff", null),
+    Unknown(null, false),
+    Jpeg("image/jpeg", false, ".jpg", ".jpeg", ".jpe"),
+    Tiff("image/tiff", true, ".tiff", ".tif"),
+    Psd("image/vnd.adobe.photoshop", false, ".psd"),
+    Png("image/png", false, ".png"),
+    Bmp("image/bmp", false, ".bmp"),
+    Gif("image/gif", false, ".gif"),
+    Ico("image/x-icon", false, ".ico"),
+    Pcx("image/x-pcx", false, ".pcx"),
+    Riff(null, true, null),
 
     /** Sony camera raw. */
-    Arw("Arw", null),
+    Arw(null, false, ".arw"),
     /** Canon camera raw, version 1. */
-    Crw("Crw", null),
+    Crw(null, false, ".crw"),
     /** Canon camera raw, version 2. */
-    Cr2("Cr2", null),
+    Cr2(null, false, ".cr2"),
     /** Nikon camera raw. */
-    Nef("Nef", null),
+    Nef(null, false, ".nef"),
     /** Olympus camera raw. */
-    Orf("Orf", null),
+    Orf(null, false, ".orf"),
     /** FujiFilm camera raw. */
-    Raf("Raf", null),
+    Raf(null, false, ".raf"),
     /** Panasonic camera raw. */
-    Rw2("Rw2", null);
-
-    private final String _name;
+    Rw2(null, false, ".rw2");
 
     private final String _mimeType;
 
-    FileType(String name, String mimeType)
+    private final boolean _isContainer;
+
+    private final String[] _extensions;
+
+    FileType(String mimeType, boolean isContainer, String... extensions)
     {
-        _name = name;
         _mimeType = mimeType;
+        _isContainer = isContainer;
+        _extensions = extensions;
     }
 
     @NotNull
     public String getName()
     {
-        return _name;
+        return this.name();
     }
 
     @Nullable
     public String getMimeType()
     {
         return _mimeType;
+    }
+
+    @NotNull
+    public boolean getIsContainer()
+    {
+        return _isContainer;
+    }
+
+    @Nullable
+    public String[] getExtension()
+    {
+        return _extensions;
     }
 }
