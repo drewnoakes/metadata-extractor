@@ -5,6 +5,7 @@ import com.drew.metadata.TagDescriptor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 public class QtDescriptor extends TagDescriptor<QtDirectory> {
 
@@ -17,15 +18,10 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
             case (QtDirectory.TAG_MAJOR_BRAND):
                 return getMajorBrandDescription(tagType);
             case (QtDirectory.TAG_COMPATIBLE_BRANDS):
-                return getCompatibleBrands(tagType);
+                return getCompatibleBrandsDescription(tagType);
             default:
                 return _directory.getString(tagType);
         }
-    }
-
-    public String getQtTimeToSampleDescription(int tagType)
-    {
-        return null;
     }
 
     public String getMajorBrandDescription(int tagType)
@@ -39,7 +35,7 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
         }
     }
 
-    public String getCompatibleBrands(int tagType)
+    public String getCompatibleBrandsDescription(int tagType)
     {
         String[] compatibleBrandKeys = _directory.getStringArray(tagType);
         ArrayList<String> compatibleBrandsValues = new ArrayList<String>();

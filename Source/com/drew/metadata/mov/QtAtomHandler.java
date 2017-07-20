@@ -119,7 +119,7 @@ public class QtAtomHandler
 
     private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException, ImageProcessingException {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(4));
-        int minorVersion = reader.getInt32();
+        directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4));
         ArrayList<String> compatibleBrands = new ArrayList<String>();
         int brandsCount = (payload.length - 8) / 4;
         for (int i = 8; i < (brandsCount * 4) + 8; i += 4) {
@@ -189,7 +189,12 @@ public class QtAtomHandler
         directory.setInt(QtDirectory.TAG_TIME_SCALE, timeScale);
 
         directory.setInt(QtDirectory.TAG_PREFERRED_RATE, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_PREFERRED_VOLUME, reader.getInt16());
+
+        int preferredVolume = reader.getInt16();
+        double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
+        double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
+        directory.setDouble(QtDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
+        
         // 10-byte reserved space at index 26
         reader.skip(10);
         // 36-byte matrix structure at index 36

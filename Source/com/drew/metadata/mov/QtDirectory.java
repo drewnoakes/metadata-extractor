@@ -45,6 +45,7 @@ public class QtDirectory extends Directory {
     public static final int TAG_OPCOLOR = 0x0312;
 
     public static final int TAG_MAJOR_BRAND = 0x0001;
+    public static final int TAG_MINOR_VERSION = 0x0002;
     public static final int TAG_COMPATIBLE_BRANDS = 0x0003;
 
     @NotNull
@@ -52,6 +53,7 @@ public class QtDirectory extends Directory {
 
     static {
         _tagNameMap.put(TAG_MAJOR_BRAND, "Major Brand");
+        _tagNameMap.put(TAG_MINOR_VERSION, "Minor Version");
         _tagNameMap.put(TAG_COMPATIBLE_BRANDS, "Compatible Brands");
 
         _tagNameMap.put(TAG_CREATION_TIME, "Creation Time");
