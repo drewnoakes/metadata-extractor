@@ -18,6 +18,7 @@ public class QtAtomHandler implements QtHandler
     public String currentHandler = "";
     public ArrayList<String> keys = new ArrayList<String>();
     public int keyCount = 0;
+    private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
 
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
@@ -46,15 +47,7 @@ public class QtAtomHandler implements QtHandler
             int versionAndFlags = reader.getInt32();
             int predefined = reader.getInt32();
             String handler = new String(reader.getBytes(4));
-            if (handler.equals("mdir")) {
-                return new QtMetadataDirectoryHandler();
-            } else if (handler.equals("mdta")) {
-                return new QtMetadataDataHandler();
-            } else if (handler.equals("soun")) {
-                return new QtSoundMediaHandler();
-            } else if (handler.equals("vide")) {
-                return new QtVideoMediaHandler();
-            }
+            return handlerFactory.getHandler(handler);
         }
         return this;
     }
