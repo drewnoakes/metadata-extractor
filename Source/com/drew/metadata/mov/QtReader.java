@@ -85,8 +85,8 @@ public class QtReader {
                         reader.skip(size - 8);
                 }
             }
-        } catch (IOException e) {
-            System.out.println("End of data reached");
+        } catch (IOException ignored) {
+
         }
     }
 

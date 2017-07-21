@@ -19,12 +19,15 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
                 return getMajorBrandDescription(tagType);
             case (QtDirectory.TAG_COMPATIBLE_BRANDS):
                 return getCompatibleBrandsDescription(tagType);
+            case (QtDirectory.TAG_HEIGHT):
+            case (QtDirectory.TAG_WIDTH):
+                return getPixelDescription(tagType);
             default:
                 return _directory.getString(tagType);
         }
     }
 
-    public String getMajorBrandDescription(int tagType)
+    private String getMajorBrandDescription(int tagType)
     {
         String majorBrandKey = new String(_directory.getByteArray(tagType));
         String majorBrandValue = QtDictionary.lookup(QtDirectory.TAG_MAJOR_BRAND, majorBrandKey);
@@ -35,7 +38,7 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
         }
     }
 
-    public String getCompatibleBrandsDescription(int tagType)
+    private String getCompatibleBrandsDescription(int tagType)
     {
         String[] compatibleBrandKeys = _directory.getStringArray(tagType);
         ArrayList<String> compatibleBrandsValues = new ArrayList<String>();
@@ -48,5 +51,10 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
             }
         }
         return Arrays.toString(compatibleBrandsValues.toArray());
+    }
+
+    private String getPixelDescription(int tagType)
+    {
+        return _directory.getString(tagType) + " pixels";
     }
 }

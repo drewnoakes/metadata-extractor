@@ -3,6 +3,7 @@ package com.drew.metadata.mov;
 import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class QtMetadataDirectoryHandler implements QtHandler
 {
