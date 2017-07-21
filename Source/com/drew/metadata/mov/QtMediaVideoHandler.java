@@ -44,15 +44,17 @@ public class QtMediaVideoHandler extends QtMediaHandler
         directory.setInt(QtDirectory.TAG_WIDTH, width);
         directory.setInt(QtDirectory.TAG_HEIGHT, height);
         directory.setString(QtDirectory.TAG_COMPRESSOR_NAME, compressorName.trim());
-
         directory.setInt(QtDirectory.TAG_DEPTH, depth);
         directory.setInt(QtDirectory.TAG_COLOR_TABLE, colorTableId);
 
+        // Calculate horizontal resolution
         double horizontalInteger = (horizontalResolution & 0xFFFF0000) >> 16;
         double horizontalFraction = (horizontalResolution & 0xFFFF) / Math.pow(2, 4);
+        directory.setDouble(QtDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
+
+        // Calculate vertical resolutoin
         double verticalInteger = (verticalResolution & 0xFFFF0000) >> 16;
         double verticalFraction = (verticalResolution & 0xFFFF) / Math.pow(2, 4);
-        directory.setDouble(QtDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
         directory.setDouble(QtDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 
@@ -61,9 +63,9 @@ public class QtMediaVideoHandler extends QtMediaHandler
     {
         reader.skip(4);
         int graphicsMode = reader.getInt16();
-        int opcolorRed = reader.getInt16();
-        int opcolorGreen = reader.getInt16();
-        int opcolorBlue = reader.getInt16();
+        int opcolorRed = reader.getUInt16();
+        int opcolorGreen = reader.getUInt16();
+        int opcolorBlue = reader.getUInt16();
 
         directory.setString(QtDirectory.TAG_OPCOLOR, "R:" + opcolorRed + " G:" + opcolorGreen + " B:" + opcolorBlue);
 

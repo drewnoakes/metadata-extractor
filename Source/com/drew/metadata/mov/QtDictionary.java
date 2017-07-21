@@ -72,6 +72,25 @@ public class QtDictionary
         _soundAudioFormats.put(".mp3", "MPEG-1 layer 3, CBR & VBR (QT4.1 and later)");
         _soundAudioFormats.put("mp4a", "MPEG-4, Advanced Audio Coding (AAC)");
         _soundAudioFormats.put("ac-3", "Digital Audio Compression Standard (AC-3, Enhanced AC-3)");
+        _soundAudioFormats.put("aac ", "ISO/IEC 144963-3 AAC");
+        _soundAudioFormats.put("agsm","Apple GSM 10:1");
+        _soundAudioFormats.put("alac","Apple Lossless Audio Codec");
+        _soundAudioFormats.put("conv","Sample Format");
+        _soundAudioFormats.put("dvi ","DV 4:1");
+        _soundAudioFormats.put("eqal","Frequency Equalizer");
+        _soundAudioFormats.put("lpc ", "LPC 23:1");
+        _soundAudioFormats.put("mixb","8-bit Mixer");
+        _soundAudioFormats.put("mixw","16-bit Mixer");
+        _soundAudioFormats.put(new String(new byte[] {0x4d, 0x53, 0x00, 0x02}), "Microsoft ADPCM");
+        _soundAudioFormats.put(new String(new byte[] {0x4d, 0x53, 0x00, 0x11}), "DV IMA");
+        _soundAudioFormats.put(new String(new byte[] {0x4d, 0x53, 0x00, 0x55}), "MPEG3");
+        _soundAudioFormats.put("ratb","8-bit Rate");
+        _soundAudioFormats.put("ratw","16-bit Rate");
+        _soundAudioFormats.put("sour","Sound Source");
+        _soundAudioFormats.put("str1","Iomega MPEG layer II");
+        _soundAudioFormats.put("str2","Iomega MPEG *layer II");
+        _soundAudioFormats.put("str3","Iomega MPEG **layer II");
+        _soundAudioFormats.put("str4","Iomega MPEG ***layer II");
 
         // Major Brands
         _majorBrands.put("3g2a", "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-0 V1.0");
