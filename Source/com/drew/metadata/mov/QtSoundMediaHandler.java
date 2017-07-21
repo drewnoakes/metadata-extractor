@@ -6,7 +6,6 @@ import java.io.IOException;
 
 public class QtSoundMediaHandler extends QtMediaHandler
 {
-
     @Override
     String getMediaInformation() {
         return QtAtomTypes.ATOM_SOUND_MEDIA_INFO;
