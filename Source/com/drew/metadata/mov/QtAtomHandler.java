@@ -1,16 +1,13 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Payton Garland
@@ -79,10 +76,11 @@ public class QtAtomHandler implements QtHandler
     private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
         reader.skip(4);
 
+        // Get creation/modification times
         long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
         long modificationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
         Calendar calendar = Calendar.getInstance();
-        calendar.set(1904, 0, 1, 0, 0, 0);      // january 1, 1904  -  macintosh time epoch
+        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
         Date date = calendar.getTime();
         long macToUnixEpochOffset = date.getTime();
         String creationTimeStamp = new Date(creationTime*1000 + macToUnixEpochOffset).toString();
@@ -90,6 +88,7 @@ public class QtAtomHandler implements QtHandler
         directory.setString(QtDirectory.TAG_CREATION_TIME, creationTimeStamp);
         directory.setString(QtDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
 
+        // Get duration and time scale
         int timeScale = reader.getInt32();
         double duration = reader.getInt32();
         duration = duration / timeScale;
@@ -116,6 +115,7 @@ public class QtAtomHandler implements QtHandler
         reader.skip(10);
         // 36-byte matrix structure at index 36
         reader.skip(36);
+
         directory.setInt(QtDirectory.TAG_PREVIEW_TIME, reader.getInt32());
         directory.setInt(QtDirectory.TAG_PREVIEW_DURATION, reader.getInt32());
         directory.setInt(QtDirectory.TAG_POSTER_TIME, reader.getInt32());
