@@ -6,6 +6,7 @@ public class QtHandlerFactory
     private static final String HANDLER_METADATA_DATA = "mdta";
     private static final String HANDLER_SOUND_MEDIA = "soun";
     private static final String HANDLER_VIDEO_MEDIA = "vide";
+    public static final String HANDLER_TIMECODE_MEDIA = "tmcd";
 
     private QtHandler caller;
 
@@ -24,6 +25,8 @@ public class QtHandlerFactory
             return new QtSoundMediaHandler();
         } else if (type.equals(HANDLER_VIDEO_MEDIA)) {
             return new QtVideoMediaHandler();
+        } else if (type.equals(HANDLER_TIMECODE_MEDIA)) {
+            return new QtTimecodeMediaHandler();
         }
         return caller;
     }
