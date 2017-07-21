@@ -1,215 +1,113 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.ByteArrayReader;
+import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author Payton Garland
  */
-public class QtAtomHandler
+public class QtAtomHandler implements QtHandler
 {
-    public String currentHandler = "";
-    public ArrayList<String> keys = new ArrayList<String>();
-    public int keyCount = 0;
+    private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
 
+    @Override
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
-        return QtAtomTypes._atomList.contains(fourCC);
+        return fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)
+            || fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)
+            || fourCC.equals(QtAtomTypes.ATOM_HANDLER)
+            || fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER);
     }
 
-    public void processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory, @NotNull List<String> history) throws IOException, ImageProcessingException
+    @Override
+    public boolean shouldAcceptContainer(String fourCC)
     {
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+        return fourCC.equals(QtContainerTypes.ATOM_TRACK)
+            || fourCC.equals(QtContainerTypes.ATOM_USER_DATA)
+            || fourCC.equals(QtContainerTypes.ATOM_METADATA)
+            || fourCC.equals(QtContainerTypes.ATOM_MOVIE)
+            || fourCC.equals(QtContainerTypes.ATOM_MEDIA);
+    }
+
+    @Override
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
+    {
+        ByteArrayReader reader = new ByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
             processMovieHeader(directory, reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_SOUND_MEDIA_INFO)) {
-            processSoundMediaInfo(directory, payload, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
             processFileType(directory, payload, reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_VIDEO_MEDIA_INFO)) {
-            processVideoMediaHeader(directory, reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
-            processSampleDescription(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
-            reader.skip(8);
-            currentHandler = new String(reader.getBytes(4));
-        } else if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
-            // Version 1-byte and Flags 3-bytes
-            reader.skip(4);
-            int entryCount = reader.getInt32();
-            for (int i = 0; i < entryCount; i++) {
-                int keySize = reader.getInt32();
-                String keyNamespace = new String(reader.getBytes(4));
-                String keyValue = new String(reader.getBytes(keySize - 8));
-                keys.add(keyValue);
-            }
-            System.out.println(currentHandler);
-        } else if (history.get(history.size() - 1).equals(QtContainerTypes.ATOM_METADATA_LIST)) {
-            String name = new String(reader.getBytes(4));
-            int countryIndicator = reader.getInt16();
-            int languageIndicator = reader.getInt16();
-        } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)) {
-            reader.skip(8);
-            System.out.println(currentHandler);
-            if (currentHandler.equals("mdir") && QtDirectory._tagIntegerMap.get(history.get(history.size() - 1)) != null) {
-                directory.setString(QtDirectory._tagIntegerMap.get(history.get(history.size() - 1)), new String(reader.getBytes(payload.length - 8)));
-            }
-//            directory.setString(history.get(history.size() - 1).hashCode(), new String(reader.getBytes(payload.length - 8)));
+            String handler = new String(reader.getBytes(8, 4));
+            return handlerFactory.getHandler(handler);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
+            QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32(12);
         }
+        return this;
     }
 
-    private void processSoundMediaInfo(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException {
-        if (payload.length == 8) {
-            reader.skip(4);
-            int balance = reader.getInt16();
-            double integerPortion = balance & 0xFFFF0000;
-            double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
-            directory.setDouble(QtDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
-        }
-    }
-
-    private void processSampleDescription(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    @Override
+    public QtHandler processContainer(String fourCC)
     {
-        reader.skip(4);
-        int numberOfEntries = reader.getInt32();
-        int sampleSize = reader.getInt32();
-        String dataFormat = new String(reader.getBytes(4));
-        reader.skip(6); // 6-bytes reserved
-        int dataReference = reader.getInt16();
-        if (currentHandler.equals("vide")) {
-            processVideoSampleDescription(directory, reader, dataFormat);
-        } else if (currentHandler.equals("soun")) {
-            processSoundSampleDescription(directory, reader, dataFormat);
+        if (fourCC.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
+            throw new RuntimeException("Compressed QuickTime movies not supported");
         }
+        return this;
     }
 
-    private void processSoundSampleDescription(@NotNull QtDirectory directory, SequentialByteArrayReader reader, String dataFormat) throws IOException
+    /**
+     * Extracts data from the 'ftyp' atom
+     * Index 0 is after size and type
+     *
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
+     *
+     */
+    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
     {
-        int version = reader.getInt16();
-        switch (version) {
-            case (0):
-            case (1):
-                int revisionLevel = reader.getInt16();
-                int vendor = reader.getInt32();
-                int numberOfChannels = reader.getInt16();
-                int sampleSizeBits = reader.getInt16();
-                int compressionId = reader.getInt16();
-                int packetSize = reader.getInt16();
-                int sampleRate = reader.getInt32();
+        directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(0, 4));
 
-                directory.setString(QtDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtDirectory.TAG_AUDIO_FORMAT, dataFormat));
-                directory.setInt(QtDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
-                directory.setInt(QtDirectory.TAG_SAMPLE_SIZE, sampleSizeBits);
-                directory.setInt(QtDirectory.TAG_SAMPLE_RATE, sampleRate);
-                break;
-        }
-    }
-
-    private void processVideoSampleDescription(@NotNull QtDirectory directory, SequentialByteArrayReader reader, String dataFormat) throws IOException
-    {
-        int version = reader.getInt16();
-        int revisionLevel = reader.getInt16();
-        String vendor = new String(reader.getBytes(4));
-        int temporalQuality = reader.getInt32();
-        int spatialQuality = reader.getInt32();
-        int width = reader.getInt16();
-        int height = reader.getInt16();
-        int horizontalResolution = reader.getInt32();
-        int verticalResolution = reader.getInt32();
-        int dataSize = reader.getInt32();
-        int frameCount = reader.getInt16();
-        String compressorName = new String(reader.getBytes(32));
-        int depth = reader.getInt16();
-        int colorTableId = reader.getInt16();
-
-        directory.setInt(QtDirectory.TAG_TEMPORAL_QUALITY, temporalQuality);
-        directory.setInt(QtDirectory.TAG_SPATIAL_QUALITY, spatialQuality);
-        directory.setInt(QtDirectory.TAG_WIDTH, width);
-        directory.setInt(QtDirectory.TAG_HEIGHT, height);
-        directory.setString(QtDirectory.TAG_COMPRESSOR_NAME, compressorName.trim());
-        directory.setString(QtDirectory.TAG_COMPRESSION_TYPE, QtDictionary.lookup(QtDirectory.TAG_COMPRESSION_TYPE, dataFormat));
-        directory.setInt(QtDirectory.TAG_DEPTH, depth);
-
-        double horizontalInteger = (horizontalResolution & 0xFFFF0000) >> 16;
-        double horizontalFraction = (horizontalResolution & 0xFFFF) / Math.pow(2, 4);
-        double verticalInteger = (verticalResolution & 0xFFFF0000) >> 16;
-        double verticalFraction = (verticalResolution & 0xFFFF) / Math.pow(2, 4);
-        directory.setDouble(QtDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
-        directory.setDouble(QtDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
-    }
-
-    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException, ImageProcessingException {
-        directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(4));
-
-        directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4));
+        directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4, 4));
 
         ArrayList<String> compatibleBrands = new ArrayList<String>();
         int brandsCount = (payload.length - 8) / 4;
         for (int i = 8; i < (brandsCount * 4) + 8; i += 4) {
-            compatibleBrands.add(new String(reader.getBytes(4)));
+            compatibleBrands.add(new String(reader.getBytes(i, 4)));
         }
         String[] compatibleBrandsReturn = new String[compatibleBrands.size()];
         directory.setStringArray(QtDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(compatibleBrandsReturn));
-        if (!compatibleBrands.contains("qt  ")) {
-            throw new ImageProcessingException("Not a QuickTime movie file");
-        }
     }
 
-    private void processVideoMediaHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
-        reader.skip(4);
-        int graphicsMode = reader.getInt16();
-        int opcolorRed = reader.getInt16();
-        int opcolorGreen = reader.getInt16();
-        int opcolorBlue = reader.getInt16();
+    /**
+     * Extracts data from the 'moov' atom's movie header marked by the fourCC 'mvhd'
+     * Index 0 is after size and type
+     *
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-32947
+     *
+     */
+    private void processMovieHeader(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
+    {
+        // Get creation/modification times
+        long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4,4), 0, true);
+        long modificationTime = ByteUtil.getUnsignedInt32(reader.getBytes(8, 4), 0, true);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
+        Date date = calendar.getTime();
+        long macToUnixEpochOffset = date.getTime();
+        String creationTimeStamp = new Date(creationTime*1000 + macToUnixEpochOffset).toString();
+        String modificationTimeStamp = new Date(modificationTime*1000 + macToUnixEpochOffset).toString();
+        directory.setString(QtDirectory.TAG_CREATION_TIME, creationTimeStamp);
+        directory.setString(QtDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
 
-        directory.setString(QtDirectory.TAG_OPCOLOR, "R:" + opcolorRed + " G:" + opcolorGreen + " B:" + opcolorBlue);
-
-        switch (graphicsMode) {
-            case (0x00):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Copy");
-                break;
-            case (0x40):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Dither copy");
-                break;
-            case (0x20):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Blend");
-                break;
-            case (0x24):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Transparent");
-                break;
-            case (0x100):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Straight alpha");
-                break;
-            case (0x101):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Premul white alpha");
-                break;
-            case (0x102):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Premul black alpha");
-                break;
-            case (0x104):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Straight alpha blend");
-                break;
-            case (0x103):
-                directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
-                break;
-            default:
-        }
-    }
-
-    private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
-        reader.skip(4);
-        directory.setLong(QtDirectory.TAG_CREATION_TIME, reader.getInt32());
-        directory.setLong(QtDirectory.TAG_MODIFICATION_TIME, reader.getInt32());
-
-        int timeScale = reader.getInt32();
-        double duration = reader.getInt32();
+        // Get duration and time scale
+        int timeScale = reader.getInt32(12);
+        double duration = reader.getInt32(16);
         duration = duration / timeScale;
         Integer hours = (int)duration / (int)(Math.pow(60, 2));
         Integer minutes = ((int)duration / (int)(Math.pow(60, 1))) - (hours * 60);
@@ -219,27 +117,23 @@ public class QtAtomHandler
         directory.setInt(QtDirectory.TAG_TIME_SCALE, timeScale);
 
         // Calculate preferred rate fixed point
-        int preferredRate = reader.getInt32();
+        int preferredRate = reader.getInt32(20);
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
         double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
         directory.setDouble(QtDirectory.TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
 
         // Calculate preferred volume fixed point
-        int preferredVolume = reader.getInt16();
+        int preferredVolume = reader.getInt16(24);
         double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
         double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
         directory.setDouble(QtDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
 
-        // 10-byte reserved space at index 26
-        reader.skip(10);
-        // 36-byte matrix structure at index 36
-        reader.skip(36);
-        directory.setInt(QtDirectory.TAG_PREVIEW_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_PREVIEW_DURATION, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_POSTER_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_SELECTION_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_SELECTION_DURATION, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_CURRENT_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_NEXT_TRACK_ID, reader.getInt32());
+        directory.setInt(QtDirectory.TAG_PREVIEW_TIME, reader.getInt32(72));
+        directory.setInt(QtDirectory.TAG_PREVIEW_DURATION, reader.getInt32(76));
+        directory.setInt(QtDirectory.TAG_POSTER_TIME, reader.getInt32(80));
+        directory.setInt(QtDirectory.TAG_SELECTION_TIME, reader.getInt32(84));
+        directory.setInt(QtDirectory.TAG_SELECTION_DURATION, reader.getInt32(88));
+        directory.setInt(QtDirectory.TAG_CURRENT_TIME, reader.getInt32(92));
+        directory.setInt(QtDirectory.TAG_NEXT_TRACK_ID, reader.getInt32(96));
     }
 }

@@ -12,39 +12,79 @@ public class QtDictionary
 
     private static HashMap<String, String> _soundAudioFormats = new HashMap<String, String>();
 
-    public static HashMap<String, String> _userDataTypes = new HashMap<String, String>();
-
-    public static HashMap<String, String> _metadataKeys = new HashMap<String, String>();
+    public static HashMap<String, String> _vendorIds = new HashMap<String, String>();
 
     static {
         _dictionary.put(QtDirectory.TAG_MAJOR_BRAND, _majorBrands);
         _dictionary.put(QtDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
         _dictionary.put(QtDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
-        _dictionary.put(0, _userDataTypes);
-        _dictionary.put(1, _metadataKeys);
+        _dictionary.put(QtDirectory.TAG_VENDOR, _vendorIds);
 
         // Video Compression Types
+        _videoCompressionTypes.put("3IVX", "3ivx MPEG-4");
+        _videoCompressionTypes.put("3IV1", "3ivx MPEG-4 v1");
+        _videoCompressionTypes.put("3IV2", "3ivx MPEG-4 v2");
+        _videoCompressionTypes.put("avr ", "AVR-JPEG");
+        _videoCompressionTypes.put("base", "Base");
+        _videoCompressionTypes.put("WRLE", "BMP");
         _videoCompressionTypes.put("cvid", "Cinepak");
-        _videoCompressionTypes.put("jpeg", "JPEG");
+        _videoCompressionTypes.put("clou", "Cloud");
+        _videoCompressionTypes.put("cmyk", "CMYK");
+        _videoCompressionTypes.put("yuv2", "ComponentVideo");
+        _videoCompressionTypes.put("yuvu", "ComponentVideoSigned");
+        _videoCompressionTypes.put("yuvs", "ComponentVideoUnsigned");
+        _videoCompressionTypes.put("dvc ", "DVC-NTSC");
+        _videoCompressionTypes.put("dvcp", "DVC-PAL");
+        _videoCompressionTypes.put("dvpn", "DVCPro-NTSC");
+        _videoCompressionTypes.put("dvpp", "DVCPro-PAL");
+        _videoCompressionTypes.put("fire", "Fire");
+        _videoCompressionTypes.put("flic", "FLC");
+        _videoCompressionTypes.put("b48r", "48RGB");
+        _videoCompressionTypes.put("gif ", "GIF");
         _videoCompressionTypes.put("smc ", "Graphics");
+        _videoCompressionTypes.put("h261", "Apple H261");
+        _videoCompressionTypes.put("h263", "Apple VC H.263");
+        _videoCompressionTypes.put("IV41", "Indeo4");
+        _videoCompressionTypes.put("jpeg", "JPEG");
+        _videoCompressionTypes.put("PNTG", "MacPaint");
+        _videoCompressionTypes.put("msvc", "Microsoft Video1");
+        _videoCompressionTypes.put("mjpa", "Apple Motion JPEG-A");
+        _videoCompressionTypes.put("mjpb", "Apple Motion JPEG-B");
+        _videoCompressionTypes.put("myuv", "MPEG YUV420");
+        _videoCompressionTypes.put("dmb1", "OpenDML JPEG");
+        _videoCompressionTypes.put("kpcd", "PhotoCD");
+        _videoCompressionTypes.put("8BPS", "Planar RGB");
+        _videoCompressionTypes.put("png ", "PNG");
+        _videoCompressionTypes.put("qdrw", "QuickDraw");
+        _videoCompressionTypes.put("qdgx", "QuickDrawGX");
+        _videoCompressionTypes.put("raw ", "RAW");
+        _videoCompressionTypes.put(".SGI", "SGI");
+        _videoCompressionTypes.put("b16g", "16Gray");
+        _videoCompressionTypes.put("b64a", "64ARGB");
+        _videoCompressionTypes.put("SVQ1", "Sorenson Video 1");
+        _videoCompressionTypes.put("SVQ3", "Sorenson Video 3");
+        _videoCompressionTypes.put("syv9", "Sorenson YUV9");
+        _videoCompressionTypes.put("tga ", "Targa");
+        _videoCompressionTypes.put("b32a", "32AlphaGray");
+        _videoCompressionTypes.put("tiff", "TIFF");
+        _videoCompressionTypes.put("path", "Vector");
+        _videoCompressionTypes.put("rpza", "Video (Road Pizza)");
+        _videoCompressionTypes.put("ripl", "WaterRipple");
+        _videoCompressionTypes.put("WRAW", "Windows RAW");
+        _videoCompressionTypes.put("y420", "YUV420");
+        _videoCompressionTypes.put("avc1", "H.264");
+        _videoCompressionTypes.put("mp4v", "MPEG-4");
+        _videoCompressionTypes.put("MP4V", "MPEG-4");
+        _videoCompressionTypes.put("dvhp", "DVCPRO HD 720p60");
+        _videoCompressionTypes.put("hdv2", "HDV 1080i60");
+        _videoCompressionTypes.put("dvc+", "DV/DVCPRO - NTSC");
+        _videoCompressionTypes.put("mx5p", "MPEG2 IMX 635/50 50mb/s");
+        _videoCompressionTypes.put("mx3n", "MPEG2 IMX 635/50 30mb/s");
+        _videoCompressionTypes.put("dv5p", "DVCPRO50");
+        _videoCompressionTypes.put("hdv3", "HDV Final Cut Pro");
         _videoCompressionTypes.put("rle ", "Animation");
-        _videoCompressionTypes.put("rpza", "Apple video");
-        _videoCompressionTypes.put("kpcd", "Kodak Photo CD");
-        _videoCompressionTypes.put("png ", "Portable Network Graphics");
-        _videoCompressionTypes.put("mjpa", "Motion-JPEG (format A)");
-        _videoCompressionTypes.put("mjpb", "Motion-JPEG (format B)");
-        _videoCompressionTypes.put("SVQ1", "Sorenson video, version 1");
-        _videoCompressionTypes.put("SVQ3", "Sorenson video 3");
-        _videoCompressionTypes.put("mp4v", "MPEG-4 video");
-        _videoCompressionTypes.put("avc1", "H.264 video");
-        _videoCompressionTypes.put("dvc ", "NTSC DV-25 video");
-        _videoCompressionTypes.put("dvcp", "PAL DV-25 video");
-        _videoCompressionTypes.put("gif ", "CompuServe Graphics Interchange Format");
-        _videoCompressionTypes.put("h263", "H.263 video");
-        _videoCompressionTypes.put("tiff", "Tagged Image File Format");
-        _videoCompressionTypes.put("raw ", "Uncompressed RGB");
+        _videoCompressionTypes.put("rle ", "Animation");
         _videoCompressionTypes.put("2vuY", "Uncompressed Y'CbCr, 8-bit-per-component 4:2:2");
-        _videoCompressionTypes.put("yuv2", "Uncompressed Y'CbCr, 8-bit-per-component 4:2:2");
         _videoCompressionTypes.put("v308", "Uncompressed Y'CbCr, 8-bit-per-component 4:4:4");
         _videoCompressionTypes.put("v408", "Uncompressed Y'CbCr, 8-bit-per-component 4:4:4:4");
         _videoCompressionTypes.put("v216", "Uncompressed Y'CbCr, 10, 12, 14, or 16-bit-per-component 4:2:2");
@@ -75,6 +115,26 @@ public class QtDictionary
         _soundAudioFormats.put(".mp3", "MPEG-1 layer 3, CBR & VBR (QT4.1 and later)");
         _soundAudioFormats.put("mp4a", "MPEG-4, Advanced Audio Coding (AAC)");
         _soundAudioFormats.put("ac-3", "Digital Audio Compression Standard (AC-3, Enhanced AC-3)");
+        _soundAudioFormats.put("aac ", "ISO/IEC 144963-3 AAC");
+        _soundAudioFormats.put("agsm", "Apple GSM 10:1");
+        _soundAudioFormats.put("alac", "Apple Lossless Audio Codec");
+        _soundAudioFormats.put("conv", "Sample Format");
+        _soundAudioFormats.put("dvi ", "DV 4:1");
+        _soundAudioFormats.put("eqal", "Frequency Equalizer");
+        _soundAudioFormats.put("lpc ", "LPC 23:1");
+        _soundAudioFormats.put("mixb", "8-bit Mixer");
+        _soundAudioFormats.put("mixw", "16-bit Mixer");
+        _soundAudioFormats.put(new String(new byte[] {0x4d, 0x53, 0x00, 0x02}), "Microsoft ADPCM");
+        _soundAudioFormats.put(new String(new byte[] {0x4d, 0x53, 0x00, 0x11}), "DV IMA");
+        _soundAudioFormats.put(new String(new byte[] {0x4d, 0x53, 0x00, 0x55}), "MPEG3");
+        _soundAudioFormats.put("ratb", "8-bit Rate");
+        _soundAudioFormats.put("ratw", "16-bit Rate");
+        _soundAudioFormats.put("sour", "Sound Source");
+        _soundAudioFormats.put("str1", "Iomega MPEG layer II");
+        _soundAudioFormats.put("str2", "Iomega MPEG *layer II");
+        _soundAudioFormats.put("str3", "Iomega MPEG **layer II");
+        _soundAudioFormats.put("str4", "Iomega MPEG ***layer II");
+        _soundAudioFormats.put("lpcm", "Linear Pulse Code Modulation");
 
         // Major Brands
         _majorBrands.put("3g2a", "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-0 V1.0");
@@ -164,88 +224,41 @@ public class QtDictionary
         _majorBrands.put("ssc1", "Samsung stereoscopic, single stream (patent pending, see notes)");
         _majorBrands.put("ssc2", "Samsung stereoscopic, dual stream (patent pending, see notes)");
 
-        // User Data Types
-        _userDataTypes.put("©arg", "Arranger Name");
-        _userDataTypes.put("©ark", "Arranger Keywords");
-        _userDataTypes.put("©cok", "Composer Keywords");
-        _userDataTypes.put("©com", "Composer Name");
-        _userDataTypes.put("©cpy", "Copyright");
-        _userDataTypes.put("©day", "Day Created");
-        _userDataTypes.put("©dir", "Director Name");
-        _userDataTypes.put("©ed1", "Edit Date 1");
-        _userDataTypes.put("©ed2", "Edit Date 2");
-        _userDataTypes.put("©ed3", "Edit Date 3");
-        _userDataTypes.put("©ed4", "Edit Date 4");
-        _userDataTypes.put("©ed5", "Edit Date 5");
-        _userDataTypes.put("©ed6", "Edit Date 6");
-        _userDataTypes.put("©ed7", "Edit Date 7");
-        _userDataTypes.put("©ed8", "Edit Date 8");
-        _userDataTypes.put("©ed9", "Edit Date 9");
-        _userDataTypes.put("©fmt", "Movie Format");
-        _userDataTypes.put("©inf", "Movie Information");
-        _userDataTypes.put("©isr", "ISRC");
-        _userDataTypes.put("©lab", "Record Label Name");
-        _userDataTypes.put("©lal", "Record Label URL");
-        _userDataTypes.put("©mak", "Creator Name");
-        _userDataTypes.put("©mal", "Creator URL");
-        _userDataTypes.put("©nak", "Title Keywords");
-        _userDataTypes.put("©nam", "Title Name");
-        _userDataTypes.put("©pdk", "Producer Keywords");
-        _userDataTypes.put("©phg", "Recording Copyright Statement");
-        _userDataTypes.put("©prd", "Producer Name");
-        _userDataTypes.put("©prf", "Performer Names");
-        _userDataTypes.put("©prk", "Main Artist/Performer Keywords");
-        _userDataTypes.put("©prl", "Main Artist/Performer URL");
-        _userDataTypes.put("©req", "Special Hardware/Software Requirements");
-        _userDataTypes.put("©snk", "Subtitle Keywords");
-        _userDataTypes.put("©snm", "Subtitle");
-        _userDataTypes.put("©src", "Credits");
-        _userDataTypes.put("©swf", "Songwriter Name");
-        _userDataTypes.put("©swk", "Songwriter Keywords");
-        _userDataTypes.put("©swr", "Software");
-        _userDataTypes.put("©wrt", "Writer Name");
-        _userDataTypes.put("AllF", "Play All Frames");
-        _userDataTypes.put("desc", "Description");
+        // Vendor ID's https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
+        _vendorIds.put(" KD ", "Kodak");
+        _vendorIds.put("AR.D", "Parrot AR.Drone");
+        _vendorIds.put("FFMP", "FFmpeg");
+        _vendorIds.put("GIC ", "General Imaging Co.");
+        _vendorIds.put("KMPI", "Konica-Minolta");
+        _vendorIds.put("NIKO", "Nikon");
+        _vendorIds.put("SMI ", "Sorenson Media Inc.");
+        _vendorIds.put("ZORA", "Zoran Corporation");
+        _vendorIds.put("appl", "Apple");
+        _vendorIds.put("fe20", "Olympus (fe20)");
+        _vendorIds.put("kdak", "Kodak");
+        _vendorIds.put("leic", "Leica");
+        _vendorIds.put("mino", "Minolta");
+        _vendorIds.put("niko", "Nikon");
+        _vendorIds.put("olym", "Olympus");
+        _vendorIds.put("pana", "Panasonic");
+        _vendorIds.put("pent", "Pentax");
+        _vendorIds.put("pr01", "Olympus (pr01)");
+        _vendorIds.put("sany", "Sanyo");
 
-        // Metadata Keys
-        _metadataKeys.put("com.apple.quicktime.album", "Album");
-        _metadataKeys.put("com.apple.quicktime.artist", "Artist");
-        _metadataKeys.put("com.apple.quicktime.artwork", "Artwork");
-        _metadataKeys.put("com.apple.quicktime.author", "Author");
-        _metadataKeys.put("com.apple.quicktime.comment", "Comment");
-        _metadataKeys.put("com.apple.quicktime.copyright", "Copyright");
-        _metadataKeys.put("com.apple.quicktime.creationdate", "Creation Date");
-        _metadataKeys.put("com.apple.quicktime.description", "Description");
-        _metadataKeys.put("com.apple.quicktime.director", "Director");
-        _metadataKeys.put("com.apple.quicktime.title", "Title");
-        _metadataKeys.put("com.apple.quicktime.genre", "Genre");
-        _metadataKeys.put("com.apple.quicktime.information", "Information");
-        _metadataKeys.put("com.apple.quicktime.keywords", "Keywords");
-        _metadataKeys.put("com.apple.quicktime.location.ISO6709", "ISO 6709");
-        _metadataKeys.put("com.apple.quicktime.producer", "Producer");
-        _metadataKeys.put("com.apple.quicktime.publisher", "Publisher");
-        _metadataKeys.put("com.apple.quicktime.software", "Software");
-        _metadataKeys.put("com.apple.quicktime.year", "Year");
-        _metadataKeys.put("com.apple.quicktime.collection.user", "Collection User");
-        _metadataKeys.put("com.apple.quicktime.rating.user", "Rating User");
-        _metadataKeys.put("com.apple.quicktime.location.name", "Location Name");
-        _metadataKeys.put("com.apple.quicktime.location.body", "Location Body");
-        _metadataKeys.put("com.apple.quicktime.location.note", "Location Note");
-        _metadataKeys.put("com.apple.quicktime.location.role", "Location Role");
-        _metadataKeys.put("com.apple.quicktime.location.date", "Location Date");
-        _metadataKeys.put("com.apple.quicktime.direction.facing", "Direction Facing");
-        _metadataKeys.put("com.apple.quicktime.direction.motion", "Direction Motion");
-        _metadataKeys.put("com.apple.quicktime.displayname", "Display Name");
     }
 
-    public static String lookup(Integer scope, String lookup)
+    public static String lookup(int scope, String lookup)
     {
-        String results;
         if (_dictionary.containsKey(scope) && _dictionary.get(scope).containsKey(lookup)) {
-            results = _dictionary.get(scope).get(lookup);
+            return  _dictionary.get(scope).get(lookup);
         } else {
-            results = null;
+            return "Unknown";
         }
-        return (results == null) ? lookup : results;
+    }
+
+    public static void setLookup(int scope, String lookup, QtDirectory directory)
+    {
+        String results = lookup(scope, lookup);
+        directory.setString(scope, results);
     }
 }
