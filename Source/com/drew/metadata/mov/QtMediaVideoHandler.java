@@ -7,7 +7,8 @@ import java.io.IOException;
 public class QtMediaVideoHandler extends QtMediaHandler
 {
     @Override
-    String getMediaInformation() {
+    String getMediaInformation()
+    {
         return QtAtomTypes.ATOM_VIDEO_MEDIA_INFO;
     }
 
@@ -43,7 +44,9 @@ public class QtMediaVideoHandler extends QtMediaHandler
         directory.setInt(QtDirectory.TAG_WIDTH, width);
         directory.setInt(QtDirectory.TAG_HEIGHT, height);
         directory.setString(QtDirectory.TAG_COMPRESSOR_NAME, compressorName.trim());
+
         directory.setInt(QtDirectory.TAG_DEPTH, depth);
+        directory.setInt(QtDirectory.TAG_COLOR_TABLE, colorTableId);
 
         double horizontalInteger = (horizontalResolution & 0xFFFF0000) >> 16;
         double horizontalFraction = (horizontalResolution & 0xFFFF) / Math.pow(2, 4);

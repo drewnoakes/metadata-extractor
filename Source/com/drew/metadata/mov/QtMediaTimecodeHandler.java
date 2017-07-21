@@ -7,7 +7,8 @@ import java.io.IOException;
 public class QtMediaTimecodeHandler extends QtMediaHandler
 {
     @Override
-    String getMediaInformation() {
+    String getMediaInformation()
+    {
         return QtAtomTypes.ATOM_TIMECODE_MEDIA_INFO;
     }
 

@@ -1,34 +1,29 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.ImageProcessingException;
-import com.drew.lang.ByteUtil;
 import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.zip.DataFormatException;
 
 public class QtReader {
     private StreamReader reader;
-    private QtDirectory directory;
     private int tabCount;
 
     public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
     {
-        metadata = metadata;
-        reader = new StreamReader(inputStream);
-        directory = new QtDirectory();
+        QtDirectory directory = new QtDirectory();
         metadata.addDirectory(directory);
+
+        reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
         tabCount = 0;
 
         processAtoms(reader, -1, directory, new QtAtomHandler(), true);
     }
 
-    public void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
+    private void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
     {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
@@ -45,7 +40,6 @@ public class QtReader {
 
                 if (qtHandler.shouldAcceptContainer(fourCC)) {
 
-                    //////////////// TREE PRINTER ////////////////
                     if (printVisited) {
                         for (int i = 0; i < tabCount; i++) {
                             System.out.print("   " + i + "   |");
@@ -60,18 +54,12 @@ public class QtReader {
                         processAtoms(reader, reader.getPosition() + size - 8, directory, qtHandler.processContainer(fourCC), printVisited);
                     }
 
-                    //////////////// TREE PRINTER ////////////////
                     if (printVisited) {
                         tabCount--;
-//                        for (int i = 0; i < tabCount; i++) {
-//                            System.out.print("   " + i + "   |");
-//                        }
-//                        System.out.println(" [" + fourCC + "]");
                     }
 
                 } else if (qtHandler.shouldAcceptAtom(fourCC)) {
 
-                    //////////////// TREE PRINTER ////////////////
                     if (printVisited) {
                         for (int i = 0; i < tabCount; i++) {
                             System.out.print("   " + i + "   |");

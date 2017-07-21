@@ -52,6 +52,7 @@ public class QtDirectory extends Directory {
     // Video Media Information Header Atom
     public static final int TAG_GRAPHICS_MODE = 0x0311;
     public static final int TAG_OPCOLOR = 0x0312;
+    public static final int TAG_COLOR_TABLE = 0x0313;
 
     public static final int TAG_MAJOR_BRAND = 0x0001;
     public static final int TAG_MINOR_VERSION = 0x0002;
@@ -102,6 +103,7 @@ public class QtDirectory extends Directory {
 
         _tagNameMap.put(TAG_GRAPHICS_MODE, "Graphics Mode");
         _tagNameMap.put(TAG_OPCOLOR, "Opcolor");
+        _tagNameMap.put(TAG_COLOR_TABLE, "Color Table");
 
         _tagIntegerMap.put("com.apple.quicktime.album", 0x0500);
         _tagIntegerMap.put("com.apple.quicktime.artist", 0x0501);

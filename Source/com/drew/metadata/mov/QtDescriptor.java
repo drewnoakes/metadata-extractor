@@ -22,6 +22,10 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
             case (QtDirectory.TAG_HEIGHT):
             case (QtDirectory.TAG_WIDTH):
                 return getPixelDescription(tagType);
+            case (QtDirectory.TAG_DEPTH):
+                return getDepthDescription(tagType);
+            case (QtDirectory.TAG_COLOR_TABLE):
+                return getColorTableDescription(tagType);
             default:
                 return _directory.getString(tagType);
         }
@@ -56,5 +60,36 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
     private String getPixelDescription(int tagType)
     {
         return _directory.getString(tagType) + " pixels";
+    }
+
+    private String getDepthDescription(int tagType)
+    {
+        int depth = _directory.getInteger(tagType);
+        switch (depth) {
+            case (40):
+            case (36):
+            case (34):
+                return (depth - 32) + "-bit grayscale";
+            default:
+                return Integer.toString(depth);
+        }
+    }
+
+    private String getColorTableDescription(int tagType)
+    {
+        int colorTableId = _directory.getInteger(tagType);
+
+        switch (colorTableId) {
+            case (-1):
+                if (_directory.getInteger(QtDirectory.TAG_DEPTH) < 16) {
+                    return "Default";
+                } else {
+                    return "None";
+                }
+            case (0):
+                return "Color table within file";
+            default:
+                return Integer.toString(colorTableId);
+        }
     }
 }

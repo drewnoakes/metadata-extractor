@@ -186,7 +186,6 @@ public class QtDictionary
 
     public static String lookup(int scope, String lookup)
     {
-        String results;
         if (_dictionary.containsKey(scope) && _dictionary.get(scope).containsKey(lookup)) {
             return  _dictionary.get(scope).get(lookup);
         } else {
