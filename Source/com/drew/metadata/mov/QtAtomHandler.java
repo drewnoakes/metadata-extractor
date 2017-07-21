@@ -14,9 +14,6 @@ import java.util.Date;
  */
 public class QtAtomHandler implements QtHandler
 {
-    public String currentHandler = "";
-    public ArrayList<String> keys = new ArrayList<String>();
-    public int keyCount = 0;
     private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
 
     public boolean shouldAcceptAtom(@NotNull String fourCC)

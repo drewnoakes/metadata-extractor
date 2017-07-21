@@ -35,12 +35,14 @@ public class QtMediaVideoHandler extends QtMediaHandler
         int depth = reader.getInt16();
         int colorTableId = reader.getInt16();
 
+        QtDictionary.setLookup(QtDirectory.TAG_VENDOR, vendor, directory);
+        QtDictionary.setLookup(QtDirectory.TAG_COMPRESSION_TYPE, dataFormat, directory);
+
         directory.setInt(QtDirectory.TAG_TEMPORAL_QUALITY, temporalQuality);
         directory.setInt(QtDirectory.TAG_SPATIAL_QUALITY, spatialQuality);
         directory.setInt(QtDirectory.TAG_WIDTH, width);
         directory.setInt(QtDirectory.TAG_HEIGHT, height);
         directory.setString(QtDirectory.TAG_COMPRESSOR_NAME, compressorName.trim());
-        directory.setString(QtDirectory.TAG_COMPRESSION_TYPE, QtDictionary.lookup(QtDirectory.TAG_COMPRESSION_TYPE, dataFormat));
         directory.setInt(QtDirectory.TAG_DEPTH, depth);
 
         double horizontalInteger = (horizontalResolution & 0xFFFF0000) >> 16;

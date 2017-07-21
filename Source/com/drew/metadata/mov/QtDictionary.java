@@ -12,14 +12,13 @@ public class QtDictionary
 
     private static HashMap<String, String> _soundAudioFormats = new HashMap<String, String>();
 
-    public static HashMap<String, String> _userDataTypes = new HashMap<String, String>();
-
-    public static HashMap<String, String> _metadataKeys = new HashMap<String, String>();
+    public static HashMap<String, String> _vendorIds = new HashMap<String, String>();
 
     static {
         _dictionary.put(QtDirectory.TAG_MAJOR_BRAND, _majorBrands);
         _dictionary.put(QtDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
         _dictionary.put(QtDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
+        _dictionary.put(QtDirectory.TAG_VENDOR, _vendorIds);
 
         // Video Compression Types
         _videoCompressionTypes.put("cvid", "Cinepak");
@@ -161,16 +160,43 @@ public class QtDictionary
         _majorBrands.put("sdv ", "SD Memory Card Video");
         _majorBrands.put("ssc1", "Samsung stereoscopic, single stream (patent pending, see notes)");
         _majorBrands.put("ssc2", "Samsung stereoscopic, dual stream (patent pending, see notes)");
+
+        // Vendor ID's https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
+        _vendorIds.put(" KD ", "Kodak");
+        _vendorIds.put("AR.D", "Parrot AR.Drone");
+        _vendorIds.put("FFMP", "FFmpeg");
+        _vendorIds.put("GIC ", "General Imaging Co.");
+        _vendorIds.put("KMPI", "Konica-Minolta");
+        _vendorIds.put("NIKO", "Nikon");
+        _vendorIds.put("SMI ", "Sorenson Media Inc.");
+        _vendorIds.put("ZORA", "Zoran Corporation");
+        _vendorIds.put("appl", "Apple");
+        _vendorIds.put("fe20", "Olympus (fe20)");
+        _vendorIds.put("kdak", "Kodak");
+        _vendorIds.put("leic", "Leica");
+        _vendorIds.put("mino", "Minolta");
+        _vendorIds.put("niko", "Nikon");
+        _vendorIds.put("olym", "Olympus");
+        _vendorIds.put("pana", "Panasonic");
+        _vendorIds.put("pent", "Pentax");
+        _vendorIds.put("pr01", "Olympus (pr01)");
+        _vendorIds.put("sany", "Sanyo");
+
     }
 
     public static String lookup(int scope, String lookup)
     {
         String results;
         if (_dictionary.containsKey(scope) && _dictionary.get(scope).containsKey(lookup)) {
-            results = _dictionary.get(scope).get(lookup);
+            return  _dictionary.get(scope).get(lookup);
         } else {
-            results = null;
+            return "Unknown";
         }
-        return (results == null) ? lookup : results;
+    }
+
+    public static void setLookup(int scope, String lookup, QtDirectory directory)
+    {
+        String results = lookup(scope, lookup);
+        directory.setString(scope, results);
     }
 }
