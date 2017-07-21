@@ -17,7 +17,6 @@ public class QtMetadataDirectoryHandler implements QtHandler
     @Override
     public boolean shouldAcceptContainer(String fourCC)
     {
-        System.out.println(fourCC);
         return QtDirectory._tagIntegerMap.containsKey(fourCC)
             || fourCC.equals(QtContainerTypes.ATOM_METADATA_LIST);
     }

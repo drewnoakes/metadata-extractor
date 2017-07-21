@@ -22,7 +22,8 @@ public class QtAtomHandler implements QtHandler
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
         return fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)
-            || fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER);
+            || fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)
+            || fourCC.equals(QtAtomTypes.ATOM_HANDLER);
     }
 
     @Override
@@ -41,17 +42,25 @@ public class QtAtomHandler implements QtHandler
             processMovieHeader(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
             processFileType(directory, payload, reader);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
+            int versionAndFlags = reader.getInt32();
+            int predefined = reader.getInt32();
+            String handler = new String(reader.getBytes(4));
+            if (handler.equals("mdir")) {
+                return new QtMetadataDirectoryHandler();
+            } else if (handler.equals("mdta")) {
+                return new QtMetadataDataHandler();
+            } else if (handler.equals("soun")) {
+                return new QtSoundMediaHandler();
+            } else if (handler.equals("vide")) {
+                return new QtVideoMediaHandler();
+            }
         }
         return this;
     }
 
     @Override
     public QtHandler processContainer(String fourCC) {
-        if (fourCC.equals(QtContainerTypes.ATOM_METADATA)) {
-            return new QtMetadataHandler();
-        } else if (fourCC.equals(QtContainerTypes.ATOM_MEDIA)) {
-            return new QtMediaHandler();
-        }
         return this;
     }
 

@@ -15,7 +15,8 @@ public class QtSoundMediaHandler implements QtHandler
 
     @Override
     public boolean shouldAcceptContainer(String fourCC) {
-        return fourCC.equals(QtContainerTypes.ATOM_SAMPLE_TABLE);
+        return fourCC.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
+            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION);
     }
 
     @Override
