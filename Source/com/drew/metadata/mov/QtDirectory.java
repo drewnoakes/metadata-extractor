@@ -43,10 +43,11 @@ public class QtDirectory extends Directory {
     public static final int TAG_SOUND_BALANCE = 0x0305;
 
     // User Data Types Holder (0x0400 - 0x04FF)
-    public static int USER_DATA_TYPES_POS = 0x0400;
+    // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
 
     // User Metadata Types Holder (0x0500 - 0x05FF)
-    public static int METADATA_KEYS_POS = 0x0500;
+    // https://developer.apple.com/library/content/documentation/QuickTime/QTFF/Metadata/Metadata.html#//apple_ref/doc/uid/TP40000939-CH1-SW43
+    // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
 
     // Video Media Information Header Atom
     public static final int TAG_GRAPHICS_MODE = 0x0311;
@@ -130,6 +131,35 @@ public class QtDirectory extends Directory {
         _tagIntegerMap.put("com.apple.quicktime.direction.facing", 0x0519);
         _tagIntegerMap.put("com.apple.quicktime.direction.motion", 0x051A);
         _tagIntegerMap.put("com.apple.quicktime.displayname", 0x051B);
+
+        _tagNameMap.put(0x0500, "Album");
+        _tagNameMap.put(0x0501, "Artist");
+        _tagNameMap.put(0x0502, "Artwork");
+        _tagNameMap.put(0x0503, "Author");
+        _tagNameMap.put(0x0504, "Comment");
+        _tagNameMap.put(0x0505, "Copyright");
+        _tagNameMap.put(0x0506, "Creation Date");
+        _tagNameMap.put(0x0507, "Description");
+        _tagNameMap.put(0x0508, "Director");
+        _tagNameMap.put(0x0509, "Title");
+        _tagNameMap.put(0x050A, "Genre");
+        _tagNameMap.put(0x050B, "Information");
+        _tagNameMap.put(0x050C, "Keywords");
+        _tagNameMap.put(0x050D, "ISO 6709");
+        _tagNameMap.put(0x050E, "Producer");
+        _tagNameMap.put(0x050F, "Publisher");
+        _tagNameMap.put(0x0510, "Software");
+        _tagNameMap.put(0x0511, "Year");
+        _tagNameMap.put(0x0512, "Collection User");
+        _tagNameMap.put(0x0513, "Rating User");
+        _tagNameMap.put(0x0514, "Location Name");
+        _tagNameMap.put(0x0515, "Location Body");
+        _tagNameMap.put(0x0516, "Location Note");
+        _tagNameMap.put(0x0517, "Location Role");
+        _tagNameMap.put(0x0518, "Location Date");
+        _tagNameMap.put(0x0519, "Direction Facing");
+        _tagNameMap.put(0x051A, "Direction Motion");
+        _tagNameMap.put(0x051B, "Display Name");
 
         _tagIntegerMap.put("----", 0x0400);
         _tagIntegerMap.put("@PST", 0x0401);
@@ -296,35 +326,6 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(0x044F, "Encoder");
         _tagNameMap.put(0x0450, "Track");
         _tagNameMap.put(0x0451, "Composer");
-
-        _tagNameMap.put(0x0500, "Album");
-        _tagNameMap.put(0x0501, "Artist");
-        _tagNameMap.put(0x0502, "Artwork");
-        _tagNameMap.put(0x0503, "Author");
-        _tagNameMap.put(0x0504, "Comment");
-        _tagNameMap.put(0x0505, "Copyright");
-        _tagNameMap.put(0x0506, "Creation Date");
-        _tagNameMap.put(0x0507, "Description");
-        _tagNameMap.put(0x0508, "Director");
-        _tagNameMap.put(0x0509, "Title");
-        _tagNameMap.put(0x050A, "Genre");
-        _tagNameMap.put(0x050B, "Information");
-        _tagNameMap.put(0x050C, "Keywords");
-        _tagNameMap.put(0x050D, "ISO 6709");
-        _tagNameMap.put(0x050E, "Producer");
-        _tagNameMap.put(0x050F, "Publisher");
-        _tagNameMap.put(0x0510, "Software");
-        _tagNameMap.put(0x0511, "Year");
-        _tagNameMap.put(0x0512, "Collection User");
-        _tagNameMap.put(0x0513, "Rating User");
-        _tagNameMap.put(0x0514, "Location Name");
-        _tagNameMap.put(0x0515, "Location Body");
-        _tagNameMap.put(0x0516, "Location Note");
-        _tagNameMap.put(0x0517, "Location Role");
-        _tagNameMap.put(0x0518, "Location Date");
-        _tagNameMap.put(0x0519, "Direction Facing");
-        _tagNameMap.put(0x051A, "Direction Motion");
-        _tagNameMap.put(0x051B, "Display Name");
     }
 
     public QtDirectory()
@@ -334,7 +335,7 @@ public class QtDirectory extends Directory {
 
     @Override
     @NotNull
-    public String getName() { return "Quicktime"; }
+    public String getName() { return "QuickTime"; }
 
     @Override
     @NotNull
