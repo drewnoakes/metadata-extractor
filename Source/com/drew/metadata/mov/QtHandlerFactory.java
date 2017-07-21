@@ -22,11 +22,11 @@ public class QtHandlerFactory
         } else if (type.equals(HANDLER_METADATA_DATA)) {
             return new QtMetadataDataHandler();
         } else if (type.equals(HANDLER_SOUND_MEDIA)) {
-            return new QtSoundMediaHandler();
+            return new QtMediaSoundHandler();
         } else if (type.equals(HANDLER_VIDEO_MEDIA)) {
-            return new QtVideoMediaHandler();
+            return new QtMediaVideoHandler();
         } else if (type.equals(HANDLER_TIMECODE_MEDIA)) {
-            return new QtTimecodeMediaHandler();
+            return new QtMediaTimecodeHandler();
         }
         return caller;
     }

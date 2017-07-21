@@ -4,7 +4,7 @@ import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
 
-public class QtTimecodeMediaHandler extends QtMediaHandler
+public class QtMediaTimecodeHandler extends QtMediaHandler
 {
     @Override
     String getMediaInformation() {

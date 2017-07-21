@@ -4,7 +4,7 @@ import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
 
-public class QtVideoMediaHandler extends QtMediaHandler
+public class QtMediaVideoHandler extends QtMediaHandler
 {
     @Override
     String getMediaInformation() {
