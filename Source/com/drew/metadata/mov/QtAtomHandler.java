@@ -1,6 +1,7 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
@@ -8,6 +9,7 @@ import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -76,8 +78,17 @@ public class QtAtomHandler implements QtHandler
 
     private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
         reader.skip(4);
-        directory.setLong(QtDirectory.TAG_CREATION_TIME, reader.getInt32());
-        directory.setLong(QtDirectory.TAG_MODIFICATION_TIME, reader.getInt32());
+
+        long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
+        long modificationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(1904, 0, 1, 0, 0, 0);      // january 1, 1904  -  macintosh time epoch
+        Date date = calendar.getTime();
+        long macToUnixEpochOffset = date.getTime();
+        String creationTimeStamp = new Date(creationTime*1000 + macToUnixEpochOffset).toString();
+        String modificationTimeStamp = new Date(modificationTime*1000 + macToUnixEpochOffset).toString();
+        directory.setString(QtDirectory.TAG_CREATION_TIME, creationTimeStamp);
+        directory.setString(QtDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
 
         int timeScale = reader.getInt32();
         double duration = reader.getInt32();
