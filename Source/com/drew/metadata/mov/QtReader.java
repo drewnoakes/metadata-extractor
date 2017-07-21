@@ -1,79 +1,92 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.ImageProcessingException;
-import com.drew.lang.RandomAccessStreamReader;
+import com.drew.lang.ByteUtil;
 import com.drew.lang.StreamReader;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.zip.DataFormatException;
 
 public class QtReader {
     private StreamReader reader;
     private QtDirectory directory;
-    private QtContainerHandler qtContainerHandler;
-    private QtAtomHandler qtAtomHandler;
-    public static ArrayList<String> history = new ArrayList<String>();
+    private int tabCount;
 
     public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
     {
         metadata = metadata;
         reader = new StreamReader(inputStream);
         directory = new QtDirectory();
-        qtContainerHandler = new QtContainerHandler();
-        qtAtomHandler = new QtAtomHandler();
         metadata.addDirectory(directory);
         reader.setMotorolaByteOrder(true);
+        tabCount = 0;
 
-        processAtoms(reader, -1, directory);
+        processAtoms(reader, -1, directory, new QtAtomHandler(), true);
     }
 
-    public void processAtoms(StreamReader reader, long atomSize, QtDirectory directory)
+    public void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
     {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
+
                 long size = reader.getInt32();
+
                 if (size == 1) {
                     size = reader.getInt64();
-                }
-
-                if (size == 0 && history.get(history.size() - 1).equals("meta")) {
-                    // This is free space for future metadata additions
+                } else if (size == 0) {
                     size = reader.getInt32();
                 }
 
                 String fourCC = new String(reader.getBytes(4));
 
-                if (history.size() > 0 && history.get(history.size() - 1).equals("ilst")) {
-                    QtContainerTypes._containerList.add(fourCC);
-                }
+                if (qtHandler.shouldAcceptContainer(fourCC)) {
 
-                if (qtContainerHandler.shouldAcceptContainer(fourCC)) {
-                    history.add(fourCC);
-                    if (size == 0) {
-                        processAtoms(reader, -1, directory);
-                    } else {
-                        processAtoms(reader, reader.getPosition() + size - 8, directory);
+                    //////////////// TREE PRINTER ////////////////
+                    if (printVisited) {
+                        for (int i = 0; i < tabCount; i++) {
+                            System.out.print("   " + i + "   |");
+                        }
+                        System.out.println(" [" + fourCC + "]");
+                        tabCount++;
                     }
-                    history.remove(history.size() - 1);
-                } else if (qtAtomHandler.shouldAcceptAtom(fourCC)) {
-                    qtAtomHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory, history);
+
+                    if (size == 0) {
+                        processAtoms(reader, -1, directory, qtHandler.processContainer(fourCC), printVisited);
+                    } else {
+                        processAtoms(reader, reader.getPosition() + size - 8, directory, qtHandler.processContainer(fourCC), printVisited);
+                    }
+
+                    //////////////// TREE PRINTER ////////////////
+                    if (printVisited) {
+                        tabCount--;
+//                        for (int i = 0; i < tabCount; i++) {
+//                            System.out.print("   " + i + "   |");
+//                        }
+//                        System.out.println(" [" + fourCC + "]");
+                    }
+
+                } else if (qtHandler.shouldAcceptAtom(fourCC)) {
+
+                    //////////////// TREE PRINTER ////////////////
+                    if (printVisited) {
+                        for (int i = 0; i < tabCount; i++) {
+                            System.out.print("   " + i + "   |");
+                        }
+                        System.out.println("  " + fourCC);
+                    }
+
+                    qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory);
                 } else {
                      if (size > 1)
                         reader.skip(size - 8);
                 }
-                System.out.println(Arrays.toString(history.toArray()) + ": " + fourCC);
             }
         } catch (IOException e) {
             System.out.println("End of data reached");
-        } catch (ImageProcessingException e) {
-            e.printStackTrace();
         }
     }
 
