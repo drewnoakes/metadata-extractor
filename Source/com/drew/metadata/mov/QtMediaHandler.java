@@ -6,6 +6,8 @@ import java.io.IOException;
 
 public class QtMediaHandler implements QtHandler
 {
+    private static final String VIDEO_MEDIA_INFORMATION = "vide";
+    private static final String SOUND_MEDIA_INFORMATION = "soun";
     private String handler;
 
     @Override
@@ -30,9 +32,9 @@ public class QtMediaHandler implements QtHandler
     @Override
     public QtHandler processContainer(String fourCC) {
         if (fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION)) {
-            if (handler.equals("vide")) {
+            if (handler.equals(VIDEO_MEDIA_INFORMATION)) {
                 return new QtVideoMediaHandler();
-            } else if (handler.equals("soun")) {
+            } else if (handler.equals(SOUND_MEDIA_INFORMATION)) {
                 return new QtSoundMediaHandler();
             }
         }

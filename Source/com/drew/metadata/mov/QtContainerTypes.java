@@ -18,6 +18,8 @@ public class QtContainerTypes
     public static final String ATOM_DATA_INFORMATION = "dinf";
     public static final String ATOM_SAMPLE_TABLE = "stbl";
 
+    public static final String ATOM_METADATA_LIST = "ilst";
+
     public static final String ATOM_METADATA = "meta";
     public static final String ATOM_METADATA_HEADER = "mhdr";
 
@@ -36,6 +38,7 @@ public class QtContainerTypes
 
         _containerList.add(ATOM_METADATA);
         _containerList.add(ATOM_METADATA_HEADER);
+        _containerList.add(ATOM_METADATA_LIST);
     }
 
     public static boolean isContainer(String fourCC)

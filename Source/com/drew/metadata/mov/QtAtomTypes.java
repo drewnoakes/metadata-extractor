@@ -23,8 +23,6 @@ public class QtAtomTypes
 
     public static final String ATOM_SAMPLE_DESCRIPTION = "stsd";
 
-    public static final String ATOM_METADATA_LIST = "ilst";
-
     public static final String ATOM_PROFILE = "prfl";
 
     // END Movie Atom Container
@@ -41,7 +39,6 @@ public class QtAtomTypes
         _atomList.add(ATOM_HANDLER);
         _atomList.add(ATOM_KEYS);
         _atomList.add(ATOM_DATA);
-        _atomList.add(ATOM_METADATA_LIST);
     }
 
     public static boolean isAtom(String fourCC)

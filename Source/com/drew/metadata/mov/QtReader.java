@@ -1,6 +1,7 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.ByteUtil;
 import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
 
@@ -36,11 +37,15 @@ public class QtReader {
 
                 if (size == 1) {
                     size = reader.getInt64();
+                } else if (size == 0) {
+                    size = reader.getInt32();
                 }
 
                 String fourCC = new String(reader.getBytes(4));
 
                 if (qtHandler.shouldAcceptContainer(fourCC)) {
+
+                    //////////////// TREE PRINTER ////////////////
                     if (printVisited) {
                         for (int i = 0; i < tabCount; i++) {
                             System.out.print("   " + i + "   |");
@@ -55,6 +60,7 @@ public class QtReader {
                         processAtoms(reader, reader.getPosition() + size - 8, directory, qtHandler.processContainer(fourCC), printVisited);
                     }
 
+                    //////////////// TREE PRINTER ////////////////
                     if (printVisited) {
                         tabCount--;
 //                        for (int i = 0; i < tabCount; i++) {
@@ -62,14 +68,18 @@ public class QtReader {
 //                        }
 //                        System.out.println(" [" + fourCC + "]");
                     }
+
                 } else if (qtHandler.shouldAcceptAtom(fourCC)) {
+
+                    //////////////// TREE PRINTER ////////////////
                     if (printVisited) {
                         for (int i = 0; i < tabCount; i++) {
                             System.out.print("   " + i + "   |");
                         }
                         System.out.println("  " + fourCC);
                     }
-                    qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory);
+
+                    qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory);
                 } else {
                      if (size > 1)
                         reader.skip(size - 8);

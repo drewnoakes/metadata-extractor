@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
@@ -18,10 +19,7 @@ public class QtMetadataHandler implements QtHandler
     @Override
     public boolean shouldAcceptAtom(String fourCC)
     {
-        return fourCC.equals(QtAtomTypes.ATOM_HANDLER)
-            || fourCC.equals(QtAtomTypes.ATOM_KEYS)
-            || fourCC.equals(QtAtomTypes.ATOM_DATA)
-            || fourCC.equals(QtAtomTypes.ATOM_METADATA_LIST); // Metadata list is not an atom, it's a container
+        return fourCC.equals(QtAtomTypes.ATOM_HANDLER);
     }
 
     @Override
@@ -41,62 +39,22 @@ public class QtMetadataHandler implements QtHandler
             reader.skip(12); // Reserved
             int nameSize = reader.getInt16();
             String name = reader.getString(nameSize);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
-            // Version 1-byte and Flags 3-bytes
-            reader.skip(4);
-            int entryCount = reader.getInt32();
-            for (int i = 0; i < entryCount; i++) {
-                int keySize = reader.getInt32();
-                String keyNamespace = new String(reader.getBytes(4));
-                String keyValue = new String(reader.getBytes(keySize - 8));
-                keys.add(keyValue);
+            if (handler.equals("mdir")) {
+                return new QtMetadataDirectoryHandler();
+            } else if (handler.equals("mdta")) {
+                return new QtMetadataDataHandler();
             }
-            values = new String[keys.size()];
-            System.out.println(Arrays.toString(keys.toArray()));
-            System.out.println(handler);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)){
-
-        } else if (fourCC.equals(QtAtomTypes.ATOM_METADATA_LIST)) {
-            processMetadataItem(payload, reader);
         }
         return this;
-    }
-
-    private void processMetadataItem(byte[] payload, SequentialByteArrayReader reader) throws IOException {
-        System.out.println(new String(payload));
-        for (String key : keys) {
-            long keySize = reader.getInt32();
-            if (keySize == 1) {
-                keySize = reader.getInt64();
-            }
-            int keyIndex = reader.getInt32();
-            long pos = 0;
-            while (pos < keySize) {
-                int size = reader.getInt32();
-                String fourCC = new String(reader.getBytes(4));
-                if (fourCC.equals(QtAtomTypes.ATOM_DATA)) {
-                    processData(reader.getBytes(size), reader);
-                } else {
-                    reader.skip(size);
-                }
-                pos += size + 4;
-            }
-        }
-    }
-
-    private void processData(byte[] payload, SequentialByteArrayReader reader) throws IOException {
-        int typeIndicator = reader.getInt32();
-        if (((typeIndicator & 0xFF000000) >> 12) == 0) {
-            System.out.println("Well-known type: " + (typeIndicator & 0x00FFFFFF));
-        }
-        int localeIndicator = reader.getInt32();
-        String value = new String(reader.getBytes(payload.length - 8));
-        System.out.println(keys.get(currentIndex) + ": " + value);
     }
 
     @Override
     public QtHandler processContainer(String fourCC)
     {
+        int numValue = ByteUtil.getInt32(fourCC.getBytes(), 0, true);
+        if (numValue > 0 && numValue < keys.size() + 1) {
+            currentIndex = numValue - 1;
+        }
         return this;
     }
 }

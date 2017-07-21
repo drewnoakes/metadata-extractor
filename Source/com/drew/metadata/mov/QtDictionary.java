@@ -20,8 +20,6 @@ public class QtDictionary
         _dictionary.put(QtDirectory.TAG_MAJOR_BRAND, _majorBrands);
         _dictionary.put(QtDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
         _dictionary.put(QtDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
-        _dictionary.put(0, _userDataTypes);
-        _dictionary.put(1, _metadataKeys);
 
         // Video Compression Types
         _videoCompressionTypes.put("cvid", "Cinepak");
@@ -163,82 +161,9 @@ public class QtDictionary
         _majorBrands.put("sdv ", "SD Memory Card Video");
         _majorBrands.put("ssc1", "Samsung stereoscopic, single stream (patent pending, see notes)");
         _majorBrands.put("ssc2", "Samsung stereoscopic, dual stream (patent pending, see notes)");
-
-        // User Data Types
-        _userDataTypes.put("©arg", "Arranger Name");
-        _userDataTypes.put("©ark", "Arranger Keywords");
-        _userDataTypes.put("©cok", "Composer Keywords");
-        _userDataTypes.put("©com", "Composer Name");
-        _userDataTypes.put("©cpy", "Copyright");
-        _userDataTypes.put("©day", "Day Created");
-        _userDataTypes.put("©dir", "Director Name");
-        _userDataTypes.put("©ed1", "Edit Date 1");
-        _userDataTypes.put("©ed2", "Edit Date 2");
-        _userDataTypes.put("©ed3", "Edit Date 3");
-        _userDataTypes.put("©ed4", "Edit Date 4");
-        _userDataTypes.put("©ed5", "Edit Date 5");
-        _userDataTypes.put("©ed6", "Edit Date 6");
-        _userDataTypes.put("©ed7", "Edit Date 7");
-        _userDataTypes.put("©ed8", "Edit Date 8");
-        _userDataTypes.put("©ed9", "Edit Date 9");
-        _userDataTypes.put("©fmt", "Movie Format");
-        _userDataTypes.put("©inf", "Movie Information");
-        _userDataTypes.put("©isr", "ISRC");
-        _userDataTypes.put("©lab", "Record Label Name");
-        _userDataTypes.put("©lal", "Record Label URL");
-        _userDataTypes.put("©mak", "Creator Name");
-        _userDataTypes.put("©mal", "Creator URL");
-        _userDataTypes.put("©nak", "Title Keywords");
-        _userDataTypes.put("©nam", "Title Name");
-        _userDataTypes.put("©pdk", "Producer Keywords");
-        _userDataTypes.put("©phg", "Recording Copyright Statement");
-        _userDataTypes.put("©prd", "Producer Name");
-        _userDataTypes.put("©prf", "Performer Names");
-        _userDataTypes.put("©prk", "Main Artist/Performer Keywords");
-        _userDataTypes.put("©prl", "Main Artist/Performer URL");
-        _userDataTypes.put("©req", "Special Hardware/Software Requirements");
-        _userDataTypes.put("©snk", "Subtitle Keywords");
-        _userDataTypes.put("©snm", "Subtitle");
-        _userDataTypes.put("©src", "Credits");
-        _userDataTypes.put("©swf", "Songwriter Name");
-        _userDataTypes.put("©swk", "Songwriter Keywords");
-        _userDataTypes.put("©swr", "Software");
-        _userDataTypes.put("©wrt", "Writer Name");
-        _userDataTypes.put("AllF", "Play All Frames");
-        _userDataTypes.put("desc", "Description");
-
-        // Metadata Keys
-        _metadataKeys.put("com.apple.quicktime.album", "Album");
-        _metadataKeys.put("com.apple.quicktime.artist", "Artist");
-        _metadataKeys.put("com.apple.quicktime.artwork", "Artwork");
-        _metadataKeys.put("com.apple.quicktime.author", "Author");
-        _metadataKeys.put("com.apple.quicktime.comment", "Comment");
-        _metadataKeys.put("com.apple.quicktime.copyright", "Copyright");
-        _metadataKeys.put("com.apple.quicktime.creationdate", "Creation Date");
-        _metadataKeys.put("com.apple.quicktime.description", "Description");
-        _metadataKeys.put("com.apple.quicktime.director", "Director");
-        _metadataKeys.put("com.apple.quicktime.title", "Title");
-        _metadataKeys.put("com.apple.quicktime.genre", "Genre");
-        _metadataKeys.put("com.apple.quicktime.information", "Information");
-        _metadataKeys.put("com.apple.quicktime.keywords", "Keywords");
-        _metadataKeys.put("com.apple.quicktime.location.ISO6709", "ISO 6709");
-        _metadataKeys.put("com.apple.quicktime.producer", "Producer");
-        _metadataKeys.put("com.apple.quicktime.publisher", "Publisher");
-        _metadataKeys.put("com.apple.quicktime.software", "Software");
-        _metadataKeys.put("com.apple.quicktime.year", "Year");
-        _metadataKeys.put("com.apple.quicktime.collection.user", "Collection User");
-        _metadataKeys.put("com.apple.quicktime.rating.user", "Rating User");
-        _metadataKeys.put("com.apple.quicktime.location.name", "Location Name");
-        _metadataKeys.put("com.apple.quicktime.location.body", "Location Body");
-        _metadataKeys.put("com.apple.quicktime.location.note", "Location Note");
-        _metadataKeys.put("com.apple.quicktime.location.role", "Location Role");
-        _metadataKeys.put("com.apple.quicktime.location.date", "Location Date");
-        _metadataKeys.put("com.apple.quicktime.direction.facing", "Direction Facing");
-        _metadataKeys.put("com.apple.quicktime.direction.motion", "Direction Motion");
-        _metadataKeys.put("com.apple.quicktime.displayname", "Display Name");
     }
 
-    public static String lookup(Integer scope, String lookup)
+    public static String lookup(int scope, String lookup)
     {
         String results;
         if (_dictionary.containsKey(scope) && _dictionary.get(scope).containsKey(lookup)) {
