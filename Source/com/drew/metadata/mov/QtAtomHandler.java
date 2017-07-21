@@ -1,29 +1,27 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author Payton Garland
  */
 public class QtAtomHandler implements QtHandler
 {
-    public String currentHandler = "";
-    public ArrayList<String> keys = new ArrayList<String>();
-    public int keyCount = 0;
+    private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
 
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
         return fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)
             || fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)
-            || fourCC.equals(QtAtomTypes.ATOM_HANDLER);
+            || fourCC.equals(QtAtomTypes.ATOM_HANDLER)
+            || fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER);
     }
 
     @Override
@@ -31,8 +29,8 @@ public class QtAtomHandler implements QtHandler
         return fourCC.equals(QtContainerTypes.ATOM_TRACK)
             || fourCC.equals(QtContainerTypes.ATOM_USER_DATA)
             || fourCC.equals(QtContainerTypes.ATOM_METADATA)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA)
-            || fourCC.equals(QtContainerTypes.ATOM_MOVIE);
+            || fourCC.equals(QtContainerTypes.ATOM_MOVIE)
+            || fourCC.equals(QtContainerTypes.ATOM_MEDIA);
     }
 
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
@@ -46,25 +44,25 @@ public class QtAtomHandler implements QtHandler
             int versionAndFlags = reader.getInt32();
             int predefined = reader.getInt32();
             String handler = new String(reader.getBytes(4));
-            if (handler.equals("mdir")) {
-                return new QtMetadataDirectoryHandler();
-            } else if (handler.equals("mdta")) {
-                return new QtMetadataDataHandler();
-            } else if (handler.equals("soun")) {
-                return new QtSoundMediaHandler();
-            } else if (handler.equals("vide")) {
-                return new QtVideoMediaHandler();
+            return handlerFactory.getHandler(handler);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
+            // We only want the value that was used to calculate frame rate
+            if (directory.getInteger(QtDirectory.TAG_FRAME_RATE) == null) {
+                reader.skip(12);
+                directory.setDouble(QtDirectory.TAG_MEDIA_TIME_SCALE, reader.getInt32());
             }
         }
         return this;
     }
 
     @Override
-    public QtHandler processContainer(String fourCC) {
+    public QtHandler processContainer(String fourCC)
+    {
         return this;
     }
 
-    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException {
+    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException
+    {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(4));
 
         directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4));
@@ -81,11 +79,23 @@ public class QtAtomHandler implements QtHandler
 //        }
     }
 
-    private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
+    private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
         reader.skip(4);
-        directory.setLong(QtDirectory.TAG_CREATION_TIME, reader.getInt32());
-        directory.setLong(QtDirectory.TAG_MODIFICATION_TIME, reader.getInt32());
 
+        // Get creation/modification times
+        long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
+        long modificationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
+        Date date = calendar.getTime();
+        long macToUnixEpochOffset = date.getTime();
+        String creationTimeStamp = new Date(creationTime*1000 + macToUnixEpochOffset).toString();
+        String modificationTimeStamp = new Date(modificationTime*1000 + macToUnixEpochOffset).toString();
+        directory.setString(QtDirectory.TAG_CREATION_TIME, creationTimeStamp);
+        directory.setString(QtDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
+
+        // Get duration and time scale
         int timeScale = reader.getInt32();
         double duration = reader.getInt32();
         duration = duration / timeScale;
@@ -112,6 +122,7 @@ public class QtAtomHandler implements QtHandler
         reader.skip(10);
         // 36-byte matrix structure at index 36
         reader.skip(36);
+
         directory.setInt(QtDirectory.TAG_PREVIEW_TIME, reader.getInt32());
         directory.setInt(QtDirectory.TAG_PREVIEW_DURATION, reader.getInt32());
         directory.setInt(QtDirectory.TAG_POSTER_TIME, reader.getInt32());

@@ -4,38 +4,17 @@ import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
 
-public class QtVideoMediaHandler implements QtHandler
+public class QtMediaVideoHandler extends QtMediaHandler
 {
-
     @Override
-    public boolean shouldAcceptAtom(String fourCC) {
-        return fourCC.equals(QtAtomTypes.ATOM_VIDEO_MEDIA_INFO)
-            || fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION);
+    String getMediaInformation()
+    {
+        return QtAtomTypes.ATOM_VIDEO_MEDIA_INFO;
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC) {
-        return fourCC.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION);
-    }
-
-    @Override
-    public QtHandler processAtom(String fourCC, byte[] payload, QtDirectory directory) throws IOException {
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
-        if (fourCC.equals(QtAtomTypes.ATOM_VIDEO_MEDIA_INFO)) {
-            processMediaInformationHeader(directory, reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
-            processSampleDescriptionAtom(directory, reader);
-        }
-        return this;
-    }
-
-    @Override
-    public QtHandler processContainer(String fourCC) {
-        return this;
-    }
-
-    private void processSampleDescriptionAtom(QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
+    public void processSampleDescription(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
         reader.skip(4);
         int numberOfEntries = reader.getInt32();
         int sampleSize = reader.getInt32();
@@ -57,28 +36,36 @@ public class QtVideoMediaHandler implements QtHandler
         int depth = reader.getInt16();
         int colorTableId = reader.getInt16();
 
+        QtDictionary.setLookup(QtDirectory.TAG_VENDOR, vendor, directory);
+        QtDictionary.setLookup(QtDirectory.TAG_COMPRESSION_TYPE, dataFormat, directory);
+
         directory.setInt(QtDirectory.TAG_TEMPORAL_QUALITY, temporalQuality);
         directory.setInt(QtDirectory.TAG_SPATIAL_QUALITY, spatialQuality);
         directory.setInt(QtDirectory.TAG_WIDTH, width);
         directory.setInt(QtDirectory.TAG_HEIGHT, height);
         directory.setString(QtDirectory.TAG_COMPRESSOR_NAME, compressorName.trim());
-        directory.setString(QtDirectory.TAG_COMPRESSION_TYPE, QtDictionary.lookup(QtDirectory.TAG_COMPRESSION_TYPE, dataFormat));
-        directory.setInt(QtDirectory.TAG_DEPTH, depth);
 
+        directory.setInt(QtDirectory.TAG_DEPTH, depth);
+        directory.setInt(QtDirectory.TAG_COLOR_TABLE, colorTableId);
+
+        // Calculate horizontal res
         double horizontalInteger = (horizontalResolution & 0xFFFF0000) >> 16;
         double horizontalFraction = (horizontalResolution & 0xFFFF) / Math.pow(2, 4);
+        directory.setDouble(QtDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
+
         double verticalInteger = (verticalResolution & 0xFFFF0000) >> 16;
         double verticalFraction = (verticalResolution & 0xFFFF) / Math.pow(2, 4);
-        directory.setDouble(QtDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
         directory.setDouble(QtDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 
-    private void processMediaInformationHeader(QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
+    @Override
+    public void processMediaInformation(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
         reader.skip(4);
         int graphicsMode = reader.getInt16();
-        int opcolorRed = reader.getInt16();
-        int opcolorGreen = reader.getInt16();
-        int opcolorBlue = reader.getInt16();
+        int opcolorRed = reader.getUInt16();
+        int opcolorGreen = reader.getUInt16();
+        int opcolorBlue = reader.getUInt16();
 
         directory.setString(QtDirectory.TAG_OPCOLOR, "R:" + opcolorRed + " G:" + opcolorGreen + " B:" + opcolorBlue);
 
@@ -111,6 +98,22 @@ public class QtVideoMediaHandler implements QtHandler
                 directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
                 break;
             default:
+        }
+    }
+
+    @Override
+    public void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
+        int flags = reader.getInt32();
+        int numberOfEntries = reader.getInt32();
+        int numberOfSamples = reader.getInt32();
+        int sampleDuration = reader.getInt32();
+
+        Integer mediaTimeScale = directory.getInteger(QtDirectory.TAG_MEDIA_TIME_SCALE);
+        if (mediaTimeScale != null) {
+            float frameRate = (float)mediaTimeScale/(float)sampleDuration;
+            System.out.println(frameRate);
+            directory.setFloat(QtDirectory.TAG_FRAME_RATE, frameRate);
         }
     }
 }
