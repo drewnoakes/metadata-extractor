@@ -6,11 +6,10 @@ import com.drew.lang.SequentialByteArrayReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class QtMetadataDataHandler implements QtHandler
+public class QtMetadataDataHandler extends QtMetadataHandler
 {
     private int currentIndex = 0;
     private ArrayList<String> keys = new ArrayList<String>();
-    private String[] values = null;
 
     @Override
     public boolean shouldAcceptAtom(String fourCC)
@@ -32,21 +31,9 @@ public class QtMetadataDataHandler implements QtHandler
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
-            // Version 1-byte and Flags 3-bytes
-            reader.skip(4);
-            int entryCount = reader.getInt32();
-            for (int i = 0; i < entryCount; i++) {
-                int keySize = reader.getInt32();
-                String keyNamespace = new String(reader.getBytes(4));
-                String keyValue = new String(reader.getBytes(keySize - 8));
-                keys.add(keyValue);
-            }
-            values = new String[keys.size()];
+            processKeys(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)){
-            int typeIndicator = reader.getInt32();
-            int localeIndicator = reader.getInt32();
-            String value = new String(reader.getBytes(payload.length - 8));
-            directory.setString(QtDirectory._tagIntegerMap.get(keys.get(currentIndex)), value);
+            processData(payload, directory, reader);
         }
         return this;
     }
@@ -59,5 +46,28 @@ public class QtMetadataDataHandler implements QtHandler
             currentIndex = numValue - 1;
         }
         return this;
+    }
+
+    @Override
+    public void processKeys(SequentialByteArrayReader reader) throws IOException
+    {
+        // Version 1-byte and Flags 3-bytes
+        reader.skip(4);
+        int entryCount = reader.getInt32();
+        for (int i = 0; i < entryCount; i++) {
+            int keySize = reader.getInt32();
+            String keyNamespace = new String(reader.getBytes(4));
+            String keyValue = new String(reader.getBytes(keySize - 8));
+            keys.add(keyValue);
+        }
+    }
+
+    @Override
+    public void processData(byte[] payload, QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
+        int typeIndicator = reader.getInt32();
+        int localeIndicator = reader.getInt32();
+        String value = new String(reader.getBytes(payload.length - 8));
+        directory.setString(QtDirectory._tagIntegerMap.get(keys.get(currentIndex)), value);
     }
 }

@@ -4,7 +4,7 @@ import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
 
-public class QtMetadataDirectoryHandler implements QtHandler
+public class QtMetadataDirectoryHandler extends QtMetadataHandler
 {
     private String currentData;
 
@@ -26,10 +26,7 @@ public class QtMetadataDirectoryHandler implements QtHandler
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_DATA) && currentData != null){
-            int typeIndicator = reader.getInt32();
-            int localeIndicator = reader.getInt32();
-            String value = new String(reader.getBytes(payload.length - 8));
-            directory.setString(QtDirectory._tagIntegerMap.get(currentData), value);
+            processData(payload, directory, reader);
         } else {
             currentData = new String(reader.getBytes(4));
         }
@@ -45,5 +42,20 @@ public class QtMetadataDirectoryHandler implements QtHandler
             currentData = null;
         }
         return this;
+    }
+
+    @Override
+    public void processData(byte[] payload, QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
+        int typeIndicator = reader.getInt32();
+        int localeIndicator = reader.getInt32();
+        String value = new String(reader.getBytes(payload.length - 8));
+        directory.setString(QtDirectory._tagIntegerMap.get(currentData), value);
+    }
+
+    @Override
+    void processKeys(SequentialByteArrayReader reader) throws IOException
+    {
+        // Do nothing
     }
 }

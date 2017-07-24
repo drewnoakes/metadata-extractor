@@ -16,6 +16,7 @@ public class QtAtomHandler implements QtHandler
 {
     private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
 
+    @Override
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
         return fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)
@@ -25,7 +26,8 @@ public class QtAtomHandler implements QtHandler
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC) {
+    public boolean shouldAcceptContainer(String fourCC)
+    {
         return fourCC.equals(QtContainerTypes.ATOM_TRACK)
             || fourCC.equals(QtContainerTypes.ATOM_USER_DATA)
             || fourCC.equals(QtContainerTypes.ATOM_METADATA)
@@ -33,6 +35,7 @@ public class QtAtomHandler implements QtHandler
             || fourCC.equals(QtContainerTypes.ATOM_MEDIA);
     }
 
+    @Override
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
@@ -46,11 +49,8 @@ public class QtAtomHandler implements QtHandler
             String handler = new String(reader.getBytes(4));
             return handlerFactory.getHandler(handler);
         } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
-            // We only want the value that was used to calculate frame rate
-            if (directory.getInteger(QtDirectory.TAG_FRAME_RATE) == null) {
-                reader.skip(12);
-                directory.setDouble(QtDirectory.TAG_MEDIA_TIME_SCALE, reader.getInt32());
-            }
+            reader.skip(12);
+            QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32();
         }
         return this;
     }
@@ -58,6 +58,9 @@ public class QtAtomHandler implements QtHandler
     @Override
     public QtHandler processContainer(String fourCC)
     {
+        if (fourCC.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
+            throw new RuntimeException("Compressed QuickTime movies not supported");
+        }
         return this;
     }
 
@@ -74,9 +77,6 @@ public class QtAtomHandler implements QtHandler
         }
         String[] compatibleBrandsReturn = new String[compatibleBrands.size()];
         directory.setStringArray(QtDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(compatibleBrandsReturn));
-//        if (!compatibleBrands.contains("qt  ")) {
-//            throw new ImageProcessingException("Not a QuickTime movie file");
-//        }
     }
 
     private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException

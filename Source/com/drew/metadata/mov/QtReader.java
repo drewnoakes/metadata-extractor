@@ -1,14 +1,10 @@
 package com.drew.metadata.mov;
 
-import com.drew.lang.Charsets;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.zip.DataFormatException;
 
 public class QtReader {
@@ -24,7 +20,7 @@ public class QtReader {
         reader.setMotorolaByteOrder(true);
         tabCount = 0;
 
-        processAtoms(reader, -1, directory, new QtAtomHandler(), true);
+        processAtoms(reader, -1, directory, new QtAtomHandler(), false);
     }
 
     private void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
@@ -32,7 +28,7 @@ public class QtReader {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
 
-                long size = reader.getInt32();
+                long size = reader.getUInt32();
 
                 if (size == 1) {
                     size = reader.getInt64();
@@ -40,13 +36,7 @@ public class QtReader {
                     size = reader.getInt32();
                 }
 
-//                byte[] temp = reader.getBytes(4);
-//                SequentialByteArrayReader tempread = new SequentialByteArrayReader(temp);
-//                System.out.println(tempread.getUInt32());
                 String fourCC = reader.getString(4);
-//                if (fourCC.equals("aART")) {
-//                    System.out.println("here");
-//                }
 
                 if (qtHandler.shouldAcceptContainer(fourCC)) {
 
@@ -83,8 +73,8 @@ public class QtReader {
                         reader.skip(size - 8);
                 }
             }
-        } catch (IOException ignored) {
-
+        } catch (IOException ex) {
+            directory.addError("Error reading file stream");
         }
     }
 
