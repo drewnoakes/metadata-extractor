@@ -20,7 +20,14 @@ public class QtReader {
         reader.setMotorolaByteOrder(true);
         tabCount = 0;
 
-        processAtoms(reader, -1, directory, new QtAtomHandler(), false);
+        boolean printVisited = true;
+
+        if (printVisited) {
+            System.out.println("_______________Beginning to Print Tree_______________");
+            System.out.println("| \"\" = leaf      \"[]\" = container    \"{}\" = Unknown |");
+            System.out.println("_____________________________________________________");
+        }
+        processAtoms(reader, -1, directory, new QtAtomHandler(), printVisited);
     }
 
     private void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
@@ -69,8 +76,15 @@ public class QtReader {
 
                     qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory);
                 } else {
-                     if (size > 1)
+                    if (size > 1)
                         reader.skip(size - 8);
+
+                    if (printVisited) {
+                        for (int i = 0; i < tabCount; i++) {
+                            System.out.print("   " + i + "   |");
+                        }
+                        System.out.println(" {" + fourCC + "}");
+                    }
                 }
             }
         } catch (IOException ex) {
