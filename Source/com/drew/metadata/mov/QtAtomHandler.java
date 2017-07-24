@@ -26,7 +26,8 @@ public class QtAtomHandler implements QtHandler
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC) {
+    public boolean shouldAcceptContainer(String fourCC)
+    {
         return fourCC.equals(QtContainerTypes.ATOM_TRACK)
             || fourCC.equals(QtContainerTypes.ATOM_USER_DATA)
             || fourCC.equals(QtContainerTypes.ATOM_METADATA)

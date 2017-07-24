@@ -9,7 +9,10 @@ import java.util.Date;
 
 public class QtDescriptor extends TagDescriptor<QtDirectory> {
 
-    public QtDescriptor(@NotNull QtDirectory directory) { super(directory); }
+    public QtDescriptor(@NotNull QtDirectory directory)
+    {
+        super(directory);
+    }
 
     @Override
     public String getDescription(int tagType)

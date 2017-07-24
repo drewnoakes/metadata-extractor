@@ -1,14 +1,10 @@
 package com.drew.metadata.mov;
 
-import com.drew.lang.Charsets;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.StreamReader;
 import com.drew.metadata.Metadata;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.zip.DataFormatException;
 
 public class QtReader {
@@ -77,8 +73,8 @@ public class QtReader {
                         reader.skip(size - 8);
                 }
             }
-        } catch (IOException ignored) {
-
+        } catch (IOException ex) {
+            directory.addError("Error reading file stream");
         }
     }
 

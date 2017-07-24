@@ -340,11 +340,15 @@ public class QtDirectory extends Directory {
 
     @Override
     @NotNull
-    public String getName() { return "QuickTime"; }
+    public String getName()
+    {
+        return "QuickTime";
+    }
 
     @Override
     @NotNull
-    protected HashMap<Integer, String> getTagNameMap() {
+    protected HashMap<Integer, String> getTagNameMap()
+    {
         return _tagNameMap;
     }
 }
