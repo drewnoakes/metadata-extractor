@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
@@ -38,19 +39,18 @@ public class QtAtomHandler implements QtHandler
     @Override
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
     {
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+        ByteArrayReader reader = new ByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
             processMovieHeader(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
             processFileType(directory, payload, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
-            int versionAndFlags = reader.getInt32();
-            int predefined = reader.getInt32();
-            String handler = new String(reader.getBytes(4));
+            int versionAndFlags = reader.getInt32(0);
+            int predefined = reader.getInt32(4);
+            String handler = new String(reader.getBytes(8, 4));
             return handlerFactory.getHandler(handler);
         } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
-            reader.skip(12);
-            QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32();
+            QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32(12);
         }
         return this;
     }
@@ -64,28 +64,26 @@ public class QtAtomHandler implements QtHandler
         return this;
     }
 
-    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException
+    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, ByteArrayReader reader) throws IOException
     {
-        directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(4));
+        directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(0, 4));
 
-        directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4));
+        directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4, 4));
 
         ArrayList<String> compatibleBrands = new ArrayList<String>();
         int brandsCount = (payload.length - 8) / 4;
         for (int i = 8; i < (brandsCount * 4) + 8; i += 4) {
-            compatibleBrands.add(new String(reader.getBytes(4)));
+            compatibleBrands.add(new String(reader.getBytes(i, 4)));
         }
         String[] compatibleBrandsReturn = new String[compatibleBrands.size()];
         directory.setStringArray(QtDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(compatibleBrandsReturn));
     }
 
-    private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    private void processMovieHeader(@NotNull QtDirectory directory, ByteArrayReader reader) throws IOException
     {
-        reader.skip(4);
-
         // Get creation/modification times
-        long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
-        long modificationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4), 0, true);
+        long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4,4), 0, true);
+        long modificationTime = ByteUtil.getUnsignedInt32(reader.getBytes(8, 4), 0, true);
         Calendar calendar = Calendar.getInstance();
         calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
         Date date = calendar.getTime();
@@ -96,8 +94,8 @@ public class QtAtomHandler implements QtHandler
         directory.setString(QtDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
 
         // Get duration and time scale
-        int timeScale = reader.getInt32();
-        double duration = reader.getInt32();
+        int timeScale = reader.getInt32(12);
+        double duration = reader.getInt32(16);
         duration = duration / timeScale;
         Integer hours = (int)duration / (int)(Math.pow(60, 2));
         Integer minutes = ((int)duration / (int)(Math.pow(60, 1))) - (hours * 60);
@@ -107,28 +105,23 @@ public class QtAtomHandler implements QtHandler
         directory.setInt(QtDirectory.TAG_TIME_SCALE, timeScale);
 
         // Calculate preferred rate fixed point
-        int preferredRate = reader.getInt32();
+        int preferredRate = reader.getInt32(20);
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
         double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
         directory.setDouble(QtDirectory.TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
 
         // Calculate preferred volume fixed point
-        int preferredVolume = reader.getInt16();
+        int preferredVolume = reader.getInt16(24);
         double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
         double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
         directory.setDouble(QtDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
 
-        // 10-byte reserved space at index 26
-        reader.skip(10);
-        // 36-byte matrix structure at index 36
-        reader.skip(36);
-
-        directory.setInt(QtDirectory.TAG_PREVIEW_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_PREVIEW_DURATION, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_POSTER_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_SELECTION_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_SELECTION_DURATION, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_CURRENT_TIME, reader.getInt32());
-        directory.setInt(QtDirectory.TAG_NEXT_TRACK_ID, reader.getInt32());
+        directory.setInt(QtDirectory.TAG_PREVIEW_TIME, reader.getInt32(72));
+        directory.setInt(QtDirectory.TAG_PREVIEW_DURATION, reader.getInt32(76));
+        directory.setInt(QtDirectory.TAG_POSTER_TIME, reader.getInt32(80));
+        directory.setInt(QtDirectory.TAG_SELECTION_TIME, reader.getInt32(84));
+        directory.setInt(QtDirectory.TAG_SELECTION_DURATION, reader.getInt32(88));
+        directory.setInt(QtDirectory.TAG_CURRENT_TIME, reader.getInt32(92));
+        directory.setInt(QtDirectory.TAG_NEXT_TRACK_ID, reader.getInt32(96));
     }
 }
