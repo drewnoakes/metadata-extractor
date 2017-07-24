@@ -134,6 +134,7 @@ public class QtDictionary
         _soundAudioFormats.put("str2", "Iomega MPEG *layer II");
         _soundAudioFormats.put("str3", "Iomega MPEG **layer II");
         _soundAudioFormats.put("str4", "Iomega MPEG ***layer II");
+        _soundAudioFormats.put("lpcm", "Linear Pulse Code Modulation");
 
         // Major Brands
         _majorBrands.put("3g2a", "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-0 V1.0");

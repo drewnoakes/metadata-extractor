@@ -22,39 +22,19 @@ public class QtMediaSoundHandler extends QtMediaHandler
         reader.skip(6); // 6-bytes reserved
         int dataReference = reader.getInt16();
         int version = reader.getInt16();
-        int revisionLevel;
-        int vendor;
-        switch (version) {
-            case (0):
-            case (1):
-                revisionLevel = reader.getInt16();
-                vendor = reader.getInt32();
-                int numberOfChannels = reader.getInt16();
-                int sampleSizeBits = reader.getInt16();
-                int compressionId = reader.getInt16();
-                int packetSize = reader.getInt16();
-                int sampleRate = reader.getInt32();
 
-                directory.setString(QtDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtDirectory.TAG_AUDIO_FORMAT, dataFormat));
-                directory.setInt(QtDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
-                directory.setInt(QtDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSizeBits);
-                break;
-            case (2):
-                revisionLevel = reader.getInt32();
-                vendor = reader.getInt32();
-                reader.skip(16);
-                long audioSampleRate = reader.getInt64();
-                int numAudioChannels = reader.getInt32();
-                reader.skip(4);
-                int constBitsPerChannel = reader.getInt32();
-                int formatSpecificFlags = reader.getInt32();
-                int constBytesPerAudioPacket = reader.getInt32();
-                int constLPCMFramesPerAudioPacket = reader.getInt32();
+        int revisionLevel = reader.getInt16();
+        int vendor = reader.getInt32();
+        int numberOfChannels = reader.getInt16();
+        int sampleSizeBits = reader.getInt16();
+        int compressionId = reader.getInt16();
+        int packetSize = reader.getInt16();
+        int sampleRate = reader.getInt32();
 
-                directory.setInt(QtDirectory.TAG_NUMBER_OF_CHANNELS, numAudioChannels);
-                directory.setLong(QtDirectory.TAG_AUDIO_SAMPLE_RATE, audioSampleRate);
-                break;
-        }
+        directory.setString(QtDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtDirectory.TAG_AUDIO_FORMAT, dataFormat));
+        directory.setInt(QtDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
+        directory.setInt(QtDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSizeBits);
+
     }
 
     @Override
