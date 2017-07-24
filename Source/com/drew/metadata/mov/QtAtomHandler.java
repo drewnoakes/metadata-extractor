@@ -45,8 +45,6 @@ public class QtAtomHandler implements QtHandler
         } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
             processFileType(directory, payload, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
-            int versionAndFlags = reader.getInt32(0);
-            int predefined = reader.getInt32(4);
             String handler = new String(reader.getBytes(8, 4));
             return handlerFactory.getHandler(handler);
         } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
@@ -71,7 +69,7 @@ public class QtAtomHandler implements QtHandler
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
      *
      */
-    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, ByteArrayReader reader) throws IOException
+    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
     {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(0, 4));
 
@@ -93,7 +91,7 @@ public class QtAtomHandler implements QtHandler
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-32947
      *
      */
-    private void processMovieHeader(@NotNull QtDirectory directory, ByteArrayReader reader) throws IOException
+    private void processMovieHeader(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         // Get creation/modification times
         long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4,4), 0, true);

@@ -2,6 +2,7 @@ package com.drew.metadata.mov;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ public class QtMediaVideoHandler extends QtMediaHandler
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
      */
     @Override
-    public void processSampleDescription(QtDirectory directory, ByteArrayReader reader) throws IOException
+    public void processSampleDescription(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         String dataFormat = new String(reader.getBytes(12,4));
         String vendor = new String(reader.getBytes(28,4));
@@ -53,8 +54,11 @@ public class QtMediaVideoHandler extends QtMediaHandler
         directory.setDouble(QtDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 
+    /**
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-25642
+     */
     @Override
-    public void processMediaInformation(QtDirectory directory, ByteArrayReader reader) throws IOException
+    public void processMediaInformation(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         int graphicsMode = reader.getInt16(4);
         int opcolorRed = reader.getUInt16(6);
@@ -95,8 +99,11 @@ public class QtMediaVideoHandler extends QtMediaHandler
         }
     }
 
+    /**
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
+     */
     @Override
-    public void processTimeToSample(QtDirectory directory, ByteArrayReader reader) throws IOException
+    public void processTimeToSample(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         int flags = reader.getInt32(0);
         int numberOfEntries = reader.getInt32(4);

@@ -2,6 +2,7 @@ package com.drew.metadata.mov;
 
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,13 +28,13 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    public QtHandler processAtom(String fourCC, byte[] payload, QtDirectory directory) throws IOException
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
             processKeys(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)){
-            processData(payload, directory, reader);
+            processData(directory, payload, reader);
         }
         return this;
     }
@@ -49,7 +50,7 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    public void processKeys(SequentialByteArrayReader reader) throws IOException
+    public void processKeys(@NotNull SequentialByteArrayReader reader) throws IOException
     {
         // Version 1-byte and Flags 3-bytes
         reader.skip(4);
@@ -63,7 +64,7 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    public void processData(byte[] payload, QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    public void processData(@NotNull QtDirectory directory, @NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
     {
         int typeIndicator = reader.getInt32();
         int localeIndicator = reader.getInt32();

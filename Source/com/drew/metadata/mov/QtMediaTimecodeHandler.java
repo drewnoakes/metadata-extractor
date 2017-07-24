@@ -2,6 +2,7 @@ package com.drew.metadata.mov;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -13,8 +14,11 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
         return QtAtomTypes.ATOM_TIMECODE_MEDIA_INFO;
     }
 
+    /**
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGABGG
+     */
     @Override
-    public void processSampleDescription(QtDirectory directory, ByteArrayReader reader) throws IOException
+    public void processSampleDescription(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         int numberOfEntries = reader.getInt32(4);
         int sampleDescriptionSize = reader.getInt32(8);
@@ -27,13 +31,16 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
     }
 
     @Override
-    public void processMediaInformation(QtDirectory directory, ByteArrayReader reader) throws IOException
+    public void processMediaInformation(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         // Do nothing
     }
 
+    /**
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
+     */
     @Override
-    void processTimeToSample(QtDirectory directory, ByteArrayReader reader) throws IOException
+    void processTimeToSample(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         // Do nothing
     }

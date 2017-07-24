@@ -2,6 +2,7 @@ package com.drew.metadata.mov;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -23,7 +24,7 @@ public abstract class QtMediaHandler implements QtHandler
     }
 
     @Override
-    public QtHandler processAtom(String fourCC, byte[] payload, QtDirectory directory) throws IOException
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
     {
         ByteArrayReader reader = new ByteArrayReader(payload);
         if (fourCC.equals(getMediaInformation())) {
@@ -60,14 +61,14 @@ public abstract class QtMediaHandler implements QtHandler
      *
      * Unique values will follow depending upon the handler
      */
-    abstract void processSampleDescription(QtDirectory directory, ByteArrayReader reader) throws IOException;
+    abstract void processSampleDescription(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
 
     /**
      * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
      *
      * Each structure will be specified in its respective handler
      */
-    abstract void processMediaInformation(QtDirectory directory, ByteArrayReader reader) throws IOException;
+    abstract void processMediaInformation(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
 
-    abstract void processTimeToSample(QtDirectory directory, ByteArrayReader reader) throws IOException;
+    abstract void processTimeToSample(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
 }
