@@ -8,40 +8,40 @@ import java.util.HashMap;
 public class QtDirectory extends Directory {
 
     // Movie Header Atom (https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-56313)
-    public static final int TAG_CREATION_TIME = 0x0100;
-    public static final int TAG_MODIFICATION_TIME = 0x0101;
-    public static final int TAG_TIME_SCALE = 0x0102;
-    public static final int TAG_DURATION = 0x0103;
-    public static final int TAG_PREFERRED_RATE = 0x0104;
-    public static final int TAG_PREFERRED_VOLUME = 0x0105;
-    public static final int TAG_PREVIEW_TIME = 0x0108;
-    public static final int TAG_PREVIEW_DURATION = 0x0109;
-    public static final int TAG_POSTER_TIME = 0x010A;
-    public static final int TAG_SELECTION_TIME = 0x010B;
-    public static final int TAG_SELECTION_DURATION = 0x010C;
-    public static final int TAG_CURRENT_TIME = 0x010D;
-    public static final int TAG_NEXT_TRACK_ID = 0x010E;
+    public static final int TAG_CREATION_TIME           = 0x0100;
+    public static final int TAG_MODIFICATION_TIME       = 0x0101;
+    public static final int TAG_TIME_SCALE              = 0x0102;
+    public static final int TAG_DURATION                = 0x0103;
+    public static final int TAG_PREFERRED_RATE          = 0x0104;
+    public static final int TAG_PREFERRED_VOLUME        = 0x0105;
+    public static final int TAG_PREVIEW_TIME            = 0x0108;
+    public static final int TAG_PREVIEW_DURATION        = 0x0109;
+    public static final int TAG_POSTER_TIME             = 0x010A;
+    public static final int TAG_SELECTION_TIME          = 0x010B;
+    public static final int TAG_SELECTION_DURATION      = 0x010C;
+    public static final int TAG_CURRENT_TIME            = 0x010D;
+    public static final int TAG_NEXT_TRACK_ID           = 0x010E;
 
     // Video Sample Description Atom
-    public static final int TAG_VENDOR = 0X0201;
-    public static final int TAG_TEMPORAL_QUALITY = 0x0202;
-    public static final int TAG_SPATIAL_QUALITY = 0x0203;
-    public static final int TAG_WIDTH = 0x0204;
-    public static final int TAG_HEIGHT = 0x0205;
-    public static final int TAG_HORIZONTAL_RESOLUTION = 0x0206;
-    public static final int TAG_VERTICAL_RESOLUTION = 0x0207;
-    public static final int TAG_COMPRESSOR_NAME = 0x0208;
-    public static final int TAG_DEPTH = 0x0209;
-    public static final int TAG_COMPRESSION_TYPE = 0x020A;
+    public static final int TAG_VENDOR                  = 0X0201;
+    public static final int TAG_TEMPORAL_QUALITY        = 0x0202;
+    public static final int TAG_SPATIAL_QUALITY         = 0x0203;
+    public static final int TAG_WIDTH                   = 0x0204;
+    public static final int TAG_HEIGHT                  = 0x0205;
+    public static final int TAG_HORIZONTAL_RESOLUTION   = 0x0206;
+    public static final int TAG_VERTICAL_RESOLUTION     = 0x0207;
+    public static final int TAG_COMPRESSOR_NAME         = 0x0208;
+    public static final int TAG_DEPTH                   = 0x0209;
+    public static final int TAG_COMPRESSION_TYPE        = 0x020A;
 
     // Sound Sample Description Atom
-    public static final int TAG_AUDIO_FORMAT = 0x0301;
-    public static final int TAG_NUMBER_OF_CHANNELS = 0x0302;
-    public static final int TAG_AUDIO_SAMPLE_SIZE = 0x0303;
-    public static final int TAG_AUDIO_SAMPLE_RATE = 0x0304;
+    public static final int TAG_AUDIO_FORMAT            = 0x0301;
+    public static final int TAG_NUMBER_OF_CHANNELS      = 0x0302;
+    public static final int TAG_AUDIO_SAMPLE_SIZE       = 0x0303;
+    public static final int TAG_AUDIO_SAMPLE_RATE       = 0x0304;
 
-    public static final int TAG_SOUND_BALANCE = 0x0305;
-    public static final int TAG_MEDIA_TIME_SCALE = 0x306;
+    public static final int TAG_SOUND_BALANCE           = 0x0305;
+    public static final int TAG_MEDIA_TIME_SCALE        = 0x0306;
 
     // User Data Types Holder (0x0400 - 0x04FF)
     // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
@@ -51,14 +51,14 @@ public class QtDirectory extends Directory {
     // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
 
     // Video Media Information Header Atom
-    public static final int TAG_GRAPHICS_MODE = 0x0311;
-    public static final int TAG_OPCOLOR = 0x0312;
-    public static final int TAG_COLOR_TABLE = 0x0313;
-    public static final int TAG_FRAME_RATE = 0x0314;
+    public static final int TAG_GRAPHICS_MODE           = 0x0311;
+    public static final int TAG_OPCOLOR                 = 0x0312;
+    public static final int TAG_COLOR_TABLE             = 0x0313;
+    public static final int TAG_FRAME_RATE              = 0x0314;
 
-    public static final int TAG_MAJOR_BRAND = 0x0001;
-    public static final int TAG_MINOR_VERSION = 0x0002;
-    public static final int TAG_COMPATIBLE_BRANDS = 0x0003;
+    public static final int TAG_MAJOR_BRAND             = 0x0001;
+    public static final int TAG_MINOR_VERSION           = 0x0002;
+    public static final int TAG_COMPATIBLE_BRANDS       = 0x0003;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();

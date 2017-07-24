@@ -2,15 +2,15 @@ package com.drew.metadata.mov;
 
 public class QtHandlerFactory
 {
-    private static final String HANDLER_METADATA_DIRECTORY = "mdir";
-    private static final String HANDLER_METADATA_DATA = "mdta";
-    private static final String HANDLER_SOUND_MEDIA = "soun";
-    private static final String HANDLER_VIDEO_MEDIA = "vide";
-    private static final String HANDLER_TIMECODE_MEDIA = "tmcd";
+    private static final String HANDLER_METADATA_DIRECTORY      = "mdir";
+    private static final String HANDLER_METADATA_DATA           = "mdta";
+    private static final String HANDLER_SOUND_MEDIA             = "soun";
+    private static final String HANDLER_VIDEO_MEDIA             = "vide";
+    private static final String HANDLER_TIMECODE_MEDIA          = "tmcd";
 
     private QtHandler caller;
 
-    public static Integer HANDLER_PARAM_TIME_SCALE = null;
+    public static Integer HANDLER_PARAM_TIME_SCALE              = null;
 
     public QtHandlerFactory(QtHandler caller)
     {
