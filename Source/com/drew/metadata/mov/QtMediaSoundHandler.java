@@ -17,8 +17,8 @@ public class QtMediaSoundHandler extends QtMediaHandler
     public void processSampleDescription(QtDirectory directory, ByteArrayReader reader) throws IOException
     {
         String dataFormat = new String(reader.getBytes(12, 4));
-        int numberOfChannels = reader.getInt16(34);
-        int sampleSizeBits = reader.getInt16(36);
+        int numberOfChannels = reader.getInt16(32);
+        int sampleSizeBits = reader.getInt16(34);
 
         directory.setString(QtDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtDirectory.TAG_AUDIO_FORMAT, dataFormat));
         directory.setInt(QtDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
