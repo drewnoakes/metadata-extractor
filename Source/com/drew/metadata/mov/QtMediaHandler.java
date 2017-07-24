@@ -10,7 +10,8 @@ public abstract class QtMediaHandler implements QtHandler
     public boolean shouldAcceptAtom(String fourCC)
     {
         return fourCC.equals(getMediaInformation())
-            || fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION);
+            || fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)
+            || fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE);
     }
 
     @Override
@@ -28,6 +29,8 @@ public abstract class QtMediaHandler implements QtHandler
             processMediaInformation(directory, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
             processSampleDescription(directory, reader);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
+            processTimeToSample(directory, reader);
         }
         return this;
     }
@@ -43,4 +46,6 @@ public abstract class QtMediaHandler implements QtHandler
     abstract void processSampleDescription(QtDirectory directory, SequentialByteArrayReader reader) throws IOException;
 
     abstract void processMediaInformation(QtDirectory directory, SequentialByteArrayReader reader) throws IOException;
+
+    abstract void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException;
 }

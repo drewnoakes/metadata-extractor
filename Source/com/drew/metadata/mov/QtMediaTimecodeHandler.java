@@ -42,4 +42,10 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
         String fontName = new String(reader.getBytes(reader.available() - 24));
         System.out.println(fontName);
     }
+
+    @Override
+    void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
+        // Do nothing
+    }
 }

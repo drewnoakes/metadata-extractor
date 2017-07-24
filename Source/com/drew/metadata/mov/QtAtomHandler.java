@@ -20,7 +20,8 @@ public class QtAtomHandler implements QtHandler
     {
         return fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)
             || fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)
-            || fourCC.equals(QtAtomTypes.ATOM_HANDLER);
+            || fourCC.equals(QtAtomTypes.ATOM_HANDLER)
+            || fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER);
     }
 
     @Override
@@ -28,8 +29,8 @@ public class QtAtomHandler implements QtHandler
         return fourCC.equals(QtContainerTypes.ATOM_TRACK)
             || fourCC.equals(QtContainerTypes.ATOM_USER_DATA)
             || fourCC.equals(QtContainerTypes.ATOM_METADATA)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA)
-            || fourCC.equals(QtContainerTypes.ATOM_MOVIE);
+            || fourCC.equals(QtContainerTypes.ATOM_MOVIE)
+            || fourCC.equals(QtContainerTypes.ATOM_MEDIA);
     }
 
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
@@ -44,16 +45,24 @@ public class QtAtomHandler implements QtHandler
             int predefined = reader.getInt32();
             String handler = new String(reader.getBytes(4));
             return handlerFactory.getHandler(handler);
+        } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
+            // We only want the value that was used to calculate frame rate
+            if (directory.getInteger(QtDirectory.TAG_FRAME_RATE) == null) {
+                reader.skip(12);
+                directory.setDouble(QtDirectory.TAG_MEDIA_TIME_SCALE, reader.getInt32());
+            }
         }
         return this;
     }
 
     @Override
-    public QtHandler processContainer(String fourCC) {
+    public QtHandler processContainer(String fourCC)
+    {
         return this;
     }
 
-    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException {
+    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, SequentialByteArrayReader reader) throws IOException
+    {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(4));
 
         directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4));
@@ -70,7 +79,8 @@ public class QtAtomHandler implements QtHandler
 //        }
     }
 
-    private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
+    private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
         reader.skip(4);
 
         // Get creation/modification times

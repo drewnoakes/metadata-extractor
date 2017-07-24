@@ -41,6 +41,7 @@ public class QtDirectory extends Directory {
     public static final int TAG_SAMPLE_RATE = 0x0304;
 
     public static final int TAG_SOUND_BALANCE = 0x0305;
+    public static final int TAG_MEDIA_TIME_SCALE = 0x306;
 
     // User Data Types Holder (0x0400 - 0x04FF)
     // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
@@ -53,6 +54,7 @@ public class QtDirectory extends Directory {
     public static final int TAG_GRAPHICS_MODE = 0x0311;
     public static final int TAG_OPCOLOR = 0x0312;
     public static final int TAG_COLOR_TABLE = 0x0313;
+    public static final int TAG_FRAME_RATE = 0x0314;
 
     public static final int TAG_MAJOR_BRAND = 0x0001;
     public static final int TAG_MINOR_VERSION = 0x0002;
@@ -100,10 +102,12 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_SAMPLE_RATE, "Sample Rate");
 
         _tagNameMap.put(TAG_SOUND_BALANCE, "Sound Balance");
+        _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
 
         _tagNameMap.put(TAG_GRAPHICS_MODE, "Graphics Mode");
         _tagNameMap.put(TAG_OPCOLOR, "Opcolor");
         _tagNameMap.put(TAG_COLOR_TABLE, "Color Table");
+        _tagNameMap.put(TAG_FRAME_RATE, "Frame Rate");
 
         _tagIntegerMap.put("com.apple.quicktime.album", 0x0500);
         _tagIntegerMap.put("com.apple.quicktime.artist", 0x0501);

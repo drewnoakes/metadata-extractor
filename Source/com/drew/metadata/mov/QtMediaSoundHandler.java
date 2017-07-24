@@ -49,4 +49,10 @@ public class QtMediaSoundHandler extends QtMediaHandler
         double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
         directory.setDouble(QtDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
     }
+
+    @Override
+    void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
+        // Do nothing
+    }
 }

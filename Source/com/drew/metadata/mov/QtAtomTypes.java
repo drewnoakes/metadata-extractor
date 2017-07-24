@@ -23,6 +23,9 @@ public class QtAtomTypes
     public static final String ATOM_KEYS = "keys";
     public static final String ATOM_DATA = "data";
     public static final String ATOM_SAMPLE_DESCRIPTION = "stsd";
+    public static final String ATOM_TIME_TO_SAMPLE = "stts";
+
+    public static final String ATOM_MEDIA_HEADER = "mdhd";
 
     public static ArrayList<String> _atomList = new ArrayList<String>();
 
@@ -39,5 +42,8 @@ public class QtAtomTypes
         _atomList.add(ATOM_KEYS);
         _atomList.add(ATOM_DATA);
         _atomList.add(ATOM_SAMPLE_DESCRIPTION);
+        _atomList.add(ATOM_TIME_TO_SAMPLE);
+
+        _atomList.add(ATOM_MEDIA_HEADER);
     }
 }

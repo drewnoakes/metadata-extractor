@@ -44,15 +44,15 @@ public class QtMediaVideoHandler extends QtMediaHandler
         directory.setInt(QtDirectory.TAG_WIDTH, width);
         directory.setInt(QtDirectory.TAG_HEIGHT, height);
         directory.setString(QtDirectory.TAG_COMPRESSOR_NAME, compressorName.trim());
+
         directory.setInt(QtDirectory.TAG_DEPTH, depth);
         directory.setInt(QtDirectory.TAG_COLOR_TABLE, colorTableId);
 
-        // Calculate horizontal resolution
+        // Calculate horizontal res
         double horizontalInteger = (horizontalResolution & 0xFFFF0000) >> 16;
         double horizontalFraction = (horizontalResolution & 0xFFFF) / Math.pow(2, 4);
         directory.setDouble(QtDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
 
-        // Calculate vertical resolutoin
         double verticalInteger = (verticalResolution & 0xFFFF0000) >> 16;
         double verticalFraction = (verticalResolution & 0xFFFF) / Math.pow(2, 4);
         directory.setDouble(QtDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
@@ -98,6 +98,22 @@ public class QtMediaVideoHandler extends QtMediaHandler
                 directory.setString(QtDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
                 break;
             default:
+        }
+    }
+
+    @Override
+    public void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
+        int flags = reader.getInt32();
+        int numberOfEntries = reader.getInt32();
+        int numberOfSamples = reader.getInt32();
+        int sampleDuration = reader.getInt32();
+
+        Integer mediaTimeScale = directory.getInteger(QtDirectory.TAG_MEDIA_TIME_SCALE);
+        if (mediaTimeScale != null) {
+            float frameRate = (float)mediaTimeScale/(float)sampleDuration;
+            System.out.println(frameRate);
+            directory.setFloat(QtDirectory.TAG_FRAME_RATE, frameRate);
         }
     }
 }
