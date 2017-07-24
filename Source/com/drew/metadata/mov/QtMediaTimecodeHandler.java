@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
@@ -13,38 +14,26 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
     }
 
     @Override
-    public void processSampleDescription(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    public void processSampleDescription(QtDirectory directory, ByteArrayReader reader) throws IOException
     {
-        reader.skip(4);
-        int numberOfEntries = reader.getInt32();
-        int sampleDescriptionSize = reader.getInt32();
-        reader.skip(6); // Reserved
-        int dataReferenceIndex = reader.getInt16();
-        reader.skip(4); // Reserved
-        int flags = reader.getInt32();
-        int timeScale = reader.getInt32();
-        int frameDuration = reader.getInt32();
-        int numberOfFrames = reader.getInt8();
-        reader.skip(1); // Reserved
+        int numberOfEntries = reader.getInt32(4);
+        int sampleDescriptionSize = reader.getInt32(8);
+        int dataReferenceIndex = reader.getInt16(14);
+        int flags = reader.getInt32(18);
+        int timeScale = reader.getInt32(22);
+        int frameDuration = reader.getInt32(26);
+        int numberOfFrames = reader.getInt8(30);
         // Source reference...
     }
 
     @Override
-    public void processMediaInformation(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    public void processMediaInformation(QtDirectory directory, ByteArrayReader reader) throws IOException
     {
-        int typeAndVersion = reader.getInt32();
-        int textFont = reader.getInt16();
-        int textFace = reader.getInt16();
-        int textSize = reader.getInt16();
-        reader.skip(2); // Reserved
-        byte[] textColor = reader.getBytes(6);
-        byte[] backgroundColor = reader.getBytes(6);
-        String fontName = new String(reader.getBytes(reader.available() - 24));
-        System.out.println(fontName);
+        // Do nothing
     }
 
     @Override
-    void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    void processTimeToSample(QtDirectory directory, ByteArrayReader reader) throws IOException
     {
         // Do nothing
     }

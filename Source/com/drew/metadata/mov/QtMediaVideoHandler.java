@@ -1,5 +1,6 @@
 package com.drew.metadata.mov;
 
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 
 import java.io.IOException;
@@ -12,29 +13,23 @@ public class QtMediaVideoHandler extends QtMediaHandler
         return QtAtomTypes.ATOM_VIDEO_MEDIA_INFO;
     }
 
+    /**
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
+     */
     @Override
-    public void processSampleDescription(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    public void processSampleDescription(QtDirectory directory, ByteArrayReader reader) throws IOException
     {
-        reader.skip(4);
-        int numberOfEntries = reader.getInt32();
-        int sampleSize = reader.getInt32();
-        String dataFormat = new String(reader.getBytes(4));
-        reader.skip(6); // 6-bytes reserved
-        int dataReference = reader.getInt16();
-        int version = reader.getInt16();
-        int revisionLevel = reader.getInt16();
-        String vendor = new String(reader.getBytes(4));
-        int temporalQuality = reader.getInt32();
-        int spatialQuality = reader.getInt32();
-        int width = reader.getInt16();
-        int height = reader.getInt16();
-        int horizontalResolution = reader.getInt32();
-        int verticalResolution = reader.getInt32();
-        int dataSize = reader.getInt32();
-        int frameCount = reader.getInt16();
-        String compressorName = new String(reader.getBytes(32));
-        int depth = reader.getInt16();
-        int colorTableId = reader.getInt16();
+        String dataFormat = new String(reader.getBytes(12,4));
+        String vendor = new String(reader.getBytes(28,4));
+        int temporalQuality = reader.getInt32(32);
+        int spatialQuality = reader.getInt32(36);
+        int width = reader.getInt16(40);
+        int height = reader.getInt16(42);
+        int horizontalResolution = reader.getInt32(44);
+        int verticalResolution = reader.getInt32(48);
+        String compressorName = new String(reader.getBytes(58,32));
+        int depth = reader.getInt16(90);
+        int colorTableId = reader.getInt16(92);
 
         QtDictionary.setLookup(QtDirectory.TAG_VENDOR, vendor, directory);
         QtDictionary.setLookup(QtDirectory.TAG_COMPRESSION_TYPE, dataFormat, directory);
@@ -59,13 +54,12 @@ public class QtMediaVideoHandler extends QtMediaHandler
     }
 
     @Override
-    public void processMediaInformation(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    public void processMediaInformation(QtDirectory directory, ByteArrayReader reader) throws IOException
     {
-        reader.skip(4);
-        int graphicsMode = reader.getInt16();
-        int opcolorRed = reader.getUInt16();
-        int opcolorGreen = reader.getUInt16();
-        int opcolorBlue = reader.getUInt16();
+        int graphicsMode = reader.getInt16(4);
+        int opcolorRed = reader.getUInt16(6);
+        int opcolorGreen = reader.getUInt16(8);
+        int opcolorBlue = reader.getUInt16(10);
 
         directory.setString(QtDirectory.TAG_OPCOLOR, "R:" + opcolorRed + " G:" + opcolorGreen + " B:" + opcolorBlue);
 
@@ -102,12 +96,12 @@ public class QtMediaVideoHandler extends QtMediaHandler
     }
 
     @Override
-    public void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    public void processTimeToSample(QtDirectory directory, ByteArrayReader reader) throws IOException
     {
-        int flags = reader.getInt32();
-        int numberOfEntries = reader.getInt32();
-        int numberOfSamples = reader.getInt32();
-        int sampleDuration = reader.getInt32();
+        int flags = reader.getInt32(0);
+        int numberOfEntries = reader.getInt32(4);
+        int numberOfSamples = reader.getInt32(8);
+        int sampleDuration = reader.getInt32(12);
 
         float frameRate = (float)QtHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
         directory.setFloat(QtDirectory.TAG_FRAME_RATE, frameRate);

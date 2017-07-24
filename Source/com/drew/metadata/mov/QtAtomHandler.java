@@ -64,6 +64,13 @@ public class QtAtomHandler implements QtHandler
         return this;
     }
 
+    /**
+     * Extracts data from the 'ftyp' atom
+     * Index 0 is after size and type
+     *
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
+     *
+     */
     private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, ByteArrayReader reader) throws IOException
     {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(0, 4));
@@ -79,6 +86,13 @@ public class QtAtomHandler implements QtHandler
         directory.setStringArray(QtDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(compatibleBrandsReturn));
     }
 
+    /**
+     * Extracts data from the 'moov' atom's movie header marked by the fourCC 'mvhd'
+     * Index 0 is after size and type
+     *
+     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-32947
+     *
+     */
     private void processMovieHeader(@NotNull QtDirectory directory, ByteArrayReader reader) throws IOException
     {
         // Get creation/modification times
