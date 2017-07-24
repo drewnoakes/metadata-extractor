@@ -34,8 +34,7 @@ public class QtMediaSoundHandler extends QtMediaHandler
 
                 directory.setString(QtDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtDirectory.TAG_AUDIO_FORMAT, dataFormat));
                 directory.setInt(QtDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
-                directory.setInt(QtDirectory.TAG_SAMPLE_SIZE, sampleSizeBits);
-                directory.setInt(QtDirectory.TAG_SAMPLE_RATE, sampleRate);
+                directory.setInt(QtDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSizeBits);
                 break;
         }
     }
@@ -53,6 +52,6 @@ public class QtMediaSoundHandler extends QtMediaHandler
     @Override
     void processTimeToSample(QtDirectory directory, SequentialByteArrayReader reader) throws IOException
     {
-        // Do nothing
+        directory.setDouble(QtDirectory.TAG_AUDIO_SAMPLE_RATE, QtHandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }
 }

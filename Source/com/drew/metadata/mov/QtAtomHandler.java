@@ -46,11 +46,8 @@ public class QtAtomHandler implements QtHandler
             String handler = new String(reader.getBytes(4));
             return handlerFactory.getHandler(handler);
         } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
-            // We only want the value that was used to calculate frame rate
-            if (directory.getInteger(QtDirectory.TAG_FRAME_RATE) == null) {
-                reader.skip(12);
-                directory.setDouble(QtDirectory.TAG_MEDIA_TIME_SCALE, reader.getInt32());
-            }
+            reader.skip(12);
+            QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32();
         }
         return this;
     }

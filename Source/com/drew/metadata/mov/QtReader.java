@@ -24,7 +24,7 @@ public class QtReader {
         reader.setMotorolaByteOrder(true);
         tabCount = 0;
 
-        processAtoms(reader, -1, directory, new QtAtomHandler(), true);
+        processAtoms(reader, -1, directory, new QtAtomHandler(), false);
     }
 
     private void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)

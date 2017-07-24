@@ -109,11 +109,7 @@ public class QtMediaVideoHandler extends QtMediaHandler
         int numberOfSamples = reader.getInt32();
         int sampleDuration = reader.getInt32();
 
-        Integer mediaTimeScale = directory.getInteger(QtDirectory.TAG_MEDIA_TIME_SCALE);
-        if (mediaTimeScale != null) {
-            float frameRate = (float)mediaTimeScale/(float)sampleDuration;
-            System.out.println(frameRate);
-            directory.setFloat(QtDirectory.TAG_FRAME_RATE, frameRate);
-        }
+        float frameRate = (float)QtHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
+        directory.setFloat(QtDirectory.TAG_FRAME_RATE, frameRate);
     }
 }

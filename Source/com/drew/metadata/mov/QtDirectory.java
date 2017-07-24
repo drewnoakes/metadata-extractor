@@ -37,8 +37,8 @@ public class QtDirectory extends Directory {
     // Sound Sample Description Atom
     public static final int TAG_AUDIO_FORMAT = 0x0301;
     public static final int TAG_NUMBER_OF_CHANNELS = 0x0302;
-    public static final int TAG_SAMPLE_SIZE = 0x0303;
-    public static final int TAG_SAMPLE_RATE = 0x0304;
+    public static final int TAG_AUDIO_SAMPLE_SIZE = 0x0303;
+    public static final int TAG_AUDIO_SAMPLE_RATE = 0x0304;
 
     public static final int TAG_SOUND_BALANCE = 0x0305;
     public static final int TAG_MEDIA_TIME_SCALE = 0x306;
@@ -73,7 +73,6 @@ public class QtDirectory extends Directory {
 
         _tagNameMap.put(TAG_CREATION_TIME, "Creation Time");
         _tagNameMap.put(TAG_MODIFICATION_TIME, "Modification Time");
-        _tagNameMap.put(TAG_TIME_SCALE, "Time Scale");
         _tagNameMap.put(TAG_DURATION, "Duration");
         _tagNameMap.put(TAG_PREFERRED_RATE, "Preferred Rate");
         _tagNameMap.put(TAG_PREFERRED_VOLUME, "Preferred Volume");
@@ -98,8 +97,8 @@ public class QtDirectory extends Directory {
 
         _tagNameMap.put(TAG_AUDIO_FORMAT, "Audio Format");
         _tagNameMap.put(TAG_NUMBER_OF_CHANNELS, "Number of Channels");
-        _tagNameMap.put(TAG_SAMPLE_SIZE, "Sample Size");
-        _tagNameMap.put(TAG_SAMPLE_RATE, "Sample Rate");
+        _tagNameMap.put(TAG_AUDIO_SAMPLE_SIZE, "Audio Sample Size");
+        _tagNameMap.put(TAG_AUDIO_SAMPLE_RATE, "Audio Sample Rate");
 
         _tagNameMap.put(TAG_SOUND_BALANCE, "Sound Balance");
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
