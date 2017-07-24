@@ -49,7 +49,8 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    public void processKeys(SequentialByteArrayReader reader) throws IOException {
+    public void processKeys(SequentialByteArrayReader reader) throws IOException
+    {
         // Version 1-byte and Flags 3-bytes
         reader.skip(4);
         int entryCount = reader.getInt32();
@@ -62,7 +63,8 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    public void processData(byte[] payload, QtDirectory directory, SequentialByteArrayReader reader) throws IOException {
+    public void processData(byte[] payload, QtDirectory directory, SequentialByteArrayReader reader) throws IOException
+    {
         int typeIndicator = reader.getInt32();
         int localeIndicator = reader.getInt32();
         String value = new String(reader.getBytes(payload.length - 8));

@@ -32,7 +32,7 @@ public class QtReader {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
 
-                long size = reader.getInt32();
+                long size = reader.getUInt32();
 
                 if (size == 1) {
                     size = reader.getInt64();
@@ -40,13 +40,7 @@ public class QtReader {
                     size = reader.getInt32();
                 }
 
-//                byte[] temp = reader.getBytes(4);
-//                SequentialByteArrayReader tempread = new SequentialByteArrayReader(temp);
-//                System.out.println(tempread.getUInt32());
                 String fourCC = reader.getString(4);
-//                if (fourCC.equals("aART")) {
-//                    System.out.println("here");
-//                }
 
                 if (qtHandler.shouldAcceptContainer(fourCC)) {
 

@@ -55,6 +55,9 @@ public class QtAtomHandler implements QtHandler
     @Override
     public QtHandler processContainer(String fourCC)
     {
+        if (fourCC.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
+            throw new RuntimeException("Compressed QuickTime movies not supported");
+        }
         return this;
     }
 
@@ -71,9 +74,6 @@ public class QtAtomHandler implements QtHandler
         }
         String[] compatibleBrandsReturn = new String[compatibleBrands.size()];
         directory.setStringArray(QtDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(compatibleBrandsReturn));
-//        if (!compatibleBrands.contains("qt  ")) {
-//            throw new ImageProcessingException("Not a QuickTime movie file");
-//        }
     }
 
     private void processMovieHeader(@NotNull QtDirectory directory, SequentialByteArrayReader reader) throws IOException
