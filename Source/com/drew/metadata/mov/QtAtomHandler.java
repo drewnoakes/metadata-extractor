@@ -16,6 +16,7 @@ public class QtAtomHandler implements QtHandler
 {
     private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
 
+    @Override
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
         return fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)
@@ -33,6 +34,7 @@ public class QtAtomHandler implements QtHandler
             || fourCC.equals(QtContainerTypes.ATOM_MEDIA);
     }
 
+    @Override
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
