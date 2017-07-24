@@ -16,6 +16,7 @@ public class QtContainerTypes
     public static final String ATOM_METADATA_LIST               = "ilst";
     public static final String ATOM_METADATA                    = "meta";
     public static final String ATOM_COMPRESSED_MOVIE            = "cmov";
+    public static final String ATOM_MEDIA_TEXT                  = "text";
 
     public static ArrayList<String> _containerList = new ArrayList<String>();
 
@@ -29,5 +30,6 @@ public class QtContainerTypes
         _containerList.add(ATOM_METADATA);
         _containerList.add(ATOM_METADATA_LIST);
         _containerList.add(ATOM_COMPRESSED_MOVIE);
+        _containerList.add(ATOM_MEDIA_TEXT);
     }
 }
