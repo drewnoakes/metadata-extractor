@@ -44,7 +44,7 @@ public class QtTimecodeDirectory extends QtDirectory
     @NotNull
     public String getName()
     {
-        return "QuickTime Timecode";
+        return "QT Timecode";
     }
 
     @Override

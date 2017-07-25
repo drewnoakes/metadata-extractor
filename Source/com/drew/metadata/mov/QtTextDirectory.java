@@ -58,7 +58,7 @@ public class QtTextDirectory extends QtDirectory
     @NotNull
     public String getName()
     {
-        return "QuickTime Text";
+        return "QT Text";
     }
 
     @Override

@@ -24,19 +24,18 @@ public class QtMediaSoundDirectory extends QtDirectory
 
     static
     {
-        _tagNameMap.put(TAG_AUDIO_FORMAT, "Audio Format");
+        _tagNameMap.put(TAG_AUDIO_FORMAT, "Format");
         _tagNameMap.put(TAG_NUMBER_OF_CHANNELS, "Number of Channels");
-        _tagNameMap.put(TAG_AUDIO_SAMPLE_SIZE, "Audio Sample Size");
-        _tagNameMap.put(TAG_AUDIO_SAMPLE_RATE, "Audio Sample Rate");
-
-        _tagNameMap.put(TAG_SOUND_BALANCE, "Sound Balance");
+        _tagNameMap.put(TAG_AUDIO_SAMPLE_SIZE, "Sample Size");
+        _tagNameMap.put(TAG_AUDIO_SAMPLE_RATE, "Sample Rate");
+        _tagNameMap.put(TAG_SOUND_BALANCE, "Balance");
     }
 
     @Override
     @NotNull
     public String getName()
     {
-        return "QuickTime Sound";
+        return "QT Sound";
     }
 
     @Override

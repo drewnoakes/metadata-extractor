@@ -255,7 +255,7 @@ public class QtMetadataDirectory extends QtDirectory
     @NotNull
     public String getName()
     {
-        return "QuickTime Metadata";
+        return "QT Metadata";
     }
 
     @Override

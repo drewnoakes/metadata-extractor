@@ -32,7 +32,6 @@ public class QtDirectory extends Directory {
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-
         _tagNameMap.put(TAG_MAJOR_BRAND, "Major Brand");
         _tagNameMap.put(TAG_MINOR_VERSION, "Minor Version");
         _tagNameMap.put(TAG_COMPATIBLE_BRANDS, "Compatible Brands");
@@ -63,7 +62,7 @@ public class QtDirectory extends Directory {
     @NotNull
     public String getName()
     {
-        return "QuickTime";
+        return "QT";
     }
 
     @Override

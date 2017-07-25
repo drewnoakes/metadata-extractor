@@ -55,7 +55,7 @@ public class QtVideoDirectory extends QtDirectory
     @NotNull
     public String getName()
     {
-        return "QuickTime Video";
+        return "QT Video";
     }
 
     @Override
