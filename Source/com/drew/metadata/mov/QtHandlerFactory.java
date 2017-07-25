@@ -14,6 +14,7 @@ public class QtHandlerFactory
     private static final String HANDLER_TIMECODE_MEDIA          = "tmcd";
     private static final String HANDLER_TEXT_MEDIA              = "text";
     private static final String HANDLER_SUBTITLE_MEDIA          = "sbtl";
+    private static final String HANDLER_MUSIC_MEDIA             = "musi";
 
     private QtHandler caller;
 
@@ -40,6 +41,8 @@ public class QtHandlerFactory
             return new QtTextHandler(metadata);
         } else if (type.equals(HANDLER_SUBTITLE_MEDIA)) {
             return new QtSubtitleHandler(metadata);
+        } else if (type.equals(HANDLER_MUSIC_MEDIA)) {
+            return new QtMusicHandler(metadata);
         }
         return caller;
     }
