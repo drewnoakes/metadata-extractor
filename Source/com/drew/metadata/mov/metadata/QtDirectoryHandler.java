@@ -10,11 +10,11 @@ import com.drew.metadata.mov.QtMetadataHandler;
 
 import java.io.IOException;
 
-public class QtDirectoryhandler extends QtMetadataHandler
+public class QtDirectoryHandler extends QtMetadataHandler
 {
     private String currentData;
 
-    public QtDirectoryhandler(Metadata metadata)
+    public QtDirectoryHandler(Metadata metadata)
     {
         super(metadata);
     }
