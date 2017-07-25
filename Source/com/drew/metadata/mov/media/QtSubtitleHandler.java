@@ -59,6 +59,26 @@ public class QtSubtitleHandler extends QtMediaHandler
         int fontSize = reader.getInt8(45);
         int foregroundColor = reader.getInt32(46);
         // font table atom 'ftab' not currently parsed
+
+        directory.setBoolean(QtSubtitleDirectory.TAG_VERTICAL_PLACEMENT, ((displayFlags & 0x20000000) == 0x20000000) ? true : false);
+        directory.setBoolean(QtSubtitleDirectory.TAG_SOME_SAMPLES_FORCED, ((displayFlags & 0x40000000) == 0x40000000) ? true : false);
+        directory.setBoolean(QtSubtitleDirectory.TAG_ALL_SAMPLES_FORCED, ((displayFlags & 0xC0000000) == 0xC0000000) ? true : false);
+
+        directory.setLong(QtSubtitleDirectory.TAG_DEFAULT_TEXT_BOX, defaultTextBox);
+        directory.setInt(QtSubtitleDirectory.TAG_FONT_IDENTIFIER, fontIdentifier);
+        switch (fontFace) {
+            case (1):
+                directory.setString(QtSubtitleDirectory.TAG_FONT_FACE, "Bold");
+                break;
+            case (2):
+                directory.setString(QtSubtitleDirectory.TAG_FONT_FACE, "Italic");
+                break;
+            case (4):
+                directory.setString(QtSubtitleDirectory.TAG_FONT_FACE, "Underline");
+                break;
+        }
+        directory.setInt(QtSubtitleDirectory.TAG_FONT_SIZE, fontSize);
+        directory.setInt(QtSubtitleDirectory.TAG_FOREGROUND_COLOR, foregroundColor);
     }
 
     @Override
