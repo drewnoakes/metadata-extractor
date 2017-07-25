@@ -1,8 +1,11 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mov.media;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QtAtomTypes;
+import com.drew.metadata.mov.QtDirectory;
+import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
@@ -14,13 +17,13 @@ public class QtTimecodeHandler extends QtMediaHandler
     }
 
     @Override
-    QtDirectory getDirectory()
+    protected QtDirectory getDirectory()
     {
         return new QtTimecodeDirectory();
     }
 
     @Override
-    String getMediaInformation()
+    protected String getMediaInformation()
     {
         return QtAtomTypes.ATOM_TIMECODE_MEDIA_INFO;
     }
@@ -105,7 +108,7 @@ public class QtTimecodeHandler extends QtMediaHandler
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
      */
     @Override
-    void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {
         // Do nothing
     }

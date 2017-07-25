@@ -1,10 +1,11 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class QtMediaSoundDirectory extends QtDirectory
+public class QtSoundDirectory extends QtDirectory
 {
     // Sound Sample Description Atom
     public static final int TAG_AUDIO_FORMAT                            = 0x0301;
@@ -14,9 +15,9 @@ public class QtMediaSoundDirectory extends QtDirectory
 
     public static final int TAG_SOUND_BALANCE                           = 0x0305;
 
-    public QtMediaSoundDirectory()
+    public QtSoundDirectory()
     {
-        this.setDescriptor(new QtDescriptor(this));
+        this.setDescriptor(new QtSoundDescriptor(this));
     }
 
     @NotNull

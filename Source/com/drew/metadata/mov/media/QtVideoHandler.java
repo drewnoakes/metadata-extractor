@@ -1,8 +1,12 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mov.media;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QtAtomTypes;
+import com.drew.metadata.mov.QtDictionary;
+import com.drew.metadata.mov.QtHandlerFactory;
+import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
@@ -14,13 +18,13 @@ public class QtVideoHandler extends QtMediaHandler
     }
 
     @Override
-    String getMediaInformation()
+    protected String getMediaInformation()
     {
         return QtAtomTypes.ATOM_VIDEO_MEDIA_INFO;
     }
 
     @Override
-    QtVideoDirectory getDirectory()
+    protected QtVideoDirectory getDirectory()
     {
         return new QtVideoDirectory();
     }
@@ -121,7 +125,7 @@ public class QtVideoHandler extends QtMediaHandler
         int numberOfSamples = reader.getInt32(8);
         int sampleDuration = reader.getInt32(12);
 
-        float frameRate = (float)QtHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
+        float frameRate = (float) QtHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
         directory.setFloat(QtVideoDirectory.TAG_FRAME_RATE, frameRate);
     }
 }

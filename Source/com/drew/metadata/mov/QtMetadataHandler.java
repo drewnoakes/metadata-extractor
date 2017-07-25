@@ -4,6 +4,7 @@ import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.metadata.QtMetadataDirectory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,13 +20,13 @@ public abstract class QtMetadataHandler extends QtHandler
     }
 
     @Override
-    public QtDirectory getDirectory()
+    protected QtDirectory getDirectory()
     {
         return new QtMetadataDirectory();
     }
 
     @Override
-    public boolean shouldAcceptAtom(String fourCC)
+    protected boolean shouldAcceptAtom(String fourCC)
     {
         return fourCC.equals(QtAtomTypes.ATOM_HANDLER)
             || fourCC.equals(QtAtomTypes.ATOM_KEYS)
@@ -33,14 +34,14 @@ public abstract class QtMetadataHandler extends QtHandler
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC)
+    protected boolean shouldAcceptContainer(String fourCC)
     {
         return fourCC.equals(QtContainerTypes.ATOM_METADATA_LIST)
             || ByteUtil.getInt32(fourCC.getBytes(), 0, true) < keys.size();
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    protected QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
@@ -51,7 +52,7 @@ public abstract class QtMetadataHandler extends QtHandler
         return this;
     }
 
-    abstract void processKeys(@NotNull SequentialByteArrayReader reader) throws IOException;
+    protected abstract void processKeys(@NotNull SequentialByteArrayReader reader) throws IOException;
 
-    abstract void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException;
+    protected abstract void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException;
 }
