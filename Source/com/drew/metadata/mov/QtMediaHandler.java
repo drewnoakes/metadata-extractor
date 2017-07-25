@@ -4,6 +4,9 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QtAtomTypes;
+import com.drew.metadata.mov.QtContainerTypes;
+import com.drew.metadata.mov.QtHandler;
 
 import java.io.IOException;
 
@@ -55,7 +58,7 @@ public abstract class QtMediaHandler extends QtHandler
         return this;
     }
 
-    abstract String getMediaInformation();
+    protected abstract String getMediaInformation();
 
     /**
      * All sample description atoms will begin with the structure specified here:
@@ -63,7 +66,7 @@ public abstract class QtMediaHandler extends QtHandler
      *
      * Unique values will follow depending upon the handler
      */
-    abstract void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException;
 
     /**
      * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
@@ -72,7 +75,7 @@ public abstract class QtMediaHandler extends QtHandler
      *
      * Each structure will be specified in its respective handler
      */
-    abstract void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException;
 
-    abstract void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException;
 }

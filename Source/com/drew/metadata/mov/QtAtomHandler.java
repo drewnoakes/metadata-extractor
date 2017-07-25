@@ -25,7 +25,7 @@ public class QtAtomHandler extends QtHandler
     }
 
     @Override
-    QtDirectory getDirectory()
+    protected QtDirectory getDirectory()
     {
         return new QtDirectory();
     }

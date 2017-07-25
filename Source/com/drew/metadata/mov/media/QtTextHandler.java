@@ -1,8 +1,11 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mov.media;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QtAtomTypes;
+import com.drew.metadata.mov.QtContainerTypes;
+import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
@@ -17,19 +20,19 @@ public class QtTextHandler extends QtMediaHandler
     }
 
     @Override
-    QtDirectory getDirectory()
+    protected QtTextDirectory getDirectory()
     {
         return new QtTextDirectory();
     }
 
     @Override
-    String getMediaInformation()
+    protected String getMediaInformation()
     {
         return QtAtomTypes.ATOM_BASE_MEDIA_INFO;
     }
 
     @Override
-    void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
+    protected void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
         // Begin general structure
         int versionAndFlags = reader.getInt32(0);
@@ -121,13 +124,13 @@ public class QtTextHandler extends QtMediaHandler
     }
 
     @Override
-    void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
+    protected void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
     {
         // Not yet implemented
     }
 
     @Override
-    void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {
         // Not yet implemented
     }

@@ -17,7 +17,7 @@ public abstract class QtHandler<T extends QtDirectory>
         metadata.addDirectory(directory);
     }
 
-    abstract T getDirectory();
+    protected abstract T getDirectory();
 
     abstract boolean shouldAcceptAtom(@NotNull String fourCC);
 
@@ -25,5 +25,5 @@ public abstract class QtHandler<T extends QtDirectory>
 
     abstract QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException;
 
-    abstract QtHandler processContainer(@NotNull String fourCC);
+    protected abstract QtHandler processContainer(@NotNull String fourCC);
 }

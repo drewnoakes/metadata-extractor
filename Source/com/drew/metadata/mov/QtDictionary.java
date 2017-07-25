@@ -1,5 +1,8 @@
 package com.drew.metadata.mov;
 
+import com.drew.metadata.mov.media.QtSoundDirectory;
+import com.drew.metadata.mov.media.QtVideoDirectory;
+
 import java.util.HashMap;
 
 public class QtDictionary
@@ -17,7 +20,7 @@ public class QtDictionary
     static {
         _dictionary.put(QtDirectory.TAG_MAJOR_BRAND, _majorBrands);
         _dictionary.put(QtVideoDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
-        _dictionary.put(QtMediaSoundDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
+        _dictionary.put(QtSoundDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
         _dictionary.put(QtVideoDirectory.TAG_VENDOR, _vendorIds);
 
         // Video Compression Types

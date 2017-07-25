@@ -1,27 +1,27 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mov.media;
 
 import com.drew.lang.ByteArrayReader;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.*;
 
 import java.io.IOException;
 
-public class QtMediaSoundHandler extends QtMediaHandler
+public class QtSoundHandler extends QtMediaHandler
 {
-    public QtMediaSoundHandler(Metadata metadata)
+    public QtSoundHandler(Metadata metadata)
     {
         super(metadata);
     }
 
     @Override
-    QtDirectory getDirectory()
+    protected QtDirectory getDirectory()
     {
-        return new QtMediaSoundDirectory();
+        return new QtSoundDirectory();
     }
 
     @Override
-    String getMediaInformation()
+    protected String getMediaInformation()
     {
         return QtAtomTypes.ATOM_SOUND_MEDIA_INFO;
     }
@@ -36,9 +36,9 @@ public class QtMediaSoundHandler extends QtMediaHandler
         int numberOfChannels = reader.getInt16(32);
         int sampleSizeBits = reader.getInt16(34);
 
-        directory.setString(QtMediaSoundDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtMediaSoundDirectory.TAG_AUDIO_FORMAT, dataFormat));
-        directory.setInt(QtMediaSoundDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
-        directory.setInt(QtMediaSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSizeBits);
+        directory.setString(QtSoundDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtSoundDirectory.TAG_AUDIO_FORMAT, dataFormat));
+        directory.setInt(QtSoundDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
+        directory.setInt(QtSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSizeBits);
     }
 
     /**
@@ -52,15 +52,15 @@ public class QtMediaSoundHandler extends QtMediaHandler
         int balance = reader.getInt16(4);
         double integerPortion = balance & 0xFFFF0000;
         double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
-        directory.setDouble(QtMediaSoundDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
+        directory.setDouble(QtSoundDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
     }
 
     /**
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
      */
     @Override
-    void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {
-        directory.setDouble(QtMediaSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QtHandlerFactory.HANDLER_PARAM_TIME_SCALE);
+        directory.setDouble(QtSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QtHandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }
 }

@@ -1,36 +1,38 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mov.media;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QtDirectory;
+import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW81
  */
-public class QtMediaSubtitleHandler extends QtMediaHandler
+public class QtSubtitleHandler extends QtMediaHandler
 {
-    public QtMediaSubtitleHandler(Metadata metadata)
+    public QtSubtitleHandler(Metadata metadata)
     {
         super(metadata);
     }
 
     @Override
-    QtDirectory getDirectory()
+    protected QtDirectory getDirectory()
     {
-        return new QtDirectory();
+        return new QtSubtitleDirectory();
     }
 
     @Override
-    String getMediaInformation()
+    protected String getMediaInformation()
     {
         // Not yet implemented
         return null;
     }
 
     @Override
-    void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
+    protected void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
         // Begin general structure
         int versionAndFlags = reader.getInt32(0);
@@ -60,13 +62,13 @@ public class QtMediaSubtitleHandler extends QtMediaHandler
     }
 
     @Override
-    void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
+    protected void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
     {
         // Not yet implemented
     }
 
     @Override
-    void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {
         // Not yet implemented
     }

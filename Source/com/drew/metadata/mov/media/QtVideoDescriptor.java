@@ -1,6 +1,7 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.mov.QtDescriptor;
 
 public class QtVideoDescriptor extends QtDescriptor<QtVideoDirectory>
 {
