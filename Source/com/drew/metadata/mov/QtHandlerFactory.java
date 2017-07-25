@@ -3,7 +3,7 @@ package com.drew.metadata.mov;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.media.*;
 import com.drew.metadata.mov.metadata.QtDataHandler;
-import com.drew.metadata.mov.metadata.QtDirectoryhandler;
+import com.drew.metadata.mov.metadata.QtDirectoryHandler;
 
 public class QtHandlerFactory
 {
@@ -27,7 +27,7 @@ public class QtHandlerFactory
     public QtHandler getHandler(String type, Metadata metadata)
     {
         if (type.equals(HANDLER_METADATA_DIRECTORY)) {
-            return new QtDirectoryhandler(metadata);
+            return new QtDirectoryHandler(metadata);
         } else if (type.equals(HANDLER_METADATA_DATA)) {
             return new QtDataHandler(metadata);
         } else if (type.equals(HANDLER_SOUND_MEDIA)) {
