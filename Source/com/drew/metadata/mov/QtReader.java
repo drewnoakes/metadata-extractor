@@ -60,6 +60,7 @@ public class QtReader {
                         tabCount++;
                     }
 
+                    // If the size is 0, that means this atom extends to the end of file
                     if (size == 0) {
                         processAtoms(reader, -1, directory, qtHandler.processContainer(fourCC), printVisited);
                     } else {

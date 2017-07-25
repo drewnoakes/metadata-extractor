@@ -35,7 +35,7 @@ public class QtDataHandler extends QtMetadataHandler
     protected boolean shouldAcceptContainer(String fourCC)
     {
         return fourCC.equals(QtContainerTypes.ATOM_METADATA_LIST)
-            || ByteUtil.getInt32(fourCC.getBytes(), 0, true) < keys.size();
+            || ByteUtil.getInt32(fourCC.getBytes(), 0, true) <= keys.size();
     }
 
     @Override
