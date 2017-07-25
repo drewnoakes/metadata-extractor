@@ -9,6 +9,9 @@ import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGABGG
+ */
 public class QtTimecodeHandler extends QtMediaHandler
 {
     public QtTimecodeHandler(Metadata metadata)
@@ -28,9 +31,6 @@ public class QtTimecodeHandler extends QtMediaHandler
         return QtAtomTypes.ATOM_TIMECODE_MEDIA_INFO;
     }
 
-    /**
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGABGG
-     */
     @Override
     public void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
@@ -104,9 +104,6 @@ public class QtTimecodeHandler extends QtMediaHandler
         directory.setString(QtTimecodeDirectory.TAG_FONT_NAME, fontName);
     }
 
-    /**
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
-     */
     @Override
     protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {

@@ -10,6 +10,9 @@ import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
+ */
 public class QtVideoHandler extends QtMediaHandler
 {
     public QtVideoHandler(Metadata metadata)
@@ -29,9 +32,6 @@ public class QtVideoHandler extends QtMediaHandler
         return new QtVideoDirectory();
     }
 
-    /**
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
-     */
     @Override
     public void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
