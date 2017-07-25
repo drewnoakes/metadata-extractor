@@ -20,13 +20,25 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
     @Override
     public void processSampleDescription(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
+        // Begin general structure
+        int versionAndFlags = reader.getInt32(0);
         int numberOfEntries = reader.getInt32(4);
         int sampleDescriptionSize = reader.getInt32(8);
-        int dataReferenceIndex = reader.getInt16(14);
-        int flags = reader.getInt32(18);
-        int timeScale = reader.getInt32(22);
-        int frameDuration = reader.getInt32(26);
-        int numberOfFrames = reader.getInt8(30);
+        String dataFormat = reader.getString(12, 4, "UTF-8");
+        // 6-bytes of reserved space set to 0
+        int dataReferenceIndex = reader.getInt16(22);
+        // End general structure
+
+        if (!dataFormat.equals("tmcd")) {
+            directory.addError("Timecode sample description atom has incorrect data format, no data extracted");
+        }
+
+        // 32-bits reserved space set to 0
+        int flags = reader.getInt32(28);
+        int timeScale = reader.getInt32(32);
+        int frameDuration = reader.getInt32(36);
+        int numberOfFrames = reader.getInt8(40);
+        // 8-bits reserved space set to 0
         // Source reference...
     }
 
