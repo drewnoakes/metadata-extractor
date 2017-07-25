@@ -18,6 +18,7 @@ public class QtContainerTypes
     public static final String ATOM_COMPRESSED_MOVIE            = "cmov";
     public static final String ATOM_MEDIA_TEXT                  = "text";
     public static final String ATOM_MEDIA_SUBTITLE              = "sbtl";
+    public static final String ATOM_MEDIA_BASE                  = "gmhd";
 
     public static ArrayList<String> _containerList = new ArrayList<String>();
 
@@ -33,5 +34,6 @@ public class QtContainerTypes
         _containerList.add(ATOM_COMPRESSED_MOVIE);
         _containerList.add(ATOM_MEDIA_TEXT);
         _containerList.add(ATOM_MEDIA_SUBTITLE);
+        _containerList.add(ATOM_MEDIA_BASE);
     }
 }

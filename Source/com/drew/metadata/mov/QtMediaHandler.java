@@ -20,7 +20,9 @@ public abstract class QtMediaHandler implements QtHandler
     public boolean shouldAcceptContainer(String fourCC)
     {
         return fourCC.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION);
+            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION)
+            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_BASE)
+            || fourCC.equals("tmcd");
     }
 
     @Override

@@ -43,13 +43,6 @@ public class QtDirectory extends Directory {
     public static final int TAG_SOUND_BALANCE                           = 0x0305;
     public static final int TAG_MEDIA_TIME_SCALE                        = 0x0306;
 
-    // User Data Types Holder (0x0400 - 0x04FF)
-    // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
-
-    // User Metadata Types Holder (0x0500 - 0x05FF)
-    // https://developer.apple.com/library/content/documentation/QuickTime/QTFF/Metadata/Metadata.html#//apple_ref/doc/uid/TP40000939-CH1-SW43
-    // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
-
     // Video Media Information Header Atom
     public static final int TAG_GRAPHICS_MODE                           = 0x0311;
     public static final int TAG_OPCOLOR                                 = 0x0312;
@@ -75,6 +68,25 @@ public class QtDirectory extends Directory {
     public static final int TAG_TEXT_FOREGROUND_COLOR                   = 0x035F;
     public static final int TAG_TEXT_NAME                               = 0x0360;
 
+    // Timecode Media Description Atom
+    public static final int TAG_TIMECODE_DROP_FRAME                     = 0x0380;
+    public static final int TAG_TIMECODE_24_HOUR_MAX                    = 0x0381;
+    public static final int TAG_TIMECODE_NEGATIVE_TIMES_OK              = 0x0382;
+    public static final int TAG_TIMECODE_COUNTER                        = 0x0383;
+    public static final int TAG_TIMECODE_TEXT_FONT                      = 0x0384;
+    public static final int TAG_TIMECODE_TEXT_FACE                      = 0x0385;
+    public static final int TAG_TIMECODE_TEXT_SIZE                      = 0x0386;
+    public static final int TAG_TIMECODE_TEXT_COLOR                     = 0x0387;
+    public static final int TAG_TIMECODE_BACKGROUND_COLOR               = 0x0388;
+    public static final int TAG_TIMECODE_FONT_NAME                      = 0x0389;
+
+    // User Data Types Holder (0x0400 - 0x04FF)
+    // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
+
+    // User Metadata Types Holder (0x0500 - 0x05FF)
+    // https://developer.apple.com/library/content/documentation/QuickTime/QTFF/Metadata/Metadata.html#//apple_ref/doc/uid/TP40000939-CH1-SW43
+    // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
+
     public static final int TAG_MAJOR_BRAND                             = 0x0001;
     public static final int TAG_MINOR_VERSION                           = 0x0002;
     public static final int TAG_COMPATIBLE_BRANDS                       = 0x0003;
@@ -86,6 +98,17 @@ public class QtDirectory extends Directory {
     protected static final HashMap<String, Integer> _tagIntegerMap = new HashMap<String, Integer>();
 
     static {
+        _tagNameMap.put(TAG_TIMECODE_DROP_FRAME, "Timecode Drop Frame");
+        _tagNameMap.put(TAG_TIMECODE_24_HOUR_MAX, "Timecode 24 Hour Max");
+        _tagNameMap.put(TAG_TIMECODE_NEGATIVE_TIMES_OK, "Timecode Negative Times OK");
+        _tagNameMap.put(TAG_TIMECODE_COUNTER, "Timecode Counter");
+        _tagNameMap.put(TAG_TIMECODE_TEXT_FONT, "Timecode Text Font");
+        _tagNameMap.put(TAG_TIMECODE_TEXT_FACE, "Timecode Text Face");
+        _tagNameMap.put(TAG_TIMECODE_TEXT_SIZE, "Timecode Text Size");
+        _tagNameMap.put(TAG_TIMECODE_TEXT_COLOR, "Timecode Text Color");
+        _tagNameMap.put(TAG_TIMECODE_BACKGROUND_COLOR, "Timecode Background Color");
+        _tagNameMap.put(TAG_TIMECODE_FONT_NAME, "Timecode Font Name");
+
         _tagNameMap.put(TAG_TEXT_AUTO_SCALE, "Auto Scale");
         _tagNameMap.put(TAG_TEXT_MOVIE_BACKGROUND_COLOR, "Use Background Color");
         _tagNameMap.put(TAG_TEXT_SCROLL_IN, "Scroll In");
