@@ -16,9 +16,9 @@ public class QtDictionary
 
     static {
         _dictionary.put(QtDirectory.TAG_MAJOR_BRAND, _majorBrands);
-        _dictionary.put(QtDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
-        _dictionary.put(QtDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
-        _dictionary.put(QtDirectory.TAG_VENDOR, _vendorIds);
+        _dictionary.put(QtVideoDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
+        _dictionary.put(QtMediaSoundDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
+        _dictionary.put(QtVideoDirectory.TAG_VENDOR, _vendorIds);
 
         // Video Compression Types
         _videoCompressionTypes.put("3IVX", "3ivx MPEG-4");

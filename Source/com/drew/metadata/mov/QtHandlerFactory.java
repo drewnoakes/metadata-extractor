@@ -1,5 +1,7 @@
 package com.drew.metadata.mov;
 
+import com.drew.metadata.Metadata;
+
 public class QtHandlerFactory
 {
     private static final String HANDLER_METADATA_DIRECTORY      = "mdir";
@@ -19,22 +21,22 @@ public class QtHandlerFactory
         this.caller = caller;
     }
 
-    public QtHandler getHandler(String type)
+    public QtHandler getHandler(String type, Metadata metadata)
     {
         if (type.equals(HANDLER_METADATA_DIRECTORY)) {
-            return new QtMetadataDirectoryHandler();
+            return new QtMetadataDirectoryHandler(metadata);
         } else if (type.equals(HANDLER_METADATA_DATA)) {
-            return new QtMetadataDataHandler();
+            return new QtMetadataDataHandler(metadata);
         } else if (type.equals(HANDLER_SOUND_MEDIA)) {
-            return new QtMediaSoundHandler();
+            return new QtMediaSoundHandler(metadata);
         } else if (type.equals(HANDLER_VIDEO_MEDIA)) {
-            return new QtMediaVideoHandler();
+            return new QtVideoHandler(metadata);
         } else if (type.equals(HANDLER_TIMECODE_MEDIA)) {
-            return new QtMediaTimecodeHandler();
+            return new QtTimecodeHandler(metadata);
         } else if (type.equals(HANDLER_TEXT_MEDIA)) {
-            return new QtMediaTextHandler();
+            return new QtTextHandler(metadata);
         } else if (type.equals(HANDLER_SUBTITLE_MEDIA)) {
-            return new QtMediaSubtitleHandler();
+            return new QtMediaSubtitleHandler(metadata);
         }
         return caller;
     }

@@ -20,14 +20,14 @@ public class QtReader {
         reader.setMotorolaByteOrder(true);
         tabCount = 0;
 
-        boolean printVisited = true;
+        boolean printVisited = false;
 
         if (printVisited) {
             System.out.println("_______________Beginning to Print Tree_______________");
             System.out.println("| \"\" = leaf      \"[]\" = container    \"{}\" = Unknown |");
             System.out.println("_____________________________________________________");
         }
-        processAtoms(reader, -1, directory, new QtAtomHandler(), printVisited);
+        processAtoms(reader, -1, directory, new QtAtomHandler(metadata), printVisited);
     }
 
     private void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
@@ -35,16 +35,21 @@ public class QtReader {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
 
+                // Get size... if size is 1, it had to be extended to the next 64-bit int
                 long size = reader.getUInt32();
-
                 if (size == 1) {
                     size = reader.getInt64();
                 } else if (size == 0) {
                     size = reader.getInt32();
                 }
 
+                // Get fourCC
                 String fourCC = reader.getString(4);
 
+                /*
+                 * Determine if fourCC is container/atom and process accordingly
+                 * Unknown atoms will be skipped
+                 */
                 if (qtHandler.shouldAcceptContainer(fourCC)) {
 
                     if (printVisited) {
@@ -74,7 +79,7 @@ public class QtReader {
                         System.out.println("  " + fourCC);
                     }
 
-                    qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory);
+                    qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8));
                 } else {
                     if (size > 1)
                         reader.skip(size - 8);
@@ -87,8 +92,8 @@ public class QtReader {
                     }
                 }
             }
-        } catch (IOException ex) {
-            directory.addError("Error reading file stream");
+        } catch (IOException ignored) {
+
         }
     }
 

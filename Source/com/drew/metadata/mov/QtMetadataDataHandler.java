@@ -3,6 +3,7 @@ package com.drew.metadata.mov;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +12,11 @@ public class QtMetadataDataHandler extends QtMetadataHandler
 {
     private int currentIndex = 0;
     private ArrayList<String> keys = new ArrayList<String>();
+
+    public QtMetadataDataHandler(Metadata metadata)
+    {
+        super(metadata);
+    }
 
     @Override
     public boolean shouldAcceptAtom(String fourCC)
@@ -28,13 +34,13 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
             processKeys(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)){
-            processData(directory, payload, reader);
+            processData(payload, reader);
         }
         return this;
     }
@@ -64,11 +70,11 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    public void processData(@NotNull QtDirectory directory, @NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
+    public void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
     {
         int typeIndicator = reader.getInt32();
         int localeIndicator = reader.getInt32();
         String value = new String(reader.getBytes(payload.length - 8));
-        directory.setString(QtDirectory._tagIntegerMap.get(keys.get(currentIndex)), value);
+        directory.setString(QtMetadataDirectory._tagIntegerMap.get(keys.get(currentIndex)), value);
     }
 }

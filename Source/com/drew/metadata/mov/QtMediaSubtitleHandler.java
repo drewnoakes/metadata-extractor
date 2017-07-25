@@ -1,6 +1,8 @@
 package com.drew.metadata.mov;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 
@@ -9,6 +11,17 @@ import java.io.IOException;
  */
 public class QtMediaSubtitleHandler extends QtMediaHandler
 {
+    public QtMediaSubtitleHandler(Metadata metadata)
+    {
+        super(metadata);
+    }
+
+    @Override
+    QtDirectory getDirectory()
+    {
+        return new QtDirectory();
+    }
+
     @Override
     String getMediaInformation()
     {
@@ -17,7 +30,7 @@ public class QtMediaSubtitleHandler extends QtMediaHandler
     }
 
     @Override
-    void processSampleDescription(QtDirectory directory, ByteArrayReader reader) throws IOException
+    void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
         // Begin general structure
         int versionAndFlags = reader.getInt32(0);
@@ -47,13 +60,13 @@ public class QtMediaSubtitleHandler extends QtMediaHandler
     }
 
     @Override
-    void processMediaInformation(QtDirectory directory, ByteArrayReader reader) throws IOException
+    void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
     {
         // Not yet implemented
     }
 
     @Override
-    void processTimeToSample(QtDirectory directory, ByteArrayReader reader) throws IOException
+    void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {
         // Not yet implemented
     }

@@ -3,11 +3,21 @@ package com.drew.metadata.mov;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 
-public abstract class QtMediaHandler implements QtHandler
+/**
+ * Classes that extend this class should be from the media dat atom types:
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
+ */
+public abstract class QtMediaHandler extends QtHandler
 {
+    public QtMediaHandler(Metadata metadata)
+    {
+        super(metadata);
+    }
+
     @Override
     public boolean shouldAcceptAtom(String fourCC)
     {
@@ -26,15 +36,15 @@ public abstract class QtMediaHandler implements QtHandler
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         ByteArrayReader reader = new ByteArrayReader(payload);
         if (fourCC.equals(getMediaInformation())) {
-            processMediaInformation(directory, reader);
+            processMediaInformation(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
-            processSampleDescription(directory, reader);
+            processSampleDescription(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
-            processTimeToSample(directory, reader);
+            processTimeToSample(reader);
         }
         return this;
     }
@@ -48,29 +58,21 @@ public abstract class QtMediaHandler implements QtHandler
     abstract String getMediaInformation();
 
     /**
-     * All sample description atoms will start with the following:
-     * <ul>
-     *     <li>Version: 1 byte</li>
-     *     <li>Flags: 3 bytes</li>
-     *     <li>Number of entries: 4 bytes</li>
-     *     <li>Sample Description Size: 4 bytes</li>
-     *     <li>Data Format: 4 bytes</li>
-     *     <li>Reserved: 6 bytes</li>
-     *     <li>Data reference index: 2 bytes</li>
-     * </ul>
-     * As per the documentation
+     * All sample description atoms will begin with the structure specified here:
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-33044
      *
      * Unique values will follow depending upon the handler
      */
-    abstract void processSampleDescription(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
+    abstract void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException;
 
     /**
      * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
      *
+     * 'gmhd' atoms will have a unique child specific to the media type you are dealing with
+     *
      * Each structure will be specified in its respective handler
      */
-    abstract void processMediaInformation(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
+    abstract void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException;
 
-    abstract void processTimeToSample(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
+    abstract void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException;
 }
