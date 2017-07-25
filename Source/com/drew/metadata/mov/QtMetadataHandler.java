@@ -3,14 +3,20 @@ package com.drew.metadata.mov;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class QtMetadataHandler implements QtHandler
+public abstract class QtMetadataHandler extends QtHandler
 {
     private int currentIndex = 0;
     private ArrayList<String> keys = new ArrayList<String>();
+
+    public QtMetadataHandler(Metadata metadata)
+    {
+        super(metadata);
+    }
 
     @Override
     public boolean shouldAcceptAtom(String fourCC)
@@ -28,18 +34,18 @@ public abstract class QtMetadataHandler implements QtHandler
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
             processKeys(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)){
-            processData(directory, payload, reader);
+            processData(payload, reader);
         }
         return this;
     }
 
     abstract void processKeys(@NotNull SequentialByteArrayReader reader) throws IOException;
 
-    abstract void processData(@NotNull QtDirectory directory, @NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException;
+    abstract void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException;
 }

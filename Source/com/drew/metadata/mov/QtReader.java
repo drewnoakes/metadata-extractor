@@ -27,7 +27,7 @@ public class QtReader {
             System.out.println("| \"\" = leaf      \"[]\" = container    \"{}\" = Unknown |");
             System.out.println("_____________________________________________________");
         }
-        processAtoms(reader, -1, directory, new QtAtomHandler(), printVisited);
+        processAtoms(reader, -1, directory, new QtAtomHandler(metadata), printVisited);
     }
 
     private void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
@@ -74,7 +74,7 @@ public class QtReader {
                         System.out.println("  " + fourCC);
                     }
 
-                    qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8), directory);
+                    qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8));
                 } else {
                     if (size > 1)
                         reader.skip(size - 8);

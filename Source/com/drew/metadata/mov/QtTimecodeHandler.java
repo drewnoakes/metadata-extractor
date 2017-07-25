@@ -1,13 +1,24 @@
 package com.drew.metadata.mov;
 
 import com.drew.lang.ByteArrayReader;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 
-public class QtMediaTimecodeHandler extends QtMediaHandler
+public class QtTimecodeHandler extends QtMediaHandler
 {
+    public QtTimecodeHandler(Metadata metadata)
+    {
+        super(metadata);
+    }
+
+    @Override
+    QtDirectory getDirectory()
+    {
+        return new QtTimecodeDirectory();
+    }
+
     @Override
     String getMediaInformation()
     {
@@ -18,7 +29,7 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGABGG
      */
     @Override
-    public void processSampleDescription(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
+    public void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
         // Begin general structure
         int versionAndFlags = reader.getInt32(0);
@@ -41,15 +52,15 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
         // 8-bits reserved space set to 0
         // Source reference...
 
-        directory.setBoolean(QtDirectory.TAG_TIMECODE_DROP_FRAME, ((flags & 0x0001) == 0x0001) ? true : false);
-        directory.setBoolean(QtDirectory.TAG_TIMECODE_24_HOUR_MAX, ((flags & 0x0002) == 0x0002) ? true : false);
-        directory.setBoolean(QtDirectory.TAG_TIMECODE_NEGATIVE_TIMES_OK, ((flags & 0x0004) == 0x0004) ? true : false);
-        directory.setBoolean(QtDirectory.TAG_TIMECODE_COUNTER, ((flags & 0x0008) == 0x0008) ? true : false);
+        directory.setBoolean(QtTimecodeDirectory.TAG_DROP_FRAME, ((flags & 0x0001) == 0x0001) ? true : false);
+        directory.setBoolean(QtTimecodeDirectory.TAG_24_HOUR_MAX, ((flags & 0x0002) == 0x0002) ? true : false);
+        directory.setBoolean(QtTimecodeDirectory.TAG_NEGATIVE_TIMES_OK, ((flags & 0x0004) == 0x0004) ? true : false);
+        directory.setBoolean(QtTimecodeDirectory.TAG_COUNTER, ((flags & 0x0008) == 0x0008) ? true : false);
 
     }
 
     @Override
-    public void processMediaInformation(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
+    public void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
     {
         int versionAndFlags = reader.getInt32(0);
         int textFont = reader.getInt16(4);
@@ -60,41 +71,41 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
         int backgroundColor = reader.getInt24(13);
         String fontName = reader.getString(16, (int)reader.getLength() - 16, "UTF-8");
 
-        directory.setInt(QtDirectory.TAG_TIMECODE_TEXT_FONT, textFont);
+        directory.setInt(QtTimecodeDirectory.TAG_TEXT_FONT, textFont);
         switch (textFace) {
             case (0x0001):
-                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Bold");
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Bold");
                 break;
             case (0x0002):
-                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Italic");
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Italic");
                 break;
             case (0x0004):
-                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Underline");
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Underline");
                 break;
             case (0x0008):
-                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Outline");
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Outline");
                 break;
             case (0x0010):
-                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Shadow");
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Shadow");
                 break;
             case (0x0020):
-                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Condense");
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Condense");
                 break;
             case (0x0040):
-                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Extend");
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Extend");
         }
 
-        directory.setInt(QtDirectory.TAG_TIMECODE_TEXT_SIZE, textSize);
-        directory.setInt(QtDirectory.TAG_TIMECODE_TEXT_COLOR, textColor);
-        directory.setInt(QtDirectory.TAG_TIMECODE_BACKGROUND_COLOR, backgroundColor);
-        directory.setString(QtDirectory.TAG_TIMECODE_FONT_NAME, fontName);
+        directory.setInt(QtTimecodeDirectory.TAG_TEXT_SIZE, textSize);
+        directory.setInt(QtTimecodeDirectory.TAG_TEXT_COLOR, textColor);
+        directory.setInt(QtTimecodeDirectory.TAG_BACKGROUND_COLOR, backgroundColor);
+        directory.setString(QtTimecodeDirectory.TAG_FONT_NAME, fontName);
     }
 
     /**
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
      */
     @Override
-    void processTimeToSample(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
+    void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {
         // Do nothing
     }

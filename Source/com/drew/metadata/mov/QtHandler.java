@@ -1,16 +1,29 @@
 package com.drew.metadata.mov;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 
-public interface QtHandler
+public abstract class QtHandler<T extends QtDirectory>
 {
-    public boolean shouldAcceptAtom(@NotNull String fourCC);
+    protected Metadata metadata;
+    protected T directory;
 
-    public boolean shouldAcceptContainer(@NotNull String fourCC);
+    public QtHandler(Metadata metadata) {
+        this.metadata = metadata;
+        this.directory = getDirectory();
+        metadata.addDirectory(directory);
+    }
 
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException;
+    abstract T getDirectory();
 
-    public QtHandler processContainer(@NotNull String fourCC);
+    abstract boolean shouldAcceptAtom(@NotNull String fourCC);
+
+    abstract boolean shouldAcceptContainer(@NotNull String fourCC);
+
+    abstract QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException;
+
+    abstract QtHandler processContainer(@NotNull String fourCC);
 }

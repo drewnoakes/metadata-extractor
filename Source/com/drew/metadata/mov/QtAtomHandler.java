@@ -4,6 +4,8 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,9 +15,20 @@ import java.util.Date;
 /**
  * @author Payton Garland
  */
-public class QtAtomHandler implements QtHandler
+public class QtAtomHandler extends QtHandler
 {
     private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
+
+    public QtAtomHandler(Metadata metadata)
+    {
+        super(metadata);
+    }
+
+    @Override
+    QtDirectory getDirectory()
+    {
+        return new QtDirectory();
+    }
 
     @Override
     public boolean shouldAcceptAtom(@NotNull String fourCC)
@@ -37,7 +50,7 @@ public class QtAtomHandler implements QtHandler
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         ByteArrayReader reader = new ByteArrayReader(payload);
         if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
@@ -46,7 +59,7 @@ public class QtAtomHandler implements QtHandler
             processFileType(directory, payload, reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
             String handler = new String(reader.getBytes(8, 4));
-            return handlerFactory.getHandler(handler);
+            return handlerFactory.getHandler(handler, metadata);
         } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
             QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32(12);
         }

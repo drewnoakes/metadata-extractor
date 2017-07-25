@@ -3,11 +3,17 @@ package com.drew.metadata.mov;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 
-public abstract class QtMediaHandler implements QtHandler
+public abstract class QtMediaHandler extends QtHandler
 {
+    public QtMediaHandler(Metadata metadata)
+    {
+        super(metadata);
+    }
+
     @Override
     public boolean shouldAcceptAtom(String fourCC)
     {
@@ -26,15 +32,15 @@ public abstract class QtMediaHandler implements QtHandler
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload, @NotNull QtDirectory directory) throws IOException
+    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         ByteArrayReader reader = new ByteArrayReader(payload);
         if (fourCC.equals(getMediaInformation())) {
-            processMediaInformation(directory, reader);
+            processMediaInformation(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
-            processSampleDescription(directory, reader);
+            processSampleDescription(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
-            processTimeToSample(directory, reader);
+            processTimeToSample(reader);
         }
         return this;
     }
@@ -63,14 +69,14 @@ public abstract class QtMediaHandler implements QtHandler
      *
      * Unique values will follow depending upon the handler
      */
-    abstract void processSampleDescription(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
+    abstract void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException;
 
     /**
      * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
      *
      * Each structure will be specified in its respective handler
      */
-    abstract void processMediaInformation(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
+    abstract void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException;
 
-    abstract void processTimeToSample(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException;
+    abstract void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException;
 }
