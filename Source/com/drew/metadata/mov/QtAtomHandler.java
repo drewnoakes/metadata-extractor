@@ -70,7 +70,7 @@ public class QtAtomHandler extends QtHandler
     public QtHandler processContainer(String fourCC)
     {
         if (fourCC.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
-            throw new RuntimeException("Compressed QuickTime movies not supported");
+            directory.addError("Compressed QuickTime movies not supported");
         }
         return this;
     }
@@ -85,8 +85,6 @@ public class QtAtomHandler extends QtHandler
     private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
     {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(0, 4));
-
-        directory.setByteArray(QtDirectory.TAG_MINOR_VERSION, reader.getBytes(4, 4));
 
         ArrayList<String> compatibleBrands = new ArrayList<String>();
         int brandsCount = (payload.length - 8) / 4;

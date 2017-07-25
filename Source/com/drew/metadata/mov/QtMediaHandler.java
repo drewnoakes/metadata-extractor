@@ -7,6 +7,10 @@ import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 
+/**
+ * Classes that extend this class should be from the media dat atom types:
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
+ */
 public abstract class QtMediaHandler extends QtHandler
 {
     public QtMediaHandler(Metadata metadata)
@@ -54,17 +58,7 @@ public abstract class QtMediaHandler extends QtHandler
     abstract String getMediaInformation();
 
     /**
-     * All sample description atoms will start with the following:
-     * <ul>
-     *     <li>Version: 1 byte</li>
-     *     <li>Flags: 3 bytes</li>
-     *     <li>Number of entries: 4 bytes</li>
-     *     <li>Sample Description Size: 4 bytes</li>
-     *     <li>Data Format: 4 bytes</li>
-     *     <li>Reserved: 6 bytes</li>
-     *     <li>Data reference index: 2 bytes</li>
-     * </ul>
-     * As per the documentation
+     * All sample description atoms will begin with the structure specified here:
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-33044
      *
      * Unique values will follow depending upon the handler
@@ -73,6 +67,8 @@ public abstract class QtMediaHandler extends QtHandler
 
     /**
      * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
+     *
+     * 'gmhd' atoms will have a unique child specific to the media type you are dealing with
      *
      * Each structure will be specified in its respective handler
      */

@@ -35,16 +35,21 @@ public class QtReader {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
 
+                // Get size... if size is 1, it had to be extended to the next 64-bit int
                 long size = reader.getUInt32();
-
                 if (size == 1) {
                     size = reader.getInt64();
                 } else if (size == 0) {
                     size = reader.getInt32();
                 }
 
+                // Get fourCC
                 String fourCC = reader.getString(4);
 
+                /*
+                 * Determine if fourCC is container/atom and process accordingly
+                 * Unknown atoms will be skipped
+                 */
                 if (qtHandler.shouldAcceptContainer(fourCC)) {
 
                     if (printVisited) {
@@ -87,8 +92,8 @@ public class QtReader {
                     }
                 }
             }
-        } catch (IOException ex) {
-            directory.addError("Error reading file stream");
+        } catch (IOException ignored) {
+
         }
     }
 

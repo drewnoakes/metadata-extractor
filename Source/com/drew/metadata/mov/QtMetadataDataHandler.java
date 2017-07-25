@@ -19,12 +19,6 @@ public class QtMetadataDataHandler extends QtMetadataHandler
     }
 
     @Override
-    QtDirectory getDirectory()
-    {
-        return new QtDirectory();
-    }
-
-    @Override
     public boolean shouldAcceptAtom(String fourCC)
     {
         return fourCC.equals(QtAtomTypes.ATOM_HANDLER)
