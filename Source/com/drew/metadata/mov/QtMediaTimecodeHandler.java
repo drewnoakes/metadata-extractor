@@ -40,12 +40,54 @@ public class QtMediaTimecodeHandler extends QtMediaHandler
         int numberOfFrames = reader.getInt8(40);
         // 8-bits reserved space set to 0
         // Source reference...
+
+        directory.setBoolean(QtDirectory.TAG_TIMECODE_DROP_FRAME, ((flags & 0x0001) == 0x0001) ? true : false);
+        directory.setBoolean(QtDirectory.TAG_TIMECODE_24_HOUR_MAX, ((flags & 0x0002) == 0x0002) ? true : false);
+        directory.setBoolean(QtDirectory.TAG_TIMECODE_NEGATIVE_TIMES_OK, ((flags & 0x0004) == 0x0004) ? true : false);
+        directory.setBoolean(QtDirectory.TAG_TIMECODE_COUNTER, ((flags & 0x0008) == 0x0008) ? true : false);
+
     }
 
     @Override
     public void processMediaInformation(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
     {
-        // Do nothing
+        int versionAndFlags = reader.getInt32(0);
+        int textFont = reader.getInt16(4);
+        int textFace = reader.getInt16(6);
+        int textSize = reader.getInt16(8);
+        // 16-bits reserved space set to 0
+        int textColor = reader.getInt24(10);
+        int backgroundColor = reader.getInt24(13);
+        String fontName = reader.getString(16, (int)reader.getLength() - 16, "UTF-8");
+
+        directory.setInt(QtDirectory.TAG_TIMECODE_TEXT_FONT, textFont);
+        switch (textFace) {
+            case (0x0001):
+                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Bold");
+                break;
+            case (0x0002):
+                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Italic");
+                break;
+            case (0x0004):
+                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Underline");
+                break;
+            case (0x0008):
+                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Outline");
+                break;
+            case (0x0010):
+                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Shadow");
+                break;
+            case (0x0020):
+                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Condense");
+                break;
+            case (0x0040):
+                directory.setString(QtDirectory.TAG_TIMECODE_TEXT_FACE, "Extend");
+        }
+
+        directory.setInt(QtDirectory.TAG_TIMECODE_TEXT_SIZE, textSize);
+        directory.setInt(QtDirectory.TAG_TIMECODE_TEXT_COLOR, textColor);
+        directory.setInt(QtDirectory.TAG_TIMECODE_BACKGROUND_COLOR, backgroundColor);
+        directory.setString(QtDirectory.TAG_TIMECODE_FONT_NAME, fontName);
     }
 
     /**
