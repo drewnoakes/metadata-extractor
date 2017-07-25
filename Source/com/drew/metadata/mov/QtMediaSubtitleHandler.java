@@ -4,6 +4,9 @@ import com.drew.lang.ByteArrayReader;
 
 import java.io.IOException;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW81
+ */
 public class QtMediaSubtitleHandler extends QtMediaHandler
 {
     @Override
@@ -24,6 +27,11 @@ public class QtMediaSubtitleHandler extends QtMediaHandler
         // 6-bytes of reserved space set to 0
         int dataReferenceIndex = reader.getInt16(22);
         // End general structure
+
+        if (!dataFormat.equals("tx3g")) {
+            directory.addError("Subtitle sample description atom has incorrect data format, no data extracted");
+            return;
+        }
 
         int displayFlags = reader.getInt32(24);
         // 8-bits reserved space set to 1
