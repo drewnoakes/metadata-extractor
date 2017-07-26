@@ -7,6 +7,11 @@ import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCJIGHH
+ *
+ * @author Payton Garland
+ */
 public class QtMusicHandler extends QtMediaHandler
 {
     public QtMusicHandler(Metadata metadata)
@@ -15,7 +20,7 @@ public class QtMusicHandler extends QtMediaHandler
     }
 
     @Override
-    protected QtDirectory getDirectory()
+    protected QtMusicDirectory getDirectory()
     {
         return new QtMusicDirectory();
     }

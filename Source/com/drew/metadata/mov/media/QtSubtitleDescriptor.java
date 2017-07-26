@@ -1,11 +1,15 @@
 package com.drew.metadata.mov.media;
 
+import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.mov.QtDescriptor;
 import com.drew.metadata.mov.QtDirectory;
 
-public class QtSubtitleDescriptor extends QtDescriptor<QtSubtitleDirectory>
+/**
+ * @author Payton Garland
+ */
+public class QtSubtitleDescriptor extends TagDescriptor<QtSubtitleDirectory>
 {
-    public QtSubtitleDescriptor(QtDirectory directory)
+    public QtSubtitleDescriptor(QtSubtitleDirectory directory)
     {
         super(directory);
     }

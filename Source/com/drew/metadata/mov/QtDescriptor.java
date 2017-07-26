@@ -7,6 +7,9 @@ import com.drew.metadata.TagDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDescriptor<T extends Directory> extends TagDescriptor<QtDirectory> {
 
     public QtDescriptor(@NotNull QtDirectory directory)
@@ -44,11 +47,7 @@ public class QtDescriptor<T extends Directory> extends TagDescriptor<QtDirectory
         ArrayList<String> compatibleBrandsValues = new ArrayList<String>();
         for (String compatibleBrandsKey : compatibleBrandKeys) {
             String compatibleBrandsValue = QtDictionary.lookup(QtDirectory.TAG_MAJOR_BRAND, compatibleBrandsKey);
-            if (compatibleBrandsValue != null) {
-                compatibleBrandsValues.add(compatibleBrandsValue);
-            } else {
-                compatibleBrandsValues.add(compatibleBrandsKey);
-            }
+            compatibleBrandsValues.add(compatibleBrandsValue);
         }
         return Arrays.toString(compatibleBrandsValues.toArray());
     }

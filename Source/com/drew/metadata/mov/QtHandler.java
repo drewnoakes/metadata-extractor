@@ -6,7 +6,10 @@ import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 
-public abstract class QtHandler<T extends QtDirectory>
+/**
+ * @author Payton Garland
+ */
+public abstract class QtHandler<T extends Directory>
 {
     protected Metadata metadata;
     protected T directory;

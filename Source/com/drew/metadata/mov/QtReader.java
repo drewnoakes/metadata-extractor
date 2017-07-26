@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.DataFormatException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtReader {
     private StreamReader reader;
     private int tabCount;

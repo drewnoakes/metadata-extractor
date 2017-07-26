@@ -1,11 +1,13 @@
 package com.drew.metadata.mov.media;
 
-import com.drew.metadata.mov.QtDescriptor;
-import com.drew.metadata.mov.QtDirectory;
+import com.drew.metadata.TagDescriptor;
 
-public class QtMusicDescriptor extends QtDescriptor<QtMusicDirectory>
+/**
+ * @author Payton Garland
+ */
+public class QtMusicDescriptor extends TagDescriptor<QtMusicDirectory>
 {
-    public QtMusicDescriptor(QtDirectory directory)
+    public QtMusicDescriptor(QtMusicDirectory directory)
     {
         super(directory);
     }

@@ -1,11 +1,15 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class QtTextDirectory extends QtDirectory
+/**
+ * @author Payton Garland
+ */
+public class QtTextDirectory extends Directory
 {
     // Text Media Description Atom
     public static final int TAG_AUTO_SCALE                          = 1;

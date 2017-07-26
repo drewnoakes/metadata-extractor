@@ -1,11 +1,14 @@
 package com.drew.metadata.mov.metadata;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.mov.QtDirectory;
+import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
-public class QtMetadataDirectory extends QtDirectory
+/**
+ * @author Payton Garland
+ */
+public class QtMetadataDirectory extends Directory
 {
     // User Data Types Holder (0x0400 - 0x04FF)
     // https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta

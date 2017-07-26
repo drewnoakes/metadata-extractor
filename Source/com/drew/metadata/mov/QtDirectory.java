@@ -5,28 +5,30 @@ import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDirectory extends Directory {
-
-    // Movie Header Atom (https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-56313)
-    public static final int TAG_CREATION_TIME                           = 0x0100;
-    public static final int TAG_MODIFICATION_TIME                       = 0x0101;
-    public static final int TAG_TIME_SCALE                              = 0x0102;
-    public static final int TAG_DURATION                                = 0x0103;
-    public static final int TAG_PREFERRED_RATE                          = 0x0104;
-    public static final int TAG_PREFERRED_VOLUME                        = 0x0105;
-    public static final int TAG_PREVIEW_TIME                            = 0x0108;
-    public static final int TAG_PREVIEW_DURATION                        = 0x0109;
-    public static final int TAG_POSTER_TIME                             = 0x010A;
-    public static final int TAG_SELECTION_TIME                          = 0x010B;
-    public static final int TAG_SELECTION_DURATION                      = 0x010C;
-    public static final int TAG_CURRENT_TIME                            = 0x010D;
-    public static final int TAG_NEXT_TRACK_ID                           = 0x010E;
-
-    public static final int TAG_MEDIA_TIME_SCALE                        = 0x0306;
 
     public static final int TAG_MAJOR_BRAND                             = 0x1000;
     public static final int TAG_MINOR_VERSION                           = 0x1001;
     public static final int TAG_COMPATIBLE_BRANDS                       = 0x1002;
+
+    // Movie Header Atom (https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-56313)
+    public static final int TAG_CREATION_TIME                           = 0x1100;
+    public static final int TAG_MODIFICATION_TIME                       = 0x1101;
+    public static final int TAG_TIME_SCALE                              = 0x1102;
+    public static final int TAG_DURATION                                = 0x1103;
+    public static final int TAG_PREFERRED_RATE                          = 0x1104;
+    public static final int TAG_PREFERRED_VOLUME                        = 0x1105;
+    public static final int TAG_PREVIEW_TIME                            = 0x1108;
+    public static final int TAG_PREVIEW_DURATION                        = 0x1109;
+    public static final int TAG_POSTER_TIME                             = 0x110A;
+    public static final int TAG_SELECTION_TIME                          = 0x110B;
+    public static final int TAG_SELECTION_DURATION                      = 0x110C;
+    public static final int TAG_CURRENT_TIME                            = 0x110D;
+    public static final int TAG_NEXT_TRACK_ID                           = 0x110E;
+    public static final int TAG_MEDIA_TIME_SCALE                        = 0x110F;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -49,7 +51,6 @@ public class QtDirectory extends Directory {
         _tagNameMap.put(TAG_SELECTION_DURATION, "Selection Duration");
         _tagNameMap.put(TAG_CURRENT_TIME, "Current Time");
         _tagNameMap.put(TAG_NEXT_TRACK_ID, "Next Track ID");
-
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
     }
 

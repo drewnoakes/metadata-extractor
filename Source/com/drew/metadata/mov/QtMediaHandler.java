@@ -13,6 +13,8 @@ import java.io.IOException;
 /**
  * Classes that extend this class should be from the media dat atom types:
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
+ *
+ * @author Payton Garland
  */
 public abstract class QtMediaHandler extends QtHandler
 {

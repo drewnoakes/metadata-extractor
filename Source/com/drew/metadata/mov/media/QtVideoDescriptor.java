@@ -1,9 +1,13 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.mov.QtDescriptor;
 
-public class QtVideoDescriptor extends QtDescriptor<QtVideoDirectory>
+/**
+ * @author Payton Garland
+ */
+public class QtVideoDescriptor extends TagDescriptor<QtVideoDirectory>
 {
     public QtVideoDescriptor(@NotNull QtVideoDirectory directory)
     {

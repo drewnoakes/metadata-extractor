@@ -1,11 +1,15 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class QtSoundDirectory extends QtDirectory
+/**
+ * @author Payton Garland
+ */
+public class QtSoundDirectory extends Directory
 {
     // Sound Sample Description Atom
     public static final int TAG_AUDIO_FORMAT                            = 0x0301;

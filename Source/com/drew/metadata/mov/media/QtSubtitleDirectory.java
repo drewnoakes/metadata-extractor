@@ -1,11 +1,15 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class QtSubtitleDirectory extends QtDirectory
+/**
+ * @author Payton Garland
+ */
+public class QtSubtitleDirectory extends Directory
 {
     public static final int TAG_VERTICAL_PLACEMENT          = 1;
     public static final int TAG_SOME_SAMPLES_FORCED         = 2;

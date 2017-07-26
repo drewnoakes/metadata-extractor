@@ -12,6 +12,8 @@ import java.io.IOException;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
+ *
+ * @author Payton Garland
  */
 public class QtVideoHandler extends QtMediaHandler
 {

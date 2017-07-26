@@ -10,6 +10,9 @@ import com.drew.metadata.mov.QtMetadataHandler;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDirectoryHandler extends QtMetadataHandler
 {
     private String currentData;

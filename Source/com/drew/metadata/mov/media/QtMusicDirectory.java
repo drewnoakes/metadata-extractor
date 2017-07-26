@@ -1,11 +1,15 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class QtMusicDirectory extends QtDirectory
+/**
+ * @author Payton Garland
+ */
+public class QtMusicDirectory extends Directory
 {
     public QtMusicDirectory()
     {

@@ -3,12 +3,16 @@ package com.drew.metadata.mov;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.metadata.QtMetadataDirectory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * @author Payton Garland
+ */
 public abstract class QtMetadataHandler extends QtHandler
 {
     private ArrayList<String> keys = new ArrayList<String>();
@@ -19,7 +23,7 @@ public abstract class QtMetadataHandler extends QtHandler
     }
 
     @Override
-    protected QtDirectory getDirectory()
+    protected QtMetadataDirectory getDirectory()
     {
         return new QtMetadataDirectory();
     }

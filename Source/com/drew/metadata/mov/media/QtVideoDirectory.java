@@ -1,11 +1,15 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class QtVideoDirectory extends QtDirectory
+/**
+ * @author Payton Garland
+ */
+public class QtVideoDirectory extends Directory
 {
     // Video Sample Description Atom
     public static final int TAG_VENDOR                                  = 1;

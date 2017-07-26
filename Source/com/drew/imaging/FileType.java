@@ -40,7 +40,7 @@ public enum FileType
     Gif("image/gif", false, ".gif"),
     Ico("image/x-icon", false, ".ico"),
     Pcx("image/x-pcx", false, ".pcx"),
-    Riff(null, true, null),
+    Riff(null, true, ".wav", ".wave", ".avi", ".webp"),
     Mov("video/quicktime", false, ".mov", ".qt"),
 
     /** Sony camera raw. */

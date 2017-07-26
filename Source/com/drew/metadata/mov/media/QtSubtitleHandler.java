@@ -10,6 +10,8 @@ import java.io.IOException;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW81
+ *
+ * @author Payton Garland
  */
 public class QtSubtitleHandler extends QtMediaHandler
 {
@@ -19,7 +21,7 @@ public class QtSubtitleHandler extends QtMediaHandler
     }
 
     @Override
-    protected QtDirectory getDirectory()
+    protected QtSubtitleDirectory getDirectory()
     {
         return new QtSubtitleDirectory();
     }

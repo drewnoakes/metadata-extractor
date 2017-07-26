@@ -1,12 +1,17 @@
 package com.drew.metadata.mov.metadata;
 
+import com.drew.metadata.Directory;
+import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.mov.QtDescriptor;
 import com.drew.metadata.mov.QtDirectory;
 import com.drew.metadata.mov.metadata.QtMetadataDirectory;
 
-public class QtMetadataDescriptor extends QtDescriptor<QtMetadataDirectory>
+/**
+ * @author Payton Garland
+ */
+public class QtMetadataDescriptor extends TagDescriptor<Directory>
 {
-    public QtMetadataDescriptor(QtDirectory directory)
+    public QtMetadataDescriptor(Directory directory)
     {
         super(directory);
     }

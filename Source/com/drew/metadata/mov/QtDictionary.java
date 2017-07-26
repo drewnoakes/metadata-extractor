@@ -1,10 +1,14 @@
 package com.drew.metadata.mov;
 
+import com.drew.metadata.Directory;
 import com.drew.metadata.mov.media.QtSoundDirectory;
 import com.drew.metadata.mov.media.QtVideoDirectory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDictionary
 {
     private static HashMap<Integer, HashMap<String, String>> _dictionary = new HashMap<Integer, HashMap<String, String>>();
@@ -259,7 +263,7 @@ public class QtDictionary
         }
     }
 
-    public static void setLookup(int scope, String lookup, QtDirectory directory)
+    public static void setLookup(int scope, String lookup, Directory directory)
     {
         String results = lookup(scope, lookup);
         directory.setString(scope, results);
