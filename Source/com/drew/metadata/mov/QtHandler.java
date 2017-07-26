@@ -14,7 +14,8 @@ public abstract class QtHandler<T extends Directory>
     protected Metadata metadata;
     protected T directory;
 
-    public QtHandler(Metadata metadata) {
+    public QtHandler(Metadata metadata)
+    {
         this.metadata = metadata;
         this.directory = getDirectory();
         metadata.addDirectory(directory);
