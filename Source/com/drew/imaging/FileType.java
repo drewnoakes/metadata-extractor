@@ -41,6 +41,9 @@ public enum FileType
     Ico("image/x-icon", false, ".ico"),
     Pcx("image/x-pcx", false, ".pcx"),
     Riff(null, true, null),
+    Wav("audio/vnd.wave", false, ".wav", ".wave"),
+    Avi("video/vnd.avi", false, ".avi"),
+    Webp("image/webp", false, ".webp"),
 
     /** Sony camera raw. */
     Arw(null, false, ".arw"),
