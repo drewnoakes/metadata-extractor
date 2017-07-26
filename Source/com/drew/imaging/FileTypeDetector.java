@@ -32,11 +32,15 @@ import java.io.IOException;
 public class FileTypeDetector
 {
     private final static ByteTrie<FileType> _root;
+    private final static int[] _offsets;
 
     static
     {
         _root = new ByteTrie<FileType>();
         _root.setDefaultValue(FileType.Unknown);
+
+        // Potential supported offsets
+        _offsets = new int[]{0, 4};
 
         // https://en.wikipedia.org/wiki/List_of_file_signatures
 
@@ -69,6 +73,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Orf, "IIRS".getBytes(), new byte[]{(byte)0x08, 0x00});
         _root.addPath(FileType.Raf, "FUJIFILMCCD-RAW".getBytes());
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
+
     }
 
     private FileTypeDetector() throws Exception
@@ -76,8 +81,33 @@ public class FileTypeDetector
         throw new Exception("Not intended for instantiation");
     }
 
+    @NotNull
+    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream, @NotNull int offset) throws IOException
+    {
+        if (!inputStream.markSupported())
+            throw new IOException("Stream must support mark/reset");
+
+        int maxByteCount = _root.getMaxDepth();
+
+        inputStream.mark(maxByteCount);
+
+        byte[] bytes = new byte[maxByteCount];
+        inputStream.skip(offset);
+        int bytesRead = inputStream.read(bytes);
+
+        if (bytesRead == -1)
+            throw new IOException("Stream ended before file's magic number could be determined.");
+
+        inputStream.reset();
+
+        FileType fileType = _root.find(bytes);
+
+        //noinspection ConstantConditions
+        return fileType;
+    }
+
     /**
-     * Examines the a file's first bytes and estimates the file's type.
+     * Examines the file's bytes and estimates the file's type.
      * <p>
      * Requires a {@link BufferedInputStream} in order to mark and reset the stream to the position
      * at which it was provided to this method once completed.
@@ -89,34 +119,22 @@ public class FileTypeDetector
     @NotNull
     public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
     {
-        if (!inputStream.markSupported())
-            throw new IOException("Stream must support mark/reset");
-
-        int maxByteCount = _root.getMaxDepth();
-
-        inputStream.mark(maxByteCount);
-
-        byte[] bytes = new byte[maxByteCount];
-        int bytesRead = inputStream.read(bytes);
-
-        if (bytesRead == -1)
-            throw new IOException("Stream ended before file's magic number could be determined.");
-
-        inputStream.reset();
-
-        FileType fileType = _root.find(bytes);
-
-        if (fileType.getIsContainer()) {
-            fileType = handleContainer(inputStream, fileType);
+        FileType fileType = FileType.Unknown;
+        for (int offset : _offsets) {
+            fileType = detectFileType(inputStream, offset);
+            if (fileType.getIsContainer()) {
+                fileType = handleContainer(inputStream, fileType);
+            }
+            if (!fileType.equals(FileType.Unknown)) {
+                break;
+            }
         }
-
-        //noinspection ConstantConditions
         return fileType;
     }
 
     /**
-     * Skips to identifier location for potential container file types and calls detectFileType on new inputStream
-     * location.  In the case of fileTypes without magic bytes to identify with (Zip), the fileType will be
+     * Calls detectFileType at correct offset for the container type being passed in.
+     * In the case of fileTypes without magic bytes to identify with (Zip), the fileType will be
      * found within this method alone.
      *
      * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
@@ -126,8 +144,7 @@ public class FileTypeDetector
     {
         switch (fileType) {
             case Riff:
-                inputStream.skip(8);
-                return detectFileType(inputStream);
+                return detectFileType(inputStream, 8);
             case Tiff:
             default:
                 return fileType;
