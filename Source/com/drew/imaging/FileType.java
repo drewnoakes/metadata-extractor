@@ -41,7 +41,7 @@ public enum FileType
     Ico("image/x-icon", false, ".ico"),
     Pcx("image/x-pcx", false, ".pcx"),
     Riff(null, true, null),
-    Mov(null, true, ".mov"),
+    Mov("video/quicktime", false, ".mov", ".qt"),
 
     /** Sony camera raw. */
     Arw(null, false, ".arw"),

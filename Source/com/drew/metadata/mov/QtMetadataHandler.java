@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public abstract class QtMetadataHandler extends QtHandler
 {
-    private int currentIndex = 0;
     private ArrayList<String> keys = new ArrayList<String>();
 
     public QtMetadataHandler(Metadata metadata)

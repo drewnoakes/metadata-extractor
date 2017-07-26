@@ -38,7 +38,7 @@ public class QtDirectory extends Directory {
 
         _tagNameMap.put(TAG_CREATION_TIME, "Creation Time");
         _tagNameMap.put(TAG_MODIFICATION_TIME, "Modification Time");
-        _tagNameMap.put(TAG_TIME_SCALE, "Media Time Scale");
+        _tagNameMap.put(TAG_TIME_SCALE, "Time Scale");
         _tagNameMap.put(TAG_DURATION, "Duration");
         _tagNameMap.put(TAG_PREFERRED_RATE, "Preferred Rate");
         _tagNameMap.put(TAG_PREFERRED_VOLUME, "Preferred Volume");
