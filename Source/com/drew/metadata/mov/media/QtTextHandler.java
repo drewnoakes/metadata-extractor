@@ -71,15 +71,16 @@ public class QtTextHandler extends QtMediaHandler
         directory.setBoolean(QtTextDirectory.TAG_KEY_TEXT, ((displayFlags & 0x4000) == 0x4000) ? true : false);
 
         int textJustification = reader.getInt32(28);
-        int backgroundColor = reader.getInt24(32);
-        long defaultTextBlock = reader.getInt64(35);
+        int[] backgroundColor = new int[]{reader.getInt16(32), reader.getInt16(34), reader.getInt16(36)};
+        long defaultTextBlock = reader.getInt64(38);
         // 64-bits of reserved space set to 0
-        int fontNumber = reader.getInt16(43);
-        int fontFace = reader.getInt16(45);
+        int fontNumber = reader.getInt16(46);
+        int fontFace = reader.getInt16(48);
         // 8-bits of reserved space set to 0
         // 16-bits of reserved space set to 0
-        int foregroundColor = reader.getInt24(48);
-        String textName = reader.getString(51, (int)reader.getLength() - 51, "UTF-8");
+        int[] foregroundColor = new int[]{reader.getInt16(53), reader.getInt16(55), reader.getInt16(57)};
+        int textNameSize = reader.getInt8(59);
+        String textName = reader.getString(60, textNameSize, "UTF-8");
 
         switch (textJustification) {
             case (0):
@@ -92,7 +93,7 @@ public class QtTextHandler extends QtMediaHandler
                 directory.setString(QtTextDirectory.TAG_JUSTIFICATION, "Right");
         }
 
-        directory.setInt(QtTextDirectory.TAG_BACKGROUND_COLOR, backgroundColor);
+        directory.setIntArray(QtTextDirectory.TAG_BACKGROUND_COLOR, backgroundColor);
         directory.setLong(QtTextDirectory.TAG_DEFAULT_TEXT_BOX, defaultTextBlock);
         directory.setInt(QtTextDirectory.TAG_FONT_NUMBER, fontNumber);
 
@@ -119,7 +120,7 @@ public class QtTextHandler extends QtMediaHandler
                 directory.setString(QtTextDirectory.TAG_FONT_FACE, "Extend");
         }
 
-        directory.setInt(QtTextDirectory.TAG_FOREGROUND_COLOR, foregroundColor);
+        directory.setIntArray(QtTextDirectory.TAG_FOREGROUND_COLOR, foregroundColor);
         directory.setString(QtTextDirectory.TAG_NAME, textName);
     }
 

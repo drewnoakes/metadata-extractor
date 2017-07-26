@@ -70,12 +70,16 @@ public class QtTimecodeHandler extends QtMediaHandler
         int textFace = reader.getInt16(6);
         int textSize = reader.getInt16(8);
         // 16-bits reserved space set to 0
-        int textColor = reader.getInt24(10);
-        int backgroundColor = reader.getInt24(13);
-        String fontName = reader.getString(16, (int)reader.getLength() - 16, "UTF-8");
+        int[] textColor = new int[]{reader.getUInt16(12), reader.getUInt16(14), reader.getUInt16(16)};
+        int[] backgroundColor = new int[]{reader.getUInt16(18), reader.getUInt16(20), reader.getUInt16(22)};
+        int fontNameSize = reader.getInt8(24);
+        String fontName = reader.getString(25, fontNameSize, "UTF-8");
 
         directory.setInt(QtTimecodeDirectory.TAG_TEXT_FONT, textFont);
         switch (textFace) {
+            case (0x0000):
+                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Normal");
+                break;
             case (0x0001):
                 directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Bold");
                 break;
@@ -99,8 +103,8 @@ public class QtTimecodeHandler extends QtMediaHandler
         }
 
         directory.setInt(QtTimecodeDirectory.TAG_TEXT_SIZE, textSize);
-        directory.setInt(QtTimecodeDirectory.TAG_TEXT_COLOR, textColor);
-        directory.setInt(QtTimecodeDirectory.TAG_BACKGROUND_COLOR, backgroundColor);
+        directory.setIntArray(QtTimecodeDirectory.TAG_TEXT_COLOR, textColor);
+        directory.setIntArray(QtTimecodeDirectory.TAG_BACKGROUND_COLOR, backgroundColor);
         directory.setString(QtTimecodeDirectory.TAG_FONT_NAME, fontName);
     }
 
