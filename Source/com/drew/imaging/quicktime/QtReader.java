@@ -22,7 +22,7 @@ public class QtReader {
         reader.setMotorolaByteOrder(true);
         tabCount = 0;
 
-        boolean printVisited = false;
+        boolean printVisited = true;
 
         if (printVisited) {
             System.out.println("_______________Beginning to Print Tree_______________");

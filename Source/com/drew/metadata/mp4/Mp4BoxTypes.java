@@ -5,13 +5,13 @@ import java.util.ArrayList;
 /**
  * @author Payton Garland
  */
-public class Mp4AtomTypes
+public class Mp4BoxTypes
 {
     public static final String ATOM_FILE_TYPE                = "ftyp";
     public static final String ATOM_MOVIE_HEADER             = "mvhd";
     public static final String ATOM_VIDEO_MEDIA_INFO         = "vmhd";
     public static final String ATOM_SOUND_MEDIA_INFO         = "smhd";
-    public static final String ATOM_BASE_MEDIA_INFO          = "gmhd";
+    public static final String ATOM_HINT_MEDIA_INFO          = "hmhd";
     public static final String ATOM_TIMECODE_MEDIA_INFO      = "tcmi";
     public static final String ATOM_HANDLER                  = "hdlr";
     public static final String ATOM_KEYS                     = "keys";
@@ -27,7 +27,7 @@ public class Mp4AtomTypes
         _atomList.add(ATOM_MOVIE_HEADER);
         _atomList.add(ATOM_VIDEO_MEDIA_INFO);
         _atomList.add(ATOM_SOUND_MEDIA_INFO);
-        _atomList.add(ATOM_BASE_MEDIA_INFO);
+        _atomList.add(ATOM_HINT_MEDIA_INFO);
         _atomList.add(ATOM_TIMECODE_MEDIA_INFO);
         _atomList.add(ATOM_HANDLER);
         _atomList.add(ATOM_KEYS);

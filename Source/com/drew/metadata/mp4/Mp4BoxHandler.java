@@ -2,7 +2,6 @@ package com.drew.metadata.mp4;
 
 import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteArrayReader;
-import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -15,6 +14,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * Source: http://l.web.umkc.edu/lizhu/teaching/2016sp.video-communication/ref/mp4.pdf
+ *
  * @author Payton Garland
  */
 public class Mp4BoxHandler extends QtHandler
@@ -35,10 +36,10 @@ public class Mp4BoxHandler extends QtHandler
     @Override
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
-        return fourCC.equals(Mp4AtomTypes.ATOM_FILE_TYPE)
-            || fourCC.equals(Mp4AtomTypes.ATOM_MOVIE_HEADER)
-            || fourCC.equals(Mp4AtomTypes.ATOM_HANDLER)
-            || fourCC.equals(Mp4AtomTypes.ATOM_MEDIA_HEADER);
+        return fourCC.equals(Mp4BoxTypes.ATOM_FILE_TYPE)
+            || fourCC.equals(Mp4BoxTypes.ATOM_MOVIE_HEADER)
+            || fourCC.equals(Mp4BoxTypes.ATOM_HANDLER)
+            || fourCC.equals(Mp4BoxTypes.ATOM_MEDIA_HEADER);
     }
 
     @Override
@@ -55,14 +56,14 @@ public class Mp4BoxHandler extends QtHandler
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         ByteArrayReader reader = new ByteArrayReader(payload);
-        if (fourCC.equals(Mp4AtomTypes.ATOM_MOVIE_HEADER)) {
+        if (fourCC.equals(Mp4BoxTypes.ATOM_MOVIE_HEADER)) {
             processMovieHeader(directory, new SequentialByteArrayReader(payload));
-        } else if (fourCC.equals(Mp4AtomTypes.ATOM_FILE_TYPE)) {
+        } else if (fourCC.equals(Mp4BoxTypes.ATOM_FILE_TYPE)) {
             processFileType(directory, payload, reader);
-        } else if (fourCC.equals(Mp4AtomTypes.ATOM_HANDLER)) {
+        } else if (fourCC.equals(Mp4BoxTypes.ATOM_HANDLER)) {
             String handler = new String(reader.getBytes(8, 4));
             return handlerFactory.getHandler(handler, metadata);
-        } else if (fourCC.equals(Mp4AtomTypes.ATOM_MEDIA_HEADER)) {
+        } else if (fourCC.equals(Mp4BoxTypes.ATOM_MEDIA_HEADER)) {
             QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32(12);
         }
         return this;
@@ -80,9 +81,6 @@ public class Mp4BoxHandler extends QtHandler
     /**
      * Extracts data from the 'ftyp' atom
      * Index 0 is after size and type
-     *
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
-     *
      */
     private void processFileType(@NotNull Directory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
     {
