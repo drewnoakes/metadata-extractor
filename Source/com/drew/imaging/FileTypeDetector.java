@@ -75,12 +75,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
         
         // Potential root atoms... typically starts with FTYP
-        _root.addPath(FileType.Mov, new byte[]{0x6D, 0x6F, 0x6F, 0x76}); // moov
-        _root.addPath(FileType.Mov, new byte[]{0x66, 0x74, 0x79, 0x70}); // ftyp
-        _root.addPath(FileType.Mov, new byte[]{0x77, 0x69, 0x64, 0x65}); // wide
-        _root.addPath(FileType.Mov, new byte[]{0x6D, 0x64, 0x61, 0x74}); // mdat
-        _root.addPath(FileType.Mov, new byte[]{0x66, 0x72, 0x65, 0x65}); // free
-
+        _root.addPath(FileType.Mov, new byte[]{0x66, 0x74, 0x79, 0x70}, "qt  ".getBytes()); // ftyp
     }
 
     private FileTypeDetector() throws Exception
