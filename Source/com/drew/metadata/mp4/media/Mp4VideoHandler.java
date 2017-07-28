@@ -76,12 +76,10 @@ public class Mp4VideoHandler extends Mp4MediaHandler
     @Override
     public void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
     {
-        int graphicsMode = reader.getInt16(4);
-        int opcolorRed = reader.getUInt16(6);
-        int opcolorGreen = reader.getUInt16(8);
-        int opcolorBlue = reader.getUInt16(10);
+        int graphicsMode = reader.getUInt16(4);
+        int[] opcolor = new int[]{reader.getUInt16(6), reader.getUInt16(8), reader.getUInt16(10)};
 
-        directory.setString(Mp4VideoDirectory.TAG_OPCOLOR, "R:" + opcolorRed + " G:" + opcolorGreen + " B:" + opcolorBlue);
+        directory.setIntArray(Mp4VideoDirectory.TAG_OPCOLOR, opcolor);
 
         switch (graphicsMode) {
             case (0x00):
