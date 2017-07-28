@@ -1,8 +1,8 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.ByteUtil;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -82,7 +82,7 @@ public class QtAtomHandler extends QtHandler
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
      *
      */
-    private void processFileType(@NotNull QtDirectory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
+    private void processFileType(@NotNull Directory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
     {
         directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(0, 4));
 
@@ -102,7 +102,7 @@ public class QtAtomHandler extends QtHandler
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-32947
      *
      */
-    private void processMovieHeader(@NotNull QtDirectory directory, @NotNull ByteArrayReader reader) throws IOException
+    private void processMovieHeader(@NotNull Directory directory, @NotNull ByteArrayReader reader) throws IOException
     {
         // Get creation/modification times
         long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4,4), 0, true);

@@ -1,14 +1,13 @@
 package com.drew.metadata.mov.metadata;
 
+import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtContainerTypes;
-import com.drew.metadata.mov.QtHandler;
 import com.drew.metadata.mov.QtMetadataHandler;
-import com.drew.metadata.mov.metadata.QtMetadataDirectory;
 
 import java.io.IOException;
 import java.util.ArrayList;

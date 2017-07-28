@@ -1,24 +1,21 @@
-package com.drew.imaging.mov;
+package com.drew.imaging.quicktime;
 
-import com.drew.lang.RandomAccessReader;
-import com.drew.lang.RandomAccessStreamReader;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.file.FileMetadataReader;
-import com.drew.metadata.mov.QtReader;
+import com.drew.metadata.mp4.Mp4BoxHandler;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.DataFormatException;
 
-public class QtMetadataReader {
+public class Mp4MetadataReader
+{
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
         try {
             Metadata metadata = new Metadata();
-            new QtReader().extract(metadata, inputStream);
+            new QtReader().extract(metadata, inputStream, new Mp4BoxHandler(metadata));
             return metadata;
         } catch (DataFormatException e) {
             e.printStackTrace();

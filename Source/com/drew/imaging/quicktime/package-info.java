@@ -1,4 +1,4 @@
 /**
  * Contains classes for working with PCX image files.
  */
-package com.drew.imaging.mov;
+package com.drew.imaging.quicktime;

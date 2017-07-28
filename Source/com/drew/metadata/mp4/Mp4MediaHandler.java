@@ -1,9 +1,11 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mp4;
 
 import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QtAtomTypes;
+import com.drew.metadata.mov.QtContainerTypes;
 
 import java.io.IOException;
 
@@ -11,9 +13,9 @@ import java.io.IOException;
  * Classes that extend this class should be from the media dat atom types:
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
  */
-public abstract class QtMediaHandler extends QtHandler
+public abstract class Mp4MediaHandler extends QtHandler
 {
-    public QtMediaHandler(Metadata metadata)
+    public Mp4MediaHandler(Metadata metadata)
     {
         super(metadata);
     }

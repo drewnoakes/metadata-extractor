@@ -1,12 +1,11 @@
-package com.drew.metadata.mov;
+package com.drew.metadata.mp4;
 
-import com.drew.metadata.Directory;
 import com.drew.metadata.mov.media.QtSoundDirectory;
 import com.drew.metadata.mov.media.QtVideoDirectory;
 
 import java.util.HashMap;
 
-public class QtDictionary
+public class Mp4Dictionary
 {
     private static HashMap<Integer, HashMap<String, String>> _dictionary = new HashMap<Integer, HashMap<String, String>>();
 
@@ -19,7 +18,7 @@ public class QtDictionary
     public static HashMap<String, String> _vendorIds = new HashMap<String, String>();
 
     static {
-        _dictionary.put(QtDirectory.TAG_MAJOR_BRAND, _majorBrands);
+        _dictionary.put(Mp4Directory.TAG_MAJOR_BRAND, _majorBrands);
         _dictionary.put(QtVideoDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
         _dictionary.put(QtSoundDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
         _dictionary.put(QtVideoDirectory.TAG_VENDOR, _vendorIds);
@@ -260,7 +259,7 @@ public class QtDictionary
         }
     }
 
-    public static void setLookup(int scope, String lookup, Directory directory)
+    public static void setLookup(int scope, String lookup, Mp4Directory directory)
     {
         String results = lookup(scope, lookup);
         directory.setString(scope, results);

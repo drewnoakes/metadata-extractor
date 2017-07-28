@@ -73,9 +73,10 @@ public class FileTypeDetector
         _root.addPath(FileType.Orf, "IIRS".getBytes(), new byte[]{(byte)0x08, 0x00});
         _root.addPath(FileType.Raf, "FUJIFILMCCD-RAW".getBytes());
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
-        
+
         // Potential root atoms... typically starts with FTYP
-        _root.addPath(FileType.Mov, new byte[]{0x66, 0x74, 0x79, 0x70}, "qt  ".getBytes()); // ftyp
+        _root.addPath(FileType.Mov, "ftypqt  ".getBytes());
+        _root.addPath(FileType.Mp4, "ftypM4V ".getBytes());
     }
 
     private FileTypeDetector() throws Exception

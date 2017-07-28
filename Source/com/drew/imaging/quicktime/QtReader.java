@@ -1,7 +1,9 @@
-package com.drew.metadata.mov;
+package com.drew.imaging.quicktime;
 
 import com.drew.lang.StreamReader;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QtDirectory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +13,7 @@ public class QtReader {
     private StreamReader reader;
     private int tabCount;
 
-    public void extract(Metadata metadata, InputStream inputStream) throws IOException, DataFormatException
+    public void extract(Metadata metadata, InputStream inputStream, QtHandler handler) throws IOException, DataFormatException
     {
         QtDirectory directory = new QtDirectory();
         metadata.addDirectory(directory);
@@ -27,10 +29,10 @@ public class QtReader {
             System.out.println("| \"\" = leaf      \"[]\" = container    \"{}\" = Unknown |");
             System.out.println("_____________________________________________________");
         }
-        processAtoms(reader, -1, directory, new QtAtomHandler(metadata), printVisited);
+        processAtoms(reader, -1, directory, handler, printVisited);
     }
 
-    private void processAtoms(StreamReader reader, long atomSize, QtDirectory directory, QtHandler qtHandler, boolean printVisited)
+    private void processAtoms(StreamReader reader, long atomSize, Directory directory, QtHandler qtHandler, boolean printVisited)
     {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
