@@ -33,13 +33,18 @@ public class Mp4SoundHandler extends Mp4MediaHandler
     @Override
     public void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
-        String dataFormat = new String(reader.getBytes(12, 4));
-        int numberOfChannels = reader.getInt16(32);
-        int sampleSizeBits = reader.getInt16(34);
+        // Date format exists, but is not listed in ISO standard documentation
+        // Skip 8-bytes SampleEntry
+        // Skip 8-bytes reserved set to 0
+        int channelCount = reader.getUInt16(32);
+        int sampleSize = reader.getUInt16(34);
+        // Skip 16-bits pre-defined set to 0
+        // Skip 16-bits reserved set to 0
+        long sampleRate = reader.getUInt32(38);
 
-        directory.setString(Mp4SoundDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(Mp4SoundDirectory.TAG_AUDIO_FORMAT, dataFormat));
-        directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
-        directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSizeBits);
+        directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, channelCount);
+        directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSize);
+        directory.setLong(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, sampleRate);
     }
 
     @Override
