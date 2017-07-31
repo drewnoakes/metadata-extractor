@@ -36,34 +36,34 @@ public class Mp4BoxHandler extends QtHandler
     @Override
     public boolean shouldAcceptAtom(@NotNull String fourCC)
     {
-        return fourCC.equals(Mp4BoxTypes.ATOM_FILE_TYPE)
-            || fourCC.equals(Mp4BoxTypes.ATOM_MOVIE_HEADER)
-            || fourCC.equals(Mp4BoxTypes.ATOM_HANDLER)
-            || fourCC.equals(Mp4BoxTypes.ATOM_MEDIA_HEADER);
+        return fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)
+            || fourCC.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)
+            || fourCC.equals(Mp4BoxTypes.BOX_HANDLER)
+            || fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER);
     }
 
     @Override
     public boolean shouldAcceptContainer(String fourCC)
     {
-        return fourCC.equals(Mp4ContainerTypes.ATOM_TRACK)
-            || fourCC.equals(Mp4ContainerTypes.ATOM_USER_DATA)
-            || fourCC.equals(Mp4ContainerTypes.ATOM_METADATA)
-            || fourCC.equals(Mp4ContainerTypes.ATOM_MOVIE)
-            || fourCC.equals(Mp4ContainerTypes.ATOM_MEDIA);
+        return fourCC.equals(Mp4ContainerTypes.BOX_TRACK)
+            || fourCC.equals(Mp4ContainerTypes.BOX_USER_DATA)
+            || fourCC.equals(Mp4ContainerTypes.BOX_METADATA)
+            || fourCC.equals(Mp4ContainerTypes.BOX_MOVIE)
+            || fourCC.equals(Mp4ContainerTypes.BOX_MEDIA);
     }
 
     @Override
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         ByteArrayReader reader = new ByteArrayReader(payload);
-        if (fourCC.equals(Mp4BoxTypes.ATOM_MOVIE_HEADER)) {
+        if (fourCC.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)) {
             processMovieHeader(directory, new SequentialByteArrayReader(payload));
-        } else if (fourCC.equals(Mp4BoxTypes.ATOM_FILE_TYPE)) {
+        } else if (fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
             processFileType(directory, payload, reader);
-        } else if (fourCC.equals(Mp4BoxTypes.ATOM_HANDLER)) {
+        } else if (fourCC.equals(Mp4BoxTypes.BOX_HANDLER)) {
             String handler = new String(reader.getBytes(8, 4));
             return handlerFactory.getHandler(handler, metadata);
-        } else if (fourCC.equals(Mp4BoxTypes.ATOM_MEDIA_HEADER)) {
+        } else if (fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
             QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32(12);
         }
         return this;
@@ -72,7 +72,7 @@ public class Mp4BoxHandler extends QtHandler
     @Override
     public QtHandler processContainer(String fourCC)
     {
-        if (fourCC.equals(Mp4ContainerTypes.ATOM_COMPRESSED_MOVIE)) {
+        if (fourCC.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
             directory.addError("Compressed QuickTime movies not supported");
         }
         return this;

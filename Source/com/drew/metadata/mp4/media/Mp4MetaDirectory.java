@@ -5,11 +5,11 @@ import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
-public class Mp4TextDirectory extends Directory
+public class Mp4MetaDirectory extends Directory
 {
-    public Mp4TextDirectory()
+    public Mp4MetaDirectory()
     {
-        this.setDescriptor(new Mp4TextDescriptor(this));
+        this.setDescriptor(new Mp4MetaDescriptor(this));
     }
 
     @NotNull
@@ -23,7 +23,7 @@ public class Mp4TextDirectory extends Directory
     @Override
     public String getName()
     {
-        return "MP4 Text";
+        return "MP4 Metadata";
     }
 
     @Override
