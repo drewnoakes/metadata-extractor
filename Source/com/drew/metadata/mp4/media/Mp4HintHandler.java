@@ -4,6 +4,8 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
+import com.drew.metadata.mp4.Mp4Dictionary;
+import com.drew.metadata.mp4.Mp4Directory;
 import com.drew.metadata.mp4.Mp4MediaHandler;
 
 import java.io.IOException;
@@ -35,6 +37,11 @@ public class Mp4HintHandler extends Mp4MediaHandler
         int avgPDUsize = reader.getUInt16(6);
         long maxbitrate = reader.getUInt32(8);
         long avgbitrate = reader.getUInt32(12);
+
+        directory.setInt(Mp4HintDirectory.TAG_MAX_PDU_SIZE, maxPDUsize);
+        directory.setInt(Mp4HintDirectory.TAG_AVERAGE_PDU_SIZE, avgPDUsize);
+        directory.setLong(Mp4HintDirectory.TAG_MAX_BITRATE, maxbitrate);
+        directory.setLong(Mp4HintDirectory.TAG_AVERAGE_BITRATE, avgbitrate);
     }
 
     @Override

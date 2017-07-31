@@ -7,6 +7,7 @@ import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtDictionary;
 import com.drew.metadata.mov.QtHandlerFactory;
 import com.drew.metadata.mov.QtMediaHandler;
+import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.Mp4MediaHandler;
 
 import java.io.IOException;
@@ -36,29 +37,23 @@ public class Mp4VideoHandler extends Mp4MediaHandler
     @Override
     public void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
     {
-        String dataFormat = new String(reader.getBytes(12,4));
-        String vendor = new String(reader.getBytes(28,4));
-        int temporalQuality = reader.getInt32(32);
-        int spatialQuality = reader.getInt32(36);
+        // Skip 16-bit predefined set to 0
+        // Skip 16-bit reserved set to 0
+        // Skip 32-bit predefined set to 0
         int width = reader.getInt16(40);
         int height = reader.getInt16(42);
-        int horizontalResolution = reader.getInt32(44);
-        int verticalResolution = reader.getInt32(48);
-        String compressorName = new String(reader.getBytes(58,32));
-        int depth = reader.getInt16(90);
-        int colorTableId = reader.getInt16(92);
+        long horizontalResolution = reader.getUInt32(44);
+        long verticalResolution = reader.getUInt32(48);
+        // Skip 32-bit reserved set to 0
+        int frameCount = reader.getUInt16(56);
+        String compressorName = new String(reader.getBytes(58, 32));
+        int depth = reader.getUInt16(90);
+        // Skip 16-bit pre defined set to -1
 
-        QtDictionary.setLookup(Mp4VideoDirectory.TAG_VENDOR, vendor, directory);
-        QtDictionary.setLookup(Mp4VideoDirectory.TAG_COMPRESSION_TYPE, dataFormat, directory);
-
-        directory.setInt(Mp4VideoDirectory.TAG_TEMPORAL_QUALITY, temporalQuality);
-        directory.setInt(Mp4VideoDirectory.TAG_SPATIAL_QUALITY, spatialQuality);
         directory.setInt(Mp4VideoDirectory.TAG_WIDTH, width);
         directory.setInt(Mp4VideoDirectory.TAG_HEIGHT, height);
-        directory.setString(Mp4VideoDirectory.TAG_COMPRESSOR_NAME, compressorName.trim());
-
+        directory.setString(Mp4VideoDirectory.TAG_COMPRESSION_TYPE, compressorName.trim());
         directory.setInt(Mp4VideoDirectory.TAG_DEPTH, depth);
-        directory.setInt(Mp4VideoDirectory.TAG_COLOR_TABLE, colorTableId);
 
         // Calculate horizontal res
         double horizontalInteger = (horizontalResolution & 0xFFFF0000) >> 16;
