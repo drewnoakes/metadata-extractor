@@ -33,8 +33,7 @@ public abstract class Mp4MediaHandler extends QtHandler
     {
         return fourCC.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
             || fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_BASE)
-            || fourCC.equals("tmcd");
+            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_BASE);
     }
 
     @Override

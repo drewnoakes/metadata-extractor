@@ -18,7 +18,6 @@ public class Mp4ContainerTypes
     public static final String BOX_COMPRESSED_MOVIE                 = "cmov";
     public static final String BOX_MEDIA_TEXT                       = "text";
     public static final String BOX_MEDIA_SUBTITLE                   = "sbtl";
-    public static final String BOX_MEDIA_BASE                       = "gmhd";
     public static final String BOX_MEDIA_NULL                       = "nmhd";
 
     public static ArrayList<String> _containerList = new ArrayList<String>();
@@ -35,7 +34,6 @@ public class Mp4ContainerTypes
         _containerList.add(BOX_COMPRESSED_MOVIE);
         _containerList.add(BOX_MEDIA_TEXT);
         _containerList.add(BOX_MEDIA_SUBTITLE);
-        _containerList.add(BOX_MEDIA_BASE);
         _containerList.add(BOX_MEDIA_NULL);
     }
 }
