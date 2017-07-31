@@ -76,11 +76,37 @@ public class FileTypeDetector
 
         // Potential root atoms... typically starts with FTYP... often at 4 byte offset
         _root.addPath(FileType.Mov, new byte[]{0x6D, 0x6F, 0x6F, 0x76}); // moov
-        _root.addPath(FileType.Mov, new byte[]{0x66, 0x74, 0x79, 0x70}); // ftyp
         _root.addPath(FileType.Mov, new byte[]{0x77, 0x69, 0x64, 0x65}); // wide
         _root.addPath(FileType.Mov, new byte[]{0x6D, 0x64, 0x61, 0x74}); // mdat
         _root.addPath(FileType.Mov, new byte[]{0x66, 0x72, 0x65, 0x65}); // free
 
+        _root.addPath(FileType.Mov, "ftypqt  ".getBytes());
+
+        _root.addPath(FileType.Mp4, "ftypavc1".getBytes());
+        _root.addPath(FileType.Mp4, "ftypiso2".getBytes());
+        _root.addPath(FileType.Mp4, "ftypisom".getBytes());
+        _root.addPath(FileType.Mp4, "ftypM4A ".getBytes());
+        _root.addPath(FileType.Mp4, "ftypM4B ".getBytes());
+        _root.addPath(FileType.Mp4, "ftypM4P ".getBytes());
+        _root.addPath(FileType.Mp4, "ftypM4V ".getBytes());
+        _root.addPath(FileType.Mp4, "ftypM4VH".getBytes());
+        _root.addPath(FileType.Mp4, "ftypM4VP".getBytes());
+        _root.addPath(FileType.Mp4, "ftypmmp4".getBytes());
+        _root.addPath(FileType.Mp4, "ftypmp41".getBytes());
+        _root.addPath(FileType.Mp4, "ftypmp42".getBytes());
+        _root.addPath(FileType.Mp4, "ftypmp71".getBytes());
+        _root.addPath(FileType.Mp4, "ftypMSNV".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDAS".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSC".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSH".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSM".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSP".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSS".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXC".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXH".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXM".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXP".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXS".getBytes());
     }
 
     private FileTypeDetector() throws Exception

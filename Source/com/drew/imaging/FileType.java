@@ -42,6 +42,7 @@ public enum FileType
     Pcx("image/x-pcx", false, ".pcx"),
     Riff(null, true, ".wav", ".wave", ".avi", ".webp"),
     Mov("video/quicktime", false, ".mov", ".qt"),
+    Mp4("video/mp4", false, ".mp4", ".m4a", ".m4p", ".m4b", ".m4r", ".m4v"),
 
     /** Sony camera raw. */
     Arw(null, false, ".arw"),
