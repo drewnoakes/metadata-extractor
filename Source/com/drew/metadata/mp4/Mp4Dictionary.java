@@ -19,9 +19,6 @@ public class Mp4Dictionary
 
     private static HashMap<String, String> _vendorIds = new HashMap<String, String>();
 
-    public static HashMap<String, FileType> _brandsMap = new HashMap<String, FileType>();
-
-
     static {
         _dictionary.put(Mp4Directory.TAG_MAJOR_BRAND, _majorBrands);
         _dictionary.put(QtVideoDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
@@ -231,94 +228,6 @@ public class Mp4Dictionary
         _majorBrands.put("sdv ", "SD Memory Card Video");
         _majorBrands.put("ssc1", "Samsung stereoscopic, single stream (patent pending, see notes)");
         _majorBrands.put("ssc2", "Samsung stereoscopic, dual stream (patent pending, see notes)");
-
-        // Major Brands
-//        _brandsMap.put("3g2a", "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-0 V1.0");
-//        _brandsMap.put("3g2b", "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-A V1.0.0");
-//        _brandsMap.put("3g2c", "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-B v1.0");
-//        _brandsMap.put("3ge6", "3GPP (.3GP) Release 6 MBMS Extended Presentations");
-//        _brandsMap.put("3ge7", "3GPP (.3GP) Release 7 MBMS Extended Presentations");
-//        _brandsMap.put("3gg6", "3GPP Release 6 General Profile");
-//        _brandsMap.put("3gp1", "3GPP Media (.3GP) Release 1 (probably non-existent)");
-//        _brandsMap.put("3gp2", "3GPP Media (.3GP) Release 2 (probably non-existent)");
-//        _brandsMap.put("3gp3", "3GPP Media (.3GP) Release 3 (probably non-existent)");
-//        _brandsMap.put("3gp4", "3GPP Media (.3GP) Release 4");
-//        _brandsMap.put("3gp5", "3GPP Media (.3GP) Release 5");
-//        _brandsMap.put("3gp6", "3GPP Media (.3GP) Release 6 Basic Profile");
-//        _brandsMap.put("3gp6", "3GPP Media (.3GP) Release 6 Progressive Download");
-//        _brandsMap.put("3gp6", "3GPP Media (.3GP) Release 6 Streaming Servers");
-//        _brandsMap.put("3gs7", "3GPP Media (.3GP) Release 7 Streaming Servers");
-        _brandsMap.put("avc1", FileType.Mp4);
-//        _brandsMap.put("CAEP", "Canon Digital Camera");
-//        _brandsMap.put("caqv", "Casio Digital Camera");
-//        _brandsMap.put("CDes", "Convergent Design");
-//        _brandsMap.put("da0a", "DMB MAF w/ MPEG Layer II aud, MOT slides, DLS, JPG/PNG/MNG images");
-//        _brandsMap.put("da0b", "DMB MAF, extending DA0A, with 3GPP timed text, DID, TVA, REL, IPMP");
-//        _brandsMap.put("da1a", "DMB MAF audio with ER-BSAC audio, JPG/PNG/MNG images");
-//        _brandsMap.put("da1b", "DMB MAF, extending da1a, with 3GPP timed text, DID, TVA, REL, IPMP");
-//        _brandsMap.put("da2a", "DMB MAF aud w/ HE-AAC v2 aud, MOT slides, DLS, JPG/PNG/MNG images");
-//        _brandsMap.put("da2b", "DMB MAF, extending da2a, with 3GPP timed text, DID, TVA, REL, IPMP");
-//        _brandsMap.put("da3a", "DMB MAF aud with HE-AAC aud, JPG/PNG/MNG images");
-//        _brandsMap.put("da3b", "DMB MAF, extending da3a w/ BIFS, 3GPP timed text, DID, TVA, REL, IPMP");
-//        _brandsMap.put("dmb1", "DMB MAF supporting all the components defined in the specification");
-//        _brandsMap.put("dmpf", "Digital Media Project");
-//        _brandsMap.put("drc1", "Dirac (wavelet compression), encapsulated in ISO base media (MP4)");
-//        _brandsMap.put("dv1a", "DMB MAF vid w/ AVC vid, ER-BSAC aud, BIFS, JPG/PNG/MNG images, TS");
-//        _brandsMap.put("dv1b", "DMB MAF, extending dv1a, with 3GPP timed text, DID, TVA, REL, IPMP");
-//        _brandsMap.put("dv2a", "DMB MAF vid w/ AVC vid, HE-AAC v2 aud, BIFS, JPG/PNG/MNG images, TS");
-//        _brandsMap.put("dv2b", "DMB MAF, extending dv2a, with 3GPP timed text, DID, TVA, REL, IPMP");
-//        _brandsMap.put("dv3a", "DMB MAF vid w/ AVC vid, HE-AAC aud, BIFS, JPG/PNG/MNG images, TS");
-//        _brandsMap.put("dv3b", "DMB MAF, extending dv3a, with 3GPP timed text, DID, TVA, REL, IPMP");
-//        _brandsMap.put("dvr1", "DVB (.DVB) over RTP");
-//        _brandsMap.put("dvt1", "DVB (.DVB) over MPEG-2 Transport Stream");
-//        _brandsMap.put("F4V ", "Video for Adobe Flash Player 9+ (.F4V)");
-//        _brandsMap.put("F4P ", "Protected Video for Adobe Flash Player 9+ (.F4P)");
-//        _brandsMap.put("F4A ", "Audio for Adobe Flash Player 9+ (.F4A)");
-//        _brandsMap.put("F4B ", "Audio Book for Adobe Flash Player 9+ (.F4B)");
-//        _brandsMap.put("isc2", "ISMACryp 2.0 Encrypted File");
-        _brandsMap.put("iso2", FileType.Mp4);
-        _brandsMap.put("isom", FileType.Mp4);
-//        _brandsMap.put("JP2 ", "JPEG 2000 Image (.JP2) [ISO 15444-1 ?]");
-//        _brandsMap.put("JP20", "Unknown, from GPAC samples (prob non-existent)");
-//        _brandsMap.put("jpm ", "JPEG 2000 Compound Image (.JPM) [ISO 15444-6]");
-//        _brandsMap.put("jpx ", "JPEG 2000 w/ extensions (.JPX) [ISO 15444-2]");
-//        _brandsMap.put("KDDI", "3GPP2 EZmovie for KDDI 3G cellphones");
-//        _brandsMap.put("M4A ", "Apple iTunes AAC-LC (.M4A) Audio");
-//        _brandsMap.put("M4B ", "Apple iTunes AAC-LC (.M4B) Audio Book");
-//        _brandsMap.put("M4P ", "Apple iTunes AAC-LC (.M4P) AES Protected Audio");
-        _brandsMap.put("M4V ", FileType.M4v);
-        _brandsMap.put("M4VH", FileType.M4v);
-        _brandsMap.put("M4VP", FileType.M4v);
-//        _brandsMap.put("mj2s", "Motion JPEG 2000 [ISO 15444-3] Simple Profile");
-//        _brandsMap.put("mjp2", "Motion JPEG 2000 [ISO 15444-3] General Profile");
-        _brandsMap.put("mmp4", FileType.Mp4);
-//        _brandsMap.put("mp21", "MPEG-21 [ISO/IEC 21000-9]");
-        _brandsMap.put("mp41", FileType.Mp4);
-        _brandsMap.put("mp42", FileType.Mp4);
-        _brandsMap.put("mp71", FileType.Mp4);
-//        _brandsMap.put("MPPI", "Photo Player, MAF [ISO/IEC 23000-3]");
-//        _brandsMap.put("mqt ", "Sony / Mobile QuickTime (.MQV)  US Patent 7,477,830 (Sony Corp)");
-        _brandsMap.put("MSNV", FileType.Mp4);
-        _brandsMap.put("NDAS", FileType.Mp4);
-        _brandsMap.put("NDSC", FileType.Mp4);
-        _brandsMap.put("NDSH", FileType.Mp4);
-        _brandsMap.put("NDSM", FileType.Mp4);
-        _brandsMap.put("NDSP", FileType.Mp4);
-        _brandsMap.put("NDSS", FileType.Mp4);
-        _brandsMap.put("NDXC", FileType.Mp4);
-        _brandsMap.put("NDXH", FileType.Mp4);
-        _brandsMap.put("NDXM", FileType.Mp4);
-        _brandsMap.put("NDXP", FileType.Mp4);
-        _brandsMap.put("NDXS", FileType.Mp4);
-//        _brandsMap.put("odcf", "OMA DCF DRM Format 2.0 (OMA-TS-DRM-DCF-V2_0-20060303-A)");
-//        _brandsMap.put("opf2", "OMA PDCF DRM Format 2.1 (OMA-TS-DRM-DCF-V2_1-20070724-C)");
-//        _brandsMap.put("opx2", "OMA PDCF DRM + XBS extensions (OMA-TS-DRM_XBS-V1_0-20070529-C)");
-//        _brandsMap.put("pana", "Panasonic Digital Camera");
-        _brandsMap.put("qt  ", FileType.Mov);
-//        _brandsMap.put("ROSS", "Ross Video");
-//        _brandsMap.put("sdv ", "SD Memory Card Video");
-//        _brandsMap.put("ssc1", "Samsung stereoscopic, single stream (patent pending, see notes)");
-//        _brandsMap.put("ssc2", "Samsung stereoscopic, dual stream (patent pending, see notes)");
 
         // Vendor ID's https://sno.phy.queensu.ca/~phil/exiftool/TagNames/QuickTime.html#Meta
         _vendorIds.put(" KD ", "Kodak");

@@ -157,7 +157,6 @@ public class ImageMetadataReader
                 return RafMetadataReader.readMetadata(inputStream);
             case Mov:
                 return QtMetadataReader.readMetadata(inputStream);
-            case M4v:
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);
             default:
