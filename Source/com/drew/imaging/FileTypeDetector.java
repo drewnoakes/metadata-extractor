@@ -76,7 +76,24 @@ public class FileTypeDetector
 
         // Potential root atoms... typically starts with FTYP
         _root.addPath(FileType.Mov, "ftypqt  ".getBytes());
-        _root.addPath(FileType.Mp4, "ftypM4V ".getBytes());
+
+        _root.addPath(FileType.Mp4, "ftypMSNV".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSC".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSM".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSP".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDSS".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXC".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXH".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXM".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXP".getBytes());
+        _root.addPath(FileType.Mp4, "ftypNDXS".getBytes());
+        _root.addPath(FileType.Mp4, "ftypmmp4".getBytes());
+        _root.addPath(FileType.Mp4, "ftypmp4".getBytes());
+
+        _root.addPath(FileType.M4v, "ftypM4V ".getBytes());
+        _root.addPath(FileType.M4v, "ftypM4VH".getBytes());
+        _root.addPath(FileType.M4v, "ftypM4VP".getBytes());
+
     }
 
     private FileTypeDetector() throws Exception
