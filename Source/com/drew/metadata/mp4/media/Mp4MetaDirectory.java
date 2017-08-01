@@ -5,7 +5,7 @@ import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
-public class Mp4MetaDirectory extends Directory
+public class Mp4MetaDirectory extends Mp4MediaDirectory
 {
     public Mp4MetaDirectory()
     {
