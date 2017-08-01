@@ -14,9 +14,9 @@ public class TimeToSampleBox extends FullBox
     long entryCount;
     ArrayList<EntryCount> entries;
 
-    public TimeToSampleBox(SequentialReader reader) throws IOException
+    public TimeToSampleBox(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         entryCount = reader.getUInt32();
         entries = new ArrayList<EntryCount>();

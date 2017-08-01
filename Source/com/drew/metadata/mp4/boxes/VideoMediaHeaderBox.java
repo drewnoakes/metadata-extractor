@@ -10,9 +10,9 @@ public class VideoMediaHeaderBox extends FullBox
     int graphicsmode;
     int[] opcolor;
 
-    public VideoMediaHeaderBox(SequentialReader reader) throws IOException
+    public VideoMediaHeaderBox(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         graphicsmode = reader.getUInt16();
         opcolor = new int[]{reader.getUInt16(), reader.getUInt16(), reader.getUInt16()};

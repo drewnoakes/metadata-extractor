@@ -18,9 +18,9 @@ public class MovieHeaderBox extends FullBox
     protected int[] matrix;
     protected long nextTrackID;
 
-    public MovieHeaderBox(SequentialReader reader) throws IOException
+    public MovieHeaderBox(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
         if (version == 1) {
             creationTime = reader.getInt64();
             modificationTime = reader.getInt64();

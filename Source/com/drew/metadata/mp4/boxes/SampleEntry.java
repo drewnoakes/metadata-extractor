@@ -11,9 +11,9 @@ public class SampleEntry extends FullBox
     String format;
     int dataReferenceIndex;
 
-    public SampleEntry(SequentialReader reader) throws IOException
+    public SampleEntry(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         numberOfEntries = reader.getUInt32();
         sampleDescriptionSize = reader.getUInt32();

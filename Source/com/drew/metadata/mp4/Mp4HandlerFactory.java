@@ -13,19 +13,19 @@ public class Mp4HandlerFactory
     private static final String HANDLER_TEXT_MEDIA              = "text";
     private static final String HANDLER_META_MEDIA              = "meta";
 
-    private QtHandler caller;
+    private Mp4Handler caller;
 
     public static Long HANDLER_PARAM_TIME_SCALE              = null;
     public static Long HANDLER_PARAM_CREATION_TIME           = null;
     public static Long HANDLER_PARAM_MODIFICATION_TIME       = null;
     public static Long HANDLER_PARAM_DURATION                = null;
 
-    public Mp4HandlerFactory(QtHandler caller)
+    public Mp4HandlerFactory(Mp4Handler caller)
     {
         this.caller = caller;
     }
 
-    public QtHandler getHandler(HandlerBox box, Metadata metadata)
+    public Mp4Handler getHandler(HandlerBox box, Metadata metadata)
     {
         String type = box.getHandlerType();
         if (type.equals(HANDLER_SOUND_MEDIA)) {

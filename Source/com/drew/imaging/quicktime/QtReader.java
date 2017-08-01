@@ -13,7 +13,7 @@ public class QtReader {
     private StreamReader reader;
     private int tabCount;
 
-    public void extract(Metadata metadata, InputStream inputStream, QtHandler handler) throws IOException, DataFormatException
+    public void extract(Metadata metadata, InputStream inputStream, QtHandlerSample handler) throws IOException, DataFormatException
     {
         QtDirectory directory = new QtDirectory();
         metadata.addDirectory(directory);
@@ -32,70 +32,57 @@ public class QtReader {
         processAtoms(reader, -1, directory, handler, printVisited);
     }
 
-    private void processAtoms(StreamReader reader, long atomSize, Directory directory, QtHandler qtHandler, boolean printVisited)
+    private void processAtoms(StreamReader reader, long atomSize, Directory directory, QtHandlerSample qtHandler, boolean printVisited)
     {
         try {
             while ((atomSize == -1) ? true : reader.getPosition() < atomSize) {
 
-                // Get size... if size is 1, it had to be extended to the next 64-bit int
-                long size = reader.getUInt32();
-
-                // Get fourCC
-                String fourCC = reader.getString(4);
-
-                if (size == 1) {
-                    size = reader.getInt64();
-                } else if (size == 0) {
-                    // box extends to end of file
-                } else if (fourCC.equals("uuid")) {
-                    String uuid = new String(reader.getBytes(16));
-                    break;
-                }
+                AtomSample atom = qtHandler.getAtom(reader);
 
                 /*
                  * Determine if fourCC is container/atom and process accordingly
                  * Unknown atoms will be skipped
                  */
-                if (qtHandler.shouldAcceptContainer(fourCC)) {
+                if (qtHandler.shouldAcceptContainer(atom.type)) {
 
                     if (printVisited) {
                         for (int i = 0; i < tabCount; i++) {
                             System.out.print("   " + i + "   |");
                         }
-                        System.out.println(" [" + fourCC + "]");
+                        System.out.println(" [" + atom.type + "]");
                         tabCount++;
                     }
 
                     // If the size is 0, that means this atom extends to the end of file
-                    if (size == 0) {
-                        processAtoms(reader, -1, directory, qtHandler.processContainer(fourCC), printVisited);
+                    if (atom.size == 0) {
+                        processAtoms(reader, -1, directory, qtHandler.processContainer(atom.type), printVisited);
                     } else {
-                        processAtoms(reader, reader.getPosition() + size - 8, directory, qtHandler.processContainer(fourCC), printVisited);
+                        processAtoms(reader, reader.getPosition() + atom.size - 8, directory, qtHandler.processContainer(atom.type), printVisited);
                     }
 
                     if (printVisited) {
                         tabCount--;
                     }
 
-                } else if (qtHandler.shouldAcceptAtom(fourCC)) {
+                } else if (qtHandler.shouldAcceptAtom(atom.type)) {
 
                     if (printVisited) {
                         for (int i = 0; i < tabCount; i++) {
                             System.out.print("   " + i + "   |");
                         }
-                        System.out.println("  " + fourCC);
+                        System.out.println("  " + atom.type);
                     }
 
-                    qtHandler = qtHandler.processAtom(fourCC, reader.getBytes((int)size - 8));
+                    qtHandler = qtHandler.processAtom(atom.type, reader.getBytes((int)atom.size - 8));
                 } else {
-                    if (size > 1)
-                        reader.skip(size - 8);
+                    if (atom.size > 1)
+                        reader.skip(atom.size - 8);
 
                     if (printVisited) {
                         for (int i = 0; i < tabCount; i++) {
                             System.out.print("   " + i + "   |");
                         }
-                        System.out.println(" {" + fourCC + "}");
+                        System.out.println(" {" + atom.type + "}");
                     }
                 }
             }

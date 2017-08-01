@@ -14,9 +14,9 @@ public class MediaHeaderBox extends FullBox
     long duration;
 //    int[] language;
 
-    public MediaHeaderBox(SequentialReader reader) throws IOException
+    public MediaHeaderBox(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         if (version == 1) {
             creationTime = reader.getInt64();

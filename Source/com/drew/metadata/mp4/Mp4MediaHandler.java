@@ -19,7 +19,7 @@ import java.util.Date;
  * Classes that extend this class should be from the media dat atom types:
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
  */
-public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends QtHandler<T>
+public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Handler<T>
 {
     public Mp4MediaHandler(Metadata metadata)
     {
@@ -53,7 +53,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends QtHan
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    public Mp4Handler<T> processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         SequentialReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(getMediaInformation())) {
@@ -67,7 +67,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends QtHan
     }
 
     @Override
-    public QtHandler processContainer(String fourCC)
+    public Mp4Handler processContainer(String fourCC)
     {
         return this;
     }

@@ -20,9 +20,9 @@ public class VisualSampleEntry extends SampleEntry
     String compressorname;
     int depth;
 
-    public VisualSampleEntry(SequentialReader reader) throws IOException
+    public VisualSampleEntry(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         version = reader.getInt16();
         revisionLevel = reader.getInt16();

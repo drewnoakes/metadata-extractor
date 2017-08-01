@@ -9,9 +9,9 @@ public class SoundMediaHeaderBox extends FullBox
 {
     int balance;
 
-    public SoundMediaHeaderBox(SequentialReader reader) throws IOException
+    public SoundMediaHeaderBox(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         balance = reader.getInt16();
         reader.skip(16); // Reserved

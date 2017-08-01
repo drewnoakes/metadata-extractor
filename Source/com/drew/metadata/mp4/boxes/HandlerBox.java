@@ -16,9 +16,9 @@ public class HandlerBox extends FullBox
 
     String name;
 
-    public HandlerBox(SequentialReader reader, long size) throws IOException
+    public HandlerBox(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         reader.skip(4); // Pre-defined
         handlerType = reader.getString(4);

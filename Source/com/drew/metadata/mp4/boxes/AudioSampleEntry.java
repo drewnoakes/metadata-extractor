@@ -11,9 +11,9 @@ public class AudioSampleEntry extends SampleEntry
     int samplesize;
     long samplerate;
 
-    public AudioSampleEntry(SequentialReader reader) throws IOException
+    public AudioSampleEntry(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         reader.skip(8); // Reserved
         channelcount = reader.getUInt16();

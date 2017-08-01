@@ -12,9 +12,9 @@ public class HintMediaHeaderBox extends FullBox
     long maxbitrate;
     long avgbitrate;
 
-    public HintMediaHeaderBox(SequentialReader reader) throws IOException
+    public HintMediaHeaderBox(SequentialReader reader, Box box) throws IOException
     {
-        super(reader);
+        super(reader, box);
 
         maxPDUsize = reader.getUInt16();
         avgPDUsize = reader.getUInt16();
