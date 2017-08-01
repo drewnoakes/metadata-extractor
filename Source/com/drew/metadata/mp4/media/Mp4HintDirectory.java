@@ -6,7 +6,7 @@ import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class Mp4HintDirectory extends Directory
+public class Mp4HintDirectory extends Mp4MediaDirectory
 {
     public static final int TAG_MAX_PDU_SIZE = 1;
     public static final int TAG_AVERAGE_PDU_SIZE = 2;

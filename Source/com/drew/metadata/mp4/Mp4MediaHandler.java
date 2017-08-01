@@ -2,7 +2,10 @@ package com.drew.metadata.mp4;
 
 import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtContainerTypes;
@@ -16,7 +19,7 @@ import java.util.Date;
  * Classes that extend this class should be from the media dat atom types:
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
  */
-public abstract class Mp4MediaHandler extends QtHandler
+public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends QtHandler<T>
 {
     public Mp4MediaHandler(Metadata metadata)
     {
@@ -38,27 +41,26 @@ public abstract class Mp4MediaHandler extends QtHandler
     public boolean shouldAcceptAtom(String fourCC)
     {
         return fourCC.equals(getMediaInformation())
-            || fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)
-            || fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE);
+            || fourCC.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)
+            || fourCC.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE);
     }
 
     @Override
     public boolean shouldAcceptContainer(String fourCC)
     {
-        return fourCC.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_BASE);
+        return fourCC.equals(Mp4ContainerTypes.BOX_SAMPLE_TABLE)
+            || fourCC.equals(Mp4ContainerTypes.BOX_MEDIA_INFORMATION);
     }
 
     @Override
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        ByteArrayReader reader = new ByteArrayReader(payload);
+        SequentialReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(getMediaInformation())) {
             processMediaInformation(reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
+        } else if (fourCC.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)) {
             processSampleDescription(reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
+        } else if (fourCC.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE)) {
             processTimeToSample(reader);
         }
         return this;
@@ -78,7 +80,7 @@ public abstract class Mp4MediaHandler extends QtHandler
      *
      * Unique values will follow depending upon the handler
      */
-    protected abstract void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
 
     /**
      * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
@@ -87,7 +89,7 @@ public abstract class Mp4MediaHandler extends QtHandler
      *
      * Each structure will be specified in its respective handler
      */
-    protected abstract void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader) throws IOException;
 }

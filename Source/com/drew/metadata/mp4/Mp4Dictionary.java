@@ -4,6 +4,8 @@ import com.drew.imaging.FileType;
 import com.drew.metadata.file.FileMetadataDirectory;
 import com.drew.metadata.mov.media.QtSoundDirectory;
 import com.drew.metadata.mov.media.QtVideoDirectory;
+import com.drew.metadata.mp4.media.Mp4SoundDirectory;
+import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
 import java.util.HashMap;
 
@@ -21,9 +23,9 @@ public class Mp4Dictionary
 
     static {
         _dictionary.put(Mp4Directory.TAG_MAJOR_BRAND, _majorBrands);
-        _dictionary.put(QtVideoDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
-        _dictionary.put(QtSoundDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
-        _dictionary.put(QtVideoDirectory.TAG_VENDOR, _vendorIds);
+        _dictionary.put(Mp4VideoDirectory.TAG_COMPRESSION_TYPE, _videoCompressionTypes);
+        _dictionary.put(Mp4SoundDirectory.TAG_AUDIO_FORMAT, _soundAudioFormats);
+        _dictionary.put(Mp4VideoDirectory.TAG_VENDOR, _vendorIds);
 
         // Video Compression Types
         _videoCompressionTypes.put("3IVX", "3ivx MPEG-4");

@@ -1,19 +1,24 @@
 package com.drew.metadata.mp4.media;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.*;
+import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4HandlerFactory;
 import com.drew.metadata.mp4.Mp4MediaHandler;
+import com.drew.metadata.mp4.boxes.AudioSampleEntry;
+import com.drew.metadata.mp4.boxes.SoundMediaHeaderBox;
+import com.drew.metadata.mp4.boxes.TimeToSampleBox;
 
 import java.io.IOException;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGEBEH
  */
-public class Mp4SoundHandler extends Mp4MediaHandler
+public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
 {
     public Mp4SoundHandler(Metadata metadata)
     {
@@ -21,7 +26,7 @@ public class Mp4SoundHandler extends Mp4MediaHandler
     }
 
     @Override
-    protected Directory getDirectory()
+    protected Mp4SoundDirectory getDirectory()
     {
         return new Mp4SoundDirectory();
     }
@@ -29,38 +34,27 @@ public class Mp4SoundHandler extends Mp4MediaHandler
     @Override
     protected String getMediaInformation()
     {
-        return QtAtomTypes.ATOM_SOUND_MEDIA_INFO;
+        return Mp4BoxTypes.BOX_SOUND_MEDIA_INFO;
     }
 
     @Override
-    public void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
+    public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        // Date format exists, but is not listed in ISO standard documentation
-        // Skip 8-bytes SampleEntry
-        // Skip 8-bytes reserved set to 0
-        int channelCount = reader.getUInt16(32);
-        int sampleSize = reader.getUInt16(34);
-        // Skip 16-bits pre-defined set to 0
-        // Skip 16-bits reserved set to 0
-        long sampleRate = reader.getUInt32(38);
-
-        directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, channelCount);
-        directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSize);
-        directory.setLong(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, sampleRate);
+        AudioSampleEntry box = new AudioSampleEntry(reader);
+        box.addMetadata(directory);
     }
 
     @Override
-    public void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
+    public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        int balance = reader.getInt16(4);
-        double integerPortion = balance & 0xFFFF0000;
-        double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
-        directory.setDouble(Mp4SoundDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
+        SoundMediaHeaderBox box = new SoundMediaHeaderBox(reader);
+        box.addMetadata(directory);
     }
 
     @Override
-    protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
-        directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE);
+        TimeToSampleBox box = new TimeToSampleBox(reader);
+        box.addMetadata(directory);
     }
 }

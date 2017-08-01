@@ -6,7 +6,7 @@ import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class Mp4SoundDirectory extends Directory
+public class Mp4SoundDirectory extends Mp4MediaDirectory
 {
     // Sound Sample Description Atom
     public static final int TAG_AUDIO_FORMAT                            = 0x0301;

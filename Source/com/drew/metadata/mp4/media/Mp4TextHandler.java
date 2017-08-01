@@ -8,40 +8,40 @@ import com.drew.metadata.mp4.Mp4MediaHandler;
 
 import java.io.IOException;
 
-public class Mp4TextHandler extends Mp4MediaHandler
-{
-    public Mp4TextHandler(Metadata metadata)
-    {
-        super(metadata);
-    }
-
-    @Override
-    protected Directory getDirectory()
-    {
-        return null;
-    }
-
-    @Override
-    protected String getMediaInformation()
-    {
-        return Mp4ContainerTypes.BOX_MEDIA_TEXT;
-    }
-
-    @Override
-    protected void processSampleDescription(ByteArrayReader reader) throws IOException
-    {
-
-    }
-
-    @Override
-    protected void processMediaInformation(ByteArrayReader reader) throws IOException
-    {
-
-    }
-
-    @Override
-    protected void processTimeToSample(ByteArrayReader reader) throws IOException
-    {
-
-    }
-}
+//public class Mp4TextHandler extends Mp4MediaHandler
+//{
+//    public Mp4TextHandler(Metadata metadata)
+//    {
+//        super(metadata);
+//    }
+//
+//    @Override
+//    protected Directory getDirectory()
+//    {
+//        return null;
+//    }
+//
+//    @Override
+//    protected String getMediaInformation()
+//    {
+//        return Mp4ContainerTypes.BOX_MEDIA_TEXT;
+//    }
+//
+//    @Override
+//    protected void processSampleDescription(ByteArrayReader reader) throws IOException
+//    {
+//
+//    }
+//
+//    @Override
+//    protected void processMediaInformation(ByteArrayReader reader) throws IOException
+//    {
+//
+//    }
+//
+//    @Override
+//    protected void processTimeToSample(ByteArrayReader reader) throws IOException
+//    {
+//
+//    }
+//}

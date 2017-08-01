@@ -1,19 +1,28 @@
 package com.drew.metadata.mp4.media;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4MediaHandler;
+import com.drew.metadata.mp4.boxes.HintMediaHeaderBox;
 
 import java.io.IOException;
 
-public class Mp4HintHandler extends Mp4MediaHandler
+public class Mp4HintHandler extends Mp4MediaHandler<Mp4HintDirectory>
 {
 
     public Mp4HintHandler(Metadata metadata)
     {
         super(metadata);
+    }
+
+    @Override
+    protected Mp4HintDirectory getDirectory()
+    {
+        return new Mp4HintDirectory();
     }
 
     @Override
@@ -23,33 +32,21 @@ public class Mp4HintHandler extends Mp4MediaHandler
     }
 
     @Override
-    protected void processSampleDescription(ByteArrayReader reader) throws IOException
+    protected void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
 
     }
 
     @Override
-    protected void processMediaInformation(ByteArrayReader reader) throws IOException
+    protected void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        int maxPDUsize = reader.getUInt16(4);
-        int avgPDUsize = reader.getUInt16(6);
-        long maxbitrate = reader.getUInt32(8);
-        long avgbitrate = reader.getUInt32(12);
-
-        directory.setInt(Mp4HintDirectory.TAG_MAX_PDU_SIZE, maxPDUsize);
-        directory.setInt(Mp4HintDirectory.TAG_AVERAGE_PDU_SIZE, avgPDUsize);
-        directory.setLong(Mp4HintDirectory.TAG_MAX_BITRATE, maxbitrate);
-        directory.setLong(Mp4HintDirectory.TAG_AVERAGE_BITRATE, avgbitrate);
+        HintMediaHeaderBox box = new HintMediaHeaderBox(reader);
+        box.addMetadata(directory);
     }
 
     @Override
-    protected void processTimeToSample(ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
 
-    }
-
-    @Override
-    protected Directory getDirectory() {
-        return new Mp4HintDirectory();
     }
 }

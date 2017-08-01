@@ -2,6 +2,7 @@ package com.drew.metadata.mp4;
 
 import com.drew.imaging.quicktime.QtHandler;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mp4.boxes.HandlerBox;
 import com.drew.metadata.mp4.media.*;
 
 public class Mp4HandlerFactory
@@ -24,18 +25,19 @@ public class Mp4HandlerFactory
         this.caller = caller;
     }
 
-    public QtHandler getHandler(String type, Metadata metadata)
+    public QtHandler getHandler(HandlerBox box, Metadata metadata)
     {
+        String type = box.getHandlerType();
         if (type.equals(HANDLER_SOUND_MEDIA)) {
             return new Mp4SoundHandler(metadata);
         } else if (type.equals(HANDLER_VIDEO_MEDIA)) {
             return new Mp4VideoHandler(metadata);
         } else if (type.equals(HANDLER_HINT_MEDIA)) {
-            return new Mp4HintHandler(metadata);
+//            return new Mp4HintHandler(metadata);
         } else if (type.equals(HANDLER_TEXT_MEDIA)) {
-            return new Mp4TextHandler(metadata);
+//            return new Mp4TextHandler(metadata);
         } else if (type.equals(HANDLER_META_MEDIA)) {
-            return new Mp4MetaHandler(metadata);
+//            return new Mp4MetaHandler(metadata);
         }
         return caller;
     }
