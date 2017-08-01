@@ -35,6 +35,7 @@ public class Mp4VideoDirectory extends QtDirectory
 
     static
     {
+        Mp4MediaDirectory.addMp4MediaTags(_tagNameMap);
         _tagNameMap.put(TAG_VENDOR, "Vendor");
         _tagNameMap.put(TAG_TEMPORAL_QUALITY, "Temporal Quality");
         _tagNameMap.put(TAG_SPATIAL_QUALITY, "Spatial Quality");

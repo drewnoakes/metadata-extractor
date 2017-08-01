@@ -17,7 +17,7 @@ public class Mp4MetaDirectory extends Directory
 
     static
     {
-
+        Mp4MediaDirectory.addMp4MediaTags(_tagNameMap);
     }
 
     @Override

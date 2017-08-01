@@ -8,9 +8,12 @@ import com.drew.metadata.mov.QtDictionary;
 import com.drew.metadata.mov.QtHandlerFactory;
 import com.drew.metadata.mov.QtMediaHandler;
 import com.drew.metadata.mp4.Mp4Dictionary;
+import com.drew.metadata.mp4.Mp4HandlerFactory;
 import com.drew.metadata.mp4.Mp4MediaHandler;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
@@ -119,7 +122,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler
         int numberOfSamples = reader.getInt32(8);
         int sampleDuration = reader.getInt32(12);
 
-        float frameRate = (float) QtHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
+        float frameRate = (float) Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
         directory.setFloat(Mp4VideoDirectory.TAG_FRAME_RATE, frameRate);
     }
 }

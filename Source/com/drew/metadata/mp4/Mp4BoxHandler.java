@@ -64,7 +64,7 @@ public class Mp4BoxHandler extends QtHandler
             String handler = new String(reader.getBytes(8, 4));
             return handlerFactory.getHandler(handler, metadata);
         } else if (fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
-            QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = reader.getInt32(12);
+            processMediaHeader(directory, payload, new ByteArrayReader(payload));
         }
         return this;
     }
@@ -172,5 +172,40 @@ public class Mp4BoxHandler extends QtHandler
         directory.setDouble(Mp4Directory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
 
         directory.setInt(Mp4Directory.TAG_NEXT_TRACK_ID, nextTrackId);
+    }
+
+    private void processMediaHeader(@NotNull Directory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
+    {
+        int version = reader.getInt8(0);
+        long creationTime;
+        long modificationTime;
+        long timescale;
+        long duration;
+        // Skip 3-bytes from flags
+        switch (version) {
+            case (1):
+                creationTime = reader.getInt64(4);
+                modificationTime = reader.getInt64(12);
+                timescale = reader.getUInt32(20);
+                duration = reader.getInt64(24);
+                Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
+                Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
+                Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
+                Mp4HandlerFactory.HANDLER_PARAM_DURATION = duration;
+                break;
+            case (0):
+                creationTime = reader.getUInt32(4);
+                modificationTime = reader.getUInt32(8);
+                timescale = reader.getUInt32(12);
+                duration = reader.getUInt32(16);
+                Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
+                Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
+                Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
+                Mp4HandlerFactory.HANDLER_PARAM_DURATION = duration;
+                break;
+        }
+        // Skip 1-bit pad set to 0
+        // Skip 15-bit language
+        // Skip 16-bit pre-defined set to 0
     }
 }

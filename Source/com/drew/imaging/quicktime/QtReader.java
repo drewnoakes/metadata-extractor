@@ -39,14 +39,18 @@ public class QtReader {
 
                 // Get size... if size is 1, it had to be extended to the next 64-bit int
                 long size = reader.getUInt32();
-                if (size == 1) {
-                    size = reader.getInt64();
-                } else if (size == 0) {
-                    size = reader.getInt32();
-                }
 
                 // Get fourCC
                 String fourCC = reader.getString(4);
+
+                if (size == 1) {
+                    size = reader.getInt64();
+                } else if (size == 0) {
+                    // box extends to end of file
+                } else if (fourCC.equals("uuid")) {
+                    String uuid = new String(reader.getBytes(16));
+                    break;
+                }
 
                 /*
                  * Determine if fourCC is container/atom and process accordingly

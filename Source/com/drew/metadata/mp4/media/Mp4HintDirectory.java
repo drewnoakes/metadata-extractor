@@ -23,6 +23,7 @@ public class Mp4HintDirectory extends Directory
 
     static
     {
+        Mp4MediaDirectory.addMp4MediaTags(_tagNameMap);
         _tagNameMap.put(TAG_MAX_PDU_SIZE, "Max PDU Size");
         _tagNameMap.put(TAG_AVERAGE_PDU_SIZE, "Average PDU Size");
         _tagNameMap.put(TAG_MAX_BITRATE, "Max Bitrate");

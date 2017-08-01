@@ -2,8 +2,10 @@ package com.drew.metadata.mp4.media;
 
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.*;
+import com.drew.metadata.mp4.Mp4HandlerFactory;
 import com.drew.metadata.mp4.Mp4MediaHandler;
 
 import java.io.IOException;
@@ -19,7 +21,7 @@ public class Mp4SoundHandler extends Mp4MediaHandler
     }
 
     @Override
-    protected QtDirectory getDirectory()
+    protected Directory getDirectory()
     {
         return new Mp4SoundDirectory();
     }
@@ -59,6 +61,6 @@ public class Mp4SoundHandler extends Mp4MediaHandler
     @Override
     protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
     {
-        directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, QtHandlerFactory.HANDLER_PARAM_TIME_SCALE);
+        directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }
 }

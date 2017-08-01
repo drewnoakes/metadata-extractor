@@ -14,7 +14,10 @@ public class Mp4HandlerFactory
 
     private QtHandler caller;
 
-    public static Integer HANDLER_PARAM_TIME_SCALE              = null;
+    public static Long HANDLER_PARAM_TIME_SCALE              = null;
+    public static Long HANDLER_PARAM_CREATION_TIME           = null;
+    public static Long HANDLER_PARAM_MODIFICATION_TIME       = null;
+    public static Long HANDLER_PARAM_DURATION                = null;
 
     public Mp4HandlerFactory(QtHandler caller)
     {

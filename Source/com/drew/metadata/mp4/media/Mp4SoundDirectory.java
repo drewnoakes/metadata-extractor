@@ -1,11 +1,12 @@
 package com.drew.metadata.mp4.media;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class Mp4SoundDirectory extends QtDirectory
+public class Mp4SoundDirectory extends Directory
 {
     // Sound Sample Description Atom
     public static final int TAG_AUDIO_FORMAT                            = 0x0301;
@@ -25,6 +26,7 @@ public class Mp4SoundDirectory extends QtDirectory
 
     static
     {
+        Mp4MediaDirectory.addMp4MediaTags(_tagNameMap);
         _tagNameMap.put(TAG_AUDIO_FORMAT, "Format");
         _tagNameMap.put(TAG_NUMBER_OF_CHANNELS, "Number of Channels");
         _tagNameMap.put(TAG_AUDIO_SAMPLE_SIZE, "Sample Size");
