@@ -25,6 +25,7 @@ public class QtSoundDirectory extends QtDirectory
 
     static
     {
+        QtMediaDirectory.addQtMediaTags(_tagNameMap);
         _tagNameMap.put(TAG_AUDIO_FORMAT, "Format");
         _tagNameMap.put(TAG_NUMBER_OF_CHANNELS, "Number of Channels");
         _tagNameMap.put(TAG_AUDIO_SAMPLE_SIZE, "Sample Size");

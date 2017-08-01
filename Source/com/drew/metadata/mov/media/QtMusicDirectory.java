@@ -17,6 +17,7 @@ public class QtMusicDirectory extends QtDirectory
 
     static
     {
+        QtMediaDirectory.addQtMediaTags(_tagNameMap);
         // Not yet implemented
     }
 

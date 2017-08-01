@@ -35,6 +35,7 @@ public class QtVideoDirectory extends QtDirectory
 
     static
     {
+        QtMediaDirectory.addQtMediaTags(_tagNameMap);
         _tagNameMap.put(TAG_VENDOR, "Vendor");
         _tagNameMap.put(TAG_TEMPORAL_QUALITY, "Temporal Quality");
         _tagNameMap.put(TAG_SPATIAL_QUALITY, "Spatial Quality");

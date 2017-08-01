@@ -4,8 +4,11 @@ import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.media.QtMediaDirectory;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Classes that extend this class should be from the media dat atom types:
@@ -16,6 +19,17 @@ public abstract class QtMediaHandler extends QtHandler
     public QtMediaHandler(Metadata metadata)
     {
         super(metadata);
+        if (QtHandlerFactory.HANDLER_PARAM_CREATION_TIME != null && QtHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME != null) {
+            // Get creation/modification times
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
+            Date date = calendar.getTime();
+            long macToUnixEpochOffset = date.getTime();
+            String creationTimeStamp = new Date(QtHandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + macToUnixEpochOffset).toString();
+            String modificationTimeStamp = new Date(QtHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + macToUnixEpochOffset).toString();
+            directory.setString(QtMediaDirectory.TAG_CREATION_TIME, creationTimeStamp);
+            directory.setString(QtMediaDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
+        }
     }
 
     @Override

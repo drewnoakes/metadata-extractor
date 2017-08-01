@@ -29,6 +29,7 @@ public class QtTimecodeDirectory extends QtDirectory
 
     static
     {
+        QtMediaDirectory.addQtMediaTags(_tagNameMap);
         _tagNameMap.put(TAG_DROP_FRAME, "Drop Frame");
         _tagNameMap.put(TAG_24_HOUR_MAX, "24 Hour Max");
         _tagNameMap.put(TAG_NEGATIVE_TIMES_OK, "Negative Times OK");

@@ -26,6 +26,7 @@ public class QtSubtitleDirectory extends QtDirectory
 
     static
     {
+        QtMediaDirectory.addQtMediaTags(_tagNameMap);
         _tagNameMap.put(TAG_VERTICAL_PLACEMENT, "Vertical Placement");
         _tagNameMap.put(TAG_SOME_SAMPLES_FORCED, "Some Samples Forced");
         _tagNameMap.put(TAG_ALL_SAMPLES_FORCED, "All Samples Forced");

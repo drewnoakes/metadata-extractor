@@ -36,6 +36,7 @@ public class QtTextDirectory extends QtDirectory
 
     static
     {
+        QtMediaDirectory.addQtMediaTags(_tagNameMap);
         _tagNameMap.put(TAG_AUTO_SCALE, "Auto Scale");
         _tagNameMap.put(TAG_MOVIE_BACKGROUND_COLOR, "Use Background Color");
         _tagNameMap.put(TAG_SCROLL_IN, "Scroll In");
