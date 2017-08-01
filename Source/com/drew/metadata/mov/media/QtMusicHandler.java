@@ -1,13 +1,14 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtDirectory;
 import com.drew.metadata.mov.QtMediaHandler;
 
 import java.io.IOException;
 
-public class QtMusicHandler extends QtMediaHandler
+public class QtMusicHandler extends QtMediaHandler<QtMusicDirectory>
 {
     public QtMusicHandler(Metadata metadata)
     {
@@ -15,9 +16,9 @@ public class QtMusicHandler extends QtMediaHandler
     }
 
     @Override
-    protected QtDirectory getDirectory()
+    protected QtMusicDirectory getDirectory()
     {
-        return new QtMusicDirectory();
+        return directory;
     }
 
     @Override
@@ -27,7 +28,7 @@ public class QtMusicHandler extends QtMediaHandler
     }
 
     @Override
-    protected void processSampleDescription(ByteArrayReader reader) throws IOException
+    protected void processSampleDescription(SequentialReader reader) throws IOException
     {
         // Begin general structure
         int versionAndFlags = reader.getInt32(0);
@@ -47,13 +48,13 @@ public class QtMusicHandler extends QtMediaHandler
     }
 
     @Override
-    protected void processMediaInformation(ByteArrayReader reader) throws IOException
+    protected void processMediaInformation(SequentialReader reader) throws IOException
     {
         // Not yet implemented
     }
 
     @Override
-    protected void processTimeToSample(ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(SequentialReader reader) throws IOException
     {
         // Not yet implemented
     }

@@ -1,6 +1,5 @@
 package com.drew.metadata.mp4;
 
-import com.drew.imaging.quicktime.QtHandler;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.boxes.HandlerBox;
 import com.drew.metadata.mp4.media.*;

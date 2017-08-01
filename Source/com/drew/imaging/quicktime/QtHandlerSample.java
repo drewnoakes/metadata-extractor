@@ -11,7 +11,7 @@ public abstract class QtHandlerSample<T extends Directory, U extends AtomSample>
 {
     protected Metadata metadata;
     protected T directory;
-    protected U atom;
+    protected U baseAtom;
 
     public QtHandlerSample(Metadata metadata) {
         this.metadata = metadata;

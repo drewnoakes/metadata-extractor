@@ -40,21 +40,21 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
     @Override
     public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        AudioSampleEntry box = new AudioSampleEntry(reader, atom);
+        AudioSampleEntry box = new AudioSampleEntry(reader, baseAtom);
         box.addMetadata(directory);
     }
 
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        SoundMediaHeaderBox box = new SoundMediaHeaderBox(reader, atom);
+        SoundMediaHeaderBox box = new SoundMediaHeaderBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 
     @Override
     protected void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
-        TimeToSampleBox box = new TimeToSampleBox(reader, atom);
+        TimeToSampleBox box = new TimeToSampleBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 }

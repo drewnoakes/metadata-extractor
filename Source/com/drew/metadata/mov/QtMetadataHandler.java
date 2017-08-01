@@ -1,6 +1,5 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;

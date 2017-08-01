@@ -18,7 +18,7 @@ public abstract class Mp4Handler<T extends Directory> extends QtHandlerSample<T,
     @Override
     protected Box getAtom(SequentialReader reader) throws IOException
     {
-        atom = new Box(reader);
-        return atom;
+        baseAtom = new Box(reader);
+        return baseAtom;
     }
 }

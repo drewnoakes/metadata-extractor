@@ -1,7 +1,8 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.media.QtMediaDirectory;
@@ -14,7 +15,7 @@ import java.util.Date;
  * Classes that extend this class should be from the media dat atom types:
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
  */
-public abstract class QtMediaHandler extends QtHandler
+public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
 {
     public QtMediaHandler(Metadata metadata)
     {
@@ -50,9 +51,9 @@ public abstract class QtMediaHandler extends QtHandler
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    public QtMediaHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        ByteArrayReader reader = new ByteArrayReader(payload);
+        SequentialReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(getMediaInformation())) {
             processMediaInformation(reader);
         } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
@@ -64,7 +65,7 @@ public abstract class QtMediaHandler extends QtHandler
     }
 
     @Override
-    public QtHandler processContainer(String fourCC)
+    public QtMediaHandler processContainer(String fourCC)
     {
         return this;
     }
@@ -77,7 +78,7 @@ public abstract class QtMediaHandler extends QtHandler
      *
      * Unique values will follow depending upon the handler
      */
-    protected abstract void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
 
     /**
      * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
@@ -86,7 +87,7 @@ public abstract class QtMediaHandler extends QtHandler
      *
      * Each structure will be specified in its respective handler
      */
-    protected abstract void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader) throws IOException;
 }

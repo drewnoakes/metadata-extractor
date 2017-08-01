@@ -1,11 +1,17 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.ByteUtil;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.atoms.FileTypeCompatibilityAtom;
+import com.drew.metadata.mov.atoms.HandlerReferenceAtom;
+import com.drew.metadata.mov.atoms.MediaHeaderAtom;
+import com.drew.metadata.mov.atoms.MovieHeaderAtom;
+import com.drew.metadata.mp4.boxes.MediaHeaderBox;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,16 +58,19 @@ public class QtAtomHandler extends QtHandler
     @Override
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        ByteArrayReader reader = new ByteArrayReader(payload);
+        SequentialReader reader = new SequentialByteArrayReader(payload);
+
         if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
-            processMovieHeader(directory, reader);
+            MovieHeaderAtom atom = new MovieHeaderAtom(reader, baseAtom);
+            atom.addMetadata(directory);
         } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
-            processFileType(directory, payload, reader);
+            FileTypeCompatibilityAtom atom = new FileTypeCompatibilityAtom(reader, baseAtom);
+            atom.addMetadata(directory);
         } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
-            String handler = new String(reader.getBytes(8, 4));
-            return handlerFactory.getHandler(handler, metadata);
+            HandlerReferenceAtom atom = new HandlerReferenceAtom(reader, baseAtom);
+            return handlerFactory.getHandler(atom.getComponentType(), metadata);
         } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
-            processMediaHeader(directory, payload, new ByteArrayReader(payload));
+            MediaHeaderAtom atom = new MediaHeaderAtom(reader, baseAtom);
         }
         return this;
     }
@@ -73,113 +82,5 @@ public class QtAtomHandler extends QtHandler
             directory.addError("Compressed QuickTime movies not supported");
         }
         return this;
-    }
-
-    /**
-     * Extracts data from the 'ftyp' atom
-     * Index 0 is after size and type
-     *
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
-     *
-     */
-    private void processFileType(@NotNull Directory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
-    {
-        directory.setByteArray(QtDirectory.TAG_MAJOR_BRAND, reader.getBytes(0, 4));
-
-        ArrayList<String> compatibleBrands = new ArrayList<String>();
-        int brandsCount = (payload.length - 8) / 4;
-        for (int i = 8; i < (brandsCount * 4) + 8; i += 4) {
-            compatibleBrands.add(new String(reader.getBytes(i, 4)));
-        }
-        String[] compatibleBrandsReturn = new String[compatibleBrands.size()];
-        directory.setStringArray(QtDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(compatibleBrandsReturn));
-    }
-
-    /**
-     * Extracts data from the 'moov' atom's movie header marked by the fourCC 'mvhd'
-     * Index 0 is after size and type
-     *
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-32947
-     *
-     */
-    private void processMovieHeader(@NotNull Directory directory, @NotNull ByteArrayReader reader) throws IOException
-    {
-        // Get creation/modification times
-        long creationTime = ByteUtil.getUnsignedInt32(reader.getBytes(4,4), 0, true);
-        long modificationTime = ByteUtil.getUnsignedInt32(reader.getBytes(8, 4), 0, true);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-        Date date = calendar.getTime();
-        long macToUnixEpochOffset = date.getTime();
-        String creationTimeStamp = new Date(creationTime*1000 + macToUnixEpochOffset).toString();
-        String modificationTimeStamp = new Date(modificationTime*1000 + macToUnixEpochOffset).toString();
-        directory.setString(QtDirectory.TAG_CREATION_TIME, creationTimeStamp);
-        directory.setString(QtDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
-
-        // Get duration and time scale
-        int timeScale = reader.getInt32(12);
-        double duration = reader.getInt32(16);
-        duration = duration / timeScale;
-        Integer hours = (int)duration / (int)(Math.pow(60, 2));
-        Integer minutes = ((int)duration / (int)(Math.pow(60, 1))) - (hours * 60);
-        Integer seconds = (int)Math.ceil((duration / (Math.pow(60, 0))) - (minutes * 60));
-        String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
-        directory.setString(QtDirectory.TAG_DURATION, time);
-        directory.setInt(QtDirectory.TAG_TIME_SCALE, timeScale);
-
-        // Calculate preferred rate fixed point
-        int preferredRate = reader.getInt32(20);
-        double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
-        double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
-        directory.setDouble(QtDirectory.TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
-
-        // Calculate preferred volume fixed point
-        int preferredVolume = reader.getInt16(24);
-        double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
-        double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
-        directory.setDouble(QtDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
-
-        directory.setInt(QtDirectory.TAG_PREVIEW_TIME, reader.getInt32(72));
-        directory.setInt(QtDirectory.TAG_PREVIEW_DURATION, reader.getInt32(76));
-        directory.setInt(QtDirectory.TAG_POSTER_TIME, reader.getInt32(80));
-        directory.setInt(QtDirectory.TAG_SELECTION_TIME, reader.getInt32(84));
-        directory.setInt(QtDirectory.TAG_SELECTION_DURATION, reader.getInt32(88));
-        directory.setInt(QtDirectory.TAG_CURRENT_TIME, reader.getInt32(92));
-        directory.setInt(QtDirectory.TAG_NEXT_TRACK_ID, reader.getInt32(96));
-    }
-
-    private void processMediaHeader(@NotNull Directory directory, @NotNull byte[] payload, @NotNull ByteArrayReader reader) throws IOException
-    {
-        int version = reader.getInt8(0);
-        long creationTime;
-        long modificationTime;
-        long timescale;
-        long duration;
-        // Skip 3-bytes from flags
-        switch (version) {
-            case (1):
-                creationTime = reader.getInt64(4);
-                modificationTime = reader.getInt64(12);
-                timescale = reader.getUInt32(20);
-                duration = reader.getInt64(24);
-                QtHandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
-                QtHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
-                QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
-                QtHandlerFactory.HANDLER_PARAM_DURATION = duration;
-                break;
-            case (0):
-                creationTime = reader.getUInt32(4);
-                modificationTime = reader.getUInt32(8);
-                timescale = reader.getUInt32(12);
-                duration = reader.getUInt32(16);
-                QtHandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
-                QtHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
-                QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
-                QtHandlerFactory.HANDLER_PARAM_DURATION = duration;
-                break;
-        }
-        // Skip 1-bit pad set to 0
-        // Skip 15-bit language
-        // Skip 16-bit pre-defined set to 0
     }
 }

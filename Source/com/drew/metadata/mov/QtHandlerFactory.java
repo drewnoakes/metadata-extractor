@@ -1,6 +1,5 @@
 package com.drew.metadata.mov;
 
-import com.drew.imaging.quicktime.QtHandler;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.media.*;
 import com.drew.metadata.mov.metadata.QtDataHandler;

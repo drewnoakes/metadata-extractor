@@ -1,14 +1,9 @@
 package com.drew.metadata.mp4;
 
-import com.drew.imaging.quicktime.QtHandler;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.QtAtomTypes;
-import com.drew.metadata.mov.QtContainerTypes;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 
 import java.io.IOException;
@@ -53,7 +48,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     }
 
     @Override
-    public Mp4Handler<T> processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    public Mp4Handler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
         SequentialReader reader = new SequentialByteArrayReader(payload);
         if (fourCC.equals(getMediaInformation())) {

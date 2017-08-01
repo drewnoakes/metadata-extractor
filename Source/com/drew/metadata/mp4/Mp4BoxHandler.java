@@ -1,19 +1,12 @@
 package com.drew.metadata.mp4;
 
-import com.drew.imaging.quicktime.QtHandler;
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.*;
 import com.drew.metadata.mp4.boxes.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Source: http://l.web.umkc.edu/lizhu/teaching/2016sp.video-communication/ref/mp4.pdf
@@ -63,7 +56,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         } else if (fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
             processFileType(directory, reader, payload.length);
         } else if (fourCC.equals(Mp4BoxTypes.BOX_HANDLER)) {
-            HandlerBox box = new HandlerBox(reader, atom);
+            HandlerBox box = new HandlerBox(reader, baseAtom);
             return handlerFactory.getHandler(box, metadata);
         } else if (fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
             processMediaHeader(new SequentialByteArrayReader(payload));
@@ -86,7 +79,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
      */
     private void processFileType(@NotNull Mp4Directory directory, @NotNull SequentialReader reader, @NotNull long size) throws IOException
     {
-        FileTypeBox box = new FileTypeBox(reader, atom);
+        FileTypeBox box = new FileTypeBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -95,12 +88,12 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
      */
     private void processMovieHeader(@NotNull Mp4Directory directory, @NotNull SequentialReader reader) throws IOException
     {
-        MovieHeaderBox box = new MovieHeaderBox(reader, atom);
+        MovieHeaderBox box = new MovieHeaderBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 
     private void processMediaHeader(@NotNull SequentialReader reader) throws IOException
     {
-        MediaHeaderBox box = new MediaHeaderBox(reader, atom);
+        MediaHeaderBox box = new MediaHeaderBox(reader, baseAtom);
     }
 }

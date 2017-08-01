@@ -55,7 +55,7 @@ public class QtReader {
 
                     // If the size is 0, that means this atom extends to the end of file
                     if (atom.size == 0) {
-                        processAtoms(reader, -1, directory, qtHandler.processContainer(atom.type), printVisited);
+                        processAtoms(reader, atom.size, directory, qtHandler.processContainer(atom.type), printVisited);
                     } else {
                         processAtoms(reader, reader.getPosition() + atom.size - 8, directory, qtHandler.processContainer(atom.type), printVisited);
                     }

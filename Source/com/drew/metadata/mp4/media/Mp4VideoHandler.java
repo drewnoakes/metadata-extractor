@@ -44,7 +44,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        VisualSampleEntry box = new VisualSampleEntry(reader, atom);
+        VisualSampleEntry box = new VisualSampleEntry(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -54,7 +54,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        VideoMediaHeaderBox box = new VideoMediaHeaderBox(reader, atom);
+        VideoMediaHeaderBox box = new VideoMediaHeaderBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -64,7 +64,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
-        TimeToSampleBox box = new TimeToSampleBox(reader, atom);
+        TimeToSampleBox box = new TimeToSampleBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 }

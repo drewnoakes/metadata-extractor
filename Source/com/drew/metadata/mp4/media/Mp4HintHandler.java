@@ -40,7 +40,7 @@ public class Mp4HintHandler extends Mp4MediaHandler<Mp4HintDirectory>
     @Override
     protected void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        HintMediaHeaderBox box = new HintMediaHeaderBox(reader, atom);
+        HintMediaHeaderBox box = new HintMediaHeaderBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 

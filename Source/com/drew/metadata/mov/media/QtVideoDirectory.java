@@ -5,7 +5,7 @@ import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
-public class QtVideoDirectory extends QtDirectory
+public class QtVideoDirectory extends QtMediaDirectory
 {
     // Video Sample Description Atom
     public static final int TAG_VENDOR                                  = 1;
