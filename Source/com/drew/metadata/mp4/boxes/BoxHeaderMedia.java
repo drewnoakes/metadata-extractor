@@ -11,7 +11,7 @@ public class BoxHeaderMedia extends BoxFull
     long modificationTime;
     long timescale;
     long duration;
-//    int[] language;
+    String language;
 
     public BoxHeaderMedia(SequentialReader reader, Box box) throws IOException
     {
@@ -28,11 +28,15 @@ public class BoxHeaderMedia extends BoxFull
             timescale = reader.getUInt32();
             duration = reader.getUInt32();
         }
-        reader.skip(4);
+        int languageBits = reader.getInt16();
+        language = new String(new char[]{(char)(((languageBits & 0x7C00) >> 10) + 0x60),
+            (char)(((languageBits & 0x03E0) >> 5) + 0x60),
+            (char)((languageBits & 0x001F) + 0x60)});
 
         Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
         Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
         Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
         Mp4HandlerFactory.HANDLER_PARAM_DURATION = duration;
+        Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE = language;
     }
 }
