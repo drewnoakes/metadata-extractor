@@ -27,8 +27,10 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
             long macToUnixEpochOffset = date.getTime();
             String creationTimeStamp = new Date(Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + macToUnixEpochOffset).toString();
             String modificationTimeStamp = new Date(Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + macToUnixEpochOffset).toString();
+            String language = Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE;
             directory.setString(Mp4MediaDirectory.TAG_CREATION_TIME, creationTimeStamp);
             directory.setString(Mp4MediaDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
+            directory.setString(Mp4MediaDirectory.TAG_LANGUAGE_CODE, language);
         }
     }
 
@@ -68,22 +70,9 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     }
 
     protected abstract String getMediaInformation();
-
-    /**
-     * All sample description atoms will begin with the structure specified here:
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-33044
-     *
-     * Unique values will follow depending upon the handler
-     */
+    
     protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
 
-    /**
-     * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
-     *
-     * 'gmhd' atoms will have a unique child specific to the media type you are dealing with
-     *
-     * Each structure will be specified in its respective handler
-     */
     protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;
 
     protected abstract void processTimeToSample(@NotNull SequentialReader reader) throws IOException;
