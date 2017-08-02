@@ -11,7 +11,6 @@ import java.util.zip.DataFormatException;
 
 public class QtReader {
     private StreamReader reader;
-    private int tabCount;
 
     public void extract(Metadata metadata, InputStream inputStream, QtHandler handler) throws IOException, DataFormatException
     {
@@ -20,7 +19,6 @@ public class QtReader {
 
         reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
-        tabCount = 0;
 
         processAtoms(reader, -1, handler);
     }

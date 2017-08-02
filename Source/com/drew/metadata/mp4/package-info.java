@@ -10,5 +10,7 @@
  * containing atoms are read may depend upon that information.  This is also very important because some atoms have
  * the same name and the only way to determine how to read this data is with the handler.
  *
+ * Documentation: ISO/IEC 14496-12:2015
+ *                http://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip
  */
 package com.drew.metadata.mp4;

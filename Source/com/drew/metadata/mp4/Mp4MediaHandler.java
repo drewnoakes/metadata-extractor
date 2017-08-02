@@ -12,10 +12,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Classes that extend this class should be from the media dat atom types:
- * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
- */
 public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Handler<T>
 {
     public Mp4MediaHandler(Metadata metadata)

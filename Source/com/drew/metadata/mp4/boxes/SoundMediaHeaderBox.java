@@ -5,6 +5,9 @@ import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 
 import java.io.IOException;
 
+/**
+ * ISO/IED 14496-12:2015 pg.159
+ */
 public class SoundMediaHeaderBox extends FullBox
 {
     int balance;

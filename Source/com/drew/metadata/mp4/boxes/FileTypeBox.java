@@ -7,6 +7,9 @@ import com.drew.metadata.mp4.Mp4Directory;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * ISO/IED 14496-12:2015 pg.8
+ */
 public class FileTypeBox extends Box
 {
     String majorBrand;

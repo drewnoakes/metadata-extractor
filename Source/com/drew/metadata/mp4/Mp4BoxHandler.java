@@ -10,8 +10,6 @@ import com.drew.metadata.mp4.boxes.*;
 import java.io.IOException;
 
 /**
- * Source: http://l.web.umkc.edu/lizhu/teaching/2016sp.video-communication/ref/mp4.pdf
- *
  * @author Payton Garland
  */
 public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
@@ -65,25 +63,18 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
             }
         } else {
             if (box.type.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
-                directory.addError("Compressed QuickTime movies not supported");
+                directory.addError("Compressed MP4 movies not supported");
             }
         }
         return this;
     }
 
-    /**
-     * Extracts data from the 'ftyp' atom
-     * Index 0 is after size and type
-     */
     private void processFileType(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {
         FileTypeBox fileTypeBox = new FileTypeBox(reader, box);
         fileTypeBox.addMetadata(directory);
     }
 
-    /**
-     * Extracts data from the 'moov' atom's movie header marked by the box 'mvhd'
-     */
     private void processMovieHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {
         MovieHeaderBox movieHeaderBox = new MovieHeaderBox(reader, box);

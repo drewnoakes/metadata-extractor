@@ -12,9 +12,6 @@ import com.drew.metadata.mov.atoms.VideoSampleDescriptionAtom;
 
 import java.io.IOException;
 
-/**
- * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
- */
 public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
 {
     public QtVideoHandler(Metadata metadata)
@@ -41,9 +38,6 @@ public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
         videoSampleDescriptionAtom.addMetadata(directory);
     }
 
-    /**
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-25642
-     */
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
@@ -51,9 +45,6 @@ public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
         videoInformationMediaHeaderAtom.addMetadata(directory);
     }
 
-    /**
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
-     */
     @Override
     public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {

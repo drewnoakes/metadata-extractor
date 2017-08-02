@@ -12,9 +12,6 @@ import com.drew.metadata.mp4.boxes.TimeToSampleBox;
 
 import java.io.IOException;
 
-/**
- * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGEBEH
- */
 public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
 {
     public Mp4SoundHandler(Metadata metadata)

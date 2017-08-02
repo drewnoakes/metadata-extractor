@@ -10,9 +10,6 @@ import com.drew.metadata.mov.atoms.TextSampleDescriptionAtom;
 
 import java.io.IOException;
 
-/**
- * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCJAJEA
- */
 public class QtTextHandler extends QtMediaHandler<QtTextDirectory>
 {
     public QtTextHandler(Metadata metadata)

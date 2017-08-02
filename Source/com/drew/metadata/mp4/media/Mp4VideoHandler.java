@@ -13,9 +13,6 @@ import com.drew.metadata.mp4.boxes.VisualSampleEntry;
 
 import java.io.IOException;
 
-/**
- * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
- */
 public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
 {
     public Mp4VideoHandler(Metadata metadata)
@@ -42,9 +39,6 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
         visualSampleEntry.addMetadata(directory);
     }
 
-    /**
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-25642
-     */
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {
@@ -52,9 +46,6 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
         videoMediaHeaderBox.addMetadata(directory);
     }
 
-    /**
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
-     */
     @Override
     public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {

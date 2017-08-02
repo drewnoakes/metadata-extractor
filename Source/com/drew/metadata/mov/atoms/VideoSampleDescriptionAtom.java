@@ -6,6 +6,9 @@ import com.drew.metadata.mov.media.QtVideoDirectory;
 
 import java.io.IOException;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGICBJ
+ */
 public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampleDescriptionAtom.VideoSampleDescription>
 {
     public VideoSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException

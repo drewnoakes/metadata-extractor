@@ -5,6 +5,9 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-25691
+ */
 public abstract class SampleDescriptionAtom<T extends SampleDescription> extends FullAtom
 {
     long numberOfEntries;

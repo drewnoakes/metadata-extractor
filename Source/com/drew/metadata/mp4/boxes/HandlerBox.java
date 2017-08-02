@@ -5,6 +5,9 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+/**
+ * ISO/IED 14496-12:2015 pg.30
+ */
 public class HandlerBox extends FullBox
 {
     String handlerType;

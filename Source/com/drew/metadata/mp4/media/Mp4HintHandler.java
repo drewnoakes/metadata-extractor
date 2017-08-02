@@ -12,7 +12,6 @@ import java.io.IOException;
 
 public class Mp4HintHandler extends Mp4MediaHandler<Mp4HintDirectory>
 {
-
     public Mp4HintHandler(Metadata metadata)
     {
         super(metadata);

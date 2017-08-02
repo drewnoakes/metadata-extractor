@@ -1,13 +1,8 @@
 package com.drew.metadata.mp4;
 
-import com.drew.imaging.FileType;
-import com.drew.metadata.file.FileMetadataDirectory;
-import com.drew.metadata.mov.media.QtSoundDirectory;
-import com.drew.metadata.mov.media.QtVideoDirectory;
 import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Mp4Dictionary

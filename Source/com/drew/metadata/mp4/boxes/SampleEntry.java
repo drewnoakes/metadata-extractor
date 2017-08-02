@@ -4,6 +4,9 @@ import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
 
+/**
+ * ISO/IED 14496-12:2015 pg.33
+ */
 public class SampleEntry extends FullBox
 {
     long numberOfEntries;

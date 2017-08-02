@@ -6,6 +6,9 @@ import com.drew.metadata.mov.media.QtSoundDirectory;
 
 import java.io.IOException;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGGHJH
+ */
 public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampleDescriptionAtom.SoundSampleDescription>
 {
 

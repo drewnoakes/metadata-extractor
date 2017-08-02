@@ -5,6 +5,9 @@ import com.drew.metadata.mp4.media.Mp4HintDirectory;
 
 import java.io.IOException;
 
+/**
+ * ISO/IED 14496-12:2015 pg.169
+ */
 public class HintMediaHeaderBox extends FullBox
 {
     int maxPDUsize;

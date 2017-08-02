@@ -34,11 +34,11 @@ public class Mp4HandlerFactory
         } else if (type.equals(HANDLER_VIDEO_MEDIA)) {
             return new Mp4VideoHandler(metadata);
         } else if (type.equals(HANDLER_HINT_MEDIA)) {
-//            return new Mp4HintHandler(metadata);
+            return new Mp4HintHandler(metadata);
         } else if (type.equals(HANDLER_TEXT_MEDIA)) {
-//            return new Mp4TextHandler(metadata);
+            return new Mp4TextHandler(metadata);
         } else if (type.equals(HANDLER_META_MEDIA)) {
-//            return new Mp4MetaHandler(metadata);
+            return new Mp4MetaHandler(metadata);
         }
         return caller;
     }

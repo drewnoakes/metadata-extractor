@@ -5,6 +5,9 @@ import com.drew.metadata.mov.media.QtTimecodeDirectory;
 
 import java.io.IOException;
 
+/**
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-57409
+ */
 public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<TimecodeSampleDescriptionAtom.TimecodeSampleDescription>
 {
     public TimecodeSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException

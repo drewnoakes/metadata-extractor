@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Extracts data from the 'ftyp' atom
- * Index 0 is after size and type
- *
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
  */
 public class FileTypeCompatibilityAtom extends Atom

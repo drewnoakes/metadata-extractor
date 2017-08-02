@@ -5,6 +5,9 @@ import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
 import java.io.IOException;
 
+/**
+ * ISO/IED 14496-12:2015 pg.156
+ */
 public class VisualSampleEntry extends SampleEntry
 {
     int version;

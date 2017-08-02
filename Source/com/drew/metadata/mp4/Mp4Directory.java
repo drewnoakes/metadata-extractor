@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 public class Mp4Directory extends Directory {
 
-    // Movie Header Atom (https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-56313)
     public static final int TAG_CREATION_TIME                           = 0x0100;
     public static final int TAG_MODIFICATION_TIME                       = 0x0101;
     public static final int TAG_TIME_SCALE                              = 0x0102;

@@ -11,9 +11,6 @@ import com.drew.metadata.mov.atoms.TimecodeSampleDescriptionAtom;
 
 import java.io.IOException;
 
-/**
- * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGABGG
- */
 public class QtTimecodeHandler extends QtMediaHandler<QtTimecodeDirectory>
 {
     public QtTimecodeHandler(Metadata metadata)
