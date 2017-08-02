@@ -56,7 +56,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         } else if (fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
             processFileType(directory, reader, payload.length);
         } else if (fourCC.equals(Mp4BoxTypes.BOX_HANDLER)) {
-            HandlerBox box = new HandlerBox(reader, baseAtom);
+            BoxHandler box = new BoxHandler(reader, baseAtom);
             return handlerFactory.getHandler(box, metadata);
         } else if (fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
             processMediaHeader(new SequentialByteArrayReader(payload));
@@ -79,7 +79,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
      */
     private void processFileType(@NotNull Mp4Directory directory, @NotNull SequentialReader reader, @NotNull long size) throws IOException
     {
-        FileTypeBox box = new FileTypeBox(reader, baseAtom);
+        BoxFileType box = new BoxFileType(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -88,12 +88,12 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
      */
     private void processMovieHeader(@NotNull Mp4Directory directory, @NotNull SequentialReader reader) throws IOException
     {
-        MovieHeaderBox box = new MovieHeaderBox(reader, baseAtom);
+        BoxHeaderMovie box = new BoxHeaderMovie(reader, baseAtom);
         box.addMetadata(directory);
     }
 
     private void processMediaHeader(@NotNull SequentialReader reader) throws IOException
     {
-        MediaHeaderBox box = new MediaHeaderBox(reader, baseAtom);
+        BoxHeaderMedia box = new BoxHeaderMedia(reader, baseAtom);
     }
 }

@@ -5,13 +5,13 @@ import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 
 import java.io.IOException;
 
-public class AudioSampleEntry extends SampleEntry
+public class SampleEntryAudio extends SampleEntry
 {
     int channelcount;
     int samplesize;
     long samplerate;
 
-    public AudioSampleEntry(SequentialReader reader, Box box) throws IOException
+    public SampleEntryAudio(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

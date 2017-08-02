@@ -1,22 +1,15 @@
 package com.drew.metadata.mov;
 
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.FileTypeCompatibilityAtom;
 import com.drew.metadata.mov.atoms.HandlerReferenceAtom;
 import com.drew.metadata.mov.atoms.MediaHeaderAtom;
 import com.drew.metadata.mov.atoms.MovieHeaderAtom;
-import com.drew.metadata.mp4.boxes.MediaHeaderBox;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * @author Payton Garland

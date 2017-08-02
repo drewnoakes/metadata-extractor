@@ -5,7 +5,7 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public class HandlerBox extends FullBox
+public class BoxHandler extends BoxFull
 {
     String handlerType;
 
@@ -16,7 +16,7 @@ public class HandlerBox extends FullBox
 
     String name;
 
-    public HandlerBox(SequentialReader reader, Box box) throws IOException
+    public BoxHandler(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

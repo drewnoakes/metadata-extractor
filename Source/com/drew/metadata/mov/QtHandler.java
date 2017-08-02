@@ -3,7 +3,6 @@ package com.drew.metadata.mov;
 import com.drew.imaging.quicktime.QtHandlerSample;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.QtDirectory;
 import com.drew.metadata.mov.atoms.Atom;
 
 import java.io.IOException;

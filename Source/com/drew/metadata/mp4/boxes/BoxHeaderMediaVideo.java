@@ -5,12 +5,12 @@ import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
 import java.io.IOException;
 
-public class VideoMediaHeaderBox extends FullBox
+public class BoxHeaderMediaVideo extends BoxFull
 {
     int graphicsmode;
     int[] opcolor;
 
-    public VideoMediaHeaderBox(SequentialReader reader, Box box) throws IOException
+    public BoxHeaderMediaVideo(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

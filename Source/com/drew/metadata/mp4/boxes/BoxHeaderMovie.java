@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MovieHeaderBox extends FullBox
+public class BoxHeaderMovie extends BoxFull
 {
     protected long creationTime;
     protected long modificationTime;
@@ -18,7 +18,7 @@ public class MovieHeaderBox extends FullBox
     protected int[] matrix;
     protected long nextTrackID;
 
-    public MovieHeaderBox(SequentialReader reader, Box box) throws IOException
+    public BoxHeaderMovie(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
         if (version == 1) {

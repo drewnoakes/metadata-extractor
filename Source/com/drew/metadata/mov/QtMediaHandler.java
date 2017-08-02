@@ -1,10 +1,10 @@
 package com.drew.metadata.mov;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.atoms.SampleDescriptionAtom;
 import com.drew.metadata.mov.media.QtMediaDirectory;
 
 import java.io.IOException;
@@ -72,21 +72,8 @@ public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
 
     protected abstract String getMediaInformation();
 
-    /**
-     * All sample description atoms will begin with the structure specified here:
-     * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-33044
-     *
-     * Unique values will follow depending upon the handler
-     */
     protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
 
-    /**
-     * Media information atoms will be one of three types: 'vmhd', 'smhd', or 'gmhd'
-     *
-     * 'gmhd' atoms will have a unique child specific to the media type you are dealing with
-     *
-     * Each structure will be specified in its respective handler
-     */
     protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;
 
     protected abstract void processTimeToSample(@NotNull SequentialReader reader) throws IOException;

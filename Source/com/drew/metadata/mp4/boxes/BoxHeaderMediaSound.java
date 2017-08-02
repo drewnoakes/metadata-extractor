@@ -5,11 +5,11 @@ import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 
 import java.io.IOException;
 
-public class SoundMediaHeaderBox extends FullBox
+public class BoxHeaderMediaSound extends BoxFull
 {
     int balance;
 
-    public SoundMediaHeaderBox(SequentialReader reader, Box box) throws IOException
+    public BoxHeaderMediaSound(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

@@ -2,19 +2,18 @@ package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mp4.Mp4HandlerFactory;
-import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TimeToSampleBox extends FullBox
+public class BoxTimeToSample extends BoxFull
 {
     long entryCount;
     ArrayList<EntryCount> entries;
 
-    public TimeToSampleBox(SequentialReader reader, Box box) throws IOException
+    public BoxTimeToSample(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

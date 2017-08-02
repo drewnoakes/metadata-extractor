@@ -1,13 +1,11 @@
 package com.drew.metadata.mp4.media;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4MediaHandler;
-import com.drew.metadata.mp4.boxes.HintMediaHeaderBox;
+import com.drew.metadata.mp4.boxes.BoxHeaderMediaHint;
 
 import java.io.IOException;
 
@@ -40,7 +38,7 @@ public class Mp4HintHandler extends Mp4MediaHandler<Mp4HintDirectory>
     @Override
     protected void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        HintMediaHeaderBox box = new HintMediaHeaderBox(reader, baseAtom);
+        BoxHeaderMediaHint box = new BoxHeaderMediaHint(reader, baseAtom);
         box.addMetadata(directory);
     }
 

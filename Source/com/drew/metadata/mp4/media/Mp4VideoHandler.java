@@ -1,23 +1,15 @@
 package com.drew.metadata.mp4.media;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
-import com.drew.metadata.mov.QtDictionary;
-import com.drew.metadata.mov.QtHandlerFactory;
-import com.drew.metadata.mov.QtMediaHandler;
-import com.drew.metadata.mp4.Mp4Dictionary;
-import com.drew.metadata.mp4.Mp4HandlerFactory;
 import com.drew.metadata.mp4.Mp4MediaHandler;
-import com.drew.metadata.mp4.boxes.TimeToSampleBox;
-import com.drew.metadata.mp4.boxes.VideoMediaHeaderBox;
-import com.drew.metadata.mp4.boxes.VisualSampleEntry;
+import com.drew.metadata.mp4.boxes.BoxTimeToSample;
+import com.drew.metadata.mp4.boxes.BoxHeaderMediaVideo;
+import com.drew.metadata.mp4.boxes.SampleEntryVisual;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-74522
@@ -44,7 +36,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        VisualSampleEntry box = new VisualSampleEntry(reader, baseAtom);
+        SampleEntryVisual box = new SampleEntryVisual(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -54,7 +46,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        VideoMediaHeaderBox box = new VideoMediaHeaderBox(reader, baseAtom);
+        BoxHeaderMediaVideo box = new BoxHeaderMediaVideo(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -64,7 +56,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
-        TimeToSampleBox box = new TimeToSampleBox(reader, baseAtom);
+        BoxTimeToSample box = new BoxTimeToSample(reader, baseAtom);
         box.addMetadata(directory);
     }
 }
