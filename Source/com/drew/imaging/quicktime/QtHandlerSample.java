@@ -5,6 +5,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
+import java.awt.*;
 import java.io.IOException;
 
 public abstract class QtHandlerSample<T extends Directory, U extends AtomSample>

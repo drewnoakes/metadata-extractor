@@ -1,11 +1,13 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.quicktime.ContainerTypesSample;
+
 import java.util.ArrayList;
 
 /**
  * @author Payton Garland
  */
-public class QtContainerTypes
+public class QtContainerTypes extends ContainerTypesSample
 {
     public static final String ATOM_MOVIE                       = "moov";
     public static final String ATOM_USER_DATA                   = "udta";
@@ -19,8 +21,6 @@ public class QtContainerTypes
     public static final String ATOM_MEDIA_TEXT                  = "text";
     public static final String ATOM_MEDIA_SUBTITLE              = "sbtl";
     public static final String ATOM_MEDIA_BASE                  = "gmhd";
-
-    public static ArrayList<String> _containerList = new ArrayList<String>();
 
     static {
         _containerList.add(ATOM_MOVIE);

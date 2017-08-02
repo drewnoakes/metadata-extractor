@@ -1,11 +1,11 @@
 package com.drew.metadata.mov;
 
-import java.util.ArrayList;
+import com.drew.imaging.quicktime.AtomTypesSample;
 
 /**
  * @author Payton Garland
  */
-public class QtAtomTypes
+public class QtAtomTypes extends AtomTypesSample
 {
     public static final String ATOM_FILE_TYPE                = "ftyp";
     public static final String ATOM_MOVIE_HEADER             = "mvhd";
@@ -19,8 +19,6 @@ public class QtAtomTypes
     public static final String ATOM_SAMPLE_DESCRIPTION       = "stsd";
     public static final String ATOM_TIME_TO_SAMPLE           = "stts";
     public static final String ATOM_MEDIA_HEADER             = "mdhd";
-
-    public static ArrayList<String> _atomList = new ArrayList<String>();
 
     static {
         _atomList.add(ATOM_FILE_TYPE);
