@@ -4,12 +4,12 @@ import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
 
-public class FullAtom extends Atom
+public class AtomFull extends Atom
 {
     int version;
     byte[] flags;
 
-    public FullAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomFull(SequentialReader reader, Atom atom) throws IOException
     {
         super(atom);
 

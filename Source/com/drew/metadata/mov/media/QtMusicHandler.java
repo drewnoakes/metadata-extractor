@@ -3,7 +3,7 @@ package com.drew.metadata.mov.media;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtMediaHandler;
-import com.drew.metadata.mov.atoms.MusicSampleDescriptionAtom;
+import com.drew.metadata.mov.atoms.AtomMovie;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ public class QtMusicHandler extends QtMediaHandler<QtMusicDirectory>
     @Override
     protected void processSampleDescription(SequentialReader reader) throws IOException
     {
-        MusicSampleDescriptionAtom atom = new MusicSampleDescriptionAtom(reader, baseAtom);
+        AtomMovie atom = new AtomMovie(reader, baseAtom);
         atom.addMetadata(directory);
     }
 

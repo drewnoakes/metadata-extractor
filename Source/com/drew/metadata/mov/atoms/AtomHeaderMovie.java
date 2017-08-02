@@ -1,6 +1,5 @@
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.QtDirectory;
 
@@ -8,7 +7,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MovieHeaderAtom extends FullAtom
+public class AtomHeaderMovie extends AtomFull
 {
     long creationTime;
     long modificationTime;
@@ -25,7 +24,7 @@ public class MovieHeaderAtom extends FullAtom
     long currentTime;
     long nextTrackID;
 
-    public MovieHeaderAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomHeaderMovie(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

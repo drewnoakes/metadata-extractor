@@ -4,7 +4,7 @@ import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
 
-public class HandlerReferenceAtom extends FullAtom
+public class AtomHandlerReference extends AtomFull
 {
     public String getComponentType()
     {
@@ -15,7 +15,7 @@ public class HandlerReferenceAtom extends FullAtom
     String componentSubtype;
     String componentName;
 
-    public HandlerReferenceAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomHandlerReference(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

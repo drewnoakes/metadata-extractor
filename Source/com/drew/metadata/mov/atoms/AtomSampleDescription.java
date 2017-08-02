@@ -5,12 +5,12 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class SampleDescriptionAtom<T extends SampleDescription> extends FullAtom
+public abstract class AtomSampleDescription<T extends SampleDescription> extends AtomFull
 {
     long numberOfEntries;
     ArrayList<T> sampleDescriptions;
 
-    public SampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomSampleDescription(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

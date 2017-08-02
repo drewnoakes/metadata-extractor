@@ -5,10 +5,10 @@ import com.drew.metadata.mov.media.QtSubtitleDirectory;
 
 import java.io.IOException;
 
-public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<SubtitleSampleDescriptionAtom.SubtitleSampleDescription>
+public class AtomSampleDescriptionSubtitle extends AtomSampleDescription<AtomSampleDescriptionSubtitle.SubtitleSampleDescription>
 {
 
-    public SubtitleSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomSampleDescriptionSubtitle(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

@@ -12,13 +12,13 @@ import java.util.ArrayList;
  *
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-CJBCBIFF
  */
-public class FileTypeCompatibilityAtom extends Atom
+public class AtomFileTypeCompatibility extends Atom
 {
     String majorBrand;
     long minorVersion;
     ArrayList<String> compatibleBrands;
 
-    public FileTypeCompatibilityAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomFileTypeCompatibility(SequentialReader reader, Atom atom) throws IOException
     {
         super(atom);
 

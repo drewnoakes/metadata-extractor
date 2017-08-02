@@ -1,12 +1,11 @@
 package com.drew.metadata.mov.media;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.*;
-import com.drew.metadata.mov.atoms.SoundMediaInformationHeaderAtom;
-import com.drew.metadata.mov.atoms.SoundSampleDescriptionAtom;
+import com.drew.metadata.mov.atoms.AtomHeaderMediaSoundInformation;
+import com.drew.metadata.mov.atoms.AtomSampleDescriptionSound;
 
 import java.io.IOException;
 
@@ -35,14 +34,14 @@ public class QtSoundHandler extends QtMediaHandler<QtSoundDirectory>
     @Override
     public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        SoundSampleDescriptionAtom atom = new SoundSampleDescriptionAtom(reader, baseAtom);
+        AtomSampleDescriptionSound atom = new AtomSampleDescriptionSound(reader, baseAtom);
         atom.addMetadata(directory);
     }
 
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        SoundMediaInformationHeaderAtom atom = new SoundMediaInformationHeaderAtom(reader, baseAtom);
+        AtomHeaderMediaSoundInformation atom = new AtomHeaderMediaSoundInformation(reader, baseAtom);
         atom.addMetadata(directory);
     }
 

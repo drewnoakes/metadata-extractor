@@ -3,13 +3,11 @@ package com.drew.metadata.mov.atoms;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.media.QtTextDirectory;
 
-import javax.xml.soap.Text;
 import java.io.IOException;
-import java.util.ArrayList;
 
-public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleDescriptionAtom.TextSampleDescription>
+public class AtomSampleDescriptionText extends AtomSampleDescription<AtomSampleDescriptionText.TextSampleDescription>
 {
-    public TextSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomSampleDescriptionText(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

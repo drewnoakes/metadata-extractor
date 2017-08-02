@@ -5,11 +5,10 @@ import com.drew.metadata.mov.QtDictionary;
 import com.drew.metadata.mov.media.QtVideoDirectory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampleDescriptionAtom.VideoSampleDescription>
+public class AtomSampleDescriptionVideo extends AtomSampleDescription<AtomSampleDescriptionVideo.VideoSampleDescription>
 {
-    public VideoSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomSampleDescriptionVideo(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

@@ -5,7 +5,7 @@ import com.drew.metadata.mov.media.QtTimecodeDirectory;
 
 import java.io.IOException;
 
-public class TimecodeMediaInformationAtom extends FullAtom
+public class AtomMediaTimecodeInformation extends AtomFull
 {
     int textFont;
     int textFace;
@@ -14,7 +14,7 @@ public class TimecodeMediaInformationAtom extends FullAtom
     int[] backgroundColor;
     String fontName;
 
-    public TimecodeMediaInformationAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomMediaTimecodeInformation(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

@@ -1,12 +1,10 @@
 package com.drew.metadata.mov.media;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.QtDirectory;
 import com.drew.metadata.mov.QtMediaHandler;
-import com.drew.metadata.mov.atoms.SubtitleSampleDescriptionAtom;
+import com.drew.metadata.mov.atoms.AtomSampleDescriptionSubtitle;
 
 import java.io.IOException;
 
@@ -36,7 +34,7 @@ public class QtSubtitleHandler extends QtMediaHandler<QtSubtitleDirectory>
     @Override
     protected void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        SubtitleSampleDescriptionAtom atom = new SubtitleSampleDescriptionAtom(reader, baseAtom);
+        AtomSampleDescriptionSubtitle atom = new AtomSampleDescriptionSubtitle(reader, baseAtom);
         atom.addMetadata(directory);
     }
 

@@ -6,11 +6,11 @@ import com.drew.metadata.mov.media.QtMusicDirectory;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MusicSampleDescriptionAtom extends SampleDescriptionAtom<MusicSampleDescriptionAtom.MusicSampleDescription>
+public class AtomMovie extends AtomSampleDescription<AtomMovie.MusicSampleDescription>
 {
     ArrayList<MusicSampleDescription> sampleDescriptions;
 
-    public MusicSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public AtomMovie(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

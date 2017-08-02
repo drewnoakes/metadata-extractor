@@ -4,7 +4,6 @@ import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.atoms.SampleDescriptionAtom;
 import com.drew.metadata.mov.media.QtMediaDirectory;
 
 import java.io.IOException;
