@@ -1,9 +1,11 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.metadata.QtMetadataDirectory;
 
 import java.io.IOException;
@@ -26,28 +28,28 @@ public abstract class QtMetadataHandler extends QtHandler
     }
 
     @Override
-    protected boolean shouldAcceptAtom(String fourCC)
+    protected boolean shouldAcceptAtom(Atom atom)
     {
-        return fourCC.equals(QtAtomTypes.ATOM_HANDLER)
-            || fourCC.equals(QtAtomTypes.ATOM_KEYS)
-            || fourCC.equals(QtAtomTypes.ATOM_DATA);
+        return atom.type.equals(QtAtomTypes.ATOM_HANDLER)
+            || atom.type.equals(QtAtomTypes.ATOM_KEYS)
+            || atom.type.equals(QtAtomTypes.ATOM_DATA);
     }
 
     @Override
-    protected boolean shouldAcceptContainer(String fourCC)
+    protected boolean shouldAcceptContainer(Atom atom)
     {
-        return fourCC.equals(QtContainerTypes.ATOM_METADATA_LIST)
-            || ByteUtil.getInt32(fourCC.getBytes(), 0, true) < keys.size();
+        return atom.type.equals(QtContainerTypes.ATOM_METADATA_LIST)
+            || ByteUtil.getInt32(atom.type.getBytes(), 0, true) < keys.size();
     }
 
     @Override
-    protected QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    protected QtHandler processAtom(@NotNull Atom atom, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
-            if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
+            if (atom.type.equals(QtAtomTypes.ATOM_KEYS)) {
                 processKeys(reader);
-            } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)) {
+            } else if (atom.type.equals(QtAtomTypes.ATOM_DATA)) {
                 processData(payload, reader);
             }
         }

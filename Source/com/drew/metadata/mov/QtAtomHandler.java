@@ -1,13 +1,11 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.atoms.FileTypeCompatibilityAtom;
-import com.drew.metadata.mov.atoms.HandlerReferenceAtom;
-import com.drew.metadata.mov.atoms.MediaHeaderAtom;
-import com.drew.metadata.mov.atoms.MovieHeaderAtom;
+import com.drew.metadata.mov.atoms.*;
 
 import java.io.IOException;
 
@@ -30,44 +28,44 @@ public class QtAtomHandler extends QtHandler<QtDirectory>
     }
 
     @Override
-    public boolean shouldAcceptAtom(@NotNull String fourCC)
+    public boolean shouldAcceptAtom(@NotNull Atom atom)
     {
-        return fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)
-            || fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)
-            || fourCC.equals(QtAtomTypes.ATOM_HANDLER)
-            || fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER);
+        return atom.type.equals(QtAtomTypes.ATOM_FILE_TYPE)
+            || atom.type.equals(QtAtomTypes.ATOM_MOVIE_HEADER)
+            || atom.type.equals(QtAtomTypes.ATOM_HANDLER)
+            || atom.type.equals(QtAtomTypes.ATOM_MEDIA_HEADER);
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC)
+    public boolean shouldAcceptContainer(Atom atom)
     {
-        return fourCC.equals(QtContainerTypes.ATOM_TRACK)
-            || fourCC.equals(QtContainerTypes.ATOM_USER_DATA)
-            || fourCC.equals(QtContainerTypes.ATOM_METADATA)
-            || fourCC.equals(QtContainerTypes.ATOM_MOVIE)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA);
+        return atom.type.equals(QtContainerTypes.ATOM_TRACK)
+            || atom.type.equals(QtContainerTypes.ATOM_USER_DATA)
+            || atom.type.equals(QtContainerTypes.ATOM_METADATA)
+            || atom.type.equals(QtContainerTypes.ATOM_MOVIE)
+            || atom.type.equals(QtContainerTypes.ATOM_MEDIA);
     }
 
     @Override
-    public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    public QtHandler processAtom(@NotNull Atom atom, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
 
-            if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
-                MovieHeaderAtom atom = new MovieHeaderAtom(reader, baseAtom);
-                atom.addMetadata(directory);
-            } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
-                FileTypeCompatibilityAtom atom = new FileTypeCompatibilityAtom(reader, baseAtom);
-                atom.addMetadata(directory);
-            } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
-                HandlerReferenceAtom atom = new HandlerReferenceAtom(reader, baseAtom);
-                return handlerFactory.getHandler(atom.getComponentType(), metadata);
-            } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
-                MediaHeaderAtom atom = new MediaHeaderAtom(reader, baseAtom);
+            if (atom.type.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
+                MovieHeaderAtom movieHeaderAtom = new MovieHeaderAtom(reader, atom);
+                movieHeaderAtom.addMetadata(directory);
+            } else if (atom.type.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
+                FileTypeCompatibilityAtom fileTypeCompatibilityAtom = new FileTypeCompatibilityAtom(reader, atom);
+                fileTypeCompatibilityAtom.addMetadata(directory);
+            } else if (atom.type.equals(QtAtomTypes.ATOM_HANDLER)) {
+                HandlerReferenceAtom handlerReferenceAtom = new HandlerReferenceAtom(reader, atom);
+                return handlerFactory.getHandler(handlerReferenceAtom.getComponentType(), metadata);
+            } else if (atom.type.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
+                MediaHeaderAtom mediaHeaderAtom = new MediaHeaderAtom(reader, atom);
             }
         } else {
-            if (fourCC.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
+            if (atom.type.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
                 directory.addError("Compressed QuickTime movies not supported");
             }
         }

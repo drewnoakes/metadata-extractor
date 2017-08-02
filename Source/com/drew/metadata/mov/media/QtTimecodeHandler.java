@@ -5,6 +5,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtMediaHandler;
+import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.atoms.TimecodeInformationMediaAtom;
 import com.drew.metadata.mov.atoms.TimecodeSampleDescriptionAtom;
 
@@ -33,21 +34,21 @@ public class QtTimecodeHandler extends QtMediaHandler<QtTimecodeDirectory>
     }
 
     @Override
-    public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
+    public void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        TimecodeSampleDescriptionAtom atom = new TimecodeSampleDescriptionAtom(reader, baseAtom);
-        atom.addMetadata(directory);
+        TimecodeSampleDescriptionAtom timecodeSampleDescriptionAtom = new TimecodeSampleDescriptionAtom(reader, atom);
+        timecodeSampleDescriptionAtom.addMetadata(directory);
     }
 
     @Override
-    public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
+    public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        TimecodeInformationMediaAtom atom = new TimecodeInformationMediaAtom(reader, baseAtom);
-        atom.addMetadata(directory);
+        TimecodeInformationMediaAtom timecodeInformationMediaAtom = new TimecodeInformationMediaAtom(reader, atom);
+        timecodeInformationMediaAtom.addMetadata(directory);
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
         // Do nothing
     }

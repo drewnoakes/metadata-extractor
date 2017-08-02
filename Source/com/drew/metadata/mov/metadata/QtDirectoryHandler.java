@@ -1,12 +1,13 @@
 package com.drew.metadata.mov.metadata;
 
-import com.drew.metadata.mov.QtHandler;
+import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtContainerTypes;
 import com.drew.metadata.mov.QtMetadataHandler;
+import com.drew.metadata.mov.atoms.Atom;
 
 import java.io.IOException;
 
@@ -20,31 +21,31 @@ public class QtDirectoryHandler extends QtMetadataHandler
     }
 
     @Override
-    protected boolean shouldAcceptAtom(String fourCC)
+    protected boolean shouldAcceptAtom(Atom atom)
     {
-        return fourCC.equals(QtAtomTypes.ATOM_DATA);
+        return atom.type.equals(QtAtomTypes.ATOM_DATA);
     }
 
     @Override
-    protected boolean shouldAcceptContainer(String fourCC)
+    protected boolean shouldAcceptContainer(Atom atom)
     {
-        return QtMetadataDirectory._tagIntegerMap.containsKey(fourCC)
-            || fourCC.equals(QtContainerTypes.ATOM_METADATA_LIST);
+        return QtMetadataDirectory._tagIntegerMap.containsKey(atom)
+            || atom.type.equals(QtContainerTypes.ATOM_METADATA_LIST);
     }
 
     @Override
-    protected QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    protected QtHandler processAtom(@NotNull Atom atom, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
-            if (fourCC.equals(QtAtomTypes.ATOM_DATA) && currentData != null) {
+            if (atom.type.equals(QtAtomTypes.ATOM_DATA) && currentData != null) {
                 processData(payload, reader);
             } else {
                 currentData = new String(reader.getBytes(4));
             }
         } else {
-            if (QtMetadataDirectory._tagIntegerMap.containsKey(fourCC)) {
-                currentData = fourCC;
+            if (QtMetadataDirectory._tagIntegerMap.containsKey(atom)) {
+                currentData = atom.type;
             } else {
                 currentData = null;
             }

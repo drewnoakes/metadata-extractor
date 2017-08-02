@@ -1,5 +1,6 @@
-package com.drew.imaging.quicktime;
+package com.drew.imaging.mp4;
 
+import com.drew.imaging.quicktime.QtReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxHandler;
@@ -15,7 +16,7 @@ public class Mp4MetadataReader
     {
         try {
             Metadata metadata = new Metadata();
-            new QtReader().extract(metadata, inputStream, new Mp4BoxHandler(metadata));
+            new Mp4Reader().extract(metadata, inputStream, new Mp4BoxHandler(metadata));
             return metadata;
         } catch (DataFormatException e) {
             e.printStackTrace();

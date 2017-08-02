@@ -1,18 +1,19 @@
 package com.drew.metadata.mp4.boxes;
 
-import com.drew.imaging.quicktime.AtomSample;
 import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
 
-public class Box extends AtomSample
+public class Box
 {
+    public long size;
+    public String type;
     String usertype;
 
     public Box(SequentialReader reader) throws IOException
     {
-        super(reader);
-
+        this.size = reader.getUInt32();
+        this.type = reader.getString(4);
         if (size == 1) {
             size = reader.getInt64();
         } else if (size == 0) {
@@ -25,8 +26,8 @@ public class Box extends AtomSample
 
     public Box(Box box)
     {
-        super(box);
-
+        this.size = box.size;
+        this.type = box.type;
         this.usertype = box.usertype;
     }
 }

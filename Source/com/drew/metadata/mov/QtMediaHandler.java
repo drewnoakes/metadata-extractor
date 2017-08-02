@@ -1,9 +1,11 @@
 package com.drew.metadata.mov;
 
+import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.media.QtMediaDirectory;
 
 import java.io.IOException;
@@ -33,33 +35,33 @@ public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
     }
 
     @Override
-    public boolean shouldAcceptAtom(String fourCC)
+    public boolean shouldAcceptAtom(Atom atom)
     {
-        return fourCC.equals(getMediaInformation())
-            || fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)
-            || fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE);
+        return atom.type.equals(getMediaInformation())
+            || atom.type.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)
+            || atom.type.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE);
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC)
+    public boolean shouldAcceptContainer(Atom atom)
     {
-        return fourCC.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION)
-            || fourCC.equals(QtContainerTypes.ATOM_MEDIA_BASE)
-            || fourCC.equals("tmcd");
+        return atom.type.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
+            || atom.type.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION)
+            || atom.type.equals(QtContainerTypes.ATOM_MEDIA_BASE)
+            || atom.type.equals("tmcd");
     }
 
     @Override
-    public QtMediaHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    public QtMediaHandler processAtom(@NotNull Atom atom, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
-            if (fourCC.equals(getMediaInformation())) {
-                processMediaInformation(reader);
-            } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
-                processSampleDescription(reader);
-            } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
-                processTimeToSample(reader);
+            if (atom.type.equals(getMediaInformation())) {
+                processMediaInformation(reader, atom);
+            } else if (atom.type.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
+                processSampleDescription(reader, atom);
+            } else if (atom.type.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
+                processTimeToSample(reader, atom);
             }
         }
         return this;
@@ -67,9 +69,9 @@ public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
 
     protected abstract String getMediaInformation();
 
-    protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
+    protected abstract void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
 
-    protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;
+    protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
 }

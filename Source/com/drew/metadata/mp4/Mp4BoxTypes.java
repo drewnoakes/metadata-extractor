@@ -1,11 +1,11 @@
 package com.drew.metadata.mp4;
 
-import com.drew.imaging.quicktime.AtomTypesSample;
+import java.util.ArrayList;
 
 /**
  * @author Payton Garland
  */
-public class Mp4BoxTypes extends AtomTypesSample
+public class Mp4BoxTypes
 {
     public static final String BOX_FILE_TYPE                        = "ftyp";
     public static final String BOX_MOVIE_HEADER                     = "mvhd";
@@ -18,16 +18,18 @@ public class Mp4BoxTypes extends AtomTypesSample
     public static final String BOX_TIME_TO_SAMPLE                   = "stts";
     public static final String BOX_MEDIA_HEADER                     = "mdhd";
 
+    public static ArrayList<String> _boxList = new ArrayList<String>();
+
     static {
-        _atomList.add(BOX_FILE_TYPE);
-        _atomList.add(BOX_MOVIE_HEADER);
-        _atomList.add(BOX_VIDEO_MEDIA_INFO);
-        _atomList.add(BOX_SOUND_MEDIA_INFO);
-        _atomList.add(BOX_HINT_MEDIA_INFO);
-        _atomList.add(BOX_NULL_MEDIA_INFO);
-        _atomList.add(BOX_HANDLER);
-        _atomList.add(BOX_SAMPLE_DESCRIPTION);
-        _atomList.add(BOX_TIME_TO_SAMPLE);
-        _atomList.add(BOX_MEDIA_HEADER);
+        _boxList.add(BOX_FILE_TYPE);
+        _boxList.add(BOX_MOVIE_HEADER);
+        _boxList.add(BOX_VIDEO_MEDIA_INFO);
+        _boxList.add(BOX_SOUND_MEDIA_INFO);
+        _boxList.add(BOX_HINT_MEDIA_INFO);
+        _boxList.add(BOX_NULL_MEDIA_INFO);
+        _boxList.add(BOX_HANDLER);
+        _boxList.add(BOX_SAMPLE_DESCRIPTION);
+        _boxList.add(BOX_TIME_TO_SAMPLE);
+        _boxList.add(BOX_MEDIA_HEADER);
     }
 }

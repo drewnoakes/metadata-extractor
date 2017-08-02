@@ -1,9 +1,11 @@
 package com.drew.metadata.mp4;
 
+import com.drew.imaging.mp4.Mp4Handler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 
 import java.io.IOException;
@@ -35,31 +37,31 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     }
 
     @Override
-    public boolean shouldAcceptAtom(String fourCC)
+    public boolean shouldAcceptBox(Box box)
     {
-        return fourCC.equals(getMediaInformation())
-            || fourCC.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)
-            || fourCC.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE);
+        return box.type.equals(getMediaInformation())
+            || box.type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)
+            || box.type.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE);
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC)
+    public boolean shouldAcceptContainer(Box box)
     {
-        return fourCC.equals(Mp4ContainerTypes.BOX_SAMPLE_TABLE)
-            || fourCC.equals(Mp4ContainerTypes.BOX_MEDIA_INFORMATION);
+        return box.type.equals(Mp4ContainerTypes.BOX_SAMPLE_TABLE)
+            || box.type.equals(Mp4ContainerTypes.BOX_MEDIA_INFORMATION);
     }
 
     @Override
-    public Mp4Handler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    public Mp4Handler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
-            if (fourCC.equals(getMediaInformation())) {
-                processMediaInformation(reader);
-            } else if (fourCC.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)) {
-                processSampleDescription(reader);
-            } else if (fourCC.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE)) {
-                processTimeToSample(reader);
+            if (box.type.equals(getMediaInformation())) {
+                processMediaInformation(reader, box);
+            } else if (box.type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)) {
+                processSampleDescription(reader, box);
+            } else if (box.type.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE)) {
+                processTimeToSample(reader, box);
             }
         }
         return this;
@@ -67,9 +69,9 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
 
     protected abstract String getMediaInformation();
 
-    protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
+    protected abstract void processSampleDescription(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
 
-    protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;
+    protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
 }

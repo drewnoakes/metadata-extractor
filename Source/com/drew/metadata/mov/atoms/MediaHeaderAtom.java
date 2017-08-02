@@ -6,7 +6,7 @@ import com.drew.metadata.mov.QtHandlerFactory;
 import java.io.IOException;
 
 /**
- * Extracts data from the 'moov' atom's movie header marked by the fourCC 'mvhd'
+ * Extracts data from the 'moov' atom's movie header marked by the atom 'mvhd'
  * Index 0 is after size and type
  *
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-32947

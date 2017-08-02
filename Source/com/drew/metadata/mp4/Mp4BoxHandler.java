@@ -1,5 +1,6 @@
 package com.drew.metadata.mp4;
 
+import com.drew.imaging.mp4.Mp4Handler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
@@ -29,41 +30,41 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     }
 
     @Override
-    public boolean shouldAcceptAtom(@NotNull String fourCC)
+    public boolean shouldAcceptBox(@NotNull Box box)
     {
-        return fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)
-            || fourCC.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)
-            || fourCC.equals(Mp4BoxTypes.BOX_HANDLER)
-            || fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER);
+        return box.type.equals(Mp4BoxTypes.BOX_FILE_TYPE)
+            || box.type.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)
+            || box.type.equals(Mp4BoxTypes.BOX_HANDLER)
+            || box.type.equals(Mp4BoxTypes.BOX_MEDIA_HEADER);
     }
 
     @Override
-    public boolean shouldAcceptContainer(String fourCC)
+    public boolean shouldAcceptContainer(Box box)
     {
-        return fourCC.equals(Mp4ContainerTypes.BOX_TRACK)
-            || fourCC.equals(Mp4ContainerTypes.BOX_USER_DATA)
-            || fourCC.equals(Mp4ContainerTypes.BOX_METADATA)
-            || fourCC.equals(Mp4ContainerTypes.BOX_MOVIE)
-            || fourCC.equals(Mp4ContainerTypes.BOX_MEDIA);
+        return box.type.equals(Mp4ContainerTypes.BOX_TRACK)
+            || box.type.equals(Mp4ContainerTypes.BOX_USER_DATA)
+            || box.type.equals(Mp4ContainerTypes.BOX_METADATA)
+            || box.type.equals(Mp4ContainerTypes.BOX_MOVIE)
+            || box.type.equals(Mp4ContainerTypes.BOX_MEDIA);
     }
 
     @Override
-    public Mp4Handler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
+    public Mp4Handler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
-            if (fourCC.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)) {
-                processMovieHeader(directory, new SequentialByteArrayReader(payload));
-            } else if (fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
-                processFileType(directory, reader, payload.length);
-            } else if (fourCC.equals(Mp4BoxTypes.BOX_HANDLER)) {
-                HandlerBox box = new HandlerBox(reader, baseAtom);
-                return handlerFactory.getHandler(box, metadata);
-            } else if (fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
-                processMediaHeader(new SequentialByteArrayReader(payload));
+            if (box.type.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)) {
+                processMovieHeader(reader, box);
+            } else if (box.type.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
+                processFileType(reader, box);
+            } else if (box.type.equals(Mp4BoxTypes.BOX_HANDLER)) {
+                HandlerBox handlerBox = new HandlerBox(reader, box);
+                return handlerFactory.getHandler(handlerBox, metadata);
+            } else if (box.type.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
+                processMediaHeader(reader, box);
             }
         } else {
-            if (fourCC.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
+            if (box.type.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
                 directory.addError("Compressed QuickTime movies not supported");
             }
         }
@@ -74,23 +75,23 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
      * Extracts data from the 'ftyp' atom
      * Index 0 is after size and type
      */
-    private void processFileType(@NotNull Mp4Directory directory, @NotNull SequentialReader reader, @NotNull long size) throws IOException
+    private void processFileType(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {
-        FileTypeBox box = new FileTypeBox(reader, baseAtom);
-        box.addMetadata(directory);
+        FileTypeBox fileTypeBox = new FileTypeBox(reader, box);
+        fileTypeBox.addMetadata(directory);
     }
 
     /**
-     * Extracts data from the 'moov' atom's movie header marked by the fourCC 'mvhd'
+     * Extracts data from the 'moov' atom's movie header marked by the box 'mvhd'
      */
-    private void processMovieHeader(@NotNull Mp4Directory directory, @NotNull SequentialReader reader) throws IOException
+    private void processMovieHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {
-        MovieHeaderBox box = new MovieHeaderBox(reader, baseAtom);
-        box.addMetadata(directory);
+        MovieHeaderBox movieHeaderBox = new MovieHeaderBox(reader, box);
+        movieHeaderBox.addMetadata(directory);
     }
 
-    private void processMediaHeader(@NotNull SequentialReader reader) throws IOException
+    private void processMediaHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {
-        MediaHeaderBox box = new MediaHeaderBox(reader, baseAtom);
+        MediaHeaderBox mediaHeaderBox = new MediaHeaderBox(reader, box);
     }
 }

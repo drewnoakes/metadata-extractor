@@ -1,11 +1,11 @@
 package com.drew.metadata.mp4;
 
-import com.drew.imaging.quicktime.ContainerTypesSample;
+import java.util.ArrayList;
 
 /**
  * @author Payton Garland
  */
-public class Mp4ContainerTypes extends ContainerTypesSample
+public class Mp4ContainerTypes
 {
     public static final String BOX_MOVIE                            = "moov";
     public static final String BOX_USER_DATA                        = "udta";
@@ -19,6 +19,8 @@ public class Mp4ContainerTypes extends ContainerTypesSample
     public static final String BOX_MEDIA_TEXT                       = "text";
     public static final String BOX_MEDIA_SUBTITLE                   = "sbtl";
     public static final String BOX_MEDIA_NULL                       = "nmhd";
+
+    public static ArrayList<String> _containerList = new ArrayList<String>();
 
     static {
         _containerList.add(BOX_MOVIE);

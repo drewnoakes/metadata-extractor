@@ -5,6 +5,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtMediaHandler;
+import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.atoms.TimeToSampleAtom;
 import com.drew.metadata.mov.atoms.VideoInformationMediaHeaderAtom;
 import com.drew.metadata.mov.atoms.VideoSampleDescriptionAtom;
@@ -34,29 +35,29 @@ public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
     }
 
     @Override
-    public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
+    public void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        VideoSampleDescriptionAtom atom = new VideoSampleDescriptionAtom(reader, baseAtom);
-        atom.addMetadata(directory);
+        VideoSampleDescriptionAtom videoSampleDescriptionAtom = new VideoSampleDescriptionAtom(reader, atom);
+        videoSampleDescriptionAtom.addMetadata(directory);
     }
 
     /**
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-25642
      */
     @Override
-    public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
+    public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        VideoInformationMediaHeaderAtom atom = new VideoInformationMediaHeaderAtom(reader, baseAtom);
-        atom.addMetadata(directory);
+        VideoInformationMediaHeaderAtom videoInformationMediaHeaderAtom = new VideoInformationMediaHeaderAtom(reader, atom);
+        videoInformationMediaHeaderAtom.addMetadata(directory);
     }
 
     /**
      * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFJII
      */
     @Override
-    public void processTimeToSample(@NotNull SequentialReader reader) throws IOException
+    public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        TimeToSampleAtom atom = new TimeToSampleAtom(reader, baseAtom);
-        atom.addMetadata(directory);
+        TimeToSampleAtom timeToSampleAtom = new TimeToSampleAtom(reader, atom);
+        timeToSampleAtom.addMetadata(directory);
     }
 }

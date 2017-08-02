@@ -4,6 +4,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.*;
+import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.atoms.SoundInformationMediaHeaderAtom;
 import com.drew.metadata.mov.atoms.SoundSampleDescriptionAtom;
 
@@ -32,21 +33,21 @@ public class QtSoundHandler extends QtMediaHandler<QtSoundDirectory>
     }
 
     @Override
-    public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
+    public void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        SoundSampleDescriptionAtom atom = new SoundSampleDescriptionAtom(reader, baseAtom);
-        atom.addMetadata(directory);
+        SoundSampleDescriptionAtom soundSampleDescriptionAtom = new SoundSampleDescriptionAtom(reader, atom);
+        soundSampleDescriptionAtom.addMetadata(directory);
     }
 
     @Override
-    public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
+    public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        SoundInformationMediaHeaderAtom atom = new SoundInformationMediaHeaderAtom(reader, baseAtom);
-        atom.addMetadata(directory);
+        SoundInformationMediaHeaderAtom soundInformationMediaHeaderAtom = new SoundInformationMediaHeaderAtom(reader, atom);
+        soundInformationMediaHeaderAtom.addMetadata(directory);
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
         directory.setDouble(QtSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QtHandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }
