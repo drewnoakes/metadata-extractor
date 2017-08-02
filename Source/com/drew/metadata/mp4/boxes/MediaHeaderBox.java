@@ -5,7 +5,7 @@ import com.drew.metadata.mp4.Mp4HandlerFactory;
 
 import java.io.IOException;
 
-public class BoxHeaderMedia extends BoxFull
+public class MediaHeaderBox extends FullBox
 {
     long creationTime;
     long modificationTime;
@@ -13,7 +13,7 @@ public class BoxHeaderMedia extends BoxFull
     long duration;
     String language;
 
-    public BoxHeaderMedia(SequentialReader reader, Box box) throws IOException
+    public MediaHeaderBox(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

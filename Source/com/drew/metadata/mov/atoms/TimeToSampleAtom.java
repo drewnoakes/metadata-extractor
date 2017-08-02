@@ -7,14 +7,14 @@ import com.drew.metadata.mov.media.QtVideoDirectory;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class AtomTimeToSample extends AtomFull
+public class TimeToSampleAtom extends FullAtom
 {
     long numberOfEntries;
     ArrayList<Entry> entries;
     long sampleCount;
     long sampleDuration;
 
-    public AtomTimeToSample(SequentialReader reader, Atom atom) throws IOException
+    public TimeToSampleAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

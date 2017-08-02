@@ -4,7 +4,7 @@ import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
 
-public class SampleEntry extends BoxFull
+public class SampleEntry extends FullBox
 {
     long numberOfEntries;
     long sampleDescriptionSize;

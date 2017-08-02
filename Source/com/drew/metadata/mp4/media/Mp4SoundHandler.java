@@ -5,9 +5,9 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4MediaHandler;
-import com.drew.metadata.mp4.boxes.SampleEntryAudio;
-import com.drew.metadata.mp4.boxes.BoxHeaderMediaSound;
-import com.drew.metadata.mp4.boxes.BoxTimeToSample;
+import com.drew.metadata.mp4.boxes.AudioSampleEntry;
+import com.drew.metadata.mp4.boxes.SoundMediaHeaderBox;
+import com.drew.metadata.mp4.boxes.TimeToSampleBox;
 
 import java.io.IOException;
 
@@ -36,21 +36,21 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
     @Override
     public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        SampleEntryAudio box = new SampleEntryAudio(reader, baseAtom);
+        AudioSampleEntry box = new AudioSampleEntry(reader, baseAtom);
         box.addMetadata(directory);
     }
 
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        BoxHeaderMediaSound box = new BoxHeaderMediaSound(reader, baseAtom);
+        SoundMediaHeaderBox box = new SoundMediaHeaderBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 
     @Override
     protected void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
-        BoxTimeToSample box = new BoxTimeToSample(reader, baseAtom);
+        TimeToSampleBox box = new TimeToSampleBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 }

@@ -5,9 +5,9 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mp4.Mp4MediaHandler;
-import com.drew.metadata.mp4.boxes.BoxTimeToSample;
-import com.drew.metadata.mp4.boxes.BoxHeaderMediaVideo;
-import com.drew.metadata.mp4.boxes.SampleEntryVisual;
+import com.drew.metadata.mp4.boxes.TimeToSampleBox;
+import com.drew.metadata.mp4.boxes.VideoMediaHeaderBox;
+import com.drew.metadata.mp4.boxes.VisualSampleEntry;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        SampleEntryVisual box = new SampleEntryVisual(reader, baseAtom);
+        VisualSampleEntry box = new VisualSampleEntry(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -46,7 +46,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        BoxHeaderMediaVideo box = new BoxHeaderMediaVideo(reader, baseAtom);
+        VideoMediaHeaderBox box = new VideoMediaHeaderBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 
@@ -56,7 +56,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     @Override
     public void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
-        BoxTimeToSample box = new BoxTimeToSample(reader, baseAtom);
+        TimeToSampleBox box = new TimeToSampleBox(reader, baseAtom);
         box.addMetadata(directory);
     }
 }

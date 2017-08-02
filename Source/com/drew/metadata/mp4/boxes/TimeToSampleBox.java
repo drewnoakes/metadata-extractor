@@ -8,12 +8,12 @@ import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class BoxTimeToSample extends BoxFull
+public class TimeToSampleBox extends FullBox
 {
     long entryCount;
     ArrayList<EntryCount> entries;
 
-    public BoxTimeToSample(SequentialReader reader, Box box) throws IOException
+    public TimeToSampleBox(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

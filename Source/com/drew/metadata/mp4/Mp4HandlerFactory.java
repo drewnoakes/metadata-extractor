@@ -1,7 +1,7 @@
 package com.drew.metadata.mp4;
 
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mp4.boxes.BoxHandler;
+import com.drew.metadata.mp4.boxes.HandlerBox;
 import com.drew.metadata.mp4.media.*;
 
 public class Mp4HandlerFactory
@@ -25,7 +25,7 @@ public class Mp4HandlerFactory
         this.caller = caller;
     }
 
-    public Mp4Handler getHandler(BoxHandler box, Metadata metadata)
+    public Mp4Handler getHandler(HandlerBox box, Metadata metadata)
     {
         String type = box.getHandlerType();
         if (type.equals(HANDLER_SOUND_MEDIA)) {

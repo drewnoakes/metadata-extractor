@@ -11,7 +11,7 @@ import java.io.IOException;
  *
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-32947
  */
-public class AtomHeaderMedia extends AtomFull
+public class MediaHeaderAtom extends FullAtom
 {
     long creationTime;
     long modificationTime;
@@ -20,7 +20,7 @@ public class AtomHeaderMedia extends AtomFull
     int language;
     int quality;
 
-    public AtomHeaderMedia(SequentialReader reader, Atom atom) throws IOException
+    public MediaHeaderAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

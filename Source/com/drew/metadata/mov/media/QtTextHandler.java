@@ -5,7 +5,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtMediaHandler;
-import com.drew.metadata.mov.atoms.AtomSampleDescriptionText;
+import com.drew.metadata.mov.atoms.TextSampleDescriptionAtom;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ public class QtTextHandler extends QtMediaHandler<QtTextDirectory>
     @Override
     protected void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        AtomSampleDescriptionText atom = new AtomSampleDescriptionText(reader, baseAtom);
+        TextSampleDescriptionAtom atom = new TextSampleDescriptionAtom(reader, baseAtom);
         atom.addMetadata(directory);
     }
 

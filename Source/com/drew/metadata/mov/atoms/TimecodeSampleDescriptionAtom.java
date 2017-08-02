@@ -5,9 +5,9 @@ import com.drew.metadata.mov.media.QtTimecodeDirectory;
 
 import java.io.IOException;
 
-public class AtomSampleDescriptionTimecode extends AtomSampleDescription<AtomSampleDescriptionTimecode.TimecodeSampleDescription>
+public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<TimecodeSampleDescriptionAtom.TimecodeSampleDescription>
 {
-    public AtomSampleDescriptionTimecode(SequentialReader reader, Atom atom) throws IOException
+    public TimecodeSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

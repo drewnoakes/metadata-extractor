@@ -7,13 +7,13 @@ import com.drew.metadata.mp4.Mp4Directory;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class BoxFileType extends Box
+public class FileTypeBox extends Box
 {
     String majorBrand;
     long minorVersion;
     ArrayList<String> compatibleBrands;
 
-    public BoxFileType(SequentialReader reader, Box box) throws IOException
+    public FileTypeBox(SequentialReader reader, Box box) throws IOException
     {
         super(box);
 

@@ -5,9 +5,9 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mov.QtMediaHandler;
-import com.drew.metadata.mov.atoms.AtomTimeToSample;
-import com.drew.metadata.mov.atoms.AtomHeaderMediaVideoInformation;
-import com.drew.metadata.mov.atoms.AtomSampleDescriptionVideo;
+import com.drew.metadata.mov.atoms.TimeToSampleAtom;
+import com.drew.metadata.mov.atoms.VideoInformationMediaHeaderAtom;
+import com.drew.metadata.mov.atoms.VideoSampleDescriptionAtom;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
     @Override
     public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        AtomSampleDescriptionVideo atom = new AtomSampleDescriptionVideo(reader, baseAtom);
+        VideoSampleDescriptionAtom atom = new VideoSampleDescriptionAtom(reader, baseAtom);
         atom.addMetadata(directory);
     }
 
@@ -46,7 +46,7 @@ public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
     @Override
     public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        AtomHeaderMediaVideoInformation atom = new AtomHeaderMediaVideoInformation(reader, baseAtom);
+        VideoInformationMediaHeaderAtom atom = new VideoInformationMediaHeaderAtom(reader, baseAtom);
         atom.addMetadata(directory);
     }
 
@@ -56,7 +56,7 @@ public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
     @Override
     public void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
-        AtomTimeToSample atom = new AtomTimeToSample(reader, baseAtom);
+        TimeToSampleAtom atom = new TimeToSampleAtom(reader, baseAtom);
         atom.addMetadata(directory);
     }
 }

@@ -4,13 +4,10 @@ import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.media.QtMusicDirectory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-public class AtomMovie extends AtomSampleDescription<AtomMovie.MusicSampleDescription>
+public class MusicSampleDescriptionAtom extends SampleDescriptionAtom<MusicSampleDescriptionAtom.MusicSampleDescription>
 {
-    ArrayList<MusicSampleDescription> sampleDescriptions;
-
-    public AtomMovie(SequentialReader reader, Atom atom) throws IOException
+    public MusicSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

@@ -6,9 +6,9 @@ import com.drew.metadata.mov.media.QtVideoDirectory;
 
 import java.io.IOException;
 
-public class AtomSampleDescriptionVideo extends AtomSampleDescription<AtomSampleDescriptionVideo.VideoSampleDescription>
+public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampleDescriptionAtom.VideoSampleDescription>
 {
-    public AtomSampleDescriptionVideo(SequentialReader reader, Atom atom) throws IOException
+    public VideoSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

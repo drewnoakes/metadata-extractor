@@ -5,12 +5,12 @@ import com.drew.metadata.mov.media.QtVideoDirectory;
 
 import java.io.IOException;
 
-public class AtomHeaderMediaVideoInformation extends AtomFull
+public class VideoInformationMediaHeaderAtom extends FullAtom
 {
     int graphicsMode;
     int[] opcolor;
 
-    public AtomHeaderMediaVideoInformation(SequentialReader reader, Atom atom) throws IOException
+    public VideoInformationMediaHeaderAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

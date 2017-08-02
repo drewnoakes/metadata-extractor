@@ -5,14 +5,14 @@ import com.drew.metadata.mp4.media.Mp4HintDirectory;
 
 import java.io.IOException;
 
-public class BoxHeaderMediaHint extends BoxFull
+public class HintMediaHeaderBox extends FullBox
 {
     int maxPDUsize;
     int avgPDUsize;
     long maxbitrate;
     long avgbitrate;
 
-    public BoxHeaderMediaHint(SequentialReader reader, Box box) throws IOException
+    public HintMediaHeaderBox(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

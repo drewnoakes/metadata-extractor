@@ -2,6 +2,7 @@ package com.drew.metadata.mov.atoms;
 
 import com.drew.imaging.quicktime.AtomSample;
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.Directory;
 
 import java.io.IOException;
 

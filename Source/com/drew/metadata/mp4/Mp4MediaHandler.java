@@ -70,7 +70,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     }
 
     protected abstract String getMediaInformation();
-    
+
     protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
 
     protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;

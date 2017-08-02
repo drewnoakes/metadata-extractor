@@ -6,10 +6,10 @@ import com.drew.metadata.mov.media.QtSoundDirectory;
 
 import java.io.IOException;
 
-public class AtomSampleDescriptionSound extends AtomSampleDescription<AtomSampleDescriptionSound.SoundSampleDescription>
+public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampleDescriptionAtom.SoundSampleDescription>
 {
 
-    public AtomSampleDescriptionSound(SequentialReader reader, Atom atom) throws IOException
+    public SoundSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

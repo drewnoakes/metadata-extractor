@@ -5,11 +5,11 @@ import com.drew.metadata.mov.media.QtSoundDirectory;
 
 import java.io.IOException;
 
-public class AtomHeaderMediaSoundInformation extends AtomFull
+public class SoundInformationMediaHeaderAtom extends FullAtom
 {
     int balance;
 
-    public AtomHeaderMediaSoundInformation(SequentialReader reader, Atom atom) throws IOException
+    public SoundInformationMediaHeaderAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

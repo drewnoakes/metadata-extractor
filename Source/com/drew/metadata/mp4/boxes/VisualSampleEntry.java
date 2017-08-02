@@ -5,7 +5,7 @@ import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
 import java.io.IOException;
 
-public class SampleEntryVisual extends SampleEntry
+public class VisualSampleEntry extends SampleEntry
 {
     int version;
     int revisionLevel;
@@ -20,7 +20,7 @@ public class SampleEntryVisual extends SampleEntry
     String compressorname;
     int depth;
 
-    public SampleEntryVisual(SequentialReader reader, Box box) throws IOException
+    public VisualSampleEntry(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 

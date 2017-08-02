@@ -5,9 +5,9 @@ import com.drew.metadata.mov.media.QtTextDirectory;
 
 import java.io.IOException;
 
-public class AtomSampleDescriptionText extends AtomSampleDescription<AtomSampleDescriptionText.TextSampleDescription>
+public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleDescriptionAtom.TextSampleDescription>
 {
-    public AtomSampleDescriptionText(SequentialReader reader, Atom atom) throws IOException
+    public TextSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }

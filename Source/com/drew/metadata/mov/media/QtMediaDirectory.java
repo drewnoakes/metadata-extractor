@@ -7,9 +7,9 @@ import java.util.HashMap;
 
 public abstract class QtMediaDirectory extends QtDirectory
 {
-    public static final int TAG_CREATION_TIME = 0x1000;
-    public static final int TAG_MODIFICATION_TIME = 0x1001;
-    public static final int TAG_DURATION = 0x1002;
+    public static final int TAG_CREATION_TIME = 0x5001;
+    public static final int TAG_MODIFICATION_TIME = 0x5002;
+    public static final int TAG_DURATION = 0x5003;
 
     protected static void addQtMediaTags(HashMap<Integer, String> map)
     {

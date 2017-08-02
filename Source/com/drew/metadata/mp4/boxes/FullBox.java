@@ -4,12 +4,12 @@ import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
 
-public class BoxFull extends Box
+public class FullBox extends Box
 {
     protected int version;
     protected byte[] flags;
 
-    public BoxFull(SequentialReader reader, Box box) throws IOException
+    public FullBox(SequentialReader reader, Box box) throws IOException
     {
         super(box);
 

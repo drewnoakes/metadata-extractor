@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-public class AtomHeaderMovie extends AtomFull
+public class MovieHeaderAtom extends FullAtom
 {
     long creationTime;
     long modificationTime;
@@ -24,7 +24,7 @@ public class AtomHeaderMovie extends AtomFull
     long currentTime;
     long nextTrackID;
 
-    public AtomHeaderMovie(SequentialReader reader, Atom atom) throws IOException
+    public MovieHeaderAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
