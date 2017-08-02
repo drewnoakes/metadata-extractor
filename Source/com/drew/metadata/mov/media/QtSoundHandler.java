@@ -1,16 +1,19 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.*;
+import com.drew.metadata.mov.atoms.SoundMediaInformationHeaderAtom;
+import com.drew.metadata.mov.atoms.SoundSampleDescriptionAtom;
 
 import java.io.IOException;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-BBCGEBEH
  */
-public class QtSoundHandler extends QtMediaHandler
+public class QtSoundHandler extends QtMediaHandler<QtSoundDirectory>
 {
     public QtSoundHandler(Metadata metadata)
     {
@@ -18,7 +21,7 @@ public class QtSoundHandler extends QtMediaHandler
     }
 
     @Override
-    protected QtDirectory getDirectory()
+    protected QtSoundDirectory getDirectory()
     {
         return new QtSoundDirectory();
     }
@@ -30,28 +33,21 @@ public class QtSoundHandler extends QtMediaHandler
     }
 
     @Override
-    public void processSampleDescription(@NotNull ByteArrayReader reader) throws IOException
+    public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        String dataFormat = new String(reader.getBytes(12, 4));
-        int numberOfChannels = reader.getInt16(32);
-        int sampleSizeBits = reader.getInt16(34);
-
-        directory.setString(QtSoundDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtSoundDirectory.TAG_AUDIO_FORMAT, dataFormat));
-        directory.setInt(QtSoundDirectory.TAG_NUMBER_OF_CHANNELS, numberOfChannels);
-        directory.setInt(QtSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSizeBits);
+        SoundSampleDescriptionAtom atom = new SoundSampleDescriptionAtom(reader, baseAtom);
+        atom.addMetadata(directory);
     }
 
     @Override
-    public void processMediaInformation(@NotNull ByteArrayReader reader) throws IOException
+    public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        int balance = reader.getInt16(4);
-        double integerPortion = balance & 0xFFFF0000;
-        double fractionPortion = (balance & 0x0000FFFF) / Math.pow(2, 4);
-        directory.setDouble(QtSoundDirectory.TAG_SOUND_BALANCE, integerPortion + fractionPortion);
+        SoundMediaInformationHeaderAtom atom = new SoundMediaInformationHeaderAtom(reader, baseAtom);
+        atom.addMetadata(directory);
     }
 
     @Override
-    protected void processTimeToSample(@NotNull ByteArrayReader reader) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader) throws IOException
     {
         directory.setDouble(QtSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QtHandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }

@@ -8,7 +8,7 @@ public class HandlerReferenceAtom extends FullAtom
 {
     public String getComponentType()
     {
-        return componentType;
+        return componentSubtype;
     }
 
     String componentType;

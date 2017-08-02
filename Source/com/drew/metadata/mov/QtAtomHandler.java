@@ -21,7 +21,7 @@ import java.util.Date;
 /**
  * @author Payton Garland
  */
-public class QtAtomHandler extends QtHandler
+public class QtAtomHandler extends QtHandler<QtDirectory>
 {
     private QtHandlerFactory handlerFactory = new QtHandlerFactory(this);
 

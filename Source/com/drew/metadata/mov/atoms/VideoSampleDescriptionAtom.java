@@ -7,18 +7,42 @@ import com.drew.metadata.mov.media.QtVideoDirectory;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class VideoSampleDescriptionAtom extends SampleDescriptionAtom
+public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampleDescriptionAtom.VideoSampleDescription>
 {
-    ArrayList<VideoSampleDescription> sampleDescriptions;
-
     public VideoSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
+    }
 
-        sampleDescriptions = new ArrayList<VideoSampleDescription>();
-        for (int i = 0; i < numberOfEntries; i++) {
-            sampleDescriptions.add(new VideoSampleDescription(reader));
-        }
+    @Override
+    VideoSampleDescription getSampleDescription(SequentialReader reader) throws IOException
+    {
+        return new VideoSampleDescription(reader);
+    }
+
+    public void addMetadata(QtVideoDirectory directory)
+    {
+        VideoSampleDescription sampleDescription = sampleDescriptions.get(0);
+
+        QtDictionary.setLookup(QtVideoDirectory.TAG_VENDOR, sampleDescription.vendor, directory);
+        QtDictionary.setLookup(QtVideoDirectory.TAG_COMPRESSION_TYPE, sampleDescription.dataFormat, directory);
+
+        directory.setLong(QtVideoDirectory.TAG_TEMPORAL_QUALITY, sampleDescription.temporalQuality);
+        directory.setLong(QtVideoDirectory.TAG_SPATIAL_QUALITY, sampleDescription.spatialQuality);
+        directory.setInt(QtVideoDirectory.TAG_WIDTH, sampleDescription.width);
+        directory.setInt(QtVideoDirectory.TAG_HEIGHT, sampleDescription.height);
+        directory.setString(QtVideoDirectory.TAG_COMPRESSOR_NAME, sampleDescription.compressorName.trim());
+
+        directory.setInt(QtVideoDirectory.TAG_DEPTH, sampleDescription.depth);
+        directory.setInt(QtVideoDirectory.TAG_COLOR_TABLE, sampleDescription.colorTableID);
+
+        double horizontalInteger = (sampleDescription.horizontalResolution & 0xFFFF0000) >> 16;
+        double horizontalFraction = (sampleDescription.horizontalResolution & 0xFFFF) / Math.pow(2, 4);
+        directory.setDouble(QtVideoDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
+
+        double verticalInteger = (sampleDescription.verticalResolution & 0xFFFF0000) >> 16;
+        double verticalFraction = (sampleDescription.verticalResolution & 0xFFFF) / Math.pow(2, 4);
+        directory.setDouble(QtVideoDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 
     class VideoSampleDescription extends SampleDescription
@@ -57,30 +81,5 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom
             depth = reader.getUInt16();
             colorTableID = reader.getInt16();
         }
-    }
-
-    public void addMetadata(QtVideoDirectory directory)
-    {
-        VideoSampleDescription sampleDescription = sampleDescriptions.get(0);
-
-        QtDictionary.setLookup(QtVideoDirectory.TAG_VENDOR, sampleDescription.vendor, directory);
-        QtDictionary.setLookup(QtVideoDirectory.TAG_COMPRESSION_TYPE, sampleDescription.dataFormat, directory);
-
-        directory.setLong(QtVideoDirectory.TAG_TEMPORAL_QUALITY, sampleDescription.temporalQuality);
-        directory.setLong(QtVideoDirectory.TAG_SPATIAL_QUALITY, sampleDescription.spatialQuality);
-        directory.setInt(QtVideoDirectory.TAG_WIDTH, sampleDescription.width);
-        directory.setInt(QtVideoDirectory.TAG_HEIGHT, sampleDescription.height);
-        directory.setString(QtVideoDirectory.TAG_COMPRESSOR_NAME, sampleDescription.compressorName.trim());
-
-        directory.setInt(QtVideoDirectory.TAG_DEPTH, sampleDescription.depth);
-        directory.setInt(QtVideoDirectory.TAG_COLOR_TABLE, sampleDescription.colorTableID);
-
-        double horizontalInteger = (sampleDescription.horizontalResolution & 0xFFFF0000) >> 16;
-        double horizontalFraction = (sampleDescription.horizontalResolution & 0xFFFF) / Math.pow(2, 4);
-        directory.setDouble(QtVideoDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
-
-        double verticalInteger = (sampleDescription.verticalResolution & 0xFFFF0000) >> 16;
-        double verticalFraction = (sampleDescription.verticalResolution & 0xFFFF) / Math.pow(2, 4);
-        directory.setDouble(QtVideoDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 }

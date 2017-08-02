@@ -1,12 +1,9 @@
 package com.drew.metadata.mov.media;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtAtomTypes;
-import com.drew.metadata.mov.QtDictionary;
-import com.drew.metadata.mov.QtHandlerFactory;
 import com.drew.metadata.mov.QtMediaHandler;
 import com.drew.metadata.mov.atoms.TimeToSampleAtom;
 import com.drew.metadata.mov.atoms.VideoMediaInformationHeaderAtom;

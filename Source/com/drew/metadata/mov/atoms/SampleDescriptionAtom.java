@@ -5,29 +5,21 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SampleDescriptionAtom extends FullAtom
+public abstract class SampleDescriptionAtom<T extends SampleDescription> extends FullAtom
 {
     long numberOfEntries;
+    ArrayList<T> sampleDescriptions;
 
     public SampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
         numberOfEntries = reader.getUInt32();
-    }
-
-    class SampleDescription
-    {
-        long sampleDescriptionSize;
-        String dataFormat;
-        int dataReferenceIndex;
-
-        public SampleDescription(SequentialReader reader) throws IOException
-        {
-            sampleDescriptionSize = reader.getUInt32();
-            dataFormat = reader.getString(4);
-            reader.skip(6); // Reserved
-            dataReferenceIndex = reader.getUInt16();
+        sampleDescriptions = new ArrayList<T>();
+        for (int i = 0; i < numberOfEntries; i++) {
+            sampleDescriptions.add(getSampleDescription(reader));
         }
     }
+
+    abstract T getSampleDescription(SequentialReader reader) throws IOException;
 }
