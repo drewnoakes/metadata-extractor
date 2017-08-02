@@ -43,11 +43,13 @@ public abstract class QtMetadataHandler extends QtHandler
     @Override
     protected QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
-        if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
-            processKeys(reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)){
-            processData(payload, reader);
+        if (payload != null) {
+            SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+            if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
+                processKeys(reader);
+            } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)) {
+                processData(payload, reader);
+            }
         }
         return this;
     }

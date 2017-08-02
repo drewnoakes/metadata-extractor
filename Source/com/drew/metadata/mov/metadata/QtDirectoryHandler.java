@@ -35,22 +35,19 @@ public class QtDirectoryHandler extends QtMetadataHandler
     @Override
     protected QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
-        if (fourCC.equals(QtAtomTypes.ATOM_DATA) && currentData != null){
-            processData(payload, reader);
+        if (payload != null) {
+            SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+            if (fourCC.equals(QtAtomTypes.ATOM_DATA) && currentData != null) {
+                processData(payload, reader);
+            } else {
+                currentData = new String(reader.getBytes(4));
+            }
         } else {
-            currentData = new String(reader.getBytes(4));
-        }
-        return this;
-    }
-
-    @Override
-    protected QtHandler processContainer(String fourCC)
-    {
-        if (QtMetadataDirectory._tagIntegerMap.containsKey(fourCC)) {
-            currentData = fourCC;
-        } else {
-            currentData = null;
+            if (QtMetadataDirectory._tagIntegerMap.containsKey(fourCC)) {
+                currentData = fourCC;
+            } else {
+                currentData = null;
+            }
         }
         return this;
     }

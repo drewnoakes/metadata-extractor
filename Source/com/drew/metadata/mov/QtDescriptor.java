@@ -7,7 +7,7 @@ import com.drew.metadata.TagDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class QtDescriptor<T extends Directory> extends TagDescriptor<QtDirectory> {
+public class QtDescriptor extends TagDescriptor<QtDirectory> {
 
     public QtDescriptor(@NotNull QtDirectory directory)
     {

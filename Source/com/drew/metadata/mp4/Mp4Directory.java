@@ -22,12 +22,11 @@ public class Mp4Directory extends Directory {
     public static final int TAG_CURRENT_TIME                            = 0x010D;
     public static final int TAG_NEXT_TRACK_ID                           = 0x010E;
     public static final int TAG_TRANSFORMATION_MATRIX                   = 0x010F;
-
     public static final int TAG_MEDIA_TIME_SCALE                        = 0x0306;
 
-    public static final int TAG_MAJOR_BRAND                             = 0x1000;
-    public static final int TAG_MINOR_VERSION                           = 0x1001;
-    public static final int TAG_COMPATIBLE_BRANDS                       = 0x1002;
+    public static final int TAG_MAJOR_BRAND                             = 1;
+    public static final int TAG_MINOR_VERSION                           = 2;
+    public static final int TAG_COMPATIBLE_BRANDS                       = 3;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();

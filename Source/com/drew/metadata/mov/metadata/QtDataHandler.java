@@ -40,21 +40,18 @@ public class QtDataHandler extends QtMetadataHandler
     @Override
     protected QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
-        if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
-            processKeys(reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)){
-            processData(payload, reader);
-        }
-        return this;
-    }
-
-    @Override
-    protected QtHandler processContainer(String fourCC)
-    {
-        int numValue = ByteUtil.getInt32(fourCC.getBytes(), 0, true);
-        if (numValue > 0 && numValue < keys.size() + 1) {
-            currentIndex = numValue - 1;
+        if (payload != null) {
+            SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+            if (fourCC.equals(QtAtomTypes.ATOM_KEYS)) {
+                processKeys(reader);
+            } else if (fourCC.equals(QtAtomTypes.ATOM_DATA)) {
+                processData(payload, reader);
+            }
+        } else {
+            int numValue = ByteUtil.getInt32(fourCC.getBytes(), 0, true);
+            if (numValue > 0 && numValue < keys.size() + 1) {
+                currentIndex = numValue - 1;
+            }
         }
         return this;
     }

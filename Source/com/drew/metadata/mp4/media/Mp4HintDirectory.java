@@ -8,10 +8,10 @@ import java.util.HashMap;
 
 public class Mp4HintDirectory extends Mp4MediaDirectory
 {
-    public static final int TAG_MAX_PDU_SIZE = 1;
-    public static final int TAG_AVERAGE_PDU_SIZE = 2;
-    public static final int TAG_MAX_BITRATE = 3;
-    public static final int TAG_AVERAGE_BITRATE = 4;
+    public static final int TAG_MAX_PDU_SIZE = 101;
+    public static final int TAG_AVERAGE_PDU_SIZE = 102;
+    public static final int TAG_MAX_BITRATE = 103;
+    public static final int TAG_AVERAGE_BITRATE = 104;
 
     public Mp4HintDirectory()
     {

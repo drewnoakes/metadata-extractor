@@ -52,20 +52,16 @@ public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
     @Override
     public QtMediaHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        SequentialReader reader = new SequentialByteArrayReader(payload);
-        if (fourCC.equals(getMediaInformation())) {
-            processMediaInformation(reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
-            processSampleDescription(reader);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
-            processTimeToSample(reader);
+        if (payload != null) {
+            SequentialReader reader = new SequentialByteArrayReader(payload);
+            if (fourCC.equals(getMediaInformation())) {
+                processMediaInformation(reader);
+            } else if (fourCC.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
+                processSampleDescription(reader);
+            } else if (fourCC.equals(QtAtomTypes.ATOM_TIME_TO_SAMPLE)) {
+                processTimeToSample(reader);
+            }
         }
-        return this;
-    }
-
-    @Override
-    public QtMediaHandler processContainer(String fourCC)
-    {
         return this;
     }
 

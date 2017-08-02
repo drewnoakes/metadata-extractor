@@ -51,28 +51,25 @@ public class QtAtomHandler extends QtHandler<QtDirectory>
     @Override
     public QtHandler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        SequentialReader reader = new SequentialByteArrayReader(payload);
+        if (payload != null) {
+            SequentialReader reader = new SequentialByteArrayReader(payload);
 
-        if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
-            MovieHeaderAtom atom = new MovieHeaderAtom(reader, baseAtom);
-            atom.addMetadata(directory);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
-            FileTypeCompatibilityAtom atom = new FileTypeCompatibilityAtom(reader, baseAtom);
-            atom.addMetadata(directory);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
-            HandlerReferenceAtom atom = new HandlerReferenceAtom(reader, baseAtom);
-            return handlerFactory.getHandler(atom.getComponentType(), metadata);
-        } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
-            MediaHeaderAtom atom = new MediaHeaderAtom(reader, baseAtom);
-        }
-        return this;
-    }
-
-    @Override
-    public QtHandler processContainer(String fourCC)
-    {
-        if (fourCC.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
-            directory.addError("Compressed QuickTime movies not supported");
+            if (fourCC.equals(QtAtomTypes.ATOM_MOVIE_HEADER)) {
+                MovieHeaderAtom atom = new MovieHeaderAtom(reader, baseAtom);
+                atom.addMetadata(directory);
+            } else if (fourCC.equals(QtAtomTypes.ATOM_FILE_TYPE)) {
+                FileTypeCompatibilityAtom atom = new FileTypeCompatibilityAtom(reader, baseAtom);
+                atom.addMetadata(directory);
+            } else if (fourCC.equals(QtAtomTypes.ATOM_HANDLER)) {
+                HandlerReferenceAtom atom = new HandlerReferenceAtom(reader, baseAtom);
+                return handlerFactory.getHandler(atom.getComponentType(), metadata);
+            } else if (fourCC.equals(QtAtomTypes.ATOM_MEDIA_HEADER)) {
+                MediaHeaderAtom atom = new MediaHeaderAtom(reader, baseAtom);
+            }
+        } else {
+            if (fourCC.equals(QtContainerTypes.ATOM_COMPRESSED_MOVIE)) {
+                directory.addError("Compressed QuickTime movies not supported");
+            }
         }
         return this;
     }

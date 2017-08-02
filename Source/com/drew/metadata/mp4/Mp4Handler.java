@@ -8,7 +8,7 @@ import com.drew.metadata.mp4.boxes.Box;
 
 import java.io.IOException;
 
-public abstract class Mp4Handler<T extends Directory> extends QtHandlerSample<T, Box>
+public abstract class Mp4Handler<T extends Mp4Directory> extends QtHandlerSample<T, Box>
 {
     public Mp4Handler(Metadata metadata)
     {

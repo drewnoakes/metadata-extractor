@@ -8,22 +8,22 @@ import java.util.HashMap;
 public class Mp4VideoDirectory extends Mp4MediaDirectory
 {
     // Video Sample Description Atom
-    public static final int TAG_VENDOR                                  = 1;
-    public static final int TAG_TEMPORAL_QUALITY                        = 2;
-    public static final int TAG_SPATIAL_QUALITY                         = 3;
-    public static final int TAG_WIDTH                                   = 4;
-    public static final int TAG_HEIGHT                                  = 5;
-    public static final int TAG_HORIZONTAL_RESOLUTION                   = 6;
-    public static final int TAG_VERTICAL_RESOLUTION                     = 7;
-    public static final int TAG_COMPRESSOR_NAME                         = 8;
-    public static final int TAG_DEPTH                                   = 9;
-    public static final int TAG_COMPRESSION_TYPE                        = 10;
+    public static final int TAG_VENDOR                                  = 101;
+    public static final int TAG_TEMPORAL_QUALITY                        = 102;
+    public static final int TAG_SPATIAL_QUALITY                         = 103;
+    public static final int TAG_WIDTH                                   = 104;
+    public static final int TAG_HEIGHT                                  = 105;
+    public static final int TAG_HORIZONTAL_RESOLUTION                   = 106;
+    public static final int TAG_VERTICAL_RESOLUTION                     = 107;
+    public static final int TAG_COMPRESSOR_NAME                         = 108;
+    public static final int TAG_DEPTH                                   = 109;
+    public static final int TAG_COMPRESSION_TYPE                        = 110;
 
     // Video Media Information Header Atom
-    public static final int TAG_GRAPHICS_MODE                           = 11;
-    public static final int TAG_OPCOLOR                                 = 12;
-    public static final int TAG_COLOR_TABLE                             = 13;
-    public static final int TAG_FRAME_RATE                              = 14;
+    public static final int TAG_GRAPHICS_MODE                           = 111;
+    public static final int TAG_OPCOLOR                                 = 112;
+    public static final int TAG_COLOR_TABLE                             = 113;
+    public static final int TAG_FRAME_RATE                              = 114;
 
     public Mp4VideoDirectory()
     {

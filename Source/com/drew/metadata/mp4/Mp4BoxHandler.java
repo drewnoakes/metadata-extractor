@@ -50,25 +50,22 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     @Override
     public Mp4Handler processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException
     {
-        SequentialReader reader = new SequentialByteArrayReader(payload);
-        if (fourCC.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)) {
-            processMovieHeader(directory, new SequentialByteArrayReader(payload));
-        } else if (fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
-            processFileType(directory, reader, payload.length);
-        } else if (fourCC.equals(Mp4BoxTypes.BOX_HANDLER)) {
-            HandlerBox box = new HandlerBox(reader, baseAtom);
-            return handlerFactory.getHandler(box, metadata);
-        } else if (fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
-            processMediaHeader(new SequentialByteArrayReader(payload));
-        }
-        return this;
-    }
-
-    @Override
-    public Mp4Handler processContainer(String fourCC)
-    {
-        if (fourCC.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
-            directory.addError("Compressed QuickTime movies not supported");
+        if (payload != null) {
+            SequentialReader reader = new SequentialByteArrayReader(payload);
+            if (fourCC.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)) {
+                processMovieHeader(directory, new SequentialByteArrayReader(payload));
+            } else if (fourCC.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
+                processFileType(directory, reader, payload.length);
+            } else if (fourCC.equals(Mp4BoxTypes.BOX_HANDLER)) {
+                HandlerBox box = new HandlerBox(reader, baseAtom);
+                return handlerFactory.getHandler(box, metadata);
+            } else if (fourCC.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
+                processMediaHeader(new SequentialByteArrayReader(payload));
+            }
+        } else {
+            if (fourCC.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
+                directory.addError("Compressed QuickTime movies not supported");
+            }
         }
         return this;
     }

@@ -13,7 +13,8 @@ public abstract class QtHandlerSample<T extends Directory, U extends AtomSample>
     protected T directory;
     protected U baseAtom;
 
-    public QtHandlerSample(Metadata metadata) {
+    public QtHandlerSample(Metadata metadata)
+    {
         this.metadata = metadata;
         this.directory = getDirectory();
         metadata.addDirectory(directory);
@@ -29,5 +30,8 @@ public abstract class QtHandlerSample<T extends Directory, U extends AtomSample>
 
     protected abstract QtHandlerSample processAtom(@NotNull String fourCC, @NotNull byte[] payload) throws IOException;
 
-    protected abstract QtHandlerSample processContainer(@NotNull String fourCC);
+    protected QtHandlerSample processContainer(@NotNull String fourCC) throws IOException
+    {
+        return processAtom(fourCC, null);
+    }
 }

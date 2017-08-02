@@ -9,12 +9,12 @@ import java.util.HashMap;
 public class Mp4SoundDirectory extends Mp4MediaDirectory
 {
     // Sound Sample Description Atom
-    public static final int TAG_AUDIO_FORMAT                            = 0x0301;
-    public static final int TAG_NUMBER_OF_CHANNELS                      = 0x0302;
-    public static final int TAG_AUDIO_SAMPLE_SIZE                       = 0x0303;
-    public static final int TAG_AUDIO_SAMPLE_RATE                       = 0x0304;
+    public static final int TAG_AUDIO_FORMAT                            = 101;
+    public static final int TAG_NUMBER_OF_CHANNELS                      = 102;
+    public static final int TAG_AUDIO_SAMPLE_SIZE                       = 103;
+    public static final int TAG_AUDIO_SAMPLE_RATE                       = 104;
 
-    public static final int TAG_SOUND_BALANCE                           = 0x0305;
+    public static final int TAG_SOUND_BALANCE                           = 105;
 
     public Mp4SoundDirectory()
     {
