@@ -17,10 +17,10 @@ public class Mp4Reader
         reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
 
-        processAtoms(reader, -1, handler);
+        processBoxes(reader, -1, handler);
     }
 
-    private void processAtoms(StreamReader reader, long atomEnd, Mp4Handler mp4handler)
+    private void processBoxes(StreamReader reader, long atomEnd, Mp4Handler mp4handler)
     {
         try {
             long startPos = reader.getPosition();
@@ -34,7 +34,7 @@ public class Mp4Reader
                  */
                 if (mp4handler.shouldAcceptContainer(box)) {
 
-                    processAtoms(reader, box.size + startPos, mp4handler.processContainer(box));
+                    processBoxes(reader, box.size + startPos, mp4handler.processContainer(box));
 
                 } else if (mp4handler.shouldAcceptBox(box)) {
 
@@ -51,7 +51,7 @@ public class Mp4Reader
                 }
             }
         } catch (IOException ignored) {
-
+            System.out.println(ignored.getMessage());
         }
     }
 }

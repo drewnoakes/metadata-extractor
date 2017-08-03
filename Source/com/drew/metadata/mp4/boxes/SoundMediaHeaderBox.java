@@ -17,7 +17,7 @@ public class SoundMediaHeaderBox extends FullBox
         super(reader, box);
 
         balance = reader.getInt16();
-        reader.skip(16); // Reserved
+        reader.skip(2); // Reserved
     }
 
     public void addMetadata(Mp4SoundDirectory directory)

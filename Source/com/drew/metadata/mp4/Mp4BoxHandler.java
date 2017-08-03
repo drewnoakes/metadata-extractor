@@ -40,7 +40,6 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     public boolean shouldAcceptContainer(Box box)
     {
         return box.type.equals(Mp4ContainerTypes.BOX_TRACK)
-            || box.type.equals(Mp4ContainerTypes.BOX_USER_DATA)
             || box.type.equals(Mp4ContainerTypes.BOX_METADATA)
             || box.type.equals(Mp4ContainerTypes.BOX_MOVIE)
             || box.type.equals(Mp4ContainerTypes.BOX_MEDIA);
