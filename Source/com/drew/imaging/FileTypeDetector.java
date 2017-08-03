@@ -108,17 +108,12 @@ public class FileTypeDetector
         _root.addPath(FileType.Mp4, "ftypNDXP".getBytes());
         _root.addPath(FileType.Mp4, "ftypNDXS".getBytes());
 
-        _root.addPath(FileType.ThreeGP, "ftyp3ge6".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3ge7".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gg6".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gp1".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gp2".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gp3".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gp4".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gp5".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gp6".getBytes());
-        _root.addPath(FileType.ThreeGP, "ftyp3gs7".getBytes());
-
+        _root.addPath(FileType.Heif, "ftypmif1".getBytes());
+        _root.addPath(FileType.Heif, "ftypmsf1".getBytes());
+        _root.addPath(FileType.Heif, "ftypheic".getBytes());
+        _root.addPath(FileType.Heif, "ftypheix".getBytes());
+        _root.addPath(FileType.Heif, "ftyphevc".getBytes());
+        _root.addPath(FileType.Heif, "ftyphevx".getBytes());
     }
 
     private FileTypeDetector() throws Exception

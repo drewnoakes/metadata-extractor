@@ -159,8 +159,6 @@ public class ImageMetadataReader
                 return QtMetadataReader.readMetadata(inputStream);
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);
-            case ThreeGP:
-                return new Metadata();
             default:
                 throw new ImageProcessingException("File format is not supported");
         }

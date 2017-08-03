@@ -43,8 +43,7 @@ public enum FileType
     Riff(null, true, null),
     Mov("video/quicktime", true, ".mov", ".qt"),
     Mp4("video/mp4", false, ".mp4", ".m4a", ".m4p", ".m4b", ".m4r", ".m4v"),
-    ThreeGP("Video/3gpp", false, ".3gp"),
-    ThreeG2("video/3gpp2", false, ".3g2"),
+    Heif("image/heif", false, ".heif", ".heic"),
 
     /** Sony camera raw. */
     Arw(null, false, ".arw"),
