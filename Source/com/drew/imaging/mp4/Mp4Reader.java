@@ -23,7 +23,6 @@ public class Mp4Reader
     private void processBoxes(StreamReader reader, long atomEnd, Mp4Handler mp4Handler)
     {
         try {
-            long startPos = reader.getPosition();
             while ((atomEnd == -1) ? true : reader.getPosition() < atomEnd) {
 
                 Box box = new Box(reader);
@@ -34,7 +33,7 @@ public class Mp4Reader
                  */
                 if (mp4Handler.shouldAcceptContainer(box)) {
 
-                    processBoxes(reader, box.size + startPos, mp4Handler.processContainer(box));
+                    processBoxes(reader, box.size + reader.getPosition() - 8, mp4Handler.processContainer(box));
 
                 } else if (mp4Handler.shouldAcceptBox(box)) {
 
@@ -51,7 +50,6 @@ public class Mp4Reader
                 }
             }
         } catch (IOException ignored) {
-            System.out.println(ignored.getMessage());
         }
     }
 }

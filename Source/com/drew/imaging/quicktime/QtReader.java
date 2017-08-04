@@ -26,7 +26,6 @@ public class QtReader {
     private void processAtoms(StreamReader reader, long atomEnd, QtHandler qtHandler)
     {
         try {
-            long startPos = reader.getPosition();
             while ((atomEnd == -1) ? true : reader.getPosition() < atomEnd) {
 
                 Atom atom = new Atom(reader);
@@ -37,7 +36,7 @@ public class QtReader {
                  */
                 if (qtHandler.shouldAcceptContainer(atom)) {
 
-                    processAtoms(reader, atom.size + startPos, qtHandler.processContainer(atom));
+                    processAtoms(reader, atom.size + reader.getPosition() - 8, qtHandler.processContainer(atom));
 
                 } else if (qtHandler.shouldAcceptAtom(atom)) {
 
