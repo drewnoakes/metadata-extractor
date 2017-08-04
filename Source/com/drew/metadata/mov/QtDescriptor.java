@@ -23,7 +23,7 @@ public class QtDescriptor extends TagDescriptor<QtDirectory> {
             case (QtDirectory.TAG_COMPATIBLE_BRANDS):
                 return getCompatibleBrandsDescription(tagType);
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 
