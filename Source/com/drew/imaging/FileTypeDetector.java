@@ -20,11 +20,13 @@
  */
 package com.drew.imaging;
 
+import com.drew.imaging.zip.ZipFileTypeDetector;
 import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.zip.ZipInputStream;
 
 /**
  * Examines the a file's first bytes and estimates the file's type.
@@ -73,6 +75,8 @@ public class FileTypeDetector
         _root.addPath(FileType.Orf, "IIRS".getBytes(), new byte[]{(byte)0x08, 0x00});
         _root.addPath(FileType.Raf, "FUJIFILMCCD-RAW".getBytes());
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
+
+        _root.addPath(FileType.Zip, "PK".getBytes());
 
     }
 
@@ -145,6 +149,10 @@ public class FileTypeDetector
         switch (fileType) {
             case Riff:
                 return detectFileType(inputStream, 8);
+            case Zip:
+                inputStream.reset();
+                ZipFileTypeDetector zipFileTypeDetector = new ZipFileTypeDetector();
+                return zipFileTypeDetector.detectFileType(inputStream);
             case Tiff:
             default:
                 return fileType;

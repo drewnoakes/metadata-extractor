@@ -153,6 +153,12 @@ public class ImageMetadataReader
                 return WebpMetadataReader.readMetadata(inputStream);
             case Raf:
                 return RafMetadataReader.readMetadata(inputStream);
+            case Docx:
+            case Pptx:
+            case Xlsx:
+            case Indd:
+            case Zip:
+                return new Metadata();
             default:
                 throw new ImageProcessingException("File format is not supported");
         }

@@ -41,6 +41,11 @@ public enum FileType
     Ico("image/x-icon", false, ".ico"),
     Pcx("image/x-pcx", false, ".pcx"),
     Riff(null, true, null),
+    Zip("application/zip", true, ".zip", ".zipx"),
+    Indd("application/zip", false, ".indd"),
+    Docx("application/vnd.openxmlformats-officedocument.wordprocessingml.document", false, ".docx", ".docm"),
+    Pptx("application/vnd.openxmlformats-officedocument.presentationml.presentation", false, ".pptx", ".pptm"),
+    Xlsx("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", false, ".xlsx", ".xlsm"),
 
     /** Sony camera raw. */
     Arw(null, false, ".arw"),
