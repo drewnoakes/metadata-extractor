@@ -41,7 +41,7 @@ public class OoxmlFilter extends ZipFilter
     }
 
     @Override
-    HashMap<List<Boolean>, FileType> addConditions()
+    HashMap<List<Boolean>, FileType> createConditionsMap()
     {
         HashMap<List<Boolean>, FileType> conditionsMap = new HashMap<List<Boolean>, FileType>();
 
