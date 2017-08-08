@@ -12,8 +12,6 @@ import java.util.zip.ZipInputStream;
  */
 public interface ZipFilter
 {
-    // List of boolean flags that specify whether this filter's conditions were met
-
     public FileType getFileType();
 
     public void filterEntry(ZipEntry entry, ZipInputStream inputStream);

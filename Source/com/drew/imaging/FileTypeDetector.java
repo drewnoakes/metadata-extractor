@@ -150,9 +150,7 @@ public class FileTypeDetector
             case Riff:
                 return detectFileType(inputStream, 8);
             case Zip:
-                inputStream.reset();
-                ZipFileTypeDetector zipFileTypeDetector = new ZipFileTypeDetector();
-                return zipFileTypeDetector.detectFileType(inputStream);
+                return ZipFileTypeDetector.detectFileType(inputStream);
             case Tiff:
             default:
                 return fileType;

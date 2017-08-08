@@ -32,7 +32,7 @@ public class IndesignPackageFilter implements ZipFilter
     @Override
     public void filterEntry(ZipEntry entry, ZipInputStream inputStream)
     {
-        if (entry.getName().endsWith("Links/")) {
+        if (entry.isDirectory() && entry.getName().endsWith("Links/")) {
             containsLinksDiretory = true;
         } else if (entry.getName().endsWith(".indd")) {
             containsInddFile = true;

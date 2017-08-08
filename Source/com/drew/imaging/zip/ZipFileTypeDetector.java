@@ -5,7 +5,7 @@ import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -15,17 +15,12 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipFileTypeDetector
 {
-    List<ZipFilter> filters;
+    static List<ZipFilter> filters;
 
-    public ZipFileTypeDetector()
+    public static FileType detectFileType(@NotNull InputStream inputStream) throws IOException
     {
-        filters = new ArrayList<ZipFilter>();
-        filters.add(new IndesignPackageFilter());
-        filters.add(new OoxmlFilter());
-    }
+        filters = Arrays.asList(new IndesignPackageFilter(), new OoxmlFilter());
 
-    public FileType detectFileType(@NotNull InputStream inputStream) throws IOException
-    {
         ZipInputStream reader = new ZipInputStream(inputStream);
         ZipEntry entry = reader.getNextEntry();
 
