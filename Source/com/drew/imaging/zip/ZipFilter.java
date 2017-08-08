@@ -14,7 +14,7 @@ import java.util.zip.ZipInputStream;
  */
 public abstract class ZipFilter
 {
-    FileType getFileType()
+    public FileType getFileType()
     {
         HashMap<List<Boolean>, FileType> conditionsMap = createConditionsMap();
         for (List<Boolean> booleans : conditionsMap.keySet()) {

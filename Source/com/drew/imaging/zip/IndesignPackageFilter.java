@@ -13,8 +13,8 @@ import java.util.zip.ZipInputStream;
  */
 public class IndesignPackageFilter extends ZipFilter
 {
-    private Boolean containsInddFile;
-    private Boolean containsLinksDirectory;
+    private boolean containsInddFile;
+    private boolean containsLinksDirectory;
 
     public IndesignPackageFilter()
     {
