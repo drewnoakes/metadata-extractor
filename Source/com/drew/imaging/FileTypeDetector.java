@@ -77,6 +77,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Rw2, "II".getBytes(), new byte[]{0x55, 0x00});
 
         _root.addPath(FileType.Zip, "PK".getBytes());
+        _root.addPath(FileType.Indd, new byte[]{0x06, 0x06, (byte)0xED, (byte)0xF5, (byte)0xD8, 0x1D, 0x46, (byte)0xE5, (byte)0xBD, 0x31, (byte)0xEF, (byte)0xE7, (byte)0xFE, 0x74, (byte)0xB7, 0x1D});
 
     }
 

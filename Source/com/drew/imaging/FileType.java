@@ -43,6 +43,7 @@ public enum FileType
     Riff(null, true, null),
     Zip("application/zip", true, ".zip", ".zipx"),
     Indd("application/octet-stream", false, ".indd"),
+    IndesignPackage("application/octet-stream", false, ".zip"),
     Docx("application/vnd.openxmlformats-officedocument.wordprocessingml.document", false, ".docx", ".docm"),
     Pptx("application/vnd.openxmlformats-officedocument.presentationml.presentation", false, ".pptx", ".pptm"),
     Xlsx("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", false, ".xlsx", ".xlsm"),

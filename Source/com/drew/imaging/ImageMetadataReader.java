@@ -23,6 +23,7 @@ package com.drew.imaging;
 import com.drew.imaging.bmp.BmpMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
+import com.drew.imaging.indd.InddMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.pcx.PcxMetadataReader;
 import com.drew.imaging.png.PngMetadataReader;
@@ -153,10 +154,12 @@ public class ImageMetadataReader
                 return WebpMetadataReader.readMetadata(inputStream);
             case Raf:
                 return RafMetadataReader.readMetadata(inputStream);
+            case Indd:
+                return InddMetadataReader.readMetadata(inputStream);
+            case IndesignPackage:
             case Docx:
             case Pptx:
             case Xlsx:
-            case Indd:
             case Zip:
                 return new Metadata();
             default:
