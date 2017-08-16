@@ -24,6 +24,7 @@ public class ZipFileTypeDetector
         filters = Arrays.asList(new IndesignPackageFilter(), new OoxmlFilter(), new ZipFileFilter());
 
         ZipInputStream reader = new ZipInputStream(inputStream);
+
         ZipEntry entry = reader.getNextEntry();
 
         while (entry != null) {

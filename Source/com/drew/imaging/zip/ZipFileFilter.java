@@ -21,8 +21,8 @@ public class ZipFileFilter extends ZipFilter
     public ZipDirectory directory;
     private ArrayList<String> names;
     private ArrayList<String> modDates;
-    private ArrayList<Long> compressedSizes;
-    private ArrayList<Long> uncompressedSizes;
+    private ArrayList<String> compressedSizes;
+    private ArrayList<String> uncompressedSizes;
     private ArrayList<String> compressionMethods;
     private ArrayList<String> comments;
 
@@ -34,8 +34,8 @@ public class ZipFileFilter extends ZipFilter
 
         names = new ArrayList<String>();
         modDates = new ArrayList<String>();
-        compressedSizes = new ArrayList<Long>();
-        uncompressedSizes = new ArrayList<Long>();
+        compressedSizes = new ArrayList<String>();
+        uncompressedSizes = new ArrayList<String>();
         compressionMethods = new ArrayList<String>();
         comments = new ArrayList<String>();
     }
@@ -43,23 +43,47 @@ public class ZipFileFilter extends ZipFilter
     @Override
     void filterEntry(ZipEntry entry, ZipInputStream inputStream)
     {
-        names.add(entry.getName());
+        if (entry.getName() != null) {
+            names.add(entry.getName());
+        } else {
+            names.add("");
+        }
         directory.setStringArray(12, names.toArray(new String[names.size()]));
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        modDates.add(new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").format(new Date(entry.getTime())));
+        if (entry.getTime() != -1) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            modDates.add(new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").format(new Date(entry.getTime())));
+        } else {
+            modDates.add("");
+        }
         directory.setStringArray(6, modDates.toArray(new String[modDates.size()]));
 
-        compressedSizes.add(entry.getCompressedSize());
-        directory.setObjectArray(8, compressedSizes.toArray(new Long[compressedSizes.size()]));
+        if (entry.getCompressedSize() != -1) {
+            compressedSizes.add(Long.toString(entry.getCompressedSize()));
+        } else {
+            compressedSizes.add(Long.toString(-1L));
+        }
+        directory.setStringArray(8, compressedSizes.toArray(new String[compressedSizes.size()]));
 
-        uncompressedSizes.add(entry.getSize());
-        directory.setObjectArray(9, uncompressedSizes.toArray(new Long[uncompressedSizes.size()]));
+        if (entry.getSize() != -1) {
+            uncompressedSizes.add(Long.toString(entry.getSize()));
+        } else {
+            uncompressedSizes.add(Long.toString(-1L));
+        }
+        directory.setStringArray(9, uncompressedSizes.toArray(new String[uncompressedSizes.size()]));
 
-        compressionMethods.add(getCompressionMethod(entry.getMethod()));
+        if (entry.getMethod() != -1) {
+            compressionMethods.add(getCompressionMethod(entry.getMethod()));
+        } else {
+            compressionMethods.add("");
+        }
         directory.setStringArray(4, compressionMethods.toArray(new String[compressionMethods.size()]));
 
-        comments.add(entry.getComment());
+        if (entry.getComment() != null) {
+            comments.add(entry.getComment());
+        } else {
+            comments.add("");
+        }
         directory.setStringArray(18, comments.toArray(new String[comments.size()]));
     }
 
