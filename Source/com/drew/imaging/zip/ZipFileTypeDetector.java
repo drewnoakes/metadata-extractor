@@ -2,6 +2,7 @@ package com.drew.imaging.zip;
 
 import com.drew.imaging.FileType;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +17,11 @@ import java.util.zip.ZipInputStream;
 public class ZipFileTypeDetector
 {
     static List<ZipFilter> filters;
+    static Metadata metadata;
 
     public static FileType detectFileType(@NotNull InputStream inputStream) throws IOException
     {
-        filters = Arrays.asList(new IndesignPackageFilter(), new OoxmlFilter());
+        filters = Arrays.asList(new IndesignPackageFilter(), new OoxmlFilter(), new ZipFileFilter());
 
         ZipInputStream reader = new ZipInputStream(inputStream);
         ZipEntry entry = reader.getNextEntry();

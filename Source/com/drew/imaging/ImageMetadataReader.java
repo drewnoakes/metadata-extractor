@@ -32,6 +32,7 @@ import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
 import com.drew.imaging.zip.IndesignPackageFilter;
+import com.drew.imaging.zip.ZipFileFilter;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
@@ -159,10 +160,11 @@ public class ImageMetadataReader
                 return InddMetadataReader.readMetadata(inputStream);
             case IndesignPackage:
                 return IndesignPackageFilter.metadata;
+            case Zip:
+                return ZipFileFilter.metadata;
             case Docx:
             case Pptx:
             case Xlsx:
-            case Zip:
                 return new Metadata();
             default:
                 throw new ImageProcessingException("File format is not supported");
