@@ -1,9 +1,11 @@
 package com.drew.metadata.indd.structs;
 
+import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.indd.InddDirectory;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Payton Garland
@@ -16,9 +18,15 @@ public class MasterPage
     long fSequenceNumber;
     long fFilePages;
 
-    public MasterPage(SequentialReader reader) throws IOException
+    public MasterPage(SequentialReader reader) throws IOException, ImageProcessingException
     {
         fGUID = reader.getBytes(16);
+
+        if (!Arrays.equals(fGUID, new byte[]{0x06, 0x06, (byte)0xED, (byte)0xF5, (byte)0xD8, 0x1D, 0x46, (byte)0xE5, (byte)0xBD, 0x31, (byte)0xEF, (byte)0xE7, (byte)0xFE, 0x74, (byte)0xB7, 0x1D}))
+        {
+            throw new ImageProcessingException("Not an INDD file");
+        }
+
         fMagicBytes = reader.getString(8);
         fObjectStreamEndian = (char)reader.getUInt8();
         reader.skip(239); // Irrelevant

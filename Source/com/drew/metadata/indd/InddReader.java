@@ -1,5 +1,6 @@
 package com.drew.metadata.indd;
 
+import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -10,6 +11,8 @@ import com.drew.metadata.xmp.XmpReader;
 import com.drew.metadata.xmp.handlers.InddHandler;
 
 import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author Payton Garland
@@ -19,10 +22,15 @@ public class InddReader
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
         try {
+            MasterPage masterPage;
+            try {
+                masterPage = new MasterPage(reader);
+            } catch (ImageProcessingException e) {
+                return;
+            }
+
             InddDirectory directory = new InddDirectory();
             metadata.addDirectory(directory);
-
-            MasterPage masterPage = new MasterPage(reader);
             masterPage.addMetadata(directory);
 
             reader.skip(4096 * (masterPage.getfFilePages() - 1));

@@ -4,9 +4,12 @@ import com.adobe.xmp.impl.Base64;
 import com.adobe.xmp.properties.XMPProperty;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.FileType;
+import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.StreamReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import com.drew.metadata.indd.InddReader;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -22,11 +25,13 @@ import java.util.zip.ZipInputStream;
  */
 public class IndesignPackageFilter extends ZipFilter
 {
+    public static Metadata metadata;
     private boolean containsInddFile;
     private boolean containsLinksDirectory;
 
     public IndesignPackageFilter()
     {
+        metadata = new Metadata();
         containsInddFile = false;
         containsLinksDirectory = false;
     }
@@ -37,6 +42,7 @@ public class IndesignPackageFilter extends ZipFilter
         if (entry.isDirectory() && entry.getName().endsWith("Links/")) {
             containsLinksDirectory = true;
         } else if (entry.getName().endsWith(".indd")) {
+            new InddReader().extract(new StreamReader(inputStream), metadata);
             containsInddFile = true;
         }
     }

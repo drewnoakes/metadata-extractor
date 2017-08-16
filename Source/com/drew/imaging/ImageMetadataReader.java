@@ -31,6 +31,7 @@ import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
+import com.drew.imaging.zip.IndesignPackageFilter;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
@@ -157,6 +158,7 @@ public class ImageMetadataReader
             case Indd:
                 return InddMetadataReader.readMetadata(inputStream);
             case IndesignPackage:
+                return IndesignPackageFilter.metadata;
             case Docx:
             case Pptx:
             case Xlsx:
