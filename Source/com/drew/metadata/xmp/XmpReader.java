@@ -25,6 +25,8 @@ import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.impl.ByteBuffer;
+import com.adobe.xmp.impl.XMPMetaParser;
+import com.adobe.xmp.options.ParseOptions;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
@@ -303,5 +305,10 @@ public class XmpReader implements JpegSegmentMetadataReader
         }
 
         return extendedXMPBuffer;
+    }
+
+    public void processXMPMeta(@NotNull XmpHandler handler, @NotNull Metadata metadata)
+    {
+        handler.process(metadata);
     }
 }

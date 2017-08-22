@@ -20,34 +20,83 @@
  */
 package com.drew.imaging;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
 /**
  * Enumeration of supported image file formats.
+ *
+ * MIME Type Source: https://www.freeformatter.com/mime-types-list.html
+ *                   https://www.iana.org/assignments/media-types/media-types.xhtml
  */
 public enum FileType
 {
-    Unknown,
-    Jpeg,
-    Tiff,
-    Psd,
-    Png,
-    Bmp,
-    Gif,
-    Ico,
-    Pcx,
-    Riff,
+    Unknown(null, false),
+    Jpeg("image/jpeg", false, ".jpg", ".jpeg", ".jpe"),
+    Tiff("image/tiff", true, ".tiff", ".tif"),
+    Psd("image/vnd.adobe.photoshop", false, ".psd"),
+    Png("image/png", false, ".png"),
+    Bmp("image/bmp", false, ".bmp"),
+    Gif("image/gif", false, ".gif"),
+    Ico("image/x-icon", false, ".ico"),
+    Pcx("image/x-pcx", false, ".pcx"),
+    Riff(null, true, null),
+    Zip("application/zip", true, ".zip", ".zipx"),
+    Indd("application/octet-stream", false, ".indd"),
+    IndesignPackage("application/octet-stream", false, ".zip"),
+    Docx("application/vnd.openxmlformats-officedocument.wordprocessingml.document", false, ".docx", ".docm"),
+    Pptx("application/vnd.openxmlformats-officedocument.presentationml.presentation", false, ".pptx", ".pptm"),
+    Xlsx("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", false, ".xlsx", ".xlsm"),
 
     /** Sony camera raw. */
-    Arw,
+    Arw(null, false, ".arw"),
     /** Canon camera raw, version 1. */
-    Crw,
+    Crw(null, false, ".crw"),
     /** Canon camera raw, version 2. */
-    Cr2,
+    Cr2(null, false, ".cr2"),
     /** Nikon camera raw. */
-    Nef,
+    Nef(null, false, ".nef"),
     /** Olympus camera raw. */
-    Orf,
+    Orf(null, false, ".orf"),
     /** FujiFilm camera raw. */
-    Raf,
+    Raf(null, false, ".raf"),
     /** Panasonic camera raw. */
-    Rw2
+    Rw2(null, false, ".rw2");
+
+    private final String _mimeType;
+
+    private final boolean _isContainer;
+
+    private final String[] _extensions;
+
+    FileType(String mimeType, boolean isContainer, String... extensions)
+    {
+        _mimeType = mimeType;
+        _isContainer = isContainer;
+        _extensions = extensions;
+    }
+
+    @NotNull
+    public String getName()
+    {
+        return this.name();
+    }
+
+    @Nullable
+    public String getMimeType()
+    {
+        return _mimeType;
+    }
+
+    @NotNull
+    public boolean getIsContainer()
+    {
+        return _isContainer;
+    }
+
+    @Nullable
+    public String[] getExtension()
+    {
+        return _extensions;
+    }
 }
