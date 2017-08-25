@@ -229,6 +229,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getColorimetricReferenceDescription();
             case TAG_PROFILE_EMBED_POLICY:
                 return getProfileEmbedPolicyDescription();
+            case TAG_PREVIEW_COLOR_SPACE:
+                return getPreviewColorSpaceDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1460,6 +1462,33 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return "no restrictions";
         } else {
             return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getPreviewColorSpaceDescription()
+    {
+        Long value = _directory.getLongObject(TAG_PREVIEW_COLOR_SPACE);
+        if (value == null)
+            return null;
+        if (value != (int)(long)value)
+            return "Unknown (" + value + ")";
+
+        int intValue = (int)(long)value;
+
+        switch (intValue) {
+            case 0:
+                return "Unknown";
+            case 1:
+                return "Gray Gamma 2.2";
+            case 2:
+                return "sRGB";
+            case 3:
+                return "Adobe RGB";
+            case 4:
+                return "ProPhoto RGB";
+            default:
+                return "Unknown (" + value + ")";
         }
     }
 }
