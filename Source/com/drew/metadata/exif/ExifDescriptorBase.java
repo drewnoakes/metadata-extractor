@@ -209,6 +209,15 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getJpegProcDescription();
             case TAG_LENS_SPECIFICATION:
                 return getLensSpecificationDescription();
+            case TAG_DNG_BACKWARD_VERSION:
+            case TAG_DNG_VERSION:
+                return getDngVersionDescription(tagType);
+            case TAG_CFA_LAYOUT:
+                return getCfaLayoutDescription();
+            case TAG_BLACK_LEVEL_REPEAT_DIM:
+                return getBlackLevelRepeatDimDescription();
+            case TAG_MAKER_NOTE_SAFETY:
+                return getMakerNoteSafetyDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1227,6 +1236,93 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         switch (value) {
             case 1: return "Baseline";
             case 14: return "Lossless";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getDngVersionDescription(int tagType)
+    {
+        byte[] version = _directory.getByteArray(tagType);
+        if (version == null)
+            return null;
+        StringBuilder versionString = new StringBuilder();
+        for (byte b : version) {
+            versionString.append((int)b);
+            versionString.append('.');
+        }
+        versionString.deleteCharAt(versionString.length() - 1);
+        return versionString.toString();
+    }
+
+    @Nullable
+    public String getCfaLayoutDescription()
+    {
+        Integer value = _directory.getInteger(TAG_CFA_LAYOUT);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 1:
+                return "Rectangular (or square) layout";
+            case 2:
+                return "Staggered layout A: even columns are offset down by 1/2 row";
+            case 3:
+                return "Staggered layout B: even columns are offset up by 1/2 row";
+            case 4:
+                return "Staggered layout C: even rows are offset right by 1/2 column";
+            case 5:
+                return "Staggered layout D: even rows are offset left by 1/2 column";
+            case 6:
+                return "Staggered layout E: even rows are offset up by 1/2 row, even columns are offset left by 1/2 column";
+            case 7:
+                return "Staggered layout F: even rows are offset up by 1/2 row, even columns are offset right by 1/2 column";
+            case 8:
+                return "Staggered layout G: even rows are offset down by 1/2 row, even columns are offset left by 1/2 column";
+            case 9:
+                return "Staggered layout H: even rows are offset down by 1/2 row, even columns are offset right by 1/2 column";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getBlackLevelRepeatDimDescription()
+    {
+        byte[] patternSizes = _directory.getByteArray(TAG_BLACK_LEVEL_REPEAT_DIM);
+        if (patternSizes == null)
+            return null;
+
+        StringBuilder repeatSize = new StringBuilder();
+
+        for (byte patternSize : patternSizes) {
+            switch (patternSize) {
+                case 0:
+                    repeatSize.append("BlackLevelRepeatRows" + ", ");
+                    break;
+                case 1:
+                    repeatSize.append("BlackLevelRepeatCols" + ", ");
+                    break;
+                default:
+                    repeatSize.append("Unknown (" + (int)patternSize + ")" + ", ");
+            }
+        }
+
+        repeatSize.delete(repeatSize.length() - 2, repeatSize.length() - 1);
+        return repeatSize.toString();
+    }
+
+    @Nullable
+    public String getMakerNoteSafetyDescription()
+    {
+        Integer value = _directory.getInteger(TAG_MAKER_NOTE_SAFETY);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 1:
+                return "safe";
+            case 2:
+                return "unsafe";
             default:
                 return "Unknown (" + value + ")";
         }
