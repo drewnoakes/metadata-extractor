@@ -231,6 +231,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getProfileEmbedPolicyDescription();
             case TAG_PREVIEW_COLOR_SPACE:
                 return getPreviewColorSpaceDescription();
+            case TAG_DEFAULT_BLACK_RENDER:
+                return getDefaultBlackRenderDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1487,6 +1489,27 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return "Adobe RGB";
             case 4:
                 return "ProPhoto RGB";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getDefaultBlackRenderDescription()
+    {
+        Long value = _directory.getLongObject(TAG_PREVIEW_COLOR_SPACE);
+        if (value == null)
+            return null;
+        if (value != (int)(long)value)
+            return "Unknown (" + value + ")";
+
+        int intValue = (int)(long)value;
+
+        switch (intValue) {
+            case 0:
+                return "Auto";
+            case 1:
+                return "None";
             default:
                 return "Unknown (" + value + ")";
         }
