@@ -233,8 +233,9 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getPreviewColorSpaceDescription();
             case TAG_DEFAULT_BLACK_RENDER:
                 return getDefaultBlackRenderDescription();
+            case TAG_PROFILE_HUE_SAT_MAP_ENCODING:
             case TAG_PROFILE_LOOK_TABLE_ENCODING:
-                return getProfileLookTableEncodingDescription();
+                return getProfileEncodingDescription(tagType);
             default:
                 return super.getDescription(tagType);
         }
@@ -1518,9 +1519,9 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     }
 
     @Nullable
-    public String getProfileLookTableEncodingDescription()
+    public String getProfileEncodingDescription(int tagType)
     {
-        Long value = _directory.getLongObject(TAG_PROFILE_LOOK_TABLE_ENCODING);
+        Long value = _directory.getLongObject(tagType);
         if (value == null)
             return null;
         if (value != (int)(long)value)
