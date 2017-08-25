@@ -225,6 +225,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getDefaultCropSizeDescription();
             case TAG_ACTIVE_AREA:
                 return getActiveAreaDescription();
+            case TAG_COLORIMETRIC_REFERENCE:
+                return getColorimetricReferenceDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1420,5 +1422,22 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         }
         return activeArea.toString();
+    }
+
+    @Nullable
+    public String getColorimetricReferenceDescription()
+    {
+        Integer value = _directory.getInteger(TAG_COLORIMETRIC_REFERENCE);
+        if (value == null)
+            return null;
+
+        switch (value) {
+            case 0:
+                return "The XYZ values are scene-referred.";
+            case 1:
+                return "The XYZ values are output-referred, using the ICC profile perceptual dynamic range.";
+            default:
+                return "Unknown (" + value + ")";
+        }
     }
 }
