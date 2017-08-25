@@ -223,6 +223,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getLensInfoDescription();
             case TAG_DEFAULT_CROP_SIZE:
                 return getDefaultCropSizeDescription();
+            case TAG_ACTIVE_AREA:
+                return getActiveAreaDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1385,5 +1387,38 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             }
         }
         return lensInfo.toString();
+    }
+
+    @Nullable
+    public String getActiveAreaDescription()
+    {
+        Object values = _directory.getObject(TAG_ACTIVE_AREA);
+        StringBuilder activeArea = new StringBuilder();
+        if (values == null)
+            return null;
+        if (values instanceof short[]) {
+            short[] shorts = (short[]) values;
+            if (shorts.length == 4) {
+                activeArea.append("Top: " + shorts[0] + ", ");
+                activeArea.append("Left: " + shorts[1] + ", ");
+                activeArea.append("Bottom: " + shorts[2] + ", ");
+                activeArea.append("Right: " + shorts[3]);
+            } else {
+                activeArea.append("Unknown (" + Arrays.toString(shorts) + ")");
+            }
+        } else if (values instanceof long[]) {
+            long[] longs = (long[]) values;
+            if (longs.length == 4) {
+                activeArea.append("Top: " + longs[0] + ", ");
+                activeArea.append("Left: " + longs[1] + ", ");
+                activeArea.append("Bottom: " + longs[2] + ", ");
+                activeArea.append("Right: " + longs[3]);
+            } else {
+                activeArea.append("Unknown (" + Arrays.toString(longs) + ")");
+            }
+        } else {
+            return null;
+        }
+        return activeArea.toString();
     }
 }
