@@ -233,6 +233,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getPreviewColorSpaceDescription();
             case TAG_DEFAULT_BLACK_RENDER:
                 return getDefaultBlackRenderDescription();
+            case TAG_PROFILE_LOOK_TABLE_ENCODING:
+                return getProfileLookTableEncodingDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1497,7 +1499,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getDefaultBlackRenderDescription()
     {
-        Long value = _directory.getLongObject(TAG_PREVIEW_COLOR_SPACE);
+        Long value = _directory.getLongObject(TAG_DEFAULT_BLACK_RENDER);
         if (value == null)
             return null;
         if (value != (int)(long)value)
@@ -1510,6 +1512,27 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return "Auto";
             case 1:
                 return "None";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getProfileLookTableEncodingDescription()
+    {
+        Long value = _directory.getLongObject(TAG_PROFILE_LOOK_TABLE_ENCODING);
+        if (value == null)
+            return null;
+        if (value != (int)(long)value)
+            return "Unknown (" + value + ")";
+
+        int intValue = (int)(long)value;
+
+        switch (intValue) {
+            case 0:
+                return "Linear encoding";
+            case 1:
+                return "sRGB encoding";
             default:
                 return "Unknown (" + value + ")";
         }
