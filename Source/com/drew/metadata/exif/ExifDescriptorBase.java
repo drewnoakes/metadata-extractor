@@ -32,6 +32,7 @@ import com.drew.metadata.TagDescriptor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -218,6 +219,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getBlackLevelRepeatDimDescription();
             case TAG_MAKER_NOTE_SAFETY:
                 return getMakerNoteSafetyDescription();
+            case TAG_LENS_INFO:
+                return getLensInfoDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1326,5 +1329,29 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             default:
                 return "Unknown (" + value + ")";
         }
+    }
+
+    @Nullable
+    public String getLensInfoDescription()
+    {
+        Rational[] rationals = _directory.getRationalArray(TAG_LENS_INFO);
+        if (rationals == null)
+            return null;
+        StringBuilder lensInfo = new StringBuilder();
+        if (rationals.length >= 4) {
+            lensInfo.append("Min Focal Length: " + rationals[0].getNumerator() + "mm, ");
+            lensInfo.append("Max Focal Length: " + rationals[1].getNumerator() + "mm, ");
+            if (rationals[2].getNumerator() == 0) {
+                lensInfo.append("Min F-Stop at Min Focal Length: unknown, ");
+            } else {
+                lensInfo.append("Min F-Stop at Min Focal Length: " + rationals[2].getNumerator() + ", ");
+            }
+            if (rationals[3].getNumerator() == 0) {
+                lensInfo.append("Min F-Stop at Max Focal Length: unknown");
+            } else {
+                lensInfo.append("Min F-Stop at Max Focal Length: " + rationals[3].getNumerator());
+            }
+        }
+        return lensInfo.toString();
     }
 }
