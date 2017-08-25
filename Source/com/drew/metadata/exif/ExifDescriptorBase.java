@@ -227,6 +227,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getActiveAreaDescription();
             case TAG_COLORIMETRIC_REFERENCE:
                 return getColorimetricReferenceDescription();
+            case TAG_PROFILE_EMBED_POLICY:
+                return getProfileEmbedPolicyDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1438,6 +1440,26 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return "The XYZ values are output-referred, using the ICC profile perceptual dynamic range.";
             default:
                 return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getProfileEmbedPolicyDescription()
+    {
+        Long value = _directory.getLongObject(TAG_PROFILE_EMBED_POLICY);
+        if (value == null)
+            return null;
+
+        if (value == 0) {
+            return "allow copying";
+        } else if (value == 1) {
+            return "embed if used";
+        } else if (value == 2) {
+            return "embed never";
+        } else if (value == 3) {
+            return "no restrictions";
+        } else {
+            return "Unknown (" + value + ")";
         }
     }
 }
