@@ -236,8 +236,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             case TAG_PROFILE_HUE_SAT_MAP_ENCODING:
             case TAG_PROFILE_LOOK_TABLE_ENCODING:
                 return getProfileEncodingDescription(tagType);
+            case TAG_ORIGINAL_DEFAULT_CROP_SIZE:
+            case TAG_ORIGINAL_BEST_QUALITY_FINAL_SIZE:
             case TAG_ORIGINAL_DEFAULT_FINAL_SIZE:
-                return getOriginalDefaultFinalSize();
+                return getSizeDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1542,7 +1544,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     }
 
     @Nullable
-    public String getOriginalDefaultFinalSize()
+    public String getSizeDescription()
     {
         Object values = _directory.getObject(TAG_ORIGINAL_DEFAULT_FINAL_SIZE);
         StringBuilder size = new StringBuilder();
@@ -1551,17 +1553,22 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             short[] shorts = (short[])values;
             size.append("Width: ");
             size.append(shorts[0]);
-            size.append(", ");
-            size.append("Length: ");
+            size.append(", Length: ");
             size.append(shorts[1]);
             return size.toString();
         } else if (values instanceof long[]) {
             long[] longs = (long[])values;
             size.append("Width: ");
             size.append(longs[0]);
-            size.append(", ");
-            size.append("Length: ");
+            size.append(", Length: ");
             size.append(longs[1]);
+            return size.toString();
+        } else if (values instanceof Rational[]) {
+            Rational[] rationals = (Rational[])values;
+            size.append("Width: ");
+            size.append(rationals[0].getNumerator());
+            size.append(", Length: ");
+            size.append(rationals[1].getNumerator());
             return size.toString();
         } else {
             return null;
