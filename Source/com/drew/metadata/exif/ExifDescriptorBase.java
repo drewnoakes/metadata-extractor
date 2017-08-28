@@ -236,6 +236,8 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             case TAG_PROFILE_HUE_SAT_MAP_ENCODING:
             case TAG_PROFILE_LOOK_TABLE_ENCODING:
                 return getProfileEncodingDescription(tagType);
+            case TAG_ORIGINAL_DEFAULT_FINAL_SIZE:
+                return getOriginalDefaultFinalSize();
             default:
                 return super.getDescription(tagType);
         }
@@ -1536,6 +1538,33 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return "sRGB encoding";
             default:
                 return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getOriginalDefaultFinalSize()
+    {
+        Object values = _directory.getObject(TAG_ORIGINAL_DEFAULT_FINAL_SIZE);
+        StringBuilder size = new StringBuilder();
+
+        if (values instanceof short[]) {
+            short[] shorts = (short[])values;
+            size.append("Width: ");
+            size.append(shorts[0]);
+            size.append(", ");
+            size.append("Length: ");
+            size.append(shorts[1]);
+            return size.toString();
+        } else if (values instanceof long[]) {
+            long[] longs = (long[])values;
+            size.append("Width: ");
+            size.append(longs[0]);
+            size.append(", ");
+            size.append("Length: ");
+            size.append(longs[1]);
+            return size.toString();
+        } else {
+            return null;
         }
     }
 }
