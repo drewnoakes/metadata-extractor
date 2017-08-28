@@ -1460,17 +1460,20 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Long value = _directory.getLongObject(TAG_PROFILE_EMBED_POLICY);
         if (value == null)
             return null;
-
-        if (value == 0) {
-            return "allow copying";
-        } else if (value == 1) {
-            return "embed if used";
-        } else if (value == 2) {
-            return "embed never";
-        } else if (value == 3) {
-            return "no restrictions";
-        } else {
+        if (value != (int)(long)value)
             return "Unknown (" + value + ")";
+
+        switch ((int)(long)value) {
+            case 0:
+                return "allow copying";
+            case 1:
+                return "embed if used";
+            case 2:
+                return "embed never";
+            case 3:
+                return "no restrictions";
+            default:
+                return "Unknown (" + value + ")";
         }
     }
 
