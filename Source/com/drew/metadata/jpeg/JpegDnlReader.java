@@ -29,7 +29,6 @@ import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**

@@ -28,13 +28,11 @@ import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.TagDescriptor;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.xmp.XmpReader;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 

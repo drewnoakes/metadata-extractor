@@ -21,7 +21,6 @@
 package com.drew.metadata.file;
 
 import com.drew.imaging.FileType;
-import com.drew.imaging.FileTypeDetector;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 

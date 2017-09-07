@@ -30,7 +30,6 @@ import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable.HuffmanTableCl
 import org.junit.Before;
 import org.junit.Test;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
