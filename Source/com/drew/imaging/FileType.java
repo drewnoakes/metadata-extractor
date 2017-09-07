@@ -24,7 +24,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 /**
- * Enumeration of supported image file formats.
+ * Enumeration of supported file types.
  *
  * MIME Type Source: https://www.freeformatter.com/mime-types-list.html
  *                   https://www.iana.org/assignments/media-types/media-types.xhtml
