@@ -35,7 +35,7 @@ public class ByteTrie<T>
     /** A node in the trie. Has children and may have an associated value. */
     static class ByteTrieNode<T>
     {
-        private final Map<Byte,ByteTrieNode<T>> _children = new HashMap<Byte, ByteTrieNode<T>>();
+        private final Map<Byte, ByteTrieNode<T>> _children = new HashMap<Byte, ByteTrieNode<T>>();
         private T _value = null;
 
         public void setValue(T value)
