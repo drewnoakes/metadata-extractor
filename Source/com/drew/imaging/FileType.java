@@ -57,13 +57,14 @@ public enum FileType
     /** Panasonic camera raw. */
     Rw2(null, false, ".rw2");
 
+    @Nullable
     private final String _mimeType;
 
     private final boolean _isContainer;
 
     private final String[] _extensions;
 
-    FileType(String mimeType, boolean isContainer, String... extensions)
+    FileType(@Nullable String mimeType, boolean isContainer, String... extensions)
     {
         _mimeType = mimeType;
         _isContainer = isContainer;
