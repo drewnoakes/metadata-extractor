@@ -41,6 +41,9 @@ public enum FileType
     Ico("ICO", "Windows Icon", "image/x-icon", "ico"),
     Pcx("PCX", "PiCture eXchange", "image/x-pcx", "pcx"),
     Riff("RIFF", "Resource Interchange File Format", null),
+    Wav("WAV", "Waveform Audio File Format", "audio/vnd.wave", "wav", "wave"),
+    Avi("AVI", "Audio Video Interleaved", "video/vnd.avi", "avi"),
+    WebP("WebP", "WebP", "image/webp", "webp"),
 
     /** Sony camera raw. */
     Arw("ARW", "Sony Camera Raw", null, "arw"),

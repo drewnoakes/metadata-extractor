@@ -116,6 +116,14 @@ public class FileTypeDetector
                 // http://www.ftyps.com
                 return FileType.QuickTime;
             }
+        } else if (fileType == FileType.Riff) {
+            String fourCC = new String(bytes, 8, 4);
+            if (fourCC.equals("WAVE"))
+                return FileType.Wav;
+            if (fourCC.equals("AVI "))
+                return FileType.Avi;
+            if (fourCC.equals("WEBP"))
+                return FileType.WebP;
         }
 
         return fileType;
