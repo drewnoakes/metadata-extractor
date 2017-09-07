@@ -20,6 +20,7 @@
  */
 package com.drew.imaging;
 
+import com.drew.imaging.avi.AviMetadataReader;
 import com.drew.imaging.bmp.BmpMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
@@ -29,6 +30,7 @@ import com.drew.imaging.png.PngMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
 import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
+import com.drew.imaging.wav.WavMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StringUtil;
@@ -107,7 +109,11 @@ public class ImageMetadataReader
 
         FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
 
-        return readMetadata(bufferedInputStream, streamLength, fileType);
+        Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
+
+        new FileMetadataReader().read(metadata, fileType);
+
+        return metadata;
     }
 
     /**
@@ -145,10 +151,14 @@ public class ImageMetadataReader
                 return IcoMetadataReader.readMetadata(inputStream);
             case Pcx:
                 return PcxMetadataReader.readMetadata(inputStream);
-            case Riff:
+            case Webp:
                 return WebpMetadataReader.readMetadata(inputStream);
             case Raf:
                 return RafMetadataReader.readMetadata(inputStream);
+            case Avi:
+                return AviMetadataReader.readMetadata(inputStream);
+            case Wav:
+                return WavMetadataReader.readMetadata(inputStream);
             default:
                 throw new ImageProcessingException("File format is not supported");
         }

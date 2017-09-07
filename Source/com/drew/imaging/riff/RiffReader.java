@@ -35,6 +35,7 @@ import java.io.IOException;
  *     <li>https://www.daubnet.com/en/file-format-riff</li>
  * </ul>
  * @author Drew Noakes https://drewnoakes.com
+ * @author Payton Garland
  */
 public class RiffReader
 {
@@ -60,7 +61,7 @@ public class RiffReader
         if (!fileFourCC.equals("RIFF"))
             throw new RiffProcessingException("Invalid RIFF header: " + fileFourCC);
 
-        // The total size of the chunks that follow plus 4 bytes for the 'WEBP' FourCC
+        // The total size of the chunks that follow plus 4 bytes for the FourCC
         final int fileSize = reader.getInt32();
         int sizeLeft = fileSize;
 
@@ -71,30 +72,32 @@ public class RiffReader
             return;
 
         // PROCESS CHUNKS
+        processChunks(reader, sizeLeft, handler);
+    }
 
-        while (sizeLeft != 0) {
-            final String chunkFourCC = reader.getString(4);
-            final int chunkSize = reader.getInt32();
-            sizeLeft -= 8;
-
-            // NOTE we fail a negative chunk size here (greater than 0x7FFFFFFF) as Java cannot
-            // allocate arrays larger than this.
-            if (chunkSize < 0 || sizeLeft < chunkSize)
-                throw new RiffProcessingException("Invalid RIFF chunk size");
-
-            if (handler.shouldAcceptChunk(chunkFourCC)) {
-                // TODO is it feasible to avoid copying the chunk here, and to pass the sequential reader to the handler?
-                handler.processChunk(chunkFourCC, reader.getBytes(chunkSize));
+    public void processChunks(SequentialReader reader, int sectionSize, RiffHandler handler) throws IOException
+    {
+        while (reader.getPosition() < sectionSize) {
+            String fourCC = new String(reader.getBytes(4));
+            int size = reader.getInt32();
+            if (fourCC.equals("LIST") || fourCC.equals("RIFF")) {
+                String listName = new String(reader.getBytes(4));
+                if (handler.shouldAcceptList(listName)) {
+                    processChunks(reader, size - 4, handler);
+                } else {
+                    reader.skip(size - 4);
+                }
             } else {
-                reader.skip(chunkSize);
-            }
-
-            sizeLeft -= chunkSize;
-
-            // Skip any padding byte added to keep chunks aligned to even numbers of bytes
-            if (chunkSize % 2 == 1) {
-                reader.getInt8();
-                sizeLeft--;
+                if (handler.shouldAcceptChunk(fourCC)) {
+                    // TODO is it feasible to avoid copying the chunk here, and to pass the sequential reader to the handler?
+                    handler.processChunk(fourCC, reader.getBytes(size));
+                } else {
+                    reader.skip(size);
+                }
+                // Bytes read must be even - skip one if not
+                if (size % 2 == 1) {
+                    reader.skip(1);
+                }
             }
         }
     }
