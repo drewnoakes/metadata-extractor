@@ -139,12 +139,12 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected String getIndexedDescription(final int tagType, final int baseIndex, @NotNull String... descriptions)
     {
-        final Integer index = _directory.getInteger(tagType);
+        final Long index = _directory.getLongObject(tagType);
         if (index == null)
             return null;
-        final int arrayIndex = index - baseIndex;
-        if (arrayIndex >= 0 && arrayIndex < descriptions.length) {
-            String description = descriptions[arrayIndex];
+        final long arrayIndex = index - baseIndex;
+        if (arrayIndex >= 0 && arrayIndex < (long)descriptions.length) {
+            String description = descriptions[(int)arrayIndex];
             if (description != null)
                 return description;
         }
