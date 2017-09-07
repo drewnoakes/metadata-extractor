@@ -32,30 +32,30 @@ import com.drew.lang.annotations.Nullable;
 public enum FileType
 {
     Unknown(null, false),
-    Jpeg("image/jpeg", false, ".jpg", ".jpeg", ".jpe"),
-    Tiff("image/tiff", true, ".tiff", ".tif"),
-    Psd("image/vnd.adobe.photoshop", false, ".psd"),
-    Png("image/png", false, ".png"),
-    Bmp("image/bmp", false, ".bmp"),
-    Gif("image/gif", false, ".gif"),
-    Ico("image/x-icon", false, ".ico"),
-    Pcx("image/x-pcx", false, ".pcx"),
+    Jpeg("image/jpeg", false, "jpg", "jpeg", "jpe"),
+    Tiff("image/tiff", true, "tiff", "tif"),
+    Psd("image/vnd.adobe.photoshop", false, "psd"),
+    Png("image/png", false, "png"),
+    Bmp("image/bmp", false, "bmp"),
+    Gif("image/gif", false, "gif"),
+    Ico("image/x-icon", false, "ico"),
+    Pcx("image/x-pcx", false, "pcx"),
     Riff(null, true),
 
     /** Sony camera raw. */
-    Arw(null, false, ".arw"),
+    Arw(null, false, "arw"),
     /** Canon camera raw, version 1. */
-    Crw(null, false, ".crw"),
+    Crw(null, false, "crw"),
     /** Canon camera raw, version 2. */
-    Cr2(null, false, ".cr2"),
+    Cr2(null, false, "cr2"),
     /** Nikon camera raw. */
-    Nef(null, false, ".nef"),
+    Nef(null, false, "nef"),
     /** Olympus camera raw. */
-    Orf(null, false, ".orf"),
+    Orf(null, false, "orf"),
     /** FujiFilm camera raw. */
-    Raf(null, false, ".raf"),
+    Raf(null, false, "raf"),
     /** Panasonic camera raw. */
-    Rw2(null, false, ".rw2");
+    Rw2(null, false, "rw2");
 
     @Nullable
     private final String _mimeType;
