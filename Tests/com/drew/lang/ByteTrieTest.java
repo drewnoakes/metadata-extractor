@@ -47,11 +47,15 @@ public class ByteTrieTest
 
         assertNull(trie.find("Not Included".getBytes()));
         assertNull(trie.find("HELL".getBytes()));
+        assertNull(trie.find("H".getBytes()));
         assertEquals("HELLO", trie.find("HELLO MUM".getBytes()));
 
         assertEquals("HELLO WORLD".length(), trie.getMaxDepth());
 
         trie.setDefaultValue("DEFAULT");
+
         assertEquals("DEFAULT", trie.find("Also Not Included".getBytes()));
+        assertEquals("DEFAULT", trie.find("H".getBytes()));
+        assertEquals("DEFAULT", trie.find("HELL".getBytes()));
     }
 }
