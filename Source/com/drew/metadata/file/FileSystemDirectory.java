@@ -18,42 +18,48 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.imaging.pcx;
+package com.drew.metadata.file;
 
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.file.FileSystemMetadataReader;
-import com.drew.metadata.pcx.PcxReader;
+import com.drew.metadata.Directory;
 
-import java.io.*;
+import java.util.HashMap;
 
 /**
- * Obtains metadata from PCX image files.
- *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class PcxMetadataReader
+@SuppressWarnings("WeakerAccess")
+public class FileSystemDirectory extends Directory
 {
-    @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws IOException
-    {
-        InputStream inputStream = new FileInputStream(file);
-        Metadata metadata;
-        try {
-            metadata = readMetadata(inputStream);
-        } finally {
-            inputStream.close();
-        }
-        new FileSystemMetadataReader().read(file, metadata);
-        return metadata;
-    }
+    public static final int TAG_FILE_NAME = 1;
+    public static final int TAG_FILE_SIZE = 2;
+    public static final int TAG_FILE_MODIFIED_DATE = 3;
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+
+    static {
+        _tagNameMap.put(TAG_FILE_NAME, "File Name");
+        _tagNameMap.put(TAG_FILE_SIZE, "File Size");
+        _tagNameMap.put(TAG_FILE_MODIFIED_DATE, "File Modified Date");
+    }
+
+    public FileSystemDirectory()
     {
-        Metadata metadata = new Metadata();
-        new PcxReader().extract(new StreamReader(inputStream), metadata);
-        return metadata;
+        this.setDescriptor(new FileSystemDescriptor(this));
+    }
+
+    @Override
+    @NotNull
+    public String getName()
+    {
+        return "File";
+    }
+
+    @Override
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
+    {
+        return _tagNameMap;
     }
 }

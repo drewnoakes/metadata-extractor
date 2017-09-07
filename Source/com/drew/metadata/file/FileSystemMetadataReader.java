@@ -20,14 +20,13 @@
  */
 package com.drew.metadata.file;
 
-import com.drew.imaging.FileType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
 import java.io.*;
 import java.util.Date;
 
-public class FileMetadataReader
+public class FileSystemMetadataReader
 {
     public void read(@NotNull File file, @NotNull Metadata metadata) throws IOException
     {
@@ -38,31 +37,15 @@ public class FileMetadataReader
         if (!file.canRead())
             throw new IOException("File is not readable");
 
-        FileMetadataDirectory directory = metadata.getFirstDirectoryOfType(FileMetadataDirectory.class);
+        FileSystemDirectory directory = metadata.getFirstDirectoryOfType(FileSystemDirectory.class);
 
         if (directory == null) {
-            directory = new FileMetadataDirectory();
+            directory = new FileSystemDirectory();
             metadata.addDirectory(directory);
         }
 
-        directory.setString(FileMetadataDirectory.TAG_FILE_NAME, file.getName());
-        directory.setLong(FileMetadataDirectory.TAG_FILE_SIZE, file.length());
-        directory.setDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
-    }
-
-    public void read(@NotNull Metadata metadata, @NotNull FileType fileType)
-    {
-        FileMetadataDirectory directory = new FileMetadataDirectory();
-
-        directory.setString(FileMetadataDirectory.TAG_FILE_TYPE, fileType.getName());
-        if (fileType.getMimeType() != null) {
-            directory.setString(FileMetadataDirectory.TAG_FILE_MIME_TYPE, fileType.getMimeType());
-        }
-
-        if (fileType.getCommonExtension() != null) {
-            directory.setString(FileMetadataDirectory.TAG_FILE_EXTENSION, fileType.getCommonExtension());
-        }
-
-        metadata.addDirectory(directory);
+        directory.setString(FileSystemDirectory.TAG_FILE_NAME, file.getName());
+        directory.setLong(FileSystemDirectory.TAG_FILE_SIZE, file.length());
+        directory.setDate(FileSystemDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
     }
 }

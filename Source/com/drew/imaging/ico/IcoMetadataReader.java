@@ -23,7 +23,7 @@ package com.drew.imaging.ico;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.ico.IcoReader;
 
 import java.io.*;
@@ -45,7 +45,7 @@ public class IcoMetadataReader
         } finally {
             inputStream.close();
         }
-        new FileMetadataReader().read(file, metadata);
+        new FileSystemMetadataReader().read(file, metadata);
         return metadata;
     }
 

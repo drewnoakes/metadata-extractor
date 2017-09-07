@@ -38,7 +38,8 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.file.FileSystemMetadataReader;
+import com.drew.metadata.file.FileTypeDirectory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -109,7 +110,7 @@ public class ImageMetadataReader
 
         Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
 
-        new FileMetadataReader().read(metadata, fileType);
+        metadata.addDirectory(new FileTypeDirectory(fileType));
 
         return metadata;
     }
@@ -175,7 +176,7 @@ public class ImageMetadataReader
         } finally {
             inputStream.close();
         }
-        new FileMetadataReader().read(file, metadata);
+        new FileSystemMetadataReader().read(file, metadata);
         return metadata;
     }
 

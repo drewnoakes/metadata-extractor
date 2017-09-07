@@ -20,46 +20,52 @@
  */
 package com.drew.metadata.file;
 
+import com.drew.imaging.FileType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
 /**
- * @author Drew Noakes https://drewnoakes.com
+ * @author Payton Garland https://github.com/PaytonGarland
  */
 @SuppressWarnings("WeakerAccess")
-public class FileMetadataDirectory extends Directory
+public class FileTypeDirectory extends Directory
 {
-    public static final int TAG_FILE_NAME = 1;
-    public static final int TAG_FILE_SIZE = 2;
-    public static final int TAG_FILE_MODIFIED_DATE = 3;
-    public static final int TAG_FILE_TYPE = 4;
-    public static final int TAG_FILE_MIME_TYPE = 5;
-    public static final int TAG_FILE_EXTENSION = 6;
+    public static final int TAG_DETECTED_FILE_TYPE_NAME = 1;
+    public static final int TAG_DETECTED_FILE_TYPE_LONG_NAME = 2;
+    public static final int TAG_DETECTED_FILE_MIME_TYPE = 3;
+    public static final int TAG_EXPECTED_FILE_NAME_EXTENSION = 4;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-        _tagNameMap.put(TAG_FILE_NAME, "File Name");
-        _tagNameMap.put(TAG_FILE_SIZE, "File Size");
-        _tagNameMap.put(TAG_FILE_MODIFIED_DATE, "File Modified Date");
-        _tagNameMap.put(TAG_FILE_TYPE, "File Type");
-        _tagNameMap.put(TAG_FILE_MIME_TYPE, "MIME Type");
-        _tagNameMap.put(TAG_FILE_EXTENSION, "File Extensions");
+        _tagNameMap.put(TAG_DETECTED_FILE_TYPE_NAME, "Detected File Type Name");
+        _tagNameMap.put(TAG_DETECTED_FILE_TYPE_LONG_NAME, "Detected File Type Long Name");
+        _tagNameMap.put(TAG_DETECTED_FILE_MIME_TYPE, "Detected MIME Type");
+        _tagNameMap.put(TAG_EXPECTED_FILE_NAME_EXTENSION, "Expected File Name Extension");
     }
 
-    public FileMetadataDirectory()
+    public FileTypeDirectory(FileType fileType)
     {
-        this.setDescriptor(new FileMetadataDescriptor(this));
+        this.setDescriptor(new FileTypeDescriptor(this));
+
+        setString(TAG_DETECTED_FILE_TYPE_NAME, fileType.getName());
+        setString(TAG_DETECTED_FILE_TYPE_LONG_NAME, fileType.getLongName());
+
+        if (fileType.getMimeType() != null)
+            setString(TAG_DETECTED_FILE_MIME_TYPE, fileType.getMimeType());
+
+        if (fileType.getCommonExtension() != null)
+            setString(TAG_EXPECTED_FILE_NAME_EXTENSION, fileType.getCommonExtension());
     }
 
     @Override
     @NotNull
     public String getName()
     {
-        return "File";
+        return "File Type";
     }
 
     @Override

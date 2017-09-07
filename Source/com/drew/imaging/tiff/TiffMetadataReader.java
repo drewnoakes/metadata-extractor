@@ -26,7 +26,7 @@ import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifTiffHandler;
-import com.drew.metadata.file.FileMetadataReader;
+import com.drew.metadata.file.FileSystemMetadataReader;
 
 import java.io.*;
 
@@ -52,7 +52,7 @@ public class TiffMetadataReader
             randomAccessFile.close();
         }
 
-        new FileMetadataReader().read(file, metadata);
+        new FileSystemMetadataReader().read(file, metadata);
 
         return metadata;
     }

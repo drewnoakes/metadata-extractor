@@ -24,15 +24,15 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
-import static com.drew.metadata.file.FileMetadataDirectory.*;
+import static com.drew.metadata.file.FileSystemDirectory.*;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
 @SuppressWarnings("WeakerAccess")
-public class FileMetadataDescriptor extends TagDescriptor<FileMetadataDirectory>
+public class FileSystemDescriptor extends TagDescriptor<FileSystemDirectory>
 {
-    public FileMetadataDescriptor(@NotNull FileMetadataDirectory directory)
+    public FileSystemDescriptor(@NotNull FileSystemDirectory directory)
     {
         super(directory);
     }
