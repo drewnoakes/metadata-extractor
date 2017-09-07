@@ -44,6 +44,9 @@ public enum FileType
     Wav("WAV", "Waveform Audio File Format", "audio/vnd.wave", "wav", "wave"),
     Avi("AVI", "Audio Video Interleaved", "video/vnd.avi", "avi"),
     WebP("WebP", "WebP", "image/webp", "webp"),
+    Mov("MOV", "QuickTime Movie", "video/quicktime", "mov", "qt"),
+    Mp4("MP4", "MPEG-4 Part 14", "video/mp4", "mp4", "m4a", "m4p", "m4b", "m4r", "m4v"),
+    Heif("HEIF", "High Efficiency Image File Format", "image/heif", "heif", "heic"),
 
     /** Sony camera raw. */
     Arw("ARW", "Sony Camera Raw", null, "arw"),
@@ -58,9 +61,7 @@ public enum FileType
     /** FujiFilm camera raw. */
     Raf("RAF", "FujiFilm Camera Raw", null, "raf"),
     /** Panasonic camera raw. */
-    Rw2("RW2", "Panasonic Camera Raw", null, "rw2"),
-
-    QuickTime("QuickTime", "QuickTime", "video/quicktime", "mov");
+    Rw2("RW2", "Panasonic Camera Raw", null, "rw2");
 
     @NotNull private final String _name;
     @NotNull private final String _longName;
