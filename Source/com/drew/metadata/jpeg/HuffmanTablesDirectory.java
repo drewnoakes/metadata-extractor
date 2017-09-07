@@ -237,12 +237,18 @@ public class HuffmanTablesDirectory extends Directory
         private final byte[] _lengthBytes;
         private final byte[] _valueBytes;
 
+        @SuppressWarnings("ConstantConditions")
         public HuffmanTable(
             @NotNull HuffmanTableClass tableClass,
             int tableDestinationId,
             @NotNull byte[] lengthBytes,
             @NotNull byte[] valueBytes)
         {
+            if (lengthBytes == null)
+                throw new IllegalArgumentException("lengthBytes cannot be null.");
+            if (valueBytes == null)
+                throw new IllegalArgumentException("valueBytes cannot be null.");
+
             _tableClass = tableClass;
             _tableDestinationId = tableDestinationId;
             _lengthBytes = lengthBytes;
@@ -277,10 +283,9 @@ public class HuffmanTablesDirectory extends Directory
         /**
          * @return A byte array with the L values for this table.
          */
+        @NotNull
         public byte[] getLengthBytes()
         {
-            if (_lengthBytes == null)
-                return null;
             byte[] result = new byte[_lengthBytes.length];
             System.arraycopy(_lengthBytes, 0, result, 0, _lengthBytes.length);
             return result;
@@ -289,10 +294,9 @@ public class HuffmanTablesDirectory extends Directory
         /**
          * @return A byte array with the V values for this table.
          */
+        @NotNull
         public byte[] getValueBytes()
         {
-            if (_valueBytes == null)
-                return null;
             byte[] result = new byte[_valueBytes.length];
             System.arraycopy(_valueBytes, 0, result, 0, _valueBytes.length);
             return result;
