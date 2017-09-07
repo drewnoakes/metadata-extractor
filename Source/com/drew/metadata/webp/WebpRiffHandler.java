@@ -69,7 +69,7 @@ public class WebpRiffHandler implements RiffHandler
     }
 
     @Override
-    public boolean shouldAcceptList(String fourCC)
+    public boolean shouldAcceptList(@NotNull String fourCC)
     {
         return false;
     }
