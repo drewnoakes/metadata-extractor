@@ -8,7 +8,7 @@ import com.drew.metadata.Metadata;
 import java.io.IOException;
 
 /**
- * Implementation of {@link RiffHandler} specialising in Wav support.
+ * Implementation of {@link RiffHandler} specialising in AVI support.
  *
  * Extracts data from chunk/list types:
  *
