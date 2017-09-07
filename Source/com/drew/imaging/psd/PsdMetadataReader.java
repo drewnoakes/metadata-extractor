@@ -39,12 +39,12 @@ public class PsdMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException
     {
-        Metadata metadata = new Metadata();
-        InputStream stream = new FileInputStream(file);
+        InputStream inputStream = new FileInputStream(file);
+        Metadata metadata;
         try {
-            new PsdReader().extract(new StreamReader(stream), metadata);
+            metadata = readMetadata(inputStream);
         } finally {
-            stream.close();
+            inputStream.close();
         }
         new FileSystemMetadataReader().read(file, metadata);
         return metadata;

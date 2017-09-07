@@ -9,6 +9,7 @@ import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.wav.WavRiffHandler;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -20,9 +21,15 @@ import java.io.InputStream;
 public class WavMetadataReader
 {
     @NotNull
-    public static Metadata readMetadata(@NotNull File file) throws IOException
+    public static Metadata readMetadata(@NotNull File file) throws IOException, RiffProcessingException
     {
-        Metadata metadata = new Metadata();
+        InputStream inputStream = new FileInputStream(file);
+        Metadata metadata;
+        try {
+            metadata = readMetadata(inputStream);
+        } finally {
+            inputStream.close();
+        }
         new FileSystemMetadataReader().read(file, metadata);
         return metadata;
     }

@@ -42,18 +42,14 @@ public class TiffMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws IOException, TiffProcessingException
     {
-        Metadata metadata = new Metadata();
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-
+        Metadata metadata;
         try {
-            ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
-            new TiffReader().processTiff(new RandomAccessFileReader(randomAccessFile), handler, 0);
+            metadata = readMetadata(new RandomAccessFileReader(randomAccessFile));
         } finally {
             randomAccessFile.close();
         }
-
         new FileSystemMetadataReader().read(file, metadata);
-
         return metadata;
     }
 
