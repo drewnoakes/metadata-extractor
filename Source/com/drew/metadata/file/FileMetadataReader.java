@@ -50,7 +50,7 @@ public class FileMetadataReader
         directory.setDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE, new Date(file.lastModified()));
     }
 
-    public void read(@NotNull Metadata metadata, @NotNull FileType fileType) throws IOException
+    public void read(@NotNull Metadata metadata, @NotNull FileType fileType)
     {
         FileMetadataDirectory directory = new FileMetadataDirectory();
 
