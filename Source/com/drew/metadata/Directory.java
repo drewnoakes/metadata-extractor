@@ -1008,16 +1008,20 @@ public abstract class Directory
                     string.append(Array.getLong(o, i));
                 }
             } else if (componentType.getName().equals("float")) {
+                DecimalFormat format = new DecimalFormat(_floatFormatPattern);
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getFloat(o, i)));
+                    String s = format.format(Array.getFloat(o, i));
+                    string.append(s.equals("-0") ? "0" : s);
                 }
             } else if (componentType.getName().equals("double")) {
+                DecimalFormat format = new DecimalFormat(_floatFormatPattern);
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
-                    string.append(new DecimalFormat(_floatFormatPattern).format(Array.getDouble(o, i)));
+                    String s = format.format(Array.getDouble(o, i));
+                    string.append(s.equals("-0") ? "0" : s);
                 }
             } else if (componentType.getName().equals("byte")) {
                 for (int i = 0; i < arrayLength; i++) {
