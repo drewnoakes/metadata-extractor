@@ -1,10 +1,12 @@
 language: java
 
+# Seems Travis CI no longer supports openjdk6 or oraclejdk7
+# https://github.com/travis-ci/travis-ci/issues/7884#issuecomment-308451879
+
 jdk:
-  - openjdk6
   - openjdk7
-  - oraclejdk7
   - oraclejdk8
+  - oraclejdk9
 
 install: mvn install -DskipTests=true -Dgpg.skip=true
 
