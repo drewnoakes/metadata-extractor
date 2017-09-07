@@ -60,8 +60,8 @@ public class FileMetadataReader
             directory.setString(FileMetadataDirectory.TAG_FILE_MIME_TYPE, fileType.getMimeType());
         }
 
-        if (fileType.getExtension() != null) {
-            directory.setStringArray(FileMetadataDirectory.TAG_FILE_EXTENSION, fileType.getExtension());
+        if (fileType.getCommonExtension() != null) {
+            directory.setString(FileMetadataDirectory.TAG_FILE_EXTENSION, fileType.getCommonExtension());
         }
 
         metadata.addDirectory(directory);

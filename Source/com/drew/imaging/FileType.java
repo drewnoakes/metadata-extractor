@@ -89,7 +89,13 @@ public enum FileType
     }
 
     @Nullable
-    public String[] getExtension()
+    public String getCommonExtension()
+    {
+        return _extensions.length == 0 ? null : _extensions[0];
+    }
+
+    @Nullable
+    public String[] getAllExtensions()
     {
         return _extensions;
     }
