@@ -756,15 +756,31 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null)
             return null;
+        if (o instanceof Number)
+            return ((Number)o).longValue();
         if (o instanceof String || o instanceof StringValue) {
             try {
                 return Long.parseLong(o.toString());
             } catch (NumberFormatException nfe) {
                 return null;
             }
+        } else if (o instanceof Rational[]) {
+            Rational[] rationals = (Rational[])o;
+            if (rationals.length == 1)
+                return rationals[0].longValue();
+        } else if (o instanceof byte[]) {
+            byte[] bytes = (byte[])o;
+            if (bytes.length == 1)
+                return (long)bytes[0];
+        } else if (o instanceof int[]) {
+            int[] ints = (int[])o;
+            if (ints.length == 1)
+                return (long)ints[0];
+        } else if (o instanceof short[]) {
+            short[] shorts = (short[])o;
+            if (shorts.length == 1)
+                return (long)shorts[0];
         }
-        if (o instanceof Number)
-            return ((Number)o).longValue();
         return null;
     }
 
