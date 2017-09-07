@@ -2,7 +2,6 @@
 
 [![metadata-extractor build status](https://api.travis-ci.org/drewnoakes/metadata-extractor.svg)](https://travis-ci.org/drewnoakes/metadata-extractor)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.drewnoakes/metadata-extractor/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.drewnoakes/metadata-extractor)
-[![Issue Stats](http://issuestats.com/github/drewnoakes/metadata-extractor/badge/pr?style=flat)](http://issuestats.com/github/drewnoakes/metadata-extractor)
 [![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=TNXDJKCDV5Z2C&lc=GB&item_name=Drew%20Noakes&item_number=metadata%2dextractor&no_note=0&cn=Add%20a%20message%20%28optional%29%3a&no_shipping=1&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 _metadata-extractor_ is a straightforward Java library for reading metadata from image files.
