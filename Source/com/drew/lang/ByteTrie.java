@@ -86,6 +86,8 @@ public class ByteTrie<T>
                 depth++;
             }
         }
+        if (depth == 0)
+            throw new IllegalArgumentException("Parts must contain at least one byte.");
         node.setValue(value);
         _maxDepth = Math.max(_maxDepth, depth);
     }
