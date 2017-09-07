@@ -27,7 +27,7 @@ import com.drew.metadata.TagDescriptor;
 import static com.drew.metadata.jpeg.HuffmanTablesDirectory.*;
 
 /**
- * Provides a human-readable string version of the tag stored in a HuffmanTableDirectory.
+ * Provides a human-readable string version of the tag stored in a {@link HuffmanTablesDirectory}.
  *
  * <ul>
  *   <li>https://en.wikipedia.org/wiki/Huffman_coding</li>
