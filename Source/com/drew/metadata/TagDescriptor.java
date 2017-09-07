@@ -78,8 +78,7 @@ public class TagDescriptor<T extends Directory>
             }
         }
 
-        if (object instanceof Date)
-        {
+        if (object instanceof Date) {
             // Produce a date string having a format that includes the offset in form "+00:00"
             return new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy")
                 .format((Date) object)
@@ -210,7 +209,7 @@ public class TagDescriptor<T extends Directory>
     {
         // TODO have observed a byte[8] here which is likely some kind of date (ticks as long?)
         Long value = _directory.getLongObject(tagType);
-        if (value==null)
+        if (value == null)
             return null;
         return new Date(value).toString();
     }
@@ -291,8 +290,7 @@ public class TagDescriptor<T extends Directory>
             return rational.toSimpleString(true);
 
         Double d = _directory.getDoubleObject(tagType);
-        if (d != null)
-        {
+        if (d != null) {
             DecimalFormat format = new DecimalFormat("0.###");
             return format.format(d);
         }
@@ -413,8 +411,7 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected String getLightSourceDescription(short wbtype)
     {
-        switch (wbtype)
-        {
+        switch (wbtype) {
             case 0:
                 return "Unknown";
             case 1:

@@ -60,7 +60,7 @@ public class HuffmanTablesDescriptor extends TagDescriptor<HuffmanTablesDirector
     public String getNumberOfTablesDescription()
     {
         Integer value = _directory.getInteger(TAG_NUMBER_OF_TABLES);
-        if (value==null)
+        if (value == null)
             return null;
         return value + (value == 1 ? " Huffman table" : " Huffman tables");
     }
