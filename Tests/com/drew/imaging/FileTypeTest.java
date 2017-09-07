@@ -32,6 +32,10 @@ public class FileTypeTest
     public void testExtensions()
     {
         assertEquals("jpg", FileType.Jpeg.getCommonExtension());
+        assertEquals("bmp", FileType.Bmp.getCommonExtension());
+
+        assertEquals("JPEG", FileType.Jpeg.getName());
+        assertEquals("BMP", FileType.Bmp.getName());
 
         assertArrayEquals(new String[]{"jpg", "jpeg", "jpe"}, FileType.Jpeg.getAllExtensions());
 

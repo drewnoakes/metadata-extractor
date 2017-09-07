@@ -31,41 +31,43 @@ import com.drew.lang.annotations.Nullable;
  */
 public enum FileType
 {
-    Unknown(null),
-    Jpeg("image/jpeg", "jpg", "jpeg", "jpe"),
-    Tiff("image/tiff", "tiff", "tif"),
-    Psd("image/vnd.adobe.photoshop", "psd"),
-    Png("image/png", "png"),
-    Bmp("image/bmp", "bmp"),
-    Gif("image/gif", "gif"),
-    Ico("image/x-icon", "ico"),
-    Pcx("image/x-pcx", "pcx"),
-    Riff(null),
+    Unknown("Unknown", "Unknown", null),
+    Jpeg("JPEG", "Joint Photographic Experts Group", "image/jpeg", "jpg", "jpeg", "jpe"),
+    Tiff("TIFF", "Tagged Image File Format", "image/tiff", "tiff", "tif"),
+    Psd("PSD", "Photoshop Document", "image/vnd.adobe.photoshop", "psd"),
+    Png("PNG", "Portable Network Graphics", "image/png", "png"),
+    Bmp("BMP", "Device Independent Bitmap", "image/bmp", "bmp"),
+    Gif("GIF", "Graphics Interchange Format", "image/gif", "gif"),
+    Ico("ICO", "Windows Icon", "image/x-icon", "ico"),
+    Pcx("PCX", "PiCture eXchange", "image/x-pcx", "pcx"),
+    Riff("RIFF", "Resource Interchange File Format", null),
 
     /** Sony camera raw. */
-    Arw(null, "arw"),
+    Arw("ARW", "Sony Camera Raw", null, "arw"),
     /** Canon camera raw, version 1. */
-    Crw(null, "crw"),
+    Crw("CRW", "Canon Camera Raw", null, "crw"),
     /** Canon camera raw, version 2. */
-    Cr2(null, "cr2"),
+    Cr2("CR2", "Canon Camera Raw", null, "cr2"),
     /** Nikon camera raw. */
-    Nef(null, "nef"),
+    Nef("NEF", "Nikon Camera Raw", null, "nef"),
     /** Olympus camera raw. */
-    Orf(null, "orf"),
+    Orf("ORF", "Olympus Camera Raw", null, "orf"),
     /** FujiFilm camera raw. */
-    Raf(null, "raf"),
+    Raf("RAF", "FujiFilm Camera Raw", null, "raf"),
     /** Panasonic camera raw. */
-    Rw2(null, "rw2"),
+    Rw2("RW2", "Panasonic Camera Raw", null, "rw2"),
 
-    QuickTime("video/quicktime", "mov");
+    QuickTime("QuickTime", "QuickTime", "video/quicktime", "mov");
 
-    @Nullable
-    private final String _mimeType;
-
+    @NotNull private final String _name;
+    @NotNull private final String _longName;
+    @Nullable private final String _mimeType;
     private final String[] _extensions;
 
-    FileType(@Nullable String mimeType, String... extensions)
+    FileType(@NotNull String name, @NotNull String longName, @Nullable String mimeType, String... extensions)
     {
+        _name = name;
+        _longName = longName;
         _mimeType = mimeType;
         _extensions = extensions;
     }
@@ -73,7 +75,13 @@ public enum FileType
     @NotNull
     public String getName()
     {
-        return this.name();
+        return _name;
+    }
+
+    @NotNull
+    public String getLongName()
+    {
+        return _longName;
     }
 
     @Nullable
