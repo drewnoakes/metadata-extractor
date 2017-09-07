@@ -154,6 +154,10 @@ public class ImageMetadataReader
                 return WebpMetadataReader.readMetadata(inputStream);
             case Raf:
                 return RafMetadataReader.readMetadata(inputStream);
+            case Unknown:
+                throw new ImageProcessingException("File format could not be determined");
+            case QuickTime:
+            case Crw:
             default:
                 throw new ImageProcessingException("File format is not supported");
         }
