@@ -82,7 +82,6 @@ public enum FileType
         return _mimeType;
     }
 
-    @NotNull
     public boolean getIsContainer()
     {
         return _isContainer;

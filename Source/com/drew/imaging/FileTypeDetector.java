@@ -82,7 +82,7 @@ public class FileTypeDetector
     }
 
     @NotNull
-    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream, @NotNull int offset) throws IOException
+    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream, int offset) throws IOException
     {
         if (!inputStream.markSupported())
             throw new IOException("Stream must support mark/reset");
