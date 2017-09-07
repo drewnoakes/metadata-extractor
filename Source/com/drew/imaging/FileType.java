@@ -31,43 +31,42 @@ import com.drew.lang.annotations.Nullable;
  */
 public enum FileType
 {
-    Unknown(null, false),
-    Jpeg("image/jpeg", false, "jpg", "jpeg", "jpe"),
-    Tiff("image/tiff", true, "tiff", "tif"),
-    Psd("image/vnd.adobe.photoshop", false, "psd"),
-    Png("image/png", false, "png"),
-    Bmp("image/bmp", false, "bmp"),
-    Gif("image/gif", false, "gif"),
-    Ico("image/x-icon", false, "ico"),
-    Pcx("image/x-pcx", false, "pcx"),
-    Riff(null, true),
+    Unknown(null),
+    Jpeg("image/jpeg", "jpg", "jpeg", "jpe"),
+    Tiff("image/tiff", "tiff", "tif"),
+    Psd("image/vnd.adobe.photoshop", "psd"),
+    Png("image/png", "png"),
+    Bmp("image/bmp", "bmp"),
+    Gif("image/gif", "gif"),
+    Ico("image/x-icon", "ico"),
+    Pcx("image/x-pcx", "pcx"),
+    Riff(null),
 
     /** Sony camera raw. */
-    Arw(null, false, "arw"),
+    Arw(null, "arw"),
     /** Canon camera raw, version 1. */
-    Crw(null, false, "crw"),
+    Crw(null, "crw"),
     /** Canon camera raw, version 2. */
-    Cr2(null, false, "cr2"),
+    Cr2(null, "cr2"),
     /** Nikon camera raw. */
-    Nef(null, false, "nef"),
+    Nef(null, "nef"),
     /** Olympus camera raw. */
-    Orf(null, false, "orf"),
+    Orf(null, "orf"),
     /** FujiFilm camera raw. */
-    Raf(null, false, "raf"),
+    Raf(null, "raf"),
     /** Panasonic camera raw. */
-    Rw2(null, false, "rw2");
+    Rw2(null, "rw2"),
+
+    QuickTime("video/quicktime", "mov");
 
     @Nullable
     private final String _mimeType;
 
-    private final boolean _isContainer;
-
     private final String[] _extensions;
 
-    FileType(@Nullable String mimeType, boolean isContainer, String... extensions)
+    FileType(@Nullable String mimeType, String... extensions)
     {
         _mimeType = mimeType;
-        _isContainer = isContainer;
         _extensions = extensions;
     }
 
@@ -81,11 +80,6 @@ public enum FileType
     public String getMimeType()
     {
         return _mimeType;
-    }
-
-    public boolean getIsContainer()
-    {
-        return _isContainer;
     }
 
     @Nullable

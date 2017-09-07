@@ -32,15 +32,11 @@ import java.io.IOException;
 public class FileTypeDetector
 {
     private final static ByteTrie<FileType> _root;
-    private final static int[] _offsets;
 
     static
     {
         _root = new ByteTrie<FileType>();
         _root.setDefaultValue(FileType.Unknown);
-
-        // Potential supported offsets
-        _offsets = new int[]{0, 4};
 
         // https://en.wikipedia.org/wiki/List_of_file_signatures
 
@@ -80,31 +76,6 @@ public class FileTypeDetector
         throw new Exception("Not intended for instantiation");
     }
 
-    @NotNull
-    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream, int offset) throws IOException
-    {
-        if (!inputStream.markSupported())
-            throw new IOException("Stream must support mark/reset");
-
-        int maxByteCount = _root.getMaxDepth();
-
-        inputStream.mark(maxByteCount);
-
-        byte[] bytes = new byte[maxByteCount];
-        inputStream.skip(offset);
-        int bytesRead = inputStream.read(bytes);
-
-        if (bytesRead == -1)
-            throw new IOException("Stream ended before file's magic number could be determined.");
-
-        inputStream.reset();
-
-        FileType fileType = _root.find(bytes);
-
-        //noinspection ConstantConditions
-        return fileType;
-    }
-
     /**
      * Examines the file's bytes and estimates the file's type.
      * <p>
@@ -118,35 +89,34 @@ public class FileTypeDetector
     @NotNull
     public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
     {
-        FileType fileType = FileType.Unknown;
-        for (int offset : _offsets) {
-            fileType = detectFileType(inputStream, offset);
-            if (fileType.getIsContainer()) {
-                fileType = handleContainer(inputStream, fileType);
-            }
-            if (!fileType.equals(FileType.Unknown)) {
-                break;
-            }
-        }
-        return fileType;
-    }
+        if (!inputStream.markSupported())
+            throw new IOException("Stream must support mark/reset");
 
-    /**
-     * Calls detectFileType at correct offset for the container type being passed in.
-     * In the case of fileTypes without magic bytes to identify with (Zip), the fileType will be
-     * found within this method alone.
-     *
-     * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
-     */
-    @NotNull
-    public static FileType handleContainer(@NotNull final BufferedInputStream inputStream, @NotNull FileType fileType) throws IOException
-    {
-        switch (fileType) {
-            case Riff:
-                return detectFileType(inputStream, 8);
-            case Tiff:
-            default:
-                return fileType;
+        int maxByteCount = Math.max(12, _root.getMaxDepth());
+
+        inputStream.mark(maxByteCount);
+
+        byte[] bytes = new byte[maxByteCount];
+        int bytesRead = inputStream.read(bytes);
+
+        if (bytesRead == -1)
+            throw new IOException("Stream ended before file's magic number could be determined.");
+
+        inputStream.reset();
+
+        FileType fileType = _root.find(bytes);
+
+        assert(fileType != null);
+
+        if (fileType == FileType.Unknown) {
+            // Test at offset 4 for Base Media Format (i.e. QuickTime, MP4, etc...) identifier "ftyp"
+            if (bytes[4] == 'f' && bytes[5] == 't' && bytes[6] == 'y' && bytes[7] == 'p') {
+                // TODO base this upon an additional lookup on the 4-character-codes used with base media format and friends ("atom" or "box" type)
+                // http://www.ftyps.com
+                return FileType.QuickTime;
+            }
         }
+
+        return fileType;
     }
 }
