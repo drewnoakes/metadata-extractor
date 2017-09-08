@@ -21,7 +21,6 @@
 package com.drew.metadata.mov.media;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 

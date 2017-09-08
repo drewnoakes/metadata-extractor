@@ -20,7 +20,6 @@
  */
 package com.drew.metadata.mov.media;
 
-import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;

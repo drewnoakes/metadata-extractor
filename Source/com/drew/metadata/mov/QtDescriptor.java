@@ -21,7 +21,6 @@
 package com.drew.metadata.mov;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.util.ArrayList;

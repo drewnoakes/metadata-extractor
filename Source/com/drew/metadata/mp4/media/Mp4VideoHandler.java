@@ -23,7 +23,6 @@ package com.drew.metadata.mp4.media;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.QtAtomTypes;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4MediaHandler;
 import com.drew.metadata.mp4.boxes.Box;

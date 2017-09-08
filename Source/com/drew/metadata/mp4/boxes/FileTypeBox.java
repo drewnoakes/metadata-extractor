@@ -21,7 +21,6 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.Mp4Directory;
 
 import java.io.IOException;

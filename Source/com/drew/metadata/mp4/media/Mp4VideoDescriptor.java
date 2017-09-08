@@ -22,7 +22,6 @@ package com.drew.metadata.mp4.media;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.TagDescriptor;
-import com.drew.metadata.mov.QtDescriptor;
 
 public class Mp4VideoDescriptor extends TagDescriptor<Mp4VideoDirectory>
 {

@@ -21,7 +21,6 @@
 package com.drew.metadata.mp4.media;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 

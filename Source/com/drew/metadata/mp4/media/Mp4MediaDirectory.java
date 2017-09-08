@@ -20,7 +20,6 @@
  */
 package com.drew.metadata.mp4.media;
 
-import com.drew.metadata.Directory;
 import com.drew.metadata.mp4.Mp4Directory;
 
 import java.util.HashMap;
