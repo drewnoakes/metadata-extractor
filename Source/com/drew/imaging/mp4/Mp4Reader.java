@@ -27,26 +27,19 @@ public class Mp4Reader
 
                 Box box = new Box(reader);
 
-                /*
-                 * Determine if fourCC is container/atom and process accordingly
-                 * Unknown atoms will be skipped
-                 */
+                // Determine if fourCC is container/atom and process accordingly.
+                // Unknown atoms will be skipped
+
                 if (mp4Handler.shouldAcceptContainer(box)) {
-
                     processBoxes(reader, box.size + reader.getPosition() - 8, mp4Handler.processContainer(box));
-
                 } else if (mp4Handler.shouldAcceptBox(box)) {
-
                     mp4Handler = mp4Handler.processBox(box, reader.getBytes((int)box.size - 8));
-
                 } else {
-
                     if (box.size > 1) {
                         reader.skip(box.size - 8);
                     } else if (box.size == -1) {
                         break;
                     }
-
                 }
             }
         } catch (IOException ignored) {

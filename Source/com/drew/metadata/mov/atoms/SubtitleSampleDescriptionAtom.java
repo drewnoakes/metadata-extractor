@@ -10,7 +10,6 @@ import java.io.IOException;
  */
 public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<SubtitleSampleDescriptionAtom.SubtitleSampleDescription>
 {
-
     public SubtitleSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);

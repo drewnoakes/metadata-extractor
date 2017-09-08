@@ -11,7 +11,6 @@ import java.io.IOException;
  */
 public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampleDescriptionAtom.SoundSampleDescription>
 {
-
     public SoundSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);

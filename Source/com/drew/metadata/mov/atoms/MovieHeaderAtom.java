@@ -38,7 +38,8 @@ public class MovieHeaderAtom extends FullAtom
         preferredRate = reader.getInt32();
         preferredVolume = reader.getInt16();
         reader.skip(10); // Reserved
-        matrixStructure = new int[]{reader.getInt32(),
+        matrixStructure = new int[]{
+            reader.getInt32(),
             reader.getInt32(),
             reader.getInt32(),
             reader.getInt32(),
