@@ -26,13 +26,12 @@ import com.drew.metadata.mp4.boxes.Box;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.DataFormatException;
 
 public class Mp4Reader
 {
     private StreamReader reader;
 
-    public void extract(Metadata metadata, InputStream inputStream, Mp4Handler handler) throws IOException, DataFormatException
+    public void extract(Metadata metadata, InputStream inputStream, Mp4Handler handler)
     {
         reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);

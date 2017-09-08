@@ -27,7 +27,6 @@ import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.mov.QtAtomHandler;
 
 import java.io.*;
-import java.util.zip.DataFormatException;
 
 public class QtMetadataReader
 {
@@ -46,15 +45,10 @@ public class QtMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
-        try {
-            Metadata metadata = new Metadata();
-            new QtReader().extract(metadata, inputStream, new QtAtomHandler(metadata));
-            return metadata;
-        } catch (DataFormatException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Metadata metadata = new Metadata();
+        new QtReader().extract(metadata, inputStream, new QtAtomHandler(metadata));
+        return metadata;
     }
 }

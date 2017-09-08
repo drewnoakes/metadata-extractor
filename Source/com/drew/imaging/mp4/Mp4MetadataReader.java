@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.DataFormatException;
 
 public class Mp4MetadataReader
 {
@@ -51,13 +50,8 @@ public class Mp4MetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
-        try {
-            Metadata metadata = new Metadata();
-            new Mp4Reader().extract(metadata, inputStream, new Mp4BoxHandler(metadata));
-            return metadata;
-        } catch (DataFormatException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Metadata metadata = new Metadata();
+        new Mp4Reader().extract(inputStream, new Mp4BoxHandler(metadata));
+        return metadata;
     }
 }

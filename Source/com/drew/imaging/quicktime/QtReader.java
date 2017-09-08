@@ -27,13 +27,12 @@ import com.drew.metadata.mov.atoms.Atom;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.DataFormatException;
 
 public class QtReader
 {
     private StreamReader reader;
 
-    public void extract(Metadata metadata, InputStream inputStream, QtHandler handler) throws IOException, DataFormatException
+    public void extract(Metadata metadata, InputStream inputStream, QtHandler handler)
     {
         QtDirectory directory = new QtDirectory();
         metadata.addDirectory(directory);
