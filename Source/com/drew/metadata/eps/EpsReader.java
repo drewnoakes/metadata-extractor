@@ -43,7 +43,6 @@ import java.util.List;
  */
 public class EpsReader {
 
-    private RandomAccessStreamReader _reader;
     private int _previousTag;
 
     /**
@@ -57,7 +56,7 @@ public class EpsReader {
      */
     public void extract(@NotNull final InputStream inputStream, @NotNull final Metadata metadata) throws IOException
     {
-        this._reader = new RandomAccessStreamReader(inputStream);
+        RandomAccessStreamReader reader = new RandomAccessStreamReader(inputStream);
         EpsDirectory directory = new EpsDirectory();
         metadata.addDirectory(directory);
 
@@ -66,16 +65,16 @@ public class EpsReader {
          *
          * 0x25215053 (%!PS) signifies an EPS File and leads straight into the PostScript
          */
-        switch (_reader.getInt32(0)) {
+        switch (reader.getInt32(0)) {
             case (0xC5D0D3C6):
-                _reader.setMotorolaByteOrder(false);
-                int postScriptOffset = _reader.getInt32(4);
-                int postScriptLength = _reader.getInt32(8);
-                int wmfOffset = _reader.getInt32(12);
-                int wmfSize = _reader.getInt32(16);
-                int tifOffset = _reader.getInt32(20);
-                int tifSize = _reader.getInt32(24);
-                int checkSum = _reader.getInt32(28);
+                reader.setMotorolaByteOrder(false);
+                int postScriptOffset = reader.getInt32(4);
+                int postScriptLength = reader.getInt32(8);
+                int wmfOffset = reader.getInt32(12);
+                int wmfSize = reader.getInt32(16);
+                int tifOffset = reader.getInt32(20);
+                int tifSize = reader.getInt32(24);
+                int checkSum = reader.getInt32(28);
 
                 // Get Tiff/WMF preview data if applicable
                 if (tifSize != 0) {
@@ -83,7 +82,7 @@ public class EpsReader {
                     directory.setInt(EpsDirectory.TAG_TIFF_PREVIEW_OFFSET, tifOffset);
                     // Get Tiff metadata
                     try {
-                        ByteArrayReader byteArrayReader = new ByteArrayReader(_reader.getBytes(tifOffset, tifSize));
+                        ByteArrayReader byteArrayReader = new ByteArrayReader(reader.getBytes(tifOffset, tifSize));
                         new TiffReader().processTiff(byteArrayReader, new ExifTiffHandler(metadata, null), 0);
                     } catch (TiffProcessingException ex) {
                         directory.addError("Unable to process TIFF data: " + ex.getMessage());
@@ -93,7 +92,7 @@ public class EpsReader {
                     directory.setInt(EpsDirectory.TAG_WMF_PREVIEW_OFFSET, wmfOffset);
                 }
 
-                extract(directory, metadata, new SequentialByteArrayReader(_reader.getBytes(postScriptOffset, postScriptLength)));
+                extract(directory, metadata, new SequentialByteArrayReader(reader.getBytes(postScriptOffset, postScriptLength)));
                 break;
             case (0x25215053):
                 inputStream.reset();
