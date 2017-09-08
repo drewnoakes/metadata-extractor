@@ -33,20 +33,20 @@ With that `Metadata` instance, you can [iterate or query](https://github.com/dre
 
 The library understands several formats of metadata, many of which may be present in a single image:
 
-* [Exif](http://en.wikipedia.org/wiki/Exchangeable_image_file_format)
-* [IPTC](http://en.wikipedia.org/wiki/IPTC)
-* [XMP](http://en.wikipedia.org/wiki/Extensible_Metadata_Platform)
-* [JFIF / JFXX](http://en.wikipedia.org/wiki/JPEG_File_Interchange_Format)
-* [ICC Profiles](http://en.wikipedia.org/wiki/ICC_profile)
-* [Photoshop](http://en.wikipedia.org/wiki/Photoshop) fields
-* [WebP](http://en.wikipedia.org/wiki/WebP) properties
-* [WAV](http://en.wikipedia.org/wiki/WAV) properties
-* [AVI](http://en.wikipedia.org/wiki/Audio_Video_Interleave) properties
-* [PNG](http://en.wikipedia.org/wiki/Portable_Network_Graphics) properties
-* [BMP](http://en.wikipedia.org/wiki/BMP_file_format) properties
-* [GIF](http://en.wikipedia.org/wiki/Graphics_Interchange_Format) properties
-* [ICO](http://en.wikipedia.org/wiki/ICO_(file_format)) properties
-* [PCX](http://en.wikipedia.org/wiki/PCX) properties
+* [Exif](https://en.wikipedia.org/wiki/Exchangeable_image_file_format)
+* [IPTC](https://en.wikipedia.org/wiki/IPTC)
+* [XMP](https://en.wikipedia.org/wiki/Extensible_Metadata_Platform)
+* [JFIF / JFXX](https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format)
+* [ICC Profiles](https://en.wikipedia.org/wiki/ICC_profile)
+* [Photoshop](https://en.wikipedia.org/wiki/Photoshop) fields
+* [WebP](https://en.wikipedia.org/wiki/WebP) properties
+* [WAV](https://en.wikipedia.org/wiki/WAV) properties
+* [AVI](https://en.wikipedia.org/wiki/Audio_Video_Interleave) properties
+* [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics) properties
+* [BMP](https://en.wikipedia.org/wiki/BMP_file_format) properties
+* [GIF](https://en.wikipedia.org/wiki/Graphics_Interchange_Format) properties
+* [ICO](https://en.wikipedia.org/wiki/ICO_(file_format)) properties
+* [PCX](https://en.wikipedia.org/wiki/PCX) properties
 
 It will process files of type:
 
