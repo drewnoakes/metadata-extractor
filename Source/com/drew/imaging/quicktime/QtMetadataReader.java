@@ -48,7 +48,7 @@ public class QtMetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
-        new QtReader().extract(metadata, inputStream, new QtAtomHandler(metadata));
+        QtReader.extract(metadata, inputStream, new QtAtomHandler(metadata));
         return metadata;
     }
 }

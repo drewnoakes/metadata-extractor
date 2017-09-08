@@ -30,7 +30,9 @@ import java.io.InputStream;
 
 public class QtReader
 {
-    public void extract(Metadata metadata, InputStream inputStream, QtHandler handler)
+    private QtReader() {}
+
+    public static void extract(Metadata metadata, InputStream inputStream, QtHandler handler)
     {
         QtDirectory directory = new QtDirectory();
         metadata.addDirectory(directory);
@@ -41,7 +43,7 @@ public class QtReader
         processAtoms(reader, -1, handler);
     }
 
-    private void processAtoms(StreamReader reader, long atomEnd, QtHandler qtHandler)
+    private static void processAtoms(StreamReader reader, long atomEnd, QtHandler qtHandler)
     {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {

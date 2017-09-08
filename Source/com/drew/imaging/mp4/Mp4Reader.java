@@ -29,7 +29,9 @@ import java.io.InputStream;
 
 public class Mp4Reader
 {
-    public void extract(Metadata metadata, InputStream inputStream, Mp4Handler handler)
+    private Mp4Reader() {}
+
+    public static void extract(Metadata metadata, InputStream inputStream, Mp4Handler handler)
     {
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
@@ -37,7 +39,7 @@ public class Mp4Reader
         processBoxes(reader, -1, handler);
     }
 
-    private void processBoxes(StreamReader reader, long atomEnd, Mp4Handler mp4Handler)
+    private static void processBoxes(StreamReader reader, long atomEnd, Mp4Handler mp4Handler)
     {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
