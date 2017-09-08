@@ -24,6 +24,7 @@ import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.media.QtMediaDirectory;
@@ -55,7 +56,7 @@ public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
     }
 
     @Override
-    public boolean shouldAcceptAtom(Atom atom)
+    public boolean shouldAcceptAtom(@NotNull Atom atom)
     {
         return atom.type.equals(getMediaInformation())
             || atom.type.equals(QtAtomTypes.ATOM_SAMPLE_DESCRIPTION)
@@ -63,7 +64,7 @@ public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
     }
 
     @Override
-    public boolean shouldAcceptContainer(Atom atom)
+    public boolean shouldAcceptContainer(@NotNull Atom atom)
     {
         return atom.type.equals(QtContainerTypes.ATOM_SAMPLE_TABLE)
             || atom.type.equals(QtContainerTypes.ATOM_MEDIA_INFORMATION)
@@ -72,7 +73,7 @@ public abstract class QtMediaHandler<T extends QtDirectory> extends QtHandler<T>
     }
 
     @Override
-    public QtMediaHandler processAtom(@NotNull Atom atom, @NotNull byte[] payload) throws IOException
+    public QtMediaHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);

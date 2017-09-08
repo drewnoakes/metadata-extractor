@@ -24,6 +24,7 @@ import com.drew.imaging.mp4.Mp4Handler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
@@ -53,7 +54,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     }
 
     @Override
-    public boolean shouldAcceptBox(Box box)
+    public boolean shouldAcceptBox(@NotNull Box box)
     {
         return box.type.equals(getMediaInformation())
             || box.type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)
@@ -61,14 +62,14 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     }
 
     @Override
-    public boolean shouldAcceptContainer(Box box)
+    public boolean shouldAcceptContainer(@NotNull Box box)
     {
         return box.type.equals(Mp4ContainerTypes.BOX_SAMPLE_TABLE)
             || box.type.equals(Mp4ContainerTypes.BOX_MEDIA_INFORMATION);
     }
 
     @Override
-    public Mp4Handler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
+    public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);

@@ -40,12 +40,14 @@ public class Mp4MetaDirectory extends Mp4MediaDirectory
         Mp4MediaDirectory.addMp4MediaTags(_tagNameMap);
     }
 
+    @NotNull
     @Override
     public String getName()
     {
         return "MP4 Metadata";
     }
 
+    @NotNull
     @Override
     protected HashMap<Integer, String> getTagNameMap()
     {

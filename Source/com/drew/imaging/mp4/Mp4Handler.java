@@ -21,6 +21,7 @@
 package com.drew.imaging.mp4;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4Directory;
 import com.drew.metadata.mp4.boxes.Box;
@@ -45,7 +46,7 @@ public abstract class Mp4Handler<T extends Mp4Directory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Box box);
 
-    protected abstract Mp4Handler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException;
+    protected abstract Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload) throws IOException;
 
     protected Mp4Handler processContainer(@NotNull Box box) throws IOException
     {

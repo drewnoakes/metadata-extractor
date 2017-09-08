@@ -52,7 +52,7 @@ public class WavRiffHandler implements RiffHandler
     }
 
     @Override
-    public boolean shouldAcceptList(String fourCC)
+    public boolean shouldAcceptList(@NotNull String fourCC)
     {
         if (fourCC.equals(WavDirectory.LIST_INFO)) {
             _currentList = WavDirectory.LIST_INFO;

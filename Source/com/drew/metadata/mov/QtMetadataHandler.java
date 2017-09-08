@@ -24,6 +24,7 @@ import com.drew.imaging.quicktime.QtHandler;
 import com.drew.lang.ByteUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.metadata.QtMetadataDirectory;
@@ -48,7 +49,7 @@ public abstract class QtMetadataHandler extends QtHandler
     }
 
     @Override
-    protected boolean shouldAcceptAtom(Atom atom)
+    protected boolean shouldAcceptAtom(@NotNull Atom atom)
     {
         return atom.type.equals(QtAtomTypes.ATOM_HANDLER)
             || atom.type.equals(QtAtomTypes.ATOM_KEYS)
@@ -56,14 +57,14 @@ public abstract class QtMetadataHandler extends QtHandler
     }
 
     @Override
-    protected boolean shouldAcceptContainer(Atom atom)
+    protected boolean shouldAcceptContainer(@NotNull Atom atom)
     {
         return atom.type.equals(QtContainerTypes.ATOM_METADATA_LIST)
             || ByteUtil.getInt32(atom.type.getBytes(), 0, true) < keys.size();
     }
 
     @Override
-    protected QtHandler processAtom(@NotNull Atom atom, @NotNull byte[] payload) throws IOException
+    protected QtHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);

@@ -21,6 +21,7 @@
 package com.drew.imaging.quicktime;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QtDirectory;
 import com.drew.metadata.mov.atoms.Atom;
@@ -46,7 +47,7 @@ public abstract class QtHandler<T extends QtDirectory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Atom atom);
 
-    protected abstract QtHandler processAtom(@NotNull Atom atom, @NotNull byte[] payload) throws IOException;
+    protected abstract QtHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException;
 
     protected QtHandler processContainer(@NotNull Atom atom) throws IOException
     {

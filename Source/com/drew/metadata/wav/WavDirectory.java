@@ -324,12 +324,14 @@ public class WavDirectory extends Directory
         this.setDescriptor(new WavDescriptor(this));
     }
 
+    @NotNull
     @Override
     public String getName()
     {
         return "WAV";
     }
 
+    @NotNull
     @Override
     protected HashMap<Integer, String> getTagNameMap()
     {

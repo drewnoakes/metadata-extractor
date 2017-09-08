@@ -69,11 +69,13 @@ public class AviDirectory extends Directory
         this.setDescriptor(new AviDescriptor(this));
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "AVI";
     }
 
+    @NotNull
     @Override
     protected HashMap<Integer, String> getTagNameMap() {
         return _tagNameMap;

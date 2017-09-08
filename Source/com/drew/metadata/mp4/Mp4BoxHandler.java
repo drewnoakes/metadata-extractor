@@ -24,6 +24,7 @@ import com.drew.imaging.mp4.Mp4Handler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.boxes.*;
 
@@ -57,7 +58,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     }
 
     @Override
-    public boolean shouldAcceptContainer(Box box)
+    public boolean shouldAcceptContainer(@NotNull Box box)
     {
         return box.type.equals(Mp4ContainerTypes.BOX_TRACK)
             || box.type.equals(Mp4ContainerTypes.BOX_METADATA)
@@ -66,7 +67,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     }
 
     @Override
-    public Mp4Handler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
+    public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
