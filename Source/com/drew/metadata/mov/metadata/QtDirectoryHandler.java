@@ -53,7 +53,7 @@ public class QtDirectoryHandler extends QtMetadataHandler
     @Override
     protected boolean shouldAcceptContainer(@NotNull Atom atom)
     {
-        return QtMetadataDirectory._tagIntegerMap.containsKey(atom)
+        return QtMetadataDirectory._tagIntegerMap.containsKey(atom.type)
             || atom.type.equals(QtContainerTypes.ATOM_METADATA_LIST);
     }
 
@@ -68,7 +68,7 @@ public class QtDirectoryHandler extends QtMetadataHandler
                 currentData = new String(reader.getBytes(4));
             }
         } else {
-            if (QtMetadataDirectory._tagIntegerMap.containsKey(atom)) {
+            if (QtMetadataDirectory._tagIntegerMap.containsKey(atom.type)) {
                 currentData = atom.type;
             } else {
                 currentData = null;
