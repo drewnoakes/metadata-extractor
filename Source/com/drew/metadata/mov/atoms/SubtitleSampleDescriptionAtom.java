@@ -72,9 +72,9 @@ public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<Subtitl
     {
         SubtitleSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setBoolean(QtSubtitleDirectory.TAG_VERTICAL_PLACEMENT, ((description.displayFlags & 0x20000000) == 0x20000000) ? true : false);
-        directory.setBoolean(QtSubtitleDirectory.TAG_SOME_SAMPLES_FORCED, ((description.displayFlags & 0x40000000) == 0x40000000) ? true : false);
-        directory.setBoolean(QtSubtitleDirectory.TAG_ALL_SAMPLES_FORCED, ((description.displayFlags & 0xC0000000) == 0xC0000000) ? true : false);
+        directory.setBoolean(QtSubtitleDirectory.TAG_VERTICAL_PLACEMENT, (description.displayFlags & 0x20000000) == 0x20000000);
+        directory.setBoolean(QtSubtitleDirectory.TAG_SOME_SAMPLES_FORCED, (description.displayFlags & 0x40000000) == 0x40000000);
+        directory.setBoolean(QtSubtitleDirectory.TAG_ALL_SAMPLES_FORCED, (description.displayFlags & 0xC0000000) == 0xC0000000);
 
         directory.setLong(QtSubtitleDirectory.TAG_DEFAULT_TEXT_BOX, description.defaultTextBox);
         directory.setInt(QtSubtitleDirectory.TAG_FONT_IDENTIFIER, description.fontIdentifier);

@@ -45,25 +45,25 @@ public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleD
     {
         TextSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setBoolean(QtTextDirectory.TAG_AUTO_SCALE, ((description.displayFlags & 0x0002) == 0x0002) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_AUTO_SCALE, (description.displayFlags & 0x0002) == 0x0002);
 
-        directory.setBoolean(QtTextDirectory.TAG_MOVIE_BACKGROUND_COLOR, ((description.displayFlags & 0x0008) == 0x0008) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_MOVIE_BACKGROUND_COLOR, (description.displayFlags & 0x0008) == 0x0008);
 
-        directory.setBoolean(QtTextDirectory.TAG_SCROLL_IN, ((description.displayFlags & 0x0020) == 0x0020) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_SCROLL_IN, (description.displayFlags & 0x0020) == 0x0020);
 
-        directory.setBoolean(QtTextDirectory.TAG_SCROLL_OUT, ((description.displayFlags & 0x0040) == 0x0040) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_SCROLL_OUT, (description.displayFlags & 0x0040) == 0x0040);
 
         directory.setString(QtTextDirectory.TAG_HORIZONTAL_SCROLL, ((description.displayFlags & 0x0080) == 0x0080) ? "Horizontal" : "Vertical");
 
         directory.setString(QtTextDirectory.TAG_REVERSE_SCROLL, ((description.displayFlags & 0x0100) == 0x0100) ? "Reverse" : "Normal");
 
-        directory.setBoolean(QtTextDirectory.TAG_CONTINUOUS_SCROLL, ((description.displayFlags & 0x0200) == 0x0200) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_CONTINUOUS_SCROLL, (description.displayFlags & 0x0200) == 0x0200);
 
-        directory.setBoolean(QtTextDirectory.TAG_DROP_SHADOW, ((description.displayFlags & 0x1000) == 0x1000) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_DROP_SHADOW, (description.displayFlags & 0x1000) == 0x1000);
 
-        directory.setBoolean(QtTextDirectory.TAG_ANTI_ALIAS, ((description.displayFlags & 0x2000) == 0x2000) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_ANTI_ALIAS, (description.displayFlags & 0x2000) == 0x2000);
 
-        directory.setBoolean(QtTextDirectory.TAG_KEY_TEXT, ((description.displayFlags & 0x4000) == 0x4000) ? true : false);
+        directory.setBoolean(QtTextDirectory.TAG_KEY_TEXT, (description.displayFlags & 0x4000) == 0x4000);
 
         switch (description.textJustification) {
             case (0):

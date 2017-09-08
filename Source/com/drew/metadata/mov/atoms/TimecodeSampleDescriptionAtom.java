@@ -45,10 +45,10 @@ public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<Timecod
     {
         TimecodeSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setBoolean(QtTimecodeDirectory.TAG_DROP_FRAME, ((description.flags & 0x0001) == 0x0001) ? true : false);
-        directory.setBoolean(QtTimecodeDirectory.TAG_24_HOUR_MAX, ((description.flags & 0x0002) == 0x0002) ? true : false);
-        directory.setBoolean(QtTimecodeDirectory.TAG_NEGATIVE_TIMES_OK, ((description.flags & 0x0004) == 0x0004) ? true : false);
-        directory.setBoolean(QtTimecodeDirectory.TAG_COUNTER, ((description.flags & 0x0008) == 0x0008) ? true : false);
+        directory.setBoolean(QtTimecodeDirectory.TAG_DROP_FRAME,        (description.flags & 0x0001) == 0x0001);
+        directory.setBoolean(QtTimecodeDirectory.TAG_24_HOUR_MAX,       (description.flags & 0x0002) == 0x0002);
+        directory.setBoolean(QtTimecodeDirectory.TAG_NEGATIVE_TIMES_OK, (description.flags & 0x0004) == 0x0004);
+        directory.setBoolean(QtTimecodeDirectory.TAG_COUNTER,           (description.flags & 0x0008) == 0x0008);
     }
 
     class TimecodeSampleDescription extends SampleDescription

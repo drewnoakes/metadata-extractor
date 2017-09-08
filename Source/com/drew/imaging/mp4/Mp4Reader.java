@@ -43,7 +43,7 @@ public class Mp4Reader
     private void processBoxes(StreamReader reader, long atomEnd, Mp4Handler mp4Handler)
     {
         try {
-            while ((atomEnd == -1) ? true : reader.getPosition() < atomEnd) {
+            while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
                 Box box = new Box(reader);
 

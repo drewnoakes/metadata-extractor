@@ -75,7 +75,7 @@ public class GifControlDirectory extends Directory
      */
     public boolean isTransparent() {
         Boolean transparent = getBooleanObject(TAG_TRANSPARENT_COLOR_FLAG);
-        return transparent != null ? transparent.booleanValue() : false;
+        return transparent != null && transparent;
     }
 
     @Override

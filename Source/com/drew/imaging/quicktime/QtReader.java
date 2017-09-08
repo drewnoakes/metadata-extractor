@@ -47,7 +47,7 @@ public class QtReader
     private void processAtoms(StreamReader reader, long atomEnd, QtHandler qtHandler)
     {
         try {
-            while ((atomEnd == -1) ? true : reader.getPosition() < atomEnd) {
+            while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
                 Atom atom = new Atom(reader);
 
