@@ -47,6 +47,8 @@ The library understands several formats of metadata, many of which may be presen
 * [GIF](https://en.wikipedia.org/wiki/Graphics_Interchange_Format) properties
 * [ICO](https://en.wikipedia.org/wiki/ICO_(file_format)) properties
 * [PCX](https://en.wikipedia.org/wiki/PCX) properties
+* [QuickTime](https://en.wikipedia.org/wiki/QuickTime_File_Format) properties
+* [MP4](https://en.wikipedia.org/wiki/MPEG-4_Part_14) properties
 
 It will process files of type:
 
@@ -61,6 +63,8 @@ It will process files of type:
 * GIF
 * ICO
 * PCX
+* QuickTime
+* MP4
 * Camera Raw
   * NEF (Nikon)
   * CR2 (Canon)
