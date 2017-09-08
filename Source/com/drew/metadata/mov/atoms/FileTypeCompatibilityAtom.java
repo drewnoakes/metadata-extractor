@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.QtDirectory;
+import com.drew.metadata.mov.QuickTimeDirectory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,10 +49,10 @@ public class FileTypeCompatibilityAtom extends Atom
         }
     }
 
-    public void addMetadata(QtDirectory directory)
+    public void addMetadata(QuickTimeDirectory directory)
     {
-        directory.setString(QtDirectory.TAG_MAJOR_BRAND, majorBrand);
-        directory.setLong(QtDirectory.TAG_MINOR_VERSION, minorVersion);
-        directory.setStringArray(QtDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(new String[compatibleBrands.size()]));
+        directory.setString(QuickTimeDirectory.TAG_MAJOR_BRAND, majorBrand);
+        directory.setLong(QuickTimeDirectory.TAG_MINOR_VERSION, minorVersion);
+        directory.setStringArray(QuickTimeDirectory.TAG_COMPATIBLE_BRANDS, compatibleBrands.toArray(new String[compatibleBrands.size()]));
     }
 }

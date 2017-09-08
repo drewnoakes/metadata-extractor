@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.QtHandlerFactory;
+import com.drew.metadata.mov.QuickTimeHandlerFactory;
 
 import java.io.IOException;
 
@@ -51,9 +51,9 @@ public class MediaHeaderAtom extends FullAtom
         quality = reader.getUInt16();
 
         // TODO can't use static fields here as it breaks concurrency
-        QtHandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
-        QtHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
-        QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
-        QtHandlerFactory.HANDLER_PARAM_DURATION = duration;
+        QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
+        QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
+        QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
+        QuickTimeHandlerFactory.HANDLER_PARAM_DURATION = duration;
     }
 }

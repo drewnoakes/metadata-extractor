@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.media.QtVideoDirectory;
+import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
 import java.io.IOException;
 
@@ -43,38 +43,38 @@ public class VideoInformationMediaHeaderAtom extends FullAtom
         opcolor = new int[]{reader.getUInt16(), reader.getUInt16(), reader.getUInt16()};
     }
 
-    public void addMetadata(QtVideoDirectory directory)
+    public void addMetadata(QuickTimeVideoDirectory directory)
     {
-        directory.setIntArray(QtVideoDirectory.TAG_OPCOLOR, opcolor);
+        directory.setIntArray(QuickTimeVideoDirectory.TAG_OPCOLOR, opcolor);
 
         // TODO store the raw number, and use a descriptor to decode it
         switch (graphicsMode) {
             case (0x00):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Copy");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Copy");
                 break;
             case (0x40):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Dither copy");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Dither copy");
                 break;
             case (0x20):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Blend");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Blend");
                 break;
             case (0x24):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Transparent");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Transparent");
                 break;
             case (0x100):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Straight alpha");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Straight alpha");
                 break;
             case (0x101):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Premul white alpha");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Premul white alpha");
                 break;
             case (0x102):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Premul black alpha");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Premul black alpha");
                 break;
             case (0x104):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Straight alpha blend");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Straight alpha blend");
                 break;
             case (0x103):
-                directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
+                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
                 break;
             default:
         }

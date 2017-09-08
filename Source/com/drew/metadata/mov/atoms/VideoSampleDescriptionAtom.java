@@ -21,8 +21,8 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.QtDictionary;
-import com.drew.metadata.mov.media.QtVideoDirectory;
+import com.drew.metadata.mov.QuickTimeDictionary;
+import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
 import java.io.IOException;
 
@@ -44,29 +44,29 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
         return new VideoSampleDescription(reader);
     }
 
-    public void addMetadata(QtVideoDirectory directory)
+    public void addMetadata(QuickTimeVideoDirectory directory)
     {
         VideoSampleDescription sampleDescription = sampleDescriptions.get(0);
 
-        QtDictionary.setLookup(QtVideoDirectory.TAG_VENDOR, sampleDescription.vendor, directory);
-        QtDictionary.setLookup(QtVideoDirectory.TAG_COMPRESSION_TYPE, sampleDescription.dataFormat, directory);
+        QuickTimeDictionary.setLookup(QuickTimeVideoDirectory.TAG_VENDOR, sampleDescription.vendor, directory);
+        QuickTimeDictionary.setLookup(QuickTimeVideoDirectory.TAG_COMPRESSION_TYPE, sampleDescription.dataFormat, directory);
 
-        directory.setLong(QtVideoDirectory.TAG_TEMPORAL_QUALITY, sampleDescription.temporalQuality);
-        directory.setLong(QtVideoDirectory.TAG_SPATIAL_QUALITY, sampleDescription.spatialQuality);
-        directory.setInt(QtVideoDirectory.TAG_WIDTH, sampleDescription.width);
-        directory.setInt(QtVideoDirectory.TAG_HEIGHT, sampleDescription.height);
-        directory.setString(QtVideoDirectory.TAG_COMPRESSOR_NAME, sampleDescription.compressorName.trim());
+        directory.setLong(QuickTimeVideoDirectory.TAG_TEMPORAL_QUALITY, sampleDescription.temporalQuality);
+        directory.setLong(QuickTimeVideoDirectory.TAG_SPATIAL_QUALITY, sampleDescription.spatialQuality);
+        directory.setInt(QuickTimeVideoDirectory.TAG_WIDTH, sampleDescription.width);
+        directory.setInt(QuickTimeVideoDirectory.TAG_HEIGHT, sampleDescription.height);
+        directory.setString(QuickTimeVideoDirectory.TAG_COMPRESSOR_NAME, sampleDescription.compressorName.trim());
 
-        directory.setInt(QtVideoDirectory.TAG_DEPTH, sampleDescription.depth);
-        directory.setInt(QtVideoDirectory.TAG_COLOR_TABLE, sampleDescription.colorTableID);
+        directory.setInt(QuickTimeVideoDirectory.TAG_DEPTH, sampleDescription.depth);
+        directory.setInt(QuickTimeVideoDirectory.TAG_COLOR_TABLE, sampleDescription.colorTableID);
 
         double horizontalInteger = (sampleDescription.horizontalResolution & 0xFFFF0000) >> 16;
         double horizontalFraction = (sampleDescription.horizontalResolution & 0xFFFF) / Math.pow(2, 4);
-        directory.setDouble(QtVideoDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
+        directory.setDouble(QuickTimeVideoDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
 
         double verticalInteger = (sampleDescription.verticalResolution & 0xFFFF0000) >> 16;
         double verticalFraction = (sampleDescription.verticalResolution & 0xFFFF) / Math.pow(2, 4);
-        directory.setDouble(QtVideoDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
+        directory.setDouble(QuickTimeVideoDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 
     class VideoSampleDescription extends SampleDescription

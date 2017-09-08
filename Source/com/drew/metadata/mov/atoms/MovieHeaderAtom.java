@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.QtDirectory;
+import com.drew.metadata.mov.QuickTimeDirectory;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -80,7 +80,7 @@ public class MovieHeaderAtom extends FullAtom
         nextTrackID = reader.getUInt32();
     }
 
-    public void addMetadata(QtDirectory directory)
+    public void addMetadata(QuickTimeDirectory directory)
     {
         // Get creation/modification times
         Calendar calendar = Calendar.getInstance();
@@ -89,8 +89,8 @@ public class MovieHeaderAtom extends FullAtom
         long macToUnixEpochOffset = date.getTime();
         String creationTimeStamp = new Date(creationTime * 1000 + macToUnixEpochOffset).toString();
         String modificationTimeStamp = new Date(modificationTime * 1000 + macToUnixEpochOffset).toString();
-        directory.setString(QtDirectory.TAG_CREATION_TIME, creationTimeStamp);
-        directory.setString(QtDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
+        directory.setString(QuickTimeDirectory.TAG_CREATION_TIME, creationTimeStamp);
+        directory.setString(QuickTimeDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
 
         // Get duration and time scale
         duration = duration / timescale;
@@ -98,25 +98,25 @@ public class MovieHeaderAtom extends FullAtom
         Integer minutes = ((int)duration / (int)(Math.pow(60, 1))) - (hours * 60);
         Integer seconds = (int)Math.ceil((duration / (Math.pow(60, 0))) - (minutes * 60));
         String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
-        directory.setString(QtDirectory.TAG_DURATION, time);
-        directory.setLong(QtDirectory.TAG_TIME_SCALE, timescale);
+        directory.setString(QuickTimeDirectory.TAG_DURATION, time);
+        directory.setLong(QuickTimeDirectory.TAG_TIME_SCALE, timescale);
 
         // Calculate preferred rate fixed point
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
         double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
-        directory.setDouble(QtDirectory.TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
+        directory.setDouble(QuickTimeDirectory.TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
 
         // Calculate preferred volume fixed point
         double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
         double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
-        directory.setDouble(QtDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
+        directory.setDouble(QuickTimeDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
 
-        directory.setLong(QtDirectory.TAG_PREVIEW_TIME, previewTime);
-        directory.setLong(QtDirectory.TAG_PREVIEW_DURATION, previewDuration);
-        directory.setLong(QtDirectory.TAG_POSTER_TIME, posterTime);
-        directory.setLong(QtDirectory.TAG_SELECTION_TIME, selectionTime);
-        directory.setLong(QtDirectory.TAG_SELECTION_DURATION, selectionDuration);
-        directory.setLong(QtDirectory.TAG_CURRENT_TIME, currentTime);
-        directory.setLong(QtDirectory.TAG_NEXT_TRACK_ID, nextTrackID);
+        directory.setLong(QuickTimeDirectory.TAG_PREVIEW_TIME, previewTime);
+        directory.setLong(QuickTimeDirectory.TAG_PREVIEW_DURATION, previewDuration);
+        directory.setLong(QuickTimeDirectory.TAG_POSTER_TIME, posterTime);
+        directory.setLong(QuickTimeDirectory.TAG_SELECTION_TIME, selectionTime);
+        directory.setLong(QuickTimeDirectory.TAG_SELECTION_DURATION, selectionDuration);
+        directory.setLong(QuickTimeDirectory.TAG_CURRENT_TIME, currentTime);
+        directory.setLong(QuickTimeDirectory.TAG_NEXT_TRACK_ID, nextTrackID);
     }
 }

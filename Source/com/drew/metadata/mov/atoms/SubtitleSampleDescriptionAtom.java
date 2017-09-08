@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.media.QtSubtitleDirectory;
+import com.drew.metadata.mov.media.QuickTimeSubtitleDirectory;
 
 import java.io.IOException;
 
@@ -70,28 +70,28 @@ public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<Subtitl
         }
     }
 
-    public void addMetadata(QtSubtitleDirectory directory)
+    public void addMetadata(QuickTimeSubtitleDirectory directory)
     {
         SubtitleSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setBoolean(QtSubtitleDirectory.TAG_VERTICAL_PLACEMENT, (description.displayFlags & 0x20000000) == 0x20000000);
-        directory.setBoolean(QtSubtitleDirectory.TAG_SOME_SAMPLES_FORCED, (description.displayFlags & 0x40000000) == 0x40000000);
-        directory.setBoolean(QtSubtitleDirectory.TAG_ALL_SAMPLES_FORCED, (description.displayFlags & 0xC0000000) == 0xC0000000);
+        directory.setBoolean(QuickTimeSubtitleDirectory.TAG_VERTICAL_PLACEMENT, (description.displayFlags & 0x20000000) == 0x20000000);
+        directory.setBoolean(QuickTimeSubtitleDirectory.TAG_SOME_SAMPLES_FORCED, (description.displayFlags & 0x40000000) == 0x40000000);
+        directory.setBoolean(QuickTimeSubtitleDirectory.TAG_ALL_SAMPLES_FORCED, (description.displayFlags & 0xC0000000) == 0xC0000000);
 
-        directory.setLong(QtSubtitleDirectory.TAG_DEFAULT_TEXT_BOX, description.defaultTextBox);
-        directory.setInt(QtSubtitleDirectory.TAG_FONT_IDENTIFIER, description.fontIdentifier);
+        directory.setLong(QuickTimeSubtitleDirectory.TAG_DEFAULT_TEXT_BOX, description.defaultTextBox);
+        directory.setInt(QuickTimeSubtitleDirectory.TAG_FONT_IDENTIFIER, description.fontIdentifier);
         switch (description.fontFace) {
             case (1):
-                directory.setString(QtSubtitleDirectory.TAG_FONT_FACE, "Bold");
+                directory.setString(QuickTimeSubtitleDirectory.TAG_FONT_FACE, "Bold");
                 break;
             case (2):
-                directory.setString(QtSubtitleDirectory.TAG_FONT_FACE, "Italic");
+                directory.setString(QuickTimeSubtitleDirectory.TAG_FONT_FACE, "Italic");
                 break;
             case (4):
-                directory.setString(QtSubtitleDirectory.TAG_FONT_FACE, "Underline");
+                directory.setString(QuickTimeSubtitleDirectory.TAG_FONT_FACE, "Underline");
                 break;
         }
-        directory.setInt(QtSubtitleDirectory.TAG_FONT_SIZE, description.fontSize);
-        directory.setIntArray(QtSubtitleDirectory.TAG_FOREGROUND_COLOR, description.foregroundColor);
+        directory.setInt(QuickTimeSubtitleDirectory.TAG_FONT_SIZE, description.fontSize);
+        directory.setIntArray(QuickTimeSubtitleDirectory.TAG_FOREGROUND_COLOR, description.foregroundColor);
     }
 }

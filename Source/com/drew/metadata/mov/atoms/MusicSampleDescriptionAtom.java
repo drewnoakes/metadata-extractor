@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.media.QtMusicDirectory;
+import com.drew.metadata.mov.media.QuickTimeMusicDirectory;
 
 import java.io.IOException;
 
@@ -43,7 +43,7 @@ public class MusicSampleDescriptionAtom extends SampleDescriptionAtom<MusicSampl
         return new MusicSampleDescription(reader);
     }
 
-    public void addMetadata(QtMusicDirectory directory)
+    public void addMetadata(QuickTimeMusicDirectory directory)
     {
         // Do nothing
     }

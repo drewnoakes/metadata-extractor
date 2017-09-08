@@ -5,7 +5,7 @@
  * Atoms all have the same initial structure, but the rest will change depending upon the box type.  A box can either be a
  * standalone (leaf) box or a container.
  *
- * QtRe will recursively go through all of the atoms using the handlers to know which container/atom should be read.
+ * Mp4Reader will recursively go through all of the atoms using the handlers to know which container/atom should be read.
  * A new handler is created when the current container has an immediate ‘handler’ atom.  This means that the way the
  * containing atoms are read may depend upon that information.  This is also very important because some atoms have
  * the same name and the only way to determine how to read this data is with the handler.

@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.media.QtTimecodeDirectory;
+import com.drew.metadata.mov.media.QuickTimeTimecodeDirectory;
 
 import java.io.IOException;
 
@@ -43,14 +43,14 @@ public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<Timecod
         return new TimecodeSampleDescription(reader);
     }
 
-    public void addMetadata(QtTimecodeDirectory directory)
+    public void addMetadata(QuickTimeTimecodeDirectory directory)
     {
         TimecodeSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setBoolean(QtTimecodeDirectory.TAG_DROP_FRAME,        (description.flags & 0x0001) == 0x0001);
-        directory.setBoolean(QtTimecodeDirectory.TAG_24_HOUR_MAX,       (description.flags & 0x0002) == 0x0002);
-        directory.setBoolean(QtTimecodeDirectory.TAG_NEGATIVE_TIMES_OK, (description.flags & 0x0004) == 0x0004);
-        directory.setBoolean(QtTimecodeDirectory.TAG_COUNTER,           (description.flags & 0x0008) == 0x0008);
+        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_DROP_FRAME,        (description.flags & 0x0001) == 0x0001);
+        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_24_HOUR_MAX,       (description.flags & 0x0002) == 0x0002);
+        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_NEGATIVE_TIMES_OK, (description.flags & 0x0004) == 0x0004);
+        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_COUNTER,           (description.flags & 0x0008) == 0x0008);
     }
 
     class TimecodeSampleDescription extends SampleDescription

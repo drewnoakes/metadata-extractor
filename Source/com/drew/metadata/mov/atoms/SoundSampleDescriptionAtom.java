@@ -21,8 +21,8 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.QtDictionary;
-import com.drew.metadata.mov.media.QtSoundDirectory;
+import com.drew.metadata.mov.QuickTimeDictionary;
+import com.drew.metadata.mov.media.QuickTimeSoundDirectory;
 
 import java.io.IOException;
 
@@ -44,13 +44,13 @@ public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampl
         return new SoundSampleDescription(reader);
     }
 
-    public void addMetadata(QtSoundDirectory directory)
+    public void addMetadata(QuickTimeSoundDirectory directory)
     {
         SoundSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setString(QtSoundDirectory.TAG_AUDIO_FORMAT, QtDictionary.lookup(QtSoundDirectory.TAG_AUDIO_FORMAT, description.dataFormat));
-        directory.setInt(QtSoundDirectory.TAG_NUMBER_OF_CHANNELS, description.numberOfChannels);
-        directory.setInt(QtSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, description.sampleSize);
+        directory.setString(QuickTimeSoundDirectory.TAG_AUDIO_FORMAT, QuickTimeDictionary.lookup(QuickTimeSoundDirectory.TAG_AUDIO_FORMAT, description.dataFormat));
+        directory.setInt(QuickTimeSoundDirectory.TAG_NUMBER_OF_CHANNELS, description.numberOfChannels);
+        directory.setInt(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, description.sampleSize);
     }
 
     class SoundSampleDescription extends SampleDescription

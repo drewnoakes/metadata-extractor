@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.media.QtTimecodeDirectory;
+import com.drew.metadata.mov.media.QuickTimeTimecodeDirectory;
 
 import java.io.IOException;
 
@@ -52,35 +52,35 @@ public class TimecodeInformationMediaAtom extends FullAtom
         fontName = reader.getString(reader.getUInt8());
     }
 
-    public void addMetadata(QtTimecodeDirectory directory)
+    public void addMetadata(QuickTimeTimecodeDirectory directory)
     {
-        directory.setInt(QtTimecodeDirectory.TAG_TEXT_FONT, textFont);
+        directory.setInt(QuickTimeTimecodeDirectory.TAG_TEXT_FONT, textFont);
         switch (textFace) {
             case (0x0001):
-                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Bold");
+                directory.setString(QuickTimeTimecodeDirectory.TAG_TEXT_FACE, "Bold");
                 break;
             case (0x0002):
-                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Italic");
+                directory.setString(QuickTimeTimecodeDirectory.TAG_TEXT_FACE, "Italic");
                 break;
             case (0x0004):
-                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Underline");
+                directory.setString(QuickTimeTimecodeDirectory.TAG_TEXT_FACE, "Underline");
                 break;
             case (0x0008):
-                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Outline");
+                directory.setString(QuickTimeTimecodeDirectory.TAG_TEXT_FACE, "Outline");
                 break;
             case (0x0010):
-                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Shadow");
+                directory.setString(QuickTimeTimecodeDirectory.TAG_TEXT_FACE, "Shadow");
                 break;
             case (0x0020):
-                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Condense");
+                directory.setString(QuickTimeTimecodeDirectory.TAG_TEXT_FACE, "Condense");
                 break;
             case (0x0040):
-                directory.setString(QtTimecodeDirectory.TAG_TEXT_FACE, "Extend");
+                directory.setString(QuickTimeTimecodeDirectory.TAG_TEXT_FACE, "Extend");
         }
 
-        directory.setInt(QtTimecodeDirectory.TAG_TEXT_SIZE, textSize);
-        directory.setIntArray(QtTimecodeDirectory.TAG_TEXT_COLOR, textColor);
-        directory.setIntArray(QtTimecodeDirectory.TAG_BACKGROUND_COLOR, backgroundColor);
-        directory.setString(QtTimecodeDirectory.TAG_FONT_NAME, fontName);
+        directory.setInt(QuickTimeTimecodeDirectory.TAG_TEXT_SIZE, textSize);
+        directory.setIntArray(QuickTimeTimecodeDirectory.TAG_TEXT_COLOR, textColor);
+        directory.setIntArray(QuickTimeTimecodeDirectory.TAG_BACKGROUND_COLOR, backgroundColor);
+        directory.setString(QuickTimeTimecodeDirectory.TAG_FONT_NAME, fontName);
     }
 }

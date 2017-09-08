@@ -26,7 +26,7 @@ import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
-import com.drew.imaging.quicktime.QtMetadataReader;
+import com.drew.imaging.quicktime.QuickTimeMetadataReader;
 import com.drew.imaging.pcx.PcxMetadataReader;
 import com.drew.imaging.png.PngMetadataReader;
 import com.drew.imaging.psd.PsdMetadataReader;
@@ -163,7 +163,7 @@ public class ImageMetadataReader
             case Wav:
                 return WavMetadataReader.readMetadata(inputStream);
             case Mov:
-                return QtMetadataReader.readMetadata(inputStream);
+                return QuickTimeMetadataReader.readMetadata(inputStream);
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);
             case Unknown:
