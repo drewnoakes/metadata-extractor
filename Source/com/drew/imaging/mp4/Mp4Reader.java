@@ -21,7 +21,6 @@
 package com.drew.imaging.mp4;
 
 import com.drew.lang.StreamReader;
-import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.boxes.Box;
 
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class Mp4Reader
 {
     private Mp4Reader() {}
 
-    public static void extract(Metadata metadata, InputStream inputStream, Mp4Handler handler)
+    public static void extract(InputStream inputStream, Mp4Handler handler)
     {
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);

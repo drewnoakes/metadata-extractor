@@ -51,7 +51,7 @@ public class Mp4MetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
         Metadata metadata = new Metadata();
-        Mp4Reader.extract(metadata, inputStream, new Mp4BoxHandler(metadata));
+        Mp4Reader.extract(inputStream, new Mp4BoxHandler(metadata));
         return metadata;
     }
 }
