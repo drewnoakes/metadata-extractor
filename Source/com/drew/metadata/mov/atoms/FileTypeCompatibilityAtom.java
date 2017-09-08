@@ -41,7 +41,7 @@ public class FileTypeCompatibilityAtom extends Atom
 
         majorBrand = reader.getString(4);
         minorVersion = reader.getUInt32();
-        compatibleBrands = new ArrayList<String>();
+        compatibleBrands = new ArrayList<String>((int) ((size/16)>>2));
         for (int i = 16; i < size; i += 4) {
             compatibleBrands.add(reader.getString(4));
         }

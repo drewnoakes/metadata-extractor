@@ -38,7 +38,7 @@ public abstract class SampleDescriptionAtom<T extends SampleDescription> extends
         super(reader, atom);
 
         numberOfEntries = reader.getUInt32();
-        sampleDescriptions = new ArrayList<T>();
+        sampleDescriptions = new ArrayList<T>((int)numberOfEntries);
         for (int i = 0; i < numberOfEntries; i++) {
             sampleDescriptions.add(getSampleDescription(reader));
         }
