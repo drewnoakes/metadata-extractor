@@ -28,14 +28,10 @@ public class EpsMetadataReader {
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
         Metadata metadata = new Metadata();
-        try {
-            new EpsReader().extract(inputStream, metadata);
-        } catch (IOException e) {
-
-        }
+        new EpsReader().extract(inputStream, metadata);
         return metadata;
     }
 }
