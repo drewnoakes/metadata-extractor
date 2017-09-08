@@ -37,9 +37,6 @@ import java.util.ArrayList;
  */
 public abstract class QtMetadataHandler extends QtHandler
 {
-    private int currentIndex = 0;
-    private ArrayList<String> keys = new ArrayList<String>();
-
     public QtMetadataHandler(Metadata metadata)
     {
         super(metadata);
@@ -62,8 +59,7 @@ public abstract class QtMetadataHandler extends QtHandler
     @Override
     protected boolean shouldAcceptContainer(@NotNull Atom atom)
     {
-        return atom.type.equals(QtContainerTypes.ATOM_METADATA_LIST)
-            || ByteUtil.getInt32(atom.type.getBytes(), 0, true) < keys.size();
+        return atom.type.equals(QtContainerTypes.ATOM_METADATA_LIST);
     }
 
     @Override
