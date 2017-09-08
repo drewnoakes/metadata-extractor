@@ -42,10 +42,10 @@ public class QuickTimeHandlerFactory
 
     private QuickTimeHandler caller;
 
-    public static Long HANDLER_PARAM_TIME_SCALE              = null;
-    public static Long HANDLER_PARAM_CREATION_TIME           = null;
-    public static Long HANDLER_PARAM_MODIFICATION_TIME       = null;
-    public static Long HANDLER_PARAM_DURATION                = null;
+//    public static Long HANDLER_PARAM_TIME_SCALE              = null;
+//    public static Long HANDLER_PARAM_CREATION_TIME           = null;
+//    public static Long HANDLER_PARAM_MODIFICATION_TIME       = null;
+//    public static Long HANDLER_PARAM_DURATION                = null;
 
     public QuickTimeHandlerFactory(QuickTimeHandler caller)
     {

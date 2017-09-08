@@ -56,10 +56,10 @@ public class MediaHeaderBox extends FullBox
             (char)(((languageBits & 0x03E0) >> 5) + 0x60),
             (char)((languageBits & 0x001F) + 0x60)});
 
-        Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
-        Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
-        Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
-        Mp4HandlerFactory.HANDLER_PARAM_DURATION = duration;
-        Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE = language;
+//        Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
+//        Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
+//        Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;
+//        Mp4HandlerFactory.HANDLER_PARAM_DURATION = duration;
+//        Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE = language;
     }
 }

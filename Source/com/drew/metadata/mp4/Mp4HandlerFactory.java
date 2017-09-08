@@ -35,11 +35,11 @@ public class Mp4HandlerFactory
 
     private Mp4Handler caller;
 
-    public static Long HANDLER_PARAM_TIME_SCALE              = null;
-    public static Long HANDLER_PARAM_CREATION_TIME           = null;
-    public static Long HANDLER_PARAM_MODIFICATION_TIME       = null;
-    public static Long HANDLER_PARAM_DURATION                = null;
-    public static String HANDLER_PARAM_LANGUAGE              = null;
+//    public static Long HANDLER_PARAM_TIME_SCALE              = null;
+//    public static Long HANDLER_PARAM_CREATION_TIME           = null;
+//    public static Long HANDLER_PARAM_MODIFICATION_TIME       = null;
+//    public static Long HANDLER_PARAM_DURATION                = null;
+//    public static String HANDLER_PARAM_LANGUAGE              = null;
 
     public Mp4HandlerFactory(Mp4Handler caller)
     {

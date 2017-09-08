@@ -69,6 +69,6 @@ public class QuickTimeSoundHandler extends QuickTimeMediaHandler<QuickTimeSoundD
     @Override
     protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
     {
-        directory.setDouble(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE);
+//        directory.setDouble(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }
 }

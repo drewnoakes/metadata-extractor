@@ -66,7 +66,7 @@ public class TimeToSampleAtom extends FullAtom
 
     public void addMetadata(QuickTimeVideoDirectory directory)
     {
-        float frameRate = (float) QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
-        directory.setFloat(QuickTimeVideoDirectory.TAG_FRAME_RATE, frameRate);
+//        float frameRate = (float) QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
+//        directory.setFloat(QuickTimeVideoDirectory.TAG_FRAME_RATE, frameRate);
     }
 }
