@@ -44,6 +44,8 @@ public class Mp4Descriptor<T extends Directory> extends TagDescriptor<Mp4Directo
                 return getMajorBrandDescription();
             case TAG_COMPATIBLE_BRANDS:
                 return getCompatibleBrandsDescription();
+            case TAG_DURATION:
+                return getDurationDescription();
             default:
                 return _directory.getString(tagType);
         }
@@ -69,5 +71,17 @@ public class Mp4Descriptor<T extends Directory> extends TagDescriptor<Mp4Directo
             compatibleBrandsValues.add(compatibleBrandsValue == null ? value : compatibleBrandsValue);
         }
         return Arrays.toString(compatibleBrandsValues.toArray());
+    }
+
+    private String getDurationDescription()
+    {
+        Long value = _directory.getLongObject(TAG_DURATION);
+        if (value == null)
+            return null;
+
+        Integer hours = (int)(value / (Math.pow(60, 2)));
+        Integer minutes = (int)((value / (Math.pow(60, 1))) - (hours * 60));
+        Integer seconds = (int)Math.ceil((value / (Math.pow(60, 0))) - (minutes * 60));
+        return String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
     }
 }

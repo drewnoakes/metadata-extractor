@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.drew.metadata.mov.QuickTimeDirectory.*;
+
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-BBCGFGJG
  *
@@ -89,34 +91,30 @@ public class MovieHeaderAtom extends FullAtom
         long macToUnixEpochOffset = date.getTime();
         String creationTimeStamp = new Date(creationTime * 1000 + macToUnixEpochOffset).toString();
         String modificationTimeStamp = new Date(modificationTime * 1000 + macToUnixEpochOffset).toString();
-        directory.setString(QuickTimeDirectory.TAG_CREATION_TIME, creationTimeStamp);
-        directory.setString(QuickTimeDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
+        directory.setString(TAG_CREATION_TIME, creationTimeStamp);
+        directory.setString(TAG_MODIFICATION_TIME, modificationTimeStamp);
 
         // Get duration and time scale
         duration = duration / timescale;
-        Integer hours = (int)duration / (int)(Math.pow(60, 2));
-        Integer minutes = ((int)duration / (int)(Math.pow(60, 1))) - (hours * 60);
-        Integer seconds = (int)Math.ceil((duration / (Math.pow(60, 0))) - (minutes * 60));
-        String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
-        directory.setString(QuickTimeDirectory.TAG_DURATION, time);
-        directory.setLong(QuickTimeDirectory.TAG_TIME_SCALE, timescale);
+        directory.setLong(TAG_DURATION, duration);
+        directory.setLong(TAG_TIME_SCALE, timescale);
 
         // Calculate preferred rate fixed point
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
         double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
-        directory.setDouble(QuickTimeDirectory.TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
+        directory.setDouble(TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
 
         // Calculate preferred volume fixed point
         double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
         double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
-        directory.setDouble(QuickTimeDirectory.TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
+        directory.setDouble(TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
 
-        directory.setLong(QuickTimeDirectory.TAG_PREVIEW_TIME, previewTime);
-        directory.setLong(QuickTimeDirectory.TAG_PREVIEW_DURATION, previewDuration);
-        directory.setLong(QuickTimeDirectory.TAG_POSTER_TIME, posterTime);
-        directory.setLong(QuickTimeDirectory.TAG_SELECTION_TIME, selectionTime);
-        directory.setLong(QuickTimeDirectory.TAG_SELECTION_DURATION, selectionDuration);
-        directory.setLong(QuickTimeDirectory.TAG_CURRENT_TIME, currentTime);
-        directory.setLong(QuickTimeDirectory.TAG_NEXT_TRACK_ID, nextTrackID);
+        directory.setLong(TAG_PREVIEW_TIME, previewTime);
+        directory.setLong(TAG_PREVIEW_DURATION, previewDuration);
+        directory.setLong(TAG_POSTER_TIME, posterTime);
+        directory.setLong(TAG_SELECTION_TIME, selectionTime);
+        directory.setLong(TAG_SELECTION_DURATION, selectionDuration);
+        directory.setLong(TAG_CURRENT_TIME, currentTime);
+        directory.setLong(TAG_NEXT_TRACK_ID, nextTrackID);
     }
 }
