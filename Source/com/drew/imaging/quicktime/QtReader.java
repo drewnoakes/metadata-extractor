@@ -30,14 +30,12 @@ import java.io.InputStream;
 
 public class QtReader
 {
-    private StreamReader reader;
-
     public void extract(Metadata metadata, InputStream inputStream, QtHandler handler)
     {
         QtDirectory directory = new QtDirectory();
         metadata.addDirectory(directory);
 
-        reader = new StreamReader(inputStream);
+        StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
 
         processAtoms(reader, -1, handler);

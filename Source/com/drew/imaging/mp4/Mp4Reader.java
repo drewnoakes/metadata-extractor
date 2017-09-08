@@ -29,11 +29,9 @@ import java.io.InputStream;
 
 public class Mp4Reader
 {
-    private StreamReader reader;
-
     public void extract(Metadata metadata, InputStream inputStream, Mp4Handler handler)
     {
-        reader = new StreamReader(inputStream);
+        StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
 
         processBoxes(reader, -1, handler);
