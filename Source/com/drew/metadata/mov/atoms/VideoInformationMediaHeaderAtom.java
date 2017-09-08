@@ -46,37 +46,6 @@ public class VideoInformationMediaHeaderAtom extends FullAtom
     public void addMetadata(QuickTimeVideoDirectory directory)
     {
         directory.setIntArray(QuickTimeVideoDirectory.TAG_OPCOLOR, opcolor);
-
-        // TODO store the raw number, and use a descriptor to decode it
-        switch (graphicsMode) {
-            case (0x00):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Copy");
-                break;
-            case (0x40):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Dither copy");
-                break;
-            case (0x20):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Blend");
-                break;
-            case (0x24):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Transparent");
-                break;
-            case (0x100):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Straight alpha");
-                break;
-            case (0x101):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Premul white alpha");
-                break;
-            case (0x102):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Premul black alpha");
-                break;
-            case (0x104):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Straight alpha blend");
-                break;
-            case (0x103):
-                directory.setString(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, "Composition (dither copy)");
-                break;
-            default:
-        }
+        directory.setInt(QuickTimeVideoDirectory.TAG_GRAPHICS_MODE, graphicsMode);
     }
 }
