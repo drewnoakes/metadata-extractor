@@ -158,7 +158,7 @@ public class FileTypeDetector
         assert(fileType != null);
 
         if (fileType == FileType.Unknown) {
-            String eightCC = new String(bytes, 8, 8);
+            String eightCC = new String(bytes, 4, 8);
             // Test at offset 4 for Base Media Format (i.e. QuickTime, MP4, etc...) identifier "ftyp" plus four identifying characters
             FileType t = _ftypMap.get(eightCC);
             if (t != null)
