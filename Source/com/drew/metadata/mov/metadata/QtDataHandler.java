@@ -89,7 +89,7 @@ public class QtDataHandler extends QtMetadataHandler
         int entryCount = reader.getInt32();
         for (int i = 0; i < entryCount; i++) {
             int keySize = reader.getInt32();
-            String keyNamespace = new String(reader.getBytes(4));
+            reader.skip(4); // key namespace
             String keyValue = new String(reader.getBytes(keySize - 8));
             keys.add(keyValue);
         }
@@ -98,8 +98,9 @@ public class QtDataHandler extends QtMetadataHandler
     @Override
     protected void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
     {
-        int typeIndicator = reader.getInt32();
-        int localeIndicator = reader.getInt32();
+        // 4 bytes: type indicator
+        // 4 bytes: locale indicator
+        reader.skip(8);
         String value = new String(reader.getBytes(payload.length - 8));
         directory.setString(QtMetadataDirectory._tagIntegerMap.get(keys.get(currentIndex)), value);
     }

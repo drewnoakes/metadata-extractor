@@ -80,8 +80,9 @@ public class QtDirectoryHandler extends QtMetadataHandler
     @Override
     protected void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
     {
-        int typeIndicator = reader.getInt32();
-        int localeIndicator = reader.getInt32();
+        // 4 bytes: type indicator
+        // 4 bytes: locale indicator
+        reader.skip(8);
         String value = new String(reader.getBytes(payload.length - 8));
         directory.setString(QtMetadataDirectory._tagIntegerMap.get(currentData), value);
     }
