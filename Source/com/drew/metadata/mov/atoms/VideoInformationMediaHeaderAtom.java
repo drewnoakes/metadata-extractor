@@ -47,6 +47,7 @@ public class VideoInformationMediaHeaderAtom extends FullAtom
     {
         directory.setIntArray(QtVideoDirectory.TAG_OPCOLOR, opcolor);
 
+        // TODO store the raw number, and use a descriptor to decode it
         switch (graphicsMode) {
             case (0x00):
                 directory.setString(QtVideoDirectory.TAG_GRAPHICS_MODE, "Copy");

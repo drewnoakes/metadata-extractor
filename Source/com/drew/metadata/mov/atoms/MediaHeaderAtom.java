@@ -50,6 +50,7 @@ public class MediaHeaderAtom extends FullAtom
         language = reader.getUInt16();
         quality = reader.getUInt16();
 
+        // TODO can't use static fields here as it breaks concurrency
         QtHandlerFactory.HANDLER_PARAM_CREATION_TIME = creationTime;
         QtHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME = modificationTime;
         QtHandlerFactory.HANDLER_PARAM_TIME_SCALE = timescale;

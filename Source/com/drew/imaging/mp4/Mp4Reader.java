@@ -61,6 +61,7 @@ public class Mp4Reader
                 }
             }
         } catch (IOException ignored) {
+            // TODO capture this error on the directory
         }
     }
 }

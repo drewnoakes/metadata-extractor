@@ -170,6 +170,7 @@ public class ProcessAllImagesInFolderUtility
 
     abstract static class FileHandlerBase implements FileHandler
     {
+        // TODO obtain these from FileType enum directly
         private final Set<String> _supportedExtensions = new HashSet<String>(
             Arrays.asList(
                 "jpg", "jpeg", "png", "gif", "bmp", "ico", "webp", "pcx", "ai", "eps",

@@ -67,6 +67,7 @@ public class QtReader
                 }
             }
         } catch (IOException ignored) {
+            // TODO capture this error on the directory
         }
     }
 }
