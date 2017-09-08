@@ -68,6 +68,11 @@ import java.util.Collection;
  *     <li>{@link PcxMetadataReader} for PCX files</li>
  *     <li>{@link WebpMetadataReader} for WebP files</li>
  *     <li>{@link RafMetadataReader} for RAF files</li>
+ *     <li>{@link AviMetadataReader} for AVI files</li>
+ *     <li>{@link FileSystemMetadataReader} for metadata from the file system when a {@link File} is provided</li>
+ *     <li>{@link Mp4MetadataReader} for MPEG-4 files</li>
+ *     <li>{@link QuickTimeMetadataReader} for QuickTime files</li>
+ *     <li>{@link WavMetadataReader} for WAV files</li>
  * </ul>
  *
  * If you know the file type you're working with, you may use one of the above processors directly.
