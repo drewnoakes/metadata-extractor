@@ -28,7 +28,9 @@ import com.drew.metadata.mov.atoms.Atom;
 
 import java.io.IOException;
 
-
+/**
+ * @author Payton Garland
+ */
 public abstract class QtHandler<T extends QtDirectory>
 {
     protected Metadata metadata;

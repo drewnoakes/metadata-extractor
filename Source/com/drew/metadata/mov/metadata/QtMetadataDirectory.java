@@ -25,6 +25,9 @@ import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtMetadataDirectory extends QtDirectory
 {
     // User Data Types Holder (0x0400 - 0x04FF)

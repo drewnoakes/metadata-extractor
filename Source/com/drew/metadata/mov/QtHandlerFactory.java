@@ -26,6 +26,9 @@ import com.drew.metadata.mov.media.*;
 import com.drew.metadata.mov.metadata.QtDataHandler;
 import com.drew.metadata.mov.metadata.QtDirectoryHandler;
 
+/**
+ * @author Payton Garland
+ */
 public class QtHandlerFactory
 {
     private static final String HANDLER_METADATA_DIRECTORY      = "mdir";

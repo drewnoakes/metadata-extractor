@@ -29,6 +29,9 @@ import com.drew.metadata.mov.atoms.MusicSampleDescriptionAtom;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtMusicHandler extends QtMediaHandler<QtMusicDirectory>
 {
     public QtMusicHandler(Metadata metadata)

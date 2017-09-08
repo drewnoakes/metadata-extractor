@@ -32,6 +32,9 @@ import com.drew.metadata.mov.metadata.QtMetadataDirectory;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * @author Payton Garland
+ */
 public abstract class QtMetadataHandler extends QtHandler
 {
     private int currentIndex = 0;

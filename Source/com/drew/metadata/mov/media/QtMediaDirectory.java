@@ -24,6 +24,9 @@ import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public abstract class QtMediaDirectory extends QtDirectory
 {
     public static final int TAG_CREATION_TIME = 0x5001;

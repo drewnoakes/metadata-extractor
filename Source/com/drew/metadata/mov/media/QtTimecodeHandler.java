@@ -31,6 +31,9 @@ import com.drew.metadata.mov.atoms.TimecodeSampleDescriptionAtom;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtTimecodeHandler extends QtMediaHandler<QtTimecodeDirectory>
 {
     public QtTimecodeHandler(Metadata metadata)

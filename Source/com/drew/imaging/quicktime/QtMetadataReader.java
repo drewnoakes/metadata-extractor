@@ -28,6 +28,9 @@ import com.drew.metadata.mov.QtAtomHandler;
 
 import java.io.*;
 
+/**
+ * @author Payton Garland
+ */
 public class QtMetadataReader
 {
     @NotNull

@@ -25,6 +25,9 @@ import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtSubtitleDirectory extends QtDirectory
 {
     public static final int TAG_VERTICAL_PLACEMENT          = 1;

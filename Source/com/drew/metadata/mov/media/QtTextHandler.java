@@ -30,6 +30,9 @@ import com.drew.metadata.mov.atoms.TextSampleDescriptionAtom;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtTextHandler extends QtMediaHandler<QtTextDirectory>
 {
     public QtTextHandler(Metadata metadata)

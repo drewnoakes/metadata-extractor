@@ -26,6 +26,9 @@ import com.drew.metadata.TagDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDescriptor extends TagDescriptor<QtDirectory> {
 
     public QtDescriptor(@NotNull QtDirectory directory)

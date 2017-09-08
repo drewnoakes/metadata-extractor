@@ -25,6 +25,9 @@ import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDirectory extends Directory {
 
     // Movie Header Atom (https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap2/qtff2.html#//apple_ref/doc/uid/TP40000939-CH204-56313)

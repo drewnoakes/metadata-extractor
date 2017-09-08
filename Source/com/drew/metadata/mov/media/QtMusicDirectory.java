@@ -25,6 +25,9 @@ import com.drew.metadata.mov.QtDirectory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtMusicDirectory extends QtDirectory
 {
     public QtMusicDirectory()

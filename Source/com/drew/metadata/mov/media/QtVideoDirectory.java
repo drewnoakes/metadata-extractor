@@ -24,6 +24,9 @@ import com.drew.lang.annotations.NotNull;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtVideoDirectory extends QtMediaDirectory
 {
     // Video Sample Description Atom

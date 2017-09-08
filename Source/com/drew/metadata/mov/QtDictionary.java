@@ -26,6 +26,9 @@ import com.drew.metadata.mov.media.QtVideoDirectory;
 
 import java.util.HashMap;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDictionary
 {
     private static HashMap<Integer, HashMap<String, String>> _dictionary = new HashMap<Integer, HashMap<String, String>>();

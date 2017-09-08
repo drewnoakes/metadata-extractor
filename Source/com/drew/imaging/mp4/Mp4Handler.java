@@ -28,6 +28,9 @@ import com.drew.metadata.mp4.boxes.Box;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public abstract class Mp4Handler<T extends Mp4Directory>
 {
     protected Metadata metadata;

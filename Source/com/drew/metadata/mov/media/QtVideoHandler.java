@@ -32,6 +32,9 @@ import com.drew.metadata.mov.atoms.VideoSampleDescriptionAtom;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtVideoHandler extends QtMediaHandler<QtVideoDirectory>
 {
     public QtVideoHandler(Metadata metadata)

@@ -29,6 +29,9 @@ import com.drew.metadata.mov.atoms.SubtitleSampleDescriptionAtom;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtSubtitleHandler extends QtMediaHandler<QtSubtitleDirectory>
 {
     public QtSubtitleHandler(Metadata metadata)

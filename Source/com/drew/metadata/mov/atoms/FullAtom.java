@@ -26,6 +26,8 @@ import java.io.IOException;
 
 /**
  * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html#//apple_ref/doc/uid/TP40000939-CH203-38195
+ *
+ * @author Payton Garland
  */
 public class FullAtom extends Atom
 {

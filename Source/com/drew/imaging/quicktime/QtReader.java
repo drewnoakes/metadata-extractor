@@ -28,6 +28,9 @@ import com.drew.metadata.mov.atoms.Atom;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * @author Payton Garland
+ */
 public class QtReader
 {
     private QtReader() {}

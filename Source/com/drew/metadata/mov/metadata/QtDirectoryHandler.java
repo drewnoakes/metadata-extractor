@@ -32,6 +32,9 @@ import com.drew.metadata.mov.atoms.Atom;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtDirectoryHandler extends QtMetadataHandler
 {
     private String currentData;

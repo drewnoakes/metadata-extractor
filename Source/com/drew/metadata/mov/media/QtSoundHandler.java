@@ -30,6 +30,9 @@ import com.drew.metadata.mov.atoms.SoundSampleDescriptionAtom;
 
 import java.io.IOException;
 
+/**
+ * @author Payton Garland
+ */
 public class QtSoundHandler extends QtMediaHandler<QtSoundDirectory>
 {
     public QtSoundHandler(Metadata metadata)
