@@ -23,6 +23,8 @@ package com.drew.metadata.mov.media;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mov.QuickTimeDescriptor;
 
+import static com.drew.metadata.mov.media.QuickTimeVideoDirectory.*;
+
 /**
  * @author Payton Garland
  */
@@ -37,13 +39,15 @@ public class QuickTimeVideoDescriptor extends QuickTimeDescriptor
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case (QuickTimeVideoDirectory.TAG_HEIGHT):
-            case (QuickTimeVideoDirectory.TAG_WIDTH):
+            case TAG_HEIGHT:
+            case TAG_WIDTH:
                 return getPixelDescription(tagType);
-            case (QuickTimeVideoDirectory.TAG_DEPTH):
+            case TAG_DEPTH:
                 return getDepthDescription(tagType);
-            case (QuickTimeVideoDirectory.TAG_COLOR_TABLE):
+            case TAG_COLOR_TABLE:
                 return getColorTableDescription(tagType);
+            case TAG_GRAPHICS_MODE:
+                return getGraphicsModeDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -51,29 +55,35 @@ public class QuickTimeVideoDescriptor extends QuickTimeDescriptor
 
     private String getPixelDescription(int tagType)
     {
-        return _directory.getString(tagType) + " pixels";
+        String value = _directory.getString(tagType);
+        return value == null ? null : value + " pixels";
     }
 
     private String getDepthDescription(int tagType)
     {
-        int depth = _directory.getInteger(tagType);
-        switch (depth) {
+        Integer value = _directory.getInteger(tagType);
+        if (value == null)
+            return null;
+
+        switch (value) {
             case (40):
             case (36):
             case (34):
-                return (depth - 32) + "-bit grayscale";
+                return (value - 32) + "-bit grayscale";
             default:
-                return Integer.toString(depth);
+                return "Unknown (" + value + ")";
         }
     }
 
     private String getColorTableDescription(int tagType)
     {
-        int colorTableId = _directory.getInteger(tagType);
+        Integer value = _directory.getInteger(tagType);
+        if (value == null)
+            return null;
 
-        switch (colorTableId) {
+        switch (value) {
             case (-1):
-                if (_directory.getInteger(QuickTimeVideoDirectory.TAG_DEPTH) < 16) {
+                if (_directory.getInteger(TAG_DEPTH) < 16) {
                     return "Default";
                 } else {
                     return "None";
@@ -81,7 +91,37 @@ public class QuickTimeVideoDescriptor extends QuickTimeDescriptor
             case (0):
                 return "Color table within file";
             default:
-                return Integer.toString(colorTableId);
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    private String getGraphicsModeDescription()
+    {
+        Integer value = _directory.getInteger(TAG_GRAPHICS_MODE);
+        if (value == null)
+            return null;
+
+        switch (value) {
+            case (0x00):
+                return "Copy";
+            case (0x40):
+                return "Dither copy";
+            case (0x20):
+                return "Blend";
+            case (0x24):
+                return "Transparent";
+            case (0x100):
+                return "Straight alpha";
+            case (0x101):
+                return "Premul white alpha";
+            case (0x102):
+                return "Premul black alpha";
+            case (0x104):
+                return "Straight alpha blend";
+            case (0x103):
+                return "Composition (dither copy)";
+            default:
+                return "Unknown (" + value + ")";
         }
     }
 }

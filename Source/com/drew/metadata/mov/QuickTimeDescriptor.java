@@ -26,6 +26,8 @@ import com.drew.metadata.TagDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.drew.metadata.mov.QuickTimeDirectory.*;
+
 /**
  * @author Payton Garland
  */
@@ -40,37 +42,33 @@ public class QuickTimeDescriptor extends TagDescriptor<QuickTimeDirectory> {
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case (QuickTimeDirectory.TAG_MAJOR_BRAND):
-                return getMajorBrandDescription(tagType);
-            case (QuickTimeDirectory.TAG_COMPATIBLE_BRANDS):
-                return getCompatibleBrandsDescription(tagType);
+            case TAG_MAJOR_BRAND:
+                return getMajorBrandDescription();
+            case TAG_COMPATIBLE_BRANDS:
+                return getCompatibleBrandsDescription();
             default:
                 return super.getDescription(tagType);
         }
     }
 
-    private String getMajorBrandDescription(int tagType)
+    private String getMajorBrandDescription()
     {
-        String majorBrandKey = new String(_directory.getByteArray(tagType));
-        String majorBrandValue = QuickTimeDictionary.lookup(QuickTimeDirectory.TAG_MAJOR_BRAND, majorBrandKey);
-        if (majorBrandValue != null) {
-            return majorBrandValue;
-        } else {
-            return majorBrandKey;
-        }
+        byte[] value = _directory.getByteArray(QuickTimeDirectory.TAG_MAJOR_BRAND);
+        if (value == null)
+            return null;
+        return QuickTimeDictionary.lookup(TAG_MAJOR_BRAND, new String(value));
     }
 
-    private String getCompatibleBrandsDescription(int tagType)
+    private String getCompatibleBrandsDescription()
     {
-        String[] compatibleBrandKeys = _directory.getStringArray(tagType);
+        String[] values = _directory.getStringArray(QuickTimeDirectory.TAG_COMPATIBLE_BRANDS);
+        if (values == null)
+            return null;
+
         ArrayList<String> compatibleBrandsValues = new ArrayList<String>();
-        for (String compatibleBrandsKey : compatibleBrandKeys) {
-            String compatibleBrandsValue = QuickTimeDictionary.lookup(QuickTimeDirectory.TAG_MAJOR_BRAND, compatibleBrandsKey);
-            if (compatibleBrandsValue != null) {
-                compatibleBrandsValues.add(compatibleBrandsValue);
-            } else {
-                compatibleBrandsValues.add(compatibleBrandsKey);
-            }
+        for (String value : values) {
+            String compatibleBrandsValue = QuickTimeDictionary.lookup(TAG_MAJOR_BRAND, value);
+            compatibleBrandsValues.add(compatibleBrandsValue == null ? value : compatibleBrandsValue);
         }
         return Arrays.toString(compatibleBrandsValues.toArray());
     }

@@ -23,6 +23,8 @@ package com.drew.metadata.mp4.media;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.mp4.media.Mp4VideoDirectory.*;
+
 public class Mp4VideoDescriptor extends TagDescriptor<Mp4VideoDirectory>
 {
     public Mp4VideoDescriptor(@NotNull Mp4VideoDirectory directory)
@@ -34,13 +36,15 @@ public class Mp4VideoDescriptor extends TagDescriptor<Mp4VideoDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case (Mp4VideoDirectory.TAG_HEIGHT):
-            case (Mp4VideoDirectory.TAG_WIDTH):
+            case TAG_HEIGHT:
+            case TAG_WIDTH:
                 return getPixelDescription(tagType);
-            case (Mp4VideoDirectory.TAG_DEPTH):
-                return getDepthDescription(tagType);
-            case (Mp4VideoDirectory.TAG_COLOR_TABLE):
-                return getColorTableDescription(tagType);
+            case TAG_DEPTH:
+                return getDepthDescription();
+            case TAG_COLOR_TABLE:
+                return getColorTableDescription();
+            case TAG_GRAPHICS_MODE:
+                return getGraphicsModeDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -48,29 +52,39 @@ public class Mp4VideoDescriptor extends TagDescriptor<Mp4VideoDirectory>
 
     private String getPixelDescription(int tagType)
     {
-        return _directory.getString(tagType) + " pixels";
+        String value = _directory.getString(tagType);
+        return value == null ? null : value + " pixels";
     }
 
-    private String getDepthDescription(int tagType)
+    private String getDepthDescription()
     {
-        int depth = _directory.getInteger(tagType);
-        switch (depth) {
+        Integer value = _directory.getInteger(TAG_DEPTH);
+        if (value == null)
+            return null;
+
+        switch (value) {
             case (40):
             case (36):
             case (34):
-                return (depth - 32) + "-bit grayscale";
+                return (value - 32) + "-bit grayscale";
             default:
-                return Integer.toString(depth);
+                return "Unknown (" + value + ")";
         }
     }
 
-    private String getColorTableDescription(int tagType)
+    private String getColorTableDescription()
     {
-        int colorTableId = _directory.getInteger(tagType);
+        Integer value = _directory.getInteger(TAG_COLOR_TABLE);
+        if (value == null)
+            return null;
 
-        switch (colorTableId) {
+        switch (value) {
             case (-1):
-                if (_directory.getInteger(Mp4VideoDirectory.TAG_DEPTH) < 16) {
+                Integer depth = _directory.getInteger(TAG_DEPTH);
+                if (depth == null)
+                    return "None";
+
+                if (depth < 16) {
                     return "Default";
                 } else {
                     return "None";
@@ -78,7 +92,37 @@ public class Mp4VideoDescriptor extends TagDescriptor<Mp4VideoDirectory>
             case (0):
                 return "Color table within file";
             default:
-                return Integer.toString(colorTableId);
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    private String getGraphicsModeDescription()
+    {
+        Integer value = _directory.getInteger(TAG_GRAPHICS_MODE);
+        if (value == null)
+            return null;
+
+        switch (value) {
+            case (0x00):
+                return "Copy";
+            case (0x40):
+                return "Dither copy";
+            case (0x20):
+                return "Blend";
+            case (0x24):
+                return "Transparent";
+            case (0x100):
+                return "Straight alpha";
+            case (0x101):
+                return "Premul white alpha";
+            case (0x102):
+                return "Premul black alpha";
+            case (0x104):
+                return "Straight alpha blend";
+            case (0x103):
+                return "Composition (dither copy)";
+            default:
+                return "Unknown (" + value + ")";
         }
     }
 }

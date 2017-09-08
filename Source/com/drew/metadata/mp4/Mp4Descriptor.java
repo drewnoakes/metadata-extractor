@@ -27,6 +27,8 @@ import com.drew.metadata.TagDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.drew.metadata.mp4.Mp4Directory.*;
+
 public class Mp4Descriptor<T extends Directory> extends TagDescriptor<Mp4Directory> {
 
     public Mp4Descriptor(@NotNull Mp4Directory directory)
@@ -38,37 +40,33 @@ public class Mp4Descriptor<T extends Directory> extends TagDescriptor<Mp4Directo
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case (Mp4Directory.TAG_MAJOR_BRAND):
-                return getMajorBrandDescription(tagType);
-            case (Mp4Directory.TAG_COMPATIBLE_BRANDS):
-                return getCompatibleBrandsDescription(tagType);
+            case TAG_MAJOR_BRAND:
+                return getMajorBrandDescription();
+            case TAG_COMPATIBLE_BRANDS:
+                return getCompatibleBrandsDescription();
             default:
                 return _directory.getString(tagType);
         }
     }
 
-    private String getMajorBrandDescription(int tagType)
+    private String getMajorBrandDescription()
     {
-        String majorBrandKey = new String(_directory.getByteArray(tagType));
-        String majorBrandValue = Mp4Dictionary.lookup(Mp4Directory.TAG_MAJOR_BRAND, majorBrandKey);
-        if (majorBrandValue != null) {
-            return majorBrandValue;
-        } else {
-            return majorBrandKey;
-        }
+        byte[] value = _directory.getByteArray(Mp4Directory.TAG_MAJOR_BRAND);
+        if (value == null)
+            return null;
+        return Mp4Dictionary.lookup(TAG_MAJOR_BRAND, new String(value));
     }
 
-    private String getCompatibleBrandsDescription(int tagType)
+    private String getCompatibleBrandsDescription()
     {
-        String[] compatibleBrandKeys = _directory.getStringArray(tagType);
+        String[] values = _directory.getStringArray(Mp4Directory.TAG_COMPATIBLE_BRANDS);
+        if (values == null)
+            return null;
+
         ArrayList<String> compatibleBrandsValues = new ArrayList<String>();
-        for (String compatibleBrandsKey : compatibleBrandKeys) {
-            String compatibleBrandsValue = Mp4Dictionary.lookup(Mp4Directory.TAG_MAJOR_BRAND, compatibleBrandsKey);
-            if (compatibleBrandsValue != null) {
-                compatibleBrandsValues.add(compatibleBrandsValue);
-            } else {
-                compatibleBrandsValues.add(compatibleBrandsKey);
-            }
+        for (String value : values) {
+            String compatibleBrandsValue = Mp4Dictionary.lookup(TAG_MAJOR_BRAND, value);
+            compatibleBrandsValues.add(compatibleBrandsValue == null ? value : compatibleBrandsValue);
         }
         return Arrays.toString(compatibleBrandsValues.toArray());
     }
