@@ -58,21 +58,21 @@ import java.util.Collection;
  * Parsing is then delegated to one of:
  *
  * <ul>
- *     <li>{@link JpegMetadataReader} for JPEG files</li>
- *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
- *     <li>{@link PsdMetadataReader} for Photoshop files</li>
- *     <li>{@link PngMetadataReader} for PNG files</li>
+ *     <li>{@link AviMetadataReader} for AVI files</li>
  *     <li>{@link BmpMetadataReader} for BMP files</li>
+ *     <li>{@link FileSystemMetadataReader} for metadata from the file system when a {@link File} is provided</li>
  *     <li>{@link GifMetadataReader} for GIF files</li>
  *     <li>{@link IcoMetadataReader} for ICO files</li>
- *     <li>{@link PcxMetadataReader} for PCX files</li>
- *     <li>{@link WebpMetadataReader} for WebP files</li>
- *     <li>{@link RafMetadataReader} for RAF files</li>
- *     <li>{@link AviMetadataReader} for AVI files</li>
- *     <li>{@link FileSystemMetadataReader} for metadata from the file system when a {@link File} is provided</li>
+ *     <li>{@link JpegMetadataReader} for JPEG files</li>
  *     <li>{@link Mp4MetadataReader} for MPEG-4 files</li>
+ *     <li>{@link PcxMetadataReader} for PCX files</li>
+ *     <li>{@link PngMetadataReader} for PNG files</li>
+ *     <li>{@link PsdMetadataReader} for Photoshop files</li>
  *     <li>{@link QuickTimeMetadataReader} for QuickTime files</li>
+ *     <li>{@link RafMetadataReader} for RAF files</li>
+ *     <li>{@link TiffMetadataReader} for TIFF and (most) RAW files</li>
  *     <li>{@link WavMetadataReader} for WAV files</li>
+ *     <li>{@link WebpMetadataReader} for WebP files</li>
  * </ul>
  *
  * If you know the file type you're working with, you may use one of the above processors directly.
