@@ -304,7 +304,7 @@ public class EpsReader
      * @param indicator String that represents when to stop reading lines
      * @return ArrayList of comments
      */
-    public List<String> extractHelper(@NotNull String indicator, @NotNull SequentialReader reader) throws IOException
+    private List<String> extractHelper(@NotNull String indicator, @NotNull SequentialReader reader) throws IOException
     {
         StringBuilder comment;
         char curr;
