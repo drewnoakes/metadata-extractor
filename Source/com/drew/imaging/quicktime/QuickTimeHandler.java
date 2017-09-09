@@ -56,4 +56,9 @@ public abstract class QuickTimeHandler<T extends QuickTimeDirectory>
     {
         return processAtom(atom, null);
     }
+
+    public void addError(@NotNull String message)
+    {
+        directory.addError(message);
+    }
 }

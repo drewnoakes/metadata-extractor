@@ -64,8 +64,8 @@ public class QuickTimeReader
                     break;
                 }
             }
-        } catch (IOException ignored) {
-            // TODO capture this error on the directory
+        } catch (IOException e) {
+            handler.addError(e.getMessage());
         }
     }
 }

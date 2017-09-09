@@ -61,8 +61,8 @@ public class Mp4Reader
                     }
                 }
             }
-        } catch (IOException ignored) {
-            // TODO capture this error on the directory
+        } catch (IOException e) {
+            mp4Handler.addError(e.getMessage());
         }
     }
 }

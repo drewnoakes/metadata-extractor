@@ -56,4 +56,9 @@ public abstract class Mp4Handler<T extends Mp4Directory>
     {
         return processBox(box, null);
     }
+
+    public void addError(@NotNull String message)
+    {
+        directory.addError(message);
+    }
 }
