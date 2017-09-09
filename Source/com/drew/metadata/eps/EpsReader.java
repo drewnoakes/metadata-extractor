@@ -4,18 +4,16 @@ import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Reads file passed in through SequentialReader and parses encountered data:
@@ -33,7 +31,7 @@ import java.util.List;
  * EPS Constraints (Source: https://www-cdf.fnal.gov/offline/PostScript/5001.PDF pg.18):
  * <ul>
  *     <li>Max line length is 255 characters</li>
- *     <li>Lines end with a CR(0xD) or LF(0xA) character</li>
+ *     <li>Lines end with a CR(0xD) or LF(0xA) character (or both, in practice)</li>
  *     <li>':' separates keywords (considered part of the keyword)</li>
  *     <li>Whitespace is either a space(0x20) or tab(0x9)</li>
  *     <li>If there is more than one header, the 1st is truth</li>
@@ -114,44 +112,52 @@ public class EpsReader
     private void extract(@NotNull final EpsDirectory directory, @NotNull Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
         StringBuilder line = new StringBuilder();
-        char curr;
-        String name;
-        String value;
-        do {
-            // Get full line until new line character
-            do {
-                curr = (char) reader.getByte();
-                line.append(curr);
-            } while (curr != '\r' && curr != '\n');
 
-            // Only parse if it is an EPS comment
-            if (line.toString().startsWith("%")) {
-                // ':' signifies there is an associated keyword (should be put in directory)
-                // otherwise, the name could be a marker
-                int colonIndex = line.indexOf(":");
-                if (colonIndex != -1) {
-                    name = line.substring(0, colonIndex).trim();
-                    value = line.substring(colonIndex + 1).trim();
-                    addToDirectory(directory, name, value);
-                } else {
-                    name = line.toString().trim();
-                }
-
-                // Some comments will both have a value and signify a new block to follow
-                if (name.equals("%BeginPhotoshop")) {
-                    extractPhotoshopData(metadata, reader);
-                } else if (name.equals("%%BeginICCProfile")) {
-                    extractIccData(metadata, reader);
-                } else if (name.equals("%begin_xml_packet")) {
-                    extractXmpData(metadata, reader);
-                }
-            } else {
-                name = "";
-            }
+        while (true) {
             line.setLength(0);
-        } while (!name.equals("%%BeginBinary")
-            && !name.equals("%%BeginData")
-            && !name.equals("%AI9_PrivateDataEnd"));
+
+            // Read the next line, excluding any trailing newline character
+            // Note that for Windows-style line endings ("\r\n") the outer loop will be run a second time with an empty
+            // string, which is fine.
+            while (true) {
+                char c = (char)reader.getByte();
+                if (c == '\r' || c == '\n')
+                    break;
+                line.append(c);
+            }
+
+            // Skip any blank lines, or lines that don't start with '%'
+            if (line.length() == 0 || line.charAt(0) != '%')
+                continue;
+
+            String name;
+
+            // ':' signifies there is an associated keyword (should be put in directory)
+            // otherwise, the name could be a marker
+            int colonIndex = line.indexOf(":");
+            if (colonIndex != -1) {
+                name = line.substring(0, colonIndex).trim();
+                String value = line.substring(colonIndex + 1).trim();
+                addToDirectory(directory, name, value);
+            } else {
+                name = line.toString().trim();
+            }
+
+            // Some comments will both have a value and signify a new block to follow
+            if (name.equals("%BeginPhotoshop")) {
+                extractPhotoshopData(metadata, reader);
+            } else if (name.equals("%%BeginICCProfile")) {
+                extractIccData(metadata, reader);
+            } else if (name.equals("%begin_xml_packet")) {
+                extractXmpData(metadata, reader);
+            } else if (
+                name.equals("%%BeginBinary") ||
+                name.equals("%%BeginData") ||
+                name.equals("%AI9_PrivateDataEnd")) {
+                // Stop parsing once we hit one of these sections
+                return;
+            }
+        }
     }
 
     /**
@@ -246,103 +252,169 @@ public class EpsReader
     }
 
     /**
-     * Lines are retrieved from extractHelper and stored in a List.  All lines get transferred to a byte array
-     * with fillBuffer and then the rest of the job is passed on to PhotoshopReader.
-     *
-     * @param metadata Metadata to add directory to and extracted photoshop data
+     * Decodes a commented hex section, and uses {@link PhotoshopReader} to decode the resulting data.
      */
     private static void extractPhotoshopData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
-        List<String> comments = extractHelper("%EndPhotoshop", reader);
-        // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
-        byte[] buffer = fillBuffer(comments);
+        byte[] buffer = decodeHexCommentBlock(reader);
 
-        new PhotoshopReader().extract(new SequentialByteArrayReader(buffer), buffer.length, metadata);
+        if (buffer != null)
+            new PhotoshopReader().extract(new SequentialByteArrayReader(buffer), buffer.length, metadata);
     }
 
     /**
-     * Lines are retrieved from extractHelper and stored in a List.  All lines get transferred to a byte array
-     * with fillBuffer and then the rest of the job is passed on to IccReader.
-     *
-     * @param metadata Metadata to add directory to and extracted icc data
+     * Decodes a commented hex section, and uses {@link IccReader} to decode the resulting data.
      */
     private static void extractIccData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
-        List<String> comments = extractHelper("%%EndICCProfile", reader);
-        // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
-        byte[] buffer = fillBuffer(comments);
+        byte[] buffer = decodeHexCommentBlock(reader);
 
-        new IccReader().extract(new ByteArrayReader(buffer), metadata);
+        if (buffer != null)
+            new IccReader().extract(new ByteArrayReader(buffer), metadata);
     }
 
     /**
-     * Lines are retrieved from extractHelper and stored in a List.  All lines get transferred to one String
-     * where the rest of the job is passed on to XmpReader.
-     *
-     * @param metadata Metadata to add directory to and extracted xmp data
+     * Extracts an XMP xpacket, and uses {@link XmpReader} to decode the resulting data.
      */
     private static void extractXmpData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
-        List<String> comments = extractHelper("<?xpacket end=\"w\"?>", reader);
-
-        StringBuilder all = new StringBuilder();
-        for (String temp : comments) {
-            all.append(temp);
-        }
-
-        new XmpReader().extract(all.toString(), metadata);
+        byte[] bytes = readUntil(reader, "<?xpacket end=\"w\"?>".getBytes());
+        String xmp = new String(bytes, Charsets.UTF_8);
+        new XmpReader().extract(xmp, metadata);
     }
 
     /**
-     * Parses file until reaching indicator.  Each line is stored as a String in an ArrayList.  Extra
-     * characters like returns, spaces, and %'s are removed.
-     *
-     * @param indicator String that represents when to stop reading lines
-     * @return ArrayList of comments
+     * Reads all bytes until the given sentinel is observed.
+     * The sentinel will be included in the returned bytes.
      */
-    private static List<String> extractHelper(@NotNull String indicator, @NotNull SequentialReader reader) throws IOException
-    {
-        StringBuilder comment = new StringBuilder();
-        List<String> comments = new ArrayList<String>();
-
-        do {
-            comment.setLength(0);
-
-            // Read in entire line
-            char curr;
-            do {
-                curr = (char) reader.getByte();
-                comment.append(curr);
-            } while (curr != '\r' && curr != '\n');
-
-            if (comment.length() > 2)
-                comments.add(comment.toString().substring(1, comment.length() - 1));
-        } while (!comment.toString().startsWith(indicator));
-
-        // Get rid of last line (%%EndCCProfile)
-        comments.remove(comments.size() - 1);
-
-        return comments;
-    }
-
-    /**
-     * Adds comments list to a byte array for use in later readers.  Comment's data are
-     * stored in hex in ascii form, so the list is read in sets of two characters which are
-     * converted to bytes.
-     *
-     * @param comments ArrayList of Strings that contains data in hex (ascii)
-     */
-    private static byte[] fillBuffer(List<String> comments)
+    private static byte[] readUntil(@NotNull SequentialReader reader, @NotNull byte[] sentinel) throws IOException
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        for (String comment : comments) {
-            comment = comment.trim();
-            int pos = 0;
-            while (pos < comment.length()) {
-                bytes.write((byte)Integer.parseInt(comment.substring(pos, pos + 2), 16));
-                pos += 2;
+
+        final int length = sentinel.length;
+        int depth = 0;
+
+        while (depth != length) {
+            byte b = reader.getByte();
+            if (b == sentinel[depth])
+                depth++;
+            else
+                depth = 0;
+            bytes.write(b);
+        }
+
+        return bytes.toByteArray();
+    }
+
+    /**
+     * EPS files can contain hexadecimal-encoded ASCII blocks, each prefixed with <c>"% "</c>.
+     * This method reads such a block and returns a byte[] of the decoded contents.
+     * Reading stops at the first invalid line, which is discarded (it's a terminator anyway).
+     * <p/>
+     * For example:
+     * <pre><code>
+     * %BeginPhotoshop: 9564
+     * % 3842494D040400000000005D1C015A00031B25471C0200000200041C02780004
+     * % 6E756C6C1C027A00046E756C6C1C025000046E756C6C1C023700083230313630
+     * % 3331311C023C000B3131343335362B303030301C023E00083230313630333131
+     * % 48000000010000003842494D03FD0000000000080101000000000000
+     * %EndPhotoshop
+     * </code></pre>
+     * When calling this method, the reader must be positioned at the start of the first line containing
+     * hex data, not at the introductory line.
+     *
+     * @return The decoded bytes, or <code>null</code> if decoding failed.
+     */
+    @Nullable
+    private static byte[] decodeHexCommentBlock(@NotNull SequentialReader reader) throws IOException
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+        // Use a state machine to efficiently parse data in a single traversal
+
+        final int AwaitingPercent = 0;
+        final int AwaitingSpace = 1;
+        final int AwaitingHex1 = 2;
+        final int AwaitingHex2 = 3;
+
+        int state = AwaitingPercent;
+
+        int carry = 0;
+        boolean done = false;
+
+        byte b = 0;
+        while (!done) {
+            b = reader.getByte();
+
+            switch (state) {
+                case AwaitingPercent: {
+                    switch (b) {
+                        case '\r':
+                        case '\n':
+                        case ' ':
+                            // skip newline chars and spaces
+                            break;
+                        case '%':
+                            state = AwaitingSpace;
+                            break;
+                        default:
+                            return null;
+                    }
+                    break;
+                }
+                case AwaitingSpace: {
+                    switch (b) {
+                        case ' ':
+                            state = AwaitingHex1;
+                            break;
+                        default:
+                            done = true;
+                            break;
+                    }
+                    break;
+                }
+                case AwaitingHex1: {
+                    int i = tryHexToInt(b);
+                    if (i != -1) {
+                        carry = i * 16;
+                        state = AwaitingHex2;
+                    } else if (b == '\r' || b == '\n') {
+                        state = AwaitingPercent;
+                    } else {
+                        return null;
+                    }
+                    break;
+                }
+                case AwaitingHex2: {
+                    int i = tryHexToInt(b);
+                    if (i == -1)
+                        return null;
+                    bytes.write(carry + i);
+                    state = AwaitingHex1;
+                    break;
+                }
             }
         }
+
+        // skip through the remainder of the last line
+        while (b != '\n')
+            b = reader.getByte();
+
         return bytes.toByteArray();
+    }
+
+    /**
+     * Treats a byte as an ASCII character, and returns it's numerical value in hexadecimal.
+     * If conversion is not possible, returns -1.
+     */
+    private static int tryHexToInt(byte b)
+    {
+        if (b >= '0' && b <= '9')
+            return b - '0';
+        if (b >= 'A' && b <= 'F')
+            return b - 'A' + 10;
+        if (b >= 'a' && b <= 'f')
+            return b - 'a' + 10;
+        return -1;
     }
 }
