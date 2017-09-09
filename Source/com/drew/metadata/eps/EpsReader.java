@@ -256,8 +256,7 @@ public class EpsReader
         // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
         byte[] buffer = fillBuffer(comments);
 
-        PhotoshopReader photoshopReader = new PhotoshopReader();
-        photoshopReader.extract(new SequentialByteArrayReader(buffer), buffer.length, metadata);
+        new PhotoshopReader().extract(new SequentialByteArrayReader(buffer), buffer.length, metadata);
     }
 
     /**
@@ -272,8 +271,7 @@ public class EpsReader
         // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
         byte[] buffer = fillBuffer(comments);
 
-        IccReader iccReader = new IccReader();
-        iccReader.extract(new ByteArrayReader(buffer), metadata);
+        new IccReader().extract(new ByteArrayReader(buffer), metadata);
     }
 
     /**
@@ -291,8 +289,7 @@ public class EpsReader
             all.append(temp);
         }
 
-        XmpReader xmpReader = new XmpReader();
-        xmpReader.extract(all.toString(), metadata);
+        new XmpReader().extract(all.toString(), metadata);
     }
 
     /**
