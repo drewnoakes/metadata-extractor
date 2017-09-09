@@ -122,7 +122,7 @@ public class EpsReader
             do {
                 curr = (char) reader.getByte();
                 line.append(curr);
-            } while (curr != 0xD && curr != 0xA);
+            } while (curr != '\r' && curr != '\n');
 
             // Only parse if it is an EPS comment
             if (line.toString().startsWith("%")) {
@@ -312,7 +312,7 @@ public class EpsReader
             do {
                 curr = (char) reader.getByte();
                 comment.append(curr);
-            } while (curr != 0xD && curr != 0xA);
+            } while (curr != '\r' && curr != '\n');
 
             if (comment.length() > 2)
                 comments.add(comment.toString().substring(1, comment.length() - 1));
