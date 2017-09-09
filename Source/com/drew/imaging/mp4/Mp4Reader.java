@@ -27,6 +27,9 @@ import com.drew.metadata.mp4.boxes.Box;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * @author Payton Garland
+ */
 public class Mp4Reader
 {
     private Mp4Reader() {}
@@ -53,12 +56,10 @@ public class Mp4Reader
                     processBoxes(reader, box.size + reader.getPosition() - 8, handler.processContainer(box));
                 } else if (handler.shouldAcceptBox(box)) {
                     handler = handler.processBox(box, reader.getBytes((int)box.size - 8));
-                } else {
-                    if (box.size > 1) {
-                        reader.skip(box.size - 8);
-                    } else if (box.size == -1) {
-                        break;
-                    }
+                } else if (box.size > 1) {
+                    reader.skip(box.size - 8);
+                } else if (box.size == -1) {
+                    break;
                 }
             }
         } catch (IOException e) {
