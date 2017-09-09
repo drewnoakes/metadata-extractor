@@ -190,7 +190,7 @@ public class EpsReader
      *
      * @param directory EpsDirectory to add data to
      */
-    private void extractImageData(@NotNull final EpsDirectory directory, String d1) throws IOException
+    private static void extractImageData(@NotNull final EpsDirectory directory, String d1) throws IOException
     {
         // 	%ImageData: 1000 1000 8 3 1 1000 7 "beginimage"
         directory.setString(EpsDirectory.TAG_IMAGE_DATA, d1.trim());
@@ -250,7 +250,7 @@ public class EpsReader
      *
      * @param metadata Metadata to add directory to and extracted photoshop data
      */
-    private void extractPhotoshopData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    private static void extractPhotoshopData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
         List<String> comments = extractHelper("%EndPhotoshop", reader);
         // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
@@ -267,7 +267,7 @@ public class EpsReader
      *
      * @param metadata Metadata to add directory to and extracted icc data
      */
-    private void extractIccData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    private static void extractIccData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
         List<String> comments = extractHelper("%%EndICCProfile", reader);
         // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
@@ -284,7 +284,7 @@ public class EpsReader
      *
      * @param metadata Metadata to add directory to and extracted xmp data
      */
-    private void extractXmpData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    private static void extractXmpData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
         List<String> comments = extractHelper("<?xpacket end=\"w\"?>", reader);
 
@@ -304,7 +304,7 @@ public class EpsReader
      * @param indicator String that represents when to stop reading lines
      * @return ArrayList of comments
      */
-    private List<String> extractHelper(@NotNull String indicator, @NotNull SequentialReader reader) throws IOException
+    private static List<String> extractHelper(@NotNull String indicator, @NotNull SequentialReader reader) throws IOException
     {
         StringBuilder comment;
         char curr;
@@ -335,7 +335,7 @@ public class EpsReader
      *
      * @param comments ArrayList of Strings that contains data in hex (ascii)
      */
-    private byte[] fillBuffer(List<String> comments)
+    private static byte[] fillBuffer(List<String> comments)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         for (String comment : comments) {
