@@ -286,14 +286,15 @@ public class EpsReader
      */
     private void extractXmpData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
-        String all = "";
         List<String> comments = extractHelper("<?xpacket end=\"w\"?>", reader);
+
+        StringBuilder all = new StringBuilder();
         for (String temp : comments) {
-            all += temp;
+            all.append(temp);
         }
 
         XmpReader xmpReader = new XmpReader();
-        xmpReader.extract(all, metadata);
+        xmpReader.extract(all.toString(), metadata);
     }
 
     /**
