@@ -42,7 +42,7 @@ public class EpsReaderTest
         assertEquals(30, directory.getInt(EpsDirectory.TAG_TIFF_PREVIEW_OFFSET));
         assertEquals(8, directory.getInt(EpsDirectory.TAG_IMAGE_WIDTH));
         assertEquals(4, directory.getInt(EpsDirectory.TAG_IMAGE_HEIGHT));
-        assertEquals("Grayscale", directory.getString(EpsDirectory.TAG_COLOR_TYPE));
+        assertEquals(1, directory.getInt(EpsDirectory.TAG_COLOR_TYPE));
     }
 
     @Test
@@ -54,6 +54,6 @@ public class EpsReaderTest
         assertEquals(30, directory.getInt(EpsDirectory.TAG_TIFF_PREVIEW_OFFSET));
         assertEquals(275, directory.getInt(EpsDirectory.TAG_IMAGE_WIDTH));
         assertEquals(207, directory.getInt(EpsDirectory.TAG_IMAGE_HEIGHT));
-        assertEquals("RGB", directory.getString(EpsDirectory.TAG_COLOR_TYPE));
+        assertEquals(3, directory.getInt(EpsDirectory.TAG_COLOR_TYPE));
     }
 }
