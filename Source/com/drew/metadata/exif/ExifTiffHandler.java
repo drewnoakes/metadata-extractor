@@ -68,8 +68,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         switch (marker)
         {
             case standardTiffMarker:
-            case olympusRawTiffMarker:      // Todo: implement an IFD0, if there is one
-            case olympusRawTiffMarker2:     // Todo: implement an IFD0, if there is one
+            case olympusRawTiffMarker:      // TODO implement an IFD0, if there is one
+            case olympusRawTiffMarker2:     // TODO implement an IFD0, if there is one
                 pushDirectory(ExifIFD0Directory.class);
                 break;
             case panasonicRawTiffMarker:
@@ -221,12 +221,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             return true;
         }
 
-        if (HandlePrintIM(_currentDirectory, tagId))
+        if (handlePrintIM(_currentDirectory, tagId))
         {
             PrintIMDirectory printIMDirectory = new PrintIMDirectory();
             printIMDirectory.setParent(_currentDirectory);
             _metadata.addDirectory(printIMDirectory);
-            ProcessPrintIM(printIMDirectory, tagOffset, reader, byteCount);
+            processPrintIM(printIMDirectory, tagOffset, reader, byteCount);
             return true;
         }
 
@@ -281,19 +281,19 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     PanasonicRawWbInfoDirectory dirWbInfo = new PanasonicRawWbInfoDirectory();
                     dirWbInfo.setParent(_currentDirectory);
                     _metadata.addDirectory(dirWbInfo);
-                    ProcessBinary(dirWbInfo, tagOffset, reader, byteCount, false, 2);
+                    processBinary(dirWbInfo, tagOffset, reader, byteCount, false, 2);
                     return true;
                 case PanasonicRawIFD0Directory.TagWbInfo2:
                     PanasonicRawWbInfo2Directory dirWbInfo2 = new PanasonicRawWbInfo2Directory();
                     dirWbInfo2.setParent(_currentDirectory);
                     _metadata.addDirectory(dirWbInfo2);
-                    ProcessBinary(dirWbInfo2, tagOffset, reader, byteCount, false, 3);
+                    processBinary(dirWbInfo2, tagOffset, reader, byteCount, false, 3);
                     return true;
                 case PanasonicRawIFD0Directory.TagDistortionInfo:
                     PanasonicRawDistortionDirectory dirDistort = new PanasonicRawDistortionDirectory();
                     dirDistort.setParent(_currentDirectory);
                     _metadata.addDirectory(dirDistort);
-                    ProcessBinary(dirDistort, tagOffset, reader, byteCount, true, 1);
+                    processBinary(dirDistort, tagOffset, reader, byteCount, true, 1);
                     return true;
             }
         }
@@ -322,7 +322,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return false;
     }
 
-    private static void ProcessBinary(@NotNull final Directory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount, final Boolean issigned, final int arrayLength) throws IOException
+    private static void processBinary(@NotNull final Directory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount, final Boolean issigned, final int arrayLength) throws IOException
     {
         // expects signed/unsigned int16 (for now)
         //int byteSize = issigned ? sizeof(short) : sizeof(ushort);
@@ -583,7 +583,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return true;
     }
 
-    private static Boolean HandlePrintIM(@NotNull final Directory directory, final int tagId)
+    private static Boolean handlePrintIM(@NotNull final Directory directory, final int tagId)
     {
         if (tagId == ExifDirectoryBase.TAG_PRINT_IMAGE_MATCHING_INFO)
             return true;
@@ -614,7 +614,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     /// http://www.sno.phy.queensu.ca/~phil/exiftool/
     /// lib\Image\ExifTool\PrintIM.pm
     /// </remarks>
-    private static void ProcessPrintIM(@NotNull final PrintIMDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount) throws IOException
+    private static void processPrintIM(@NotNull final PrintIMDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount) throws IOException
     {
         Boolean resetByteOrder = null;
 
