@@ -147,7 +147,7 @@ public class EpsReader
             } else {
                 name = "";
             }
-            line = new StringBuilder();
+            line.setLength(0);
         } while (!name.equals("%%BeginBinary")
             && !name.equals("%%BeginData")
             && !name.equals("%AI9_PrivateDataEnd"));
@@ -301,13 +301,14 @@ public class EpsReader
      */
     private static List<String> extractHelper(@NotNull String indicator, @NotNull SequentialReader reader) throws IOException
     {
-        StringBuilder comment;
-        char curr;
+        StringBuilder comment = new StringBuilder();
         List<String> comments = new ArrayList<String>();
 
         do {
-            comment = new StringBuilder();
+            comment.setLength(0);
+
             // Read in entire line
+            char curr;
             do {
                 curr = (char) reader.getByte();
                 comment.append(curr);
