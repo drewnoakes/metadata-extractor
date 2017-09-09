@@ -254,9 +254,7 @@ public class EpsReader
     {
         List<String> comments = extractHelper("%EndPhotoshop", reader);
         // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
-        byte[] buffer = new byte[comments.size() * 32];
-        // Fill the buffer accordingly
-        buffer = fillBuffer(comments);
+        byte[] buffer = fillBuffer(comments);
 
         PhotoshopReader photoshopReader = new PhotoshopReader();
         SequentialReader psdReader = new StreamReader(new ByteArrayInputStream(buffer));
@@ -273,9 +271,7 @@ public class EpsReader
     {
         List<String> comments = extractHelper("%%EndICCProfile", reader);
         // Create a buffer for the comments (they can be a maximum of 32 bytes per line)
-        byte[] buffer = new byte[comments.size() * 32];
-        // Fill the buffer accordingly
-        buffer = fillBuffer(comments);
+        byte[] buffer = fillBuffer(comments);
 
         IccReader iccReader = new IccReader();
         RandomAccessReader randomAccessReader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
