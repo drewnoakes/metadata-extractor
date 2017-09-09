@@ -1,6 +1,7 @@
 package com.drew.metadata.eps;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 import static com.drew.metadata.eps.EpsDirectory.*;
@@ -25,7 +26,9 @@ public class EpsDescriptor extends TagDescriptor<EpsDirectory>
                 return getPixelDescription(tagType);
             case TAG_TIFF_PREVIEW_SIZE:
             case TAG_TIFF_PREVIEW_OFFSET:
-                return getByteDescription(tagType);
+                return getByteSizeDescription(tagType);
+            case TAG_COLOR_TYPE:
+                return getColorTypeDescription();
             default:
                 return _directory.getString(tagType);
         }
@@ -36,8 +39,15 @@ public class EpsDescriptor extends TagDescriptor<EpsDirectory>
         return _directory.getString(tagType) + " pixels";
     }
 
-    public String getByteDescription(int tagType)
+    public String getByteSizeDescription(int tagType)
     {
         return _directory.getString(tagType) + " bytes";
+    }
+
+    @Nullable
+    public String getColorTypeDescription()
+    {
+        return getIndexedDescription(TAG_COLOR_TYPE, 1,
+            "Grayscale", "Lab", "RGB", "CMYK");
     }
 }

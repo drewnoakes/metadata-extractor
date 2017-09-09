@@ -89,6 +89,7 @@ public class EpsReader
                     directory.setInt(EpsDirectory.TAG_WMF_PREVIEW_OFFSET, wmfOffset);
                 }
 
+                // TODO avoid allocating byte array here -- read directly from InputStream
                 extract(directory, metadata, new SequentialByteArrayReader(reader.getBytes(postScriptOffset, postScriptLength)));
                 break;
             case 0x25215053:
@@ -195,63 +196,39 @@ public class EpsReader
     }
 
     /**
-     * Parses %ImageData comment which holds several values including width in px,
-     * height in px, color type, and ram size.
-     *
-     * @param directory EpsDirectory to add data to
+     * Parses <code>%ImageData</code> comment which holds several values including width in px,
+     * height in px and color type.
      */
-    private static void extractImageData(@NotNull final EpsDirectory directory, String d1) throws IOException
+    private static void extractImageData(@NotNull final EpsDirectory directory, String imageData) throws IOException
     {
-        // 	%ImageData: 1000 1000 8 3 1 1000 7 "beginimage"
-        directory.setString(EpsDirectory.TAG_IMAGE_DATA, d1.trim());
+        // %ImageData: 1000 1000 8 3 1 1000 7 "beginimage"
+        directory.setString(EpsDirectory.TAG_IMAGE_DATA, imageData.trim());
 
-        String[] imageDataParts = d1.split(" ");
+        String[] imageDataParts = imageData.split(" ");
+
         int width = Integer.parseInt(imageDataParts[0]);
         int height = Integer.parseInt(imageDataParts[1]);
-
-        // Verify this value was not already added
-        if (directory.getString(EpsDirectory.TAG_IMAGE_WIDTH) == null) {
-            directory.setString(EpsDirectory.TAG_IMAGE_WIDTH, Integer.toString(width));
-        }
-        // Verify this value was not already added
-        if (directory.getString(EpsDirectory.TAG_IMAGE_HEIGHT) == null) {
-            directory.setString(EpsDirectory.TAG_IMAGE_HEIGHT, Integer.toString(height));
-        }
-
         int colorType = Integer.parseInt(imageDataParts[3]);
-        String colorTypeDescription;
-        double ramSize;
 
-        switch (colorType) {
-            case 1:
-                colorTypeDescription = "Grayscale";
-                ramSize = width * height;
-                break;
-            case 2:
-                colorTypeDescription = "Lab Color";
-                ramSize = width * height * 3;
-                break;
-            case 3:
-                colorTypeDescription = "RGB";
-                ramSize = width * height * 3;
-                break;
-            case 4:
-                colorTypeDescription = "CMYK";
-                ramSize = width * height * 4;
-                break;
-            default:
-                colorTypeDescription = "Unknown";
-                ramSize = 0;
-                break;
-        }
+        // Only add values that are not already present
+        if (!directory.containsTag(EpsDirectory.TAG_IMAGE_WIDTH))
+            directory.setInt(EpsDirectory.TAG_IMAGE_WIDTH, width);
+        if (!directory.containsTag(EpsDirectory.TAG_IMAGE_HEIGHT))
+            directory.setInt(EpsDirectory.TAG_IMAGE_HEIGHT, height);
+        if (!directory.containsTag(EpsDirectory.TAG_COLOR_TYPE))
+            directory.setInt(EpsDirectory.TAG_COLOR_TYPE, colorType);
 
-        // Verify this value was not already added
-        if (directory.getString(EpsDirectory.TAG_COLOR_TYPE) == null) {
-            directory.setString(EpsDirectory.TAG_COLOR_TYPE, colorTypeDescription);
-        }
-        // Verify this value was not already added
-        if (directory.getString(EpsDirectory.TAG_RAM_SIZE) == null) {
-            directory.setString(EpsDirectory.TAG_RAM_SIZE, Double.toString(ramSize));
+        if (!directory.containsTag(EpsDirectory.TAG_RAM_SIZE)) {
+            int bytesPerPixel = 0;
+            if (colorType == 1)
+                bytesPerPixel = 1; // grayscale
+            else if (colorType == 2 || colorType == 3)
+                bytesPerPixel = 3; // Lab or RGB
+            else if (colorType == 4)
+                bytesPerPixel = 3; // CMYK
+
+            if (bytesPerPixel != 0)
+                directory.setInt(EpsDirectory.TAG_RAM_SIZE, bytesPerPixel * width * height);
         }
     }
 
