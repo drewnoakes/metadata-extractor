@@ -73,7 +73,7 @@ public class EpsReader
                 int wmfSize = reader.getInt32(16);
                 int tifOffset = reader.getInt32(20);
                 int tifSize = reader.getInt32(24);
-                int checkSum = reader.getInt32(28);
+                //int checkSum = reader.getInt32(28);
 
                 // Get Tiff/WMF preview data if applicable
                 if (tifSize != 0) {
