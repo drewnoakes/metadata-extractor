@@ -33,16 +33,17 @@ import java.io.IOException;
  */
 public abstract class QuickTimeHandler<T extends QuickTimeDirectory>
 {
-    protected Metadata metadata;
-    protected T directory;
+    @NotNull protected Metadata metadata;
+    @NotNull protected T directory;
 
-    public QuickTimeHandler(Metadata metadata)
+    public QuickTimeHandler(@NotNull Metadata metadata)
     {
         this.metadata = metadata;
         this.directory = getDirectory();
         metadata.addDirectory(directory);
     }
 
+    @NotNull
     protected abstract T getDirectory();
 
     protected abstract boolean shouldAcceptAtom(@NotNull Atom atom);

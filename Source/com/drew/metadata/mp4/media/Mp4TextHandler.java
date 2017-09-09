@@ -36,6 +36,7 @@ public class Mp4TextHandler extends Mp4MediaHandler<Mp4TextDirectory>
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected Mp4TextDirectory getDirectory()
     {

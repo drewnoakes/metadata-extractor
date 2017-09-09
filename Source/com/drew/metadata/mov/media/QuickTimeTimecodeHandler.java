@@ -41,6 +41,7 @@ public class QuickTimeTimecodeHandler extends QuickTimeMediaHandler<QuickTimeTim
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected QuickTimeTimecodeDirectory getDirectory()
     {

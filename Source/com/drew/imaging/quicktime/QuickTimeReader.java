@@ -21,6 +21,7 @@
 package com.drew.imaging.quicktime;
 
 import com.drew.lang.StreamReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mov.atoms.Atom;

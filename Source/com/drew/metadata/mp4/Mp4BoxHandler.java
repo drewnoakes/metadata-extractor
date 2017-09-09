@@ -42,6 +42,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected Mp4Directory getDirectory()
     {

@@ -115,7 +115,6 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                     pos ++;
                 }
 
-
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
                 if (pos % 2 != 0) {
                     reader.skip(1);

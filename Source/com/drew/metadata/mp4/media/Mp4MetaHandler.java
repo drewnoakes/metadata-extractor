@@ -36,6 +36,7 @@ public class Mp4MetaHandler extends Mp4MediaHandler<Mp4MetaDirectory>
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected Mp4MetaDirectory getDirectory()
     {

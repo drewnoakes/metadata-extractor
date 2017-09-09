@@ -33,16 +33,17 @@ import java.io.IOException;
  */
 public abstract class Mp4Handler<T extends Mp4Directory>
 {
-    protected Metadata metadata;
-    protected T directory;
+    @NotNull protected Metadata metadata;
+    @NotNull protected T directory;
 
-    public Mp4Handler(Metadata metadata)
+    public Mp4Handler(@NotNull Metadata metadata)
     {
         this.metadata = metadata;
         this.directory = getDirectory();
         metadata.addDirectory(directory);
     }
 
+    @NotNull
     protected abstract T getDirectory();
 
     protected abstract boolean shouldAcceptBox(@NotNull Box box);

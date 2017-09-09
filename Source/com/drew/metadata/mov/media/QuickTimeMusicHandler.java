@@ -39,6 +39,7 @@ public class QuickTimeMusicHandler extends QuickTimeMediaHandler<QuickTimeMusicD
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected QuickTimeMusicDirectory getDirectory()
     {

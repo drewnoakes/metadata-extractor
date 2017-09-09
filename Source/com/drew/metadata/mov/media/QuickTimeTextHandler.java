@@ -40,6 +40,7 @@ public class QuickTimeTextHandler extends QuickTimeMediaHandler<QuickTimeTextDir
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected QuickTimeTextDirectory getDirectory()
     {

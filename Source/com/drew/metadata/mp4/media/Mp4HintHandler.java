@@ -37,6 +37,7 @@ public class Mp4HintHandler extends Mp4MediaHandler<Mp4HintDirectory>
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected Mp4HintDirectory getDirectory()
     {

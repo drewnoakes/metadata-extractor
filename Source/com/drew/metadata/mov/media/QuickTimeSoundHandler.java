@@ -40,6 +40,7 @@ public class QuickTimeSoundHandler extends QuickTimeMediaHandler<QuickTimeSoundD
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected QuickTimeSoundDirectory getDirectory()
     {

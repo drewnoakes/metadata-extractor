@@ -39,6 +39,7 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected Mp4SoundDirectory getDirectory()
     {

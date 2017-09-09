@@ -42,6 +42,7 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected QuickTimeDirectory getDirectory()
     {

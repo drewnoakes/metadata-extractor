@@ -39,6 +39,7 @@ public class QuickTimeSubtitleHandler extends QuickTimeMediaHandler<QuickTimeSub
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected QuickTimeSubtitleDirectory getDirectory()
     {

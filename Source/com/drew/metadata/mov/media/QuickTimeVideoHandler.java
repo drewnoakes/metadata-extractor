@@ -48,6 +48,7 @@ public class QuickTimeVideoHandler extends QuickTimeMediaHandler<QuickTimeVideoD
         return QuickTimeAtomTypes.ATOM_VIDEO_MEDIA_INFO;
     }
 
+    @NotNull
     @Override
     protected QuickTimeVideoDirectory getDirectory()
     {

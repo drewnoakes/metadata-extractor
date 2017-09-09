@@ -45,6 +45,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
         return Mp4BoxTypes.BOX_VIDEO_MEDIA_INFO;
     }
 
+    @NotNull
     @Override
     protected Mp4VideoDirectory getDirectory()
     {

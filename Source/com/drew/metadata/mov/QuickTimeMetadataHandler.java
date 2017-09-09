@@ -40,6 +40,7 @@ public abstract class QuickTimeMetadataHandler extends QuickTimeHandler
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected QuickTimeDirectory getDirectory()
     {
