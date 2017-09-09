@@ -29,7 +29,7 @@ import java.util.List;
  * </ul>
  * EPS comments are retrieved from EPS directory.  Photoshop, ICC Profile, and XMP processing
  * is passed to their respective reader.
- *
+ * <p/>
  * EPS Constraints (Source: https://www-cdf.fnal.gov/offline/PostScript/5001.PDF pg.18):
  * <ul>
  *     <li>Max line length is 255 characters</li>
@@ -41,8 +41,8 @@ import java.util.List;
  *
  * @author Payton Garland
  */
-public class EpsReader {
-
+public class EpsReader
+{
     private int _previousTag;
 
     /**
@@ -52,7 +52,6 @@ public class EpsReader {
      *
      * @param inputStream InputStream containing file
      * @param metadata Metadata to add directory to and extracted data
-     *
      */
     public void extract(@NotNull final InputStream inputStream, @NotNull final Metadata metadata) throws IOException
     {
@@ -66,7 +65,7 @@ public class EpsReader {
          * 0x25215053 (%!PS) signifies an EPS File and leads straight into the PostScript
          */
         switch (reader.getInt32(0)) {
-            case (0xC5D0D3C6):
+            case 0xC5D0D3C6:
                 reader.setMotorolaByteOrder(false);
                 int postScriptOffset = reader.getInt32(4);
                 int postScriptLength = reader.getInt32(8);
@@ -94,12 +93,13 @@ public class EpsReader {
 
                 extract(directory, metadata, new SequentialByteArrayReader(reader.getBytes(postScriptOffset, postScriptLength)));
                 break;
-            case (0x25215053):
+            case 0x25215053:
                 inputStream.reset();
                 extract(directory, metadata, new StreamReader(inputStream));
                 break;
             default:
-                directory.addError("Filetype not supported.");
+                directory.addError("File type not supported.");
+                break;
         }
     }
 
@@ -110,7 +110,6 @@ public class EpsReader {
      * available data has run out (or AI09 End Private Data).  Will extract data from normal EPS comments, Photoshop, ICC, and XMP.
      *
      * @param metadata Metadata to add directory to and extracted data
-     *
      */
     private void extract(@NotNull final EpsDirectory directory, @NotNull Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
@@ -149,9 +148,9 @@ public class EpsReader {
                 name = "";
             }
             line = new StringBuilder();
-        } while (!(name.equals("%%BeginBinary"))
-            && !(name.equals("%%BeginData"))
-            && !(name.equals("%AI9_PrivateDataEnd")));
+        } while (!name.equals("%%BeginBinary")
+            && !name.equals("%%BeginData")
+            && !name.equals("%AI9_PrivateDataEnd"));
     }
 
     /**
@@ -160,22 +159,20 @@ public class EpsReader {
      * @param directory EpsDirectory to add extracted data to
      * @param name String that holds name of current comment
      * @param value String that holds value of current comment
-     * @throws IOException
-     *
      */
     private void addToDirectory(@NotNull final EpsDirectory directory, String name, String value) throws IOException
     {
         if (EpsDirectory._tagIntegerMap.get(name) != null) {
             switch (EpsDirectory._tagIntegerMap.get(name)) {
-                case (EpsDirectory.TAG_IMAGE_DATA):
+                case EpsDirectory.TAG_IMAGE_DATA:
                     extractImageData(directory, value);
                     break;
-                case (EpsDirectory.TAG_CONTINUE_LINE):
+                case EpsDirectory.TAG_CONTINUE_LINE:
                     directory.setString(_previousTag, directory.getString(_previousTag) + " " + value);
                     break;
                 default:
                     if (EpsDirectory._tagNameMap.containsKey(EpsDirectory._tagIntegerMap.get(name))
-                            && directory.getString(EpsDirectory._tagIntegerMap.get(name)) == null) {
+                        && directory.getString(EpsDirectory._tagIntegerMap.get(name)) == null) {
                         directory.setString(EpsDirectory._tagIntegerMap.get(name), value);
                         _previousTag = EpsDirectory._tagIntegerMap.get(name);
                     } else {
@@ -192,8 +189,6 @@ public class EpsReader {
      * height in px, color type, and ram size.
      *
      * @param directory EpsDirectory to add data to
-     * @throws IOException
-     *
      */
     private void extractImageData(@NotNull final EpsDirectory directory, String d1) throws IOException
     {
@@ -220,7 +215,7 @@ public class EpsReader {
         switch (colorType) {
             case 1:
                 colorTypeDescription = "Grayscale";
-                ramSize = width * height * 1;
+                ramSize = width * height;
                 break;
             case 2:
                 colorTypeDescription = "Lab Color";
@@ -254,8 +249,6 @@ public class EpsReader {
      * with fillBuffer and then the rest of the job is passed on to PhotoshopReader.
      *
      * @param metadata Metadata to add directory to and extracted photoshop data
-     * @throws IOException
-     *
      */
     private void extractPhotoshopData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
@@ -275,7 +268,6 @@ public class EpsReader {
      * with fillBuffer and then the rest of the job is passed on to IccReader.
      *
      * @param metadata Metadata to add directory to and extracted icc data
-     * @throws IOException
      */
     private void extractIccData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
@@ -295,13 +287,14 @@ public class EpsReader {
      * where the rest of the job is passed on to XmpReader.
      *
      * @param metadata Metadata to add directory to and extracted xmp data
-     * @throws IOException
      */
     private void extractXmpData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
         String all = "";
         List<String> comments = extractHelper("<?xpacket end=\"w\"?>", reader);
-        for (String temp : comments) { all += temp; }
+        for (String temp : comments) {
+            all += temp;
+        }
 
         XmpReader xmpReader = new XmpReader();
         xmpReader.extract(all, metadata);
@@ -313,7 +306,6 @@ public class EpsReader {
      *
      * @param indicator String that represents when to stop reading lines
      * @return ArrayList of comments
-     * @throws IOException
      */
     public List<String> extractHelper(@NotNull String indicator, @NotNull SequentialReader reader) throws IOException
     {
@@ -330,11 +322,11 @@ public class EpsReader {
             } while (curr != 0xD && curr != 0xA);
 
             if (comment.length() > 2)
-                comments.add(comment.toString().substring(1, comment.length()-1));
+                comments.add(comment.toString().substring(1, comment.length() - 1));
         } while (!comment.toString().startsWith(indicator));
 
         // Get rid of last line (%%EndCCProfile)
-        comments.remove(comments.size()-1);
+        comments.remove(comments.size() - 1);
 
         return comments;
     }
@@ -346,7 +338,8 @@ public class EpsReader {
      *
      * @param comments ArrayList of Strings that contains data in hex (ascii)
      */
-    private byte[] fillBuffer(List<String> comments) {
+    private byte[] fillBuffer(List<String> comments)
+    {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         for (String comment : comments) {
             comment = comment.trim();
