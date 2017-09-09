@@ -242,6 +242,7 @@ public class EpsReader
             default:
                 colorTypeDescription = "Unknown";
                 ramSize = 0;
+                break;
         }
 
         // Verify this value was not already added

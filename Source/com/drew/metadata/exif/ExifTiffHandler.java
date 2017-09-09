@@ -170,7 +170,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             return componentCount * 4;
 
         // an unknown (0) formatCode needs to be potentially handled later as a highly custom directory tag
-        if(formatCode == 0)
+        if (formatCode == 0)
             return 0L;
 
         return null;
@@ -583,7 +583,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return true;
     }
 
-    private static Boolean handlePrintIM(@NotNull final Directory directory, final int tagId)
+    private static boolean handlePrintIM(@NotNull final Directory directory, final int tagId)
     {
         if (tagId == ExifDirectoryBase.TAG_PRINT_IMAGE_MATCHING_INFO)
             return true;
