@@ -51,7 +51,7 @@ public class QuickTimeMetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
         Metadata metadata = new Metadata();
-        QuickTimeReader.extract(metadata, inputStream, new QuickTimeAtomHandler(metadata));
+        QuickTimeReader.extract(inputStream, new QuickTimeAtomHandler(metadata));
         return metadata;
     }
 }

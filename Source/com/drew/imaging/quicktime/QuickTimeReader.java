@@ -36,11 +36,8 @@ public class QuickTimeReader
 {
     private QuickTimeReader() {}
 
-    public static void extract(Metadata metadata, InputStream inputStream, QuickTimeHandler handler)
+    public static void extract(@NotNull InputStream inputStream, @NotNull QuickTimeHandler handler)
     {
-        QuickTimeDirectory directory = new QuickTimeDirectory();
-        metadata.addDirectory(directory);
-
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
 
