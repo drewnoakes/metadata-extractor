@@ -23,6 +23,7 @@ package com.drew.metadata.tiff;
 import com.drew.imaging.tiff.TiffHandler;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
@@ -39,12 +40,14 @@ public abstract class DirectoryTiffHandler implements TiffHandler
 {
     private final Stack<Directory> _directoryStack = new Stack<Directory>();
 
-    protected Directory _currentDirectory;
+    @Nullable private Directory _rootParentDirectory;
+    @Nullable protected Directory _currentDirectory;
     protected final Metadata _metadata;
 
-    protected DirectoryTiffHandler(Metadata metadata)
+    protected DirectoryTiffHandler(Metadata metadata, @Nullable Directory parentDirectory)
     {
         _metadata = metadata;
+        _rootParentDirectory = parentDirectory;
     }
 
     public void endingIFD()
@@ -54,7 +57,7 @@ public abstract class DirectoryTiffHandler implements TiffHandler
 
     protected void pushDirectory(@NotNull Class<? extends Directory> directoryClass)
     {
-        Directory newDirectory = null;
+        Directory newDirectory;
 
         try {
             newDirectory = directoryClass.newInstance();
@@ -64,17 +67,22 @@ public abstract class DirectoryTiffHandler implements TiffHandler
             throw new RuntimeException(e);
         }
 
-        if (newDirectory != null)
-        {
-            // If this is the first directory, don't add to the stack
-            if (_currentDirectory != null)
-            {
-                _directoryStack.push(_currentDirectory);
-                newDirectory.setParent(_currentDirectory);
+        // If this is the first directory, don't add to the stack
+        if (_currentDirectory == null) {
+            // Apply any pending root parent to this new directory
+            if (_rootParentDirectory != null) {
+                newDirectory.setParent(_rootParentDirectory);
+                _rootParentDirectory = null;
             }
-            _currentDirectory = newDirectory;
-            _metadata.addDirectory(_currentDirectory);
         }
+        else {
+            // The current directory is pushed onto the stack, and set as the new directory's parent
+            _directoryStack.push(_currentDirectory);
+            newDirectory.setParent(_currentDirectory);
+        }
+
+        _currentDirectory = newDirectory;
+        _metadata.addDirectory(_currentDirectory);
     }
 
     public void warn(@NotNull String message)

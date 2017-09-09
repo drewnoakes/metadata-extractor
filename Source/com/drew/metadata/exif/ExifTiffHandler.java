@@ -55,10 +55,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 {
     public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
-        super(metadata);
-
-        if (parentDirectory != null)
-            _currentDirectory.setParent(parentDirectory);
+        super(metadata, parentDirectory);
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException
@@ -186,6 +183,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                     final int tagId,
                                     final int byteCount) throws IOException
     {
+        assert(_currentDirectory != null);
+
         // Some 0x0000 tags have a 0 byteCount. Determine whether it's bad.
         if (tagId == 0)
         {
@@ -371,6 +370,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                      final int tiffHeaderOffset,
                                      final @NotNull RandomAccessReader reader) throws IOException
     {
+        assert(_currentDirectory != null);
+
         // Determine the camera model and makernote format.
         Directory ifd0Directory = _metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
 
