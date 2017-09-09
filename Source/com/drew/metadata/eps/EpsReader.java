@@ -257,8 +257,7 @@ public class EpsReader
         byte[] buffer = fillBuffer(comments);
 
         PhotoshopReader photoshopReader = new PhotoshopReader();
-        SequentialReader psdReader = new StreamReader(new ByteArrayInputStream(buffer));
-        photoshopReader.extract(psdReader, buffer.length, metadata);
+        photoshopReader.extract(new SequentialByteArrayReader(buffer), buffer.length, metadata);
     }
 
     /**
@@ -274,8 +273,7 @@ public class EpsReader
         byte[] buffer = fillBuffer(comments);
 
         IccReader iccReader = new IccReader();
-        RandomAccessReader randomAccessReader = new RandomAccessStreamReader(new ByteArrayInputStream(buffer));
-        iccReader.extract(randomAccessReader, metadata);
+        iccReader.extract(new ByteArrayReader(buffer), metadata);
     }
 
     /**
