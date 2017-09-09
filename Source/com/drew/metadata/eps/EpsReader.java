@@ -128,9 +128,10 @@ public class EpsReader
             if (line.toString().startsWith("%")) {
                 // ':' signifies there is an associated keyword (should be put in directory)
                 // otherwise, the name could be a marker
-                if (line.toString().contains(":")) {
-                    name = line.substring(0, line.indexOf(":")).trim();
-                    value = line.substring(line.indexOf(":") + 1, line.length()).trim();
+                int colonIndex = line.indexOf(":");
+                if (colonIndex != -1) {
+                    name = line.substring(0, colonIndex).trim();
+                    value = line.substring(colonIndex + 1).trim();
                     addToDirectory(directory, name, value);
                 } else {
                     name = line.toString().trim();
