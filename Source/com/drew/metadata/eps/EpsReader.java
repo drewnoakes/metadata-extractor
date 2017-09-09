@@ -169,26 +169,29 @@ public class EpsReader
      */
     private void addToDirectory(@NotNull final EpsDirectory directory, String name, String value) throws IOException
     {
-        if (EpsDirectory._tagIntegerMap.get(name) != null) {
-            switch (EpsDirectory._tagIntegerMap.get(name)) {
-                case EpsDirectory.TAG_IMAGE_DATA:
-                    extractImageData(directory, value);
-                    break;
-                case EpsDirectory.TAG_CONTINUE_LINE:
-                    directory.setString(_previousTag, directory.getString(_previousTag) + " " + value);
-                    break;
-                default:
-                    if (EpsDirectory._tagNameMap.containsKey(EpsDirectory._tagIntegerMap.get(name))
-                        && directory.getString(EpsDirectory._tagIntegerMap.get(name)) == null) {
-                        directory.setString(EpsDirectory._tagIntegerMap.get(name), value);
-                        _previousTag = EpsDirectory._tagIntegerMap.get(name);
-                    } else {
-                        // Set previous tag to an Integer that doesn't exist in EpsDirectory
-                        _previousTag = 0;
-                    }
-            }
-            _previousTag = EpsDirectory._tagIntegerMap.get(name);
+        Integer tag = EpsDirectory._tagIntegerMap.get(name);
+
+        if (tag == null)
+            return;
+
+        switch (tag) {
+            case EpsDirectory.TAG_IMAGE_DATA:
+                extractImageData(directory, value);
+                break;
+            case EpsDirectory.TAG_CONTINUE_LINE:
+                directory.setString(_previousTag, directory.getString(_previousTag) + " " + value);
+                break;
+            default:
+                if (EpsDirectory._tagNameMap.containsKey(tag) && !directory.containsTag(tag)) {
+                    directory.setString(tag, value);
+                    _previousTag = tag;
+                } else {
+                    // Set previous tag to an Integer that doesn't exist in EpsDirectory
+                    _previousTag = 0;
+                }
+                break;
         }
+        _previousTag = tag;
     }
 
     /**
