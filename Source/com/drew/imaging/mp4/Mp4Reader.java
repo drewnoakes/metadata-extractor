@@ -39,7 +39,7 @@ public class Mp4Reader
         processBoxes(reader, -1, handler);
     }
 
-    private static void processBoxes(StreamReader reader, long atomEnd, Mp4Handler mp4Handler)
+    private static void processBoxes(StreamReader reader, long atomEnd, Mp4Handler handler)
     {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
@@ -49,10 +49,10 @@ public class Mp4Reader
                 // Determine if fourCC is container/atom and process accordingly.
                 // Unknown atoms will be skipped
 
-                if (mp4Handler.shouldAcceptContainer(box)) {
-                    processBoxes(reader, box.size + reader.getPosition() - 8, mp4Handler.processContainer(box));
-                } else if (mp4Handler.shouldAcceptBox(box)) {
-                    mp4Handler = mp4Handler.processBox(box, reader.getBytes((int)box.size - 8));
+                if (handler.shouldAcceptContainer(box)) {
+                    processBoxes(reader, box.size + reader.getPosition() - 8, handler.processContainer(box));
+                } else if (handler.shouldAcceptBox(box)) {
+                    handler = handler.processBox(box, reader.getBytes((int)box.size - 8));
                 } else {
                     if (box.size > 1) {
                         reader.skip(box.size - 8);
@@ -62,7 +62,7 @@ public class Mp4Reader
                 }
             }
         } catch (IOException e) {
-            mp4Handler.addError(e.getMessage());
+            handler.addError(e.getMessage());
         }
     }
 }
