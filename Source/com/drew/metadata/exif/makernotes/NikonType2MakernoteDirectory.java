@@ -20,7 +20,6 @@
  */
 package com.drew.metadata.exif.makernotes;
 
-import com.drew.metadata.MetadataException;;
 import com.drew.lang.annotations.Nullable;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -961,11 +960,15 @@ public class NikonType2MakernoteDirectory extends Directory
 
 
     /** decryption algorithm adapted from exiftool */
-    public int[] getDecryptedIntArray(int tagType) throws MetadataException
+    @Nullable
+    public int[] getDecryptedIntArray(int tagType)
     {
         int[] data = getIntArray(tagType);
-        int serial = getInt(TAG_CAMERA_SERIAL_NUMBER);
-        int count = getInt(TAG_EXPOSURE_SEQUENCE_NUMBER);
+        Integer serial = getInteger(TAG_CAMERA_SERIAL_NUMBER);
+        Integer count = getInteger(TAG_EXPOSURE_SEQUENCE_NUMBER);
+
+        if (data == null || serial == null || count == null)
+            return null;
 
         int key = 0;
         for (int i = 0; i < 4; i++)
@@ -984,5 +987,4 @@ public class NikonType2MakernoteDirectory extends Directory
 
         return data;
     }
-
 }

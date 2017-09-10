@@ -24,7 +24,6 @@ import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
-import com.drew.metadata.MetadataException;
 
 import java.text.DecimalFormat;
 
@@ -334,9 +333,13 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     }
 
     @Nullable
-    public String getLensFocusDistance() throws MetadataException
+    public String getLensFocusDistance()
     {
         int[] values = _directory.getDecryptedIntArray(TAG_LENS_DATA);
+
+        if (values == null || values.length < 11)
+            return null;
+
         return String.format("%.2fm", getDistanceInMeters(values[10]));
     }
 
