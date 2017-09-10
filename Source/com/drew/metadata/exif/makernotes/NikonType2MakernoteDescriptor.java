@@ -362,7 +362,6 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
         return getVersionBytesDescription(TAG_FIRMWARE_VERSION, 2);
     }
 
-	@Nullable
     private double getDistanceInMeters(int val)
     {
         if (val < 0) val += 256;
