@@ -176,11 +176,8 @@ public class ImageMetadataReader
                 return EpsMetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
-            case Riff:
-            case Heif:
-            case Crw:
             default:
-                throw new ImageProcessingException("File format is not supported");
+                return new Metadata();
         }
     }
 
