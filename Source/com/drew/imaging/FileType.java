@@ -62,7 +62,24 @@ public enum FileType
     /** FujiFilm camera raw. */
     Raf("RAF", "FujiFilm Camera Raw", null, "raf"),
     /** Panasonic camera raw. */
-    Rw2("RW2", "Panasonic Camera Raw", null, "rw2");
+    Rw2("RW2", "Panasonic Camera Raw", null, "rw2"),
+
+    // Only file detection
+    Aac("AAC", "Advanced Audio Coding", "audio/aac", "m4a"),
+    Asf("ASF", "Advanced Systems Format", "video/x-ms-asf", "asf", "wma", "wmv"),
+    Cfbf("CFBF", "Compound File Binary Format", null, null),
+    Flv("FLV", "Flash Video", "video/x-flv", ".flv", ".f4v,"),
+    Indd("INDD", "INDesign Document", "application/octet-stream", ".indd"),
+    Mxf("MXF", "Material Exchange Format", "application/mxf", "mxf"),
+    Pdf("PDF", "Portable Document Format", "application/pdf", "pdf"),
+    Qxp("QXP", "Quark XPress Document", null, "qzp", "qxd"),
+    Ram("RAM", "RealAudio", "audio/vnd.rn-realaudio", "aac", "ra"),
+    Rtf("RTF", "Rich Text Format", "application/rtf", "rtf"),
+    Sit("SIT", "Stuffit Archive", "application/x-stuffit", "sit"),
+    Sitx("SITX", "Stuffit X Archive", "application/x-stuffitx", "sitx"),
+    Swf("SWF", "Small Web Format", "application/vnd.adobe.flash-movie", "swf"),
+    Vob("VOB", "Video Object", "video/dvd", ".vob"),
+    Zip("ZIP", "ZIP Archive", "application/zip", ".zip", ".zipx");
 
     @NotNull private final String _name;
     @NotNull private final String _longName;
@@ -98,7 +115,7 @@ public enum FileType
     @Nullable
     public String getCommonExtension()
     {
-        return _extensions.length == 0 ? null : _extensions[0];
+        return (_extensions == null || _extensions.length == 0) ? null : _extensions[0];
     }
 
     @Nullable
