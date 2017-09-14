@@ -6,9 +6,9 @@ import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
+import com.drew.metadata.photoshop.PhotoshopTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.ByteArrayOutputStream;
@@ -80,7 +80,7 @@ public class EpsReader
                     // Get Tiff metadata
                     try {
                         ByteArrayReader byteArrayReader = new ByteArrayReader(reader.getBytes(tifOffset, tifSize));
-                        new TiffReader().processTiff(byteArrayReader, new ExifTiffHandler(metadata, null), 0);
+                        new TiffReader().processTiff(byteArrayReader, new PhotoshopTiffHandler(metadata, null), 0);
                     } catch (TiffProcessingException ex) {
                         directory.addError("Unable to process TIFF data: " + ex.getMessage());
                     }
@@ -127,9 +127,9 @@ public class EpsReader
                 line.append(c);
             }
 
-            // Skip any blank lines, or lines that don't start with '%'
+            // Stop when we hit a line that is not a comment
             if (line.length() == 0 || line.charAt(0) != '%')
-                continue;
+                break;
 
             String name;
 
@@ -151,12 +151,6 @@ public class EpsReader
                 extractIccData(metadata, reader);
             } else if (name.equals("%begin_xml_packet")) {
                 extractXmpData(metadata, reader);
-            } else if (
-                name.equals("%%BeginBinary") ||
-                name.equals("%%BeginData") ||
-                name.equals("%AI9_PrivateDataEnd")) {
-                // Stop parsing once we hit one of these sections
-                return;
             }
         }
     }
