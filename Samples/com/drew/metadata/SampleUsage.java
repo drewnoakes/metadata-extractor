@@ -41,11 +41,6 @@ import java.util.Arrays;
  */
 public class SampleUsage
 {
-    /**
-     * Executes the sample usage program.
-     *
-     * @param args command line parameters
-     */
     public static void main(String[] args)
     {
         File file = new File("Tests/Data/withIptcExifGps.jpg");
@@ -62,11 +57,11 @@ public class SampleUsage
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(file);
 
-            print(metadata);
+            print(metadata, "Using ImageMetadataReader");
         } catch (ImageProcessingException e) {
-            // handle exception
+            print(e);
         } catch (IOException e) {
-            // handle exception
+            print(e);
         }
 
         //
@@ -81,11 +76,11 @@ public class SampleUsage
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(file);
 
-            print(metadata);
+            print(metadata, "Using JpegMetadataReader");
         } catch (JpegProcessingException e) {
-            // handle exception
+            print(e);
         } catch (IOException e) {
-            // handle exception
+            print(e);
         }
 
         //
@@ -102,19 +97,25 @@ public class SampleUsage
 
             Metadata metadata = JpegMetadataReader.readMetadata(file, readers);
 
-            print(metadata);
+            print(metadata, "Using JpegMetadataReader for Exif and IPTC only");
         } catch (JpegProcessingException e) {
-            // handle exception
+            print(e);
         } catch (IOException e) {
-            // handle exception
+            print(e);
         }
     }
 
-    private static void print(Metadata metadata)
+    /**
+     * Write all extracted values to stdout.
+     */
+    private static void print(Metadata metadata, String method)
     {
-        System.out.println("-------------------------------------");
-
-        // Iterate over the data and print to System.out
+        System.out.println();
+        System.out.println("-------------------------------------------------");
+        System.out.print(' ');
+        System.out.print(method);
+        System.out.println("-------------------------------------------------");
+        System.out.println();
 
         //
         // A Metadata object contains multiple Directory objects
@@ -131,11 +132,14 @@ public class SampleUsage
             //
             // Each Directory may also contain error messages
             //
-            if (directory.hasErrors()) {
-                for (String error : directory.getErrors()) {
-                    System.err.println("ERROR: " + error);
-                }
+            for (String error : directory.getErrors()) {
+                System.err.println("ERROR: " + error);
             }
         }
+    }
+
+    private static void print(Exception exception)
+    {
+        System.err.println("EXCEPTION: " + exception);
     }
 }
