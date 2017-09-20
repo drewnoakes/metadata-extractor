@@ -128,7 +128,7 @@ public class EpsReader
             }
 
             // Stop when we hit a line that is not a comment
-            if (line.length() == 0 || line.charAt(0) != '%')
+            if (line.length() != 0 && line.charAt(0) != '%')
                 break;
 
             String name;
