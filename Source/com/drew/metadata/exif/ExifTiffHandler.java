@@ -24,7 +24,7 @@ import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
-
+import com.drew.lang.BufferBoundsException;
 import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
@@ -378,14 +378,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
      * @param makernoteOffset
      * @param bytesRequested
      * @return
+     * @throws IOException
      */
-    private static String getReaderString(final @NotNull RandomAccessReader reader, final int makernoteOffset, final int bytesRequested)
+    private static String getReaderString(final @NotNull RandomAccessReader reader, final int makernoteOffset, final int bytesRequested) throws IOException
     {
         try
         {
             return reader.getString(makernoteOffset, bytesRequested, Charsets.UTF_8);
         }
-        catch(IOException e)
+        catch(BufferBoundsException e)
         {
             return "";
         }
