@@ -24,7 +24,7 @@ import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
-
+import com.drew.lang.BufferBoundsException;
 import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
@@ -364,6 +364,33 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             }
         }
     }
+    /** Read a given number of bytes from the stream
+     *
+     * This method is employed to "suppress" attempts to read beyond end of the
+     * file as may happen at the beggining of processMakernote when we read
+     * increasingly longer camera makes.
+     *
+     * Instead of failing altogether in this context we return an empty string
+     * which will fail all sensible attempts to compare to makes while avoiding
+     * a full-on failure.
+     *
+     * @param reader
+     * @param makernoteOffset
+     * @param bytesRequested
+     * @return
+     * @throws IOException
+     */
+    private static String getReaderString(final @NotNull RandomAccessReader reader, final int makernoteOffset, final int bytesRequested) throws IOException
+    {
+        try
+        {
+            return reader.getString(makernoteOffset, bytesRequested, Charsets.UTF_8);
+        }
+        catch(BufferBoundsException e)
+        {
+            return "";
+        }
+    }
 
     private boolean processMakernote(final int makernoteOffset,
                                      final @NotNull Set<Integer> processedIfdOffsets,
@@ -377,16 +404,16 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         String cameraMake = ifd0Directory == null ? null : ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
-        final String firstTwoChars    = reader.getString(makernoteOffset, 2, Charsets.UTF_8);
-        final String firstThreeChars  = reader.getString(makernoteOffset, 3, Charsets.UTF_8);
-        final String firstFourChars   = reader.getString(makernoteOffset, 4, Charsets.UTF_8);
-        final String firstFiveChars   = reader.getString(makernoteOffset, 5, Charsets.UTF_8);
-        final String firstSixChars    = reader.getString(makernoteOffset, 6, Charsets.UTF_8);
-        final String firstSevenChars  = reader.getString(makernoteOffset, 7, Charsets.UTF_8);
-        final String firstEightChars  = reader.getString(makernoteOffset, 8, Charsets.UTF_8);
-        final String firstNineChars   = reader.getString(makernoteOffset, 9, Charsets.UTF_8);
-        final String firstTenChars    = reader.getString(makernoteOffset, 10, Charsets.UTF_8);
-        final String firstTwelveChars = reader.getString(makernoteOffset, 12, Charsets.UTF_8);
+        final String firstTwoChars    = getReaderString(reader, makernoteOffset, 2);
+        final String firstThreeChars  = getReaderString(reader, makernoteOffset, 3);
+        final String firstFourChars   = getReaderString(reader, makernoteOffset, 4);
+        final String firstFiveChars   = getReaderString(reader, makernoteOffset, 5);
+        final String firstSixChars    = getReaderString(reader, makernoteOffset, 6);
+        final String firstSevenChars  = getReaderString(reader, makernoteOffset, 7);
+        final String firstEightChars  = getReaderString(reader, makernoteOffset, 8);
+        final String firstNineChars   = getReaderString(reader, makernoteOffset, 9);
+        final String firstTenChars    = getReaderString(reader, makernoteOffset, 10);
+        final String firstTwelveChars = getReaderString(reader, makernoteOffset, 12);
 
         boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
@@ -509,7 +536,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             } else {
                 return false;
             }
-        } else if ("Panasonic\u0000\u0000\u0000".equals(reader.getString(makernoteOffset, 12, Charsets.UTF_8))) {
+        } else if ("Panasonic\u0000\u0000\u0000".equals(firstTwelveChars)) {
             // NON-Standard TIFF IFD Data using Panasonic Tags. There is no Next-IFD pointer after the IFD
             // Offsets are relative to the start of the TIFF header at the beginning of the EXIF segment
             // more information here: http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html
