@@ -78,6 +78,9 @@ public class QuickTimeMetadataDirectory extends QuickTimeDirectory
         _tagIntegerMap.put("com.apple.quicktime.direction.facing", 0x0519);
         _tagIntegerMap.put("com.apple.quicktime.direction.motion", 0x051A);
         _tagIntegerMap.put("com.apple.quicktime.displayname", 0x051B);
+        _tagIntegerMap.put("com.apple.quicktime.content.identifier", 0x051C);
+        _tagIntegerMap.put("com.apple.quicktime.make", 0x051D);
+        _tagIntegerMap.put("com.apple.quicktime.model", 0x051E);
 
         _tagIntegerMap.put("----", 0x0400);
         _tagIntegerMap.put("@PST", 0x0401);
@@ -190,7 +193,10 @@ public class QuickTimeMetadataDirectory extends QuickTimeDirectory
         _tagNameMap.put(0x0519, "Direction Facing");
         _tagNameMap.put(0x051A, "Direction Motion");
         _tagNameMap.put(0x051B, "Display Name");
-
+        _tagNameMap.put(0x051C, "Content Identifier");
+        _tagNameMap.put(0x051D, "Make");
+        _tagNameMap.put(0x051E, "Model");
+        
         _tagNameMap.put(0x0400, "iTunes Info");
         _tagNameMap.put(0x0401, "Parent Short Title");
         _tagNameMap.put(0x0402, "Parent Product ID");
