@@ -31,7 +31,7 @@ public class Box
 {
     public long size;
     public String type;
-    String usertype;
+    public String usertype;
 
     public Box(SequentialReader reader) throws IOException
     {
