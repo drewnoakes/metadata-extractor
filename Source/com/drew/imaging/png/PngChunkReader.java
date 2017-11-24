@@ -86,6 +86,9 @@ public class PngChunkReader
             // Process the next chunk.
             int chunkDataLength = reader.getInt32();
 
+            if (chunkDataLength < 0)
+                throw new PngProcessingException("PNG chunk length exceeds maximum");
+
             PngChunkType chunkType = new PngChunkType(reader.getBytes(4));
 
             boolean willStoreChunk = desiredChunkTypes == null || desiredChunkTypes.contains(chunkType);
