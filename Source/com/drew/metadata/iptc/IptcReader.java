@@ -117,8 +117,8 @@ public class IptcReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            // we need at least five bytes left to read a tag
-            if (offset + 5 > length) {
+            // we need at least four bytes left to read a tag
+            if (offset + 4 > length) {
                 directory.addError("Too few bytes remain for a valid IPTC tag");
                 return;
             }
