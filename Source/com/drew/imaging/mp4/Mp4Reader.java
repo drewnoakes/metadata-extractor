@@ -56,6 +56,8 @@ public class Mp4Reader
                     processBoxes(reader, box.size + reader.getPosition() - 8, handler.processContainer(box));
                 } else if (handler.shouldAcceptBox(box)) {
                     handler = handler.processBox(box, reader.getBytes((int)box.size - 8));
+                } else if (box.usertype != null) {
+                    reader.skip(box.size - 24);
                 } else if (box.size > 1) {
                     reader.skip(box.size - 8);
                 } else if (box.size == -1) {
