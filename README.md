@@ -14,7 +14,7 @@ The easiest way is to install the library via its [Maven package](http://search.
 <dependency>
   <groupId>com.drewnoakes</groupId>
   <artifactId>metadata-extractor</artifactId>
-  <version>2.10.1</version>
+  <version>2.11.0</version>
 </dependency>
 ```
 
