@@ -89,10 +89,8 @@ public class MovieHeaderAtom extends FullAtom
         calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
         Date date = calendar.getTime();
         long macToUnixEpochOffset = date.getTime();
-        String creationTimeStamp = new Date(creationTime * 1000 + macToUnixEpochOffset).toString();
-        String modificationTimeStamp = new Date(modificationTime * 1000 + macToUnixEpochOffset).toString();
-        directory.setString(TAG_CREATION_TIME, creationTimeStamp);
-        directory.setString(TAG_MODIFICATION_TIME, modificationTimeStamp);
+        directory.setDate(TAG_CREATION_TIME, new Date((creationTime * 1000) + macToUnixEpochOffset));
+        directory.setDate(TAG_MODIFICATION_TIME, new Date((modificationTime * 1000) + macToUnixEpochOffset));
 
         // Get duration and time scale
         duration = duration / timescale;
