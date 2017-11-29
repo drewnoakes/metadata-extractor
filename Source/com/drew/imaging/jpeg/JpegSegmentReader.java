@@ -152,8 +152,9 @@ public class JpegSegmentReader
                 assert (segmentLength == segmentBytes.length);
                 segmentData.addSegment(segmentType, segmentBytes);
             } else {
-                // Some if the JPEG is truncated, just return what data we've already gathered
+                // Skip this segment
                 if (!reader.trySkip(segmentLength)) {
+                    // If skipping failed, just return the segments we found so far
                     return segmentData;
                 }
             }
