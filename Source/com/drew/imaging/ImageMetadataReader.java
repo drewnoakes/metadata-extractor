@@ -24,6 +24,7 @@ import com.drew.imaging.avi.AviMetadataReader;
 import com.drew.imaging.bmp.BmpMetadataReader;
 import com.drew.imaging.eps.EpsMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
+import com.drew.imaging.heif.HeifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
@@ -174,6 +175,8 @@ public class ImageMetadataReader
                 return Mp4MetadataReader.readMetadata(inputStream);
             case Eps:
                 return EpsMetadataReader.readMetadata(inputStream);
+            case Heif:
+                return HeifMetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
             default:
