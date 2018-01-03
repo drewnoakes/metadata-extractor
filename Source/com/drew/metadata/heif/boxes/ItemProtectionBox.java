@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * @author Payton Garland
+ * ISO/IEC 14496-12:2015 pg.80, 89-90
  */
 public class ItemProtectionBox extends FullBox
 {

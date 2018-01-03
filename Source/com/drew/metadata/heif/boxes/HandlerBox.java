@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
- * @author Payton Garland
+ * ISO/IEC 14496-12:2015 pg.30
+ * ISO/IEC 23008-12:2017 pg.22
  */
 public class HandlerBox extends FullBox
 {

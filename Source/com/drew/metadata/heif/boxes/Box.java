@@ -25,7 +25,7 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 
 /**
- * ISO/IED 14496-12:2015 pg.6
+ * ISO/IEC 14496-12:2015 pg.6
  */
 public class Box
 {

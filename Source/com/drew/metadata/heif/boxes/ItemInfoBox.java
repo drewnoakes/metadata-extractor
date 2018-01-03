@@ -29,7 +29,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
- * @author Payton Garland
+ * ISO/IEC 14496-12:2015 pg.81-83
  */
 public class ItemInfoBox extends FullBox
 {
