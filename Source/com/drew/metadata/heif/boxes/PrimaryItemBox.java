@@ -25,7 +25,7 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 
 /**
- * @author Payton Garland
+ * ISO/IEC 14496-12:2015 pg.80
  */
 public class PrimaryItemBox extends FullBox
 {

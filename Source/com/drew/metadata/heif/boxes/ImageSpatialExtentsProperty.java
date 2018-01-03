@@ -26,7 +26,7 @@ import com.drew.metadata.heif.HeifDirectory;
 import java.io.IOException;
 
 /**
- * @author Payton Garland
+ * ISO/IEC 23008-12:2017 pg.11
  */
 public class ImageSpatialExtentsProperty extends FullBox
 {

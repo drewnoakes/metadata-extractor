@@ -26,17 +26,19 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
- * @author Payton Garland
+ * ISO/IEC 23008-12:2017 pg.14
  */
 public class AuxiliaryTypeProperty extends FullBox
 {
     String auxType;
+    int[] auxSubtype;
 
     public AuxiliaryTypeProperty(SequentialReader reader, Box box) throws IOException
     {
         super(reader, box);
 
         auxType = getZeroTerminatedString((int)box.size - 12, reader);
+        // auxSubtype
     }
 
     private String getZeroTerminatedString(int maxLengthBytes, SequentialReader reader) throws IOException

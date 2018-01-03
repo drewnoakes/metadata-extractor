@@ -25,12 +25,11 @@ import com.drew.lang.SequentialReader;
 import java.io.IOException;
 
 /**
- * @author Payton Garland
+ * ISO/IEC 14496-12:2015 pg.77-80
  */
 public class ItemLocationBox extends FullBox
 {
     int indexSize;
-
     int offsetSize;
     int lengthSize;
     int baseOffsetSize;
