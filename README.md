@@ -26,7 +26,7 @@ Alternatively, download it from the [releases page](https://github.com/drewnoake
 Metadata metadata = ImageMetadataReader.readMetadata(imagePath);
 ```
 
-With that `Metadata` instance, you can [iterate or query](https://github.com/drewnoakes/metadata-extractor/wiki/GettingStarted#2-query-tags) the
+With that `Metadata` instance, you can [iterate or query](https://github.com/drewnoakes/metadata-extractor/wiki/Getting-Started-(Java)#2-query-tags) the
 [various tag values](https://github.com/drewnoakes/metadata-extractor/wiki/SampleOutput) that were read from the image.
 
 ## Features
@@ -95,7 +95,7 @@ Camera-specific "makernote" data is decoded for cameras manufactured by:
 * Sigma/Foveon
 * Sony
 
-Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/GettingStarted) for an introduction to the basics of using this library.
+Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/Getting-Started) for an introduction to the basics of using this library.
 
 ## Questions & Feedback
 
