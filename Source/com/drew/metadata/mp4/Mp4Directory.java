@@ -31,8 +31,9 @@ public class Mp4Directory extends Directory {
     public static final int TAG_MODIFICATION_TIME                       = 0x0101;
     public static final int TAG_TIME_SCALE                              = 0x0102;
     public static final int TAG_DURATION                                = 0x0103;
-    public static final int TAG_PREFERRED_RATE                          = 0x0104;
-    public static final int TAG_PREFERRED_VOLUME                        = 0x0105;
+    public static final int TAG_DURATION_SECONDS                        = 0x0104;
+    public static final int TAG_PREFERRED_RATE                          = 0x0105;
+    public static final int TAG_PREFERRED_VOLUME                        = 0x0106;
     public static final int TAG_PREVIEW_TIME                            = 0x0108;
     public static final int TAG_PREVIEW_DURATION                        = 0x0109;
     public static final int TAG_POSTER_TIME                             = 0x010A;
@@ -59,6 +60,7 @@ public class Mp4Directory extends Directory {
         _tagNameMap.put(TAG_MODIFICATION_TIME, "Modification Time");
         _tagNameMap.put(TAG_TIME_SCALE, "Media Time Scale");
         _tagNameMap.put(TAG_DURATION, "Duration");
+        _tagNameMap.put(TAG_DURATION_SECONDS, "Duration in Seconds");
         _tagNameMap.put(TAG_PREFERRED_RATE, "Preferred Rate");
         _tagNameMap.put(TAG_PREFERRED_VOLUME, "Preferred Volume");
         _tagNameMap.put(TAG_PREVIEW_TIME, "Preview Time");
