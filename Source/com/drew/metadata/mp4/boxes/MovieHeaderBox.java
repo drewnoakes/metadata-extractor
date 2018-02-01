@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.mp4.boxes;
 
+import com.drew.lang.Rational;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mp4.Mp4Directory;
 
@@ -84,9 +85,9 @@ public class MovieHeaderBox extends FullBox
         directory.setDate(Mp4Directory.TAG_MODIFICATION_TIME, new Date((modificationTime * 1000) + macToUnixEpochOffset));
 
         // Get duration and time scale
-        duration = duration / timescale;
         directory.setLong(Mp4Directory.TAG_DURATION, duration);
         directory.setLong(Mp4Directory.TAG_TIME_SCALE, timescale);
+        directory.setRational(Mp4Directory.TAG_DURATION_SECONDS, new Rational(duration, timescale));
 
         directory.setIntArray(Mp4Directory.TAG_TRANSFORMATION_MATRIX, matrix);
 
