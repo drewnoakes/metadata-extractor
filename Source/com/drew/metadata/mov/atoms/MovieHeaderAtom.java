@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
+import com.drew.lang.Rational;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.QuickTimeDirectory;
 
@@ -93,9 +94,9 @@ public class MovieHeaderAtom extends FullAtom
         directory.setDate(TAG_MODIFICATION_TIME, new Date((modificationTime * 1000) + macToUnixEpochOffset));
 
         // Get duration and time scale
-        duration = duration / timescale;
         directory.setLong(TAG_DURATION, duration);
         directory.setLong(TAG_TIME_SCALE, timescale);
+        directory.setRational(QuickTimeDirectory.TAG_DURATION_SECONDS, new Rational(duration, timescale));
 
         // Calculate preferred rate fixed point
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
