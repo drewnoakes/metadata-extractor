@@ -152,22 +152,19 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
     public String getBackgroundColorDescription()
     {
         byte[] bytes = _directory.getByteArray(TAG_BACKGROUND_COLOR);
-        Integer colorType = _directory.getInteger(TAG_COLOR_TYPE);
-        if (bytes == null || colorType == null) {
+        if (bytes == null) {
             return null;
         }
         SequentialReader reader = new SequentialByteArrayReader(bytes);
         try {
             // TODO do we need to normalise these based upon the bit depth?
-            switch (colorType) {
-                case 0:
-                case 4:
-                    return String.format("Greyscale Level %d", reader.getUInt16());
+            switch (bytes.length) {
+                case 1:
+                    return String.format("Palette Index %d", reader.getUInt8());
                 case 2:
+                    return String.format("Greyscale Level %d", reader.getUInt16());
                 case 6:
                     return String.format("R %d, G %d, B %d", reader.getUInt16(), reader.getUInt16(), reader.getUInt16());
-                case 3:
-                    return String.format("Palette Index %d", reader.getUInt8());
             }
         } catch (IOException ex) {
             return null;
