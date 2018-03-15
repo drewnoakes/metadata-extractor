@@ -23,6 +23,7 @@ package com.drew.metadata.xmp;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.impl.XMPMetaImpl;
+import com.adobe.xmp.options.IteratorOptions;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -91,7 +92,8 @@ public class XmpDirectory extends Directory
         if (_xmpMeta != null)
         {
             try {
-                for (Iterator i = _xmpMeta.iterator(); i.hasNext(); ) {
+                IteratorOptions options = new IteratorOptions().setJustLeafnodes(true);
+                for (Iterator i = _xmpMeta.iterator(options); i.hasNext(); ) {
                     XMPPropertyInfo prop = (XMPPropertyInfo)i.next();
                     String path = prop.getPath();
                     String value = prop.getValue();
@@ -112,7 +114,8 @@ public class XmpDirectory extends Directory
 
         try {
             int valueCount = 0;
-            for (Iterator i = _xmpMeta.iterator(); i.hasNext(); ) {
+            IteratorOptions options = new IteratorOptions().setJustLeafnodes(true);
+            for (Iterator i = _xmpMeta.iterator(options); i.hasNext(); ) {
                 XMPPropertyInfo prop = (XMPPropertyInfo)i.next();
                 if (prop.getPath() != null) {
                     valueCount++;
