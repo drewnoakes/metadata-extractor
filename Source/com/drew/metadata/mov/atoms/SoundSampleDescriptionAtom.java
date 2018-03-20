@@ -48,7 +48,7 @@ public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampl
     {
         SoundSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setString(QuickTimeSoundDirectory.TAG_AUDIO_FORMAT, QuickTimeDictionary.lookup(QuickTimeSoundDirectory.TAG_AUDIO_FORMAT, description.dataFormat));
+        QuickTimeDictionary.setLookup(QuickTimeSoundDirectory.TAG_AUDIO_FORMAT, description.dataFormat, directory);
         directory.setInt(QuickTimeSoundDirectory.TAG_NUMBER_OF_CHANNELS, description.numberOfChannels);
         directory.setInt(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, description.sampleSize);
     }

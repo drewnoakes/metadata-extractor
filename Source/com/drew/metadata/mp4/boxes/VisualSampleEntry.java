@@ -21,6 +21,7 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
 import java.io.IOException;
@@ -65,9 +66,16 @@ public class VisualSampleEntry extends SampleEntry
 
     public void addMetadata(Mp4VideoDirectory directory)
     {
+        Mp4Dictionary.setLookup(Mp4VideoDirectory.TAG_COMPRESSION_TYPE, format, directory);
+
         directory.setInt(Mp4VideoDirectory.TAG_WIDTH, width);
         directory.setInt(Mp4VideoDirectory.TAG_HEIGHT, height);
-        directory.setString(Mp4VideoDirectory.TAG_COMPRESSION_TYPE, compressorname.trim());
+
+        String compressorName = compressorname.trim();
+        if (!compressorName.isEmpty()) {
+            directory.setString(Mp4VideoDirectory.TAG_COMPRESSOR_NAME, compressorName);
+        }
+
         directory.setInt(Mp4VideoDirectory.TAG_DEPTH, depth);
 
         // Calculate horizontal res

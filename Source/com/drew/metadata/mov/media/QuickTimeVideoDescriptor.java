@@ -66,6 +66,14 @@ public class QuickTimeVideoDescriptor extends QuickTimeDescriptor
             return null;
 
         switch (value) {
+            case (1):
+            case (2):
+            case (4):
+            case (8):
+            case (16):
+            case (24):
+            case (32):
+                return value + "-bit color";
             case (40):
             case (36):
             case (34):

@@ -48,8 +48,6 @@ public class TimeToSampleAtom extends FullAtom
         for (int i = 0; i < numberOfEntries; i++) {
             entries.add(new Entry(reader));
         }
-        sampleCount = reader.getUInt32();
-        sampleDuration = reader.getUInt32();
     }
 
     class Entry
@@ -66,7 +64,7 @@ public class TimeToSampleAtom extends FullAtom
 
     public void addMetadata(QuickTimeVideoDirectory directory)
     {
-        float frameRate = (float) QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)sampleDuration;
+        float frameRate = (float) QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)entries.get(0).sampleDuration;
         directory.setFloat(QuickTimeVideoDirectory.TAG_FRAME_RATE, frameRate);
     }
 }
