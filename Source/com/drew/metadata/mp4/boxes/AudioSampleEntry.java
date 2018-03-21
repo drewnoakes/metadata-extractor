@@ -21,6 +21,7 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 
 import java.io.IOException;
@@ -51,8 +52,8 @@ public class AudioSampleEntry extends SampleEntry
 
     public void addMetadata(Mp4SoundDirectory directory)
     {
+        Mp4Dictionary.setLookup(Mp4SoundDirectory.TAG_AUDIO_FORMAT, format, directory);
         directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, channelcount);
         directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, samplesize);
-        directory.setLong(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, samplerate);
     }
 }

@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.mp4;
 
+import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
@@ -44,7 +45,7 @@ public class Mp4Descriptor<T extends Directory> extends TagDescriptor<Mp4Directo
                 return getMajorBrandDescription();
             case TAG_COMPATIBLE_BRANDS:
                 return getCompatibleBrandsDescription();
-            case TAG_DURATION:
+            case TAG_DURATION_SECONDS:
                 return getDurationDescription();
             default:
                 return _directory.getString(tagType);
@@ -75,10 +76,11 @@ public class Mp4Descriptor<T extends Directory> extends TagDescriptor<Mp4Directo
 
     private String getDurationDescription()
     {
-        Long value = _directory.getLongObject(TAG_DURATION);
-        if (value == null)
+        Rational duration = _directory.getRational(TAG_DURATION_SECONDS);
+        if (duration == null)
             return null;
 
+        double value = duration.doubleValue();
         Integer hours = (int)(value / (Math.pow(60, 2)));
         Integer minutes = (int)((value / (Math.pow(60, 1))) - (hours * 60));
         Integer seconds = (int)Math.ceil((value / (Math.pow(60, 0))) - (minutes * 60));

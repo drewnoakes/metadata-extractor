@@ -55,7 +55,11 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
         directory.setLong(QuickTimeVideoDirectory.TAG_SPATIAL_QUALITY, sampleDescription.spatialQuality);
         directory.setInt(QuickTimeVideoDirectory.TAG_WIDTH, sampleDescription.width);
         directory.setInt(QuickTimeVideoDirectory.TAG_HEIGHT, sampleDescription.height);
-        directory.setString(QuickTimeVideoDirectory.TAG_COMPRESSOR_NAME, sampleDescription.compressorName.trim());
+
+        String compressorName = sampleDescription.compressorName.trim();
+        if (!compressorName.isEmpty()) {
+            directory.setString(QuickTimeVideoDirectory.TAG_COMPRESSOR_NAME, compressorName);
+        }
 
         directory.setInt(QuickTimeVideoDirectory.TAG_DEPTH, sampleDescription.depth);
         directory.setInt(QuickTimeVideoDirectory.TAG_COLOR_TABLE, sampleDescription.colorTableID);
@@ -101,7 +105,7 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
             verticalResolution = reader.getUInt32();
             dataSize = reader.getUInt32();
             frameCount = reader.getUInt16();
-            compressorName = reader.getString(reader.getUInt8());
+            compressorName = reader.getString(32);
             depth = reader.getUInt16();
             colorTableID = reader.getInt16();
         }
