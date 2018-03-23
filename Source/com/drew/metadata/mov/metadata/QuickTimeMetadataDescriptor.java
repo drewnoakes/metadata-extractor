@@ -23,6 +23,8 @@ package com.drew.metadata.mov.metadata;
 import com.drew.metadata.mov.QuickTimeDescriptor;
 import com.drew.metadata.mov.QuickTimeDirectory;
 
+import static com.drew.metadata.mov.metadata.QuickTimeMetadataDirectory.*;
+
 /**
  * @author Payton Garland
  */
@@ -36,6 +38,27 @@ public class QuickTimeMetadataDescriptor extends QuickTimeDescriptor
     @Override
     public String getDescription(int tagType)
     {
-        return super.getDescription(tagType);
+        switch (tagType) {
+            case TAG_ARTWORK:
+                return getArtworkDescription();
+            case TAG_LOCATION_ROLE:
+                return getLocationRoleDescription();
+            default:
+                return super.getDescription(tagType);
+        }
+    }
+
+    private String getArtworkDescription()
+    {
+        return getByteLengthDescription(TAG_ARTWORK);
+    }
+
+    private String getLocationRoleDescription()
+    {
+        return getIndexedDescription(TAG_LOCATION_ROLE, 0,
+            "Shooting location",
+            "Real location",
+            "Fictional location"
+        );
     }
 }

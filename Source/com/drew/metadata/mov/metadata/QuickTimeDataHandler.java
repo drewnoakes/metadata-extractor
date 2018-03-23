@@ -98,10 +98,37 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
     @Override
     protected void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
     {
-        // 4 bytes: type indicator
+        int type = reader.getInt32();
         // 4 bytes: locale indicator
-        reader.skip(8);
-        String value = new String(reader.getBytes(payload.length - 8));
-        directory.setString(QuickTimeMetadataDirectory._tagIntegerMap.get(keys.get(currentIndex)), value);
+        reader.skip(4);
+        Integer tag = QuickTimeMetadataDirectory._tagIntegerMap.get(keys.get(currentIndex));
+        if (tag != null) {
+            int length = payload.length - 8;
+            switch (type) {
+                case 1:
+                    directory.setString(tag, reader.getString(length, "UTF-8"));
+                    break;
+                case 13:
+                case 14:
+                case 27:
+                    directory.setByteArray(tag, reader.getBytes(length));
+                    break;
+                case 22:
+                    byte[] buf = new byte[4];
+                    reader.getBytes(buf, 4 - length, length);
+                    directory.setInt(tag, new SequentialByteArrayReader(buf).getInt32());
+                    break;
+                case 23:
+                    directory.setFloat(tag, reader.getFloat32());
+                    break;
+                case 30:
+                    int[] value = new int[length / 4];
+                    for (int i = 0; i < value.length; i++) {
+                        value[i] = reader.getInt32();
+                    }
+                    directory.setIntArray(tag, value);
+                    break;
+            }
+        }
     }
 }
