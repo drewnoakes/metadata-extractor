@@ -94,12 +94,16 @@ public class GpsDirectory extends ExifDirectoryBase
     public static final int TAG_DEST_DISTANCE_REF = 0x0019;
     /** Distance to destination GPSDestDistance 26 1A RATIONAL 1 */
     public static final int TAG_DEST_DISTANCE = 0x001A;
-
-    /** Values of "GPS", "CELLID", "WLAN" or "MANUAL" by the EXIF spec. */
+    /** Name of the method used for location finding GPSProcessingMethod 27 1B UNDEFINED Any */
     public static final int TAG_PROCESSING_METHOD = 0x001B;
+    /** Name of the GPS area GPSAreaInformation 28 1C UNDEFINED Any */
     public static final int TAG_AREA_INFORMATION = 0x001C;
+    /** Date and time GPSDateStamp 29 1D ASCII 11 */
     public static final int TAG_DATE_STAMP = 0x001D;
+    /** Whether differential correction is applied GPSDifferential 30 1E SHORT 1 */
     public static final int TAG_DIFFERENTIAL = 0x001E;
+    /** Horizontal positioning errors GPSHPositioningError 31 1F RATIONAL 1 */
+    public static final int TAG_H_POSITIONING_ERROR = 0x001F;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -139,6 +143,7 @@ public class GpsDirectory extends ExifDirectoryBase
         _tagNameMap.put(TAG_AREA_INFORMATION, "GPS Area Information");
         _tagNameMap.put(TAG_DATE_STAMP, "GPS Date Stamp");
         _tagNameMap.put(TAG_DIFFERENTIAL, "GPS Differential");
+        _tagNameMap.put(TAG_H_POSITIONING_ERROR, "GPS H Positioning Error");
     }
 
     public GpsDirectory()
