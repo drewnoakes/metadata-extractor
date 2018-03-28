@@ -66,9 +66,10 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     }
 
     /**
-     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
-     * representing the date and time when this image was captured.  Attempts will be made to parse the
-     * values as though it is in the GMT {@link TimeZone}.
+     * Parses the date/time tag, the subsecond tag and the time offset tag to obtain a single Date
+     * object with milliseconds representing the date and time when this image was captured.  If
+     * the time offset tag does not exist, attempts will be made to parse the values as though it is
+     * in the GMT {@link TimeZone}.
      *
      * @return A Date object representing when this image was captured, if possible, otherwise null
      */
@@ -79,10 +80,10 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     }
 
     /**
-     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
-     * representing the date and time when this image was captured.  Attempts will be made to parse the
-     * values as though it is in the {@link TimeZone} represented by the {@code timeZone} parameter
-     * (if it is non-null).
+     * Parses the date/time tag, the subsecond tag and the time offset tag to obtain a single Date
+     * object with milliseconds representing the date and time when this image was captured.  If
+     * the time offset tag does not exist, attempts will be made to parse the values as though it is
+     * in the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).
      *
      * @param timeZone the time zone to use
      * @return A Date object representing when this image was captured, if possible, otherwise null
@@ -90,13 +91,18 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     @Nullable
     public Date getDateOriginal(@Nullable TimeZone timeZone)
     {
+        String timeOffset = getString(TAG_OFFSET_TIME_ORIGINAL);
+        if (timeOffset != null && timeOffset.matches("[\\+\\-]\\d\\d:\\d\\d")) {
+            timeZone = TimeZone.getTimeZone("GMT" + timeOffset);
+        }
         return getDate(TAG_DATETIME_ORIGINAL, getString(TAG_SUBSECOND_TIME_ORIGINAL), timeZone);
     }
 
     /**
-     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
-     * representing the date and time when this image was digitized.  Attempts will be made to parse the
-     * values as though it is in the GMT {@link TimeZone}.
+     * Parses the date/time tag, the subsecond tag and the time offset tag to obtain a single Date
+     * object with milliseconds representing the date and time when this image was digitized.  If
+     * the time offset tag does not exist, attempts will be made to parse the values as though it is
+     * in the GMT {@link TimeZone}.
      *
      * @return A Date object representing when this image was digitized, if possible, otherwise null
      */
@@ -107,10 +113,10 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     }
 
     /**
-     * Parses the date/time tag and the subsecond tag to obtain a single Date object with milliseconds
-     * representing the date and time when this image was digitized.  Attempts will be made to parse the
-     * values as though it is in the {@link TimeZone} represented by the {@code timeZone} parameter
-     * (if it is non-null).
+     * Parses the date/time tag, the subsecond tag and the time offset tag to obtain a single Date
+     * object with milliseconds representing the date and time when this image was digitized.  If
+     * the time offset tag does not exist, attempts will be made to parse the values as though it is
+     * in the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).
      *
      * @param timeZone the time zone to use
      * @return A Date object representing when this image was digitized, if possible, otherwise null
@@ -118,6 +124,10 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     @Nullable
     public Date getDateDigitized(@Nullable TimeZone timeZone)
     {
+        String timeOffset = getString(TAG_OFFSET_TIME_DIGITIZED);
+        if (timeOffset != null && timeOffset.matches("[\\+\\-]\\d\\d:\\d\\d")) {
+            timeZone = TimeZone.getTimeZone("GMT" + timeOffset);
+        }
         return getDate(TAG_DATETIME_DIGITIZED, getString(TAG_SUBSECOND_TIME_DIGITIZED), timeZone);
     }
 }
