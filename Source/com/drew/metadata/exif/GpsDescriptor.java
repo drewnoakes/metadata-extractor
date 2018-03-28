@@ -26,7 +26,10 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.drew.metadata.exif.GpsDirectory.*;
 
@@ -58,8 +61,12 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
                 return getGpsStatusDescription();
             case TAG_MEASURE_MODE:
                 return getGpsMeasureModeDescription();
+            case TAG_DOP:
+                return getGpsDopDescription();
             case TAG_SPEED_REF:
                 return getGpsSpeedRefDescription();
+            case TAG_SPEED:
+                return getGpsSpeedDescription();
             case TAG_TRACK_REF:
             case TAG_IMG_DIRECTION_REF:
             case TAG_DEST_BEARING_REF:
@@ -68,8 +75,14 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
             case TAG_IMG_DIRECTION:
             case TAG_DEST_BEARING:
                 return getGpsDirectionDescription(tagType);
+            case TAG_DEST_LATITUDE:
+                return getGpsDestLatitudeDescription();
+            case TAG_DEST_LONGITUDE:
+                return getGpsDestLongitudeDescription();
             case TAG_DEST_DISTANCE_REF:
                 return getGpsDestinationReferenceDescription();
+            case TAG_DEST_DISTANCE:
+                return getGpsDestDistanceDescription();
             case TAG_TIME_STAMP:
                 return getGpsTimeStampDescription();
             case TAG_LONGITUDE:
@@ -78,8 +91,13 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
             case TAG_LATITUDE:
                 // three rational numbers -- displayed in HH"MM"SS.ss
                 return getGpsLatitudeDescription();
+            case TAG_PROCESSING_METHOD:
+            case TAG_AREA_INFORMATION:
+                return getGpsEncodedTextDescription(tagType);
             case TAG_DIFFERENTIAL:
                 return getGpsDifferentialDescription();
+            case TAG_H_POSITIONING_ERROR:
+                return getGpsHPositioningErrorDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -120,6 +138,36 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     }
 
     @Nullable
+    public String getGpsDestLatitudeDescription()
+    {
+        Rational[] latitudes = _directory.getRationalArray(TAG_DEST_LATITUDE);
+        String latitudeRef = _directory.getString(TAG_DEST_LATITUDE_REF);
+
+        if (latitudes == null || latitudes.length != 3 || latitudeRef == null)
+            return null;
+
+        Double lat = GeoLocation.degreesMinutesSecondsToDecimal(
+            latitudes[0], latitudes[1], latitudes[2], latitudeRef.equalsIgnoreCase("S"));
+
+        return lat == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(lat);
+    }
+
+    @Nullable
+    public String getGpsDestLongitudeDescription()
+    {
+        Rational[] longitudes = _directory.getRationalArray(TAG_LONGITUDE);
+        String longitudeRef = _directory.getString(TAG_LONGITUDE_REF);
+
+        if (longitudes == null || longitudes.length != 3 || longitudeRef == null)
+            return null;
+
+        Double lon = GeoLocation.degreesMinutesSecondsToDecimal(
+            longitudes[0], longitudes[1], longitudes[2], longitudeRef.equalsIgnoreCase("W"));
+
+        return lon == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(lon);
+    }
+
+    @Nullable
     public String getGpsDestinationReferenceDescription()
     {
         final String value = _directory.getString(TAG_DEST_DISTANCE_REF);
@@ -135,6 +183,18 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         } else {
             return "Unknown (" + distanceRef + ")";
         }
+    }
+
+    @Nullable
+    public String getGpsDestDistanceDescription()
+    {
+        final Rational value = _directory.getRational(TAG_DEST_DISTANCE);
+        if (value == null)
+            return null;
+        final String unit = getGpsDestinationReferenceDescription();
+        return String.format("%s %s",
+            new DecimalFormat("0.##").format(value.doubleValue()),
+            unit == null ? "unit" : unit.toLowerCase());
     }
 
     @Nullable
@@ -165,6 +225,13 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     }
 
     @Nullable
+    public String getGpsDopDescription()
+    {
+        final Rational value = _directory.getRational(TAG_DOP);
+        return value == null ? null : new DecimalFormat("0.##").format(value.doubleValue());
+    }
+
+    @Nullable
     public String getGpsSpeedRefDescription()
     {
         final String value = _directory.getString(TAG_SPEED_REF);
@@ -180,6 +247,18 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         } else {
             return "Unknown (" + gpsSpeedRef + ")";
         }
+    }
+
+    @Nullable
+    public String getGpsSpeedDescription()
+    {
+        final Rational value = _directory.getRational(TAG_SPEED);
+        if (value == null)
+            return null;
+        final String unit = getGpsSpeedRefDescription();
+        return String.format("%s %s",
+            new DecimalFormat("0.##").format(value.doubleValue()),
+            unit == null ? "unit" : unit.toLowerCase());
     }
 
     @Nullable
@@ -224,13 +303,60 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     public String getGpsAltitudeDescription()
     {
         final Rational value = _directory.getRational(TAG_ALTITUDE);
-        return value == null ? null : value.intValue() + " metres";
+        return value == null ? null : new DecimalFormat("0.##").format(value.doubleValue()) + " metres";
+    }
+
+    @Nullable
+    public String getGpsEncodedTextDescription(int tagType)
+    {
+        byte[] commentBytes = _directory.getByteArray(tagType);
+        if (commentBytes == null)
+            return null;
+        if (commentBytes.length == 0)
+            return "";
+
+        final Map<String, String> encodingMap = new HashMap<String, String>();
+        encodingMap.put("ASCII", System.getProperty("file.encoding")); // Someone suggested "ISO-8859-1".
+        encodingMap.put("UNICODE", "UTF-16LE");
+        encodingMap.put("JIS", "Shift-JIS"); // We assume this charset for now.  Another suggestion is "JIS".
+
+        try {
+            if (commentBytes.length >= 10) {
+                String firstTenBytesString = new String(commentBytes, 0, 10);
+
+                // try each encoding name
+                for (Map.Entry<String, String> pair : encodingMap.entrySet()) {
+                    String encodingName = pair.getKey();
+                    String charset = pair.getValue();
+                    if (firstTenBytesString.startsWith(encodingName)) {
+                        // skip any null or blank characters commonly present after the encoding name, up to a limit of 10 from the start
+                        for (int j = encodingName.length(); j < 10; j++) {
+                            byte b = commentBytes[j];
+                            if (b != '\0' && b != ' ')
+                                return new String(commentBytes, j, commentBytes.length - j, charset).trim();
+                        }
+                        return new String(commentBytes, 10, commentBytes.length - 10, charset).trim();
+                    }
+                }
+            }
+            // special handling fell through, return a plain string representation
+            return new String(commentBytes, System.getProperty("file.encoding")).trim();
+        } catch (UnsupportedEncodingException ex) {
+            return null;
+        }
     }
 
     @Nullable
     public String getGpsDifferentialDescription()
     {
         return getIndexedDescription(TAG_DIFFERENTIAL, "No Correction", "Differential Corrected");
+    }
+
+    @Nullable
+    public String getGpsHPositioningErrorDescription()
+    {
+        final Rational value = _directory.getRational(TAG_H_POSITIONING_ERROR);
+        return value == null ? null : new DecimalFormat("0.##").format(value.doubleValue()) + " metres";
     }
 
     @Nullable
