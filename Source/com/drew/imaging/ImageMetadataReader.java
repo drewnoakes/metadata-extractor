@@ -27,6 +27,7 @@ import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.heif.HeifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.mp3.Mp3MetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
 import com.drew.imaging.pcx.PcxMetadataReader;
@@ -173,6 +174,8 @@ public class ImageMetadataReader
                 return QuickTimeMetadataReader.readMetadata(inputStream);
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);
+            case Mp3:
+                return Mp3MetadataReader.readMetadata(inputStream);
             case Eps:
                 return EpsMetadataReader.readMetadata(inputStream);
             case Heif:
