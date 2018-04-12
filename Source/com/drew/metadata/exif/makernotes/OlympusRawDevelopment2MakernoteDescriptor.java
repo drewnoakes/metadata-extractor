@@ -110,8 +110,12 @@ public class OlympusRawDevelopment2MakernoteDescriptor extends TagDescriptor<Oly
         if ((v        & 1) != 0) sb.append("Noise Reduction, ");
         if (((v >> 1) & 1) != 0) sb.append("Noise Filter, ");
         if (((v >> 2) & 1) != 0) sb.append("Noise Filter (ISO Boost), ");
-
-        return sb.substring(0, sb.length() - 2);
+        if (((v >> 3) & 1) != 0) sb.append("Noise Filter (Auto), ");
+        
+        if (sb.length() > 2) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        return sb.toString();
     }
 
     @Nullable
