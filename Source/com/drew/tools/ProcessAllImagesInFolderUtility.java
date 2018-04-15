@@ -320,7 +320,12 @@ public class ProcessAllImagesInFolderUtility
                         // Write the directory's tags
                         for (Tag tag : directory.getTags()) {
                             String tagName = tag.getTagName();
-                            String description = tag.getDescription();
+                            String description;
+                            try {
+                                description = tag.getDescription();
+                            } catch (Exception ex) {
+                                description = "ERROR: " + ex.getMessage();
+                            }
                             if (description == null)
                                 description = "";
                             // Skip the file write-time as this changes based on the time at which the regression test image repository was cloned
