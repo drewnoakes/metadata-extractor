@@ -25,6 +25,7 @@ import com.drew.imaging.tiff.TiffReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.BufferBoundsException;
+import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
@@ -34,7 +35,9 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.exif.makernotes.*;
+import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
+import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -210,6 +213,20 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 return true;
             }
             return false;
+        }
+
+        // Custom processing for ICC Profile data
+        if (tagId == ExifSubIFDDirectory.TAG_INTER_COLOR_PROFILE) {
+            final byte[] iccBytes = reader.getBytes(tagOffset, byteCount);
+            new IccReader().extract(new ByteArrayReader(iccBytes), _metadata);
+            return true;
+        }
+
+        // Custom processing for Photoshop data
+        if (tagId == ExifSubIFDDirectory.TAG_PHOTOSHOP_SETTINGS && _currentDirectory instanceof ExifIFD0Directory) {
+            final byte[] photoshopBytes = reader.getBytes(tagOffset, byteCount);
+            new PhotoshopReader().extract(new SequentialByteArrayReader(photoshopBytes), byteCount, _metadata);
+            return true;
         }
 
         // Custom processing for embedded XMP data

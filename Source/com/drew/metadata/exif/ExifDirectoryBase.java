@@ -188,6 +188,7 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_FNUMBER                           = 0x829D;
     public static final int TAG_IPTC_NAA                          = 0x83BB;
+    public static final int TAG_PHOTOSHOP_SETTINGS                = 0x8649;
     public static final int TAG_INTER_COLOR_PROFILE               = 0x8773;
     /**
      * Exposure program that the camera used when image was taken. '1' means
