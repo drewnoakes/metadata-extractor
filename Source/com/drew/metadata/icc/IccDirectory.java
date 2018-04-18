@@ -102,6 +102,12 @@ public class IccDirectory extends Directory
     public static final int TAG_TAG_vued = 0x76756564;
     public static final int TAG_TAG_view = 0x76696577;
 
+    public static final int TAG_TAG_aabg = 0x61616267;
+    public static final int TAG_TAG_aagg = 0x61616767;
+    public static final int TAG_TAG_aarg = 0x61617267;
+    public static final int TAG_TAG_mmod = 0x6D6D6F64;
+    public static final int TAG_TAG_ndin = 0x6E64696E;
+    public static final int TAG_TAG_vcgt = 0x76636774;
     public static final int TAG_APPLE_MULTI_LANGUAGE_PROFILE_NAME = 0x6473636d;
 
     @NotNull
@@ -172,6 +178,12 @@ public class IccDirectory extends Directory
         _tagNameMap.put(TAG_TAG_bfd, "Ucrbg");
         _tagNameMap.put(TAG_TAG_vued, "Viewing Conditions Description");
         _tagNameMap.put(TAG_TAG_view, "Viewing Conditions");
+        _tagNameMap.put(TAG_TAG_aabg, "Blue Parametric TRC");
+        _tagNameMap.put(TAG_TAG_aagg, "Green Parametric TRC");
+        _tagNameMap.put(TAG_TAG_aarg, "Red Parametric TRC");
+        _tagNameMap.put(TAG_TAG_mmod, "Make And Model");
+        _tagNameMap.put(TAG_TAG_ndin, "Native Display Information");
+        _tagNameMap.put(TAG_TAG_vcgt, "Video Card Gamma");
         _tagNameMap.put(TAG_APPLE_MULTI_LANGUAGE_PROFILE_NAME, "Apple Multi-language Profile Name");
     }
 
