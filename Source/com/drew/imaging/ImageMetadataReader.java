@@ -47,11 +47,13 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.file.FileTypeDirectory;
+import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Reads metadata from any supported file format.
@@ -302,6 +304,24 @@ public class ImageMetadataReader
                             System.out.printf("[%s - %s] %s = %s%n", directoryName, tag.getTagTypeHex(), tagName, description);
                         } else {
                             System.out.printf("[%s] %s = %s%n", directoryName, tagName, description);
+                        }
+                    }
+                }
+
+                if (directory instanceof XmpDirectory) {
+                    Map<String, String> xmpProperties = ((XmpDirectory)directory).getXmpProperties();
+                    for (Map.Entry<String, String> property : xmpProperties.entrySet()) {
+                        String key = property.getKey();
+                        String value = property.getValue();
+
+                        if (value != null && value.length() > 1024) {
+                            value = value.substring(0, 1024) + "...";
+                        }
+
+                        if (markdownFormat) {
+                            System.out.printf("%s||%s|%s%n", directoryName, key, value);
+                        } else {
+                            System.out.printf("[%s] %s = %s%n", directoryName, key, value);
                         }
                     }
                 }
