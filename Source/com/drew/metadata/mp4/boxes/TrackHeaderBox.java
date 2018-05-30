@@ -22,14 +22,12 @@ package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mp4.Mp4Directory;
-import com.drew.metadata.mp4.Mp4HandlerFactory;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
- * ISO/IED 14496-12:2015 pg.29
+ * ISO/IED 14496-12:2005 pg.17-18
  */
 public class TrackHeaderBox extends FullBox
 {
