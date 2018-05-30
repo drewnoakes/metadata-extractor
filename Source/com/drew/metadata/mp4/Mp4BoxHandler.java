@@ -55,7 +55,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         return box.type.equals(Mp4BoxTypes.BOX_FILE_TYPE)
             || box.type.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)
             || box.type.equals(Mp4BoxTypes.BOX_HANDLER)
-            || box.type.equals(Mp4BoxTypes.BOX_MEDIA_HEADER);
+            || box.type.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)
+            || box.type.equals(Mp4BoxTypes.BOX_TRACK_HEADER);
     }
 
     @Override
@@ -81,6 +82,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 return handlerFactory.getHandler(handlerBox, metadata);
             } else if (box.type.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
                 processMediaHeader(reader, box);
+            } else if (box.type.equals(Mp4BoxTypes.BOX_TRACK_HEADER)) {
+                processTrackHeader(reader, box);
             }
         } else {
             if (box.type.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
@@ -105,5 +108,11 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     private void processMediaHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
     {
         MediaHeaderBox mediaHeaderBox = new MediaHeaderBox(reader, box);
+    }
+
+    private void processTrackHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    {
+        TrackHeaderBox trackHeaderBox = new TrackHeaderBox(reader, box);
+        trackHeaderBox.addMetadata(directory);
     }
 }
