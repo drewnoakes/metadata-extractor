@@ -139,6 +139,10 @@ public class AviRiffHandler implements RiffHandler
                 _directory.setInt(AviDirectory.TAG_WIDTH, dwWidth);
                 _directory.setInt(AviDirectory.TAG_HEIGHT, dwHeight);
                 _directory.setInt(AviDirectory.TAG_STREAMS, dwStreams);
+            } else if (fourCC.equals("IDIT")) {
+            	ByteArrayReader reader = new ByteArrayReader(payload);
+            	String str = reader.getString(0, payload.length, "ASCII").trim();
+            	_directory.setString(AviDirectory.TAG_DATETIME_ORIGINAL, str);
             }
         } catch (IOException ex) {
             _directory.addError(ex.getMessage());
