@@ -67,6 +67,8 @@ public abstract class Directory
     @Nullable
     private Directory _parent;
 
+    private long fileDataOffset = 0;
+
 // ABSTRACT METHODS
 
     /**
@@ -89,6 +91,15 @@ public abstract class Directory
     {}
 
 // VARIOUS METHODS
+
+    public long getFileDataOffset() {
+        return fileDataOffset +
+            (_parent == null ? 0 : _parent.getFileDataOffset());
+    }
+
+    public void setFileDataOffset(long fileDataOffset) {
+        this.fileDataOffset = fileDataOffset;
+    }
 
     /**
      * Gets a value indicating whether the directory is empty, meaning it contains no errors and no tag values.

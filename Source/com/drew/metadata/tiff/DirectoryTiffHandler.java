@@ -96,6 +96,11 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     }
 
     @NotNull
+    public Directory getCurrentDirectory() {
+        return _currentDirectory;
+    }
+
+    @NotNull
     private Directory getCurrentOrErrorDirectory()
     {
         if (_currentDirectory != null)

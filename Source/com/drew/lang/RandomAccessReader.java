@@ -46,6 +46,16 @@ import java.nio.charset.Charset;
 public abstract class RandomAccessReader
 {
     private boolean _isMotorolaByteOrder = true;
+    private long _originOffset = 0;
+
+    public RandomAccessReader originOffset(long _originOffset) {
+        this._originOffset = _originOffset;
+        return this;
+    }
+
+    public long getOriginOffset() {
+        return _originOffset;
+    }
 
     public abstract int toUnshiftedOffset(int localOffset);
 

@@ -39,11 +39,10 @@ import java.util.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class JpegSegmentData
-{
+public class JpegSegmentData {
     // TODO key this on JpegSegmentType rather than Byte, and hopefully lose much of the use of 'byte' with this class
     @NotNull
-    private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
+    private final HashMap<Byte, List<JpegSegmentInfo>> _segmentDataMap = new HashMap<Byte, List<JpegSegmentInfo>>(10);
 
     /**
      * Adds segment bytes to the collection.
@@ -54,7 +53,19 @@ public class JpegSegmentData
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void addSegment(byte segmentType, @NotNull byte[] segmentBytes)
     {
-        getOrCreateSegmentList(segmentType).add(segmentBytes);
+        addSegment(segmentType, 0, segmentBytes);
+    }
+
+    /**
+     * Adds segment bytes to the collection.
+     *
+     * @param segmentType  the type of the segment being added
+     * @param segmentBytes the byte array holding bytes for the segment being added
+     */
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
+    public void addSegment(byte segmentType, long fileOffset, @NotNull byte[] segmentBytes)
+    {
+        getOrCreateSegmentList(segmentType).add(new JpegSegmentInfo(segmentBytes, fileOffset));
     }
 
     /**
@@ -125,10 +136,10 @@ public class JpegSegmentData
     @Nullable
     public byte[] getSegment(byte segmentType, int occurrence)
     {
-        final List<byte[]> segmentList = getSegmentList(segmentType);
+        final List<JpegSegmentInfo> segmentList = getSegmentList(segmentType);
 
         return segmentList != null && segmentList.size() > occurrence
-                ? segmentList.get(occurrence)
+                ? segmentList.get(occurrence).bytes
                 : null;
     }
 
@@ -151,26 +162,57 @@ public class JpegSegmentData
      * @return zero or more byte arrays, each holding the data of a JPEG segment
      */
     @NotNull
+    public Iterable<JpegSegmentInfo> getSegmentsInfo(@NotNull JpegSegmentType segmentType)
+    {
+        return getSegmentsInfo(segmentType.byteValue);
+    }
+
+    /**
+     * Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.
+     *
+     * @param segmentType a number which identifies the type of JPEG segment being queried
+     * @return zero or more byte arrays, each holding the data of a JPEG segment
+     */
+    @NotNull
     public Iterable<byte[]> getSegments(byte segmentType)
     {
-        final List<byte[]> segmentList = getSegmentList(segmentType);
-        return segmentList == null ? new ArrayList<byte[]>() : segmentList;
+        final List<JpegSegmentInfo> segmentList = getSegmentList(segmentType);
+        List<byte[]> segmentDataList = new ArrayList<byte[]>();
+        if (segmentList != null) {
+            for (JpegSegmentInfo info : segmentList) {
+                segmentDataList.add(info.bytes);
+            }
+        }
+        return segmentList == null ? new ArrayList<byte[]>() : segmentDataList;
+    }
+
+    /**
+     * Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.
+     *
+     * @param segmentType a number which identifies the type of JPEG segment being queried
+     * @return zero or more byte arrays, each holding the bytes of a JPEG segment
+     */
+    @NotNull
+    public Iterable<JpegSegmentInfo> getSegmentsInfo(byte segmentType)
+    {
+        final List<JpegSegmentInfo> segmentList = getSegmentList(segmentType);
+        return segmentList == null ? new ArrayList<JpegSegmentInfo>() : segmentList;
     }
 
     @Nullable
-    private List<byte[]> getSegmentList(byte segmentType)
+    private List<JpegSegmentInfo> getSegmentList(byte segmentType)
     {
         return _segmentDataMap.get(segmentType);
     }
 
     @NotNull
-    private List<byte[]> getOrCreateSegmentList(byte segmentType)
+    private List<JpegSegmentInfo> getOrCreateSegmentList(byte segmentType)
     {
-        List<byte[]> segmentList;
+        List<JpegSegmentInfo> segmentList;
         if (_segmentDataMap.containsKey(segmentType)) {
             segmentList = _segmentDataMap.get(segmentType);
         } else {
-            segmentList = new ArrayList<byte[]>();
+            segmentList = new ArrayList<JpegSegmentInfo>();
             _segmentDataMap.put(segmentType, segmentList);
         }
         return segmentList;
@@ -195,7 +237,7 @@ public class JpegSegmentData
      */
     public int getSegmentCount(byte segmentType)
     {
-        final List<byte[]> segmentList = getSegmentList(segmentType);
+        final List<JpegSegmentInfo> segmentList = getSegmentList(segmentType);
         return segmentList == null ? 0 : segmentList.size();
     }
 
@@ -222,7 +264,7 @@ public class JpegSegmentData
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void removeSegmentOccurrence(byte segmentType, int occurrence)
     {
-        final List<byte[]> segmentList = _segmentDataMap.get(segmentType);
+        final List<JpegSegmentInfo> segmentList = _segmentDataMap.get(segmentType);
         segmentList.remove(occurrence);
     }
 

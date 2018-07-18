@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Rational;
@@ -87,8 +88,8 @@ public class ExifReaderTest
     {
         byte[] badExifData = new byte[]{ 1,2,3,4,5,6,7,8,9,10 };
         Metadata metadata = new Metadata();
-        ArrayList<byte[]> segments = new ArrayList<byte[]>();
-        segments.add(badExifData);
+        ArrayList<JpegSegmentInfo> segments = new ArrayList<JpegSegmentInfo>();
+        segments.add(new JpegSegmentInfo(badExifData));
         new ExifReader().readJpegSegments(segments, metadata, JpegSegmentType.APP1);
         assertEquals(0, metadata.getDirectoryCount());
         assertFalse(metadata.hasErrors());

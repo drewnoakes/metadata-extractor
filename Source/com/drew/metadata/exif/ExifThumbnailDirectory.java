@@ -22,7 +22,9 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.MetadataException;
 
+import java.io.*;
 import java.util.HashMap;
 
 /**
@@ -76,5 +78,40 @@ public class ExifThumbnailDirectory extends ExifDirectoryBase
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
+    }
+
+    public boolean writeThumbnail(File imageFile, File thumbTargetFile) throws MetadataException, IOException {
+        // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
+        if (containsTag(ExifThumbnailDirectory.TAG_COMPRESSION)) {
+            Integer offset = getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
+            Integer length = getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
+            if (offset != null && length != null) {
+                FileInputStream input = new FileInputStream(imageFile);
+                try {
+                    FileOutputStream output = new FileOutputStream(thumbTargetFile);
+                    try {
+                        long tiffHeaderOffset = getFileDataOffset();
+                        tiffHeaderOffset += ExifReader.JPEG_SEGMENT_PREAMBLE.length();
+                        byte[] buffer = new byte[length];
+                        if (input.skip(tiffHeaderOffset + offset) < 0) {
+                            throw new MetadataException("Thumbnail offset is beyond the end of file");
+                        }
+                        if (input.read(buffer, 0, length) < length){
+                            throw new MetadataException("Thumbnail content is beyond the end of file");
+                        }
+                        output.write(buffer);
+                        output.flush();
+                        return true;
+                    } finally {
+                        output.flush();
+                        output.close();
+                    }
+                } finally {
+                    input.close();
+                }
+            }
+            return false;
+        }
+        throw new MetadataException("No thumbnail data exists.");
     }
 }

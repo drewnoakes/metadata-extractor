@@ -23,6 +23,8 @@ package com.drew.imaging.tiff;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
+import com.drew.metadata.tiff.DirectoryTiffHandler;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -63,6 +65,13 @@ public class TiffReader
         // Check the next two values for correctness.
         final int tiffMarker = reader.getUInt16(2 + tiffHeaderOffset);
         handler.setTiffMarker(tiffMarker);
+
+        if (handler instanceof DirectoryTiffHandler) {
+            Directory currentDirectory = ((DirectoryTiffHandler) handler).getCurrentDirectory();
+            if (currentDirectory != null) {
+                currentDirectory.setFileDataOffset(reader.getOriginOffset());
+            }
+        }
 
         int firstIfdOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
 
