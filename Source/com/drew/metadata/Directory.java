@@ -92,12 +92,14 @@ public abstract class Directory
 
 // VARIOUS METHODS
 
-    public long getFileDataOffset() {
+    public long getFileDataOffset()
+    {
         return fileDataOffset +
             (_parent == null ? 0 : _parent.getFileDataOffset());
     }
 
-    public void setFileDataOffset(long fileDataOffset) {
+    public void setFileDataOffset(long fileDataOffset)
+    {
         this.fileDataOffset = fileDataOffset;
     }
 

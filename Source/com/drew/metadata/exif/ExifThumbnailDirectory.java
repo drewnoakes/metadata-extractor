@@ -80,9 +80,11 @@ public class ExifThumbnailDirectory extends ExifDirectoryBase
         return _tagNameMap;
     }
 
-    public boolean writeThumbnail(File imageFile, File thumbTargetFile) throws MetadataException, IOException {
+    public boolean writeThumbnail(File imageFile, File thumbTargetFile) throws MetadataException, IOException
+    {
         // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
-        if (containsTag(ExifThumbnailDirectory.TAG_COMPRESSION)) {
+        if (containsTag(ExifThumbnailDirectory.TAG_COMPRESSION))
+        {
             Integer offset = getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
             Integer length = getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
             if (offset != null && length != null) {

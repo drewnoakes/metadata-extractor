@@ -39,7 +39,8 @@ import java.util.*;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class JpegSegmentData {
+public class JpegSegmentData
+{
     // TODO key this on JpegSegmentType rather than Byte, and hopefully lose much of the use of 'byte' with this class
     @NotNull
     private final HashMap<Byte, List<JpegSegmentInfo>> _segmentDataMap = new HashMap<Byte, List<JpegSegmentInfo>>(10);
