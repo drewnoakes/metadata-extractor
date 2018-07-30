@@ -148,9 +148,10 @@ public class JpegSegmentReader
 
             // Check whether we are interested in this segment
             if (segmentTypeBytes == null || segmentTypeBytes.contains(segmentType)) {
+                long fileOffset =  reader.getPosition();
                 byte[] segmentBytes = reader.getBytes(segmentLength);
                 assert (segmentLength == segmentBytes.length);
-                segmentData.addSegment(segmentType, segmentBytes);
+                segmentData.addSegment(segmentType, fileOffset, segmentBytes);
             } else {
                 // Skip this segment
                 if (!reader.trySkip(segmentLength)) {

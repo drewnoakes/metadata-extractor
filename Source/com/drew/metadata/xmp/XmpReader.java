@@ -26,6 +26,7 @@ import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.impl.ByteBuffer;
 import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
@@ -85,24 +86,24 @@ public class XmpReader implements JpegSegmentMetadataReader
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
      */
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegmentInfo> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         final int preambleLength = XMP_JPEG_PREAMBLE.length();
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         String extendedXMPGUID = null;
         byte[] extendedXMPBuffer = null;
 
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegmentInfo info : segments) {
             // XMP in a JPEG file has an identifying preamble which is not valid XML
-            if (segmentBytes.length >= preambleLength) {
+            if (info.bytes.length >= preambleLength) {
                 // NOTE we expect the full preamble here, but some images (such as that reported on GitHub #102)
                 // start with "XMP\0://ns.adobe.com/xap/1.0/" which appears to be an error but is easily recovered
                 // from. In such cases, the actual XMP data begins at the same offset.
-                if (XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)) ||
-                    "XMP".equalsIgnoreCase(new String(segmentBytes, 0, 3))) {
+                if (XMP_JPEG_PREAMBLE.equalsIgnoreCase(new String(info.bytes, 0, preambleLength)) ||
+                    "XMP".equalsIgnoreCase(new String(info.bytes, 0, 3))) {
 
-                    byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
-                    System.arraycopy(segmentBytes, preambleLength, xmlBytes, 0, xmlBytes.length);
+                    byte[] xmlBytes = new byte[info.bytes.length - preambleLength];
+                    System.arraycopy(info.bytes, preambleLength, xmlBytes, 0, xmlBytes.length);
                     extract(xmlBytes, metadata);
                     // Check in the Standard XMP if there should be a Extended XMP part in other chunks.
                     extendedXMPGUID = getExtendedXMPGUID(metadata);
@@ -112,10 +113,10 @@ public class XmpReader implements JpegSegmentMetadataReader
 
             // If we know that there's Extended XMP chunks, look for them.
             if (extendedXMPGUID != null &&
-                segmentBytes.length >= extensionPreambleLength &&
-                XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, extensionPreambleLength))) {
+                info.bytes.length >= extensionPreambleLength &&
+                XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(info.bytes, 0, extensionPreambleLength))) {
 
-                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer);
+                extendedXMPBuffer = processExtendedXMPChunk(metadata, info.bytes, extendedXMPGUID, extendedXMPBuffer);
             }
         }
 

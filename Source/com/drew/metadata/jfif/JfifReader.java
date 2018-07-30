@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.jfif;
 
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
@@ -51,12 +52,12 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
         return Collections.singletonList(JpegSegmentType.APP0);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegmentInfo> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegmentInfo info : segments) {
             // Skip segments not starting with the required header
-            if (segmentBytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
-                extract(new ByteArrayReader(segmentBytes), metadata);
+            if (info.bytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(info.bytes, 0, PREAMBLE.length())))
+                extract(new ByteArrayReader(info.bytes), metadata);
         }
     }
 

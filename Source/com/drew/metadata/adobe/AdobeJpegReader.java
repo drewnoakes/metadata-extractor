@@ -21,6 +21,7 @@
 
 package com.drew.metadata.adobe;
 
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
@@ -49,11 +50,11 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPE);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegmentInfo> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        for (byte[] bytes : segments) {
-            if (bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(bytes, 0, PREAMBLE.length())))
-                extract(new SequentialByteArrayReader(bytes), metadata);
+        for (JpegSegmentInfo info : segments) {
+            if (info.bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(info.bytes, 0, PREAMBLE.length())))
+                extract(new SequentialByteArrayReader(info.bytes), metadata);
         }
     }
 
