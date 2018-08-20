@@ -55,8 +55,8 @@ public class CanonThumbnailAtom extends Atom {
 			try {
 				segmentData = JpegSegmentReader.readSegments(new StreamReader(exifStream), segmentTypes);
 			} catch (JpegProcessingException e) {
-				Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.SEVERE,
-						e.getLocalizedMessage());
+//				Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.SEVERE,
+//						e.getLocalizedMessage());
 				e.printStackTrace();
 			}
 
@@ -76,7 +76,7 @@ public class CanonThumbnailAtom extends Atom {
 				}
 			}
 		} else {
-			Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.WARNING, "Not CNDA: " + this.type+ " ("+this.size + ")" );
+//			Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.WARNING, "Not CNDA: " + this.type+ " ("+this.size + ")" );
 		}
 
 	}
