@@ -168,7 +168,7 @@
                         <![CDATA[<a href='https://drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='https://raw.githubusercontent.com/drewnoakes/metadata-extractor/master/Resources/metadata-extractor-logo-131x30.png' border="0" alt='Metadata Extractor Logo'></a>]]></header>
                     <bottom><![CDATA[<i>Copyright &#169; 2002-2017 Drew Noakes. All Rights Reserved.</i>]]></bottom>
                     <excludePackageNames>com.drew.tools</excludePackageNames>
-                    <stylesheetfile>Resources/javadoc-stylesheet.css</stylesheetfile>
+                    <stylesheetfile>${project.basedir}/Resources/javadoc-stylesheet.css</stylesheetfile>
                 </configuration>
                 <executions>
                     <execution>
