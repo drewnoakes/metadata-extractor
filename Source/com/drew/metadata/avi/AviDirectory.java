@@ -41,11 +41,14 @@ public class AviDirectory extends Directory
     public static final int TAG_WIDTH = 6;
     public static final int TAG_HEIGHT = 7;
     public static final int TAG_STREAMS = 8;
+
     public static final int TAG_DATETIME_ORIGINAL = 320;
 
     public static final String CHUNK_STREAM_HEADER = "strh";
     public static final String CHUNK_MAIN_HEADER = "avih";
 
+    public static final String CHUNK_DATETIME_ORIGINAL = "IDIT";
+    
     public static final String LIST_HEADER = "hdrl";
     public static final String LIST_STREAM_HEADER = "strl";
 
@@ -63,7 +66,7 @@ public class AviDirectory extends Directory
         _tagNameMap.put(TAG_WIDTH, "Width");
         _tagNameMap.put(TAG_HEIGHT, "Height");
         _tagNameMap.put(TAG_STREAMS, "Stream Count");
-        _tagNameMap.put(TAG_DATETIME_ORIGINAL, "DateTime Original");
+        _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Datetime Original");
     }
 
     public AviDirectory()
