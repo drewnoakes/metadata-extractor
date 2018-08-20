@@ -52,6 +52,8 @@ public class QuickTimeDirectory extends Directory {
     public static final int TAG_MINOR_VERSION                           = 0x1001;
     public static final int TAG_COMPATIBLE_BRANDS                       = 0x1002;
 
+    public static final int TAG_CANON_THUMBNAIL_DT                      = 0x2000;
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -76,6 +78,8 @@ public class QuickTimeDirectory extends Directory {
         _tagNameMap.put(TAG_NEXT_TRACK_ID, "Next Track ID");
 
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
+        
+        _tagNameMap.put(TAG_CANON_THUMBNAIL_DT, "Canon Thumbnail DateTime");
     }
 
     public QuickTimeDirectory()
