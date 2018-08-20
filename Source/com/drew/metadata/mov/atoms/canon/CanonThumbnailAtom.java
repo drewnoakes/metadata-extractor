@@ -33,11 +33,6 @@ public class CanonThumbnailAtom extends Atom {
 		readCNDA(reader);
 	}
 
-	// public CanonThumbnailAtom(Atom atom) {
-	// super(atom);
-	// // TODO Auto-generated constructor stub
-	// }
-
 	/**
 	 * Canon Data Block (Exif/TIFF ThumbnailImage)
 	 * 
