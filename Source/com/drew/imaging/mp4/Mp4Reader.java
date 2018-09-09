@@ -35,7 +35,6 @@ public class Mp4Reader
 
     public static void extract(@NotNull ReaderInfo reader, @NotNull Mp4Handler handler) throws IOException
     {
-        //StreamReader reader = new StreamReader(inputStream);
         if(!reader.isMotorolaByteOrder())
         {
             reader = reader.Clone();

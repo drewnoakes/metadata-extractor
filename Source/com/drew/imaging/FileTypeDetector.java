@@ -97,6 +97,8 @@ public class FileTypeDetector
         _ftypMap.put("ftypM4VH", FileType.Mp4);
         _ftypMap.put("ftypM4VP", FileType.Mp4);
         _ftypMap.put("ftypmmp4", FileType.Mp4);
+        _ftypMap.put("ftyp3g2a", FileType.Mp4);
+        _ftypMap.put("ftyp3gp5", FileType.Mp4);
         _ftypMap.put("ftypmp41", FileType.Mp4);
         _ftypMap.put("ftypmp42", FileType.Mp4);
         _ftypMap.put("ftypmp71", FileType.Mp4);
