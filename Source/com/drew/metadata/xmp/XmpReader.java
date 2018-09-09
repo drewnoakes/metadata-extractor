@@ -98,7 +98,6 @@ public class XmpReader implements JpegSegmentMetadataReader
      *
      * @param segments The byte array from which the metadata should be extracted.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
-     * @param segmentType The {@link JpegSegmentType} being read.
      */
     @Override
     public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException

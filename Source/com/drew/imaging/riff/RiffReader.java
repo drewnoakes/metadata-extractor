@@ -43,7 +43,7 @@ public class RiffReader
     /**
      * Processes a RIFF data sequence.
      *
-     * @param reader the {@link SequentialReader} from which the data should be read
+     * @param reader the {@link ReaderInfo} from which the data should be read
      * @param handler the {@link RiffHandler} that will coordinate processing and accept read values
      * @throws RiffProcessingException if an error occurred during the processing of RIFF data that could not be
      *                                 ignored or recovered from

@@ -46,11 +46,11 @@ public interface RiffHandler
     /**
      * Gets whether this handler is interested in the specific chunk type.
      * Returns <code>true</code> if the data should be copied into an array and passed
-     * to {@link RiffHandler#processChunk(String, byte[])}, or <code>false</code> to avoid
+     * to {@link RiffHandler#processChunk(String, ReaderInfo)}, or <code>false</code> to avoid
      * the copy and skip to the next chunk in the file, if any.
      *
      * @param fourCC the four character code of this chunk
-     * @return true if {@link RiffHandler#processChunk(String, byte[])} should be called, otherwise false
+     * @return true if {@link RiffHandler#processChunk(String, ReaderInfo)} should be called, otherwise false
      */
     boolean shouldAcceptChunk(@NotNull String fourCC);
 
@@ -60,7 +60,7 @@ public interface RiffHandler
      * or <code>false</code> to avoid any unknown chunks within the list.
      *
      * @param fourCC the four character code of this chunk
-     * @return true if {@link RiffHandler#processChunk(String, byte[])} should be called, otherwise false
+     * @return true if {@link RiffHandler#processChunk(String, ReaderInfo)} should be called, otherwise false
      */
     boolean shouldAcceptList(@NotNull String fourCC);
 

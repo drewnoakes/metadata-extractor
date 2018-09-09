@@ -24,7 +24,7 @@ package com.drew.lang;
 import java.io.IOException;
 
 /**
- * A checked replacement for {@link IndexOutOfBoundsException}.  Used by {@link RandomAccessReader}.
+ * A checked replacement for {@link IndexOutOfBoundsException}.  Used by {@link RandomAccessStream}.
  *
  * @author Drew Noakes https://drewnoakes.com
  */
