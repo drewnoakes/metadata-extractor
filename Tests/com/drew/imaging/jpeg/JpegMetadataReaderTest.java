@@ -50,7 +50,8 @@ public class JpegMetadataReaderTest
     @Test
     public void testExtractMetadataUsingInputStream() throws Exception
     {
-        validate(JpegMetadataReader.readMetadata(new FileInputStream((new File("Tests/Data/withExif.jpg")))));
+        File file = new File("Tests/Data/withExif.jpg");
+        validate(JpegMetadataReader.readMetadata(new FileInputStream(file), file.length()));
     }
 
     @Test

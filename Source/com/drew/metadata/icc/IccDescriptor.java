@@ -21,8 +21,7 @@
 
 package com.drew.metadata.icc;
 
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -80,7 +79,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
             byte[] bytes = _directory.getByteArray(tagType);
             if (bytes == null)
                 return _directory.getString(tagType);
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             int iccTagType = reader.getInt32(0);
             switch (iccTagType) {
                 case ICC_TAG_TYPE_TEXT:
@@ -337,6 +336,6 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     private static int getInt32FromString(@NotNull String string) throws IOException
     {
         byte[] bytes = string.getBytes();
-        return new ByteArrayReader(bytes).getInt32(0);
+        return ReaderInfo.createFromArray(bytes).getInt32(0);
     }
 }

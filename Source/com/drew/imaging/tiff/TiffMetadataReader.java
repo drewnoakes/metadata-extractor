@@ -20,9 +20,8 @@
  */
 package com.drew.imaging.tiff;
 
-import com.drew.lang.RandomAccessFileReader;
-import com.drew.lang.RandomAccessReader;
-import com.drew.lang.RandomAccessStreamReader;
+import com.drew.lang.RandomAccessStream;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifTiffHandler;
@@ -45,7 +44,7 @@ public class TiffMetadataReader
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
         Metadata metadata;
         try {
-            metadata = readMetadata(new RandomAccessFileReader(randomAccessFile));
+            metadata = readMetadata(new RandomAccessStream(randomAccessFile).createReader());
         } finally {
             randomAccessFile.close();
         }
@@ -54,21 +53,17 @@ public class TiffMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException, TiffProcessingException
+    public static Metadata readMetadata(@NotNull InputStream inputStream, long streamLength) throws IOException, TiffProcessingException
     {
-        // TIFF processing requires random access, as directories can be scattered throughout the byte sequence.
-        // InputStream does not support seeking backwards, so we wrap it with RandomAccessStreamReader, which
-        // buffers data from the stream as we seek forward.
-
-        return readMetadata(new RandomAccessStreamReader(inputStream));
+        return readMetadata(new RandomAccessStream(inputStream, streamLength).createReader());
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull RandomAccessReader reader) throws IOException, TiffProcessingException
+    public static Metadata readMetadata(@NotNull ReaderInfo reader) throws IOException, TiffProcessingException
     {
         Metadata metadata = new Metadata();
         ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
-        new TiffReader().processTiff(reader, handler, 0);
+        new TiffReader().processTiff(reader, handler);
         return metadata;
     }
 }

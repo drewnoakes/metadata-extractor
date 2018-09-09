@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.QuickTimeDirectory;
 
 import java.io.IOException;
@@ -37,15 +38,15 @@ public class FileTypeCompatibilityAtom extends Atom
     long minorVersion;
     ArrayList<String> compatibleBrands;
 
-    public FileTypeCompatibilityAtom(SequentialReader reader, Atom atom) throws IOException
+    public FileTypeCompatibilityAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(atom);
 
-        majorBrand = reader.getString(4);
+        majorBrand = reader.getString(4, Charsets.UTF_8);
         minorVersion = reader.getUInt32();
         compatibleBrands = new ArrayList<String>((int) ((size/16)>>2));
         for (int i = 16; i < size; i += 4) {
-            compatibleBrands.add(reader.getString(4));
+            compatibleBrands.add(reader.getString(4, Charsets.UTF_8));
         }
     }
 

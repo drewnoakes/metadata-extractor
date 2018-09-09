@@ -20,12 +20,11 @@
  */
 package com.drew.imaging.mp4;
 
-import com.drew.lang.StreamReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mp4.boxes.Box;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author Payton Garland
@@ -34,18 +33,22 @@ public class Mp4Reader
 {
     private Mp4Reader() {}
 
-    public static void extract(@NotNull InputStream inputStream, @NotNull Mp4Handler handler)
+    public static void extract(@NotNull ReaderInfo reader, @NotNull Mp4Handler handler) throws IOException
     {
-        StreamReader reader = new StreamReader(inputStream);
-        reader.setMotorolaByteOrder(true);
+        //StreamReader reader = new StreamReader(inputStream);
+        if(!reader.isMotorolaByteOrder())
+        {
+            reader = reader.Clone();
+            reader.setMotorolaByteOrder(true);
+        }
 
         processBoxes(reader, -1, handler);
     }
 
-    private static void processBoxes(StreamReader reader, long atomEnd, Mp4Handler handler)
+    private static void processBoxes(ReaderInfo reader, long atomEnd, Mp4Handler handler)
     {
         try {
-            while (atomEnd == -1 || reader.getPosition() < atomEnd) {
+            while (atomEnd == -1 || reader.getLocalPosition() < atomEnd) {
 
                 Box box = new Box(reader);
 
@@ -53,7 +56,7 @@ public class Mp4Reader
                 // Unknown atoms will be skipped
 
                 if (handler.shouldAcceptContainer(box)) {
-                    processBoxes(reader, box.size + reader.getPosition() - 8, handler.processContainer(box));
+                    processBoxes(reader, box.size + reader.getLocalPosition() - 8, handler.processContainer(box));
                 } else if (handler.shouldAcceptBox(box)) {
                     handler = handler.processBox(box, reader.getBytes((int)box.size - 8));
                 } else if (box.usertype != null) {

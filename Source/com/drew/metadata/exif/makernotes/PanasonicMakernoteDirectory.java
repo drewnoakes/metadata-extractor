@@ -20,8 +20,7 @@
  */
 package com.drew.metadata.exif.makernotes;
 
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Age;
@@ -637,7 +636,7 @@ public class PanasonicMakernoteDirectory extends Directory
         if (bytes==null)
             return null;
 
-        RandomAccessReader reader = new ByteArrayReader(bytes);
+        ReaderInfo reader = ReaderInfo.createFromArray(bytes);
         reader.setMotorolaByteOrder(false);
 
         try {
@@ -668,7 +667,7 @@ public class PanasonicMakernoteDirectory extends Directory
         if (bytes == null)
             return null;
 
-        RandomAccessReader reader = new ByteArrayReader(bytes);
+        ReaderInfo reader = ReaderInfo.createFromArray(bytes);
         reader.setMotorolaByteOrder(false);
 
         try {

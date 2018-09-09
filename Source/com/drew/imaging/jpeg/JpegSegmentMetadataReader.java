@@ -3,6 +3,8 @@ package com.drew.imaging.jpeg;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
+import java.io.IOException;
+
 /**
  * Defines an object that extracts metadata from in JPEG segments.
  */
@@ -22,5 +24,7 @@ public interface JpegSegmentMetadataReader
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
      */
-    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType);
+    //void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType);
+    //void readJpegSegments(@NotNull final Iterable<JpegSegment> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType) throws IOException;
+    void readJpegSegments(@NotNull final Iterable<JpegSegment> segments, @NotNull final Metadata metadata) throws IOException;
 }

@@ -41,20 +41,18 @@ import java.util.*;
  */
 public class JpegSegmentData
 {
-    // TODO key this on JpegSegmentType rather than Byte, and hopefully lose much of the use of 'byte' with this class
     @NotNull
-    private final HashMap<Byte, List<byte[]>> _segmentDataMap = new HashMap<Byte, List<byte[]>>(10);
+    private final HashMap<JpegSegmentType, List<JpegSegment>> _segmentDataMap = new HashMap<JpegSegmentType, List<JpegSegment>>(10);
 
     /**
      * Adds segment bytes to the collection.
      *
-     * @param segmentType  the type of the segment being added
-     * @param segmentBytes the byte array holding data for the segment being added
+     * @param segment  the specific segment being added
      */
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
-    public void addSegment(byte segmentType, @NotNull byte[] segmentBytes)
+    public void addSegment(@NotNull JpegSegment segment)
     {
-        getOrCreateSegmentList(segmentType).add(segmentBytes);
+        getOrCreateSegmentList(segment.getType()).add(segment);
     }
 
     /**
@@ -64,12 +62,8 @@ public class JpegSegmentData
     {
         Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
 
-        for (Byte segmentTypeByte : _segmentDataMap.keySet())
+        for (JpegSegmentType segmentType : _segmentDataMap.keySet())
         {
-            JpegSegmentType segmentType = JpegSegmentType.fromByte(segmentTypeByte);
-            if (segmentType == null) {
-                throw new IllegalStateException("Should not have a segmentTypeByte that is not in the enum: " + Integer.toHexString(segmentTypeByte));
-            }
             segmentTypes.add(segmentType);
         }
 
@@ -83,24 +77,12 @@ public class JpegSegmentData
      * @return a byte[] containing segment data or null if no data exists for that segment
      */
     @Nullable
-    public byte[] getSegment(byte segmentType)
+    public JpegSegment getSegment(@NotNull JpegSegmentType segmentType)
     {
         return getSegment(segmentType, 0);
     }
 
     /**
-     * Gets the first JPEG segment data for the specified type.
-     *
-     * @param segmentType the JpegSegmentType for the desired segment
-     * @return a byte[] containing segment data or null if no data exists for that segment
-     */
-    @Nullable
-    public byte[] getSegment(@NotNull JpegSegmentType segmentType)
-    {
-        return getSegment(segmentType.byteValue, 0);
-    }
-
-    /**
      * Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
      * of segment data for a given type exists.
      *
@@ -109,23 +91,9 @@ public class JpegSegmentData
      * @return the segment data as a byte[], or null if no segment exists for the type &amp; occurrence
      */
     @Nullable
-    public byte[] getSegment(@NotNull JpegSegmentType segmentType, int occurrence)
+    public JpegSegment getSegment(@NotNull JpegSegmentType segmentType, int occurrence)
     {
-        return getSegment(segmentType.byteValue, occurrence);
-    }
-
-    /**
-     * Gets segment data for a specific occurrence and type.  Use this method when more than one occurrence
-     * of segment data for a given type exists.
-     *
-     * @param segmentType identifies the required segment
-     * @param occurrence  the zero-based index of the occurrence
-     * @return the segment data as a byte[], or null if no segment exists for the type &amp; occurrence
-     */
-    @Nullable
-    public byte[] getSegment(byte segmentType, int occurrence)
-    {
-        final List<byte[]> segmentList = getSegmentList(segmentType);
+        final List<JpegSegment> segmentList = getSegmentList(segmentType);
 
         return segmentList != null && segmentList.size() > occurrence
                 ? segmentList.get(occurrence)
@@ -139,38 +107,26 @@ public class JpegSegmentData
      * @return zero or more byte arrays, each holding the data of a JPEG segment
      */
     @NotNull
-    public Iterable<byte[]> getSegments(@NotNull JpegSegmentType segmentType)
+    public Iterable<JpegSegment> getSegments(JpegSegmentType segmentType)
     {
-        return getSegments(segmentType.byteValue);
-    }
-
-    /**
-     * Returns all instances of a given JPEG segment.  If no instances exist, an empty sequence is returned.
-     *
-     * @param segmentType a number which identifies the type of JPEG segment being queried
-     * @return zero or more byte arrays, each holding the data of a JPEG segment
-     */
-    @NotNull
-    public Iterable<byte[]> getSegments(byte segmentType)
-    {
-        final List<byte[]> segmentList = getSegmentList(segmentType);
-        return segmentList == null ? new ArrayList<byte[]>() : segmentList;
+        final List<JpegSegment> segmentList = getSegmentList(segmentType);
+        return segmentList == null ? new ArrayList<JpegSegment>() : segmentList;
     }
 
     @Nullable
-    private List<byte[]> getSegmentList(byte segmentType)
+    private List<JpegSegment> getSegmentList(JpegSegmentType segmentType)
     {
         return _segmentDataMap.get(segmentType);
     }
 
     @NotNull
-    private List<byte[]> getOrCreateSegmentList(byte segmentType)
+    private List<JpegSegment> getOrCreateSegmentList(JpegSegmentType segmentType)
     {
-        List<byte[]> segmentList;
+        List<JpegSegment> segmentList;
         if (_segmentDataMap.containsKey(segmentType)) {
             segmentList = _segmentDataMap.get(segmentType);
         } else {
-            segmentList = new ArrayList<byte[]>();
+            segmentList = new ArrayList<JpegSegment>();
             _segmentDataMap.put(segmentType, segmentList);
         }
         return segmentList;
@@ -184,18 +140,7 @@ public class JpegSegmentData
      */
     public int getSegmentCount(@NotNull JpegSegmentType segmentType)
     {
-        return getSegmentCount(segmentType.byteValue);
-    }
-
-    /**
-     * Returns the count of segment data byte arrays stored for a given segment type.
-     *
-     * @param segmentType identifies the required segment
-     * @return the segment count (zero if no segments exist).
-     */
-    public int getSegmentCount(byte segmentType)
-    {
-        final List<byte[]> segmentList = getSegmentList(segmentType);
+        final List<JpegSegment> segmentList = getSegmentList(segmentType);
         return segmentList == null ? 0 : segmentList.size();
     }
 
@@ -209,20 +154,7 @@ public class JpegSegmentData
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
     public void removeSegmentOccurrence(@NotNull JpegSegmentType segmentType, int occurrence)
     {
-        removeSegmentOccurrence(segmentType.byteValue, occurrence);
-    }
-
-    /**
-     * Removes a specified instance of a segment's data from the collection.  Use this method when more than one
-     * occurrence of segment data exists for a given type exists.
-     *
-     * @param segmentType identifies the required segment
-     * @param occurrence  the zero-based index of the segment occurrence to remove.
-     */
-    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
-    public void removeSegmentOccurrence(byte segmentType, int occurrence)
-    {
-        final List<byte[]> segmentList = _segmentDataMap.get(segmentType);
+        final List<JpegSegment> segmentList = _segmentDataMap.get(segmentType);
         segmentList.remove(occurrence);
     }
 
@@ -232,16 +164,6 @@ public class JpegSegmentData
      * @param segmentType identifies the required segment
      */
     public void removeSegment(@NotNull JpegSegmentType segmentType)
-    {
-        removeSegment(segmentType.byteValue);
-    }
-
-    /**
-     * Removes all segments from the collection having the specified type.
-     *
-     * @param segmentType identifies the required segment
-     */
-    public void removeSegment(byte segmentType)
     {
         _segmentDataMap.remove(segmentType);
     }
@@ -253,17 +175,6 @@ public class JpegSegmentData
      * @return true if data exists, otherwise false
      */
     public boolean containsSegment(@NotNull JpegSegmentType segmentType)
-    {
-        return containsSegment(segmentType.byteValue);
-    }
-
-    /**
-     * Determines whether data is present for a given segment type.
-     *
-     * @param segmentType identifies the required segment
-     * @return true if data exists, otherwise false
-     */
-    public boolean containsSegment(byte segmentType)
     {
         return _segmentDataMap.containsKey(segmentType);
     }

@@ -20,9 +20,9 @@
  */
 package com.drew.imaging.png;
 
-import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 import java.util.*;
@@ -34,7 +34,7 @@ public class PngChunkReader
 {
     private static final byte[] PNG_SIGNATURE_BYTES = {(byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
 
-    public Iterable<PngChunk> extract(@NotNull final SequentialReader reader, @Nullable final Set<PngChunkType> desiredChunkTypes) throws PngProcessingException, IOException
+    public Iterable<PngChunk> extract(@NotNull ReaderInfo reader, @Nullable final Set<PngChunkType> desiredChunkTypes) throws PngProcessingException, IOException
     {
         //
         // PNG DATA STREAM
@@ -70,6 +70,7 @@ public class PngChunkReader
         //     Time information:          tIME
         //
 
+        reader = reader.Clone();
         reader.setMotorolaByteOrder(true); // network byte order
 
         if (!Arrays.equals(PNG_SIGNATURE_BYTES, reader.getBytes(PNG_SIGNATURE_BYTES.length))) {
@@ -93,11 +94,12 @@ public class PngChunkReader
 
             boolean willStoreChunk = desiredChunkTypes == null || desiredChunkTypes.contains(chunkType);
 
-            byte[] chunkData = reader.getBytes(chunkDataLength);
+            ReaderInfo chunkReader = reader.Clone(chunkDataLength);
 
             // Skip the CRC bytes at the end of the chunk
             // TODO consider verifying the CRC value to determine if we're processing bad data
-            reader.skip(4);
+            //reader.skip(4);
+            reader.skip(chunkDataLength);
 
             if (willStoreChunk && seenChunkTypes.contains(chunkType) && !chunkType.areMultipleAllowed()) {
                 throw new PngProcessingException(String.format("Observed multiple instances of PNG chunk '%s', for which multiples are not allowed", chunkType));
@@ -114,9 +116,13 @@ public class PngChunkReader
             }
 
             if (willStoreChunk) {
-                chunks.add(new PngChunk(chunkType, chunkData));
+                chunks.add(new PngChunk(chunkType, chunkReader));
             }
 
+            // Skip the CRC bytes at the end of the chunk
+            // TODO consider verifying the CRC value to determine if we're processing bad data
+            reader.skip(4);
+                
             seenChunkTypes.add(chunkType);
         }
 

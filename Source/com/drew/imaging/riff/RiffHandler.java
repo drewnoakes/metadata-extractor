@@ -20,7 +20,10 @@
  */
 package com.drew.imaging.riff;
 
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
+
+import java.io.IOException;
 
 /**
  * Interface of an class capable of handling events raised during the reading of a RIFF file
@@ -71,5 +74,5 @@ public interface RiffHandler
      * @param fourCC the four character code of the chunk
      * @param payload they payload of the chunk as a byte array
      */
-    void processChunk(@NotNull String fourCC, @NotNull byte[] payload);
+    void processChunk(@NotNull String fourCC, @NotNull ReaderInfo payload) throws IOException;
 }

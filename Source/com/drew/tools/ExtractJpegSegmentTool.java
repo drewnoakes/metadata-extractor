@@ -24,6 +24,7 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.imaging.jpeg.JpegSegment;
 import com.drew.lang.Iterables;
 import com.drew.lang.annotations.NotNull;
 
@@ -67,7 +68,7 @@ public class ExtractJpegSegmentTool
 
         for (int i = 1; i < args.length; i++) {
             JpegSegmentType segmentType = JpegSegmentType.valueOf(args[i].toUpperCase());
-            if (!segmentType.canContainMetadata) {
+            if (!JpegSegmentType.canContainMetadata(segmentType)) {
                 System.err.printf("WARNING: Segment type %s cannot contain metadata so it may not be necessary to extract it%n", segmentType);
             }
             segmentTypes.add(segmentType);
@@ -80,7 +81,7 @@ public class ExtractJpegSegmentTool
 
         System.out.println("Reading: " + filePath);
 
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File(filePath), segmentTypes);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new File(filePath), segmentTypes, true);
 
         saveSegmentFiles(filePath, segmentData);
     }
@@ -88,7 +89,7 @@ public class ExtractJpegSegmentTool
     public static void saveSegmentFiles(@NotNull String jpegFilePath, @NotNull JpegSegmentData segmentData) throws IOException
     {
         for (JpegSegmentType segmentType : segmentData.getSegmentTypes()) {
-            List<byte[]> segments = Iterables.toList(segmentData.getSegments(segmentType));
+            List<JpegSegment> segments = Iterables.toList(segmentData.getSegments(segmentType));
             if (segments.size() == 0) {
                 continue;
             }
@@ -97,12 +98,12 @@ public class ExtractJpegSegmentTool
                 for (int i = 0; i < segments.size(); i++) {
                     String outputFilePath = String.format("%s.%s.%d", jpegFilePath, segmentType.toString().toLowerCase(), i);
                     System.out.println("Writing: " + outputFilePath);
-                    FileUtil.saveBytes(new File(outputFilePath), segments.get(i));
+                    FileUtil.saveBytes(new File(outputFilePath), segments.get(i).getReader().toArray());
                 }
             } else {
                 String outputFilePath = String.format("%s.%s", jpegFilePath, segmentType.toString().toLowerCase());
                 System.out.println("Writing: " + outputFilePath);
-                FileUtil.saveBytes(new File(outputFilePath), segments.get(0));
+                FileUtil.saveBytes(new File(outputFilePath), segments.get(0).getReader().toArray());
             }
         }
     }
@@ -114,7 +115,7 @@ public class ExtractJpegSegmentTool
 
         System.out.print("Where <segment> is zero or more of:");
         for (JpegSegmentType segmentType : JpegSegmentType.class.getEnumConstants()) {
-            if (segmentType.canContainMetadata) {
+            if (JpegSegmentType.canContainMetadata(segmentType)) {
                 System.out.print(" " + segmentType.toString());
             }
         }

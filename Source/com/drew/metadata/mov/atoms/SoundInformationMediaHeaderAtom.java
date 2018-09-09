@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.media.QuickTimeSoundDirectory;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class SoundInformationMediaHeaderAtom extends FullAtom
 {
     int balance;
 
-    public SoundInformationMediaHeaderAtom(SequentialReader reader, Atom atom) throws IOException
+    public SoundInformationMediaHeaderAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

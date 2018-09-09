@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -35,10 +36,10 @@ public class SampleDescription
     String dataFormat;
     int dataReferenceIndex;
 
-    public SampleDescription(SequentialReader reader) throws IOException
+    public SampleDescription(ReaderInfo reader) throws IOException
     {
         sampleDescriptionSize = reader.getUInt32();
-        dataFormat = reader.getString(4);
+        dataFormat = reader.getString(4, Charsets.UTF_8);
         reader.skip(6); // Reserved
         dataReferenceIndex = reader.getUInt16();
     }

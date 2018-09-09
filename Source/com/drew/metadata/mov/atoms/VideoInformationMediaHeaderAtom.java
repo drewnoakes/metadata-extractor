@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class VideoInformationMediaHeaderAtom extends FullAtom
     int graphicsMode;
     int[] opcolor;
 
-    public VideoInformationMediaHeaderAtom(SequentialReader reader, Atom atom) throws IOException
+    public VideoInformationMediaHeaderAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

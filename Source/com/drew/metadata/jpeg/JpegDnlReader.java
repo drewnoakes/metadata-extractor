@@ -22,8 +22,8 @@ package com.drew.metadata.jpeg;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.imaging.jpeg.JpegSegment;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
@@ -39,19 +39,21 @@ import java.util.Collections;
 public class JpegDnlReader implements JpegSegmentMetadataReader
 {
     @NotNull
+    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Collections.singletonList(JpegSegmentType.DNL);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    @Override
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
-        for (byte[] segmentBytes : segments) {
-            extract(segmentBytes, metadata, segmentType);
+        for (JpegSegment segment : segments) {
+            extract(segment.getReader().Clone(), metadata);
         }
     }
 
-    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType)
+    public void extract(ReaderInfo reader, Metadata metadata)
     {
         JpegDirectory directory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         if (directory == null) {
@@ -60,8 +62,6 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
             errorDirectory.addError("DNL segment found without SOFx - illegal JPEG format");
             return;
         }
-
-        SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
 
         try {
             // Only set height from DNL if it's not already defined

@@ -21,6 +21,7 @@
 package com.drew.imaging.png;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -30,12 +31,12 @@ public class PngChunk
     @NotNull
     private final PngChunkType _chunkType;
     @NotNull
-    private final byte[] _bytes;
+    private ReaderInfo _reader;
 
-    public PngChunk(@NotNull PngChunkType chunkType, @NotNull byte[] bytes)
+    public PngChunk(@NotNull PngChunkType chunkType, @NotNull ReaderInfo chunkReader)
     {
         _chunkType = chunkType;
-        _bytes = bytes;
+        _reader = chunkReader;
     }
 
     @NotNull
@@ -45,8 +46,8 @@ public class PngChunk
     }
 
     @NotNull
-    public byte[] getBytes()
+    public ReaderInfo getReader()
     {
-        return _bytes;
+        return _reader;
     }
 }

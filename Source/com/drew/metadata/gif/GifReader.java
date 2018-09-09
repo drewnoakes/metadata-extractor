@@ -20,9 +20,8 @@
  */
 package com.drew.metadata.gif;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
@@ -31,7 +30,6 @@ import com.drew.metadata.gif.GifControlDirectory.DisposalMethod;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.xmp.XmpReader;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -52,9 +50,10 @@ public class GifReader
     private static final String GIF_87A_VERSION_IDENTIFIER = "87a";
     private static final String GIF_89A_VERSION_IDENTIFIER = "89a";
 
-    public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, final @NotNull Metadata metadata) throws IOException
     {
-        reader.setMotorolaByteOrder(false);
+        if(reader.isMotorolaByteOrder())
+            reader = reader.Clone(false);
 
         GifHeaderDirectory header;
         try {
@@ -131,7 +130,7 @@ public class GifReader
         }
     }
 
-    private static GifHeaderDirectory readGifHeader(@NotNull final SequentialReader reader) throws IOException
+    private static GifHeaderDirectory readGifHeader(@NotNull ReaderInfo reader) throws IOException
     {
         // FILE HEADER
         //
@@ -152,7 +151,7 @@ public class GifReader
 
         GifHeaderDirectory headerDirectory = new GifHeaderDirectory();
 
-        String signature = reader.getString(3);
+        String signature = reader.getString(3, Charsets.UTF_8);
 
         if (!signature.equals("GIF"))
         {
@@ -160,7 +159,7 @@ public class GifReader
             return headerDirectory;
         }
 
-        String version = reader.getString(3);
+        String version = reader.getString(3, Charsets.UTF_8);
 
         if (!version.equals(GIF_87A_VERSION_IDENTIFIER) && !version.equals(GIF_89A_VERSION_IDENTIFIER)) {
             headerDirectory.addError("Unexpected GIF version");
@@ -202,11 +201,11 @@ public class GifReader
         return headerDirectory;
     }
 
-    private static void readGifExtensionBlock(SequentialReader reader, Metadata metadata) throws IOException
+    private static void readGifExtensionBlock(ReaderInfo reader, Metadata metadata) throws IOException
     {
         byte extensionLabel = reader.getInt8();
         short blockSizeBytes = reader.getUInt8();
-        long blockStartPos = reader.getPosition();
+        long blockStartPos = reader.getLocalPosition();
 
         switch (extensionLabel)
         {
@@ -229,13 +228,13 @@ public class GifReader
                 break;
         }
 
-        long skipCount = blockStartPos + blockSizeBytes - reader.getPosition();
+        long skipCount = blockStartPos + blockSizeBytes - reader.getLocalPosition();
         if (skipCount > 0)
             reader.skip(skipCount);
     }
 
     @Nullable
-    private static Directory readPlainTextBlock(SequentialReader reader, int blockSizeBytes) throws IOException
+    private static Directory readPlainTextBlock(ReaderInfo reader, int blockSizeBytes) throws IOException
     {
         // It seems this extension is deprecated. If somebody finds an image with this in it, could implement here.
         // Just skip the entire block for now.
@@ -252,13 +251,13 @@ public class GifReader
         return null;
     }
 
-    private static GifCommentDirectory readCommentBlock(SequentialReader reader, int blockSizeBytes) throws IOException
+    private static GifCommentDirectory readCommentBlock(ReaderInfo reader, int blockSizeBytes) throws IOException
     {
-        byte[] buffer = gatherBytes(reader, blockSizeBytes);
-        return new GifCommentDirectory(new StringValue(buffer, Charsets.ASCII));
+        ReaderInfo buffer = gatherBytes(reader, blockSizeBytes);
+        return new GifCommentDirectory(new StringValue(buffer.toArray(), Charsets.ASCII));
     }
 
-    private static void readApplicationExtensionBlock(SequentialReader reader, int blockSizeBytes, Metadata metadata) throws IOException
+    private static void readApplicationExtensionBlock(ReaderInfo reader, int blockSizeBytes, Metadata metadata) throws IOException
     {
         if (blockSizeBytes != 11)
         {
@@ -271,15 +270,15 @@ public class GifReader
         if (extensionType.equals("XMP DataXMP"))
         {
             // XMP data extension
-            byte[] xmpBytes = gatherBytes(reader);
-            new XmpReader().extract(xmpBytes, 0, xmpBytes.length - 257, metadata, null);
+            ReaderInfo xmpBytes = gatherBytes(reader);
+            new XmpReader().extract(xmpBytes.Clone(xmpBytes.getLength() - 257), metadata);
         }
         else if (extensionType.equals("ICCRGBG1012"))
         {
             // ICC profile extension
-            byte[] iccBytes = gatherBytes(reader, ((int) reader.getByte()) & 0xff);
-            if (iccBytes.length != 0)
-                new IccReader().extract(new ByteArrayReader(iccBytes), metadata);
+            ReaderInfo iccBytes = gatherBytes(reader, ((int)reader.getByte()) & 0xff);
+            if (iccBytes.getLength() != 0)
+                new IccReader().extract(iccBytes, metadata);
         }
         else if (extensionType.equals("NETSCAPE2.0"))
         {
@@ -299,7 +298,7 @@ public class GifReader
         }
     }
 
-    private static GifControlDirectory readControlBlock(SequentialReader reader, int blockSizeBytes) throws IOException
+    private static GifControlDirectory readControlBlock(ReaderInfo reader, int blockSizeBytes) throws IOException
     {
         if (blockSizeBytes < 4)
             blockSizeBytes = 4;
@@ -319,7 +318,7 @@ public class GifReader
         return directory;
     }
 
-    private static GifImageDirectory readImageBlock(SequentialReader reader) throws IOException
+    private static GifImageDirectory readImageBlock(ReaderInfo reader) throws IOException
     {
         GifImageDirectory imageDirectory = new GifImageDirectory();
 
@@ -353,42 +352,41 @@ public class GifReader
         return imageDirectory;
     }
 
-    private static byte[] gatherBytes(SequentialReader reader) throws IOException
+    private static ReaderInfo gatherBytes(ReaderInfo reader) throws IOException
     {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        byte[] buffer = new byte[257];
+        int length = 0;
 
         while (true)
         {
             byte b = reader.getByte();
             if (b == 0)
-                return bytes.toByteArray();
+                break;
 
             int bInt = b & 0xFF;
+            reader.skip(bInt);
 
-            buffer[0] = b;
-            reader.getBytes(buffer, 1, bInt);
-            bytes.write(buffer, 0, bInt + 1);
+            length += bInt + 1;
         }
+        
+        return reader.Clone(-length - 1, length);
     }
 
-    private static byte[] gatherBytes(SequentialReader reader, int firstLength) throws IOException
+    private static ReaderInfo gatherBytes(ReaderInfo reader, int firstLength) throws IOException
     {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
         int length = firstLength;
-
+        int readerLength = 0;
+        
         while (length > 0)
         {
-            buffer.write(reader.getBytes(length), 0, length);
-
+            reader.skip(length);
+            readerLength += length;
             length = reader.getByte() & 0xff;
         }
 
-        return buffer.toByteArray();
+        return reader.Clone(-readerLength - 1, readerLength);
     }
 
-    private static void skipBlocks(SequentialReader reader) throws IOException
+    private static void skipBlocks(ReaderInfo reader) throws IOException
     {
         while (true)
         {

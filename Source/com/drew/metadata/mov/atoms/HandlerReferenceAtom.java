@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -40,15 +41,15 @@ public class HandlerReferenceAtom extends FullAtom
     String componentSubtype;
     String componentName;
 
-    public HandlerReferenceAtom(SequentialReader reader, Atom atom) throws IOException
+    public HandlerReferenceAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
-        componentType = reader.getString(4);
-        componentSubtype = reader.getString(4);
+        componentType = reader.getString(4, Charsets.UTF_8);
+        componentSubtype = reader.getString(4, Charsets.UTF_8);
         reader.skip(4); // Reserved
         reader.skip(4); // Reserved
         reader.skip(4); // Reserved
-        componentName = reader.getString(reader.getUInt8());
+        componentName = reader.getString(reader.getUInt8(), Charsets.UTF_8);
     }
 }

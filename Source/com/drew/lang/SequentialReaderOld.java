@@ -34,7 +34,7 @@ import java.nio.charset.Charset;
  * @author Drew Noakes https://drewnoakes.com
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class SequentialReader
+public abstract class SequentialReaderOld
 {
     // TODO review whether the masks are needed (in both this and RandomAccessReader)
 

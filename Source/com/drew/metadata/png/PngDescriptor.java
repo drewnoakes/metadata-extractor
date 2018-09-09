@@ -22,8 +22,7 @@ package com.drew.metadata.png;
 
 import com.drew.imaging.png.PngColorType;
 import com.drew.lang.KeyValuePair;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -155,7 +154,7 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
         if (bytes == null) {
             return null;
         }
-        SequentialReader reader = new SequentialByteArrayReader(bytes);
+        ReaderInfo reader = ReaderInfo.createFromArray(bytes);
         try {
             // TODO do we need to normalise these based upon the bit depth?
             switch (bytes.length) {

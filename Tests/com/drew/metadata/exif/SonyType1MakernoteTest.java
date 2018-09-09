@@ -21,6 +21,7 @@
 
 package com.drew.metadata.exif;
 
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.metadata.exif.makernotes.SonyType1MakernoteDescriptor;
 import com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class SonyType1MakernoteTest
 {
     @Test public void testSonyType1Makernote() throws Exception
     {
-        SonyType1MakernoteDirectory directory = ExifReaderTest.processBytes("Tests/Data/sonyType1.jpg.app1", SonyType1MakernoteDirectory.class);
+        SonyType1MakernoteDirectory directory = ExifReaderTest.processSegmentBytes("Tests/Data/sonyType1.jpg.app1", JpegSegmentType.APP1, SonyType1MakernoteDirectory.class);
 
         assertNotNull(directory);
         assertFalse(directory.hasErrors());

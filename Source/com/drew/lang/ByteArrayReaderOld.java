@@ -24,40 +24,40 @@ package com.drew.lang;
 import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
- * Provides methods to read specific values from a {@link RandomAccessFile}, with a consistent, checked exception structure for
+ * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
  * issues.
+ * <p>
+ * By default, the reader operates with Motorola byte order (big endianness).  This can be changed by calling
+ * <code>setMotorolaByteOrder(boolean)</code>.
  *
  * @author Drew Noakes https://drewnoakes.com
  * */
-public class RandomAccessFileReader extends RandomAccessReader
+public class ByteArrayReaderOld extends RandomAccessReaderOld
 {
     @NotNull
-    private final RandomAccessFile _file;
-    private final long _length;
-    private int _currentIndex;
-
+    private final byte[] _buffer;
     private final int _baseOffset;
 
     @SuppressWarnings({ "ConstantConditions" })
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
-    public RandomAccessFileReader(@NotNull RandomAccessFile file) throws IOException
+    public ByteArrayReaderOld(@NotNull byte[] buffer)
     {
-        this(file, 0);
+        this(buffer, 0);
     }
 
     @SuppressWarnings({ "ConstantConditions" })
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
-    public RandomAccessFileReader(@NotNull RandomAccessFile file, int baseOffset) throws IOException
+    public ByteArrayReaderOld(@NotNull byte[] buffer, int baseOffset)
     {
-        if (file == null)
+        if (buffer == null)
             throw new NullPointerException();
+        if (baseOffset < 0)
+            throw new IllegalArgumentException("Must be zero or greater");
 
-        _file = file;
+        _buffer = buffer;
         _baseOffset = baseOffset;
-        _length = _file.length();
     }
 
     @Override
@@ -69,21 +69,29 @@ public class RandomAccessFileReader extends RandomAccessReader
     @Override
     public long getLength()
     {
-        return _length;
+        return _buffer.length - _baseOffset;
     }
 
     @Override
     public byte getByte(int index) throws IOException
     {
-        if (index != _currentIndex)
-            seek(index);
+        validateIndex(index, 1);
+        return _buffer[index + _baseOffset];
+    }
 
-        final int b = _file.read();
-        if (b < 0)
-            throw new BufferBoundsException("Unexpected end of file encountered.");
-        assert (b <= 0xff);
-        _currentIndex++;
-        return (byte)b;
+    @Override
+    protected void validateIndex(int index, int bytesRequested) throws IOException
+    {
+        if (!isValidIndex(index, bytesRequested))
+            throw new BufferBoundsException(toUnshiftedOffset(index), bytesRequested, _buffer.length);
+    }
+
+    @Override
+    protected boolean isValidIndex(int index, int bytesRequested) throws IOException
+    {
+        return bytesRequested >= 0
+            && index >= 0
+            && (long)index + (long)bytesRequested - 1L < getLength();
     }
 
     @Override
@@ -92,38 +100,8 @@ public class RandomAccessFileReader extends RandomAccessReader
     {
         validateIndex(index, count);
 
-        if (index != _currentIndex)
-            seek(index);
-
         byte[] bytes = new byte[count];
-        final int bytesRead = _file.read(bytes);
-        _currentIndex += bytesRead;
-        if (bytesRead != count)
-            throw new BufferBoundsException("Unexpected end of file encountered.");
+        System.arraycopy(_buffer, index + _baseOffset, bytes, 0, count);
         return bytes;
-    }
-
-    private void seek(final int index) throws IOException
-    {
-        if (index == _currentIndex)
-            return;
-
-        _file.seek(index);
-        _currentIndex = index;
-    }
-
-    @Override
-    protected boolean isValidIndex(int index, int bytesRequested) throws IOException
-    {
-        return bytesRequested >= 0
-                && index >= 0
-                && (long)index + (long)bytesRequested - 1L < _length;
-    }
-
-    @Override
-    protected void validateIndex(final int index, final int bytesRequested) throws IOException
-    {
-        if (!isValidIndex(index, bytesRequested))
-            throw new BufferBoundsException(index, bytesRequested, _length);
     }
 }

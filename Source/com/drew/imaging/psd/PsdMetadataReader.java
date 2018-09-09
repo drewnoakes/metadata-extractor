@@ -21,8 +21,9 @@
 
 package com.drew.imaging.psd;
 
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.RandomAccessStream;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.photoshop.PsdReader;
@@ -42,7 +43,7 @@ public class PsdMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             inputStream.close();
         }
@@ -51,10 +52,10 @@ public class PsdMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull ReaderInfo reader)
     {
         Metadata metadata = new Metadata();
-        new PsdReader().extract(new StreamReader(inputStream), metadata);
+        new PsdReader().extract(reader, metadata);
         return metadata;
     }
 }

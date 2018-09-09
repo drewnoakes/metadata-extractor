@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.iptc;
 
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
@@ -44,7 +44,7 @@ public class IptcReaderTest
     {
         Metadata metadata = new Metadata();
         byte[] bytes = FileUtil.readBytes(filePath);
-        new IptcReader().extract(new SequentialByteArrayReader(bytes), metadata, bytes.length);
+        new IptcReader().extract(ReaderInfo.createFromArray(bytes), metadata);
         IptcDirectory directory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
         assertNotNull(directory);
         return directory;

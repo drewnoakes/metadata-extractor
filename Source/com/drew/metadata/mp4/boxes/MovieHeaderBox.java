@@ -21,7 +21,7 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.Rational;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mp4.Mp4Directory;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class MovieHeaderBox extends FullBox
     protected int[] matrix;
     protected long nextTrackID;
 
-    public MovieHeaderBox(SequentialReader reader, Box box) throws IOException
+    public MovieHeaderBox(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
         if (version == 1) {

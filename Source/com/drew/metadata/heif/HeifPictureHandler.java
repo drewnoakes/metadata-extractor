@@ -21,8 +21,7 @@
 package com.drew.metadata.heif;
 
 import com.drew.imaging.heif.HeifHandler;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.boxes.*;
 
@@ -71,29 +70,29 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    protected HeifHandler processBox(Box box, byte[] payload) throws IOException
+    //protected HeifHandler processBox(Box box, byte[] payload) throws IOException
+    protected HeifHandler processBox(Box box, ReaderInfo payloadReader) throws IOException
     {
-        SequentialReader reader = new SequentialByteArrayReader(payload);
         if (box.type.equals(HeifBoxTypes.BOX_ITEM_PROTECTION)) {
-            itemProtectionBox = new ItemProtectionBox(reader, box);
+            itemProtectionBox = new ItemProtectionBox(payloadReader, box);
         } else if (box.type.equals(HeifBoxTypes.BOX_PRIMARY_ITEM)) {
-            primaryItemBox = new PrimaryItemBox(reader, box);
+            primaryItemBox = new PrimaryItemBox(payloadReader, box);
         } else if (box.type.equals(HeifBoxTypes.BOX_ITEM_INFO)) {
-            itemInfoBox = new ItemInfoBox(reader, box);
+            itemInfoBox = new ItemInfoBox(payloadReader, box);
             itemInfoBox.addMetadata(directory);
         } else if (box.type.equals(HeifBoxTypes.BOX_ITEM_LOCATION)) {
-            itemLocationBox = new ItemLocationBox(reader, box);
+            itemLocationBox = new ItemLocationBox(payloadReader, box);
         } else if (box.type.equals(HeifBoxTypes.BOX_IMAGE_SPATIAL_EXTENTS)) {
-            ImageSpatialExtentsProperty imageSpatialExtentsProperty = new ImageSpatialExtentsProperty(reader, box);
+            ImageSpatialExtentsProperty imageSpatialExtentsProperty = new ImageSpatialExtentsProperty(payloadReader, box);
             imageSpatialExtentsProperty.addMetadata(directory);
         } else if (box.type.equals(HeifBoxTypes.BOX_AUXILIARY_TYPE_PROPERTY)) {
-            AuxiliaryTypeProperty auxiliaryTypeProperty = new AuxiliaryTypeProperty(reader, box);
+            AuxiliaryTypeProperty auxiliaryTypeProperty = new AuxiliaryTypeProperty(payloadReader, box);
         }
         return this;
     }
 
     @Override
-    protected void processContainer(Box box, SequentialReader reader) throws IOException
+    protected void processContainer(Box box, ReaderInfo reader) throws IOException
     {
 
     }

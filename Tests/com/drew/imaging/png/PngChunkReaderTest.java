@@ -21,9 +21,10 @@
 package com.drew.imaging.png;
 
 import com.drew.lang.Iterables;
-import com.drew.lang.StreamReader;
+import com.drew.lang.RandomAccessStream;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -37,10 +38,12 @@ public class PngChunkReaderTest
 {
     public static List<PngChunk> processFile(String filePath) throws PngProcessingException, IOException
     {
+        File file = new File(filePath);
+        
         FileInputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(filePath);
-            return Iterables.toList(new PngChunkReader().extract(new StreamReader(inputStream), null));
+            inputStream = new FileInputStream(file);
+            return Iterables.toList(new PngChunkReader().extract(new RandomAccessStream(inputStream, file.length()).createReader(), null));
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -56,22 +59,22 @@ public class PngChunkReaderTest
         assertEquals(6, chunks.size());
 
         assertEquals(PngChunkType.IHDR, chunks.get(0).getType());
-        assertEquals(13, chunks.get(0).getBytes().length);
+        assertEquals(13, chunks.get(0).getReader().getLength()); //.getBytes().length);
 
         assertEquals(PngChunkType.sRGB, chunks.get(1).getType());
-        assertEquals(1, chunks.get(1).getBytes().length);
+        assertEquals(1, chunks.get(1).getReader().getLength());
 
         assertEquals(PngChunkType.gAMA, chunks.get(2).getType());
-        assertEquals(4, chunks.get(2).getBytes().length);
+        assertEquals(4, chunks.get(2).getReader().getLength());
 
         assertEquals(PngChunkType.pHYs, chunks.get(3).getType());
-        assertEquals(9, chunks.get(3).getBytes().length);
+        assertEquals(9, chunks.get(3).getReader().getLength());
 
         assertEquals(PngChunkType.IDAT, chunks.get(4).getType());
-        assertEquals(17, chunks.get(4).getBytes().length);
+        assertEquals(17, chunks.get(4).getReader().getLength());
 
         assertEquals(PngChunkType.IEND, chunks.get(5).getType());
-        assertEquals(0, chunks.get(5).getBytes().length);
+        assertEquals(0, chunks.get(5).getReader().getLength());
     }
 
     @Test
@@ -82,18 +85,18 @@ public class PngChunkReaderTest
         assertEquals(5, chunks.size());
 
         assertEquals(PngChunkType.IHDR, chunks.get(0).getType());
-        assertEquals(13, chunks.get(0).getBytes().length);
+        assertEquals(13, chunks.get(0).getReader().getLength());
 
         assertEquals(PngChunkType.tEXt, chunks.get(1).getType());
-        assertEquals(25, chunks.get(1).getBytes().length);
+        assertEquals(25, chunks.get(1).getReader().getLength());
 
         assertEquals(PngChunkType.iTXt, chunks.get(2).getType());
-        assertEquals(802, chunks.get(2).getBytes().length);
+        assertEquals(802, chunks.get(2).getReader().getLength());
 
         assertEquals(PngChunkType.IDAT, chunks.get(3).getType());
-        assertEquals(130, chunks.get(3).getBytes().length);
+        assertEquals(130, chunks.get(3).getReader().getLength());
 
         assertEquals(PngChunkType.IEND, chunks.get(4).getType());
-        assertEquals(0, chunks.get(4).getBytes().length);
+        assertEquals(0, chunks.get(4).getReader().getLength());
     }
 }

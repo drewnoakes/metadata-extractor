@@ -36,7 +36,7 @@ import static org.junit.Assert.fail;
  */
 public abstract class RandomAccessTestBase
 {
-    protected abstract RandomAccessReader createReader(byte[] bytes);
+    protected abstract ReaderInfo createReader(byte[] bytes);
 
     @Test
     public void testDefaultEndianness()
@@ -48,7 +48,7 @@ public abstract class RandomAccessTestBase
     public void testGetInt8() throws Exception
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals((byte)0, reader.getInt8(0));
         assertEquals((byte)1, reader.getInt8(1));
@@ -60,7 +60,7 @@ public abstract class RandomAccessTestBase
     public void testGetUInt8() throws Exception
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0, reader.getUInt8(0));
         assertEquals(1, reader.getUInt8(1));
@@ -72,7 +72,7 @@ public abstract class RandomAccessTestBase
     public void testGetUInt8_OutOfBounds()
     {
         try {
-            RandomAccessReader reader = createReader(new byte[2]);
+            ReaderInfo reader = createReader(new byte[2]);
             reader.getUInt8(2);
             fail("Exception expected");
         } catch (IOException ex) {
@@ -86,7 +86,7 @@ public abstract class RandomAccessTestBase
         assertEquals(-1, createReader(new byte[]{(byte)0xff, (byte)0xff}).getInt16(0));
 
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals((short)0x0001, reader.getInt16(0));
         assertEquals((short)0x017F, reader.getInt16(1));
@@ -103,7 +103,7 @@ public abstract class RandomAccessTestBase
     public void testGetUInt16() throws Exception
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0x0001, reader.getUInt16(0));
         assertEquals(0x017F, reader.getUInt16(1));
@@ -120,7 +120,7 @@ public abstract class RandomAccessTestBase
     public void testGetUInt16_OutOfBounds()
     {
         try {
-            RandomAccessReader reader = createReader(new byte[2]);
+            ReaderInfo reader = createReader(new byte[2]);
             reader.getUInt16(1);
             fail("Exception expected");
         } catch (IOException ex) {
@@ -134,7 +134,7 @@ public abstract class RandomAccessTestBase
         assertEquals(-1, createReader(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff}).getInt32(0));
 
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0x00017FFF, reader.getInt32(0));
         assertEquals(0x017FFF02, reader.getInt32(1));
@@ -155,7 +155,7 @@ public abstract class RandomAccessTestBase
         assertEquals(4294967295L, createReader(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff}).getUInt32(0));
 
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF, 0x02, 0x03, 0x04};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0x00017FFFL, reader.getUInt32(0));
         assertEquals(0x017FFF02L, reader.getUInt32(1));
@@ -174,7 +174,7 @@ public abstract class RandomAccessTestBase
     public void testGetInt32_OutOfBounds()
     {
         try {
-            RandomAccessReader reader = createReader(new byte[3]);
+            ReaderInfo reader = createReader(new byte[3]);
             reader.getInt32(0);
             fail("Exception expected");
         } catch (IOException ex) {
@@ -186,7 +186,7 @@ public abstract class RandomAccessTestBase
     public void testGetInt64() throws IOException
     {
         byte[] buffer = new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)0xFF};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0x0001020304050607L, reader.getInt64(0));
         assertEquals(0x01020304050607FFL, reader.getInt64(1));
@@ -201,14 +201,14 @@ public abstract class RandomAccessTestBase
     public void testGetInt64_OutOfBounds() throws Exception
     {
         try {
-            RandomAccessReader reader = createReader(new byte[7]);
+            ReaderInfo reader = createReader(new byte[7]);
             reader.getInt64(0);
             fail("Exception expected");
         } catch (IOException ex) {
             assertEquals("Attempt to read from beyond end of underlying data source (requested index: 0, requested count: 8, max index: 6)", ex.getMessage());
         }
         try {
-            RandomAccessReader reader = createReader(new byte[7]);
+            ReaderInfo reader = createReader(new byte[7]);
             reader.getInt64(-1);
             fail("Exception expected");
         } catch (IOException ex) {
@@ -223,7 +223,7 @@ public abstract class RandomAccessTestBase
         assertTrue(Float.isNaN(Float.intBitsToFloat(nanBits)));
 
         byte[] buffer = new byte[]{0x7f, (byte)0xc0, 0x00, 0x00};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertTrue(Float.isNaN(reader.getFloat32(0)));
     }
@@ -235,7 +235,7 @@ public abstract class RandomAccessTestBase
         assertTrue(Double.isNaN(Double.longBitsToDouble(nanBits)));
 
         byte[] buffer = new byte[]{(byte)0xff, (byte)0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-        RandomAccessReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertTrue(Double.isNaN(reader.getDouble64(0)));
     }
@@ -244,7 +244,7 @@ public abstract class RandomAccessTestBase
     public void testGetNullTerminatedString() throws Exception
     {
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47};
-        RandomAccessReader reader = createReader(bytes);
+        ReaderInfo reader = createReader(bytes);
 
         assertEquals("", reader.getNullTerminatedString(0, 0, Charsets.UTF_8));
         assertEquals("A", reader.getNullTerminatedString(0, 1, Charsets.UTF_8));
@@ -265,7 +265,7 @@ public abstract class RandomAccessTestBase
     public void testGetString() throws Exception
     {
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x00, 0x45, 0x46, 0x47};
-        RandomAccessReader reader = createReader(bytes);
+        ReaderInfo reader = createReader(bytes);
 
         assertEquals("", reader.getString(0, 0, Charsets.UTF_8));
         assertEquals("A", reader.getString(0, 1, Charsets.UTF_8));
@@ -285,7 +285,7 @@ public abstract class RandomAccessTestBase
     @Test
     public void testIndexPlusCountExceedsIntMaxValue()
     {
-        RandomAccessReader reader = createReader(new byte[10]);
+        ReaderInfo reader = createReader(new byte[10]);
 
         try {
             reader.getBytes(0x6FFFFFFF, 0x6FFFFFFF);
@@ -297,7 +297,7 @@ public abstract class RandomAccessTestBase
     @Test
     public void testOverflowBoundsCalculation()
     {
-        RandomAccessReader reader = createReader(new byte[10]);
+        ReaderInfo reader = createReader(new byte[10]);
 
         try {
             reader.getBytes(5, 10);
@@ -311,7 +311,7 @@ public abstract class RandomAccessTestBase
     {
         createReader(new byte[50]).getBytes(0, 50);
 
-        RandomAccessReader reader = createReader(new byte[50]);
+        ReaderInfo reader = createReader(new byte[50]);
         reader.getBytes(25, 25);
 
         try {
@@ -325,7 +325,7 @@ public abstract class RandomAccessTestBase
     {
         createReader(new byte[1]).getInt8(0);
 
-        RandomAccessReader reader = createReader(new byte[2]);
+        ReaderInfo reader = createReader(new byte[2]);
         reader.getInt8(0);
         reader.getInt8(1);
 

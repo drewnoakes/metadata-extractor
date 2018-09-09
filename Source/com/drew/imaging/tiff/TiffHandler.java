@@ -20,7 +20,7 @@
  */
 package com.drew.imaging.tiff;
 
-import com.drew.lang.RandomAccessReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -56,9 +56,8 @@ public interface TiffHandler
     Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);
 
     boolean customProcessTag(int tagOffset,
-                             @NotNull Set<Integer> processedIfdOffsets,
-                             int tiffHeaderOffset,
-                             @NotNull RandomAccessReader reader,
+                             @NotNull Set<Long> processedIfdOffsets,
+                             @NotNull ReaderInfo reader,
                              int tagId,
                              int byteCount) throws IOException;
 

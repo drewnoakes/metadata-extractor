@@ -22,7 +22,6 @@
 package com.drew.metadata.adobe;
 
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.tools.FileUtil;
@@ -31,6 +30,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.drew.lang.Iterables.toList;
+import com.drew.lang.ReaderInfo;
 import static org.junit.Assert.*;
 
 /**
@@ -42,7 +42,7 @@ public class AdobeJpegReaderTest
     public static AdobeJpegDirectory processBytes(@NotNull String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
-        new AdobeJpegReader().extract(new SequentialByteArrayReader(FileUtil.readBytes(filePath)), metadata);
+        new AdobeJpegReader().extract(ReaderInfo.createFromArray(FileUtil.readBytes(filePath)), metadata);
 
         AdobeJpegDirectory directory = metadata.getFirstDirectoryOfType(AdobeJpegDirectory.class);
         assertNotNull(directory);

@@ -13,7 +13,6 @@ import com.drew.metadata.xmp.XmpReader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Reads file passed in through SequentialReader and parses encountered data:
@@ -48,12 +47,11 @@ public class EpsReader
      * data and then set the position to the beginning of the PostScript data.  If it does not, the position will not
      * be changed.  After both scenarios, the main extract method is called.
      *
-     * @param inputStream InputStream containing file
+     * @param reader ReaderInfo containing file
      * @param metadata Metadata to add directory to and extracted data
      */
-    public void extract(@NotNull final InputStream inputStream, @NotNull final Metadata metadata) throws IOException
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata) throws IOException
     {
-        RandomAccessStreamReader reader = new RandomAccessStreamReader(inputStream);
         EpsDirectory directory = new EpsDirectory();
         metadata.addDirectory(directory);
 
@@ -62,6 +60,8 @@ public class EpsReader
          *
          * 0x25215053 (%!PS) signifies an EPS File and leads straight into the PostScript
          */
+        ReaderInfo origreader = reader.Clone();
+        
         switch (reader.getInt32(0)) {
             case 0xC5D0D3C6:
                 reader.setMotorolaByteOrder(false);
@@ -79,8 +79,7 @@ public class EpsReader
                     directory.setInt(EpsDirectory.TAG_TIFF_PREVIEW_OFFSET, tifOffset);
                     // Get Tiff metadata
                     try {
-                        ByteArrayReader byteArrayReader = new ByteArrayReader(reader.getBytes(tifOffset, tifSize));
-                        new TiffReader().processTiff(byteArrayReader, new PhotoshopTiffHandler(metadata, null), 0);
+                        new TiffReader().processTiff(reader.Clone(tifOffset, tifSize), new PhotoshopTiffHandler(metadata, null));
                     } catch (TiffProcessingException ex) {
                         directory.addError("Unable to process TIFF data: " + ex.getMessage());
                     }
@@ -90,11 +89,10 @@ public class EpsReader
                 }
 
                 // TODO avoid allocating byte array here -- read directly from InputStream
-                extract(directory, metadata, new SequentialByteArrayReader(reader.getBytes(postScriptOffset, postScriptLength)));
+                extract(directory, metadata, reader.Clone(postScriptOffset, postScriptLength));
                 break;
             case 0x25215053:
-                inputStream.reset();
-                extract(directory, metadata, new StreamReader(inputStream));
+                extract(directory, metadata, origreader);
                 break;
             default:
                 directory.addError("File type not supported.");
@@ -110,7 +108,8 @@ public class EpsReader
      *
      * @param metadata Metadata to add directory to and extracted data
      */
-    private void extract(@NotNull final EpsDirectory directory, @NotNull Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    //private void extract(@NotNull final EpsDirectory directory, @NotNull Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    private void extract(@NotNull final EpsDirectory directory, @NotNull Metadata metadata, @NotNull ReaderInfo reader) throws IOException
     {
         StringBuilder line = new StringBuilder();
 
@@ -229,29 +228,29 @@ public class EpsReader
     /**
      * Decodes a commented hex section, and uses {@link PhotoshopReader} to decode the resulting data.
      */
-    private static void extractPhotoshopData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    private static void extractPhotoshopData(@NotNull final Metadata metadata, @NotNull ReaderInfo reader) throws IOException
     {
         byte[] buffer = decodeHexCommentBlock(reader);
 
         if (buffer != null)
-            new PhotoshopReader().extract(new SequentialByteArrayReader(buffer), buffer.length, metadata);
+            new PhotoshopReader().extract(ReaderInfo.createFromArray(buffer), metadata);
     }
 
     /**
      * Decodes a commented hex section, and uses {@link IccReader} to decode the resulting data.
      */
-    private static void extractIccData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    private static void extractIccData(@NotNull final Metadata metadata, @NotNull ReaderInfo reader) throws IOException
     {
         byte[] buffer = decodeHexCommentBlock(reader);
 
         if (buffer != null)
-            new IccReader().extract(new ByteArrayReader(buffer), metadata);
+            new IccReader().extract(ReaderInfo.createFromArray(buffer), metadata);
     }
 
     /**
      * Extracts an XMP xpacket, and uses {@link XmpReader} to decode the resulting data.
      */
-    private static void extractXmpData(@NotNull final Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    private static void extractXmpData(@NotNull final Metadata metadata, @NotNull ReaderInfo reader) throws IOException
     {
         byte[] bytes = readUntil(reader, "<?xpacket end=\"w\"?>".getBytes());
         String xmp = new String(bytes, Charsets.UTF_8);
@@ -262,7 +261,7 @@ public class EpsReader
      * Reads all bytes until the given sentinel is observed.
      * The sentinel will be included in the returned bytes.
      */
-    private static byte[] readUntil(@NotNull SequentialReader reader, @NotNull byte[] sentinel) throws IOException
+    private static byte[] readUntil(@NotNull ReaderInfo reader, @NotNull byte[] sentinel) throws IOException
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
@@ -301,7 +300,7 @@ public class EpsReader
      * @return The decoded bytes, or <code>null</code> if decoding failed.
      */
     @Nullable
-    private static byte[] decodeHexCommentBlock(@NotNull SequentialReader reader) throws IOException
+    private static byte[] decodeHexCommentBlock(@NotNull ReaderInfo reader) throws IOException
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 

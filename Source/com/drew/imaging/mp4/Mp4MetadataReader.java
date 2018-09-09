@@ -22,6 +22,8 @@ package com.drew.imaging.mp4;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.RandomAccessStream;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.mp4.Mp4BoxHandler;
@@ -42,7 +44,7 @@ public class Mp4MetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             inputStream.close();
         }
@@ -51,10 +53,10 @@ public class Mp4MetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
+    public static Metadata readMetadata(@NotNull ReaderInfo reader) throws IOException
     {
         Metadata metadata = new Metadata();
-        Mp4Reader.extract(inputStream, new Mp4BoxHandler(metadata));
+        Mp4Reader.extract(reader, new Mp4BoxHandler(metadata));
         return metadata;
     }
 }

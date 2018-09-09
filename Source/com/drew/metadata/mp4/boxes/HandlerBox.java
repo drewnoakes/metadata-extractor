@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mp4.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -39,12 +40,12 @@ public class HandlerBox extends FullBox
 
     String name;
 
-    public HandlerBox(SequentialReader reader, Box box) throws IOException
+    public HandlerBox(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 
         reader.skip(4); // Pre-defined
-        handlerType = reader.getString(4);
+        handlerType = reader.getString(4, Charsets.UTF_8);
         reader.skip(12); // Reserved
         name = reader.getNullTerminatedString((int)size - 32, Charset.defaultCharset());
     }

@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.media.QuickTimeMusicDirectory;
 
 import java.io.IOException;
@@ -32,13 +32,13 @@ import java.io.IOException;
  */
 public class MusicSampleDescriptionAtom extends SampleDescriptionAtom<MusicSampleDescriptionAtom.MusicSampleDescription>
 {
-    public MusicSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public MusicSampleDescriptionAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }
 
     @Override
-    MusicSampleDescription getSampleDescription(SequentialReader reader) throws IOException
+    MusicSampleDescription getSampleDescription(ReaderInfo reader) throws IOException
     {
         return new MusicSampleDescription(reader);
     }
@@ -52,7 +52,7 @@ public class MusicSampleDescriptionAtom extends SampleDescriptionAtom<MusicSampl
     {
         long flags;
 
-        public MusicSampleDescription(SequentialReader reader) throws IOException
+        public MusicSampleDescription(ReaderInfo reader) throws IOException
         {
             super(reader);
 

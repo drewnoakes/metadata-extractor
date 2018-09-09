@@ -21,7 +21,7 @@
 package com.drew.metadata.pcx;
 
 import com.drew.imaging.ImageProcessingException;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
@@ -38,7 +38,7 @@ import com.drew.metadata.Metadata;
  */
 public class PcxReader
 {
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata)
     {
         reader.setMotorolaByteOrder(false);
 

@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.QuickTimeDictionary;
 import com.drew.metadata.mov.media.QuickTimeSoundDirectory;
 
@@ -33,13 +33,13 @@ import java.io.IOException;
  */
 public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampleDescriptionAtom.SoundSampleDescription>
 {
-    public SoundSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public SoundSampleDescriptionAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }
 
     @Override
-    SoundSampleDescription getSampleDescription(SequentialReader reader) throws IOException
+    SoundSampleDescription getSampleDescription(ReaderInfo reader) throws IOException
     {
         return new SoundSampleDescription(reader);
     }
@@ -64,7 +64,7 @@ public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampl
         int packetSize;
         long sampleRate;
 
-        public SoundSampleDescription(SequentialReader reader) throws IOException
+        public SoundSampleDescription(ReaderInfo reader) throws IOException
         {
             super(reader);
 

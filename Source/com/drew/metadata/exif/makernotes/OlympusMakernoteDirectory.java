@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.exif.makernotes;
 
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
@@ -476,7 +476,7 @@ public class OlympusMakernoteDirectory extends Directory
 
     private void processCameraSettings(byte[] bytes)
     {
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
+        ReaderInfo reader = ReaderInfo.createFromArray(bytes);
         reader.setMotorolaByteOrder(true);
 
         int count = bytes.length / 4;

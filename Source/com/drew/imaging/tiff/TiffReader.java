@@ -20,7 +20,7 @@
  */
 package com.drew.imaging.tiff;
 
-import com.drew.lang.RandomAccessReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 
@@ -38,44 +38,45 @@ public class TiffReader
     /**
      * Processes a TIFF data sequence.
      *
-     * @param reader the {@link RandomAccessReader} from which the data should be read
+     * @param reader the {@link ReaderInfo} from which the data should be read
      * @param handler the {@link TiffHandler} that will coordinate processing and accept read values
-     * @param tiffHeaderOffset the offset within <code>reader</code> at which the TIFF header starts
      * @throws TiffProcessingException if an error occurred during the processing of TIFF data that could not be
      *                                 ignored or recovered from
      * @throws IOException an error occurred while accessing the required data
      */
-    public void processTiff(@NotNull final RandomAccessReader reader,
-                            @NotNull final TiffHandler handler,
-                            final int tiffHeaderOffset) throws TiffProcessingException, IOException
+    public void processTiff(@NotNull ReaderInfo reader,
+                            @NotNull final TiffHandler handler) throws TiffProcessingException, IOException
     {
         // This must be either "MM" or "II".
-        short byteOrderIdentifier = reader.getInt16(tiffHeaderOffset);
+        short byteOrderIdentifier = reader.getInt16(0);
 
         if (byteOrderIdentifier == 0x4d4d) { // "MM"
-            reader.setMotorolaByteOrder(true);
+            if(!reader.isMotorolaByteOrder())
+                reader = reader.Clone(false);
         } else if (byteOrderIdentifier == 0x4949) { // "II"
-            reader.setMotorolaByteOrder(false);
+            if(reader.isMotorolaByteOrder())
+                reader = reader.Clone(false);
         } else {
             throw new TiffProcessingException("Unclear distinction between Motorola/Intel byte ordering: " + byteOrderIdentifier);
         }
 
         // Check the next two values for correctness.
-        final int tiffMarker = reader.getUInt16(2 + tiffHeaderOffset);
+        final int tiffMarker = reader.getUInt16(2);
         handler.setTiffMarker(tiffMarker);
 
-        int firstIfdOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
+        int firstIfdOffset = reader.getInt32(4);
 
         // David Ekholm sent a digital camera image that has this problem
         // TODO getLength should be avoided as it causes RandomAccessStreamReader to read to the end of the stream
+        // Update: solved with RandomAccessReader and ReaderInfo implementation
         if (firstIfdOffset >= reader.getLength() - 1) {
             handler.warn("First IFD offset is beyond the end of the TIFF data segment -- trying default offset");
             // First directory normally starts immediately after the offset bytes, so try that
-            firstIfdOffset = tiffHeaderOffset + 2 + 2 + 4;
+            firstIfdOffset = 2 + 2 + 4;
         }
 
-        Set<Integer> processedIfdOffsets = new HashSet<Integer>();
-        processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset);
+        Set<Long> processedIfdOffsets = new HashSet<Long>();
+        processIfd(handler, reader, processedIfdOffsets, firstIfdOffset);
     }
 
     /**
@@ -95,27 +96,25 @@ public class TiffReader
      *
      *
      * @param handler the {@link com.drew.imaging.tiff.TiffHandler} that will coordinate processing and accept read values
-     * @param reader the {@link com.drew.lang.RandomAccessReader} from which the data should be read
+     * @param reader the {@link ReaderInfo} from which the data should be read
      * @param processedIfdOffsets the set of visited IFD offsets, to avoid revisiting the same IFD in an endless loop
      * @param ifdOffset the offset within <code>reader</code> at which the IFD data starts
-     * @param tiffHeaderOffset the offset within <code>reader</code> at which the TIFF header starts
      * @throws IOException an error occurred while accessing the required data
      */
     public static void processIfd(@NotNull final TiffHandler handler,
-                                  @NotNull final RandomAccessReader reader,
-                                  @NotNull final Set<Integer> processedIfdOffsets,
-                                  final int ifdOffset,
-                                  final int tiffHeaderOffset) throws IOException
+                                  @NotNull ReaderInfo reader,
+                                  @NotNull final Set<Long> processedIfdOffsets,
+                                  final int ifdOffset) throws IOException
     {
-        Boolean resetByteOrder = null;
         try {
             // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
-            if (processedIfdOffsets.contains(Integer.valueOf(ifdOffset))) {
+            long globalIfdOffset = reader.getStartPosition() + ifdOffset;
+            if (processedIfdOffsets.contains(globalIfdOffset)) {
                 return;
             }
 
             // remember that we've visited this directory so that we don't visit it again later
-            processedIfdOffsets.add(ifdOffset);
+            processedIfdOffsets.add(globalIfdOffset);
 
             if (ifdOffset >= reader.getLength() || ifdOffset < 0) {
                 handler.error("Ignored IFD marked to start outside data segment");
@@ -130,9 +129,8 @@ public class TiffReader
             // Here we detect switched bytes that suggest this problem, and temporarily swap the byte order.
             // This was discussed in GitHub issue #136.
             if (dirTagCount > 0xFF && (dirTagCount & 0xFF) == 0) {
-                resetByteOrder = reader.isMotorolaByteOrder();
                 dirTagCount >>= 8;
-                reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
+                reader = reader.Clone(false);
             }
 
             int dirLength = (2 + (12 * dirTagCount) + 4);
@@ -147,7 +145,7 @@ public class TiffReader
             int invalidTiffFormatCodeCount = 0;
             for (int tagNumber = 0; tagNumber < dirTagCount; tagNumber++) {
                 final int tagOffset = calculateTagOffset(ifdOffset, tagNumber);
-
+                
                 // 2 bytes for the tag id
                 final int tagId = reader.getUInt16(tagOffset);
 
@@ -180,13 +178,12 @@ public class TiffReader
                 final long tagValueOffset;
                 if (byteCount > 4) {
                     // If it's bigger than 4 bytes, the dir entry contains an offset.
-                    final long offsetVal = reader.getUInt32(tagOffset + 8);
-                    if (offsetVal + byteCount > reader.getLength()) {
+                    tagValueOffset = reader.getUInt32(tagOffset + 8);
+                    if (tagValueOffset + byteCount > reader.getLength()) {
                         // Bogus pointer offset and / or byteCount value
                         handler.error("Illegal TIFF tag pointer offset");
                         continue;
                     }
-                    tagValueOffset = tiffHeaderOffset + offsetVal;
                 } else {
                     // 4 bytes or less and value is in the dir entry itself.
                     tagValueOffset = tagOffset + 8;
@@ -210,14 +207,14 @@ public class TiffReader
                     for (int i = 0; i < componentCount; i++) {
                         if (handler.tryEnterSubIfd(tagId)) {
                             isIfdPointer = true;
-                            int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
-                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
+                            int subDirOffset = reader.getInt32((int) (tagValueOffset + i * 4));
+                            processIfd(handler, reader, processedIfdOffsets, subDirOffset);
                         }
                     }
                 }
 
                 // If it wasn't an IFD pointer, allow custom tag processing to occur
-                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
+                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, reader, tagId, (int) byteCount)) {
                     // If no custom processing occurred, process the tag in the standard fashion
                     processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
                 }
@@ -227,7 +224,6 @@ public class TiffReader
             final int finalTagOffset = calculateTagOffset(ifdOffset, dirTagCount);
             int nextIfdOffset = reader.getInt32(finalTagOffset);
             if (nextIfdOffset != 0) {
-                nextIfdOffset += tiffHeaderOffset;
                 if (nextIfdOffset >= reader.getLength()) {
                     // Last 4 bytes of IFD reference another IFD with an address that is out of bounds
                     // Note this could have been caused by jhead 1.3 cropping too much
@@ -239,13 +235,11 @@ public class TiffReader
                 }
 
                 if (handler.hasFollowerIfd()) {
-                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, tiffHeaderOffset);
+                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset);
                 }
             }
         } finally {
             handler.endingIFD();
-            if (resetByteOrder != null)
-                reader.setMotorolaByteOrder(resetByteOrder);
         }
     }
 
@@ -254,7 +248,7 @@ public class TiffReader
                                    final int tagValueOffset,
                                    final int componentCount,
                                    final int formatCode,
-                                   @NotNull final RandomAccessReader reader) throws IOException
+                                   @NotNull final ReaderInfo reader) throws IOException
     {
         switch (formatCode) {
             case TiffDataFormat.CODE_UNDEFINED:

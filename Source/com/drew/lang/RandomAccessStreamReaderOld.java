@@ -30,7 +30,7 @@ import java.util.ArrayList;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public class RandomAccessStreamReader extends RandomAccessReader
+public class RandomAccessStreamReaderOld extends RandomAccessReaderOld
 {
     public final static int DEFAULT_CHUNK_LENGTH = 2 * 1024;
 
@@ -43,17 +43,17 @@ public class RandomAccessStreamReader extends RandomAccessReader
     private boolean _isStreamFinished;
     private long _streamLength;
 
-    public RandomAccessStreamReader(@NotNull InputStream stream)
+    public RandomAccessStreamReaderOld(@NotNull InputStream stream)
     {
         this(stream, DEFAULT_CHUNK_LENGTH, -1);
     }
 
-    public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength)
+    public RandomAccessStreamReaderOld(@NotNull InputStream stream, int chunkLength)
     {
         this(stream, chunkLength, -1);
     }
 
-    public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength, long streamLength)
+    public RandomAccessStreamReaderOld(@NotNull InputStream stream, int chunkLength, long streamLength)
     {
         if (stream == null)
             throw new NullPointerException();

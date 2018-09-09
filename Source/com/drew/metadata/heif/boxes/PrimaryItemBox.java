@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.heif.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public class PrimaryItemBox extends FullBox
 {
     long itemID;
 
-    public PrimaryItemBox(SequentialReader reader, Box box) throws IOException
+    public PrimaryItemBox(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 

@@ -21,11 +21,12 @@
 
 package com.drew.metadata.gif;
 
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.RandomAccessStream;
 import com.drew.metadata.Metadata;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -37,11 +38,12 @@ import static org.junit.Assert.*;
 public class GifReaderTest
 {
     @NotNull
-    public static GifHeaderDirectory processBytes(@NotNull String file) throws Exception
+    public static GifHeaderDirectory processBytes(@NotNull String filePath) throws Exception
     {
         Metadata metadata = new Metadata();
+        File file = new File(filePath);
         InputStream stream = new FileInputStream(file);
-        new GifReader().extract(new StreamReader(stream), metadata);
+        new GifReader().extract(new RandomAccessStream(stream, file.length()).createReader(), metadata);
         stream.close();
 
         GifHeaderDirectory directory = metadata.getFirstDirectoryOfType(GifHeaderDirectory.class);

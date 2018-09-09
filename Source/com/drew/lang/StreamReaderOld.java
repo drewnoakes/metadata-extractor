@@ -31,7 +31,7 @@ import java.io.InputStream;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class StreamReader extends SequentialReader
+public class StreamReaderOld extends SequentialReaderOld
 {
     @NotNull
     private final InputStream _stream;
@@ -45,7 +45,7 @@ public class StreamReader extends SequentialReader
     }
 
     @SuppressWarnings("ConstantConditions")
-    public StreamReader(@NotNull InputStream stream)
+    public StreamReaderOld(@NotNull InputStream stream)
     {
         if (stream == null)
             throw new NullPointerException();

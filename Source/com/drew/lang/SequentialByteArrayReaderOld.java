@@ -30,7 +30,7 @@ import java.io.IOException;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class SequentialByteArrayReader extends SequentialReader
+public class SequentialByteArrayReaderOld extends SequentialReaderOld
 {
     @NotNull
     private final byte[] _bytes;
@@ -42,13 +42,13 @@ public class SequentialByteArrayReader extends SequentialReader
         return _index;
     }
 
-    public SequentialByteArrayReader(@NotNull byte[] bytes)
+    public SequentialByteArrayReaderOld(@NotNull byte[] bytes)
     {
         this(bytes, 0);
     }
 
     @SuppressWarnings("ConstantConditions")
-    public SequentialByteArrayReader(@NotNull byte[] bytes, int baseIndex)
+    public SequentialByteArrayReaderOld(@NotNull byte[] bytes, int baseIndex)
     {
         if (bytes == null)
             throw new NullPointerException();

@@ -21,7 +21,7 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.quicktime.QuickTimeHandler;
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -65,7 +65,7 @@ public abstract class QuickTimeMetadataHandler extends QuickTimeHandler
     protected QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
-            SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+            ReaderInfo reader = ReaderInfo.createFromArray(payload);
             if (atom.type.equals(QuickTimeAtomTypes.ATOM_KEYS)) {
                 processKeys(reader);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_DATA)) {
@@ -75,7 +75,7 @@ public abstract class QuickTimeMetadataHandler extends QuickTimeHandler
         return this;
     }
 
-    protected abstract void processKeys(@NotNull SequentialByteArrayReader reader) throws IOException;
+    protected abstract void processKeys(@NotNull ReaderInfo reader) throws IOException;
 
-    protected abstract void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException;
+    protected abstract void processData(@NotNull byte[] payload, @NotNull ReaderInfo reader) throws IOException;
 }

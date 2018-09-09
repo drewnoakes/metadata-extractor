@@ -22,13 +22,13 @@ package com.drew.imaging;
 
 import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * Examines the a file's first bytes and estimates the file's type.
+ * Examines a file's first bytes and estimates the file's type.
  */
 public class FileTypeDetector
 {
@@ -151,7 +151,7 @@ public class FileTypeDetector
     /**
      * Examines the file's bytes and estimates the file's type.
      * <p>
-     * Requires a {@link BufferedInputStream} in order to mark and reset the stream to the position
+     * Requires a {@link ReaderInfo} in order to mark and reset the stream to the position
      * at which it was provided to this method once completed.
      * <p>
      * Requires the stream to contain at least eight bytes.
@@ -159,22 +159,17 @@ public class FileTypeDetector
      * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
      */
     @NotNull
-    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
+    public static FileType detectFileType(@NotNull final ReaderInfo rdrInfo) throws IOException
     {
-        if (!inputStream.markSupported())
-            throw new IOException("Stream must support mark/reset");
-
         int maxByteCount = Math.max(16, _root.getMaxDepth());
 
-        inputStream.mark(maxByteCount);
-
         byte[] bytes = new byte[maxByteCount];
-        int bytesRead = inputStream.read(bytes);
+        int bytesRead = rdrInfo.read(bytes, 0, bytes.length);
 
         if (bytesRead == -1)
             throw new IOException("Stream ended before file's magic number could be determined.");
 
-        inputStream.reset();
+        rdrInfo.skip(-bytesRead);
 
         FileType fileType = _root.find(bytes);
 

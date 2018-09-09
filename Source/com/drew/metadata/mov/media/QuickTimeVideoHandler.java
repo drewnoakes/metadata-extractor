@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.media;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeAtomTypes;
@@ -56,21 +56,21 @@ public class QuickTimeVideoHandler extends QuickTimeMediaHandler<QuickTimeVideoD
     }
 
     @Override
-    public void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    public void processSampleDescription(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         VideoSampleDescriptionAtom videoSampleDescriptionAtom = new VideoSampleDescriptionAtom(reader, atom);
         videoSampleDescriptionAtom.addMetadata(directory);
     }
 
     @Override
-    public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    public void processMediaInformation(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         VideoInformationMediaHeaderAtom videoInformationMediaHeaderAtom = new VideoInformationMediaHeaderAtom(reader, atom);
         videoInformationMediaHeaderAtom.addMetadata(directory);
     }
 
     @Override
-    public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    public void processTimeToSample(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         TimeToSampleAtom timeToSampleAtom = new TimeToSampleAtom(reader, atom);
         timeToSampleAtom.addMetadata(directory);

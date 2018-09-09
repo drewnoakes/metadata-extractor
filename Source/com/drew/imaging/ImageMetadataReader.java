@@ -37,7 +37,8 @@ import com.drew.imaging.raf.RafMetadataReader;
 import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.imaging.wav.WavMetadataReader;
 import com.drew.imaging.webp.WebpMetadataReader;
-import com.drew.lang.RandomAccessStreamReader;
+import com.drew.lang.RandomAccessStream;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
@@ -95,93 +96,102 @@ public class ImageMetadataReader
      *
      * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
      *                    beginning of the file's data.
-     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
-     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
-     */
-    @NotNull
-    public static Metadata readMetadata(@NotNull final InputStream inputStream) throws ImageProcessingException, IOException
-    {
-        return readMetadata(inputStream, -1);
-    }
-
-    /**
-     * Reads metadata from an {@link InputStream} of known length.
-     *
-     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
-     *                    beginning of the file's data.
      * @param streamLength the length of the stream, if known, otherwise -1.
      * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
      */
     @NotNull
-    public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength) throws ImageProcessingException, IOException
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, long streamLength) throws ImageProcessingException, IOException
     {
-        BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
-            ? (BufferedInputStream)inputStream
-            : new BufferedInputStream(inputStream);
+        return readMetadata(new RandomAccessStream(inputStream, streamLength));
+    }
 
-        FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
-
-        Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
-
+    /**
+     * Reads {@link Metadata} from the file at the given path
+     *
+     * @param filePath a file path from which the image data may be read.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final String filePath) throws ImageProcessingException, IOException
+    {
+        return readMetadata(new RandomAccessStream(new RandomAccessFile(filePath, "r")));
+    }
+    
+    /**
+     * Reads {@link Metadata} from an {@link RandomAccessStream} of known length.
+     *
+     * @param rastream a {@link RandomAccessStream} from which the file data may be read.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final RandomAccessStream rastream) throws ImageProcessingException, IOException
+    {
+        ReaderInfo fileTypeReader = rastream.createReader();
+        FileType fileType = FileTypeDetector.detectFileType(fileTypeReader);
+        
+        ReaderInfo readerClone = fileTypeReader.Clone();
+        
+        Metadata metadata = readMetadata(readerClone, fileType);
         metadata.addDirectory(new FileTypeDirectory(fileType));
 
         return metadata;
     }
 
     /**
-     * Reads metadata from an {@link InputStream} of known length and file type.
+     * Reads {@link Metadata} from an {@link ReaderInfo} of known length and file type.
      *
-     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     * @param reader a {@link ReaderInfo} from which the file data may be read.  The stream must be positioned at the
      *                    beginning of the file's data.
-     * @param streamLength the length of the stream, if known, otherwise -1.
      * @param fileType the file type of the data stream.
      * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
      * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
      */
     @NotNull
-    public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength, final FileType fileType) throws IOException, ImageProcessingException
+    public static Metadata readMetadata(@NotNull final ReaderInfo reader, final FileType fileType) throws IOException, ImageProcessingException
     {
         switch (fileType) {
             case Jpeg:
-                return JpegMetadataReader.readMetadata(inputStream);
+                return JpegMetadataReader.readMetadata(reader);
             case Tiff:
             case Arw:
             case Cr2:
             case Nef:
             case Orf:
             case Rw2:
-                return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
+                return TiffMetadataReader.readMetadata(reader);
             case Psd:
-                return PsdMetadataReader.readMetadata(inputStream);
+                return PsdMetadataReader.readMetadata(reader);
             case Png:
-                return PngMetadataReader.readMetadata(inputStream);
+                return PngMetadataReader.readMetadata(reader);
             case Bmp:
-                return BmpMetadataReader.readMetadata(inputStream);
+                return BmpMetadataReader.readMetadata(reader);
             case Gif:
-                return GifMetadataReader.readMetadata(inputStream);
+                return GifMetadataReader.readMetadata(reader);
             case Ico:
-                return IcoMetadataReader.readMetadata(inputStream);
+                return IcoMetadataReader.readMetadata(reader);
             case Pcx:
-                return PcxMetadataReader.readMetadata(inputStream);
+                return PcxMetadataReader.readMetadata(reader);
             case WebP:
-                return WebpMetadataReader.readMetadata(inputStream);
+                return WebpMetadataReader.readMetadata(reader);
             case Raf:
-                return RafMetadataReader.readMetadata(inputStream);
+                return RafMetadataReader.readMetadata(reader);
             case Avi:
-                return AviMetadataReader.readMetadata(inputStream);
+                return AviMetadataReader.readMetadata(reader);
             case Wav:
-                return WavMetadataReader.readMetadata(inputStream);
+                return WavMetadataReader.readMetadata(reader);
             case Mov:
-                return QuickTimeMetadataReader.readMetadata(inputStream);
+                return QuickTimeMetadataReader.readMetadata(reader);
             case Mp4:
-                return Mp4MetadataReader.readMetadata(inputStream);
+                return Mp4MetadataReader.readMetadata(reader);
             case Mp3:
-                return Mp3MetadataReader.readMetadata(inputStream);
+                return Mp3MetadataReader.readMetadata(reader);
             case Eps:
-                return EpsMetadataReader.readMetadata(inputStream);
+                return EpsMetadataReader.readMetadata(reader);
             case Heif:
-                return HeifMetadataReader.readMetadata(inputStream);
+                return HeifMetadataReader.readMetadata(reader);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
             default:

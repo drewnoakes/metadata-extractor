@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mp4.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mp4.Mp4HandlerFactory;
 import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
@@ -36,7 +36,7 @@ public class TimeToSampleBox extends FullBox
     long entryCount;
     ArrayList<EntryCount> entries;
 
-    public TimeToSampleBox(SequentialReader reader, Box box) throws IOException
+    public TimeToSampleBox(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 

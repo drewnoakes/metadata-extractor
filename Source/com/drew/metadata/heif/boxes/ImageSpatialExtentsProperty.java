@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.heif.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.heif.HeifDirectory;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class ImageSpatialExtentsProperty extends FullBox
     long width;
     long height;
 
-    public ImageSpatialExtentsProperty(SequentialReader reader, Box box) throws IOException
+    public ImageSpatialExtentsProperty(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 

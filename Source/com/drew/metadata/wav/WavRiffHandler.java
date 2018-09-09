@@ -1,7 +1,7 @@
 package com.drew.metadata.wav;
 
 import com.drew.imaging.riff.RiffHandler;
-import com.drew.lang.ByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -39,11 +39,13 @@ public class WavRiffHandler implements RiffHandler
         metadata.addDirectory(_directory);
     }
 
+    @Override
     public boolean shouldAcceptRiffIdentifier(@NotNull String identifier)
     {
         return identifier.equals(WavDirectory.FORMAT);
     }
 
+    @Override
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals(WavDirectory.CHUNK_FORMAT)
@@ -63,11 +65,12 @@ public class WavRiffHandler implements RiffHandler
         }
     }
 
-    public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
+    @Override
+    public void processChunk(@NotNull String fourCC, @NotNull ReaderInfo chunkReader) // @NotNull byte[] payload)
     {
         try {
             if (fourCC.equals(WavDirectory.CHUNK_FORMAT)) {
-                ByteArrayReader reader = new ByteArrayReader(payload);
+                ReaderInfo reader = chunkReader.Clone();
                 reader.setMotorolaByteOrder(false);
                 int wFormatTag = reader.getInt16(0);
                 int wChannels = reader.getInt16(2);
@@ -97,7 +100,7 @@ public class WavRiffHandler implements RiffHandler
             } else if (fourCC.equals(WavDirectory.CHUNK_DATA)) {
                 try {
                     if (_directory.containsTag(WavDirectory.TAG_BYTES_PER_SEC)) {
-                        double duration = (double)payload.length / _directory.getDouble(WavDirectory.TAG_BYTES_PER_SEC);
+                        double duration = (double)chunkReader.getLength() / _directory.getDouble(WavDirectory.TAG_BYTES_PER_SEC);
                         Integer hours = (int)duration / (int)(Math.pow(60, 2));
                         Integer minutes = ((int)duration / (int)(Math.pow(60, 1))) - (hours * 60);
                         Integer seconds = (int)Math.round((duration / (Math.pow(60, 0))) - (minutes * 60));
@@ -108,6 +111,7 @@ public class WavRiffHandler implements RiffHandler
                     _directory.addError("Error calculating duration: bytes per second not found");
                 }
             }else if (WavDirectory._tagIntegerMap.containsKey(fourCC)) {
+                byte[] payload = chunkReader.toArray();
                 _directory.setString(WavDirectory._tagIntegerMap.get(fourCC), new String(payload).substring(0, payload.length - 1));
             }
         } catch (IOException ex) {

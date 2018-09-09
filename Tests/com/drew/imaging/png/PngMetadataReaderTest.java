@@ -22,10 +22,12 @@ package com.drew.imaging.png;
 
 import com.drew.lang.KeyValuePair;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.RandomAccessStream;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.png.PngDirectory;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -44,10 +46,11 @@ public class PngMetadataReaderTest
     @NotNull
     private static Metadata processFile(@NotNull String filePath) throws PngProcessingException, IOException
     {
+        File file = new File(filePath);
         FileInputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(filePath);
-            return PngMetadataReader.readMetadata(inputStream);
+            inputStream = new FileInputStream(file);
+            return PngMetadataReader.readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             if (inputStream != null) {
                 inputStream.close();

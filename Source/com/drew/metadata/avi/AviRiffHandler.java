@@ -21,7 +21,7 @@
 package com.drew.metadata.avi;
 
 import com.drew.imaging.riff.RiffHandler;
-import com.drew.lang.ByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
@@ -47,9 +47,6 @@ public class AviRiffHandler implements RiffHandler
 {
     @NotNull
     private final AviDirectory _directory;
-
-//    @NotNull
-//    private String _currentList = "";
 
     public AviRiffHandler(@NotNull Metadata metadata)
     {
@@ -80,11 +77,11 @@ public class AviRiffHandler implements RiffHandler
             || fourCC.equals(AviDirectory.FORMAT);
     }
 
-    public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
+    public void processChunk(@NotNull String fourCC, @NotNull ReaderInfo chunkReader)
     {
         try {
             if (fourCC.equals(AviDirectory.CHUNK_STREAM_HEADER)) {
-                ByteArrayReader reader = new ByteArrayReader(payload);
+                ReaderInfo reader = chunkReader.Clone();
                 reader.setMotorolaByteOrder(false);
 
                 String fccType = new String(reader.getBytes(0, 4));
@@ -121,7 +118,7 @@ public class AviRiffHandler implements RiffHandler
                     }
                 }
             } else if (fourCC.equals(AviDirectory.CHUNK_MAIN_HEADER)) {
-                ByteArrayReader reader = new ByteArrayReader(payload);
+                ReaderInfo reader = chunkReader.Clone();
                 reader.setMotorolaByteOrder(false);
 
 //                int dwMicroSecPerFrame = reader.getInt32(0);

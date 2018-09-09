@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -34,10 +35,10 @@ public class Atom
     public long size;
     public String type;
 
-    public Atom(SequentialReader reader) throws IOException
+    public Atom(ReaderInfo reader) throws IOException
     {
         this.size = reader.getUInt32();
-        this.type = reader.getString(4);
+        this.type = reader.getString(4, Charsets.ASCII);
         if (size == 1) {
             size = reader.getInt64();
         } else if (size == 0) {

@@ -21,6 +21,7 @@
 
 package com.drew.metadata.exif;
 
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.metadata.Age;
 import com.drew.metadata.Face;
 import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
@@ -40,7 +41,7 @@ public class PanasonicMakernoteDescriptorTest
     @Before
     public void setUp() throws Exception
     {
-        _panasonicDirectory = ExifReaderTest.processBytes("Tests/Data/withPanasonicFaces.jpg.app1", PanasonicMakernoteDirectory.class);
+        _panasonicDirectory = ExifReaderTest.processSegmentBytes("Tests/Data/withPanasonicFaces.jpg.app1", JpegSegmentType.APP1, PanasonicMakernoteDirectory.class);
     }
 
     @Test

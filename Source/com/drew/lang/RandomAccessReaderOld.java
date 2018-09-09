@@ -43,7 +43,7 @@ import java.nio.charset.Charset;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public abstract class RandomAccessReader
+public abstract class RandomAccessReaderOld
 {
     private boolean _isMotorolaByteOrder = true;
 

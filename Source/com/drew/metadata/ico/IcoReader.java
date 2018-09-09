@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.ico;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
@@ -36,7 +36,7 @@ import java.io.IOException;
  */
 public class IcoReader
 {
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata)
     {
         reader.setMotorolaByteOrder(false);
 

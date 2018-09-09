@@ -20,7 +20,6 @@
  */
 package com.drew.metadata;
 
-import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 
 /**
@@ -30,7 +29,7 @@ import com.drew.lang.annotations.NotNull;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public interface MetadataReader
+public interface MetadataReaderOld
 {
     /**
      * Extracts metadata from <code>reader</code> and merges it into the specified {@link Metadata} object.
@@ -38,5 +37,5 @@ public interface MetadataReader
      * @param reader   The {@link RandomAccessReader} from which the metadata should be extracted.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      */
-    void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
+    //void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata);
 }

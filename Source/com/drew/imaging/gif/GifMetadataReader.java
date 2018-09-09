@@ -21,7 +21,8 @@
 
 package com.drew.imaging.gif;
 
-import com.drew.lang.StreamReader;
+import com.drew.lang.RandomAccessStream;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileSystemMetadataReader;
@@ -29,8 +30,8 @@ import com.drew.metadata.gif.GifReader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * Obtains metadata from GIF files.
@@ -45,7 +46,7 @@ public class GifMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             inputStream.close();
         }
@@ -54,10 +55,10 @@ public class GifMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull ReaderInfo reader) throws IOException
     {
         Metadata metadata = new Metadata();
-        new GifReader().extract(new StreamReader(inputStream), metadata);
+        new GifReader().extract(reader, metadata);
         return metadata;
     }
 }

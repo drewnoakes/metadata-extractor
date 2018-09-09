@@ -22,8 +22,8 @@ package com.drew.metadata.iptc;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.imaging.jpeg.JpegSegment;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
@@ -65,12 +65,13 @@ public class IptcReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    @Override
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegment segment : segments) {
             // Ensure data starts with the IPTC marker byte
-            if (segmentBytes.length != 0 && segmentBytes[0] == IptcMarkerByte) {
-                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
+            if (segment.getReader().getLength() != 0 && segment.getByteMarker() == IptcMarkerByte) {
+                extract(segment.getReader(), metadata);
             }
         }
     }
@@ -78,16 +79,19 @@ public class IptcReader implements JpegSegmentMetadataReader
     /**
      * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
      */
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata) throws IOException
     {
-        extract(reader, metadata, length, null);
+        extract(reader, metadata, null);
     }
 
     /**
      * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
      */
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory) throws IOException
     {
+        if(!reader.isMotorolaByteOrder())
+            reader = reader.Clone(false);
+        
         IptcDirectory directory = new IptcDirectory();
         metadata.addDirectory(directory);
 
@@ -97,7 +101,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         int offset = 0;
 
         // for each tag
-        while (offset < length) {
+        while (offset < reader.getLength()) {
 
             // identifies start of a tag
             short startByte;
@@ -112,13 +116,13 @@ public class IptcReader implements JpegSegmentMetadataReader
             if (startByte != IptcMarkerByte) {
                 // NOTE have seen images where there was one extra byte at the end, giving
                 // offset==length at this point, which is not worth logging as an error.
-                if (offset != length)
+                if (offset != reader.getLength())
                     directory.addError("Invalid IPTC tag marker at offset " + (offset - 1) + ". Expected '0x" + Integer.toHexString(IptcMarkerByte) + "' but got '0x" + Integer.toHexString(startByte) + "'.");
                 return;
             }
 
             // we need at least four bytes left to read a tag
-            if (offset + 4 > length) {
+            if (offset + 4 > reader.getLength()) {
                 directory.addError("Too few bytes remain for a valid IPTC tag");
                 return;
             }
@@ -141,7 +145,7 @@ public class IptcReader implements JpegSegmentMetadataReader
                 return;
             }
 
-            if (offset + tagByteCount > length) {
+            if (offset + tagByteCount > reader.getLength()) {
                 directory.addError("Data for tag extends beyond end of IPTC segment");
                 return;
             }
@@ -157,7 +161,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         }
     }
 
-    private void processTag(@NotNull SequentialReader reader, @NotNull Directory directory, int directoryType, int tagType, int tagByteCount) throws IOException
+    private void processTag(@NotNull ReaderInfo reader, @NotNull Directory directory, int directoryType, int tagType, int tagByteCount) throws IOException
     {
         int tagIdentifier = tagType | (directoryType << 8);
 

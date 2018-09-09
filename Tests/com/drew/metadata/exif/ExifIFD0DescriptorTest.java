@@ -21,6 +21,7 @@
 
 package com.drew.metadata.exif;
 
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import org.junit.Test;
 
@@ -59,7 +60,7 @@ public class ExifIFD0DescriptorTest
     @Test
     public void testWindowsXpFields() throws Exception
     {
-        ExifIFD0Directory directory = ExifReaderTest.processBytes("Tests/Data/windowsXpFields.jpg.app1", ExifIFD0Directory.class);
+        ExifIFD0Directory directory = ExifReaderTest.processSegmentBytes("Tests/Data/windowsXpFields.jpg.app1", JpegSegmentType.APP1, ExifIFD0Directory.class);
 
         assertEquals("Testing artist\0", directory.getString(TAG_WIN_AUTHOR, "UTF-16LE"));
         assertEquals("Testing comments\0", directory.getString(TAG_WIN_COMMENT, "UTF-16LE"));

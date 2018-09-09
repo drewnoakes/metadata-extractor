@@ -23,8 +23,6 @@ package com.drew.lang;
 
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -34,12 +32,12 @@ public class RandomAccessStreamReaderTest extends RandomAccessTestBase
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullBufferThrows()
     {
-        new RandomAccessStreamReader(null);
+        ReaderInfo.createFromArray(null);
     }
 
     @Override
-    protected RandomAccessReader createReader(byte[] bytes)
+    protected ReaderInfo createReader(byte[] bytes)
     {
-        return new RandomAccessStreamReader(new ByteArrayInputStream(bytes));
+        return ReaderInfo.createFromArray(bytes);
     }
 }

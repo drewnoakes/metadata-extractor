@@ -20,10 +20,10 @@
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.imaging.jpeg.JpegSegment;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
@@ -62,23 +62,24 @@ public class JpegReader implements JpegSegmentMetadataReader
         );
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    @Override
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) //, @NotNull JpegSegmentType segmentType)
     {
-        for (byte[] segmentBytes : segments) {
-            extract(segmentBytes, metadata, segmentType);
+        for (JpegSegment segment : segments) {
+            extract(segment, metadata); //, segmentType);
         }
     }
 
-    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType)
+    public void extract(JpegSegment segment, Metadata metadata) //, JpegSegmentType segmentType)
     {
         JpegDirectory directory = new JpegDirectory();
         metadata.addDirectory(directory);
 
         // The value of TAG_COMPRESSION_TYPE is determined by the segment type found
-        directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);
+        directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segment.getType().byteValue - JpegSegmentType.SOF0.byteValue);
 
-        SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
-
+        ReaderInfo reader = segment.getReader();
+        
         try {
             directory.setInt(JpegDirectory.TAG_DATA_PRECISION, reader.getUInt8());
             directory.setInt(JpegDirectory.TAG_IMAGE_HEIGHT, reader.getUInt16());

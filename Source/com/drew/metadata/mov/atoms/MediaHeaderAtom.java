@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.QuickTimeHandlerFactory;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class MediaHeaderAtom extends FullAtom
     int language;
     int quality;
 
-    public MediaHeaderAtom(SequentialReader reader, Atom atom) throws IOException
+    public MediaHeaderAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
