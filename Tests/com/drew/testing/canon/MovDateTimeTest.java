@@ -40,22 +40,14 @@ public class MovDateTimeTest {
 			assertFalse(errs, quickTimedir.hasErrors());
 		}
 		assertEquals("QuickTime", quickTimedir.getName());
-		// System.out.println(quickTimedir.getString(QuickTimeDirectory.TAG_MAJOR_BRAND));
 		assertNotNull(quickTimedir.getString(QuickTimeDirectory.TAG_MAJOR_BRAND));
 		assertNotNull(quickTimedir.getString(QuickTimeDirectory.TAG_MINOR_VERSION));
 	}
 
-	// @Ignore
 	@Test
 	public void testDateTime() throws ImageProcessingException, IOException {
 		Metadata metadata = ImageMetadataReader.readMetadata(new File(movFilePath));
 		QuickTimeDirectory quickTimedir = metadata.getFirstDirectoryOfType(QuickTimeDirectory.class);
-//		 for (Tag tag : quickTimedir.getTags()) {
-//		 System.out.println(tag.getTagType() + " " + tag.toString());
-//		 }
-
-		// System.out.println(quickTimedir.getString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT));
-		// [QuickTime] Canon Thumbnail DateTime - 2015:07:27 16:22:41
 		assertNotNull(quickTimedir.getString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT));
 		assertEquals("2015:07:27 16:22:41", quickTimedir.getString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT));
 	}
