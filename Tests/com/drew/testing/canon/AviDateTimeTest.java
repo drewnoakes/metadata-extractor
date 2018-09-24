@@ -35,7 +35,6 @@ public class AviDateTimeTest {
 		assertNotNull(directory.getString(AviDirectory.TAG_WIDTH));
 	}
 
-	// @Ignore
 	@Test
 	public void testDateTime() throws ImageProcessingException, IOException {
 		Metadata metadata = ImageMetadataReader.readMetadata(new File(aviFilePath));
