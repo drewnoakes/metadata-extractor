@@ -40,9 +40,6 @@ public class CanonThumbnailAtom extends Atom {
 	 * @throws IOException
 	 */
 	private void readCNDA(SequentialReader reader) throws IOException {
-		// Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.INFO,
-		// cndaAtom.type + " " + cndaAtom.size + " " + reader.getPosition());
-
 		if (this.type.compareTo("CNDA") == 0) {
 			// Taken From JpegMetadataReader
 			JpegSegmentMetadataReader exifReader = new ExifReader();
@@ -55,8 +52,6 @@ public class CanonThumbnailAtom extends Atom {
 			try {
 				segmentData = JpegSegmentReader.readSegments(new StreamReader(exifStream), segmentTypes);
 			} catch (JpegProcessingException e) {
-//				Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.SEVERE,
-//						e.getLocalizedMessage());
 				e.printStackTrace();
 			}
 
@@ -67,23 +62,15 @@ public class CanonThumbnailAtom extends Atom {
 
 			Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
 			for (Tag tag : directory.getTags()) {
-//				 Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.INFO,
-//				 "'"+tag.getTagName()+"' ("+tag.getTagType()+")'"+tag.getDescription()+"'");
 				if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME) {
-//					Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.INFO,
-//							tag.getDescription());
 					dateTime = tag.getDescription();
 				}
 			}
-		} else {
-//			Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.WARNING, "Not CNDA: " + this.type+ " ("+this.size + ")" );
 		}
 
 	}
 
 	public void addMetadata(QuickTimeDirectory directory) {
-//		Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName()).log(Level.INFO,
-//				"\t+CanonThumbnailAtom_addMetadata: " + directory.getName() + " " + dateTime);
 		 directory.setString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT, dateTime);
 	}
 
