@@ -901,6 +901,32 @@ public class ReaderInfo
         return _ras.toArray(getStartPosition(), (int)getLength());
     }
 
+    public String readLine() throws IOException
+    {
+        StringBuilder sb = new StringBuilder();
+        while (true)
+        {
+            if (getLocalPosition() == getLength())
+                break;
+
+            int ch = getByte();
+            if (ch == -1) break;
+            if (ch == '\r' || ch == '\n')
+            {
+                byte nextbyte = 0;
+                if(getGlobalPosition() + 1 < getLength())
+                    nextbyte = getByte();
+                if (!(ch == '\r' && nextbyte == '\n'))
+                    skip(-1);
+
+                return sb.toString();
+            }
+            sb.append((char)ch);
+        }
+        if (sb.length() > 0) return sb.toString();
+        return null;
+    }
+    
     /**
      * Returns true in case the sequence supports length checking and distance to the end of the stream is less then number of bytes in parameter.
      * Otherwise false.
