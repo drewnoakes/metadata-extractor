@@ -29,6 +29,7 @@ import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.mp3.Mp3MetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
+import com.drew.imaging.netpbm.NetpbmMetadataReader;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
 import com.drew.imaging.pcx.PcxMetadataReader;
 import com.drew.imaging.png.PngMetadataReader;
@@ -69,6 +70,7 @@ import java.util.Map;
  *     <li>{@link FileSystemMetadataReader} for metadata from the file system when a {@link File} is provided</li>
  *     <li>{@link GifMetadataReader} for GIF files</li>
  *     <li>{@link IcoMetadataReader} for ICO files</li>
+ *     <li>{@link NetpbmMetadataReader} for Netpbm files (PPM, PGM, PBM, PPM)</li>
  *     <li>{@link JpegMetadataReader} for JPEG files</li>
  *     <li>{@link Mp4MetadataReader} for MPEG-4 files</li>
  *     <li>{@link PcxMetadataReader} for PCX files</li>
@@ -180,6 +182,8 @@ public class ImageMetadataReader
                 return RafMetadataReader.readMetadata(reader);
             case Avi:
                 return AviMetadataReader.readMetadata(reader);
+            case Netpbm:
+                return NetpbmMetadataReader.readMetadata(reader);
             case Wav:
                 return WavMetadataReader.readMetadata(reader);
             case Mov:

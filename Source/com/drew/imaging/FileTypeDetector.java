@@ -56,6 +56,13 @@ public class FileTypeDetector
         _root.addPath(FileType.Gif, "GIF87a".getBytes());
         _root.addPath(FileType.Gif, "GIF89a".getBytes());
         _root.addPath(FileType.Ico, new byte[]{0x00, 0x00, 0x01, 0x00});
+        _root.addPath(FileType.Netpbm, "P1".getBytes()); // ASCII B
+        _root.addPath(FileType.Netpbm, "P2".getBytes()); // ASCII greysca
+        _root.addPath(FileType.Netpbm, "P3".getBytes()); // ASCII R
+        _root.addPath(FileType.Netpbm, "P4".getBytes()); // RAW B
+        _root.addPath(FileType.Netpbm, "P5".getBytes()); // RAW greysca
+        _root.addPath(FileType.Netpbm, "P6".getBytes()); // RAW R
+        _root.addPath(FileType.Netpbm, "P7".getBytes()); // P
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x00, 0x01}); // multiple PCX versions, explicitly listed
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x02, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
