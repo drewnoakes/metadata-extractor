@@ -48,7 +48,7 @@ public class AviDirectory extends Directory
     public static final String CHUNK_MAIN_HEADER = "avih";
 
     public static final String CHUNK_DATETIME_ORIGINAL = "IDIT";
-    
+
     public static final String LIST_HEADER = "hdrl";
     public static final String LIST_STREAM_HEADER = "strl";
 
