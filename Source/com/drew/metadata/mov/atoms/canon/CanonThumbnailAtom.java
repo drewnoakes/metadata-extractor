@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentData;
@@ -24,54 +22,59 @@ import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mov.atoms.Atom;
 
-public class CanonThumbnailAtom extends Atom {
+/**
+ * 
+ * @author PerB
+ */
+public class CanonThumbnailAtom extends Atom
+{
 
-	private String dateTime;
+    private String dateTime;
 
-	public CanonThumbnailAtom(SequentialReader reader) throws IOException {
-		super(reader);
-		readCNDA(reader);
-	}
+    public CanonThumbnailAtom(SequentialReader reader) throws IOException {
+        super(reader);
+        readCNDA(reader);
+    }
 
-	/**
-	 * Canon Data Block (Exif/TIFF ThumbnailImage)
-	 * 
-	 * @param reader
-	 * @throws IOException
-	 */
-	private void readCNDA(SequentialReader reader) throws IOException {
-		if (this.type.compareTo("CNDA") == 0) {
-			// Taken From JpegMetadataReader
-			JpegSegmentMetadataReader exifReader = new ExifReader();
-			InputStream exifStream = new ByteArrayInputStream(reader.getBytes((int) this.size));
-			Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
-			for (JpegSegmentType type : exifReader.getSegmentTypes()) {
-				segmentTypes.add(type);
-			}
-			JpegSegmentData segmentData = null;
-			try {
-				segmentData = JpegSegmentReader.readSegments(new StreamReader(exifStream), segmentTypes);
-			} catch (JpegProcessingException e) {
-				e.printStackTrace();
-			}
+    /**
+     * Canon Data Block (Exif/TIFF ThumbnailImage)
+     * 
+     * @param reader
+     * @throws IOException
+     */
+    private void readCNDA(SequentialReader reader) throws IOException {
+        if (this.type.compareTo("CNDA") == 0) {
+            // From JpegMetadataReader
+            JpegSegmentMetadataReader exifReader = new ExifReader();
+            InputStream exifStream = new ByteArrayInputStream(reader.getBytes((int) this.size));
+            Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
+            for (JpegSegmentType type : exifReader.getSegmentTypes()) {
+                segmentTypes.add(type);
+            }
+            JpegSegmentData segmentData = null;
+            try {
+                segmentData = JpegSegmentReader.readSegments(new StreamReader(exifStream), segmentTypes);
+            } catch (JpegProcessingException e) {
+                e.printStackTrace();
+            }
 
-			Metadata metadata = new Metadata();
-			for (JpegSegmentType segmentType : exifReader.getSegmentTypes()) {
-				exifReader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType);
-			}
+            Metadata metadata = new Metadata();
+            for (JpegSegmentType segmentType : exifReader.getSegmentTypes()) {
+                exifReader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType);
+            }
 
-			Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-			for (Tag tag : directory.getTags()) {
-				if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME) {
-					dateTime = tag.getDescription();
-				}
-			}
-		}
+            Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            for (Tag tag : directory.getTags()) {
+                if (tag.getTagType() == ExifDirectoryBase.TAG_DATETIME) {
+                    dateTime = tag.getDescription();
+                }
+            }
+        }
 
-	}
+    }
 
-	public void addMetadata(QuickTimeDirectory directory) {
-		 directory.setString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT, dateTime);
-	}
+    public void addMetadata(QuickTimeDirectory directory) {
+        directory.setString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT, dateTime);
+    }
 
 }
