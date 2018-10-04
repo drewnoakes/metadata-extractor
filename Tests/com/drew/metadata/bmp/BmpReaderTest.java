@@ -21,13 +21,12 @@
 
 package com.drew.metadata.bmp;
 
-import com.drew.lang.StreamReader;
+import com.drew.lang.RandomAccessStream;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import org.junit.Test;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,9 +41,9 @@ public class BmpReaderTest
     public static BmpHeaderDirectory processBytes(@NotNull String file) throws Exception
     {
         Metadata metadata = new Metadata();
-        InputStream stream = new FileInputStream(file);
-        new BmpReader().extract(new StreamReader(stream), metadata);
-        stream.close();
+        RandomAccessFile raf = new RandomAccessFile(file, "r");
+        new BmpReader().extract(new RandomAccessStream(raf).createReader(), metadata);
+        raf.close();
 
         BmpHeaderDirectory directory = metadata.getFirstDirectoryOfType(BmpHeaderDirectory.class);
         assertNotNull(directory);

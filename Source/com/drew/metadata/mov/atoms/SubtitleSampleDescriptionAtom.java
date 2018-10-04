@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.media.QuickTimeSubtitleDirectory;
 
 import java.io.IOException;
@@ -32,13 +32,13 @@ import java.io.IOException;
  */
 public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<SubtitleSampleDescriptionAtom.SubtitleSampleDescription>
 {
-    public SubtitleSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public SubtitleSampleDescriptionAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }
 
     @Override
-    SubtitleSampleDescription getSampleDescription(SequentialReader reader) throws IOException
+    SubtitleSampleDescription getSampleDescription(ReaderInfo reader) throws IOException
     {
         return null;
     }
@@ -52,7 +52,7 @@ public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<Subtitl
         int fontSize;
         int[] foregroundColor;
 
-        public SubtitleSampleDescription(SequentialReader reader) throws IOException
+        public SubtitleSampleDescription(ReaderInfo reader) throws IOException
         {
             super(reader);
 

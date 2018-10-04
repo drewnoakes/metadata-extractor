@@ -38,148 +38,195 @@ import java.util.List;
  */
 public enum JpegSegmentType
 {
+    /// <summary>For temporary use in arithmetic coding.</summary>
+    /// <remarks>No length or parameter sequence follows this marker.</remarks>
+    TEM((byte)0x01), //, false),
+                
     /** APP0 JPEG segment identifier. Commonly contains JFIF, JFXX. */
-    APP0((byte)0xE0, true),
+    APP0((byte)0xE0), //, true),
 
     /** APP1 JPEG segment identifier. Commonly contains Exif. XMP data is also kept in here, though usually in a second instance. */
-    APP1((byte)0xE1, true),
+    APP1((byte)0xE1), //, true),
 
         /** APP2 JPEG segment identifier. Commonly contains ICC. */
-    APP2((byte)0xE2, true),
+    APP2((byte)0xE2), //, true),
 
     /** APP3 JPEG segment identifier. */
-    APP3((byte)0xE3, true),
+    APP3((byte)0xE3), //, true),
 
     /** APP4 JPEG segment identifier. */
-    APP4((byte)0xE4, true),
+    APP4((byte)0xE4), //, true),
 
     /** APP5 JPEG segment identifier. */
-    APP5((byte)0xE5, true),
+    APP5((byte)0xE5), //, true),
 
     /** APP6 JPEG segment identifier. */
-    APP6((byte)0xE6, true),
+    APP6((byte)0xE6), //, true),
 
     /** APP7 JPEG segment identifier. */
-    APP7((byte)0xE7, true),
+    APP7((byte)0xE7), //, true),
 
     /** APP8 JPEG segment identifier. */
-    APP8((byte)0xE8, true),
+    APP8((byte)0xE8), //, true),
 
     /** APP9 JPEG segment identifier. */
-    APP9((byte)0xE9, true),
+    APP9((byte)0xE9), //, true),
 
     /** APPA (App10) JPEG segment identifier. Can contain Unicode comments, though {@link JpegSegmentType#COM} is more commonly used for comments. */
-    APPA((byte)0xEA, true),
+    APPA((byte)0xEA), //, true),
 
     /** APPB (App11) JPEG segment identifier. */
-    APPB((byte)0xEB, true),
+    APPB((byte)0xEB), //, true),
 
     /** APPC (App12) JPEG segment identifier. */
-    APPC((byte)0xEC, true),
+    APPC((byte)0xEC), //, true),
 
     /** APPD (App13) JPEG segment identifier. Commonly contains IPTC, Photoshop data. */
-    APPD((byte)0xED, true),
+    APPD((byte)0xED), //, true),
 
     /** APPE (App14) JPEG segment identifier. Commonly contains Adobe data. */
-    APPE((byte)0xEE, true),
+    APPE((byte)0xEE), //, true),
 
     /** APPF (App15) JPEG segment identifier. */
-    APPF((byte)0xEF, true),
+    APPF((byte)0xEF), //, true),
 
     /** Start Of Image segment identifier. */
-    SOI((byte)0xD8, false),
+    SOI((byte)0xD8), //, false),
 
     /** Define Quantization Table segment identifier. */
-    DQT((byte)0xDB, false),
+    DQT((byte)0xDB), //, false),
 
     /** Define Number of Lines segment identifier. */
-    DNL((byte)0xDC, false),
+    DNL((byte)0xDC), //, false),
 
     /** Define Restart Interval segment identifier. */
-    DRI((byte)0xDD, false),
+    DRI((byte)0xDD), //, false),
 
     /** Define Hierarchical Progression segment identifier. */
-    DHP((byte)0xDE, false),
+    DHP((byte)0xDE), //, false),
 
     /** EXPand reference component(s) segment identifier. */
-    EXP((byte)0xDF, false),
+    EXP((byte)0xDF), //, false),
 
     /** Define Huffman Table segment identifier. */
-    DHT((byte)0xC4, false),
+    DHT((byte)0xC4), //, false),
 
     /** Define Arithmetic Coding conditioning segment identifier. */
-    DAC((byte)0xCC, false),
+    DAC((byte)0xCC), //, false),
 
     /** Start-of-Frame (0) segment identifier for Baseline DCT. */
-    SOF0((byte)0xC0, true),
+    SOF0((byte)0xC0), //, true),
 
     /** Start-of-Frame (1) segment identifier for Extended sequential DCT. */
-    SOF1((byte)0xC1, true),
+    SOF1((byte)0xC1), //, true),
 
     /** Start-of-Frame (2) segment identifier for Progressive DCT. */
-    SOF2((byte)0xC2, true),
+    SOF2((byte)0xC2), //, true),
 
     /** Start-of-Frame (3) segment identifier for Lossless (sequential). */
-    SOF3((byte)0xC3, true),
+    SOF3((byte)0xC3), //, true),
 
 //    /** Start-of-Frame (4) segment identifier. */
 //    SOF4((byte)0xC4, true),
 
     /** Start-of-Frame (5) segment identifier for Differential sequential DCT. */
-    SOF5((byte)0xC5, true),
+    SOF5((byte)0xC5), //, true),
 
     /** Start-of-Frame (6) segment identifier for Differential progressive DCT. */
-    SOF6((byte)0xC6, true),
+    SOF6((byte)0xC6), //, true),
 
     /** Start-of-Frame (7) segment identifier for Differential lossless (sequential). */
-    SOF7((byte)0xC7, true),
+    SOF7((byte)0xC7), //, true),
 
     /** Reserved for JPEG extensions. */
-    JPG((byte)0xC8, true),
+    JPG((byte)0xC8), //, true),
 
     /** Start-of-Frame (9) segment identifier for Extended sequential DCT. */
-    SOF9((byte)0xC9, true),
+    SOF9((byte)0xC9), //, true),
 
     /** Start-of-Frame (10) segment identifier for Progressive DCT. */
-    SOF10((byte)0xCA, true),
+    SOF10((byte)0xCA), //, true),
 
     /** Start-of-Frame (11) segment identifier for Lossless (sequential). */
-    SOF11((byte)0xCB, true),
+    SOF11((byte)0xCB), //, true),
 
 //    /** Start-of-Frame (12) segment identifier. */
 //    SOF12((byte)0xCC, true),
 
     /** Start-of-Frame (13) segment identifier for Differential sequential DCT. */
-    SOF13((byte)0xCD, true),
+    SOF13((byte)0xCD), //, true),
 
     /** Start-of-Frame (14) segment identifier for Differential progressive DCT. */
-    SOF14((byte)0xCE, true),
+    SOF14((byte)0xCE), //, true),
 
     /** Start-of-Frame (15) segment identifier for Differential lossless (sequential). */
-    SOF15((byte)0xCF, true),
+    SOF15((byte)0xCF), //, true),
 
+    /** Restart. */
+    RST0((byte)0xD0), //, false),
+    
+    /** Restart. */
+    RST1((byte)0xD1), //, false),
+    
+    /** Restart. */
+    RST2((byte)0xD2), //, false),
+    
+    /** Restart. */
+    RST3((byte)0xD3), //, false),
+    
+    /** Restart. */
+    RST4((byte)0xD4), //, false),
+    
+    /** Restart. */
+    RST5((byte)0xD5), //, false),
+    
+    /** Restart. */
+    RST6((byte)0xD6), //, false),
+    
+    /** Restart. */
+    RST7((byte)0xD7), //, false),
+            
+    /** End-of-Image. Terminates the JPEG compressed data stream that started at Soi. */
+    EOI((byte)0xD9), //, false),
+    
+    /** Start-of-scan. */
+    SOS((byte)0xDA), //, false),
+    
     /** JPEG comment segment identifier for comments. */
-    COM((byte)0xFE, true);
+    COM((byte)0xFE); //, true);
 
     public static final Collection<JpegSegmentType> canContainMetadataTypes;
 
     static {
         List<JpegSegmentType> segmentTypes = new ArrayList<JpegSegmentType>();
         for (JpegSegmentType segmentType : JpegSegmentType.class.getEnumConstants()) {
-            if (segmentType.canContainMetadata) {
+            if (canContainMetadata(segmentType)) {
                 segmentTypes.add(segmentType);
             }
         }
         canContainMetadataTypes = segmentTypes;
     }
 
+    /// <summary>Gets whether this JPEG segment type might contain metadata.</summary>
+    /// <remarks>Used to exclude large image-data-only segment from certain types of processing.</remarks>
+    public static boolean canContainMetadata(JpegSegmentType type)
+    {
+        switch (type)
+        {
+            case SOI:
+            case DQT:
+            case DHT:
+                return false;
+            default:
+                return true;
+        }
+    }
+    
     public final byte byteValue;
-    public final boolean canContainMetadata;
 
-    JpegSegmentType(byte byteValue, boolean canContainMetadata)
+    JpegSegmentType(byte byteValue)
     {
         this.byteValue = byteValue;
-        this.canContainMetadata = canContainMetadata;
     }
 
     @Nullable
@@ -190,5 +237,26 @@ public enum JpegSegmentType
                 return segmentType;
         }
         return null;
+    }
+    
+    public static boolean containsPayload(JpegSegmentType type)
+    {
+        switch (type)
+        {
+            case SOI:
+            case EOI:
+            case RST0:
+            case RST1:
+            case RST2:
+            case RST3:
+            case RST4:
+            case RST5:
+            case RST6:
+            case RST7:
+            case TEM:
+                return false;
+            default:
+                return true;
+        }
     }
 }

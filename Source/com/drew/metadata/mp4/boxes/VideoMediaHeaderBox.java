@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mp4.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class VideoMediaHeaderBox extends FullBox
     int graphicsMode;
     int[] opcolor;
 
-    public VideoMediaHeaderBox(SequentialReader reader, Box box) throws IOException
+    public VideoMediaHeaderBox(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 

@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ public class FullAtom extends Atom
     int version;
     byte[] flags;
 
-    public FullAtom(SequentialReader reader, Atom atom) throws IOException
+    public FullAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(atom);
 

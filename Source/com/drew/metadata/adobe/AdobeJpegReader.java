@@ -23,8 +23,9 @@ package com.drew.metadata.adobe;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.imaging.jpeg.JpegSegment;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -41,7 +42,8 @@ import java.util.Collections;
 @SuppressWarnings("WeakerAccess")
 public class AdobeJpegReader implements JpegSegmentMetadataReader
 {
-    public static final String PREAMBLE = "Adobe";
+    public static final String JPEG_SEGMENT_ID = "Adobe";
+    public static final String JPEG_SEGMENT_PREAMBLE = "Adobe";
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -49,15 +51,15 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPE);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
-        for (byte[] bytes : segments) {
-            if (bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(bytes, 0, PREAMBLE.length())))
-                extract(new SequentialByteArrayReader(bytes), metadata);
+        for (JpegSegment segment : segments) {
+            if (segment.getReader().getLength() == 12 && JPEG_SEGMENT_ID.equals(segment.getPreamble()))
+                extract(segment.getReader().Clone(), metadata);
         }
     }
 
-    public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull Metadata metadata)
     {
         Directory directory = new AdobeJpegDirectory();
         metadata.addDirectory(directory);
@@ -65,7 +67,7 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
         try {
             reader.setMotorolaByteOrder(false);
 
-            if (!reader.getString(PREAMBLE.length()).equals(PREAMBLE)) {
+            if (!reader.getString(JPEG_SEGMENT_PREAMBLE.length(), Charsets.UTF_8).equals(JPEG_SEGMENT_PREAMBLE)) {
                 directory.addError("Invalid Adobe JPEG data header.");
                 return;
             }

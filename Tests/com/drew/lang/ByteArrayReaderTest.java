@@ -29,15 +29,15 @@ import org.junit.Test;
 public class ByteArrayReaderTest extends RandomAccessTestBase
 {
     @Override
-    protected RandomAccessReader createReader(byte[] bytes)
+    protected ReaderInfo createReader(byte[] bytes)
     {
-        return new ByteArrayReader(bytes);
+        return ReaderInfo.createFromArray(bytes);
     }
 
     @SuppressWarnings({ "ConstantConditions" })
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullBufferThrows()
     {
-        new ByteArrayReader(null);
+        ReaderInfo.createFromArray(null);
     }
 }

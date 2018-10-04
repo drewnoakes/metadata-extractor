@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.QuickTimeDictionary;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
@@ -33,13 +34,13 @@ import java.io.IOException;
  */
 public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampleDescriptionAtom.VideoSampleDescription>
 {
-    public VideoSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public VideoSampleDescriptionAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }
 
     @Override
-    VideoSampleDescription getSampleDescription(SequentialReader reader) throws IOException
+    VideoSampleDescription getSampleDescription(ReaderInfo reader) throws IOException
     {
         return new VideoSampleDescription(reader);
     }
@@ -90,13 +91,13 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
         int depth;
         int colorTableID;
 
-        public VideoSampleDescription(SequentialReader reader) throws IOException
+        public VideoSampleDescription(ReaderInfo reader) throws IOException
         {
             super(reader);
 
             version = reader.getUInt16();
             revisionLevel = reader.getUInt16();
-            vendor = reader.getString(4);
+            vendor = reader.getString(4, Charsets.UTF_8);
             temporalQuality = reader.getUInt32();
             spatialQuality = reader.getUInt32();
             width = reader.getUInt16();
@@ -105,7 +106,7 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
             verticalResolution = reader.getUInt32();
             dataSize = reader.getUInt32();
             frameCount = reader.getUInt16();
-            compressorName = reader.getString(32);
+            compressorName = reader.getString(32, Charsets.UTF_8);
             depth = reader.getUInt16();
             colorTableID = reader.getInt16();
         }

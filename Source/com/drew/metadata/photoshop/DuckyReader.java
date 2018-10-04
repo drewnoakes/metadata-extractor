@@ -22,9 +22,9 @@ package com.drew.metadata.photoshop;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.imaging.jpeg.JpegSegment;
 import com.drew.lang.Charsets;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
@@ -40,7 +40,9 @@ import java.util.Collections;
 public class DuckyReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    private static final String JPEG_SEGMENT_PREAMBLE = "Ducky";
+    public static final String JPEG_SEGMENT_ID = "Ducky";
+    @NotNull
+    public static final String JPEG_SEGMENT_PREAMBLE = "Ducky";
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -48,22 +50,18 @@ public class DuckyReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPC);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegment segment : segments) {
             // Ensure data starts with the necessary preamble
-            if (segmentBytes.length < preambleLength || !JPEG_SEGMENT_PREAMBLE.equals(new String(segmentBytes, 0, preambleLength)))
-                continue;
-
-            extract(
-                new SequentialByteArrayReader(segmentBytes, preambleLength),
-                metadata);
+            if (segment.getReader().getLength() >= preambleLength && JPEG_SEGMENT_ID.equals(segment.getPreamble()))
+                extract(segment.getReader().Clone(preambleLength, segment.getReader().getLength() - preambleLength), metadata);
         }
     }
 
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata)
     {
         DuckyDirectory directory = new DuckyDirectory();
         metadata.addDirectory(directory);

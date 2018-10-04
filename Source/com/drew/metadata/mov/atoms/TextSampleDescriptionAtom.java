@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.media.QuickTimeTextDirectory;
 
 import java.io.IOException;
@@ -32,13 +33,13 @@ import java.io.IOException;
  */
 public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleDescriptionAtom.TextSampleDescription>
 {
-    public TextSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public TextSampleDescriptionAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }
 
     @Override
-    TextSampleDescription getSampleDescription(SequentialReader reader) throws IOException
+    TextSampleDescription getSampleDescription(ReaderInfo reader) throws IOException
     {
         return new TextSampleDescription(reader);
     }
@@ -120,7 +121,7 @@ public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleD
         int[] foregroundColor;
         String textName;
 
-        public TextSampleDescription(SequentialReader reader) throws IOException
+        public TextSampleDescription(ReaderInfo reader) throws IOException
         {
             super(reader);
 
@@ -134,7 +135,7 @@ public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleD
             reader.skip(1); // 8-bits of reserved space set to 0
             reader.skip(2); // 16-bits of reserved space set to 0
             foregroundColor = new int[]{reader.getUInt16(), reader.getUInt16(), reader.getUInt16()};
-            textName = reader.getString(reader.getUInt8());
+            textName = reader.getString(reader.getUInt8(), Charsets.UTF_8);
         }
     }
 }

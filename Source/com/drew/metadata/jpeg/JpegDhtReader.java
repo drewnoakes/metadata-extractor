@@ -22,8 +22,8 @@ package com.drew.metadata.jpeg;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.imaging.jpeg.JpegSegment;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable;
@@ -39,15 +39,17 @@ import java.util.Collections;
 public class JpegDhtReader implements JpegSegmentMetadataReader
 {
     @NotNull
+    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Collections.singletonList(JpegSegmentType.DHT);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    @Override
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata)
     {
-        for (byte[] segmentBytes : segments) {
-            extract(new SequentialByteArrayReader(segmentBytes), metadata);
+        for (JpegSegment segment : segments) {
+            extract(segment.getReader(), metadata);
         }
     }
 
@@ -55,7 +57,7 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
      * Performs the DHT tables extraction, adding found tables to the specified
      * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata)
     {
         HuffmanTablesDirectory directory = metadata.getFirstDirectoryOfType(HuffmanTablesDirectory.class);
         if (directory == null) {
@@ -64,7 +66,7 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
         }
 
         try {
-            while (reader.available() > 0) {
+            while (!reader.isCloserToEnd(1)) {
                 byte header = reader.getByte();
                 HuffmanTableClass tableClass = HuffmanTableClass.typeOf((header & 0xF0) >> 4);
                 int tableDestinationId = header & 0xF;
@@ -84,7 +86,7 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
         directory.setInt(HuffmanTablesDirectory.TAG_NUMBER_OF_TABLES, directory.getTables().size());
     }
 
-    private byte[] getBytes(@NotNull final SequentialReader reader, int count) throws IOException {
+    private byte[] getBytes(@NotNull ReaderInfo reader, int count) throws IOException {
         byte[] bytes = new byte[count];
         for (int i = 0; i < count; i++) {
             byte b = reader.getByte();

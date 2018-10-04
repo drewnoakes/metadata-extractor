@@ -21,8 +21,7 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.quicktime.QuickTimeHandler;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -72,7 +71,7 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
     public QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
-            SequentialReader reader = new SequentialByteArrayReader(payload);
+            ReaderInfo reader = ReaderInfo.createFromArray(payload);
 
             if (atom.type.equals(QuickTimeAtomTypes.ATOM_MOVIE_HEADER)) {
                 MovieHeaderAtom movieHeaderAtom = new MovieHeaderAtom(reader, atom);

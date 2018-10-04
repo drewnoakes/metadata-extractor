@@ -22,7 +22,8 @@ package com.drew.metadata.mov.metadata;
 
 import com.drew.imaging.quicktime.QuickTimeHandler;
 import com.drew.lang.ByteUtil;
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -66,7 +67,8 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
     protected QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
-            SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+            //SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
+            ReaderInfo reader = ReaderInfo.createFromArray(payload);
             if (atom.type.equals(QuickTimeAtomTypes.ATOM_KEYS)) {
                 processKeys(reader);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_DATA)) {
@@ -82,7 +84,7 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
     }
 
     @Override
-    protected void processKeys(@NotNull SequentialByteArrayReader reader) throws IOException
+    protected void processKeys(@NotNull ReaderInfo reader) throws IOException
     {
         // Version 1-byte and Flags 3-bytes
         reader.skip(4);
@@ -96,7 +98,7 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
     }
 
     @Override
-    protected void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
+    protected void processData(@NotNull byte[] payload, @NotNull ReaderInfo reader) throws IOException
     {
         int type = reader.getInt32();
         // 4 bytes: locale indicator
@@ -106,7 +108,7 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
             int length = payload.length - 8;
             switch (type) {
                 case 1:
-                    directory.setString(tag, reader.getString(length, "UTF-8"));
+                    directory.setString(tag, reader.getString(length, Charsets.UTF_8));
                     break;
                 case 13:
                 case 14:
@@ -114,9 +116,8 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
                     directory.setByteArray(tag, reader.getBytes(length));
                     break;
                 case 22:
-                    byte[] buf = new byte[4];
-                    reader.getBytes(buf, 4 - length, length);
-                    directory.setInt(tag, new SequentialByteArrayReader(buf).getInt32());
+                    byte[] buf = reader.getBytes(4 - length, length);
+                    directory.setInt(tag, ReaderInfo.createFromArray(buf).getInt32());
                     break;
                 case 23:
                     directory.setFloat(tag, reader.getFloat32());

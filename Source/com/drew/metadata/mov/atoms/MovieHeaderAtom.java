@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.Rational;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.QuickTimeDirectory;
 
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class MovieHeaderAtom extends FullAtom
     long currentTime;
     long nextTrackID;
 
-    public MovieHeaderAtom(SequentialReader reader, Atom atom) throws IOException
+    public MovieHeaderAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 

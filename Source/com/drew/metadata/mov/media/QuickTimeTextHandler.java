@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.media;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeAtomTypes;
@@ -54,20 +54,20 @@ public class QuickTimeTextHandler extends QuickTimeMediaHandler<QuickTimeTextDir
     }
 
     @Override
-    protected void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    protected void processSampleDescription(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         TextSampleDescriptionAtom textSampleDescriptionAtom = new TextSampleDescriptionAtom(reader, atom);
         textSampleDescriptionAtom.addMetadata(directory);
     }
 
     @Override
-    protected void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    protected void processMediaInformation(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         // Not yet implemented
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    protected void processTimeToSample(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         // Not yet implemented
     }

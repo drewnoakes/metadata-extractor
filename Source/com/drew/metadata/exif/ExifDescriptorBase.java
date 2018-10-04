@@ -25,7 +25,7 @@ import com.drew.imaging.PhotographicConversions;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.lang.ByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
@@ -1139,7 +1139,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         ret = new int[values.length - 2];
 
         try {
-            ByteArrayReader reader = new ByteArrayReader(values);
+            ReaderInfo reader = ReaderInfo.createFromArray(values);
 
             // first two values should be read as 16-bits (2 bytes)
             short item0 = reader.getInt16(0);

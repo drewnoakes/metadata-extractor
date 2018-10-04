@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.media;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.*;
@@ -54,21 +54,21 @@ public class QuickTimeSoundHandler extends QuickTimeMediaHandler<QuickTimeSoundD
     }
 
     @Override
-    public void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    public void processSampleDescription(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         SoundSampleDescriptionAtom soundSampleDescriptionAtom = new SoundSampleDescriptionAtom(reader, atom);
         soundSampleDescriptionAtom.addMetadata(directory);
     }
 
     @Override
-    public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    public void processMediaInformation(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         SoundInformationMediaHeaderAtom soundInformationMediaHeaderAtom = new SoundInformationMediaHeaderAtom(reader, atom);
         soundInformationMediaHeaderAtom.addMetadata(directory);
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    protected void processTimeToSample(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException
     {
         directory.setDouble(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }

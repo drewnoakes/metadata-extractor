@@ -21,8 +21,7 @@
 package com.drew.metadata.mp4;
 
 import com.drew.imaging.mp4.Mp4Handler;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -72,7 +71,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
-            SequentialReader reader = new SequentialByteArrayReader(payload);
+            ReaderInfo reader = ReaderInfo.createFromArray(payload);
             if (box.type.equals(getMediaInformation())) {
                 processMediaInformation(reader, box);
             } else if (box.type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)) {
@@ -86,9 +85,9 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
 
     protected abstract String getMediaInformation();
 
-    protected abstract void processSampleDescription(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
+    protected abstract void processSampleDescription(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException;
 
-    protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
+    protected abstract void processMediaInformation(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
+    protected abstract void processTimeToSample(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException;
 }

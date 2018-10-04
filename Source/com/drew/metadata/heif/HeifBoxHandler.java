@@ -21,8 +21,7 @@
 package com.drew.metadata.heif;
 
 import com.drew.imaging.heif.HeifHandler;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.boxes.*;
@@ -70,14 +69,13 @@ public class HeifBoxHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    public HeifHandler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
+    public HeifHandler processBox(@NotNull Box box, @NotNull ReaderInfo payloadReader) throws IOException
     {
-        if (payload != null) {
-            SequentialReader reader = new SequentialByteArrayReader(payload);
+        if (payloadReader != null) {
             if (box.type.equals(HeifBoxTypes.BOX_FILE_TYPE)) {
-                processFileType(reader, box);
+                processFileType(payloadReader, box);
             }else if (box.type.equals(HeifBoxTypes.BOX_HANDLER)) {
-                handlerBox = new HandlerBox(reader, box);
+                handlerBox = new HandlerBox(payloadReader, box);
                 return handlerFactory.getHandler(handlerBox, metadata);
             }
         }
@@ -85,14 +83,14 @@ public class HeifBoxHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    public void processContainer(@NotNull Box box, @NotNull SequentialReader reader) throws IOException
+    public void processContainer(@NotNull Box box, @NotNull ReaderInfo reader) throws IOException
     {
         if (box.type.equals(HeifContainerTypes.BOX_METADATA)) {
             new FullBox(reader, box);
         }
     }
 
-    private void processFileType(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    private void processFileType(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException
     {
         FileTypeBox fileTypeBox = new FileTypeBox(reader, box);
         fileTypeBox.addMetadata(directory);

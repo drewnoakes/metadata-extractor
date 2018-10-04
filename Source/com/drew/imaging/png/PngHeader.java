@@ -20,9 +20,8 @@
  */
 package com.drew.imaging.png;
 
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -40,12 +39,11 @@ public class PngHeader
     private byte _filterMethod;
     private byte _interlaceMethod;
 
-    public PngHeader(@NotNull byte[] bytes) throws PngProcessingException
+    public PngHeader(@NotNull ReaderInfo reader) throws PngProcessingException, IOException
     {
-        if (bytes.length != 13) {
+        if (reader.getLength() != 13) {
             throw new PngProcessingException("PNG header chunk must have 13 data bytes");
         }
-        SequentialReader reader = new SequentialByteArrayReader(bytes);
         try {
             _imageWidth = reader.getInt32();
             _imageHeight = reader.getInt32();

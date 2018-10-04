@@ -22,11 +22,13 @@ package com.drew.metadata.jpeg;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.imaging.jpeg.JpegSegment;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 
 import java.util.Collections;
+import java.io.IOException;
 
 /**
  * Decodes the comment stored within JPEG files, populating a {@link Metadata} object with tag values in a
@@ -37,19 +39,21 @@ import java.util.Collections;
 public class JpegCommentReader implements JpegSegmentMetadataReader
 {
     @NotNull
+    @Override
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Collections.singletonList(JpegSegmentType.COM);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    @Override
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegment segment : segments) {
             JpegCommentDirectory directory = new JpegCommentDirectory();
             metadata.addDirectory(directory);
 
             // The entire contents of the directory are the comment
-            directory.setStringValue(JpegCommentDirectory.TAG_COMMENT, new StringValue(segmentBytes, null));
+            directory.setStringValue(JpegCommentDirectory.TAG_COMMENT, new StringValue(segment.getReader().toArray(), null));
         }
     }
 }

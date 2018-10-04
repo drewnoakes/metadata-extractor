@@ -20,10 +20,9 @@
  */
 package com.drew.metadata.heif.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * ISO/IEC 23008-12:2017 pg.14
@@ -33,7 +32,7 @@ public class AuxiliaryTypeProperty extends FullBox
     String auxType;
     int[] auxSubtype;
 
-    public AuxiliaryTypeProperty(SequentialReader reader, Box box) throws IOException
+    public AuxiliaryTypeProperty(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 
@@ -41,7 +40,7 @@ public class AuxiliaryTypeProperty extends FullBox
         // auxSubtype
     }
 
-    private String getZeroTerminatedString(int maxLengthBytes, SequentialReader reader) throws IOException
+    private String getZeroTerminatedString(int maxLengthBytes, ReaderInfo reader) throws IOException
     {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < maxLengthBytes; i++) {

@@ -56,6 +56,8 @@ public class ProcessUrlUtility
     private static void processUrl(URL url) throws IOException
     {
         URLConnection con = url.openConnection();
+        long contentLength = con.getContentLengthLong();
+
 //        con.setConnectTimeout(connectTimeout);
 //        con.setReadTimeout(readTimeout);
         InputStream in = con.getInputStream();
@@ -63,7 +65,7 @@ public class ProcessUrlUtility
         // Read metadata
         final Metadata metadata;
         try {
-            metadata = ImageMetadataReader.readMetadata(in);
+            metadata = ImageMetadataReader.readMetadata(in, contentLength);
         } catch (ImageProcessingException e) {
             // this is an error in the Jpeg segment structure.  we're looking for bad handling of
             // metadata segments.  in this case, we didn't even get a segment.

@@ -21,8 +21,7 @@
 package com.drew.metadata.mp4;
 
 import com.drew.imaging.mp4.Mp4Handler;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -72,7 +71,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
-            SequentialReader reader = new SequentialByteArrayReader(payload);
+            ReaderInfo reader = ReaderInfo.createFromArray(payload);
             if (box.type.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)) {
                 processMovieHeader(reader, box);
             } else if (box.type.equals(Mp4BoxTypes.BOX_FILE_TYPE)) {
@@ -93,24 +92,24 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         return this;
     }
 
-    private void processFileType(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    private void processFileType(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException
     {
         FileTypeBox fileTypeBox = new FileTypeBox(reader, box);
         fileTypeBox.addMetadata(directory);
     }
 
-    private void processMovieHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    private void processMovieHeader(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException
     {
         MovieHeaderBox movieHeaderBox = new MovieHeaderBox(reader, box);
         movieHeaderBox.addMetadata(directory);
     }
 
-    private void processMediaHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    private void processMediaHeader(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException
     {
         MediaHeaderBox mediaHeaderBox = new MediaHeaderBox(reader, box);
     }
 
-    private void processTrackHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    private void processTrackHeader(@NotNull ReaderInfo reader, @NotNull Box box) throws IOException
     {
         TrackHeaderBox trackHeaderBox = new TrackHeaderBox(reader, box);
         trackHeaderBox.addMetadata(directory);

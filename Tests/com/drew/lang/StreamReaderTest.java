@@ -22,8 +22,6 @@ package com.drew.lang;
 
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -33,12 +31,12 @@ public class StreamReaderTest extends SequentialAccessTestBase
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullStreamThrows()
     {
-        new StreamReader(null);
+        ReaderInfo.createFromArray(null);
     }
 
     @Override
-    protected SequentialReader createReader(byte[] bytes)
+    protected ReaderInfo createReader(byte[] bytes)
     {
-        return new StreamReader(new ByteArrayInputStream(bytes));
+        return ReaderInfo.createFromArray(bytes);
     }
 }

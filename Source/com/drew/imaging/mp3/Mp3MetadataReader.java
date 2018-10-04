@@ -21,6 +21,8 @@
 package com.drew.imaging.mp3;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.RandomAccessStream;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.mp3.Mp3Reader;
@@ -43,7 +45,7 @@ public class Mp3MetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             inputStream.close();
         }
@@ -52,10 +54,10 @@ public class Mp3MetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull ReaderInfo reader)
     {
         Metadata metadata = new Metadata();
-        new Mp3Reader().extract(inputStream, metadata);
+        new Mp3Reader().extract(reader, metadata);
         return metadata;
     }
 }

@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.heif.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
+import com.drew.lang.Charsets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class ItemProtectionBox extends FullBox
     int protectionCount;
     ArrayList<ProtectionSchemeInfoBox> protectionSchemes;
 
-    public ItemProtectionBox(SequentialReader reader, Box box) throws IOException
+    public ItemProtectionBox(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 
@@ -46,7 +47,7 @@ public class ItemProtectionBox extends FullBox
 
     class ProtectionSchemeInfoBox extends Box
     {
-        public ProtectionSchemeInfoBox(SequentialReader reader, Box box) throws IOException
+        public ProtectionSchemeInfoBox(ReaderInfo reader, Box box) throws IOException
         {
             super(box);
         }
@@ -55,11 +56,11 @@ public class ItemProtectionBox extends FullBox
         {
             String dataFormat;
 
-            public OriginalFormatBox(SequentialReader reader, Box box) throws IOException
+            public OriginalFormatBox(ReaderInfo reader, Box box) throws IOException
             {
                 super(reader);
 
-                dataFormat = reader.getString(4);
+                dataFormat = reader.getString(4, Charsets.UTF_8);
             }
         }
     }

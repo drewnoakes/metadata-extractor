@@ -20,7 +20,10 @@
  */
 package com.drew.imaging.riff;
 
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
+
+import java.io.IOException;
 
 /**
  * Interface of an class capable of handling events raised during the reading of a RIFF file
@@ -43,11 +46,11 @@ public interface RiffHandler
     /**
      * Gets whether this handler is interested in the specific chunk type.
      * Returns <code>true</code> if the data should be copied into an array and passed
-     * to {@link RiffHandler#processChunk(String, byte[])}, or <code>false</code> to avoid
+     * to {@link RiffHandler#processChunk(String, ReaderInfo)}, or <code>false</code> to avoid
      * the copy and skip to the next chunk in the file, if any.
      *
      * @param fourCC the four character code of this chunk
-     * @return true if {@link RiffHandler#processChunk(String, byte[])} should be called, otherwise false
+     * @return true if {@link RiffHandler#processChunk(String, ReaderInfo)} should be called, otherwise false
      */
     boolean shouldAcceptChunk(@NotNull String fourCC);
 
@@ -57,7 +60,7 @@ public interface RiffHandler
      * or <code>false</code> to avoid any unknown chunks within the list.
      *
      * @param fourCC the four character code of this chunk
-     * @return true if {@link RiffHandler#processChunk(String, byte[])} should be called, otherwise false
+     * @return true if {@link RiffHandler#processChunk(String, ReaderInfo)} should be called, otherwise false
      */
     boolean shouldAcceptList(@NotNull String fourCC);
 
@@ -71,5 +74,5 @@ public interface RiffHandler
      * @param fourCC the four character code of the chunk
      * @param payload they payload of the chunk as a byte array
      */
-    void processChunk(@NotNull String fourCC, @NotNull byte[] payload);
+    void processChunk(@NotNull String fourCC, @NotNull ReaderInfo payload) throws IOException;
 }

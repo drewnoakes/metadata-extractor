@@ -21,14 +21,17 @@
 
 package com.drew.metadata.icc;
 
+import com.drew.imaging.jpeg.JpegSegment;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.testing.TestHelper;
 import com.drew.tools.FileUtil;
+import java.util.ArrayList;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -48,7 +51,7 @@ public class IccReaderTest
         byte[] icc = TestHelper.skipBytes(app2Bytes, 14);
 
         Metadata metadata = new Metadata();
-        new IccReader().extract(new ByteArrayReader(icc), metadata);
+        new IccReader().extract(ReaderInfo.createFromArray(icc), metadata);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
@@ -59,10 +62,10 @@ public class IccReaderTest
     @Test
     public void testReadJpegSegments_InvalidData() throws Exception
     {
-        byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
-
         Metadata metadata = new Metadata();
-        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+        List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
+        jpegSegments.add(new JpegSegment(JpegSegmentType.APP2, ReaderInfo.createFromArray(FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2")), IccReader.JPEG_SEGMENT_ID));
+        new IccReader().readJpegSegments(jpegSegments, metadata);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
@@ -73,10 +76,10 @@ public class IccReaderTest
     @Test
     public void testExtract_ProfileDateTime() throws Exception
     {
-        byte[] app2Bytes = FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2");
-
         Metadata metadata = new Metadata();
-        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+        List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
+        jpegSegments.add(new JpegSegment(JpegSegmentType.APP2, ReaderInfo.createFromArray(FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2")), IccReader.JPEG_SEGMENT_ID));
+        new IccReader().readJpegSegments(jpegSegments, metadata);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 

@@ -21,7 +21,8 @@
 
 package com.drew.imaging.bmp;
 
-import com.drew.lang.StreamReader;
+import com.drew.lang.RandomAccessStream;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.bmp.BmpReader;
@@ -42,7 +43,7 @@ public class BmpMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             inputStream.close();
         }
@@ -51,10 +52,10 @@ public class BmpMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull ReaderInfo reader)
     {
         Metadata metadata = new Metadata();
-        new BmpReader().extract(new StreamReader(inputStream), metadata);
+        new BmpReader().extract(reader, metadata);
         return metadata;
     }
 }

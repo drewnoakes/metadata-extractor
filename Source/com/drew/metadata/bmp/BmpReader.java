@@ -20,9 +20,8 @@
  */
 package com.drew.metadata.bmp;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.ErrorDirectory;
@@ -76,7 +75,7 @@ public class BmpReader
      */
     public static final int OS2_POINTER = 0x5450;
 
-    public void extract(@NotNull final SequentialReader reader, final @NotNull Metadata metadata)
+    public void extract(@NotNull final ReaderInfo reader, final @NotNull Metadata metadata)
     {
         reader.setMotorolaByteOrder(false);
 
@@ -88,7 +87,7 @@ public class BmpReader
         readFileHeader(reader, metadata, true);
     }
 
-    protected void readFileHeader(@NotNull final SequentialReader reader, final @NotNull Metadata metadata, boolean allowArray) {
+    protected void readFileHeader(@NotNull final ReaderInfo reader, final @NotNull Metadata metadata, boolean allowArray) {
         /*
          * There are two possible headers a file can start with. If the magic
          * number is OS/2 Bitmap Array (0x4142) the OS/2 Bitmap Array Header
@@ -136,11 +135,11 @@ public class BmpReader
                     if (nextHeaderOffset == 0) {
                         return; // No more bitmaps
                     }
-                    if (reader.getPosition() > nextHeaderOffset) {
+                    if (reader.getLocalPosition() > nextHeaderOffset) {
                         addError("Invalid next header offset", metadata);
                         return;
                     }
-                    reader.skip(nextHeaderOffset - reader.getPosition());
+                    reader.skip(nextHeaderOffset - reader.getLocalPosition());
                     readFileHeader(reader, metadata, true);
                     break;
                 case BITMAP:
@@ -153,7 +152,7 @@ public class BmpReader
                     directory.setInt(BmpHeaderDirectory.TAG_BITMAP_TYPE, magicNumber);
                     // skip past the rest of the file header
                     reader.skip(4 + 2 + 2 + 4);
-                    readBitmapHeader(reader, (BmpHeaderDirectory) directory, metadata);
+                    readBitmapHeader(reader.Clone(), (BmpHeaderDirectory) directory, metadata);
                     break;
                 default:
                     metadata.addDirectory(new ErrorDirectory("Invalid BMP magic number 0x" + Integer.toHexString(magicNumber)));
@@ -168,7 +167,7 @@ public class BmpReader
         }
     }
 
-    protected void readBitmapHeader(@NotNull final SequentialReader reader, final @NotNull BmpHeaderDirectory directory, final @NotNull Metadata metadata) {
+    protected void readBitmapHeader(@NotNull final ReaderInfo reader, final @NotNull BmpHeaderDirectory directory, final @NotNull Metadata metadata) {
         /*
          * BITMAPCOREHEADER (12 bytes):
          *
@@ -263,7 +262,7 @@ public class BmpReader
 
         try {
             int bitmapType = directory.getInt(BmpHeaderDirectory.TAG_BITMAP_TYPE);
-            long headerOffset = reader.getPosition();
+            long headerOffset = reader.getLocalPosition();
             int headerSize = reader.getInt32();
 
             directory.setInt(BmpHeaderDirectory.TAG_HEADER_SIZE, headerSize);
@@ -362,16 +361,17 @@ public class BmpReader
                 if (csType == ColorSpaceType.PROFILE_EMBEDDED.getValue() || csType == ColorSpaceType.PROFILE_LINKED.getValue()) {
                     long profileOffset = reader.getUInt32();
                     int profileSize = reader.getInt32();
-                    if (reader.getPosition() > headerOffset + profileOffset) {
+                    if (reader.getLocalPosition() > headerOffset + profileOffset) {
                         directory.addError("Invalid profile data offset 0x" + Long.toHexString(headerOffset + profileOffset));
                         return;
                     }
-                    reader.skip(headerOffset + profileOffset - reader.getPosition());
+                    reader.skip(headerOffset + profileOffset - reader.getLocalPosition());
                     if (csType == ColorSpaceType.PROFILE_LINKED.getValue()) {
                         directory.setString(BmpHeaderDirectory.TAG_LINKED_PROFILE, reader.getNullTerminatedString(profileSize, Charsets.WINDOWS_1252));
                     } else {
-                        ByteArrayReader randomAccessReader = new ByteArrayReader(reader.getBytes(profileSize));
-                        new IccReader().extract(randomAccessReader, metadata, directory);
+                        //ByteArrayReader randomAccessReader = new ByteArrayReader(reader.getBytes(profileSize));
+                        ReaderInfo iccReader = reader.Clone(profileSize);
+                        new IccReader().extract(iccReader, metadata, directory);
                     }
                 } else {
                     reader.skip(

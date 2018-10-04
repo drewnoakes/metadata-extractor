@@ -23,9 +23,9 @@ package com.drew.metadata.photoshop;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.imaging.jpeg.JpegSegment;
+import com.drew.lang.ReaderInfo;
+import com.drew.lang.Charsets;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
@@ -33,6 +33,7 @@ import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -48,7 +49,9 @@ import java.util.Collections;
 public class PhotoshopReader implements JpegSegmentMetadataReader
 {
     @NotNull
-    private static final String JPEG_SEGMENT_PREAMBLE = "Photoshop 3.0";
+    public static final String JPEG_SEGMENT_ID = "Photoshop";
+    @NotNull
+    public static final String JPEG_SEGMENT_PREAMBLE = "Photoshop 3.0";
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -56,24 +59,22 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegment segment : segments) {
             // Ensure data starts with the necessary preamble
-            if (segmentBytes.length < preambleLength + 1 || !JPEG_SEGMENT_PREAMBLE.equals(new String(segmentBytes, 0, preambleLength)))
-                continue;
-
-            extract(
-                new SequentialByteArrayReader(segmentBytes, preambleLength + 1),
-                segmentBytes.length - preambleLength - 1,
-                metadata);
+            if (segment.getReader().getLength() >= preambleLength + 1 && JPEG_SEGMENT_ID.equals(segment.getPreamble()))
+                extract(segment.getReader().Clone(preambleLength + 1, segment.getReader().getLength() - preambleLength - 1), metadata);
         }
     }
 
-    public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata) throws IOException
     {
+        if (!reader.isMotorolaByteOrder())
+            reader = reader.Clone(false);
+        
         PhotoshopDirectory directory = new PhotoshopDirectory();
         metadata.addDirectory(directory);
 
@@ -89,10 +90,11 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
         int pos = 0;
         int clippingPathCount = 0;
+        int length = (int)reader.getLength();
         while (pos < length) {
             try {
                 // 4 bytes for the signature ("8BIM", "PHUT", etc.)
-                String signature = reader.getString(4);
+                String signature = reader.getString(4, Charsets.UTF_8);
                 pos += 4;
 
                 // 2 bytes for the resource identifier (tag type).
@@ -102,6 +104,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                 // A variable number of bytes holding a pascal string (two leading bytes for length).
                 short descriptionLength = reader.getUInt8();
                 pos += 1;
+
                 // Some basic bounds checking
                 if (descriptionLength < 0 || descriptionLength + pos > length)
                     throw new ImageProcessingException("Invalid string length");
@@ -117,6 +120,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
                 if (pos % 2 != 0) {
+                    //reader.skip(1);
                     reader.skip(1);
                     pos++;
                 }
@@ -124,9 +128,12 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                 // 4 bytes for the size of the resource data that follows.
                 int byteCount = reader.getInt32();
                 pos += 4;
+
                 // The resource data.
-                byte[] tagBytes = reader.getBytes(byteCount);
+                ReaderInfo tagReader = reader.Clone(byteCount);
+                reader.skip(byteCount);
                 pos += byteCount;
+
                 // The number of bytes is padded with a trailing zero, if needed, to make the size even.
                 if (pos % 2 != 0) {
                     reader.skip(1);
@@ -135,16 +142,16 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 if (signature.equals("8BIM")) {
                     if (tagType == PhotoshopDirectory.TAG_IPTC)
-                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory);
+                        new IptcReader().extract(tagReader, metadata, directory);
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
-                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
+                        new IccReader().extract(tagReader, metadata, directory);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
-                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
+                        new ExifReader().extract(tagReader, metadata, directory);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
-                        new XmpReader().extract(tagBytes, metadata, directory);
+                        new XmpReader().extract(tagReader, metadata, directory);
                     else if (tagType >= 0x07D0 && tagType <= 0x0BB6) {
                         clippingPathCount++;
-                        tagBytes = Arrays.copyOf(tagBytes, tagBytes.length + description.length() + 1);
+                        byte[] tagBytes = Arrays.copyOf(tagReader.toArray(), (int)tagReader.getLength() + description.length() + 1);
                         // Append description(name) to end of byte array with 1 byte before the description representing the length
                         for (int i = tagBytes.length - description.length() - 1; i < tagBytes.length; i++) {
                             if (i % (tagBytes.length - description.length() - 1 + description.length()) == 0)
@@ -156,7 +163,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                         directory.setByteArray(0x07CF + clippingPathCount, tagBytes);
                     }
                     else
-                        directory.setByteArray(tagType, tagBytes);
+                        directory.setByteArray(tagType, tagReader.toArray());
 
                     if (tagType >= 0x0fa0 && tagType <= 0x1387)
                         PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));

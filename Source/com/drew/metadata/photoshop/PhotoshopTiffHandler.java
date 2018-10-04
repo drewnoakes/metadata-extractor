@@ -1,8 +1,6 @@
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessReader;
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -36,10 +34,12 @@ public class PhotoshopTiffHandler extends ExifTiffHandler
         super(metadata, parentDirectory);
     }
 
+    @Override
     public boolean customProcessTag(final int tagOffset,
-                                    final @NotNull Set<Integer> processedIfdOffsets,
-                                    final int tiffHeaderOffset,
-                                    final @NotNull RandomAccessReader reader,
+                                    final @NotNull Set<Long> processedIfdOffsets,
+                                    //final int tiffHeaderOffset,
+                                    //final @NotNull RandomAccessReader reader,
+                                    @NotNull ReaderInfo reader,
                                     final int tagId,
                                     final int byteCount) throws IOException
     {
@@ -48,14 +48,14 @@ public class PhotoshopTiffHandler extends ExifTiffHandler
                 new XmpReader().extract(reader.getBytes(tagOffset, byteCount), _metadata);
                 return true;
             case TAG_PHOTOSHOP_IMAGE_RESOURCES:
-                new PhotoshopReader().extract(new SequentialByteArrayReader(reader.getBytes(tagOffset, byteCount)), byteCount, _metadata);
+                new PhotoshopReader().extract(reader.Clone(tagOffset, byteCount), _metadata);
                 return true;
             case TAG_ICC_PROFILES:
-                new IccReader().extract(new ByteArrayReader(reader.getBytes(tagOffset, byteCount)), _metadata);
+                new IccReader().extract(reader.Clone(tagOffset, byteCount), _metadata);
                 return true;
         }
 
 
-        return super.customProcessTag(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount);
+        return super.customProcessTag(tagOffset, processedIfdOffsets, reader, tagId, byteCount);
     }
 }

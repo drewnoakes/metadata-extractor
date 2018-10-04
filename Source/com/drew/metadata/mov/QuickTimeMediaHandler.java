@@ -21,8 +21,7 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.quicktime.QuickTimeHandler;
-import com.drew.lang.SequentialByteArrayReader;
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -78,7 +77,7 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
     public QuickTimeMediaHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
     {
         if (payload != null) {
-            SequentialReader reader = new SequentialByteArrayReader(payload);
+            ReaderInfo reader = ReaderInfo.createFromArray(payload);
             if (atom.type.equals(getMediaInformation())) {
                 processMediaInformation(reader, atom);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
@@ -92,9 +91,9 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
 
     protected abstract String getMediaInformation();
 
-    protected abstract void processSampleDescription(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
+    protected abstract void processSampleDescription(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException;
 
-    protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
+    protected abstract void processMediaInformation(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
+    protected abstract void processTimeToSample(@NotNull ReaderInfo reader, @NotNull Atom atom) throws IOException;
 }

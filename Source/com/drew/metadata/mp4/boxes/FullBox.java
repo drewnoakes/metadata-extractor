@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mp4.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class FullBox extends Box
     protected int version;
     protected byte[] flags;
 
-    public FullBox(SequentialReader reader, Box box) throws IOException
+    public FullBox(ReaderInfo reader, Box box) throws IOException
     {
         super(box);
 

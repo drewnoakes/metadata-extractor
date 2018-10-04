@@ -22,7 +22,9 @@ package com.drew.metadata.jpeg;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentType;
+import com.drew.imaging.jpeg.JpegSegment;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.tools.FileUtil;
 import org.junit.Before;
@@ -42,7 +44,8 @@ public class JpegReaderTest
     public static JpegDirectory processBytes(String filePath) throws IOException
     {
         Metadata metadata = new Metadata();
-        new JpegReader().extract(FileUtil.readBytes(filePath), metadata, JpegSegmentType.SOF0);
+        JpegSegment sof0 = new JpegSegment(JpegSegmentType.SOF0, ReaderInfo.createFromArray(FileUtil.readBytes(filePath)));
+        new JpegReader().extract(sof0, metadata);
 
         JpegDirectory directory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         assertNotNull(directory);

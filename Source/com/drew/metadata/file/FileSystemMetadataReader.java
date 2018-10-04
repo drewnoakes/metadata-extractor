@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.Date;
 
 public class FileSystemMetadataReader
-{
+{    
     public void read(@NotNull File file, @NotNull Metadata metadata) throws IOException
     {
         if (!file.isFile())

@@ -21,7 +21,7 @@
 
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
@@ -34,7 +34,7 @@ import java.io.IOException;
  */
 public class PsdReader
 {
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata)
     {
         PsdHeaderDirectory directory = new PsdHeaderDirectory();
         metadata.addDirectory(directory);
@@ -109,7 +109,7 @@ public class PsdReader
 
             assert(sectionLength <= Integer.MAX_VALUE);
 
-            new PhotoshopReader().extract(reader, (int)sectionLength, metadata);
+            new PhotoshopReader().extract(reader.Clone(0, (int)sectionLength), metadata);
         } catch (IOException e) {
             // ignore
         }

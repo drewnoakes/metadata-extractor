@@ -22,7 +22,9 @@ package com.drew.imaging.raf;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.lang.RandomAccessStream;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileSystemMetadataReader;
 
@@ -45,7 +47,7 @@ public class RafMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             inputStream.close();
         }
@@ -54,32 +56,25 @@ public class RafMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull ReaderInfo reader) throws JpegProcessingException, IOException
     {
-        if (!inputStream.markSupported())
-            throw new IOException("Stream must support mark/reset");
-
-        inputStream.mark(512);
-
         byte[] data = new byte[512];
-        int bytesRead = inputStream.read(data);
+        int bytesRead = reader.read(data, 0, 512);
 
         if (bytesRead == -1)
             throw new IOException("Stream is empty");
 
-        inputStream.reset();
+        reader.skip(-bytesRead);
 
         for (int i = 0; i < bytesRead - 2; i++) {
             // Look for the first three bytes of a JPEG encoded file
             if (data[i] == (byte) 0xff && data[i + 1] == (byte) 0xd8 && data[i + 2] == (byte) 0xff) {
-                long bytesSkipped = inputStream.skip(i);
-                if (bytesSkipped != i)
-                    throw new IOException("Skipping stream bytes failed");
+                reader.skip(i);
                 break;
             }
         }
 
-        return JpegMetadataReader.readMetadata(inputStream);
+        return JpegMetadataReader.readMetadata(reader);
     }
 
     private RafMetadataReader() throws Exception

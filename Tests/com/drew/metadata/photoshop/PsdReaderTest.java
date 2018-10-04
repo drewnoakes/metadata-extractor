@@ -21,8 +21,8 @@
 
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.RandomAccessStream;
 import com.drew.metadata.Metadata;
 import org.junit.Test;
 
@@ -39,12 +39,13 @@ import static org.junit.Assert.assertNotNull;
 public class PsdReaderTest
 {
     @NotNull
-    public static PsdHeaderDirectory processBytes(@NotNull String file) throws Exception
+    public static PsdHeaderDirectory processBytes(@NotNull String filePath) throws Exception
     {
         Metadata metadata = new Metadata();
-        InputStream stream = new FileInputStream(new File(file));
+        File file = new File(filePath);
+        InputStream stream = new FileInputStream(file);
         try {
-            new PsdReader().extract(new StreamReader(stream), metadata);
+            new PsdReader().extract(new RandomAccessStream(stream, file.length()).createReader(), metadata);
         } catch (Exception e) {
             stream.close();
             throw e;

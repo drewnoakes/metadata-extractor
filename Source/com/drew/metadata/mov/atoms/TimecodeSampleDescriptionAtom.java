@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.media.QuickTimeTimecodeDirectory;
 
 import java.io.IOException;
@@ -32,13 +32,13 @@ import java.io.IOException;
  */
 public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<TimecodeSampleDescriptionAtom.TimecodeSampleDescription>
 {
-    public TimecodeSampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public TimecodeSampleDescriptionAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
     }
 
     @Override
-    TimecodeSampleDescription getSampleDescription(SequentialReader reader) throws IOException
+    TimecodeSampleDescription getSampleDescription(ReaderInfo reader) throws IOException
     {
         return new TimecodeSampleDescription(reader);
     }
@@ -60,7 +60,7 @@ public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<Timecod
         int frameDuration;
         int numberOfFrames;
 
-        public TimecodeSampleDescription(SequentialReader reader) throws IOException
+        public TimecodeSampleDescription(ReaderInfo reader) throws IOException
         {
             super(reader);
 

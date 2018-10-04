@@ -21,8 +21,7 @@
 package com.drew.metadata.webp;
 
 import com.drew.imaging.riff.RiffHandler;
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
@@ -53,11 +52,13 @@ public class WebpRiffHandler implements RiffHandler
         _metadata = metadata;
     }
 
+    @Override
     public boolean shouldAcceptRiffIdentifier(@NotNull String identifier)
     {
         return identifier.equals(WebpDirectory.FORMAT);
     }
 
+    @Override
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals(WebpDirectory.CHUNK_VP8X)
@@ -74,18 +75,18 @@ public class WebpRiffHandler implements RiffHandler
         return false;
     }
 
-    public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
+    @Override
+    public void processChunk(@NotNull String fourCC, @NotNull ReaderInfo chunkReader) throws IOException // @NotNull byte[] payload)
     {
-//        System.out.println("Chunk " + fourCC + " " + payload.length + " bytes");
         WebpDirectory directory = new WebpDirectory();
         if (fourCC.equals(WebpDirectory.CHUNK_EXIF)) {
-            new ExifReader().extract(new ByteArrayReader(payload), _metadata);
+            new ExifReader().extract(chunkReader, _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_ICCP)) {
-            new IccReader().extract(new ByteArrayReader(payload), _metadata);
+            new IccReader().extract(chunkReader, _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_XMP)) {
-            new XmpReader().extract(payload, _metadata);
-        } else if (fourCC.equals(WebpDirectory.CHUNK_VP8X) && payload.length == 10) {
-            RandomAccessReader reader = new ByteArrayReader(payload);
+            new XmpReader().extract(chunkReader, _metadata);
+        } else if (fourCC.equals(WebpDirectory.CHUNK_VP8X) && chunkReader.getLength() == 10) {
+            ReaderInfo reader = chunkReader.Clone();
             reader.setMotorolaByteOrder(false);
 
             try {
@@ -111,8 +112,8 @@ public class WebpRiffHandler implements RiffHandler
             } catch (IOException e) {
                 e.printStackTrace(System.err);
             }
-        } else if (fourCC.equals(WebpDirectory.CHUNK_VP8L) && payload.length > 4) {
-            RandomAccessReader reader = new ByteArrayReader(payload);
+        } else if (fourCC.equals(WebpDirectory.CHUNK_VP8L) && chunkReader.getLength() > 4) {
+            ReaderInfo reader = chunkReader.Clone();
             reader.setMotorolaByteOrder(false);
 
             try {
@@ -138,8 +139,8 @@ public class WebpRiffHandler implements RiffHandler
             } catch (IOException e) {
                 e.printStackTrace(System.err);
             }
-        } else if (fourCC.equals(WebpDirectory.CHUNK_VP8) && payload.length > 9) {
-            RandomAccessReader reader = new ByteArrayReader(payload);
+        } else if (fourCC.equals(WebpDirectory.CHUNK_VP8) && chunkReader.getLength() > 9) {
+            ReaderInfo reader = chunkReader.Clone();
             reader.setMotorolaByteOrder(false);
 
             try {

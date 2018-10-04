@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.media.QuickTimeTimecodeDirectory;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class TimecodeInformationMediaAtom extends FullAtom
     int[] backgroundColor;
     String fontName;
 
-    public TimecodeInformationMediaAtom(SequentialReader reader, Atom atom) throws IOException
+    public TimecodeInformationMediaAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
@@ -49,7 +50,7 @@ public class TimecodeInformationMediaAtom extends FullAtom
         reader.skip(2); // Reserved
         textColor = new int[]{reader.getUInt16(), reader.getUInt16(), reader.getUInt16()};
         backgroundColor = new int[]{reader.getUInt16(), reader.getUInt16(), reader.getUInt16()};
-        fontName = reader.getString(reader.getUInt8());
+        fontName = reader.getString(reader.getUInt8(), Charsets.UTF_8);
     }
 
     public void addMetadata(QuickTimeTimecodeDirectory directory)

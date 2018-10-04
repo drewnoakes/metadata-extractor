@@ -20,8 +20,8 @@
  */
 package com.drew.imaging.png;
 
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -39,13 +39,12 @@ public class PngChromaticities
     private final int _blueX;
     private final int _blueY;
 
-    public PngChromaticities(@NotNull byte[] bytes) throws PngProcessingException
+    public PngChromaticities(@NotNull ReaderInfo reader) throws PngProcessingException, IOException
     {
-        if (bytes.length != 8 * 4) {
+        if (reader.getLength() != 8 * 4) {
             throw new PngProcessingException("Invalid number of bytes");
         }
 
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
         try {
             _whitePointX = reader.getInt32();
             _whitePointY = reader.getInt32();

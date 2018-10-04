@@ -83,7 +83,7 @@ public class PngMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            metadata = readMetadata(new RandomAccessStream(inputStream, file.length()).createReader());
         } finally {
             inputStream.close();
         }
@@ -92,9 +92,9 @@ public class PngMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream) throws PngProcessingException, IOException
+    public static Metadata readMetadata(@NotNull ReaderInfo reader) throws PngProcessingException, IOException
     {
-        Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), _desiredChunkTypes);
+        Iterable<PngChunk> chunks = new PngChunkReader().extract(reader, _desiredChunkTypes);
 
         Metadata metadata = new Metadata();
 
@@ -112,10 +112,9 @@ public class PngMetadataReader
     private static void processChunk(@NotNull Metadata metadata, @NotNull PngChunk chunk) throws PngProcessingException, IOException
     {
         PngChunkType chunkType = chunk.getType();
-        byte[] bytes = chunk.getBytes();
 
         if (chunkType.equals(PngChunkType.IHDR)) {
-            PngHeader header = new PngHeader(bytes);
+            PngHeader header = new PngHeader(chunk.getReader());
             PngDirectory directory = new PngDirectory(PngChunkType.IHDR);
             directory.setInt(PngDirectory.TAG_IMAGE_WIDTH, header.getImageWidth());
             directory.setInt(PngDirectory.TAG_IMAGE_HEIGHT, header.getImageHeight());
@@ -127,19 +126,19 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.PLTE)) {
             PngDirectory directory = new PngDirectory(PngChunkType.PLTE);
-            directory.setInt(PngDirectory.TAG_PALETTE_SIZE, bytes.length / 3);
+            directory.setInt(PngDirectory.TAG_PALETTE_SIZE, (int)chunk.getReader().getLength() / 3);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.tRNS)) {
             PngDirectory directory = new PngDirectory(PngChunkType.tRNS);
             directory.setInt(PngDirectory.TAG_PALETTE_HAS_TRANSPARENCY, 1);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.sRGB)) {
-            int srgbRenderingIntent = bytes[0];
+            int srgbRenderingIntent = chunk.getReader().getInt8(); // bytes[0];
             PngDirectory directory = new PngDirectory(PngChunkType.sRGB);
             directory.setInt(PngDirectory.TAG_SRGB_RENDERING_INTENT, srgbRenderingIntent);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.cHRM)) {
-            PngChromaticities chromaticities = new PngChromaticities(bytes);
+            PngChromaticities chromaticities = new PngChromaticities(chunk.getReader());
             PngChromaticitiesDirectory directory = new PngChromaticitiesDirectory();
             directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_X, chromaticities.getWhitePointX());
             directory.setInt(PngChromaticitiesDirectory.TAG_WHITE_POINT_Y, chromaticities.getWhitePointY());
@@ -151,29 +150,30 @@ public class PngMetadataReader
             directory.setInt(PngChromaticitiesDirectory.TAG_BLUE_Y, chromaticities.getBlueY());
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.gAMA)) {
-            int gammaInt = ByteConvert.toInt32BigEndian(bytes);
-            new SequentialByteArrayReader(bytes).getInt32();
+            int gammaInt = ByteConvert.toInt32BigEndian(chunk.getReader().toArray());
             PngDirectory directory = new PngDirectory(PngChunkType.gAMA);
             directory.setDouble(PngDirectory.TAG_GAMMA, gammaInt / 100000.0);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.iCCP)) {
-            SequentialReader reader = new SequentialByteArrayReader(bytes);
+            ReaderInfo reader = chunk.getReader();
 
             // Profile Name is 1-79 bytes, followed by the 1 byte null character
-            byte[] profileNameBytes = reader.getNullTerminatedBytes(79 + 1);
+            StringValue profileName = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding);
             PngDirectory directory = new PngDirectory(PngChunkType.iCCP);
-            directory.setStringValue(PngDirectory.TAG_ICC_PROFILE_NAME, new StringValue(profileNameBytes, _latin1Encoding));
+            directory.setStringValue(PngDirectory.TAG_ICC_PROFILE_NAME, profileName);
             byte compressionMethod = reader.getInt8();
             // Only compression method allowed by the spec is zero: deflate
             if (compressionMethod == 0) {
                 // bytes left for compressed text is:
                 // total bytes length - (profilenamebytes length + null byte + compression method byte)
-                int bytesLeft = bytes.length - (profileNameBytes.length + 1 + 1);
+                int bytesLeft = (int)reader.getLength() - (profileName.getBytes().length + 1 + 1);
+                
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
 
                 try {
                     InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
-                    new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
+                    // the inflate stream is compressed so the length is unknown. Set to Integer max...
+                    new IccReader().extract(new RandomAccessStream(inflateStream, Integer.MAX_VALUE).createReader(), metadata, directory);
                     inflateStream.close();
                 } catch(java.util.zip.ZipException zex) {
                     directory.addError(String.format("Exception decompressing PNG iCCP chunk : %s", zex.getMessage()));
@@ -184,27 +184,29 @@ public class PngMetadataReader
             }
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.bKGD)) {
+            byte[] bytes = chunk.getReader().toArray();
             PngDirectory directory = new PngDirectory(PngChunkType.bKGD);
             directory.setByteArray(PngDirectory.TAG_BACKGROUND_COLOR, bytes);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.tEXt)) {
-            SequentialReader reader = new SequentialByteArrayReader(bytes);
-
+            ReaderInfo reader = chunk.getReader();
+            
             // Keyword is 1-79 bytes, followed by the 1 byte null character
             StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding);
             String keyword = keywordsv.toString();
 
             // bytes left for text is:
             // total bytes length - (Keyword length + null byte)
-            int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1);
+            int bytesLeft = (int)reader.getLength() - (keywordsv.getBytes().length + 1);
             StringValue value = reader.getNullTerminatedStringValue(bytesLeft, _latin1Encoding);
+            
             List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
             textPairs.add(new KeyValuePair(keyword, value));
             PngDirectory directory = new PngDirectory(PngChunkType.tEXt);
             directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.zTXt)) {
-            SequentialReader reader = new SequentialByteArrayReader(bytes);
+            ReaderInfo reader = chunk.getReader();
 
             // Keyword is 1-79 bytes, followed by the 1 byte null character
             StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding);
@@ -213,11 +215,14 @@ public class PngMetadataReader
 
             // bytes left for compressed text is:
             // total bytes length - (Keyword length + null byte + compression method byte)
-            int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1 + 1);
+            int bytesLeft = (int)reader.getLength() - (keywordsv.getBytes().length + 1 + 1);
             byte[] textBytes = null;
             if (compressionMethod == 0) {
                 try {
-                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    byte[] bytes = chunk.getReader().getBytes((int)chunk.getReader().getLength() - bytesLeft, bytesLeft);
+                    InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(bytes));
+                    textBytes = StreamUtil.readAllBytes(inflateStream);
+                    inflateStream.close();
                 } catch(java.util.zip.ZipException zex) {
                     textBytes = null;
                     PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
@@ -242,27 +247,30 @@ public class PngMetadataReader
                 }
             }
         } else if (chunkType.equals(PngChunkType.iTXt)) {
-            SequentialReader reader = new SequentialByteArrayReader(bytes);
+            ReaderInfo reader = chunk.getReader();
 
             // Keyword is 1-79 bytes, followed by the 1 byte null character
-            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding);
+            StringValue keywordsv = reader.getNullTerminatedStringValue(79, _latin1Encoding);
             String keyword = keywordsv.toString();
             byte compressionFlag = reader.getInt8();
             byte compressionMethod = reader.getInt8();
             // TODO we currently ignore languageTagBytes and translatedKeywordBytes
-            byte[] languageTagBytes = reader.getNullTerminatedBytes(bytes.length);
-            byte[] translatedKeywordBytes = reader.getNullTerminatedBytes(bytes.length);
+            byte[] languageTagBytes = reader.getNullTerminatedBytes((int)reader.getLength());
+            byte[] translatedKeywordBytes = reader.getNullTerminatedBytes((int)reader.getLength());
 
             // bytes left for compressed text is:
             // total bytes length - (Keyword length + null byte + comp flag byte + comp method byte + lang length + null byte + translated length + null byte)
-            int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1 + 1 + 1 + languageTagBytes.length + 1 + translatedKeywordBytes.length + 1);
+            int bytesLeft = (int)reader.getLength() - (keywordsv.getBytes().length + 1 + 1 + 1 + languageTagBytes.length + 1 + translatedKeywordBytes.length + 1);
             byte[] textBytes = null;
             if (compressionFlag == 0) {
                 textBytes = reader.getNullTerminatedBytes(bytesLeft);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
                     try {
-                        textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                        byte[] bytes = chunk.getReader().getBytes((int)chunk.getReader().getLength() - bytesLeft, bytesLeft);
+                        InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(bytes));
+                        textBytes = StreamUtil.readAllBytes(inflateStream);
+                        inflateStream.close();
                     } catch(java.util.zip.ZipException zex) {
                         textBytes = null;
                         PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
@@ -293,7 +301,7 @@ public class PngMetadataReader
                 }
             }
         } else if (chunkType.equals(PngChunkType.tIME)) {
-            SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
+            ReaderInfo reader = chunk.getReader();
             int year = reader.getUInt16();
             int month = reader.getUInt8();
             int day = reader.getUInt8();
@@ -311,7 +319,7 @@ public class PngMetadataReader
             }
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.pHYs)) {
-            SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
+            ReaderInfo reader = chunk.getReader();
             int pixelsPerUnitX = reader.getInt32();
             int pixelsPerUnitY = reader.getInt32();
             byte unitSpecifier = reader.getInt8();
@@ -321,6 +329,7 @@ public class PngMetadataReader
             directory.setInt(PngDirectory.TAG_UNIT_SPECIFIER, unitSpecifier);
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.sBIT)) {
+            byte[] bytes = chunk.getReader().toArray();
             PngDirectory directory = new PngDirectory(PngChunkType.sBIT);
             directory.setByteArray(PngDirectory.TAG_SIGNIFICANT_BITS, bytes);
             metadata.addDirectory(directory);

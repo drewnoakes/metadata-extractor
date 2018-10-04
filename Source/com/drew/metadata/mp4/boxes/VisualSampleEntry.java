@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.mp4.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 
@@ -44,13 +45,13 @@ public class VisualSampleEntry extends SampleEntry
     String compressorname;
     int depth;
 
-    public VisualSampleEntry(SequentialReader reader, Box box) throws IOException
+    public VisualSampleEntry(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 
         version = reader.getInt16();
         revisionLevel = reader.getInt16();
-        vendor = reader.getString(4);
+        vendor = reader.getString(4, Charsets.UTF_8);
         temporalQuality = reader.getInt32();
         spatialQuality = reader.getInt32();
         width = reader.getUInt16();
@@ -59,7 +60,7 @@ public class VisualSampleEntry extends SampleEntry
         vertresolution = reader.getUInt32();
         reader.skip(4); // Reserved
         frameCount = reader.getUInt16();
-        compressorname = reader.getString(32);
+        compressorname = reader.getString(32, Charsets.UTF_8);
         depth = reader.getUInt16();
         reader.skip(2); // Pre-defined
     }

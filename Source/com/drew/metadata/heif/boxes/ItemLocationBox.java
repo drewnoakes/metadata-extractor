@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.heif.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 
 import java.io.IOException;
 
@@ -41,7 +41,7 @@ public class ItemLocationBox extends FullBox
     int extentCount;
     Extent[] extents;
 
-    public ItemLocationBox(SequentialReader reader, Box box) throws IOException
+    public ItemLocationBox(ReaderInfo reader, Box box) throws IOException
     {
         super(reader, box);
 
@@ -90,7 +90,7 @@ public class ItemLocationBox extends FullBox
         }
     }
 
-    public Long getIntFromUnknownByte(int variable, SequentialReader reader) throws IOException
+    public Long getIntFromUnknownByte(int variable, ReaderInfo reader) throws IOException
     {
         switch(variable) {
             case (1):

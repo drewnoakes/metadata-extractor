@@ -22,14 +22,13 @@ package com.drew.metadata.icc;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
+import com.drew.imaging.jpeg.JpegSegment;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.DateUtil;
-import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -47,55 +46,61 @@ import java.util.Collections;
  * @author Yuri Binev
  * @author Drew Noakes https://drewnoakes.com
  */
-public class IccReader implements JpegSegmentMetadataReader, MetadataReader
+public class IccReader implements JpegSegmentMetadataReader
 {
+    public static final String JPEG_SEGMENT_ID = "ICC";
     public static final String JPEG_SEGMENT_PREAMBLE = "ICC_PROFILE";
-
+        
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Collections.singletonList(JpegSegmentType.APP2);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
-        final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
+        // NOTE the header is 14 bytes, while "ICC_PROFILE" is 11
+        final int preambleLength = 14;
 
         // ICC data can be spread across multiple JPEG segments.
         // We concat them together in this buffer for later processing.
         byte[] buffer = null;
 
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegment segment : segments) {
             // Skip any segments that do not contain the required preamble
-            if (segmentBytes.length < preambleLength || !JPEG_SEGMENT_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)))
+            if (segment.getReader().getLength() < preambleLength || !JPEG_SEGMENT_ID.equalsIgnoreCase(segment.getPreamble()))
                 continue;
 
             // NOTE we ignore three bytes here -- are they useful for anything?
 
+            ReaderInfo segmentReader = segment.getReader();
             // Grow the buffer
             if (buffer == null) {
-                buffer = new byte[segmentBytes.length - 14];
+                buffer = new byte[(int)segmentReader.getLength() - preambleLength];
                 // skip the first 14 bytes
-                System.arraycopy(segmentBytes, 14, buffer, 0, segmentBytes.length - 14);
+                System.arraycopy(segmentReader.toArray(), preambleLength, buffer, 0, (int)segmentReader.getLength() - preambleLength);
             } else {
-                byte[] newBuffer = new byte[buffer.length + segmentBytes.length - 14];
+                byte[] newBuffer = new byte[buffer.length + (int)segmentReader.getLength() - preambleLength];
                 System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-                System.arraycopy(segmentBytes, 14, newBuffer, buffer.length, segmentBytes.length - 14);
+                System.arraycopy(segmentReader.toArray(), preambleLength, newBuffer, buffer.length, (int)segmentReader.getLength() - preambleLength);
                 buffer = newBuffer;
             }
         }
 
         if (buffer != null)
-            extract(new ByteArrayReader(buffer), metadata);
+            extract(ReaderInfo.createFromArray(buffer), metadata);
     }
 
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata) throws IOException
     {
         extract(reader, metadata, null);
     }
 
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory) throws IOException
     {
+        if (!reader.isMotorolaByteOrder())
+            reader = reader.Clone(false);
+
         // TODO review whether the 'tagPtr' values below really do require RandomAccessReader or whether SequentialReader may be used instead
 
         IccDirectory directory = new IccDirectory();
@@ -157,14 +162,14 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         metadata.addDirectory(directory);
     }
 
-    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void set4ByteString(@NotNull Directory directory, int tagType, @NotNull ReaderInfo reader) throws IOException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
             directory.setString(tagType, getStringFromInt32(i));
     }
 
-    private void setInt32(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void setInt32(@NotNull Directory directory, int tagType, @NotNull ReaderInfo reader) throws IOException
     {
         int i = reader.getInt32(tagType);
         if (i != 0)
@@ -172,7 +177,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue"})
-    private void setInt64(@NotNull Directory directory, int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void setInt64(@NotNull Directory directory, int tagType, @NotNull ReaderInfo reader) throws IOException
     {
         long l = reader.getInt64(tagType);
         if (l != 0)
@@ -180,7 +185,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue", "MagicConstant"})
-    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull ReaderInfo reader) throws IOException
     {
         final int y = reader.getUInt16(tagType);
         final int m = reader.getUInt16(tagType + 2);

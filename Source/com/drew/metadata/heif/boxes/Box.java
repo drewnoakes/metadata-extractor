@@ -20,7 +20,8 @@
  */
 package com.drew.metadata.heif.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
+import com.drew.lang.Charsets;
 
 import java.io.IOException;
 
@@ -33,17 +34,17 @@ public class Box
     public String type;
     String usertype;
 
-    public Box(SequentialReader reader) throws IOException
+    public Box(ReaderInfo reader) throws IOException
     {
         this.size = reader.getUInt32();
-        this.type = reader.getString(4);
+        this.type = reader.getString(4, Charsets.UTF_8);
         if (size == 1) {
             size = reader.getInt64();
         } else if (size == 0) {
             size = -1;
         }
         if (type.equals("uuid")) {
-            usertype = reader.getString(16);
+            usertype = reader.getString(16, Charsets.UTF_8);
         }
     }
 

@@ -20,14 +20,13 @@
  */
 package com.drew.imaging.quicktime;
 
-import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mov.atoms.Atom;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author Payton Garland
@@ -36,18 +35,17 @@ public class QuickTimeReader
 {
     private QuickTimeReader() {}
 
-    public static void extract(@NotNull InputStream inputStream, @NotNull QuickTimeHandler handler)
+    public static void extract(@NotNull ReaderInfo reader, @NotNull QuickTimeHandler handler)
     {
-        StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
 
         processAtoms(reader, -1, handler);
     }
 
-    private static void processAtoms(StreamReader reader, long atomEnd, QuickTimeHandler handler)
+    private static void processAtoms(ReaderInfo reader, long atomEnd, QuickTimeHandler handler)
     {
         try {
-            while (atomEnd == -1 || reader.getPosition() < atomEnd) {
+            while (atomEnd == -1 || reader.getLocalPosition() < atomEnd) {
 
                 Atom atom = new Atom(reader);
 
@@ -55,7 +53,7 @@ public class QuickTimeReader
                 // Unknown atoms will be skipped
 
                 if (handler.shouldAcceptContainer(atom)) {
-                    processAtoms(reader, atom.size + reader.getPosition() - 8, handler.processContainer(atom));
+                    processAtoms(reader, atom.size + reader.getLocalPosition() - 8, handler.processContainer(atom));
                 } else if (handler.shouldAcceptAtom(atom)) {
                     handler = handler.processAtom(atom, reader.getBytes((int)atom.size - 8));
                 } else if (atom.size > 1) {

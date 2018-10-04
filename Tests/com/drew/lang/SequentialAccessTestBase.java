@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  */
 public abstract class SequentialAccessTestBase
 {
-    protected abstract SequentialReader createReader(byte[] bytes);
+    protected abstract ReaderInfo createReader(byte[] bytes);
 
     @Test
     public void testDefaultEndianness()
@@ -47,7 +47,7 @@ public abstract class SequentialAccessTestBase
     public void testGetInt8() throws IOException
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals((byte)0, reader.getInt8());
         assertEquals((byte)1, reader.getInt8());
@@ -59,7 +59,7 @@ public abstract class SequentialAccessTestBase
     public void testGetUInt8() throws IOException
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0, reader.getUInt8());
         assertEquals(1, reader.getUInt8());
@@ -71,7 +71,7 @@ public abstract class SequentialAccessTestBase
     public void testGetUInt8_OutOfBounds()
     {
         try {
-            SequentialReader reader = createReader(new byte[1]);
+            ReaderInfo reader = createReader(new byte[1]);
             reader.getUInt8();
             reader.getUInt8();
             fail("Exception expected");
@@ -86,7 +86,7 @@ public abstract class SequentialAccessTestBase
         assertEquals(-1, createReader(new byte[]{(byte)0xff, (byte)0xff}).getInt16());
 
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals((short)0x0001, reader.getInt16());
         assertEquals((short)0x7FFF, reader.getInt16());
@@ -102,7 +102,7 @@ public abstract class SequentialAccessTestBase
     public void testGetUInt16() throws IOException
     {
         byte[] buffer = new byte[]{0x00, 0x01, (byte)0x7F, (byte)0xFF};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0x0001, reader.getUInt16());
         assertEquals(0x7FFF, reader.getUInt16());
@@ -118,7 +118,7 @@ public abstract class SequentialAccessTestBase
     public void testGetUInt16_OutOfBounds()
     {
         try {
-            SequentialReader reader = createReader(new byte[1]);
+            ReaderInfo reader = createReader(new byte[1]);
             reader.getUInt16();
             fail("Exception expected");
         } catch (IOException ex) {
@@ -132,7 +132,7 @@ public abstract class SequentialAccessTestBase
         assertEquals(-1, createReader(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff}).getInt32());
 
         byte[] buffer = new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0x00010203, reader.getInt32());
         assertEquals(0x04050607, reader.getInt32());
@@ -150,7 +150,7 @@ public abstract class SequentialAccessTestBase
         assertEquals(4294967295L, createReader(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff}).getUInt32());
 
         byte[] buffer = new byte[]{(byte)0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0xFF000102L, reader.getUInt32());
         assertEquals(0x03040506L, reader.getUInt32());
@@ -166,7 +166,7 @@ public abstract class SequentialAccessTestBase
     public void testGetInt32_OutOfBounds()
     {
         try {
-            SequentialReader reader = createReader(new byte[3]);
+            ReaderInfo reader = createReader(new byte[3]);
             reader.getInt32();
             fail("Exception expected");
         } catch (IOException ex) {
@@ -178,7 +178,7 @@ public abstract class SequentialAccessTestBase
     public void testGetInt64() throws IOException
     {
         byte[] buffer = new byte[]{(byte)0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertEquals(0xFF00010203040506L, reader.getInt64());
 
@@ -192,7 +192,7 @@ public abstract class SequentialAccessTestBase
     public void testGetInt64_OutOfBounds()
     {
         try {
-            SequentialReader reader = createReader(new byte[7]);
+            ReaderInfo reader = createReader(new byte[7]);
             reader.getInt64();
             fail("Exception expected");
         } catch (IOException ex) {
@@ -207,7 +207,7 @@ public abstract class SequentialAccessTestBase
         assertTrue(Float.isNaN(Float.intBitsToFloat(nanBits)));
 
         byte[] buffer = new byte[]{0x7f, (byte)0xc0, 0x00, 0x00};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertTrue(Float.isNaN(reader.getFloat32()));
     }
@@ -219,7 +219,7 @@ public abstract class SequentialAccessTestBase
         assertTrue(Double.isNaN(Double.longBitsToDouble(nanBits)));
 
         byte[] buffer = new byte[]{(byte)0xff, (byte)0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-        SequentialReader reader = createReader(buffer);
+        ReaderInfo reader = createReader(buffer);
 
         assertTrue(Double.isNaN(reader.getDouble64()));
     }
@@ -248,7 +248,8 @@ public abstract class SequentialAccessTestBase
         assertEquals(bytes.length, expected.length());
 
         for (int i = 0; i < bytes.length; i++) {
-            assertEquals("ABCDEFG".substring(0, i), createReader(bytes).getString(i));
+            //assertEquals("ABCDEFG".substring(0, i), createReader(bytes).getString(i));
+            assertEquals("ABCDEFG".substring(0, i), createReader(bytes).getString(i, Charsets.UTF_8));
         }
     }
 
@@ -258,7 +259,7 @@ public abstract class SequentialAccessTestBase
         byte[] bytes = {0, 1, 2, 3, 4, 5};
 
         for (int i = 0; i < bytes.length; i++) {
-            SequentialReader reader = createReader(bytes);
+            ReaderInfo reader = createReader(bytes);
             byte[] readBytes = reader.getBytes(i);
             for (int j = 0; j < i; j++) {
                 assertEquals(bytes[j], readBytes[j]);
@@ -269,7 +270,7 @@ public abstract class SequentialAccessTestBase
     @Test
     public void testOverflowBoundsCalculation()
     {
-        SequentialReader reader = createReader(new byte[10]);
+        ReaderInfo reader = createReader(new byte[10]);
 
         try {
             reader.getBytes(15);
@@ -283,7 +284,7 @@ public abstract class SequentialAccessTestBase
     {
         createReader(new byte[50]).getBytes(50);
 
-        SequentialReader reader = createReader(new byte[50]);
+        ReaderInfo reader = createReader(new byte[50]);
         reader.getBytes(25);
         reader.getBytes(25);
 
@@ -298,7 +299,7 @@ public abstract class SequentialAccessTestBase
     {
         createReader(new byte[1]).getInt8();
 
-        SequentialReader reader = createReader(new byte[2]);
+        ReaderInfo reader = createReader(new byte[2]);
         reader.getInt8();
         reader.getInt8();
 
@@ -315,7 +316,7 @@ public abstract class SequentialAccessTestBase
     {
         createReader(new byte[1]).skip(1);
 
-        SequentialReader reader = createReader(new byte[2]);
+        ReaderInfo reader = createReader(new byte[2]);
         reader.skip(1);
         reader.skip(1);
 
@@ -324,7 +325,8 @@ public abstract class SequentialAccessTestBase
             reader.skip(1);
             reader.skip(1);
             fail("Expecting exception");
-        } catch (EOFException ignored) {}
+        } catch (BufferBoundsException ignored) {}
+        //} catch (EOFException ignored) {}
     }
 
     @Test
@@ -332,7 +334,7 @@ public abstract class SequentialAccessTestBase
     {
         assertTrue(createReader(new byte[1]).trySkip(1));
 
-        SequentialReader reader = createReader(new byte[2]);
+        ReaderInfo reader = createReader(new byte[2]);
         assertTrue(reader.trySkip(1));
         assertTrue(reader.trySkip(1));
         assertFalse(reader.trySkip(1));

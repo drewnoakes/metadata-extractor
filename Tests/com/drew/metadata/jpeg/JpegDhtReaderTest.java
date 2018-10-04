@@ -23,7 +23,7 @@ package com.drew.metadata.jpeg;
 import com.drew.imaging.jpeg.JpegSegmentData;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.imaging.jpeg.JpegSegment;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable.HuffmanTableClass;
@@ -47,9 +47,9 @@ public class JpegDhtReaderTest
             new File(filePath),
             Collections.singletonList(JpegSegmentType.DHT));
 
-        Iterable<byte[]> segments = segmentData.getSegments(JpegSegmentType.DHT);
-        for (byte[] segment : segments) {
-            new JpegDhtReader().extract(new SequentialByteArrayReader(segment), metadata);
+        Iterable<JpegSegment> segments = segmentData.getSegments(JpegSegmentType.DHT);
+        for (JpegSegment segment : segments) {
+            new JpegDhtReader().extract(segment.getReader(), metadata);
         }
 
 

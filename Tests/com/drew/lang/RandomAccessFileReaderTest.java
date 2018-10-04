@@ -41,7 +41,7 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
     private RandomAccessFile _randomAccessFile;
 
     @Override
-    protected RandomAccessReader createReader(byte[] bytes)
+    protected ReaderInfo createReader(byte[] bytes)
     {
         try {
             // Unit tests can create multiple readers in the same test, as long as they're used one after the other
@@ -50,7 +50,7 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
             _tempFile = File.createTempFile("metadata-extractor-test-", ".tmp");
             FileUtil.saveBytes(_tempFile, bytes);
             _randomAccessFile = new RandomAccessFile(_tempFile, "r");
-            return new RandomAccessFileReader(_randomAccessFile);
+            return new RandomAccessStream(_randomAccessFile).createReader();
         } catch (IOException e) {
             fail("Unable to create temp file");
             return null;
@@ -80,6 +80,6 @@ public class RandomAccessFileReaderTest extends RandomAccessTestBase
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullBufferThrows() throws IOException
     {
-        new RandomAccessFileReader(null);
+        ReaderInfo.createFromArray(null);
     }
 }

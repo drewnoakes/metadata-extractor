@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.ReaderInfo;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -35,12 +36,13 @@ public class JpegSegmentDataTest
     {
         JpegSegmentData segmentData = new JpegSegmentData();
 
-        byte segmentMarker = (byte)12;
+        JpegSegmentType segmentType = JpegSegmentType.APP0;
         byte[] segmentBytes = new byte[] { 1,2,3 };
 
-        segmentData.addSegment(segmentMarker, segmentBytes);
-        assertEquals(1, segmentData.getSegmentCount(segmentMarker));
-        assertArrayEquals(segmentBytes, segmentData.getSegment(segmentMarker));
+        JpegSegment segment = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes));
+        segmentData.addSegment(segment);
+        assertEquals(1, segmentData.getSegmentCount(segmentType));
+        assertArrayEquals(segmentBytes, segmentData.getSegment(segmentType).getReader().toArray());
     }
 
     @Test
@@ -48,14 +50,15 @@ public class JpegSegmentDataTest
     {
         JpegSegmentData segmentData = new JpegSegmentData();
 
-        byte segmentMarker = (byte)12;
+        JpegSegmentType segmentType = JpegSegmentType.APP0;
         byte[] segmentBytes = new byte[] { 1,2,3 };
 
-        assertTrue(!segmentData.containsSegment(segmentMarker));
+        assertTrue(!segmentData.containsSegment(segmentType));
 
-        segmentData.addSegment(segmentMarker, segmentBytes);
+        JpegSegment segment = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes));
+        segmentData.addSegment(segment);
 
-        assertTrue(segmentData.containsSegment(segmentMarker));
+        assertTrue(segmentData.containsSegment(segmentType));
     }
 
     @Test
@@ -63,17 +66,20 @@ public class JpegSegmentDataTest
     {
         JpegSegmentData segmentData = new JpegSegmentData();
 
-        byte segmentMarker1 = (byte)12;
-        byte segmentMarker2 = (byte)21;
+        JpegSegmentType segmentType1 = JpegSegmentType.APP0;
+        JpegSegmentType segmentType2 = JpegSegmentType.APP1;
         byte[] segmentBytes1 = new byte[] { 1,2,3 };
         byte[] segmentBytes2 = new byte[] { 3,2,1 };
 
-        segmentData.addSegment(segmentMarker1, segmentBytes1);
-        segmentData.addSegment(segmentMarker2, segmentBytes2);
-        assertEquals(1, segmentData.getSegmentCount(segmentMarker1));
-        assertEquals(1, segmentData.getSegmentCount(segmentMarker2));
-        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker1));
-        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker2));
+        JpegSegment segment1 = new JpegSegment(segmentType1, ReaderInfo.createFromArray(segmentBytes1));
+        JpegSegment segment2 = new JpegSegment(segmentType2, ReaderInfo.createFromArray(segmentBytes2));
+        
+        segmentData.addSegment(segment1);
+        segmentData.addSegment(segment2);
+        assertEquals(1, segmentData.getSegmentCount(segmentType1));
+        assertEquals(1, segmentData.getSegmentCount(segmentType2));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentType1).getReader().toArray());
+        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentType2).getReader().toArray());
     }
 
     @Test
@@ -81,16 +87,19 @@ public class JpegSegmentDataTest
     {
         JpegSegmentData segmentData = new JpegSegmentData();
 
-        byte segmentMarker = (byte)12;
+        JpegSegmentType segmentType = JpegSegmentType.APP0;
         byte[] segmentBytes1 = new byte[] { 1,2,3 };
         byte[] segmentBytes2 = new byte[] { 3,2,1 };
 
-        segmentData.addSegment(segmentMarker, segmentBytes1);
-        segmentData.addSegment(segmentMarker, segmentBytes2);
-        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
-        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker));
-        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
-        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker, 1));
+        JpegSegment segment1 = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes1));
+        JpegSegment segment2 = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes2));
+        
+        segmentData.addSegment(segment1);
+        segmentData.addSegment(segment2);
+        assertEquals(2, segmentData.getSegmentCount(segmentType));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentType).getReader().toArray());
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentType, 0).getReader().toArray());
+        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentType, 1).getReader().toArray());
     }
 
     @Test
@@ -98,20 +107,23 @@ public class JpegSegmentDataTest
     {
         JpegSegmentData segmentData = new JpegSegmentData();
 
-        byte segmentMarker = (byte)12;
+        JpegSegmentType segmentType = JpegSegmentType.APP0;
         byte[] segmentBytes1 = new byte[] { 1,2,3 };
         byte[] segmentBytes2 = new byte[] { 3,2,1 };
 
-        segmentData.addSegment(segmentMarker, segmentBytes1);
-        segmentData.addSegment(segmentMarker, segmentBytes2);
+        JpegSegment segment1 = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes1));
+        JpegSegment segment2 = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes2));
+        
+        segmentData.addSegment(segment1);
+        segmentData.addSegment(segment2);
 
-        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
+        assertEquals(2, segmentData.getSegmentCount(segmentType));
 
-        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentType, 0).getReader().toArray());
 
-        segmentData.removeSegmentOccurrence(segmentMarker, 0);
+        segmentData.removeSegmentOccurrence(segmentType, 0);
 
-        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentMarker, 0));
+        assertArrayEquals(segmentBytes2, segmentData.getSegment(segmentType, 0).getReader().toArray());
     }
 
     @Test
@@ -119,21 +131,24 @@ public class JpegSegmentDataTest
     {
         JpegSegmentData segmentData = new JpegSegmentData();
 
-        byte segmentMarker = (byte)12;
+        JpegSegmentType segmentType = JpegSegmentType.APP0;
         byte[] segmentBytes1 = new byte[] { 1,2,3 };
         byte[] segmentBytes2 = new byte[] { 3,2,1 };
 
-        segmentData.addSegment(segmentMarker, segmentBytes1);
-        segmentData.addSegment(segmentMarker, segmentBytes2);
+        JpegSegment segment1 = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes1));
+        JpegSegment segment2 = new JpegSegment(segmentType, ReaderInfo.createFromArray(segmentBytes2));
+        
+        segmentData.addSegment(segment1);
+        segmentData.addSegment(segment2);
 
-        assertEquals(2, segmentData.getSegmentCount(segmentMarker));
-        assertTrue(segmentData.containsSegment(segmentMarker));
+        assertEquals(2, segmentData.getSegmentCount(segmentType));
+        assertTrue(segmentData.containsSegment(segmentType));
 
-        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentMarker, 0));
+        assertArrayEquals(segmentBytes1, segmentData.getSegment(segmentType, 0).getReader().toArray());
 
-        segmentData.removeSegment(segmentMarker);
+        segmentData.removeSegment(segmentType);
 
-        assertTrue(!segmentData.containsSegment(segmentMarker));
-        assertEquals(0, segmentData.getSegmentCount(segmentMarker));
+        assertTrue(!segmentData.containsSegment(segmentType));
+        assertEquals(0, segmentData.getSegmentCount(segmentType));
     }
 }

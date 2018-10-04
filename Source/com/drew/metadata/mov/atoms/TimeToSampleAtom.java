@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.mov.QuickTimeHandlerFactory;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
@@ -39,7 +39,7 @@ public class TimeToSampleAtom extends FullAtom
     long sampleCount;
     long sampleDuration;
 
-    public TimeToSampleAtom(SequentialReader reader, Atom atom) throws IOException
+    public TimeToSampleAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
@@ -55,7 +55,7 @@ public class TimeToSampleAtom extends FullAtom
         long sampleCount;
         long sampleDuration;
 
-        public Entry(SequentialReader reader) throws IOException
+        public Entry(ReaderInfo reader) throws IOException
         {
             sampleCount = reader.getUInt32();
             sampleDuration = reader.getUInt32();

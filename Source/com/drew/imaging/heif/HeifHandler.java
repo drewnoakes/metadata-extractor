@@ -20,7 +20,7 @@
  */
 package com.drew.imaging.heif;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.HeifDirectory;
@@ -46,11 +46,11 @@ public abstract class HeifHandler<T extends HeifDirectory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Box box);
 
-    protected abstract HeifHandler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException;
+    protected abstract HeifHandler processBox(@NotNull Box box, @NotNull ReaderInfo payloadReader) throws IOException;
 
     /**
      * There is potential for a box to both contain other boxes and contain information, so this method will
-     * handle those occurences.
+     * handle those occurrences.
      */
-    protected abstract void processContainer(@NotNull Box box, @NotNull SequentialReader reader) throws IOException;
+    protected abstract void processContainer(@NotNull Box box, @NotNull ReaderInfo reader) throws IOException;
 }

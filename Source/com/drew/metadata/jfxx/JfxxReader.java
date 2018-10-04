@@ -22,11 +22,10 @@ package com.drew.metadata.jfxx;
 
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
-import com.drew.lang.ByteArrayReader;
-import com.drew.lang.RandomAccessReader;
+import com.drew.imaging.jpeg.JpegSegment;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -41,9 +40,10 @@ import java.util.Collections;
  *
  * @author Drew Noakes
  */
-public class JfxxReader implements JpegSegmentMetadataReader, MetadataReader
+public class JfxxReader implements JpegSegmentMetadataReader //, MetadataReader
 {
-    public static final String PREAMBLE = "JFXX";
+    public static final String JPEG_SEGMENT_ID = "JFXX";
+    public static final String JPEG_SEGMENT_PREAMBLE = "JFXX";
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -51,12 +51,12 @@ public class JfxxReader implements JpegSegmentMetadataReader, MetadataReader
         return Collections.singletonList(JpegSegmentType.APP0);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegment> segments, @NotNull Metadata metadata) throws IOException
     {
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegment segment : segments) {
             // Skip segments not starting with the required header
-            if (segmentBytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
-                extract(new ByteArrayReader(segmentBytes), metadata);
+            if (segment.getReader().getLength() >= JPEG_SEGMENT_PREAMBLE.length() && segment.getPreamble() == JPEG_SEGMENT_ID)
+                extract(segment.getReader(), metadata);
         }
     }
 
@@ -64,7 +64,7 @@ public class JfxxReader implements JpegSegmentMetadataReader, MetadataReader
      * Performs the JFXX data extraction, adding found values to the specified
      * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull ReaderInfo reader, @NotNull final Metadata metadata)
     {
         JfxxDirectory directory = new JfxxDirectory();
         metadata.addDirectory(directory);

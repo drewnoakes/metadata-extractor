@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.mov.atoms;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;;
 import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ public abstract class SampleDescriptionAtom<T extends SampleDescription> extends
     long numberOfEntries;
     ArrayList<T> sampleDescriptions;
 
-    public SampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
+    public SampleDescriptionAtom(ReaderInfo reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
@@ -48,5 +48,5 @@ public abstract class SampleDescriptionAtom<T extends SampleDescription> extends
     }
 
     @Nullable
-    abstract T getSampleDescription(SequentialReader reader) throws IOException;
+    abstract T getSampleDescription(ReaderInfo reader) throws IOException;
 }

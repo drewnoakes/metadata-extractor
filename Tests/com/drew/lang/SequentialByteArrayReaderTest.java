@@ -31,12 +31,12 @@ public class SequentialByteArrayReaderTest extends SequentialAccessTestBase
     @Test(expected = NullPointerException.class)
     public void testConstructWithNullStreamThrows()
     {
-        new SequentialByteArrayReader(null);
+        ReaderInfo.createFromArray(null);
     }
 
     @Override
-    protected SequentialReader createReader(byte[] bytes)
+    protected ReaderInfo createReader(byte[] bytes)
     {
-        return new SequentialByteArrayReader(bytes);
+        return ReaderInfo.createFromArray(bytes);
     }
 }

@@ -20,9 +20,8 @@
  */
 package com.drew.metadata.photoshop;
 
-import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
-import com.drew.lang.RandomAccessReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -95,7 +94,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             if (b == null)
                 return _directory.getString(TAG_JPEG_QUALITY);
 
-            RandomAccessReader reader = new ByteArrayReader(b);
+            ReaderInfo reader = ReaderInfo.createFromArray(b);
             int q = reader.getUInt16(0); // & 0xFFFF;
             int f = reader.getUInt16(2); // & 0xFFFF;
             int s = reader.getUInt16(4);
@@ -164,7 +163,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] bytes = _directory.getByteArray(TAG_PIXEL_ASPECT_RATIO);
             if (bytes == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             double d = reader.getDouble64(4);
             return Double.toString(d);
         } catch (Exception e) {
@@ -179,7 +178,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte bytes[] = _directory.getByteArray(TAG_PRINT_SCALE);
             if (bytes == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             int style = reader.getInt32(0);
             float locX = reader.getFloat32(2);
             float locY = reader.getFloat32(6);
@@ -206,7 +205,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] bytes = _directory.getByteArray(TAG_RESOLUTION_INFO);
             if (bytes == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             float resX = reader.getS15Fixed16(0);
             float resY = reader.getS15Fixed16(8); // is this the correct offset? it's only reading 4 bytes each time
             DecimalFormat format = new DecimalFormat("0.##");
@@ -223,7 +222,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             final byte[] bytes = _directory.getByteArray(TAG_VERSION);
             if (bytes == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             int pos = 0;
             int ver = reader.getInt32(0);
             pos += 4;
@@ -250,7 +249,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             final byte bytes[] = _directory.getByteArray(TAG_SLICES);
             if (bytes == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             int nameLength = reader.getInt32(20);
             String name = reader.getString(24, nameLength * 2, "UTF-16");
             int pos = 24 + nameLength * 2;
@@ -269,7 +268,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] v = _directory.getByteArray(tagType);
             if (v == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(v);
+            ReaderInfo reader = ReaderInfo.createFromArray(v);
             int format = reader.getInt32(0);
             int width = reader.getInt32(4);
             int height = reader.getInt32(8);
@@ -301,7 +300,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
         byte[] bytes = _directory.getByteArray(tag);
         if (bytes == null)
             return null;
-        RandomAccessReader reader = new ByteArrayReader(bytes);
+        ReaderInfo reader = ReaderInfo.createFromArray(bytes);
         try {
             return String.format("%d", reader.getInt32(0));
         } catch (IOException e) {
@@ -334,7 +333,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] bytes = _directory.getByteArray(tagType);
             if (bytes == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             int length = reader.getByte(0);
             return new String(reader.getBytes(1, length), "UTF-8");
         } catch (Exception e) {
@@ -349,7 +348,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             byte[] bytes = _directory.getByteArray(tagType);
             if (bytes == null)
                 return null;
-            RandomAccessReader reader = new ByteArrayReader(bytes);
+            ReaderInfo reader = ReaderInfo.createFromArray(bytes);
             int length = (int) (reader.getLength() - reader.getByte((int)reader.getLength() - 1) - 1) / 26;
 
             String fillRecord = null;

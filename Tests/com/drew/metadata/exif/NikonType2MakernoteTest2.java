@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.Rational;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
@@ -45,7 +46,7 @@ public class NikonType2MakernoteTest2
     @Before
     public void setUp() throws Exception
     {
-        _metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2b.jpg.app1");
+        _metadata = ExifReaderTest.processSegmentBytes("Tests/Data/nikonMakernoteType2b.jpg.app1", JpegSegmentType.APP1);
 
         _nikonDirectory = _metadata.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class);
         _exifIFD0Directory = _metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);

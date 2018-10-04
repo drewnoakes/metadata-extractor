@@ -29,6 +29,7 @@ import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.lang.RandomAccessStream;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -439,10 +440,15 @@ public class ProcessAllImagesInFolderUtility
             writer.write("FILE: " + file.getName() + NEW_LINE);
 
             // Detect file type
-            BufferedInputStream stream = null;
+            //BufferedInputStream stream = null;
+            //FileInputStream stream = null;
+            RandomAccessFile stream = null;
             try {
-                stream = new BufferedInputStream(new FileInputStream(file));
-                FileType fileType = FileTypeDetector.detectFileType(stream);
+                //stream = new BufferedInputStream(new FileInputStream(file));
+                //stream = new FileInputStream(file);
+                stream = new RandomAccessFile(file, "r");
+                //FileType fileType = FileTypeDetector.detectFileType(new RandomAccessStream(stream, file.length()).createReader());
+                FileType fileType = FileTypeDetector.detectFileType(new RandomAccessStream(stream).createReader());
                 writer.write(String.format("TYPE: %s" + NEW_LINE, fileType.toString().toUpperCase()));
                 writer.write(NEW_LINE);
             } finally {

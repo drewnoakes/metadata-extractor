@@ -20,28 +20,27 @@
  */
 package com.drew.imaging.heif;
 
-import com.drew.lang.StreamReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.boxes.Box;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.DataFormatException;
 
 public class HeifReader
 {
-    public void extract(Metadata metadata, InputStream inputStream, HeifHandler handler) throws IOException, DataFormatException
+    public void extract(Metadata metadata, ReaderInfo reader, HeifHandler handler) throws IOException, DataFormatException
     {
-        StreamReader reader = new StreamReader(inputStream);
-        reader.setMotorolaByteOrder(true);
+        if(!reader.isMotorolaByteOrder())
+            reader = reader.Clone(false);
 
         processBoxes(reader, -1, handler);
     }
 
-    private void processBoxes(StreamReader reader, long atomEnd, HeifHandler handler)
+    private void processBoxes(ReaderInfo reader, long atomEnd, HeifHandler handler)
     {
         try {
-            while ((atomEnd == -1) ? true : reader.getPosition() < atomEnd) {
+            while ((atomEnd == -1) ? true : reader.getLocalPosition() < atomEnd) {
 
                 Box box = new Box(reader);
 
@@ -50,9 +49,9 @@ public class HeifReader
 
                 if (handler.shouldAcceptContainer(box)) {
                     handler.processContainer(box, reader);
-                    processBoxes(reader, box.size + reader.getPosition() - 8, handler);
+                    processBoxes(reader, box.size + reader.getLocalPosition() - 8, handler);
                 } else if (handler.shouldAcceptBox(box)) {
-                    handler = handler.processBox(box, reader.getBytes((int)box.size - 8));
+                    handler = handler.processBox(box, reader.Clone((int)box.size - 8));
                 } else if (box.size > 1) {
                     reader.skip(box.size - 8);
                 } else if (box.size == -1) {

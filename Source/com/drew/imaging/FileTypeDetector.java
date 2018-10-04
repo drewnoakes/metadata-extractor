@@ -22,13 +22,13 @@ package com.drew.imaging;
 
 import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.ReaderInfo;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * Examines the a file's first bytes and estimates the file's type.
+ * Examines a file's first bytes and estimates the file's type.
  */
 public class FileTypeDetector
 {
@@ -56,6 +56,13 @@ public class FileTypeDetector
         _root.addPath(FileType.Gif, "GIF87a".getBytes());
         _root.addPath(FileType.Gif, "GIF89a".getBytes());
         _root.addPath(FileType.Ico, new byte[]{0x00, 0x00, 0x01, 0x00});
+        _root.addPath(FileType.Netpbm, "P1".getBytes()); // ASCII B
+        _root.addPath(FileType.Netpbm, "P2".getBytes()); // ASCII greysca
+        _root.addPath(FileType.Netpbm, "P3".getBytes()); // ASCII R
+        _root.addPath(FileType.Netpbm, "P4".getBytes()); // RAW B
+        _root.addPath(FileType.Netpbm, "P5".getBytes()); // RAW greysca
+        _root.addPath(FileType.Netpbm, "P6".getBytes()); // RAW R
+        _root.addPath(FileType.Netpbm, "P7".getBytes()); // P
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x00, 0x01}); // multiple PCX versions, explicitly listed
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x02, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
@@ -97,6 +104,8 @@ public class FileTypeDetector
         _ftypMap.put("ftypM4VH", FileType.Mp4);
         _ftypMap.put("ftypM4VP", FileType.Mp4);
         _ftypMap.put("ftypmmp4", FileType.Mp4);
+        _ftypMap.put("ftyp3g2a", FileType.Mp4);
+        _ftypMap.put("ftyp3gp5", FileType.Mp4);
         _ftypMap.put("ftypmp41", FileType.Mp4);
         _ftypMap.put("ftypmp42", FileType.Mp4);
         _ftypMap.put("ftypmp71", FileType.Mp4);
@@ -151,7 +160,7 @@ public class FileTypeDetector
     /**
      * Examines the file's bytes and estimates the file's type.
      * <p>
-     * Requires a {@link BufferedInputStream} in order to mark and reset the stream to the position
+     * Requires a {@link ReaderInfo} in order to mark and reset the stream to the position
      * at which it was provided to this method once completed.
      * <p>
      * Requires the stream to contain at least eight bytes.
@@ -159,22 +168,17 @@ public class FileTypeDetector
      * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
      */
     @NotNull
-    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
+    public static FileType detectFileType(@NotNull final ReaderInfo rdrInfo) throws IOException
     {
-        if (!inputStream.markSupported())
-            throw new IOException("Stream must support mark/reset");
-
         int maxByteCount = Math.max(16, _root.getMaxDepth());
 
-        inputStream.mark(maxByteCount);
-
         byte[] bytes = new byte[maxByteCount];
-        int bytesRead = inputStream.read(bytes);
+        int bytesRead = rdrInfo.read(bytes, 0, bytes.length);
 
         if (bytesRead == -1)
             throw new IOException("Stream ended before file's magic number could be determined.");
 
-        inputStream.reset();
+        rdrInfo.skip(-bytesRead);
 
         FileType fileType = _root.find(bytes);
 

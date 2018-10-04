@@ -20,7 +20,8 @@
  */
 package com.drew.imaging.riff;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
+import com.drew.lang.ReaderInfo;
 import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
@@ -42,13 +43,13 @@ public class RiffReader
     /**
      * Processes a RIFF data sequence.
      *
-     * @param reader the {@link SequentialReader} from which the data should be read
+     * @param reader the {@link ReaderInfo} from which the data should be read
      * @param handler the {@link RiffHandler} that will coordinate processing and accept read values
      * @throws RiffProcessingException if an error occurred during the processing of RIFF data that could not be
      *                                 ignored or recovered from
      * @throws IOException an error occurred while accessing the required data
      */
-    public void processRiff(@NotNull final SequentialReader reader,
+    public void processRiff(@NotNull ReaderInfo reader,
                             @NotNull final RiffHandler handler) throws RiffProcessingException, IOException
     {
         // RIFF files are always little-endian
@@ -56,7 +57,7 @@ public class RiffReader
 
         // PROCESS FILE HEADER
 
-        final String fileFourCC = reader.getString(4);
+        final String fileFourCC = reader.getString(4, Charsets.ASCII);
 
         if (!fileFourCC.equals("RIFF"))
             throw new RiffProcessingException("Invalid RIFF header: " + fileFourCC);
@@ -65,7 +66,7 @@ public class RiffReader
         final int fileSize = reader.getInt32();
         int sizeLeft = fileSize;
 
-        final String identifier = reader.getString(4);
+        final String identifier = reader.getString(4, Charsets.ASCII);
         sizeLeft -= 4;
 
         if (!handler.shouldAcceptRiffIdentifier(identifier))
@@ -75,27 +76,41 @@ public class RiffReader
         processChunks(reader, sizeLeft, handler);
     }
 
-    public void processChunks(SequentialReader reader, int sectionSize, RiffHandler handler) throws IOException
+    public void processChunks(ReaderInfo reader, int sizeLeft, RiffHandler handler) throws IOException, RiffProcessingException
     {
-        while (reader.getPosition() < sectionSize) {
-            String fourCC = new String(reader.getBytes(4));
-            int size = reader.getInt32();
-            if (fourCC.equals("LIST") || fourCC.equals("RIFF")) {
+        // Processing chunks. Each chunk is 8 bytes header (4 bytes CC code + 4 bytes length of chunk) + data of the chunk
+        while (reader.getLocalPosition() < sizeLeft) {
+            // Check if end of the file is closer then 8 bytes
+            if (reader.isCloserToEnd(8)) return;
+                
+            String chunkFourCC = new String(reader.getBytes(4));
+            int chunkSize = reader.getInt32();
+            
+            // NOTE we fail a negative chunk size here (greater than 0x7FFFFFFF) as we cannot allocate arrays larger than this
+            if (chunkSize < 0 || sizeLeft < chunkSize)
+                throw new RiffProcessingException("Invalid RIFF chunk size");
+
+            // Check if end of the file is closer then chunkSize bytes
+            if (reader.isCloserToEnd(chunkSize)) return;
+                
+            if (chunkFourCC.equals("LIST") || chunkFourCC.equals("RIFF")) {
                 String listName = new String(reader.getBytes(4));
                 if (handler.shouldAcceptList(listName)) {
-                    processChunks(reader, size - 4, handler);
+                    processChunks(reader, sizeLeft - 4, handler);
                 } else {
-                    reader.skip(size - 4);
+                    reader.skip(sizeLeft - 4);
                 }
             } else {
-                if (handler.shouldAcceptChunk(fourCC)) {
+                if (handler.shouldAcceptChunk(chunkFourCC)) {
                     // TODO is it feasible to avoid copying the chunk here, and to pass the sequential reader to the handler?
-                    handler.processChunk(fourCC, reader.getBytes(size));
-                } else {
-                    reader.skip(size);
+                    // Update: solved with ReaderInfo
+                    handler.processChunk(chunkFourCC, reader.Clone(chunkSize));
                 }
+                
+                reader.skip(chunkSize);
+                
                 // Bytes read must be even - skip one if not
-                if (size % 2 == 1) {
+                if (chunkSize % 2 == 1) {
                     reader.skip(1);
                 }
             }

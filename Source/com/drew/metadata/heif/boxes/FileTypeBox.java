@@ -20,8 +20,10 @@
  */
 package com.drew.metadata.heif.boxes;
 
-import com.drew.lang.SequentialReader;
+import com.drew.lang.ReaderInfo;
 import com.drew.metadata.heif.HeifDirectory;
+
+import com.drew.lang.Charsets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,15 +37,15 @@ public class FileTypeBox extends Box
     long minorVersion;
     ArrayList<String> compatibleBrands;
 
-    public FileTypeBox(SequentialReader reader, Box box) throws IOException
+    public FileTypeBox(ReaderInfo reader, Box box) throws IOException
     {
         super(box);
 
-        majorBrand = reader.getString(4);
+        majorBrand = reader.getString(4, Charsets.UTF_8);
         minorVersion = reader.getUInt32();
         compatibleBrands = new ArrayList<String>();
         for (int i = 16; i < size; i += 4) {
-            compatibleBrands.add(reader.getString(4));
+            compatibleBrands.add(reader.getString(4, Charsets.UTF_8));
         }
     }
 
