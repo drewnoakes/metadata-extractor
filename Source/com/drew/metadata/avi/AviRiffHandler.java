@@ -33,13 +33,13 @@ import java.io.IOException;
  * Extracts data from chunk/list types:
  *
  * <ul>
- *     <li><code>"avih"</code>: width, height, streams</li>
- *     <li><code>"strh"</code>: frames/second, samples/second, duration, video codec</li>
+ * <li><code>"avih"</code>: width, height, streams</li>
+ * <li><code>"strh"</code>: frames/second, samples/second, duration, video codec</li>
  * </ul>
  *
  * Sources: http://www.alexander-noe.com/video/documentation/avi.pdf
- *          https://msdn.microsoft.com/en-us/library/ms899422.aspx
- *          https://www.loc.gov/preservation/digital/formats/fdd/fdd000025.shtml
+ * https://msdn.microsoft.com/en-us/library/ms899422.aspx
+ * https://www.loc.gov/preservation/digital/formats/fdd/fdd000025.shtml
  *
  * @author Payton Garland
  */
@@ -48,8 +48,8 @@ public class AviRiffHandler implements RiffHandler
     @NotNull
     private final AviDirectory _directory;
 
-//    @NotNull
-//    private String _currentList = "";
+    // @NotNull
+    // private String _currentList = "";
 
     public AviRiffHandler(@NotNull Metadata metadata)
     {
@@ -90,18 +90,18 @@ public class AviRiffHandler implements RiffHandler
 
                 String fccType = new String(reader.getBytes(0, 4));
                 String fccHandler = new String(reader.getBytes(4, 4));
-//                int dwFlags = reader.getInt32(8);
-//                int wPriority = reader.getInt16(12);
-//                int wLanguage = reader.getInt16(14);
-//                int dwInitialFrames = reader.getInt32(16);
+//                 int dwFlags = reader.getInt32(8);
+//                 int wPriority = reader.getInt16(12);
+//                 int wLanguage = reader.getInt16(14);
+//                 int dwInitialFrames = reader.getInt32(16);
                 float dwScale = reader.getFloat32(20);
                 float dwRate = reader.getFloat32(24);
-//                int dwStart = reader.getInt32(28);
+//                 int dwStart = reader.getInt32(28);
                 int dwLength = reader.getInt32(32);
-//                int dwSuggestedBufferSize = reader.getInt32(36);
-//                int dwQuality = reader.getInt32(40);
-//                int dwSampleSize = reader.getInt32(44);
-//                byte[] rcFrame = reader.getBytes(48, 2);
+//                 int dwSuggestedBufferSize = reader.getInt32(36);
+//                 int dwQuality = reader.getInt32(40);
+//                 int dwSampleSize = reader.getInt32(44);
+//                 byte[] rcFrame = reader.getBytes(48, 2);
 
                 if (fccType.equals("vids")) {
                     if (!_directory.containsTag(AviDirectory.TAG_FRAMES_PER_SECOND)) {
@@ -141,13 +141,13 @@ public class AviRiffHandler implements RiffHandler
                 _directory.setInt(AviDirectory.TAG_HEIGHT, dwHeight);
                 _directory.setInt(AviDirectory.TAG_STREAMS, dwStreams);
             } else if (fourCC.equals(AviDirectory.CHUNK_DATETIME_ORIGINAL)) {
-            	ByteArrayReader reader = new ByteArrayReader(payload);
-            	String str = reader.getString(0, payload.length, "ASCII");
-            	if (str.length() == 26 && str.endsWith(String.valueOf(new char[]{0x0A, 0x00}))) {
-                	// ?0A 00? "New Line" + padded to nearest WORD boundary
-					str = str.substring(0, 24);
-				}
-            	_directory.setString(AviDirectory.TAG_DATETIME_ORIGINAL, str);
+                ByteArrayReader reader = new ByteArrayReader(payload);
+                String str = reader.getString(0, payload.length, "ASCII");
+                if (str.length() == 26 && str.endsWith(String.valueOf(new char[] { 0x0A, 0x00 }))) {
+                    // ?0A 00? "New Line" + padded to nearest WORD boundary
+                    str = str.substring(0, 24);
+                }
+                _directory.setString(AviDirectory.TAG_DATETIME_ORIGINAL, str);
             }
         } catch (IOException ex) {
             _directory.addError(ex.getMessage());
