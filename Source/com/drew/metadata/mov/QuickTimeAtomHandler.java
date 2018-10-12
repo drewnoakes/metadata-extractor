@@ -27,6 +27,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.*;
+import com.drew.metadata.mov.atoms.canon.CanonThumbnailAtom;
 
 import java.io.IOException;
 
@@ -55,7 +56,8 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
         return atom.type.equals(QuickTimeAtomTypes.ATOM_FILE_TYPE)
             || atom.type.equals(QuickTimeAtomTypes.ATOM_MOVIE_HEADER)
             || atom.type.equals(QuickTimeAtomTypes.ATOM_HANDLER)
-            || atom.type.equals(QuickTimeAtomTypes.ATOM_MEDIA_HEADER);
+            || atom.type.equals(QuickTimeAtomTypes.ATOM_MEDIA_HEADER)
+        	|| atom.type.equals(QuickTimeAtomTypes.ATOM_CANON_THUMBNAIL);
     }
 
     @Override
@@ -85,6 +87,9 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
                 return handlerFactory.getHandler(handlerReferenceAtom.getComponentType(), metadata);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_MEDIA_HEADER)) {
                 MediaHeaderAtom mediaHeaderAtom = new MediaHeaderAtom(reader, atom);
+            } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_CANON_THUMBNAIL)) {
+            	CanonThumbnailAtom canonThumbnailAtom = new CanonThumbnailAtom(reader);
+            	canonThumbnailAtom.addMetadata(directory);
             }
         } else {
             if (atom.type.equals(QuickTimeContainerTypes.ATOM_COMPRESSED_MOVIE)) {
