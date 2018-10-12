@@ -47,7 +47,7 @@ public class QuickTimeReader
     private static void processAtoms(StreamReader reader, long atomEnd, QuickTimeHandler handler)
     {
         try {
-            while (reader.available() > 0 && (atomEnd == -1 || reader.getPosition() < atomEnd)) {
+            while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
                 Atom atom = new Atom(reader);
 
