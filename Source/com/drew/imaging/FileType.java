@@ -68,7 +68,7 @@ public enum FileType
     // Only file detection
     Aac("AAC", "Advanced Audio Coding", "audio/aac", "m4a"),
     Asf("ASF", "Advanced Systems Format", "video/x-ms-asf", "asf", "wma", "wmv"),
-    Cfbf("CFBF", "Compound File Binary Format", null, null),
+    Cfbf("CFBF", "Compound File Binary Format", null, (String[])null),
     Flv("FLV", "Flash Video", "video/x-flv", ".flv", ".f4v,"),
     Indd("INDD", "INDesign Document", "application/octet-stream", ".indd"),
     Mxf("MXF", "Material Exchange Format", "application/mxf", "mxf"),
