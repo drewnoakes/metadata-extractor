@@ -87,6 +87,10 @@ public class RiffReader
                 } else {
                     reader.skip(size - 4);
                 }
+            } else if (fourCC.equals("IDIT")) {
+                // Avi DateTimeOriginal
+                handler.processChunk(fourCC, reader.getBytes(size-2));
+                reader.skip(2); // ?0A 00?
             } else {
                 if (handler.shouldAcceptChunk(fourCC)) {
                     // TODO is it feasible to avoid copying the chunk here, and to pass the sequential reader to the handler?

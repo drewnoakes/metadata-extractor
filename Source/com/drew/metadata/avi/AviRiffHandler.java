@@ -65,7 +65,8 @@ public class AviRiffHandler implements RiffHandler
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals(AviDirectory.CHUNK_STREAM_HEADER)
-            || fourCC.equals(AviDirectory.CHUNK_MAIN_HEADER);
+            || fourCC.equals(AviDirectory.CHUNK_MAIN_HEADER)
+            || fourCC.equals(AviDirectory.CHUNK_DATETIME_ORIGINAL);
     }
 
     public boolean shouldAcceptList(@NotNull String fourCC)
@@ -139,6 +140,14 @@ public class AviRiffHandler implements RiffHandler
                 _directory.setInt(AviDirectory.TAG_WIDTH, dwWidth);
                 _directory.setInt(AviDirectory.TAG_HEIGHT, dwHeight);
                 _directory.setInt(AviDirectory.TAG_STREAMS, dwStreams);
+            } else if (fourCC.equals(AviDirectory.CHUNK_DATETIME_ORIGINAL)) {
+                ByteArrayReader reader = new ByteArrayReader(payload);
+                String str = reader.getString(0, payload.length, "ASCII");
+                if (str.length() == 26 && str.endsWith(String.valueOf(new char[] { 0x0A, 0x00 }))) {
+                    // ?0A 00? "New Line" + padded to nearest WORD boundary
+                    str = str.substring(0, 24);
+                }
+                _directory.setString(AviDirectory.TAG_DATETIME_ORIGINAL, str);
             }
         } catch (IOException ex) {
             _directory.addError(ex.getMessage());
