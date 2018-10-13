@@ -86,7 +86,7 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
                 HandlerReferenceAtom handlerReferenceAtom = new HandlerReferenceAtom(reader, atom);
                 return handlerFactory.getHandler(handlerReferenceAtom.getComponentType(), metadata);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_MEDIA_HEADER)) {
-                MediaHeaderAtom mediaHeaderAtom = new MediaHeaderAtom(reader, atom);
+                new MediaHeaderAtom(reader, atom);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_CANON_THUMBNAIL)) {
                 CanonThumbnailAtom canonThumbnailAtom = new CanonThumbnailAtom(reader);
                 canonThumbnailAtom.addMetadata(directory);
@@ -96,6 +96,7 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
                 directory.addError("Compressed QuickTime movies not supported");
             }
         }
+
         return this;
     }
 }
