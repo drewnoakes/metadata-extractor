@@ -40,7 +40,7 @@ public class Mp4MetaHandler extends Mp4MediaHandler<Mp4MetaDirectory>
     @Override
     protected Mp4MetaDirectory getDirectory()
     {
-        return directory;
+        return new Mp4MetaDirectory();
     }
 
     @Override
