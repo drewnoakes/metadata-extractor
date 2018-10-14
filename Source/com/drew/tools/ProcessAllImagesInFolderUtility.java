@@ -24,6 +24,7 @@ package com.drew.tools;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.options.IteratorOptions;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
@@ -341,17 +342,18 @@ public class ProcessAllImagesInFolderUtility
                             XmpDirectory xmpDirectory = (XmpDirectory)directory;
                             XMPMeta xmpMeta = xmpDirectory.getXMPMeta();
                             try {
-                                XMPIterator iterator = xmpMeta.iterator();
+                                IteratorOptions options = new IteratorOptions().setJustLeafnodes(true);
+                                XMPIterator iterator = xmpMeta.iterator(options);
                                 while (iterator.hasNext()) {
                                     XMPPropertyInfo prop = (XMPPropertyInfo)iterator.next();
                                     String ns = prop.getNamespace();
                                     String path = prop.getPath();
                                     String value = prop.getValue();
 
+                                    if (path == null)
+                                        continue;
                                     if (ns == null)
                                         ns = "";
-                                    if (path == null)
-                                        path = "";
 
                                     final int MAX_XMP_VALUE_LENGTH = 512;
                                     if (value == null)
