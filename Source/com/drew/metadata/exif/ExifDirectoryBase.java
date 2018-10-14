@@ -681,6 +681,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_EXPOSURE_TIME, "Exposure Time");
         map.put(TAG_FNUMBER, "F-Number");
         map.put(TAG_IPTC_NAA, "IPTC/NAA");
+        map.put(TAG_PHOTOSHOP_SETTINGS, "Photoshop Settings");
         map.put(TAG_INTER_COLOR_PROFILE, "Inter Color Profile");
         map.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
         map.put(TAG_SPECTRAL_SENSITIVITY, "Spectral Sensitivity");
