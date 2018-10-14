@@ -218,14 +218,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         // Custom processing for ICC Profile data
         if (tagId == ExifSubIFDDirectory.TAG_INTER_COLOR_PROFILE) {
             final byte[] iccBytes = reader.getBytes(tagOffset, byteCount);
-            new IccReader().extract(new ByteArrayReader(iccBytes), _metadata);
+            new IccReader().extract(new ByteArrayReader(iccBytes), _metadata, _currentDirectory);
             return true;
         }
 
         // Custom processing for Photoshop data
         if (tagId == ExifSubIFDDirectory.TAG_PHOTOSHOP_SETTINGS && _currentDirectory instanceof ExifIFD0Directory) {
             final byte[] photoshopBytes = reader.getBytes(tagOffset, byteCount);
-            new PhotoshopReader().extract(new SequentialByteArrayReader(photoshopBytes), byteCount, _metadata);
+            new PhotoshopReader().extract(new SequentialByteArrayReader(photoshopBytes), byteCount, _metadata, _currentDirectory);
             return true;
         }
 
