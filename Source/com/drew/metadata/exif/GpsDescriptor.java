@@ -237,7 +237,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
             return null;
         String gpsSpeedRef = value.trim();
         if ("K".equalsIgnoreCase(gpsSpeedRef)) {
-            return "kph";
+            return "km/h";
         } else if ("M".equalsIgnoreCase(gpsSpeedRef)) {
             return "mph";
         } else if ("N".equalsIgnoreCase(gpsSpeedRef)) {
