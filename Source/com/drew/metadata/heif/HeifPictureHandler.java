@@ -59,7 +59,8 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
             HeifBoxTypes.BOX_ITEM_LOCATION,
             HeifBoxTypes.BOX_IMAGE_SPATIAL_EXTENTS,
             HeifBoxTypes.BOX_AUXILIARY_TYPE_PROPERTY,
-            HeifBoxTypes.BOX_IMAGE_ROTATION);
+            HeifBoxTypes.BOX_IMAGE_ROTATION,
+            HeifBoxTypes.BOX_COLOUR_INFO);
 
         return boxes.contains(box.type);
     }
@@ -92,6 +93,9 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
         } else if (box.type.equals(HeifBoxTypes.BOX_IMAGE_ROTATION)) {
             ImageRotationBox imageRotationBox = new ImageRotationBox(reader, box);
             imageRotationBox.addMetadata(directory);
+        } else if (box.type.equals(HeifBoxTypes.BOX_COLOUR_INFO)) {
+            ColourInformationBox colourInformationBox = new ColourInformationBox(reader, box, metadata);
+            colourInformationBox.addMetadata(directory);
         }
         return this;
     }
