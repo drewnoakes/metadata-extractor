@@ -40,7 +40,7 @@ public class Mp4TextHandler extends Mp4MediaHandler<Mp4TextDirectory>
     @Override
     protected Mp4TextDirectory getDirectory()
     {
-        return directory;
+        return new Mp4TextDirectory();
     }
 
     @Override

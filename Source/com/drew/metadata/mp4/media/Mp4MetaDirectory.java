@@ -50,6 +50,6 @@ public class Mp4MetaDirectory extends Mp4MediaDirectory
     @Override
     protected HashMap<Integer, String> getTagNameMap()
     {
-        return null;
+        return _tagNameMap;
     }
 }
