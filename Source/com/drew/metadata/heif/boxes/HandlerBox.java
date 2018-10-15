@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.heif.boxes;
 
+import com.drew.lang.Charsets;
 import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class HandlerBox extends FullBox
         reader.skip(4); // Pre-defined
         handlerType = reader.getString(4);
         reader.skip(12); // Reserved
-        name = reader.getNullTerminatedString((int)box.size - 32, Charset.defaultCharset());
+        name = reader.getNullTerminatedString((int)box.size - 32, Charsets.UTF_8);
     }
 
     public String getHandlerType()
