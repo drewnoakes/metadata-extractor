@@ -37,6 +37,8 @@ public class HeifDescriptor extends TagDescriptor<HeifDirectory>
             case HeifDirectory.TAG_IMAGE_WIDTH:
             case HeifDirectory.TAG_IMAGE_HEIGHT:
                 return getPixelDescription(tagType);
+            case HeifDirectory.TAG_IMAGE_ROTATION:
+                return getRotationDescription(tagType);
             default:
                 return super.getDescription(tagType);
         }
@@ -45,5 +47,10 @@ public class HeifDescriptor extends TagDescriptor<HeifDirectory>
     public String getPixelDescription(int tagType)
     {
         return _directory.getString(tagType) + " pixels";
+    }
+
+    public String getRotationDescription(int tagType)
+    {
+        return (_directory.getInteger(tagType) * 90) + " degrees";
     }
 }

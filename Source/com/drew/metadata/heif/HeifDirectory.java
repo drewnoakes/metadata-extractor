@@ -33,6 +33,8 @@ public class HeifDirectory extends Directory
 
     public static final int TAG_IMAGE_WIDTH                             = 4;
     public static final int TAG_IMAGE_HEIGHT                            = 5;
+    public static final int TAG_IMAGE_ROTATION                          = 6;
+    public static final int TAG_BITS_PER_CHANNEL                        = 7;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -43,6 +45,8 @@ public class HeifDirectory extends Directory
         _tagNameMap.put(TAG_COMPATIBLE_BRANDS, "Compatible Brands");
         _tagNameMap.put(TAG_IMAGE_WIDTH, "Width");
         _tagNameMap.put(TAG_IMAGE_HEIGHT, "Height");
+        _tagNameMap.put(TAG_IMAGE_ROTATION, "Rotation");
+        _tagNameMap.put(TAG_BITS_PER_CHANNEL, "Bits Per Channel");
     }
 
     public HeifDirectory()

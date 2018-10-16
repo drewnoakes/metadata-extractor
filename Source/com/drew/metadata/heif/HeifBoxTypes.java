@@ -36,6 +36,9 @@ public class HeifBoxTypes
     public static final String BOX_HVC1                             = "hvc1";
     public static final String BOX_IMAGE_SPATIAL_EXTENTS            = "ispe";
     public static final String BOX_AUXILIARY_TYPE_PROPERTY          = "auxC";
+    public static final String BOX_IMAGE_ROTATION                   = "irot";
+    public static final String BOX_COLOUR_INFO                      = "colr";
+    public static final String BOX_PIXEL_INFORMATION                = "pixi";
 
     public static ArrayList<String> _boxList = new ArrayList<String>();
 
@@ -49,5 +52,8 @@ public class HeifBoxTypes
         _boxList.add(BOX_HVC1);
         _boxList.add(BOX_IMAGE_SPATIAL_EXTENTS);
         _boxList.add(BOX_AUXILIARY_TYPE_PROPERTY);
+        _boxList.add(BOX_IMAGE_ROTATION);
+        _boxList.add(BOX_COLOUR_INFO);
+        _boxList.add(BOX_PIXEL_INFORMATION);
     }
 }
