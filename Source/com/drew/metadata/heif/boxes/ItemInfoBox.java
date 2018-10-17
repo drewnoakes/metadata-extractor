@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.heif.boxes;
 
+import com.drew.lang.Charsets;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.heif.HeifDirectory;
@@ -72,10 +73,10 @@ public class ItemInfoBox extends FullBox
             if ((version == 0) || (version == 1)) {
                 itemID = reader.getUInt16();
                 itemProtectionIndex = reader.getUInt16();
-                itemName = reader.getString(4);
-                contentType = reader.getString(4);
-                if (box.size - 28 > 0) {
-                    extensionType = reader.getString((int)box.size - 28);
+                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
+                contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
+                if (box.size - reader.getPosition() > 0) {
+                    extensionType = reader.getNullTerminatedString((int) (box.size - reader.getPosition()), Charsets.UTF_8);
                 }
             }
             if (version == 1) {
@@ -92,11 +93,14 @@ public class ItemInfoBox extends FullBox
                 itemProtectionIndex = reader.getUInt16();
                 itemType = reader.getString(4);
 
-                itemName = reader.getString(4);
+                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
                 if (itemType.equals("mime")) {
-                    contentType = reader.getString(4);
+                    contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
+                    if (box.size - reader.getPosition() > 0) {
+                        contentEncoding = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
+                    }
                 } else if (itemType.equals("uri ")) {
-                    itemUriType = reader.getString(4);
+                    itemUriType = reader.getString((int)(box.size - reader.getPosition()));
                 }
             }
         }
