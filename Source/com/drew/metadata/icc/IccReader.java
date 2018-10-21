@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.icc;
 
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
@@ -57,7 +58,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         return Collections.singletonList(JpegSegmentType.APP2);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegmentInfo> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
@@ -65,22 +66,22 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         // We concat them together in this buffer for later processing.
         byte[] buffer = null;
 
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegmentInfo info : segments) {
             // Skip any segments that do not contain the required preamble
-            if (segmentBytes.length < preambleLength || !JPEG_SEGMENT_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, preambleLength)))
+            if (info.bytes.length < preambleLength || !JPEG_SEGMENT_PREAMBLE.equalsIgnoreCase(new String(info.bytes, 0, preambleLength)))
                 continue;
 
             // NOTE we ignore three bytes here -- are they useful for anything?
 
             // Grow the buffer
             if (buffer == null) {
-                buffer = new byte[segmentBytes.length - 14];
+                buffer = new byte[info.bytes.length - 14];
                 // skip the first 14 bytes
-                System.arraycopy(segmentBytes, 14, buffer, 0, segmentBytes.length - 14);
+                System.arraycopy(info.bytes, 14, buffer, 0, info.bytes.length - 14);
             } else {
-                byte[] newBuffer = new byte[buffer.length + segmentBytes.length - 14];
+                byte[] newBuffer = new byte[buffer.length + info.bytes.length - 14];
                 System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-                System.arraycopy(segmentBytes, 14, newBuffer, buffer.length, segmentBytes.length - 14);
+                System.arraycopy(info.bytes, 14, newBuffer, buffer.length, info.bytes.length - 14);
                 buffer = newBuffer;
             }
         }

@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.iptc;
 
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
@@ -65,12 +66,12 @@ public class IptcReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegmentInfo> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegmentInfo info : segments) {
             // Ensure data starts with the IPTC marker byte
-            if (segmentBytes.length != 0 && segmentBytes[0] == IptcMarkerByte) {
-                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
+            if (info.bytes.length != 0 && info.bytes[0] == IptcMarkerByte) {
+                extract(new SequentialByteArrayReader(info.bytes), metadata, info.bytes.length);
             }
         }
     }

@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.imaging.tiff.TiffProcessingException;
@@ -53,15 +54,15 @@ public class ExifReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APP1);
     }
 
-    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull final Iterable<JpegSegmentInfo> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
         assert(segmentType == JpegSegmentType.APP1);
 
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegmentInfo info: segments) {
             // Filter any segments containing unexpected preambles
-            if (segmentBytes.length < JPEG_SEGMENT_PREAMBLE.length() || !new String(segmentBytes, 0, JPEG_SEGMENT_PREAMBLE.length()).equals(JPEG_SEGMENT_PREAMBLE))
+            if (info.bytes.length < JPEG_SEGMENT_PREAMBLE.length() || !new String(info.bytes, 0, JPEG_SEGMENT_PREAMBLE.length()).equals(JPEG_SEGMENT_PREAMBLE))
                 continue;
-            extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length());
+            extract(new ByteArrayReader(info.bytes).originOffset(info.fileOffset), metadata, JPEG_SEGMENT_PREAMBLE.length());
         }
     }
 

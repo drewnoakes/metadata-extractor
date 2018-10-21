@@ -21,6 +21,7 @@
 package com.drew.metadata.photoshop;
 
 import com.drew.imaging.ImageProcessingException;
+import com.drew.imaging.jpeg.JpegSegmentInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
@@ -58,18 +59,18 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<JpegSegmentInfo> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
-        for (byte[] segmentBytes : segments) {
+        for (JpegSegmentInfo info : segments) {
             // Ensure data starts with the necessary preamble
-            if (segmentBytes.length < preambleLength + 1 || !JPEG_SEGMENT_PREAMBLE.equals(new String(segmentBytes, 0, preambleLength)))
+            if (info.bytes.length < preambleLength + 1 || !JPEG_SEGMENT_PREAMBLE.equals(new String(info.bytes, 0, preambleLength)))
                 continue;
 
             extract(
-                new SequentialByteArrayReader(segmentBytes, preambleLength + 1),
-                segmentBytes.length - preambleLength - 1,
+                new SequentialByteArrayReader(info.bytes, preambleLength + 1),
+                info.bytes.length - preambleLength - 1,
                 metadata);
         }
     }
