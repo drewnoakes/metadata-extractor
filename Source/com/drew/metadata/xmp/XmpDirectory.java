@@ -20,11 +20,11 @@
  */
 package com.drew.metadata.xmp;
 
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.impl.XMPMetaImpl;
-import com.adobe.xmp.options.IteratorOptions;
-import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.adobe.internal.xmp.XMPException;
+import com.adobe.internal.xmp.XMPMeta;
+import com.adobe.internal.xmp.impl.XMPMetaImpl;
+import com.adobe.internal.xmp.options.IteratorOptions;
+import com.adobe.internal.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
