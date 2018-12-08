@@ -25,6 +25,7 @@ import com.adobe.internal.xmp.XMPIterator;
 import com.adobe.internal.xmp.XMPMeta;
 import com.adobe.internal.xmp.XMPMetaFactory;
 import com.adobe.internal.xmp.impl.ByteBuffer;
+import com.adobe.internal.xmp.options.ParseOptions;
 import com.adobe.internal.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
@@ -64,6 +65,10 @@ public class XmpReader implements JpegSegmentMetadataReader
     private static final String SCHEMA_XMP_NOTES = "http://ns.adobe.com/xmp/note/";
     @NotNull
     private static final String ATTRIBUTE_EXTENDED_XMP = "xmpNote:HasExtendedXMP";
+    // Limit photoshop:DocumentAncestors node as it can reach over 100000 items and make parsing extremely slow. 
+    // This is not a typical value but it may happen https://forums.adobe.com/thread/2081839
+    @NotNull
+    private static final ParseOptions PARSE_OPTIONS = new ParseOptions().setXMPNodesToLimit(Collections.singletonMap("photoshop:DocumentAncestors", 1000));
 
     /**
      * Extended XMP constants
@@ -162,10 +167,10 @@ public class XmpReader implements JpegSegmentMetadataReader
 
             // If all xmpBytes are requested, no need to make a new ByteBuffer
             if (offset == 0 && length == xmpBytes.length) {
-                xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBytes);
+                xmpMeta = XMPMetaFactory.parseFromBuffer(xmpBytes, PARSE_OPTIONS);
             } else {
                 ByteBuffer buffer = new ByteBuffer(xmpBytes, offset, length);
-                xmpMeta = XMPMetaFactory.parse(buffer.getByteStream());
+                xmpMeta = XMPMetaFactory.parse(buffer.getByteStream(), PARSE_OPTIONS);
             }
 
             directory.setXMPMeta(xmpMeta);
@@ -210,7 +215,7 @@ public class XmpReader implements JpegSegmentMetadataReader
             directory.setParent(parentDirectory);
 
         try {
-            XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmpString);
+            XMPMeta xmpMeta = XMPMetaFactory.parseFromString(xmpString, PARSE_OPTIONS);
             directory.setXMPMeta(xmpMeta);
         } catch (XMPException e) {
             directory.addError("Error processing XMP data: " + e.getMessage());
