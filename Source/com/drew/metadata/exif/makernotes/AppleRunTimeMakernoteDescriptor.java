@@ -32,10 +32,11 @@ public class AppleRunTimeMakernoteDescriptor extends TagDescriptor<AppleRunTimeM
     }
     
     // flags bitmask details
-    // 0001 = Valid
-    // 0010 = Positive Infinity
-    // 0100 = Negative Infinity
-    // 1000 = Indefinite
+    // 0000 0001 = Valid
+    // 0000 0010 = Rounded
+    // 0000 0100 = Positive Infinity
+    // 0000 1000 = Negative Infinity
+    // 0001 0000 = Indefinite
     private String flagsDescription()
     {
         try {
@@ -47,14 +48,17 @@ public class AppleRunTimeMakernoteDescriptor extends TagDescriptor<AppleRunTimeM
                 sb.append("Valid");
             else
                 sb.append("Invalid");
-
+            
             if((value & 0x2) != 0)
+                sb.append(", rounded");
+
+            if((value & 0x4) != 0)
                 sb.append(", positive infinity");
             
-            if((value & 0x4) != 0)
+            if((value & 0x8) != 0)
                 sb.append(", negative infinity");
             
-            if((value & 0x8) != 0)
+            if((value & 0x10) != 0)
                 sb.append(", indefinite");
             
             return sb.toString();
