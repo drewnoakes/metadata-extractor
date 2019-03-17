@@ -2,7 +2,6 @@ package com.drew.tools;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -104,12 +103,22 @@ public class BinaryPropertyListUtil
 	 */
 	public static boolean isValid(byte[] bplist)
 	{
-        if(bplist.length < BPLIST_HEADER.length || !Arrays.equals(BPLIST_HEADER, 0, BPLIST_HEADER.length - 1, bplist, 0, BPLIST_HEADER.length - 1))
+        if(bplist.length < BPLIST_HEADER.length)
         {
             return false;
         }
         
-        return true;
+        boolean valid = true;
+        for(int i = 0; i < BPLIST_HEADER.length; i++)
+        {
+            if(bplist[i] != BPLIST_HEADER[i])
+            {
+                valid = false;
+                break;
+            }
+        }
+        
+        return valid;
 	}
     
     private static PropertyListResults parse(byte[] bplist) throws IOException
