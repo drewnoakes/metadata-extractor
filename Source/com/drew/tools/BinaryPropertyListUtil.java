@@ -122,9 +122,6 @@ public class BinaryPropertyListUtil
     	final ArrayList<Object> objects = new ArrayList<Object>();
     	final Trailer trailer = readTrailer(bplist);
     	
-//System.out.println(String.format("arraySize=%d, sortVersion=%d, offsetIntSize=%d, objectRefSize=%d, numObjects=%d, topObject=%d, offsetTableOffset=%d", 
-//    			bplist.length, trailer.sortVersion, trailer.offsetIntSize, trailer.objectRefSize, trailer.numObjects, trailer.topObject, trailer.offsetTableOffset));
-    	
 		// List out the pointers
 		SequentialByteArrayReader reader = new SequentialByteArrayReader(bplist, (int) (trailer.offsetTableOffset + trailer.topObject));
 		int[] offsets = new int[(int) trailer.numObjects];
@@ -148,69 +145,17 @@ public class BinaryPropertyListUtil
 			switch(objectFormat)
 			{
 			case 0x0D:	// dict
-			{
-				// Using linked map preserves the key order
-				LinkedHashMap<Byte, Byte> map = new LinkedHashMap<Byte, Byte>();
-				int dictEntries = marker & 0x0F;
-				byte[] keyRefs = new byte[dictEntries];
-			
-				for(int j = 0; j < dictEntries; j++)
-				{
-					keyRefs[j] = reader.getByte();
-				}
-				for(int j = 0; j < dictEntries; j++)
-				{
-					map.put(keyRefs[j], reader.getByte());
-				}
-			
-				objects.add(i, map);
-			}
-			break;
+			    handleDict(i, marker, reader, objects);
+			    break;
 			case 0x05:	// string (ASCII)
 				int charCount = marker & 0x0F;
 				objects.add(i, reader.getString(charCount));
 				break;
 			case 0x04:	// data
-				int byteCount = marker & 0x0F;
-				if(byteCount == 0x0F)
-				{
-					byte sizeMarker = reader.getByte();
-					if((sizeMarker >> 4 & 0x0F) != 1)
-					{
-						throw new IllegalArgumentException("Invalid size marker");
-					}
-			
-					int objectSizeWidth = (int) Math.pow(2, sizeMarker & 0x0F);
-					if(objectSizeWidth == 1)
-					{
-						byteCount = reader.getInt8();
-					}
-					else if(objectSizeWidth == 2)
-					{
-						byteCount = reader.getUInt16();
-					}
-				}
-		
-				objects.add(i, reader.getBytes(byteCount));
+			    handleData(i, marker, reader, objects);
 				break;
 			case 0x01:	// int
-				int objectSize = (int) Math.pow(2, (marker & 0x0F));
-				if(objectSize == 1)
-				{
-					objects.add(i, reader.getByte());
-				}
-				else if(objectSize == 2)
-				{
-					objects.add(i, reader.getUInt16());
-				}
-				else if(objectSize == 4)
-				{
-					objects.add(i, reader.getUInt32());
-				}
-				else if(objectSize == 8)
-				{
-					objects.add(i, reader.getInt64());
-				}
+			    handleInt(i, marker, reader, objects);
 				break;
 			default:
 			    throw new IOException("Un-handled objectFormat encountered");
@@ -218,6 +163,72 @@ public class BinaryPropertyListUtil
 		}
 
 		return new PropertyListResults(objects, trailer);
+    }
+    
+    private static void handleInt(final int objectIndex, final byte marker, final SequentialByteArrayReader reader, final ArrayList<Object> objects) throws IOException
+    {
+        int objectSize = (int) Math.pow(2, (marker & 0x0F));
+        if(objectSize == 1)
+        {
+            objects.add(objectIndex, reader.getByte());
+        }
+        else if(objectSize == 2)
+        {
+            objects.add(objectIndex, reader.getUInt16());
+        }
+        else if(objectSize == 4)
+        {
+            objects.add(objectIndex, reader.getUInt32());
+        }
+        else if(objectSize == 8)
+        {
+            objects.add(objectIndex, reader.getInt64());
+        }
+    }
+    
+    private static void handleDict(final int objectIndex, final byte marker, final SequentialByteArrayReader reader, final ArrayList<Object> objects) throws IOException
+    {
+        // Using linked map preserves the key order
+        LinkedHashMap<Byte, Byte> map = new LinkedHashMap<Byte, Byte>();
+        int dictEntries = marker & 0x0F;
+        byte[] keyRefs = new byte[dictEntries];
+    
+        for(int j = 0; j < dictEntries; j++)
+        {
+            keyRefs[j] = reader.getByte();
+        }
+        for(int j = 0; j < dictEntries; j++)
+        {
+            map.put(keyRefs[j], reader.getByte());
+        }
+    
+        objects.add(objectIndex, map);
+    }
+    
+    private static void handleData(final int objectIndex, final byte marker, final SequentialByteArrayReader reader, final ArrayList<Object> objects) throws IOException
+    {
+        int byteCount = marker & 0x0F;
+        if(byteCount == 0x0F)
+        {
+            byte sizeMarker = reader.getByte();
+            if((sizeMarker >> 4 & 0x0F) != 1)
+            {
+                throw new IllegalArgumentException("Invalid size marker");
+            }
+    
+            int objectSizeWidth = (int) Math.pow(2, sizeMarker & 0x0F);
+            if(objectSizeWidth == 1)
+            {
+                byteCount = reader.getInt8();
+            }
+            else if(objectSizeWidth == 2)
+            {
+                byteCount = reader.getUInt16();
+            }
+        }
+
+        objects.add(objectIndex, reader.getBytes(byteCount));
+
     }
     
 	
