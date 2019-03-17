@@ -95,10 +95,26 @@ public class BinaryPropertyListUtil
 
 		return t;
 	}
+	
+	/**
+	 * Ensure that a BPLIST is valid.
+	 * 
+	 * @param bplist
+	 * @return
+	 */
+	public static boolean isValid(byte[] bplist)
+	{
+        if(bplist.length < BPLIST_HEADER.length || !Arrays.equals(BPLIST_HEADER, 0, BPLIST_HEADER.length - 1, bplist, 0, BPLIST_HEADER.length - 1))
+        {
+            return false;
+        }
+        
+        return true;
+	}
     
     private static PropertyListResults parse(byte[] bplist) throws IOException
     {
-    	if(bplist.length < BPLIST_HEADER.length || !Arrays.equals(BPLIST_HEADER, 0, BPLIST_HEADER.length - 1, bplist, 0, BPLIST_HEADER.length - 1))
+    	if(!isValid(bplist))
     	{
     		throw new IllegalArgumentException("Input is not a bplist");
     	}
