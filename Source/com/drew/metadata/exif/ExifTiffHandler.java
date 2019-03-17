@@ -20,14 +20,15 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.imaging.tiff.TiffProcessingException;
-import com.drew.imaging.tiff.TiffReader;
-import com.adobe.internal.xmp.XMPException;
-import com.adobe.internal.xmp.XMPMeta;
-import com.adobe.internal.xmp.XMPMetaFactory;
-import com.adobe.internal.xmp.impl.ByteBuffer;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.tiff.TiffProcessingException;
+import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
@@ -38,20 +39,43 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
-import com.drew.metadata.exif.makernotes.*;
+import com.drew.metadata.exif.makernotes.AppleMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.AppleRunTimeMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.CasioType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.CasioType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.KodakMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.KyoceraMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.LeicaType5MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusCameraSettingsMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusEquipmentMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusFocusInfoMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusImageProcessingMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusRawDevelopment2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusRawDevelopmentMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusRawInfoMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.PentaxMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.ReconyxHyperFireMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.ReconyxUltraFireMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.RicohMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SamsungType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SanyoMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
-import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 import com.drew.tools.BinaryPropertyListUtil;
 import com.drew.tools.BinaryPropertyListUtil.CMTime;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
 
 /**
  * Implementation of {@link com.drew.imaging.tiff.TiffHandler} used for handling TIFF tags according to the Exif
