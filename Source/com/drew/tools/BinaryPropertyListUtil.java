@@ -58,8 +58,6 @@ public class BinaryPropertyListUtil
     		xml.append("</dict>");
     	}
 
-    	// TODO - handle 'data' as base64
-
         xml.append("</plist>");
 
     	return xml.toString();
@@ -198,6 +196,8 @@ public class BinaryPropertyListUtil
 					objects.add(i, reader.getInt64());
 				}
 				break;
+			default:
+			    throw new IOException("Un-handled objectFormat encountered");
 			}
 		}
 
