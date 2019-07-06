@@ -18,7 +18,7 @@
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Java library for extracting EXIF, IPTC, XMP, ICC and other metadata from image files.</description>
+    <description>Java library for extracting EXIF, IPTC, XMP, ICC and other metadata from image and video files.</description>
 
     <url>https://drewnoakes.com/code/exif/</url>
 
@@ -160,9 +160,7 @@
                     <additionalparam>${javadoc.opts}</additionalparam>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>public</show>
-                    <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from
-                        image files
-                    </windowtitle>
+                    <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from image and video files</windowtitle>
                     <notimestamp>true</notimestamp>
                     <header>
                         <![CDATA[<a href='https://drewnoakes.com/code/exif/' title='Go to the project home page.'><img src='https://raw.githubusercontent.com/drewnoakes/metadata-extractor/master/Resources/metadata-extractor-logo-131x30.png' border="0" alt='Metadata Extractor Logo'></a>]]></header>
