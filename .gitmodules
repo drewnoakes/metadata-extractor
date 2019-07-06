@@ -1,0 +1,6 @@
+[submodule "wiki"]
+	path = wiki
+	url = https://github.com/drewnoakes/metadata-extractor.wiki
+[submodule "wiki-images"]
+	path = wiki-images
+	url = https://github.com/drewnoakes/metadata-extractor-images.wiki.git
