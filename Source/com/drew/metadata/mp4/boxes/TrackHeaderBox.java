@@ -23,7 +23,6 @@ package com.drew.metadata.mp4.boxes;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mp4.Mp4Directory;
 
-import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -74,8 +73,9 @@ public class TrackHeaderBox extends FullBox
     public void addMetadata(Mp4Directory directory)
     {
         if (width != 0 && height != 0 && directory.getDoubleObject(Mp4Directory.TAG_ROTATION) == null) {
-            Point p = new Point(matrix[1] + matrix[4], matrix[0] + matrix[3]);
-            double theta = Math.atan2(p.y, p.x);
+            int x = matrix[1] + matrix[4];
+            int y = matrix[0] + matrix[3];
+            double theta = Math.atan2(y, x);
             double degree = Math.toDegrees(theta);
             degree -= 45;
             directory.setDouble(Mp4Directory.TAG_ROTATION, Math.abs(degree));
