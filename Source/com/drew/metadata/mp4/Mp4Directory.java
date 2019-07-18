@@ -22,8 +22,9 @@ package com.drew.metadata.mp4;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
-
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 public class Mp4Directory extends Directory {
 
@@ -48,6 +49,12 @@ public class Mp4Directory extends Directory {
     public static final int TAG_MAJOR_BRAND                             = 1;
     public static final int TAG_MINOR_VERSION                           = 2;
     public static final int TAG_COMPATIBLE_BRANDS                       = 3;
+
+    /**
+     * The offset (in milliseconds) to add to a MP4 date/time integer value to
+     * align with Java's Epoch
+     */
+    public static final long MP4_EPOCH_OFFSET;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -75,6 +82,11 @@ public class Mp4Directory extends Directory {
         _tagNameMap.put(TAG_ROTATION, "Rotation");
 
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
+
+        // Calculate the difference between the Java Epoch and the MP4 Epoch
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.set(1904, 0, 1, 0, 0, 0); // January 1, 1904  -  Macintosh/MP4/QuickTime Time Epoch
+        MP4_EPOCH_OFFSET = calendar.getTime().getTime();
     }
 
     public Mp4Directory()

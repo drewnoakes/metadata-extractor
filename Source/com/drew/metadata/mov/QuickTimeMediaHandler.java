@@ -28,9 +28,8 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.media.QuickTimeMediaDirectory;
-
+import com.drew.metadata.mp4.Mp4Directory;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -46,14 +45,14 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
         super(metadata);
         if (QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME != null && QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME != null) {
             // Get creation/modification times
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-            Date date = calendar.getTime();
-            long macToUnixEpochOffset = date.getTime();
-            String creationTimeStamp = new Date(QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            String modificationTimeStamp = new Date(QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            directory.setString(QuickTimeMediaDirectory.TAG_CREATION_TIME, creationTimeStamp);
-            directory.setString(QuickTimeMediaDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
+            directory.setDate(
+                QuickTimeMediaDirectory.TAG_CREATION_TIME,
+                new Date(QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+            );
+            directory.setDate(
+                QuickTimeMediaDirectory.TAG_MODIFICATION_TIME,
+                new Date(QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+            );
         }
     }
 

@@ -25,7 +25,6 @@ import com.drew.lang.SequentialReader;
 import com.drew.metadata.mp4.Mp4Directory;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -77,12 +76,8 @@ public class MovieHeaderBox extends FullBox
     public void addMetadata(Mp4Directory directory)
     {
         // Get creation/modification times
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-        Date date = calendar.getTime();
-        long macToUnixEpochOffset = date.getTime();
-        directory.setDate(Mp4Directory.TAG_CREATION_TIME, new Date((creationTime * 1000) + macToUnixEpochOffset));
-        directory.setDate(Mp4Directory.TAG_MODIFICATION_TIME, new Date((modificationTime * 1000) + macToUnixEpochOffset));
+        directory.setDate(Mp4Directory.TAG_CREATION_TIME, new Date(creationTime * 1000 + Mp4Directory.MP4_EPOCH_OFFSET));
+        directory.setDate(Mp4Directory.TAG_MODIFICATION_TIME, new Date(modificationTime * 1000 + Mp4Directory.MP4_EPOCH_OFFSET));
 
         // Get duration and time scale
         directory.setLong(Mp4Directory.TAG_DURATION, duration);

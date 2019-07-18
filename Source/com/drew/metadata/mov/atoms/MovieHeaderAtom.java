@@ -23,11 +23,9 @@ package com.drew.metadata.mov.atoms;
 import com.drew.lang.Rational;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.QuickTimeDirectory;
-
+import com.drew.metadata.mp4.Mp4Directory;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
-
 import static com.drew.metadata.mov.QuickTimeDirectory.*;
 
 /**
@@ -86,12 +84,8 @@ public class MovieHeaderAtom extends FullAtom
     public void addMetadata(QuickTimeDirectory directory)
     {
         // Get creation/modification times
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-        Date date = calendar.getTime();
-        long macToUnixEpochOffset = date.getTime();
-        directory.setDate(TAG_CREATION_TIME, new Date((creationTime * 1000) + macToUnixEpochOffset));
-        directory.setDate(TAG_MODIFICATION_TIME, new Date((modificationTime * 1000) + macToUnixEpochOffset));
+        directory.setDate(TAG_CREATION_TIME, new Date(creationTime * 1000 + Mp4Directory.MP4_EPOCH_OFFSET));
+        directory.setDate(TAG_MODIFICATION_TIME, new Date(modificationTime * 1000 + Mp4Directory.MP4_EPOCH_OFFSET));
 
         // Get duration and time scale
         directory.setLong(TAG_DURATION, duration);
