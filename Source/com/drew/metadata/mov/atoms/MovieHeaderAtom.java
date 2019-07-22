@@ -41,6 +41,7 @@ public class MovieHeaderAtom extends FullAtom
     private long duration;
     private int preferredRate;
     private int preferredVolume;
+    // TODO this matrix data is not currently used anywhere
     private int[] matrixStructure;
     private long previewTime;
     private long previewDuration;
