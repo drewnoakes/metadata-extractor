@@ -35,20 +35,20 @@ import static com.drew.metadata.mov.QuickTimeDirectory.*;
  */
 public class MovieHeaderAtom extends FullAtom
 {
-    long creationTime;
-    long modificationTime;
-    long timescale;
-    long duration;
-    int preferredRate;
-    int preferredVolume;
-    int[] matrixStructure;
-    long previewTime;
-    long previewDuration;
-    long posterTime;
-    long selectionTime;
-    long selectionDuration;
-    long currentTime;
-    long nextTrackID;
+    private long creationTime;
+    private long modificationTime;
+    private long timescale;
+    private long duration;
+    private int preferredRate;
+    private int preferredVolume;
+    private int[] matrixStructure;
+    private long previewTime;
+    private long previewDuration;
+    private long posterTime;
+    private long selectionTime;
+    private long selectionDuration;
+    private long currentTime;
+    private long nextTrackID;
 
     public MovieHeaderAtom(SequentialReader reader, Atom atom) throws IOException
     {
