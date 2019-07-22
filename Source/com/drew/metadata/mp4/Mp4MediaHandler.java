@@ -21,6 +21,7 @@
 package com.drew.metadata.mp4;
 
 import com.drew.imaging.mp4.Mp4Handler;
+import com.drew.lang.DateUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
@@ -30,7 +31,6 @@ import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 
 import java.io.IOException;
-import java.util.Date;
 
 public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Handler<T>
 {
@@ -41,11 +41,11 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
             // Get creation/modification times
             directory.setDate(
                 Mp4MediaDirectory.TAG_CREATION_TIME,
-                new Date(Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+                DateUtil.get1Jan1904EpochDate(Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME)
             );
             directory.setDate(
                 Mp4MediaDirectory.TAG_MODIFICATION_TIME,
-                new Date(Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+                DateUtil.get1Jan1904EpochDate(Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME)
             );
             directory.setString(Mp4MediaDirectory.TAG_LANGUAGE_CODE, Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE);
         }
