@@ -433,7 +433,11 @@ public class ProcessAllImagesInFolderUtility
             if (!metadataDir.exists())
                 metadataDir.mkdir();
 
-            String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName());
+            File javaDir = new File(String.format("%s/metadata/java", file.getParent()));
+            if (!javaDir.exists())
+                javaDir.mkdir();
+
+            String outputPath = String.format("%s/metadata/java/%s.txt", file.getParent(), file.getName());
             Writer writer = new OutputStreamWriter(
                 new FileOutputStream(outputPath),
                 "UTF-8"
