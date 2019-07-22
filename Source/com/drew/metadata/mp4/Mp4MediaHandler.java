@@ -30,7 +30,6 @@ import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 
 public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Handler<T>
@@ -40,16 +39,15 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
         super(metadata);
         if (Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME != null && Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME != null) {
             // Get creation/modification times
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-            Date date = calendar.getTime();
-            long macToUnixEpochOffset = date.getTime();
-            String creationTimeStamp = new Date(Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            String modificationTimeStamp = new Date(Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            String language = Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE;
-            directory.setString(Mp4MediaDirectory.TAG_CREATION_TIME, creationTimeStamp);
-            directory.setString(Mp4MediaDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
-            directory.setString(Mp4MediaDirectory.TAG_LANGUAGE_CODE, language);
+            directory.setDate(
+                Mp4MediaDirectory.TAG_CREATION_TIME,
+                new Date(Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+            );
+            directory.setDate(
+                Mp4MediaDirectory.TAG_MODIFICATION_TIME,
+                new Date(Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+            );
+            directory.setString(Mp4MediaDirectory.TAG_LANGUAGE_CODE, Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE);
         }
     }
 
