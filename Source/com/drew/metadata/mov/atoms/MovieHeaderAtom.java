@@ -94,12 +94,12 @@ public class MovieHeaderAtom extends FullAtom
 
         // Calculate preferred rate fixed point
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
-        double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
+        double preferredRateFraction = (preferredRate & 0x0000FFFF) / 16.0d;
         directory.setDouble(TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
 
         // Calculate preferred volume fixed point
         double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
-        double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
+        double preferredVolumeFraction = (preferredVolume & 0x00FF) / 8.0d;
         directory.setDouble(TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
 
         directory.setLong(TAG_PREVIEW_TIME, previewTime);
