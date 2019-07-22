@@ -91,7 +91,7 @@ public class MovieHeaderAtom extends FullAtom
         // Get duration and time scale
         directory.setLong(TAG_DURATION, duration);
         directory.setLong(TAG_TIME_SCALE, timescale);
-        directory.setRational(QuickTimeDirectory.TAG_DURATION_SECONDS, new Rational(duration, timescale));
+        directory.setRational(TAG_DURATION_SECONDS, new Rational(duration, timescale));
 
         // Calculate preferred rate fixed point
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
