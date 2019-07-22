@@ -174,11 +174,12 @@ public class ProcessAllImagesInFolderUtility
         // TODO obtain these from FileType enum directly
         private final Set<String> _supportedExtensions = new HashSet<String>(
             Arrays.asList(
-                "jpg", "jpeg", "png", "gif", "bmp", "ico", "webp", "pcx", "ai", "eps",
+                "jpg", "jpeg", "png", "gif", "bmp", "heic", "ico", "webp", "pcx", "ai", "eps",
                 "nef", "crw", "cr2", "orf", "arw", "raf", "srw", "x3f", "rw2", "rwl",
                 "tif", "tiff", "psd", "dng",
-                "3g2", "3gp", "m4v", "mov", "mp4",
-                "pbm", "pnm", "pgm"));
+                "j2c", "jp2", "jpf", "jpm", "mj2",
+                "3g2", "3gp", "m4v", "mov", "mp4", "m2v", "mts",
+                "pbm", "pnm", "pgm", "ppm"));
 
         private int _processedFileCount = 0;
         private int _exceptionCount = 0;
@@ -433,7 +434,11 @@ public class ProcessAllImagesInFolderUtility
             if (!metadataDir.exists())
                 metadataDir.mkdir();
 
-            String outputPath = String.format("%s/metadata/%s.txt", file.getParent(), file.getName());
+            File javaDir = new File(String.format("%s/metadata/java", file.getParent()));
+            if (!javaDir.exists())
+                javaDir.mkdir();
+
+            String outputPath = String.format("%s/metadata/java/%s.txt", file.getParent(), file.getName());
             Writer writer = new OutputStreamWriter(
                 new FileOutputStream(outputPath),
                 "UTF-8"
