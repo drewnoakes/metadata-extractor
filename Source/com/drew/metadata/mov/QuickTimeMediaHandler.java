@@ -21,6 +21,7 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.quicktime.QuickTimeHandler;
+import com.drew.lang.DateUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
@@ -28,9 +29,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.media.QuickTimeMediaDirectory;
-import com.drew.metadata.mp4.Mp4Directory;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * Classes that extend this class should be from the media dat atom types:
@@ -43,15 +42,16 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
     public QuickTimeMediaHandler(Metadata metadata)
     {
         super(metadata);
+
         if (QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME != null && QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME != null) {
             // Get creation/modification times
             directory.setDate(
                 QuickTimeMediaDirectory.TAG_CREATION_TIME,
-                new Date(QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+                DateUtil.get1Jan1904EpochDate(QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME)
             );
             directory.setDate(
                 QuickTimeMediaDirectory.TAG_MODIFICATION_TIME,
-                new Date(QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + Mp4Directory.MP4_EPOCH_OFFSET)
+                DateUtil.get1Jan1904EpochDate(QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME)
             );
         }
     }
