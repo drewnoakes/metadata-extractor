@@ -460,7 +460,7 @@ public class TagDescriptor<T extends Directory>
                 return "Other";
         }
 
-        return getDescription(wbtype);
+        return "Unknown (" + wbtype + ")";
     }
 
     // EXIF UserComment, GPSProcessingMethod and GPSAreaInformation
