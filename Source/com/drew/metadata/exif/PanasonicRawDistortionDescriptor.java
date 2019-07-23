@@ -67,16 +67,6 @@ public class PanasonicRawDistortionDescriptor extends TagDescriptor<PanasonicRaw
     }
 
     @Nullable
-    public String getWbTypeDescription(int tagType)
-    {
-        Integer wbtype = _directory.getInteger(tagType);
-        if (wbtype == null)
-            return null;
-
-        return super.getLightSourceDescription(wbtype.shortValue());
-    }
-
-    @Nullable
     public String getDistortionParam02Description()
     {
         Integer value = _directory.getInteger(TagDistortionParam02);

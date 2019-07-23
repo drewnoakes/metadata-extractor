@@ -778,10 +778,16 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        // See http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
         final Integer value = _directory.getInteger(TAG_WHITE_BALANCE);
         if (value == null)
             return null;
+        return getWhiteBalanceDescription(value);
+    }
+
+    static String getWhiteBalanceDescription(int value)
+    {
+        // See http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
+
         switch (value) {
             case 0: return "Unknown";
             case 1: return "Daylight";

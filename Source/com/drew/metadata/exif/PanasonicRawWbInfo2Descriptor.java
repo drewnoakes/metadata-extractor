@@ -62,10 +62,9 @@ public class PanasonicRawWbInfo2Descriptor extends TagDescriptor<PanasonicRawWbI
     @Nullable
     public String getWbTypeDescription(int tagType)
     {
-        Integer wbtype = _directory.getInteger(tagType);
-        if (wbtype == null)
+        Integer value = _directory.getInteger(tagType);
+        if (value == null)
             return null;
-
-        return super.getLightSourceDescription(wbtype.shortValue());
+        return ExifDescriptorBase.getWhiteBalanceDescription(value);
     }
 }
