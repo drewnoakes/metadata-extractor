@@ -23,7 +23,7 @@ package com.drew.imaging;
 import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
 
-import java.io.BufferedInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -151,7 +151,7 @@ public class FileTypeDetector
     /**
      * Examines the file's bytes and estimates the file's type.
      * <p>
-     * Requires a {@link BufferedInputStream} in order to mark and reset the stream to the position
+     * Requires a {@link FilterInputStream} in order to mark and reset the stream to the position
      * at which it was provided to this method once completed.
      * <p>
      * Requires the stream to contain at least eight bytes.
@@ -159,7 +159,7 @@ public class FileTypeDetector
      * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
      */
     @NotNull
-    public static FileType detectFileType(@NotNull final BufferedInputStream inputStream) throws IOException
+    public static FileType detectFileType(@NotNull final FilterInputStream inputStream) throws IOException
     {
         if (!inputStream.markSupported())
             throw new IOException("Stream must support mark/reset");
