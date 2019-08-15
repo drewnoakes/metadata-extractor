@@ -261,7 +261,7 @@ public class ProcessAllImagesInFolderUtility
             super.onStartingDirectory(directoryPath);
 
             // Delete any existing 'metadata' folder
-            File metadataDirectory = new File(directoryPath + "/metadata");
+            File metadataDirectory = new File(directoryPath + "/metadata/java");
             if (metadataDirectory.exists())
                 deleteRecursively(metadataDirectory);
         }
