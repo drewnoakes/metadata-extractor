@@ -174,9 +174,10 @@ public class ProcessAllImagesInFolderUtility
         // TODO obtain these from FileType enum directly
         private final Set<String> _supportedExtensions = new HashSet<String>(
             Arrays.asList(
-                "jpg", "jpeg", "png", "gif", "bmp", "heic", "ico", "webp", "pcx", "ai", "eps",
+                "jpg", "jpeg", "png", "gif", "bmp", "heic", "heif", "ico", "webp", "pcx", "ai", "eps",
                 "nef", "crw", "cr2", "orf", "arw", "raf", "srw", "x3f", "rw2", "rwl",
                 "tif", "tiff", "psd", "dng",
+                "mp3",
                 "j2c", "jp2", "jpf", "jpm", "mj2",
                 "3g2", "3gp", "m4v", "mov", "mp4", "m2v", "mts",
                 "pbm", "pnm", "pgm", "ppm"));
