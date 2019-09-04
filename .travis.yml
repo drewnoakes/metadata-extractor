@@ -10,9 +10,9 @@ language: java
 
 matrix:
   include:
-    - os: linux
-      dist: precise
-      jdk: openjdk6
+#    - os: linux
+#      dist: precise
+#      jdk: openjdk6
     - os: linux
       dist: precise
       jdk: oraclejdk7
