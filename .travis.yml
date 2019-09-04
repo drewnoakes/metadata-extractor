@@ -1,14 +1,36 @@
+# Documentation relevant to this build configuration file:
+#
+# https://docs.travis-ci.com/user/languages/java/
+
 language: java
 
-# Seems Travis CI no longer supports openjdk6 or oraclejdk7
-# https://github.com/travis-ci/travis-ci/issues/7884#issuecomment-308451879
+# Travis provides different sets of JDKs for different Ubuntu distributions:
+#
+# https://docs.travis-ci.com/user/languages/java/#testing-against-multiple-jdks
 
-dist: trusty
-
-jdk:
-  - openjdk7
-  - oraclejdk8
-#  - oraclejdk9
+matrix:
+  include:
+#    - os: linux
+#      dist: precise
+#      jdk: openjdk6
+    - os: linux
+      dist: precise
+      jdk: oraclejdk7
+    - os: linux
+      dist: trusty
+      jdk: openjdk7
+    - os: linux
+      dist: trusty
+      jdk: oraclejdk8
+    - os: linux
+      dist: trusty
+      jdk: oraclejdk9
+    - os: linux
+      dist: bionic
+      jdk: openjdk10
+    - os: linux
+      dist: bionic
+      jdk: openjdk11
 
 install: mvn install -DskipTests=true -Dgpg.skip=true
 
