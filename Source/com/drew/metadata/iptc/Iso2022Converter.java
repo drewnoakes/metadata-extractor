@@ -37,6 +37,7 @@ public final class Iso2022Converter
     private static final int DOT = 0xe280a2;
     private static final byte LATIN_CAPITAL_G = 0x47;
     private static final byte PERCENT_SIGN = 0x25;
+    private static final byte DOT_SIGN = 0x2E;
     private static final byte ESC = 0x1B;
 
     /**
@@ -50,6 +51,9 @@ public final class Iso2022Converter
     {
         if (bytes.length > 2 && bytes[0] == ESC && bytes[1] == PERCENT_SIGN && bytes[2] == LATIN_CAPITAL_G)
             return UTF_8;
+
+        if (bytes.length > 2 && bytes[0] == ESC && bytes[1] == DOT_SIGN && bytes[2] == LATIN_CAPITAL_A)
+            return ISO_8859_1;
 
         if (bytes.length > 3 && bytes[0] == ESC && (bytes[3] & 0xFF | ((bytes[2] & 0xFF) << 8) | ((bytes[1] & 0xFF) << 16)) == DOT && bytes[4] == LATIN_CAPITAL_A)
             return ISO_8859_1;
