@@ -177,7 +177,7 @@ public class CasioType2MakernoteDirectory extends Directory
     public static final int TAG_FILTER = 0x3017;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

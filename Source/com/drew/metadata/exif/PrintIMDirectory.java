@@ -39,7 +39,7 @@ public class PrintIMDirectory extends Directory
     public static final int TagPrintImVersion = 0x0000;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

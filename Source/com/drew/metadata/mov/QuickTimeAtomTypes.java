@@ -41,7 +41,7 @@ public class QuickTimeAtomTypes
     public static final String ATOM_MEDIA_HEADER             = "mdhd";
     public static final String ATOM_CANON_THUMBNAIL          = "CNTH";
 
-    public static ArrayList<String> _atomList = new ArrayList<String>();
+    private static final ArrayList<String> _atomList = new ArrayList<String>();
 
     static {
         _atomList.add(ATOM_FILE_TYPE);

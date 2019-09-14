@@ -49,7 +49,7 @@ public class ExifThumbnailDirectory extends ExifDirectoryBase
     public static final int TAG_THUMBNAIL_COMPRESSION = 0x0103;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

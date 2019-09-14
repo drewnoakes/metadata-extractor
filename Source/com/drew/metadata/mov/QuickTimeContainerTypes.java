@@ -40,7 +40,7 @@ public class QuickTimeContainerTypes
     public static final String ATOM_MEDIA_SUBTITLE              = "sbtl";
     public static final String ATOM_MEDIA_BASE                  = "gmhd";
 
-    public static ArrayList<String> _containerList = new ArrayList<String>();
+    private static final ArrayList<String> _containerList = new ArrayList<String>();
 
     static {
         _containerList.add(ATOM_MOVIE);

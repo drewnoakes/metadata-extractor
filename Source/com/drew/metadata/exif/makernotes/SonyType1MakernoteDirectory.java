@@ -125,7 +125,7 @@ public class SonyType1MakernoteDirectory extends Directory
     public static final int TAG_NO_PRINT = 0xFFFF;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

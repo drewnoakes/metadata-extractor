@@ -60,7 +60,7 @@ public class PanasonicRawWbInfoDirectory extends Directory
     public static final int TagWbRbLevels7 = 20;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

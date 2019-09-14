@@ -42,7 +42,7 @@ public class GifImageDirectory extends Directory
     public static final int TAG_LOCAL_COLOUR_TABLE_BITS_PER_PIXEL = 8;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

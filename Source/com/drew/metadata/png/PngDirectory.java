@@ -55,7 +55,7 @@ public class PngDirectory extends Directory
     public static final int TAG_SIGNIFICANT_BITS = 19;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_IMAGE_HEIGHT, "Image Height");

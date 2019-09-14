@@ -37,7 +37,7 @@ public class KyoceraMakernoteDirectory extends Directory
     public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

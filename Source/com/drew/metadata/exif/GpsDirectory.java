@@ -106,7 +106,7 @@ public class GpsDirectory extends ExifDirectoryBase
     public static final int TAG_H_POSITIONING_ERROR = 0x001F;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

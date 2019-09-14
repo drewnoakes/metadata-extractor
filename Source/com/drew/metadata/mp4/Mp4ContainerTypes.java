@@ -40,7 +40,7 @@ public class Mp4ContainerTypes
     public static final String BOX_MEDIA_SUBTITLE                   = "sbtl";
     public static final String BOX_MEDIA_NULL                       = "nmhd";
 
-    public static ArrayList<String> _containerList = new ArrayList<String>();
+    private static final ArrayList<String> _containerList = new ArrayList<String>();
 
     static {
         _containerList.add(BOX_MOVIE);

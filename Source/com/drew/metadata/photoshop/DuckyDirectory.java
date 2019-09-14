@@ -40,7 +40,7 @@ public class DuckyDirectory extends Directory
     public static final int TAG_COPYRIGHT = 3;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_QUALITY, "Quality");

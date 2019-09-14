@@ -36,7 +36,7 @@ public class FileSystemDirectory extends Directory
     public static final int TAG_FILE_MODIFIED_DATE = 3;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_FILE_NAME, "File Name");

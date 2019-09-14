@@ -40,7 +40,7 @@ public class HeifBoxTypes
     public static final String BOX_COLOUR_INFO                      = "colr";
     public static final String BOX_PIXEL_INFORMATION                = "pixi";
 
-    public static ArrayList<String> _boxList = new ArrayList<String>();
+    private static final ArrayList<String> _boxList = new ArrayList<String>();
 
     static {
         _boxList.add(BOX_FILE_TYPE);

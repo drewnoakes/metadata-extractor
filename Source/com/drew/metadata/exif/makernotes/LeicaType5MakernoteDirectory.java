@@ -45,7 +45,7 @@ public class LeicaType5MakernoteDirectory extends Directory
     public static final int TagWbRgbLevels = 0x0413;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

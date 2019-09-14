@@ -39,32 +39,32 @@ public class HuffmanTablesDirectory extends Directory
 {
     public static final int TAG_NUMBER_OF_TABLES = 1;
 
-    protected static final byte[] TYPICAL_LUMINANCE_DC_LENGTHS = {
+    static final byte[] TYPICAL_LUMINANCE_DC_LENGTHS = {
         (byte) 0x00, (byte) 0x01, (byte) 0x05, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01,
         (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
     };
 
-    protected static final byte[] TYPICAL_LUMINANCE_DC_VALUES = {
+    static final byte[] TYPICAL_LUMINANCE_DC_VALUES = {
         (byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,
         (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B
     };
 
-    protected static final byte[] TYPICAL_CHROMINANCE_DC_LENGTHS = {
+    static final byte[] TYPICAL_CHROMINANCE_DC_LENGTHS = {
         (byte) 0x00, (byte) 0x03, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01,
         (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
     };
 
-    protected static final byte[] TYPICAL_CHROMINANCE_DC_VALUES = {
+    static final byte[] TYPICAL_CHROMINANCE_DC_VALUES = {
         (byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,
         (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B
     };
 
-    protected static final byte[] TYPICAL_LUMINANCE_AC_LENGTHS = {
+    static final byte[] TYPICAL_LUMINANCE_AC_LENGTHS = {
         (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0x03, (byte) 0x03, (byte) 0x02, (byte) 0x04, (byte) 0x03,
         (byte) 0x05, (byte) 0x05, (byte) 0x04, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x7D
     };
 
-    protected static final byte[] TYPICAL_LUMINANCE_AC_VALUES = {
+    static final byte[] TYPICAL_LUMINANCE_AC_VALUES = {
         (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x00, (byte) 0x04, (byte) 0x11, (byte) 0x05, (byte) 0x12,
         (byte) 0x21, (byte) 0x31, (byte) 0x41, (byte) 0x06, (byte) 0x13, (byte) 0x51, (byte) 0x61, (byte) 0x07,
         (byte) 0x22, (byte) 0x71, (byte) 0x14, (byte) 0x32, (byte) 0x81, (byte) 0x91, (byte) 0xA1, (byte) 0x08,
@@ -88,12 +88,12 @@ public class HuffmanTablesDirectory extends Directory
         (byte) 0xF9, (byte) 0xFA
     };
 
-    protected static final byte[] TYPICAL_CHROMINANCE_AC_LENGTHS = {
+    static final byte[] TYPICAL_CHROMINANCE_AC_LENGTHS = {
         (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0x02, (byte) 0x04, (byte) 0x04, (byte) 0x03, (byte) 0x04,
         (byte) 0x07, (byte) 0x05, (byte) 0x04, (byte) 0x04, (byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x77
     };
 
-    protected static final byte[] TYPICAL_CHROMINANCE_AC_VALUES = {
+    static final byte[] TYPICAL_CHROMINANCE_AC_VALUES = {
         (byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x11, (byte) 0x04, (byte) 0x05, (byte) 0x21,
         (byte) 0x31, (byte) 0x06, (byte) 0x12, (byte) 0x41, (byte) 0x51, (byte) 0x07, (byte) 0x61, (byte) 0x71,
         (byte) 0x13, (byte) 0x22, (byte) 0x32, (byte) 0x81, (byte) 0x08, (byte) 0x14, (byte) 0x42, (byte) 0x91,
@@ -121,7 +121,7 @@ public class HuffmanTablesDirectory extends Directory
     protected final List<HuffmanTable> tables = new ArrayList<HuffmanTable>(4);
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

@@ -76,10 +76,10 @@ public class QuickTimeMetadataDirectory extends QuickTimeDirectory
     }
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     @NotNull
-    protected static final HashMap<String, Integer> _tagIntegerMap = new HashMap<String, Integer>();
+    static final HashMap<String, Integer> _tagIntegerMap = new HashMap<String, Integer>();
 
     static
     {

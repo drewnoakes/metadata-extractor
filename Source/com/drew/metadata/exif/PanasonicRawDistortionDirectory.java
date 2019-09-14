@@ -51,7 +51,7 @@ public class PanasonicRawDistortionDirectory extends Directory
     public static final int TagDistortionN = 12;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

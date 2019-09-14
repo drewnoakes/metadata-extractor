@@ -290,7 +290,7 @@ public class OlympusMakernoteDirectory extends Directory
     }
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_MAKERNOTE_VERSION, "Makernote Version");
@@ -516,7 +516,7 @@ public class OlympusMakernoteDirectory extends Directory
     // http://www.sno.phy.queensu.ca/~phil/exiftool/
     // lib\Image\ExifTool\Olympus.pm
     // </remarks>
-    public static final HashMap<String, String> OlympusCameraTypes = new HashMap<String, String>();
+    static final HashMap<String, String> OlympusCameraTypes = new HashMap<String, String>();
 
     static {
         OlympusCameraTypes.put("D4028", "X-2,C-50Z");

@@ -61,7 +61,7 @@ public class KodakMakernoteDirectory extends Directory
     public final static int TAG_SHARPNESS = 107;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

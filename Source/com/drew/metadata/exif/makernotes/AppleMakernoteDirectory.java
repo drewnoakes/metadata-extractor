@@ -40,7 +40,7 @@ public class AppleMakernoteDirectory extends Directory
     public static final int TAG_BURST_UUID = 0x000b;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

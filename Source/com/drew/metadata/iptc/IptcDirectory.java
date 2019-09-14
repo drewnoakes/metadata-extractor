@@ -124,7 +124,7 @@ public class IptcDirectory extends Directory
     public static final int TAG_OBJECT_PREVIEW_DATA              = 0x02CA; // 202
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

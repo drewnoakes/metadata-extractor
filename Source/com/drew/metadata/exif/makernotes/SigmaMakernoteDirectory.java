@@ -59,7 +59,7 @@ public class SigmaMakernoteDirectory extends Directory
     public static final int TAG_AUTO_BRACKET = 0x19;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

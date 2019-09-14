@@ -52,7 +52,7 @@ public class SamsungType2MakernoteDirectory extends Directory
     public static final int TagFirmwareName = 0xa001;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

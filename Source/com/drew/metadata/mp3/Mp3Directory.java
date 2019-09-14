@@ -41,7 +41,7 @@ public class Mp3Directory extends Directory
     public static final int TAG_FRAME_SIZE = 8;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

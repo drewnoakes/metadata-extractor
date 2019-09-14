@@ -59,7 +59,7 @@ public class LeicaMakernoteDirectory extends Directory
     public static final int TAG_IMAGE_ID_NUMBER = 0x0340;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

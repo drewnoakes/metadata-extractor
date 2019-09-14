@@ -36,7 +36,7 @@ import java.util.HashMap;
 public class ExifImageDirectory extends ExifDirectoryBase
 {
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

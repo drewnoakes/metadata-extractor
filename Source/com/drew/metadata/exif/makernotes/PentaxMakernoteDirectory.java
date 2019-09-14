@@ -130,7 +130,7 @@ public class PentaxMakernoteDirectory extends Directory
     public static final int TAG_DAYLIGHT_SAVINGS = 0x1001;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

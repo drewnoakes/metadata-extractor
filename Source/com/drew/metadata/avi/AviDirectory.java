@@ -55,7 +55,7 @@ public class AviDirectory extends Directory
     public static final String FORMAT = "AVI ";
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_FRAMES_PER_SECOND, "Frames Per Second");

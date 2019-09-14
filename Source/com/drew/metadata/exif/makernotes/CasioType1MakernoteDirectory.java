@@ -58,7 +58,7 @@ public class CasioType1MakernoteDirectory extends Directory
     public static final int TAG_CCD_SENSITIVITY = 0x0014;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

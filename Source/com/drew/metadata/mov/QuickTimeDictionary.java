@@ -39,7 +39,7 @@ public class QuickTimeDictionary
 
     private static HashMap<String, String> _soundAudioFormats = new HashMap<String, String>();
 
-    public static HashMap<String, String> _vendorIds = new HashMap<String, String>();
+    private static final HashMap<String, String> _vendorIds = new HashMap<String, String>();
 
     static {
         _dictionary.put(QuickTimeDirectory.TAG_MAJOR_BRAND, _majorBrands);

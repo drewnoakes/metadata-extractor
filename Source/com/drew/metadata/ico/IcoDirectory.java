@@ -44,7 +44,7 @@ public class IcoDirectory extends Directory
     public static final int TAG_IMAGE_OFFSET_BYTES = 10;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_IMAGE_TYPE, "Image Type");

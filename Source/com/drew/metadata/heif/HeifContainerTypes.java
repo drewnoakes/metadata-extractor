@@ -31,7 +31,7 @@ public class HeifContainerTypes
     public static final String BOX_IMAGE_PROPERTY                   = "iprp";
     public static final String BOX_ITEM_PROPERTY                    = "ipco";
 
-    public static ArrayList<String> _containerList = new ArrayList<String>();
+    private static final ArrayList<String> _containerList = new ArrayList<String>();
 
     static {
         _containerList.add(BOX_METADATA);

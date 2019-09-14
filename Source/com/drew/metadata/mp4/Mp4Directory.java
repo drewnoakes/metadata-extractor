@@ -51,7 +51,7 @@ public class Mp4Directory extends Directory {
     public static final int TAG_COMPATIBLE_BRANDS                       = 3;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_MAJOR_BRAND, "Major Brand");

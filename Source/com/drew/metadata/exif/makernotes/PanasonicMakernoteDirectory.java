@@ -502,7 +502,7 @@ public class PanasonicMakernoteDirectory extends Directory
     public static final int TAG_TRANSFORM_1 = 0x8012;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

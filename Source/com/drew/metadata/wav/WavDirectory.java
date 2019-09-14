@@ -37,13 +37,13 @@ public class WavDirectory extends Directory
     public static final String FORMAT = "WAVE";
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     @NotNull
-    protected transient static final HashMap<String, Integer> _tagIntegerMap = new HashMap<String, Integer>();
+    transient static final HashMap<String, Integer> _tagIntegerMap = new HashMap<String, Integer>();
 
     @NotNull
-    protected transient static final HashMap<Integer, String> _audioEncodingMap = new HashMap<Integer, String>();
+    transient static final HashMap<Integer, String> _audioEncodingMap = new HashMap<Integer, String>();
 
     static {
         _tagIntegerMap.put("IART", TAG_ARTIST);

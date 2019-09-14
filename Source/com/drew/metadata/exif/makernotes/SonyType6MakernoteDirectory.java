@@ -40,7 +40,7 @@ public class SonyType6MakernoteDirectory extends Directory
     public static final int TAG_MAKERNOTE_THUMB_VERSION = 0x2000;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

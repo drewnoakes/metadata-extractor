@@ -39,7 +39,7 @@ public class Mp4BoxTypes
     public static final String BOX_MEDIA_HEADER                     = "mdhd";
     public static final String BOX_TRACK_HEADER                     = "tkhd";
 
-    public static ArrayList<String> _boxList = new ArrayList<String>();
+    private static final ArrayList<String> _boxList = new ArrayList<String>();
 
     static {
         _boxList.add(BOX_FILE_TYPE);
