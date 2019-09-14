@@ -42,6 +42,7 @@ public final class Iso2022Converter
 
     /**
      * Converts the given ISO2022 char set to a Java charset name.
+     * A reference of valid charsets can be found here: http://nozer0.github.io/en/technology/system/character-encoding/#ISO/IEC%202022
      *
      * @param bytes string data encoded using ISO2022
      * @return the Java charset name as a string, or <code>null</code> if the conversion was not possible
