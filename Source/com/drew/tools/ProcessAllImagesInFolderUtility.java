@@ -50,7 +50,7 @@ import java.util.*;
  */
 public class ProcessAllImagesInFolderUtility
 {
-    public static void main(String[] args) throws IOException, JpegProcessingException
+    public static void main(String[] args) throws IOException
     {
         List<String> directories = new ArrayList<String>();
 
