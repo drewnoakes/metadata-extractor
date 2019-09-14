@@ -24,6 +24,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeAtomTypes;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.QuickTimeMediaHandler;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.atoms.TimecodeInformationMediaAtom;
@@ -36,9 +37,9 @@ import java.io.IOException;
  */
 public class QuickTimeTimecodeHandler extends QuickTimeMediaHandler<QuickTimeTimecodeDirectory>
 {
-    public QuickTimeTimecodeHandler(Metadata metadata)
+    public QuickTimeTimecodeHandler(Metadata metadata, QuickTimeContext context)
     {
-        super(metadata);
+        super(metadata, context);
     }
 
     @NotNull
@@ -69,7 +70,7 @@ public class QuickTimeTimecodeHandler extends QuickTimeMediaHandler<QuickTimeTim
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom, QuickTimeContext context) throws IOException
     {
         // Do nothing
     }

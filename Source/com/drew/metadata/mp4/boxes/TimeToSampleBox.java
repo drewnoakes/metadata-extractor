@@ -21,6 +21,7 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.mp4.Mp4Context;
 import com.drew.metadata.mp4.Mp4HandlerFactory;
 import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
@@ -33,8 +34,8 @@ import java.util.ArrayList;
  */
 public class TimeToSampleBox extends FullBox
 {
-    long entryCount;
-    ArrayList<EntryCount> entries;
+    private long entryCount;
+    private ArrayList<EntryCount> entries;
 
     public TimeToSampleBox(SequentialReader reader, Box box) throws IOException
     {
@@ -47,7 +48,7 @@ public class TimeToSampleBox extends FullBox
         }
     }
 
-    public void addMetadata(Mp4VideoDirectory directory)
+    public void addMetadata(Mp4VideoDirectory directory, Mp4Context context)
     {
         float sampleCount = 0;
 
@@ -55,14 +56,14 @@ public class TimeToSampleBox extends FullBox
             sampleCount += ec.sampleCount;
         }
 
-        float frameRate = (float) Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE/((float) Mp4HandlerFactory.HANDLER_PARAM_DURATION / sampleCount);
+        float frameRate = (float) context.timeScale/((float) context.duration / sampleCount);
 
         directory.setFloat(Mp4VideoDirectory.TAG_FRAME_RATE, frameRate);
     }
 
-    public void addMetadata(Mp4SoundDirectory directory)
+    public void addMetadata(Mp4SoundDirectory directory, Mp4Context context)
     {
-        directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE);
+        directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, context.timeScale);
     }
 
     static class EntryCount

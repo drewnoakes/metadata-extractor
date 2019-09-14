@@ -24,6 +24,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeAtomTypes;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.QuickTimeMediaHandler;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.atoms.TimeToSampleAtom;
@@ -37,9 +38,9 @@ import java.io.IOException;
  */
 public class QuickTimeVideoHandler extends QuickTimeMediaHandler<QuickTimeVideoDirectory>
 {
-    public QuickTimeVideoHandler(Metadata metadata)
+    public QuickTimeVideoHandler(Metadata metadata, QuickTimeContext context)
     {
-        super(metadata);
+        super(metadata, context);
     }
 
     @Override
@@ -70,9 +71,9 @@ public class QuickTimeVideoHandler extends QuickTimeMediaHandler<QuickTimeVideoD
     }
 
     @Override
-    public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom, QuickTimeContext context) throws IOException
     {
         TimeToSampleAtom timeToSampleAtom = new TimeToSampleAtom(reader, atom);
-        timeToSampleAtom.addMetadata(directory);
+        timeToSampleAtom.addMetadata(directory, context);
     }
 }

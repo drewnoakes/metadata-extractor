@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeAtomTypes;
 import com.drew.metadata.mov.QuickTimeContainerTypes;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.QuickTimeMetadataHandler;
 import com.drew.metadata.mov.atoms.Atom;
 
@@ -58,7 +59,7 @@ public class QuickTimeDirectoryHandler extends QuickTimeMetadataHandler
     }
 
     @Override
-    protected QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
+    protected QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
     {
         if (payload != null) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);

@@ -62,7 +62,7 @@ public abstract class QuickTimeMetadataHandler extends QuickTimeHandler
     }
 
     @Override
-    protected QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
+    protected QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
     {
         if (payload != null) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);

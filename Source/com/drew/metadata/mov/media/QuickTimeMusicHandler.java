@@ -23,6 +23,7 @@ package com.drew.metadata.mov.media;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.QuickTimeMediaHandler;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.atoms.MusicSampleDescriptionAtom;
@@ -34,9 +35,9 @@ import java.io.IOException;
  */
 public class QuickTimeMusicHandler extends QuickTimeMediaHandler<QuickTimeMusicDirectory>
 {
-    public QuickTimeMusicHandler(Metadata metadata)
+    public QuickTimeMusicHandler(Metadata metadata, QuickTimeContext context)
     {
-        super(metadata);
+        super(metadata, context);
     }
 
     @NotNull
@@ -66,7 +67,7 @@ public class QuickTimeMusicHandler extends QuickTimeMediaHandler<QuickTimeMusicD
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom, QuickTimeContext context) throws IOException
     {
         // Not yet implemented
     }
