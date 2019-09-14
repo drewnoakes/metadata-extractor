@@ -55,7 +55,7 @@ public class ItemInfoBox extends FullBox
         }
     }
 
-    class ItemInfoEntry extends FullBox
+    static class ItemInfoEntry extends FullBox
     {
         long itemID;
         long itemProtectionIndex;

@@ -43,7 +43,7 @@ public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<Subtitl
         return null;
     }
 
-    class SubtitleSampleDescription extends SampleDescription
+    static class SubtitleSampleDescription extends SampleDescription
     {
         int displayFlags;
         long defaultTextBox;

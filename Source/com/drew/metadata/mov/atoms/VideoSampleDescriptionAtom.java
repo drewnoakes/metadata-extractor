@@ -73,7 +73,7 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
         directory.setDouble(QuickTimeVideoDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 
-    class VideoSampleDescription extends SampleDescription
+    static class VideoSampleDescription extends SampleDescription
     {
         int version;
         int revisionLevel;

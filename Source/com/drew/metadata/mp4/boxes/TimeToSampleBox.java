@@ -65,7 +65,7 @@ public class TimeToSampleBox extends FullBox
         directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, Mp4HandlerFactory.HANDLER_PARAM_TIME_SCALE);
     }
 
-    class EntryCount
+    static class EntryCount
     {
         long sampleCount;
         long sampleDelta;

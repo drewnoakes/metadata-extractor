@@ -53,7 +53,7 @@ public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<Timecod
         directory.setBoolean(QuickTimeTimecodeDirectory.TAG_COUNTER,           (description.flags & 0x0008) == 0x0008);
     }
 
-    class TimecodeSampleDescription extends SampleDescription
+    static class TimecodeSampleDescription extends SampleDescription
     {
         int flags;
         int timeScale;

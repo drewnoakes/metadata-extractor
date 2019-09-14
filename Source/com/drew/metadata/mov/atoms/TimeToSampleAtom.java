@@ -50,7 +50,7 @@ public class TimeToSampleAtom extends FullAtom
         }
     }
 
-    class Entry
+    static class Entry
     {
         long sampleCount;
         long sampleDuration;

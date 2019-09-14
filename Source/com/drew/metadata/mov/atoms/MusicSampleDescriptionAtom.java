@@ -48,7 +48,7 @@ public class MusicSampleDescriptionAtom extends SampleDescriptionAtom<MusicSampl
         // Do nothing
     }
 
-    class MusicSampleDescription extends SampleDescription
+    static class MusicSampleDescription extends SampleDescription
     {
         long flags;
 

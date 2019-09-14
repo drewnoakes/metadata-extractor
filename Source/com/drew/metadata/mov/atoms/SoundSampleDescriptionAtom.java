@@ -53,7 +53,7 @@ public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampl
         directory.setInt(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, description.sampleSize);
     }
 
-    class SoundSampleDescription extends SampleDescription
+    static class SoundSampleDescription extends SampleDescription
     {
         int version;
         int revisionLevel;

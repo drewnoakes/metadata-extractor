@@ -109,7 +109,7 @@ public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleD
         directory.setString(QuickTimeTextDirectory.TAG_NAME, description.textName);
     }
 
-    class TextSampleDescription extends SampleDescription
+    static class TextSampleDescription extends SampleDescription
     {
         int displayFlags;
         int textJustification;

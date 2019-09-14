@@ -106,7 +106,7 @@ public class ItemLocationBox extends FullBox
         }
     }
 
-    class Extent
+    static class Extent
     {
         Long index;
         long offset;

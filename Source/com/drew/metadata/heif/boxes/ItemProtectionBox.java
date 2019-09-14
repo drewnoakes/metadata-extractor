@@ -44,7 +44,7 @@ public class ItemProtectionBox extends FullBox
         }
     }
 
-    class ProtectionSchemeInfoBox extends Box
+    static class ProtectionSchemeInfoBox extends Box
     {
         public ProtectionSchemeInfoBox(SequentialReader reader, Box box) throws IOException
         {
