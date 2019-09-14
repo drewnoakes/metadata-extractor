@@ -99,7 +99,7 @@ public class RiffReader
                     reader.skip(size);
                 }
                 // Bytes read must be even - skip one if not
-                if (size % 2 == 1) {
+                if ((size & 1) == 1) {
                     reader.skip(1);
                 }
             }
