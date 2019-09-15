@@ -69,7 +69,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     }
 
     @Override
-    public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload) throws IOException
+    public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload, Mp4Context context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
@@ -79,9 +79,9 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 processFileType(reader, box);
             } else if (box.type.equals(Mp4BoxTypes.BOX_HANDLER)) {
                 HandlerBox handlerBox = new HandlerBox(reader, box);
-                return handlerFactory.getHandler(handlerBox, metadata);
+                return handlerFactory.getHandler(handlerBox, metadata, context);
             } else if (box.type.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)) {
-                processMediaHeader(reader, box);
+                processMediaHeader(reader, box, context);
             } else if (box.type.equals(Mp4BoxTypes.BOX_TRACK_HEADER)) {
                 processTrackHeader(reader, box);
             }
@@ -105,9 +105,9 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         movieHeaderBox.addMetadata(directory);
     }
 
-    private void processMediaHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    private void processMediaHeader(@NotNull SequentialReader reader, @NotNull Box box, Mp4Context context) throws IOException
     {
-        MediaHeaderBox mediaHeaderBox = new MediaHeaderBox(reader, box);
+        new MediaHeaderBox(reader, box, context);
     }
 
     private void processTrackHeader(@NotNull SequentialReader reader, @NotNull Box box) throws IOException

@@ -42,34 +42,29 @@ public class QuickTimeHandlerFactory
 
     private QuickTimeHandler caller;
 
-    public static Long HANDLER_PARAM_TIME_SCALE              = null;
-    public static Long HANDLER_PARAM_CREATION_TIME           = null;
-    public static Long HANDLER_PARAM_MODIFICATION_TIME       = null;
-    public static Long HANDLER_PARAM_DURATION                = null;
-
     public QuickTimeHandlerFactory(QuickTimeHandler caller)
     {
         this.caller = caller;
     }
 
-    public QuickTimeHandler getHandler(String type, Metadata metadata)
+    public QuickTimeHandler getHandler(String type, Metadata metadata, QuickTimeContext context)
     {
         if (type.equals(HANDLER_METADATA_DIRECTORY)) {
             return new QuickTimeDirectoryHandler(metadata);
         } else if (type.equals(HANDLER_METADATA_DATA)) {
             return new QuickTimeDataHandler(metadata);
         } else if (type.equals(HANDLER_SOUND_MEDIA)) {
-            return new QuickTimeSoundHandler(metadata);
+            return new QuickTimeSoundHandler(metadata, context);
         } else if (type.equals(HANDLER_VIDEO_MEDIA)) {
-            return new QuickTimeVideoHandler(metadata);
+            return new QuickTimeVideoHandler(metadata, context);
         } else if (type.equals(HANDLER_TIMECODE_MEDIA)) {
-            return new QuickTimeTimecodeHandler(metadata);
+            return new QuickTimeTimecodeHandler(metadata, context);
         } else if (type.equals(HANDLER_TEXT_MEDIA)) {
-            return new QuickTimeTextHandler(metadata);
+            return new QuickTimeTextHandler(metadata, context);
         } else if (type.equals(HANDLER_SUBTITLE_MEDIA)) {
-            return new QuickTimeSubtitleHandler(metadata);
+            return new QuickTimeSubtitleHandler(metadata, context);
         } else if (type.equals(HANDLER_MUSIC_MEDIA)) {
-            return new QuickTimeMusicHandler(metadata);
+            return new QuickTimeMusicHandler(metadata, context);
         }
         return caller;
     }

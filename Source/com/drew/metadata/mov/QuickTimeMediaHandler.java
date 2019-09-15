@@ -39,19 +39,19 @@ import java.io.IOException;
  */
 public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extends QuickTimeHandler<T>
 {
-    public QuickTimeMediaHandler(Metadata metadata)
+    public QuickTimeMediaHandler(Metadata metadata, QuickTimeContext context)
     {
         super(metadata);
 
-        if (QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME != null && QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME != null) {
+        if (context.creationTime != null && context.modificationTime != null) {
             // Get creation/modification times
             directory.setDate(
                 QuickTimeMediaDirectory.TAG_CREATION_TIME,
-                DateUtil.get1Jan1904EpochDate(QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME)
+                DateUtil.get1Jan1904EpochDate(context.creationTime)
             );
             directory.setDate(
                 QuickTimeMediaDirectory.TAG_MODIFICATION_TIME,
-                DateUtil.get1Jan1904EpochDate(QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME)
+                DateUtil.get1Jan1904EpochDate(context.modificationTime)
             );
         }
     }
@@ -74,7 +74,7 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
     }
 
     @Override
-    public QuickTimeMediaHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
+    public QuickTimeMediaHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
@@ -83,7 +83,7 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
                 processSampleDescription(reader, atom);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_TIME_TO_SAMPLE)) {
-                processTimeToSample(reader, atom);
+                processTimeToSample(reader, atom, context);
             }
         }
         return this;
@@ -95,5 +95,5 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
 
     protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom, QuickTimeContext context) throws IOException;
 }

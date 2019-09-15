@@ -21,6 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.QuickTimeHandlerFactory;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
@@ -36,8 +37,6 @@ public class TimeToSampleAtom extends FullAtom
 {
     long numberOfEntries;
     ArrayList<Entry> entries;
-    long sampleCount;
-    long sampleDuration;
 
     public TimeToSampleAtom(SequentialReader reader, Atom atom) throws IOException
     {
@@ -62,9 +61,9 @@ public class TimeToSampleAtom extends FullAtom
         }
     }
 
-    public void addMetadata(QuickTimeVideoDirectory directory)
+    public void addMetadata(QuickTimeVideoDirectory directory, QuickTimeContext context)
     {
-        float frameRate = (float) QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)entries.get(0).sampleDuration;
+        float frameRate = (float) context.timeScale / (float)entries.get(0).sampleDuration;
         directory.setFloat(QuickTimeVideoDirectory.TAG_FRAME_RATE, frameRate);
     }
 }

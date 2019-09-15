@@ -23,6 +23,7 @@ package com.drew.imaging.quicktime;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mov.atoms.Atom;
 
@@ -50,11 +51,11 @@ public abstract class QuickTimeHandler<T extends QuickTimeDirectory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Atom atom);
 
-    protected abstract QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException;
+    protected abstract QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException;
 
-    protected QuickTimeHandler processContainer(@NotNull Atom atom) throws IOException
+    protected QuickTimeHandler processContainer(@NotNull Atom atom, QuickTimeContext context) throws IOException
     {
-        return processAtom(atom, null);
+        return processAtom(atom, null, context);
     }
 
     public void addError(@NotNull String message)
