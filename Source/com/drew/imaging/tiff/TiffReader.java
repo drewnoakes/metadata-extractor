@@ -91,6 +91,7 @@ public class TiffReader
         int tagNumber;
         int dirTagCount;
         int invalidTiffFormatCodeCount;
+        int currentComponentCount;
 
         public StackInfo(int ifdOffset, int tiffHeaderOffset, int returnLocation)
         {
@@ -99,7 +100,7 @@ public class TiffReader
             this.returnLocation = returnLocation;
         }
 
-        public StackInfo(int ifdOffset, int tiffHeaderOffset, int returnLocation, int tagNumber, int dirTagCount, int invalidTiffFormatCodeCount)
+        public StackInfo(int ifdOffset, int tiffHeaderOffset, int returnLocation, int tagNumber, int dirTagCount, int invalidTiffFormatCodeCount, int currentComponentCount)
         {
             this.ifdOffset = ifdOffset;
             this.tiffHeaderOffset = tiffHeaderOffset;
@@ -107,6 +108,7 @@ public class TiffReader
             this.tagNumber = tagNumber;
             this.dirTagCount = dirTagCount;
             this.invalidTiffFormatCodeCount = invalidTiffFormatCodeCount;
+            this.currentComponentCount = currentComponentCount;
         }
     }
 
@@ -192,7 +194,7 @@ public class TiffReader
                 boolean isIfdPointer = false;
                 boolean breakFromForLoop = false;
                 if (byteCount == 4 * componentCount) {
-                    for (int i = 0; i < componentCount; i++) {
+                    for (int i = stackInfo.currentComponentCount; i < componentCount; i++) {
                         if (handler.tryEnterSubIfd(tagId)) {
                             isIfdPointer = true;
                             int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
@@ -202,8 +204,9 @@ public class TiffReader
                             stackInfo.dirTagCount = dirTagCount;
                             stackInfo.tiffHeaderOffset = tiffHeaderOffset;
                             stackInfo.invalidTiffFormatCodeCount = invalidTiffFormatCodeCount;
-                            stack.push(new StackInfo(subDirOffset, tiffHeaderOffset, -1, tagNumber, dirTagCount, invalidTiffFormatCodeCount));
+                            stack.push(new StackInfo(subDirOffset, tiffHeaderOffset, -1, tagNumber, dirTagCount, invalidTiffFormatCodeCount, i));
                             breakFromForLoop = true;
+                            break;
                             //processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
                         }
                     }
@@ -410,7 +413,7 @@ public class TiffReader
                     // Some tags point to one or more additional IFDs to process
                     boolean isIfdPointer = false;
                     if (byteCount == 4 * componentCount) {
-                        for (int i = 0; i < componentCount; i++) {
+                        for (int i = stackInfo.currentComponentCount; i < componentCount; i++) {
                             if (handler.tryEnterSubIfd(tagId)) {
                                 isIfdPointer = true;
                                 int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
@@ -420,8 +423,9 @@ public class TiffReader
                                 stackInfo.dirTagCount = dirTagCount;
                                 stackInfo.tiffHeaderOffset = currentTiffHeaderOffset;
                                 stackInfo.invalidTiffFormatCodeCount = invalidTiffFormatCodeCount;
-                                stack.push(new StackInfo(subDirOffset, currentTiffHeaderOffset, -1, tagNumber, dirTagCount, invalidTiffFormatCodeCount));
+                                stack.push(new StackInfo(subDirOffset, currentTiffHeaderOffset, -1, tagNumber, dirTagCount, invalidTiffFormatCodeCount, i));
                                 breakFromForLoop = true;
+                                break;
                                 //processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
                             }
                         }
@@ -616,7 +620,7 @@ public class TiffReader
                         if (handler.tryEnterSubIfd(tagId)) {
                             isIfdPointer = true;
                             int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
-                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
+                            processIfdRecursively(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
                         }
                     }
                 }
@@ -644,7 +648,7 @@ public class TiffReader
                 }
 
                 if (handler.hasFollowerIfd()) {
-                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, tiffHeaderOffset);
+                    processIfdRecursively(handler, reader, processedIfdOffsets, nextIfdOffset, tiffHeaderOffset);
                 }
             }
         } finally {
