@@ -33,11 +33,14 @@ public class FileTypeTest
     {
         assertEquals("jpg", FileType.Jpeg.getCommonExtension());
         assertEquals("bmp", FileType.Bmp.getCommonExtension());
+        assertEquals("heif", FileType.Heif.getCommonExtension());
 
         assertEquals("JPEG", FileType.Jpeg.getName());
         assertEquals("BMP", FileType.Bmp.getName());
+        assertEquals("HEIF", FileType.Heif.getName());
 
         assertArrayEquals(new String[]{"jpg", "jpeg", "jpe"}, FileType.Jpeg.getAllExtensions());
+        assertArrayEquals(new String[]{"heif", "heic"}, FileType.Heif.getAllExtensions());
 
         assertNull(FileType.Unknown.getCommonExtension());
     }
