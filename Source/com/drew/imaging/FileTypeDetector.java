@@ -156,7 +156,7 @@ public class FileTypeDetector
      * <p>
      * Requires the stream to contain at least eight bytes.
      *
-     * @throws IOException if an IO error occurred or the input stream ended unexpectedly.
+     * @throws IOException if the stream does not support mark/reset.
      */
     @NotNull
     public static FileType detectFileType(@NotNull final FilterInputStream inputStream) throws IOException
@@ -169,14 +169,19 @@ public class FileTypeDetector
         inputStream.mark(maxByteCount);
 
         byte[] bytes = new byte[maxByteCount];
-        int bytesRead = inputStream.read(bytes);
-
-        if (bytesRead == -1)
-            throw new IOException("Stream ended before file's magic number could be determined.");
+        int offset = 0;
+        int count = maxByteCount;
+        while (count != 0) {
+            int bytesRead = inputStream.read(bytes, offset, count);
+            if (bytesRead == -1)
+                break;
+            count -= bytesRead;
+            offset += bytesRead;
+        }
 
         inputStream.reset();
 
-        FileType fileType = _root.find(bytes);
+        FileType fileType = _root.find(bytes, 0, offset);
 
         assert(fileType != null);
 
