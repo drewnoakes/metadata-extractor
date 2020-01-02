@@ -42,9 +42,6 @@ public class Box
         } else if (size == 0) {
             size = -1;
         }
-        if (type.equals("uuid")) {
-            usertype = reader.getString(16);
-        }
     }
 
     public Box(Box box)
