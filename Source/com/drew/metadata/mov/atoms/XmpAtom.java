@@ -13,7 +13,7 @@ public class XmpAtom extends Atom
     {
         super(atom);
 
-        xmp = new String(reader.getBytes(reader.available()));
+        xmp = reader.getString(reader.available());
     }
 
     public void addMetadata(QuickTimeDirectory directory)
