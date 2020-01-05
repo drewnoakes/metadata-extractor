@@ -8,13 +8,14 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import static com.drew.metadata.mp4.media.Mp4UserBoxDirectory.*;
+import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.*;
 
-public class UserBox extends Box {
+public class UuidBox extends Box {
 
     private byte[] userData;
 
-    public UserBox(SequentialReader reader, Box box) throws IOException {
+    public UuidBox(SequentialReader reader, Box box) throws IOException
+    {
         super(box);
 
         if (type.equals(Mp4BoxTypes.BOX_USER_DEFINED)) {

@@ -21,7 +21,8 @@ import static org.junit.Assert.assertEquals;
 public class XmpAtomTest {
 
     @Test
-    public void extractXmpTest() throws IOException, XMPException {
+    public void extractXmpTest() throws IOException, XMPException
+    {
         Metadata metadata = new Metadata();
         QuickTimeReader.extract(new FileInputStream("Tests/Data/xmp480qt.mov"), new QuickTimeAtomHandler(metadata));
 

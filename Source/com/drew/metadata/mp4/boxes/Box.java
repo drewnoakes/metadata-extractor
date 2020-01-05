@@ -32,6 +32,7 @@ public class Box
     public long size;
     public String type;
     public String usertype;
+    public boolean isLargeSize;
 
     public Box(SequentialReader reader) throws IOException
     {
@@ -39,6 +40,7 @@ public class Box
         this.type = reader.getString(4);
         if (size == 1) {
             size = reader.getInt64();
+            isLargeSize = true;
         } else if (size == 0) {
             size = -1;
         }
