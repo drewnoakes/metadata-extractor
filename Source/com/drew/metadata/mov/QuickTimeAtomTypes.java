@@ -40,6 +40,7 @@ public class QuickTimeAtomTypes
     public static final String ATOM_TIME_TO_SAMPLE           = "stts";
     public static final String ATOM_MEDIA_HEADER             = "mdhd";
     public static final String ATOM_CANON_THUMBNAIL          = "CNTH";
+    public static final String ATOM_ADOBE_XMP                = "XMP_";
 
     private static final ArrayList<String> _atomList = new ArrayList<String>();
 
@@ -57,5 +58,6 @@ public class QuickTimeAtomTypes
         _atomList.add(ATOM_TIME_TO_SAMPLE);
         _atomList.add(ATOM_MEDIA_HEADER);
         _atomList.add(ATOM_CANON_THUMBNAIL);
+        _atomList.add(ATOM_ADOBE_XMP);
     }
 }
