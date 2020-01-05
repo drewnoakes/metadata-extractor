@@ -4,6 +4,7 @@ import com.drew.imaging.mp4.Mp4Handler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4Context;
 import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.boxes.UserBox;
@@ -23,7 +24,7 @@ public class Mp4UserBoxHandler<T extends Mp4UserBoxDirectory> extends Mp4Handler
 
     @Override
     protected boolean shouldAcceptBox(Box box) {
-        return box.type.equals("uuid");
+        return box.type.equals(Mp4BoxTypes.BOX_USER_DEFINED);
     }
 
     @Override
