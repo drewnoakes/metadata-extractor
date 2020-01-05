@@ -27,7 +27,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.boxes.*;
-import com.drew.metadata.mp4.media.Mp4UserBoxHandler;
+import com.drew.metadata.mp4.media.Mp4UuidBoxHandler;
 
 import java.io.IOException;
 
@@ -87,7 +87,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
             } else if (box.type.equals(Mp4BoxTypes.BOX_TRACK_HEADER)) {
                 processTrackHeader(reader, box);
             } else if (box.type.equals(Mp4BoxTypes.BOX_USER_DEFINED)) {
-                Mp4UserBoxHandler userBoxHandler = new Mp4UserBoxHandler(metadata);
+                Mp4UuidBoxHandler userBoxHandler = new Mp4UuidBoxHandler(metadata);
                 userBoxHandler.processBox(box, payload, context);
             }
         } else {
