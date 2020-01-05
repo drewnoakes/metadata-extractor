@@ -1,6 +1,7 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4Directory;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class UserBox extends Box {
     public UserBox(SequentialReader reader, Box box) throws IOException {
         super(box);
 
-        if (type.equals("uuid")) {
+        if (type.equals(Mp4BoxTypes.BOX_USER_DEFINED)) {
             usertype = getUuid(reader.getBytes(16));
         }
 
@@ -26,7 +27,6 @@ public class UserBox extends Box {
     public void addMetadata(Mp4Directory directory)
     {
         directory.setString(TAG_UUID, usertype);
-        directory.setLong(TAG_LENGTH, userData.length);
         directory.setByteArray(TAG_USER_DATA, userData);
     }
 

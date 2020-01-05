@@ -27,7 +27,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.boxes.*;
-import com.drew.metadata.mp4.media.Mp4UserBoxDirectory;
 import com.drew.metadata.mp4.media.Mp4UserBoxHandler;
 
 import java.io.IOException;
