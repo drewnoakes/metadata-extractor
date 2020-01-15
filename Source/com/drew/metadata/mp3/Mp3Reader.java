@@ -62,7 +62,6 @@ public class Mp3Reader
                     directory.setString(Mp3Directory.TAG_ID, "MPEG-1");
                     id = 1;
                     break;
-                default:
             }
 
             // Layer Type: 1, 2, 3, or not defined
@@ -80,7 +79,6 @@ public class Mp3Reader
                 case(3):
                     directory.setString(Mp3Directory.TAG_LAYER, "Layer I");
                     break;
-                default:
             }
 
 
@@ -122,7 +120,6 @@ public class Mp3Reader
                 case(3):
                     directory.setString(Mp3Directory.TAG_MODE, "Mono");
                     break;
-                default:
             }
 
             // Copyright boolean
@@ -134,7 +131,6 @@ public class Mp3Reader
                 case(1):
                     directory.setString(Mp3Directory.TAG_COPYRIGHT, "True");
                     break;
-                default:
             }
 
             int emphasis = (header & 0x00000003);
@@ -148,7 +144,6 @@ public class Mp3Reader
                 case (3):
                     directory.setString(Mp3Directory.TAG_EMPHASIS, "CCITT j.17");
                     break;
-                default:
             }
 
             int frameSize = ((setBitrate(bitrate, layer, id) * 1000) * 144) / frequency;
@@ -193,7 +188,6 @@ public class Mp3Reader
                 case (3):
                     xPos = 3;
                     break;
-                default:
             }
         } else if (id == 1) {
             // MPEG-1
@@ -207,7 +201,6 @@ public class Mp3Reader
                 case(3):
                     xPos = 0;
                     break;
-                default:
             }
         }
 
