@@ -214,10 +214,9 @@ public class Mp3Reader
         return bitrateMapping[yPos][xPos];
     }
 
-    /**
-     * https://phoxis.org/2010/05/08/synch-safe/
-     */
-    public static int getSyncSafeSize(int decode)
+/*
+    // https://phoxis.org/2010/05/08/synch-safe/
+    private static int getSyncSafeSize(int decode)
     {
         int a = decode & 0xFF;
         int b = (decode >> 8) & 0xFF;
@@ -231,4 +230,5 @@ public class Mp3Reader
         decoded = decoded | (d << 21);
         return decoded;
     }
+*/
 }
