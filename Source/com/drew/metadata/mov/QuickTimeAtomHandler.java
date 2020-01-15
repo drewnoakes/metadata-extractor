@@ -28,6 +28,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.*;
 import com.drew.metadata.mov.atoms.canon.CanonThumbnailAtom;
+import com.drew.metadata.xmp.XmpReader;
 
 import java.io.IOException;
 
@@ -92,8 +93,7 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
                 CanonThumbnailAtom canonThumbnailAtom = new CanonThumbnailAtom(reader);
                 canonThumbnailAtom.addMetadata(directory);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_ADOBE_XMP)) {
-                XmpAtom xmpAtom = new XmpAtom(reader, atom);
-                xmpAtom.addMetadata(directory);
+                new XmpReader().extract(payload, metadata, directory);
             }
         } else {
             if (atom.type.equals(QuickTimeContainerTypes.ATOM_COMPRESSED_MOVIE)) {
