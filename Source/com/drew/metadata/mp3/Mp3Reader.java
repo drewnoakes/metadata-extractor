@@ -50,11 +50,9 @@ public class Mp3Reader
             int header = reader.getInt32();
 
             // ID: MPEG-2.5, MPEG-2, or MPEG-1
-            double id = 0;
+            int id = 0;
             switch ((header & 0x000180000) >> 19) {
                 case (0):
-                    directory.setString(Mp3Directory.TAG_ID, "MPEG-2.5");
-                    id = 2.5;
                     throw new ImageProcessingException("MPEG-2.5 not supported.");
                 case (2):
                     directory.setString(Mp3Directory.TAG_ID, "MPEG-2");
@@ -162,7 +160,7 @@ public class Mp3Reader
         }
     }
 
-    public int setBitrate(int bitrate, int layer, double id)
+    public int setBitrate(int bitrate, int layer, int id)
     {
         int[][] bitrateMapping = new int[14][6];
         bitrateMapping[0] = new int[]{32, 32, 32, 32, 32, 8};
