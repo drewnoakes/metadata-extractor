@@ -156,7 +156,7 @@ public class Mp3Reader
         }
     }
 
-    public int setBitrate(int bitrate, int layer, int id)
+    private static int setBitrate(int bitrate, int layer, int id)
     {
         int[][] bitrateMapping = new int[14][6];
         bitrateMapping[0] = new int[]{32, 32, 32, 32, 32, 8};
