@@ -37,7 +37,6 @@ import java.io.InputStream;
  */
 public class Mp3Reader
 {
-
     public void extract(@NotNull final InputStream inputStream, @NotNull final Metadata metadata)
     {
         Mp3Directory directory = new Mp3Directory();
@@ -51,13 +50,13 @@ public class Mp3Reader
             // ID: MPEG-2.5, MPEG-2, or MPEG-1
             int id = 0;
             switch ((header & 0x000180000) >> 19) {
-                case (0):
+                case 0:
                     throw new ImageProcessingException("MPEG-2.5 not supported.");
-                case (2):
+                case 2:
                     directory.setString(Mp3Directory.TAG_ID, "MPEG-2");
                     id = 2;
                     break;
-                case (3):
+                case 3:
                     directory.setString(Mp3Directory.TAG_ID, "MPEG-1");
                     id = 1;
                     break;
@@ -66,16 +65,16 @@ public class Mp3Reader
             // Layer Type: 1, 2, 3, or not defined
             int layer = ((header & 0x00060000) >> 17);
             switch (layer) {
-                case(0):
+                case 0:
                     directory.setString(Mp3Directory.TAG_LAYER, "Not defined");
                     break;
-                case(1):
+                case 1:
                     directory.setString(Mp3Directory.TAG_LAYER, "Layer III");
                     break;
-                case(2):
+                case 2:
                     directory.setString(Mp3Directory.TAG_LAYER, "Layer II");
                     break;
-                case(3):
+                case 3:
                     directory.setString(Mp3Directory.TAG_LAYER, "Layer I");
                     break;
             }
@@ -107,16 +106,16 @@ public class Mp3Reader
             // Encoding type: Stereo, Joint Stereo, Dual Channel, or Mono
             int mode = ((header & 0x000000C0) >> 6);
             switch (mode){
-                case(0):
+                case 0:
                     directory.setString(Mp3Directory.TAG_MODE, "Stereo");
                     break;
-                case(1):
+                case 1:
                     directory.setString(Mp3Directory.TAG_MODE, "Joint stereo");
                     break;
-                case(2):
+                case 2:
                     directory.setString(Mp3Directory.TAG_MODE, "Dual channel");
                     break;
-                case(3):
+                case 3:
                     directory.setString(Mp3Directory.TAG_MODE, "Mono");
                     break;
             }
@@ -124,23 +123,23 @@ public class Mp3Reader
             // Copyright boolean
             int copyright = ((header & 0x00000008) >> 3);
             switch (copyright) {
-                case(0):
+                case 0:
                     directory.setString(Mp3Directory.TAG_COPYRIGHT, "False");
                     break;
-                case(1):
+                case 1:
                     directory.setString(Mp3Directory.TAG_COPYRIGHT, "True");
                     break;
             }
 
             int emphasis = (header & 0x00000003);
             switch (emphasis) {
-                case (0):
+                case 0:
                     directory.setString(Mp3Directory.TAG_EMPHASIS, "none");
                     break;
-                case (1):
+                case 1:
                     directory.setString(Mp3Directory.TAG_EMPHASIS, "50/15ms");
                     break;
-                case (3):
+                case 3:
                     directory.setString(Mp3Directory.TAG_EMPHASIS, "CCITT j.17");
                     break;
             }
@@ -180,26 +179,26 @@ public class Mp3Reader
         if (id == 2) {
             // MPEG-2
             switch (layer) {
-                case (1):
+                case 1:
                     xPos = 5;
                     break;
-                case (2):
+                case 2:
                     xPos = 4;
                     break;
-                case (3):
+                case 3:
                     xPos = 3;
                     break;
             }
         } else if (id == 1) {
             // MPEG-1
             switch (layer) {
-                case(1):
+                case 1:
                     xPos = 2;
                     break;
-                case(2):
+                case 2:
                     xPos = 1;
                     break;
-                case(3):
+                case 3:
                     xPos = 0;
                     break;
             }
