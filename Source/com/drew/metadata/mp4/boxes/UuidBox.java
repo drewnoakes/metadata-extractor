@@ -30,8 +30,8 @@ import java.util.UUID;
 
 import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.*;
 
-public class UuidBox extends Box {
-
+public class UuidBox extends Box
+{
     private byte[] userData;
 
     public UuidBox(SequentialReader reader, Box box) throws IOException

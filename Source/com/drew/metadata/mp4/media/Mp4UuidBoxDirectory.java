@@ -24,7 +24,8 @@ import com.drew.lang.annotations.NotNull;
 
 import java.util.HashMap;
 
-public class Mp4UuidBoxDirectory extends Mp4MediaDirectory {
+public class Mp4UuidBoxDirectory extends Mp4MediaDirectory
+{
     public static final Integer TAG_UUID = 901;
     public static final Integer TAG_USER_DATA = 902;
 
