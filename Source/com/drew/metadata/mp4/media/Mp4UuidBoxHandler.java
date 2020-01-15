@@ -31,7 +31,7 @@ import com.drew.metadata.mp4.boxes.UuidBox;
 
 import java.io.IOException;
 
-public class Mp4UuidBoxHandler<T extends Mp4UuidBoxDirectory> extends Mp4Handler<Mp4UuidBoxDirectory> {
+public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory> {
 
     public Mp4UuidBoxHandler(Metadata metadata)
     {
