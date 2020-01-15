@@ -38,6 +38,7 @@ public class Mp4BoxTypes
     public static final String BOX_TIME_TO_SAMPLE                   = "stts";
     public static final String BOX_MEDIA_HEADER                     = "mdhd";
     public static final String BOX_TRACK_HEADER                     = "tkhd";
+    public static final String BOX_USER_DEFINED                     = "uuid";
 
     private static final ArrayList<String> _boxList = new ArrayList<String>();
 
@@ -53,5 +54,6 @@ public class Mp4BoxTypes
         _boxList.add(BOX_TIME_TO_SAMPLE);
         _boxList.add(BOX_MEDIA_HEADER);
         _boxList.add(BOX_TRACK_HEADER);
+        _boxList.add(BOX_USER_DEFINED);
     }
 }

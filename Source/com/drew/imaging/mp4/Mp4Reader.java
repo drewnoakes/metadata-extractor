@@ -62,7 +62,11 @@ public class Mp4Reader
                 } else if (box.usertype != null) {
                     reader.skip(box.size - 24);
                 } else if (box.size > 1) {
-                    reader.skip(box.size - 8);
+                    if (box.isLargeSize) {
+                        reader.skip(box.size - 16);
+                    } else {
+                        reader.skip(box.size - 8);
+                    }
                 } else if (box.size == -1) {
                     break;
                 }

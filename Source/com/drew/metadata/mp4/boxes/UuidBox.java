@@ -21,35 +21,40 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
+import com.drew.metadata.mp4.Mp4BoxTypes;
+import com.drew.metadata.mp4.Mp4Directory;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.UUID;
 
-/**
- * ISO/IED 14496-12:2015 pg.6
- */
-public class Box
+import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.*;
+
+public class UuidBox extends Box
 {
-    public long size;
-    public String type;
-    public String usertype;
-    public boolean isLargeSize;
+    private byte[] userData;
 
-    public Box(SequentialReader reader) throws IOException
+    public UuidBox(SequentialReader reader, Box box) throws IOException
     {
-        this.size = reader.getUInt32();
-        this.type = reader.getString(4);
-        if (size == 1) {
-            size = reader.getInt64();
-            isLargeSize = true;
-        } else if (size == 0) {
-            size = -1;
+        super(box);
+
+        if (type.equals(Mp4BoxTypes.BOX_USER_DEFINED)) {
+            usertype = getUuid(reader.getBytes(16));
         }
+
+        userData = reader.getBytes(reader.available());
     }
 
-    public Box(Box box)
+    public void addMetadata(Mp4Directory directory)
     {
-        this.size = box.size;
-        this.type = box.type;
-        this.usertype = box.usertype;
+        directory.setString(TAG_UUID, usertype);
+        directory.setByteArray(TAG_USER_DATA, userData);
+    }
+
+    private String getUuid(byte[] bytes) {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        UUID uuid = new UUID(bb.getLong(), bb.getLong());
+
+        return uuid.toString();
     }
 }

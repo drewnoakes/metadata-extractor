@@ -18,38 +18,14 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.metadata.mp4.boxes;
+package com.drew.metadata.mp4.media;
 
-import com.drew.lang.SequentialReader;
+import com.drew.metadata.TagDescriptor;
 
-import java.io.IOException;
-
-/**
- * ISO/IED 14496-12:2015 pg.6
- */
-public class Box
+public class Mp4UuidBoxDescriptor extends TagDescriptor<Mp4UuidBoxDirectory>
 {
-    public long size;
-    public String type;
-    public String usertype;
-    public boolean isLargeSize;
-
-    public Box(SequentialReader reader) throws IOException
+    public Mp4UuidBoxDescriptor(Mp4UuidBoxDirectory directory)
     {
-        this.size = reader.getUInt32();
-        this.type = reader.getString(4);
-        if (size == 1) {
-            size = reader.getInt64();
-            isLargeSize = true;
-        } else if (size == 0) {
-            size = -1;
-        }
-    }
-
-    public Box(Box box)
-    {
-        this.size = box.size;
-        this.type = box.type;
-        this.usertype = box.usertype;
+        super(directory);
     }
 }

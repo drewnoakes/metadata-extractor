@@ -27,6 +27,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.boxes.*;
+import com.drew.metadata.mp4.media.Mp4UuidBoxHandler;
 
 import java.io.IOException;
 
@@ -56,7 +57,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
             || box.type.equals(Mp4BoxTypes.BOX_MOVIE_HEADER)
             || box.type.equals(Mp4BoxTypes.BOX_HANDLER)
             || box.type.equals(Mp4BoxTypes.BOX_MEDIA_HEADER)
-            || box.type.equals(Mp4BoxTypes.BOX_TRACK_HEADER);
+            || box.type.equals(Mp4BoxTypes.BOX_TRACK_HEADER)
+            || box.type.equals(Mp4BoxTypes.BOX_USER_DEFINED);
     }
 
     @Override
@@ -84,6 +86,9 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 processMediaHeader(reader, box, context);
             } else if (box.type.equals(Mp4BoxTypes.BOX_TRACK_HEADER)) {
                 processTrackHeader(reader, box);
+            } else if (box.type.equals(Mp4BoxTypes.BOX_USER_DEFINED)) {
+                Mp4UuidBoxHandler userBoxHandler = new Mp4UuidBoxHandler(metadata);
+                userBoxHandler.processBox(box, payload, context);
             }
         } else {
             if (box.type.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
