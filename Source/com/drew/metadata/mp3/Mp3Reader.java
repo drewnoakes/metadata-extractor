@@ -145,8 +145,10 @@ public class Mp3Reader
                     break;
             }
 
-            int frameSize = ((setBitrate(bitrate, layer, id) * 1000) * 144) / frequency;
-            directory.setString(Mp3Directory.TAG_FRAME_SIZE, frameSize + " bytes");
+            if (bitrate != 0 && bitrate != 15) {
+                int frameSize = ((setBitrate(bitrate, layer, id) * 1000) * 144) / frequency;
+                directory.setString(Mp3Directory.TAG_FRAME_SIZE, frameSize + " bytes");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ImageProcessingException e) {
