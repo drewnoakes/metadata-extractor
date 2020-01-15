@@ -44,7 +44,6 @@ public class Mp3Reader
         metadata.addDirectory(directory);
 
         try {
-            inputStream.reset();
             SequentialReader reader = new StreamReader(inputStream);
 
             int header = reader.getInt32();
