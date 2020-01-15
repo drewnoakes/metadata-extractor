@@ -97,10 +97,10 @@ public class Mp3Reader
             frequencyMapping[0] = new int[]{44100, 48000, 32000};
             frequencyMapping[1] = new int[]{22050, 24000, 16000};
             if (id == 2) {
-                directory.setInt(directory.TAG_FREQUENCY, frequencyMapping[1][frequency]);
+                directory.setInt(Mp3Directory.TAG_FREQUENCY, frequencyMapping[1][frequency]);
                 frequency = frequencyMapping[1][frequency];
             } else if (id == 1) {
-                directory.setInt(directory.TAG_FREQUENCY, frequencyMapping[0][frequency]);
+                directory.setInt(Mp3Directory.TAG_FREQUENCY, frequencyMapping[0][frequency]);
                 frequency = frequencyMapping[0][frequency];
             }
 
