@@ -20,12 +20,14 @@
  */
 package com.drew.imaging;
 
+import com.drew.imaging.mp3.MpegAudioTypeChecker;
+import com.drew.imaging.quicktime.QuickTimeTypeChecker;
+import com.drew.imaging.riff.RiffTypeChecker;
 import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Examines the a file's first bytes and estimates the file's type.
@@ -33,10 +35,16 @@ import java.util.HashMap;
 public class FileTypeDetector
 {
     private final static ByteTrie<FileType> _root;
-    private static final HashMap<String, FileType> _ftypMap;
+    private final static TypeChecker[] _fixedCheckers;
+    private final static int _bytesNeeded;
 
     static
     {
+        _fixedCheckers = new TypeChecker[] {
+            new QuickTimeTypeChecker(),
+            new RiffTypeChecker(),
+        };
+
         _root = new ByteTrie<FileType>();
         _root.setDefaultValue(FileType.Unknown);
 
@@ -60,7 +68,6 @@ public class FileTypeDetector
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x02, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x05, 0x01});
-        _root.addPath(FileType.Riff, "RIFF".getBytes());
         _root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
         _root.addPath(FileType.Crw, "II".getBytes(), new byte[]{0x1a, 0x00, 0x00, 0x00}, "HEAPCCDR".getBytes());
         _root.addPath(FileType.Cr2, "II".getBytes(), new byte[]{0x2a, 0x00, 0x10, 0x00, 0x00, 0x00, 0x43, 0x52});
@@ -74,52 +81,6 @@ public class FileTypeDetector
         _root.addPath(FileType.Eps, "%!PS".getBytes());
         _root.addPath(FileType.Eps, new byte[]{(byte)0xC5, (byte)0xD0, (byte)0xD3, (byte)0xC6});
         _root.addPath(FileType.Mp3, new byte[]{(byte)0xFF, (byte)0xFB});
-
-        _ftypMap = new HashMap<String, FileType>();
-
-        // http://www.ftyps.com
-
-        // QuickTime Mov
-        _ftypMap.put("ftypmoov", FileType.Mov);
-        _ftypMap.put("ftypwide", FileType.Mov);
-        _ftypMap.put("ftypmdat", FileType.Mov);
-        _ftypMap.put("ftypfree", FileType.Mov);
-        _ftypMap.put("ftypqt  ", FileType.Mov);
-
-        // MP4
-        _ftypMap.put("ftypavc1", FileType.Mp4);
-        _ftypMap.put("ftypiso2", FileType.Mp4);
-        _ftypMap.put("ftypisom", FileType.Mp4);
-        _ftypMap.put("ftypM4A ", FileType.Mp4);
-        _ftypMap.put("ftypM4B ", FileType.Mp4);
-        _ftypMap.put("ftypM4P ", FileType.Mp4);
-        _ftypMap.put("ftypM4V ", FileType.Mp4);
-        _ftypMap.put("ftypM4VH", FileType.Mp4);
-        _ftypMap.put("ftypM4VP", FileType.Mp4);
-        _ftypMap.put("ftypmmp4", FileType.Mp4);
-        _ftypMap.put("ftypmp41", FileType.Mp4);
-        _ftypMap.put("ftypmp42", FileType.Mp4);
-        _ftypMap.put("ftypmp71", FileType.Mp4);
-        _ftypMap.put("ftypMSNV", FileType.Mp4);
-        _ftypMap.put("ftypNDAS", FileType.Mp4);
-        _ftypMap.put("ftypNDSC", FileType.Mp4);
-        _ftypMap.put("ftypNDSH", FileType.Mp4);
-        _ftypMap.put("ftypNDSM", FileType.Mp4);
-        _ftypMap.put("ftypNDSP", FileType.Mp4);
-        _ftypMap.put("ftypNDSS", FileType.Mp4);
-        _ftypMap.put("ftypNDXC", FileType.Mp4);
-        _ftypMap.put("ftypNDXH", FileType.Mp4);
-        _ftypMap.put("ftypNDXM", FileType.Mp4);
-        _ftypMap.put("ftypNDXP", FileType.Mp4);
-        _ftypMap.put("ftypNDXS", FileType.Mp4);
-
-        // HEIF
-        _ftypMap.put("ftypmif1", FileType.Heif);
-        _ftypMap.put("ftypmsf1", FileType.Heif);
-        _ftypMap.put("ftypheic", FileType.Heif);
-        _ftypMap.put("ftypheix", FileType.Heif);
-        _ftypMap.put("ftyphevc", FileType.Heif);
-        _ftypMap.put("ftyphevx", FileType.Heif);
 
         // Only file detection
         _root.addPath(FileType.Aac, new byte[]{(byte)0xFF, (byte)0xF1});
@@ -141,6 +102,13 @@ public class FileTypeDetector
         _root.addPath(FileType.Swf, "ZWS".getBytes());
         _root.addPath(FileType.Vob, new byte[]{0x00, 0x00, 0x01, (byte)0xBA});
         _root.addPath(FileType.Zip, "PK".getBytes());
+
+        int bytesNeeded = _root.getMaxDepth();
+        for (TypeChecker fixedChecker : _fixedCheckers) {
+            if (fixedChecker.getByteCount() > bytesNeeded)
+                bytesNeeded = fixedChecker.getByteCount();
+        }
+        _bytesNeeded = bytesNeeded;
     }
 
     private FileTypeDetector() throws Exception
@@ -164,13 +132,11 @@ public class FileTypeDetector
         if (!inputStream.markSupported())
             throw new IOException("Stream must support mark/reset");
 
-        int maxByteCount = Math.max(16, _root.getMaxDepth());
+        inputStream.mark(_bytesNeeded);
 
-        inputStream.mark(maxByteCount);
-
-        byte[] bytes = new byte[maxByteCount];
+        byte[] bytes = new byte[_bytesNeeded];
         int offset = 0;
-        int count = maxByteCount;
+        int count = _bytesNeeded;
         while (count != 0) {
             int bytesRead = inputStream.read(bytes, offset, count);
             if (bytesRead == -1)
@@ -186,19 +152,11 @@ public class FileTypeDetector
         assert(fileType != null);
 
         if (fileType == FileType.Unknown) {
-            String eightCC = new String(bytes, 4, 8);
-            // Test at offset 4 for Base Media Format (i.e. QuickTime, MP4, etc...) identifier "ftyp" plus four identifying characters
-            FileType t = _ftypMap.get(eightCC);
-            if (t != null)
-                return t;
-        } else if (fileType == FileType.Riff) {
-            String fourCC = new String(bytes, 8, 4);
-            if (fourCC.equals("WAVE"))
-                return FileType.Wav;
-            if (fourCC.equals("AVI "))
-                return FileType.Avi;
-            if (fourCC.equals("WEBP"))
-                return FileType.WebP;
+            for (TypeChecker checker : _fixedCheckers) {
+                fileType = checker.checkType(bytes);
+                if (fileType != FileType.Unknown)
+                    return fileType;
+            }
         }
 
         return fileType;
