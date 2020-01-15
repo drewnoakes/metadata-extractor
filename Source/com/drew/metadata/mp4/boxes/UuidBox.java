@@ -31,7 +31,7 @@ public class UuidBox extends Box {
         directory.setByteArray(TAG_USER_DATA, userData);
     }
 
-    public String getUuid(byte[] bytes) {
+    private String getUuid(byte[] bytes) {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         UUID uuid = new UUID(bb.getLong(), bb.getLong());
 
