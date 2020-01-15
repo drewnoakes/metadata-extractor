@@ -35,8 +35,8 @@ public class Mp4UuidBoxDirectory extends Mp4MediaDirectory
     static
     {
         Mp4UuidBoxDirectory.addMp4MediaTags(_tagNameMap);
-        _tagNameMap.put(TAG_UUID, "uuid");
-        _tagNameMap.put(TAG_USER_DATA, "data");
+        _tagNameMap.put(TAG_UUID, "UUID");
+        _tagNameMap.put(TAG_USER_DATA, "Data");
     }
 
     public Mp4UuidBoxDirectory()

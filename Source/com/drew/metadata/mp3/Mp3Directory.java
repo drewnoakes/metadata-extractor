@@ -30,7 +30,6 @@ import java.util.HashMap;
  */
 public class Mp3Directory extends Directory
 {
-
     public static final int TAG_ID = 1;
     public static final int TAG_LAYER = 2;
     public static final int TAG_BITRATE = 3;
