@@ -42,7 +42,6 @@ import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.file.FileSystemMetadataReader;
@@ -228,7 +227,7 @@ public class ImageMetadataReader
      *
      * @param args the command line arguments
      */
-    public static void main(@NotNull String[] args) throws MetadataException, IOException
+    public static void main(@NotNull String[] args)
     {
         Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
         boolean markdownFormat = argList.remove("-markdown");
