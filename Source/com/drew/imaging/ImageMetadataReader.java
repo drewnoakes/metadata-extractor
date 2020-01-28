@@ -171,7 +171,7 @@ public class ImageMetadataReader
                 return AviMetadataReader.readMetadata(inputStream);
             case Wav:
                 return WavMetadataReader.readMetadata(inputStream);
-            case Mov:
+            case QuickTime:
                 return QuickTimeMetadataReader.readMetadata(inputStream);
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);

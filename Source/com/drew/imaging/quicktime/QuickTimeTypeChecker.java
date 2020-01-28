@@ -36,11 +36,11 @@ public class QuickTimeTypeChecker implements TypeChecker
         // http://www.ftyps.com
 
         // QuickTime Mov
-        _ftypMap.put("ftypmoov", FileType.Mov);
-        _ftypMap.put("ftypwide", FileType.Mov);
-        _ftypMap.put("ftypmdat", FileType.Mov);
-        _ftypMap.put("ftypfree", FileType.Mov);
-        _ftypMap.put("ftypqt  ", FileType.Mov);
+        _ftypMap.put("ftypmoov", FileType.QuickTime);
+        _ftypMap.put("ftypwide", FileType.QuickTime);
+        _ftypMap.put("ftypmdat", FileType.QuickTime);
+        _ftypMap.put("ftypfree", FileType.QuickTime);
+        _ftypMap.put("ftypqt  ", FileType.QuickTime);
 
         // MP4
         _ftypMap.put("ftypavc1", FileType.Mp4);
