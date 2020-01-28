@@ -23,7 +23,6 @@ package com.drew.metadata.png;
 import com.drew.imaging.png.PngChunkType;
 import com.drew.lang.Charsets;
 import com.drew.lang.KeyValuePair;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.StringValue;
 import org.junit.Test;
 

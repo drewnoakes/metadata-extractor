@@ -26,7 +26,6 @@ import com.drew.lang.SequentialReader;
 import com.drew.metadata.heif.HeifDirectory;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**

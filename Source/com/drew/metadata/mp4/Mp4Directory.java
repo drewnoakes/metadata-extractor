@@ -22,9 +22,8 @@ package com.drew.metadata.mp4;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
-import java.util.Calendar;
+
 import java.util.HashMap;
-import java.util.TimeZone;
 
 public class Mp4Directory extends Directory {
 

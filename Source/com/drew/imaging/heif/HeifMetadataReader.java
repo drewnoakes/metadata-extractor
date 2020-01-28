@@ -20,11 +20,9 @@
  */
 package com.drew.imaging.heif;
 
-import com.drew.imaging.mp4.Mp4Reader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.HeifBoxHandler;
-import com.drew.metadata.mp4.Mp4BoxHandler;
 
 import java.io.IOException;
 import java.io.InputStream;

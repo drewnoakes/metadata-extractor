@@ -29,7 +29,6 @@ import com.adobe.internal.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;

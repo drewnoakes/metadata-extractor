@@ -23,7 +23,6 @@ package com.drew.metadata.heif.boxes;
 import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * ISO/IEC 23008-12:2017 pg.14

@@ -22,7 +22,6 @@ package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mp4.Mp4Context;
-import com.drew.metadata.mp4.Mp4HandlerFactory;
 import com.drew.metadata.mp4.media.Mp4SoundDirectory;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
 

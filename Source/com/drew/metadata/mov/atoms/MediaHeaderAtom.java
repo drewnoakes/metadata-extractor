@@ -22,7 +22,6 @@ package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.QuickTimeContext;
-import com.drew.metadata.mov.QuickTimeHandlerFactory;
 
 import java.io.IOException;
 
