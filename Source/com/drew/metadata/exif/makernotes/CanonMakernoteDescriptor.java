@@ -761,7 +761,31 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getQualityDescription()
     {
-        return getIndexedDescription(CameraSettings.TAG_QUALITY, 2, "Normal", "Fine", null, "Superfine");
+        Integer value = _directory.getInteger(CameraSettings.TAG_QUALITY);
+        if (value == null)
+            return null;
+        switch (value) {
+            case -1:
+                return "n/a";
+            case 1:
+                return "Economy";
+            case 2:
+                return "Normal";
+            case 3:
+                return "Fine";
+            case 4:
+                return "RAW";
+            case 5:
+                return "Superfine";
+            case 7:
+                return "CRAW";
+            case 130:
+                return "Normal Movie";
+            case 1131:
+                return "Movie (2)";
+            default:
+                return "Unknown (" + value + ")";
+        }
     }
 
     @Nullable
