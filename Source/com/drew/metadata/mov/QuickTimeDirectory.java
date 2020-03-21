@@ -45,6 +45,7 @@ public class QuickTimeDirectory extends Directory {
     public static final int TAG_SELECTION_DURATION                      = 0x010B;
     public static final int TAG_CURRENT_TIME                            = 0x010C;
     public static final int TAG_NEXT_TRACK_ID                           = 0x010D;
+    public static final int TAG_ROTATION                                = 0x010E;
 
     public static final int TAG_MEDIA_TIME_SCALE                        = 0x0306;
 
@@ -78,6 +79,7 @@ public class QuickTimeDirectory extends Directory {
         _tagNameMap.put(TAG_SELECTION_DURATION, "Selection Duration");
         _tagNameMap.put(TAG_CURRENT_TIME, "Current Time");
         _tagNameMap.put(TAG_NEXT_TRACK_ID, "Next Track ID");
+        _tagNameMap.put(TAG_ROTATION, "Rotation");
 
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
 
