@@ -39,6 +39,7 @@ public class Mp4BoxTypes
     public static final String BOX_MEDIA_HEADER                     = "mdhd";
     public static final String BOX_TRACK_HEADER                     = "tkhd";
     public static final String BOX_USER_DEFINED                     = "uuid";
+    public static final String BOX_USER_DATA                        = "udta";
 
     private static final ArrayList<String> _boxList = new ArrayList<String>();
 
