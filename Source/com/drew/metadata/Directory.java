@@ -896,7 +896,7 @@ public abstract class Directory
             }
 
             // if the date string has time zone information, it supersedes the timeZone parameter
-            Pattern timeZonePattern = Pattern.compile("(Z|[+-]\\d\\d:\\d\\d)$");
+            Pattern timeZonePattern = Pattern.compile("(Z|[+-]\\d\\d:\\d\\d|[+-]\\d\\d\\d\\d)$");
             Matcher timeZoneMatcher = timeZonePattern.matcher(dateString);
             if (timeZoneMatcher.find()) {
                 timeZone = TimeZone.getTimeZone("GMT" + timeZoneMatcher.group().replaceAll("Z", ""));
