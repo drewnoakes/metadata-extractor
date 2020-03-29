@@ -91,7 +91,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 Mp4UuidBoxHandler userBoxHandler = new Mp4UuidBoxHandler(metadata);
                 userBoxHandler.processBox(box, payload, context);
             } else if (box.type.equals(Mp4BoxTypes.BOX_USER_DATA)) {
-                processUserData(box, reader);
+                processUserData(box, reader, payload.length);
             }
         } else {
             if (box.type.equals(Mp4ContainerTypes.BOX_COMPRESSED_MOVIE)) {
@@ -101,9 +101,9 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         return this;
     }
 
-    private void processUserData(@NotNull Box box, SequentialReader reader) throws IOException
+    private void processUserData(@NotNull Box box, @NotNull SequentialReader reader, int length) throws IOException
     {
-        new UserDataBox(reader, box).addMetadata(directory);
+        new UserDataBox(reader, box, length).addMetadata(directory);
     }
 
     private void processFileType(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
