@@ -21,6 +21,7 @@
 package com.drew.metadata.mp4.boxes;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.mp4.Mp4Directory;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class UserDataBox extends FullBox {
 
     private static final Pattern COORDINATE_PATTERN = Pattern.compile("([+-]\\d+\\.\\d+)([+-]\\d+\\.\\d+)");
 
+    @Nullable
     private String coordinateString;
 
     public UserDataBox(final SequentialReader reader, final Box box) throws IOException {
@@ -61,13 +63,15 @@ public class UserDataBox extends FullBox {
     }
 
     public void addMetadata(final Mp4Directory directory) {
-        final Matcher matcher = COORDINATE_PATTERN.matcher(coordinateString);
-        if (matcher.find()) {
-            final double latitude = Double.parseDouble(matcher.group(1));
-            final double longitude = Double.parseDouble(matcher.group(2));
+        if (coordinateString != null) {
+            final Matcher matcher = COORDINATE_PATTERN.matcher(coordinateString);
+            if (matcher.find()) {
+                final double latitude = Double.parseDouble(matcher.group(1));
+                final double longitude = Double.parseDouble(matcher.group(2));
 
-            directory.setDouble(TAG_LATITUDE, latitude);
-            directory.setDouble(TAG_LONGITUDE, longitude);
+                directory.setDouble(TAG_LATITUDE, latitude);
+                directory.setDouble(TAG_LONGITUDE, longitude);
+            }
         }
     }
 }
