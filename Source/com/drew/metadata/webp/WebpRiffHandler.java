@@ -76,7 +76,6 @@ public class WebpRiffHandler implements RiffHandler
 
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
-//        System.out.println("Chunk " + fourCC + " " + payload.length + " bytes");
         WebpDirectory directory = new WebpDirectory();
         if (fourCC.equals(WebpDirectory.CHUNK_EXIF)) {
             new ExifReader().extract(new ByteArrayReader(payload), _metadata);
