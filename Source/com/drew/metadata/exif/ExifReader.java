@@ -44,7 +44,7 @@ import java.util.Collections;
 @SuppressWarnings("WeakerAccess")
 public class ExifReader implements JpegSegmentMetadataReader
 {
-    /** Exif data stored in JPEG files' APP1 segment are preceded by this six character preamble. */
+    /** Exif data stored in JPEG files' APP1 segment are preceded by this six character preamble "Exif\0\0". */
     public static final String JPEG_SEGMENT_PREAMBLE = "Exif\0\0";
 
     @NotNull
@@ -58,11 +58,18 @@ public class ExifReader implements JpegSegmentMetadataReader
         assert(segmentType == JpegSegmentType.APP1);
 
         for (byte[] segmentBytes : segments) {
-            // Filter any segments containing unexpected preambles
-            if (segmentBytes.length < JPEG_SEGMENT_PREAMBLE.length() || !new String(segmentBytes, 0, JPEG_SEGMENT_PREAMBLE.length()).equals(JPEG_SEGMENT_PREAMBLE))
-                continue;
-            extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length());
+            // Segment must have the expected preamble
+            if (startsWithJpegExifPreamble(segmentBytes)) {
+                extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length());
+            }
         }
+    }
+
+    /** Indicates whether 'bytes' starts with 'JpegSegmentPreamble'. */
+    public static boolean startsWithJpegExifPreamble(byte[] bytes)
+    {
+        return bytes.length >= JPEG_SEGMENT_PREAMBLE.length() &&
+            new String(bytes, 0, JPEG_SEGMENT_PREAMBLE.length()).equals(JPEG_SEGMENT_PREAMBLE);
     }
 
     /** Reads TIFF formatted Exif data from start of the specified {@link RandomAccessReader}. */

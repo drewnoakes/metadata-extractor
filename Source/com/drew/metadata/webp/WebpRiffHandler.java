@@ -78,7 +78,12 @@ public class WebpRiffHandler implements RiffHandler
     {
         WebpDirectory directory = new WebpDirectory();
         if (fourCC.equals(WebpDirectory.CHUNK_EXIF)) {
-            new ExifReader().extract(new ByteArrayReader(payload), _metadata);
+            // We have seen WebP images with and without the preamble here. It's likely that some software incorrectly
+            // copied an entire JPEG segment into the WebP image. Regardless, we can handle it here.
+            ByteArrayReader reader = ExifReader.startsWithJpegExifPreamble(payload)
+                ? new ByteArrayReader(payload, ExifReader.JPEG_SEGMENT_PREAMBLE.length())
+                : new ByteArrayReader(payload);
+            new ExifReader().extract(reader, _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_ICCP)) {
             new IccReader().extract(new ByteArrayReader(payload), _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_XMP)) {
