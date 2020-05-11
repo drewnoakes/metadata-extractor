@@ -220,7 +220,6 @@ public class PngMetadataReader
                 try {
                     textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
                 } catch(java.util.zip.ZipException zex) {
-                    textBytes = null;
                     PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
                     directory.addError(String.format("Exception decompressing PNG zTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
                     metadata.addDirectory(directory);
@@ -265,7 +264,6 @@ public class PngMetadataReader
                     try {
                         textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
                     } catch(java.util.zip.ZipException zex) {
-                        textBytes = null;
                         PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                         directory.addError(String.format("Exception decompressing PNG iTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
                         metadata.addDirectory(directory);
