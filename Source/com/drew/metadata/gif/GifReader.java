@@ -216,7 +216,7 @@ public class GifReader
                     metadata.addDirectory(plainTextBlock);
                 break;
             case (byte) 0xf9:
-                metadata.addDirectory(readControlBlock(reader, blockSizeBytes));
+                metadata.addDirectory(readControlBlock(reader));
                 break;
             case (byte) 0xfe:
                 metadata.addDirectory(readCommentBlock(reader, blockSizeBytes));
@@ -303,11 +303,8 @@ public class GifReader
         }
     }
 
-    private static GifControlDirectory readControlBlock(SequentialReader reader, int blockSizeBytes) throws IOException
+    private static GifControlDirectory readControlBlock(SequentialReader reader) throws IOException
     {
-        if (blockSizeBytes < 4)
-            blockSizeBytes = 4;
-
         GifControlDirectory directory = new GifControlDirectory();
 
         short packedFields = reader.getUInt8();
