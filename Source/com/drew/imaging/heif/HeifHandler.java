@@ -50,7 +50,7 @@ public abstract class HeifHandler<T extends HeifDirectory>
 
     /**
      * There is potential for a box to both contain other boxes and contain information, so this method will
-     * handle those occurences.
+     * handle those occurrences.
      */
     protected abstract void processContainer(@NotNull Box box, @NotNull SequentialReader reader) throws IOException;
 }
