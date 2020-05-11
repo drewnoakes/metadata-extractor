@@ -103,7 +103,7 @@ public class PngMetadataReader
             try {
                 processChunk(metadata, chunk);
             } catch (Exception e) {
-                metadata.addDirectory(new ErrorDirectory(e.getMessage()));
+                metadata.addDirectory(new ErrorDirectory("Exception reading PNG chunk: " + e.getMessage()));
             }
         }
 
