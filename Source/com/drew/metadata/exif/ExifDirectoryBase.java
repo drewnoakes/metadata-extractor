@@ -237,9 +237,9 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_EXIF_VERSION                      = 0x9000;
     public static final int TAG_DATETIME_ORIGINAL                 = 0x9003;
     public static final int TAG_DATETIME_DIGITIZED                = 0x9004;
-    public static final int TAG_OFFSET_TIME                       = 0x9010;
-    public static final int TAG_OFFSET_TIME_ORIGINAL              = 0x9011;
-    public static final int TAG_OFFSET_TIME_DIGITIZED             = 0x9012;
+    public static final int TAG_TIME_ZONE                         = 0x9010;
+    public static final int TAG_TIME_ZONE_ORIGINAL                = 0x9011;
+    public static final int TAG_TIME_ZONE_DIGITIZED               = 0x9012;
 
     public static final int TAG_COMPONENTS_CONFIGURATION          = 0x9101;
     /**
@@ -699,9 +699,9 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_EXIF_VERSION, "Exif Version");
         map.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
         map.put(TAG_DATETIME_DIGITIZED, "Date/Time Digitized");
-        map.put(TAG_OFFSET_TIME, "Offset Time");
-        map.put(TAG_OFFSET_TIME_ORIGINAL, "Offset Time Original");
-        map.put(TAG_OFFSET_TIME_DIGITIZED, "Offset Time Digitized");
+        map.put(TAG_TIME_ZONE, "Time Zone");
+        map.put(TAG_TIME_ZONE_ORIGINAL, "Time Zone Original");
+        map.put(TAG_TIME_ZONE_DIGITIZED, "Time Zone Digitized");
         map.put(TAG_COMPONENTS_CONFIGURATION, "Components Configuration");
         map.put(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL, "Compressed Bits Per Pixel");
         map.put(TAG_SHUTTER_SPEED, "Shutter Speed Value");
