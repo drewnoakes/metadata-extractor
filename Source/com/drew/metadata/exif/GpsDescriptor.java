@@ -153,8 +153,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsDestLongitudeDescription()
     {
-        Rational[] longitudes = _directory.getRationalArray(TAG_LONGITUDE);
-        String longitudeRef = _directory.getString(TAG_LONGITUDE_REF);
+        Rational[] longitudes = _directory.getRationalArray(TAG_DEST_LONGITUDE);
+        String longitudeRef = _directory.getString(TAG_DEST_LONGITUDE_REF);
 
         if (longitudes == null || longitudes.length != 3 || longitudeRef == null)
             return null;
