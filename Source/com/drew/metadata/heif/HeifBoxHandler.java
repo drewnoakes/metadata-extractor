@@ -62,7 +62,7 @@ public class HeifBoxHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    public boolean shouldAcceptContainer(Box box)
+    public boolean shouldAcceptContainer(@NotNull Box box)
     {
         return box.type.equals(HeifContainerTypes.BOX_METADATA)
             || box.type.equals(HeifContainerTypes.BOX_IMAGE_PROPERTY)

@@ -23,6 +23,7 @@ package com.drew.metadata.heif;
 import com.drew.imaging.heif.HeifHandler;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.boxes.*;
 
@@ -51,7 +52,7 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    protected boolean shouldAcceptBox(Box box)
+    protected boolean shouldAcceptBox(@NotNull Box box)
     {
         List<String> boxes = Arrays.asList(HeifBoxTypes.BOX_ITEM_PROTECTION,
             HeifBoxTypes.BOX_PRIMARY_ITEM,
@@ -67,14 +68,14 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    protected boolean shouldAcceptContainer(Box box)
+    protected boolean shouldAcceptContainer(@NotNull Box box)
     {
         return box.type.equals(HeifContainerTypes.BOX_IMAGE_PROPERTY)
             || box.type.equals(HeifContainerTypes.BOX_ITEM_PROPERTY);
     }
 
     @Override
-    protected HeifHandler<?> processBox(Box box, byte[] payload) throws IOException
+    protected HeifHandler<?> processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
     {
         SequentialReader reader = new SequentialByteArrayReader(payload);
         if (box.type.equals(HeifBoxTypes.BOX_ITEM_PROTECTION)) {
@@ -105,7 +106,7 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    protected void processContainer(Box box, SequentialReader reader) throws IOException
+    protected void processContainer(@NotNull Box box, @NotNull SequentialReader reader) throws IOException
     {
 
     }
