@@ -33,7 +33,7 @@ import java.io.IOException;
 /**
  * @author Payton Garland
  */
-public abstract class QuickTimeMetadataHandler extends QuickTimeHandler
+public abstract class QuickTimeMetadataHandler extends QuickTimeHandler<QuickTimeDirectory>
 {
     public QuickTimeMetadataHandler(Metadata metadata)
     {
@@ -62,7 +62,7 @@ public abstract class QuickTimeMetadataHandler extends QuickTimeHandler
     }
 
     @Override
-    protected QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
+    protected QuickTimeHandler<?> processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
     {
         if (payload != null) {
             SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);

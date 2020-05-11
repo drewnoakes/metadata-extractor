@@ -72,7 +72,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     }
 
     @Override
-    public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload, Mp4Context context) throws IOException
+    public Mp4Handler<?> processBox(@NotNull Box box, @Nullable byte[] payload, Mp4Context context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);

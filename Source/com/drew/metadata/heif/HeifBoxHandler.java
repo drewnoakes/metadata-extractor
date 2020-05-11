@@ -70,13 +70,13 @@ public class HeifBoxHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    public HeifHandler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
+    public HeifHandler<?> processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
             if (box.type.equals(HeifBoxTypes.BOX_FILE_TYPE)) {
                 processFileType(reader, box);
-            }else if (box.type.equals(HeifBoxTypes.BOX_HANDLER)) {
+            } else if (box.type.equals(HeifBoxTypes.BOX_HANDLER)) {
                 handlerBox = new HandlerBox(reader, box);
                 return handlerFactory.getHandler(handlerBox, metadata);
             }

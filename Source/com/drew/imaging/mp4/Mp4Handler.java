@@ -51,9 +51,9 @@ public abstract class Mp4Handler<T extends Mp4Directory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Box box);
 
-    protected abstract Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload, Mp4Context context) throws IOException;
+    protected abstract Mp4Handler<?> processBox(@NotNull Box box, @Nullable byte[] payload, Mp4Context context) throws IOException;
 
-    protected Mp4Handler processContainer(@NotNull Box box, @NotNull Mp4Context context) throws IOException
+    protected Mp4Handler<?> processContainer(@NotNull Box box, @NotNull Mp4Context context) throws IOException
     {
         return processBox(box, null, context);
     }

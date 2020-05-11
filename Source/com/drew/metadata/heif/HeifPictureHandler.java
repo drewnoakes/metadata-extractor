@@ -74,7 +74,7 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    protected HeifHandler processBox(Box box, byte[] payload) throws IOException
+    protected HeifHandler<?> processBox(Box box, byte[] payload) throws IOException
     {
         SequentialReader reader = new SequentialByteArrayReader(payload);
         if (box.type.equals(HeifBoxTypes.BOX_ITEM_PROTECTION)) {

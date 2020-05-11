@@ -30,7 +30,7 @@ import java.util.zip.DataFormatException;
 
 public class HeifReader
 {
-    public void extract(Metadata metadata, InputStream inputStream, HeifHandler handler) throws IOException, DataFormatException
+    public void extract(Metadata metadata, InputStream inputStream, HeifHandler<?> handler) throws IOException, DataFormatException
     {
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
@@ -38,7 +38,7 @@ public class HeifReader
         processBoxes(reader, -1, handler);
     }
 
-    private void processBoxes(StreamReader reader, long atomEnd, HeifHandler handler)
+    private void processBoxes(StreamReader reader, long atomEnd, HeifHandler<?> handler)
     {
         try {
             while ((atomEnd == -1) ? true : reader.getPosition() < atomEnd) {

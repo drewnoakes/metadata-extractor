@@ -35,7 +35,7 @@ public class Mp4Reader
 {
     private Mp4Reader() {}
 
-    public static void extract(@NotNull InputStream inputStream, @NotNull Mp4Handler handler)
+    public static void extract(@NotNull InputStream inputStream, @NotNull Mp4Handler<?> handler)
     {
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
@@ -45,7 +45,7 @@ public class Mp4Reader
         processBoxes(reader, -1, handler, context);
     }
 
-    private static void processBoxes(StreamReader reader, long atomEnd, Mp4Handler handler, Mp4Context context)
+    private static void processBoxes(StreamReader reader, long atomEnd, Mp4Handler<?> handler, Mp4Context context)
     {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {

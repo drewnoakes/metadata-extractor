@@ -98,7 +98,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
     }
 
     @Override
-    public Mp4Handler processBox(Box box, byte[] payload, Mp4Context context) throws IOException
+    public Mp4Handler<?> processBox(Box box, byte[] payload, Mp4Context context) throws IOException
     {
         if (payload != null && payload.length >= 16) {
             UuidType type = _uuidLookup.find(payload);

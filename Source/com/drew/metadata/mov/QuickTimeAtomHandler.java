@@ -74,7 +74,7 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
     }
 
     @Override
-    public QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
+    public QuickTimeHandler<?> processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);

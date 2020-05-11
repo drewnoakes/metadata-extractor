@@ -35,7 +35,7 @@ public class QuickTimeReader
 {
     private QuickTimeReader() {}
 
-    public static void extract(@NotNull InputStream inputStream, @NotNull QuickTimeHandler handler)
+    public static void extract(@NotNull InputStream inputStream, @NotNull QuickTimeHandler<?> handler)
     {
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
@@ -45,7 +45,7 @@ public class QuickTimeReader
         processAtoms(reader, -1, handler, context);
     }
 
-    private static void processAtoms(StreamReader reader, long atomEnd, QuickTimeHandler handler, QuickTimeContext context)
+    private static void processAtoms(StreamReader reader, long atomEnd, QuickTimeHandler<?> handler, QuickTimeContext context)
     {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {

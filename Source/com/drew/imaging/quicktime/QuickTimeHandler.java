@@ -51,9 +51,9 @@ public abstract class QuickTimeHandler<T extends QuickTimeDirectory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Atom atom);
 
-    protected abstract QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException;
+    protected abstract QuickTimeHandler<?> processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException;
 
-    protected QuickTimeHandler processContainer(@NotNull Atom atom, QuickTimeContext context) throws IOException
+    protected QuickTimeHandler<?> processContainer(@NotNull Atom atom, QuickTimeContext context) throws IOException
     {
         return processAtom(atom, null, context);
     }

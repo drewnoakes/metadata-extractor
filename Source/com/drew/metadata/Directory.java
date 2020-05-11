@@ -62,7 +62,7 @@ public abstract class Directory
     private final Collection<String> _errorList = new ArrayList<String>(4);
 
     /** The descriptor used to interpret tag values. */
-    protected TagDescriptor _descriptor;
+    protected TagDescriptor<?> _descriptor;
 
     @Nullable
     private Directory _parent;
@@ -137,7 +137,7 @@ public abstract class Directory
      * @param descriptor the descriptor used to interpret tag values
      */
     @java.lang.SuppressWarnings({ "ConstantConditions" })
-    public void setDescriptor(@NotNull TagDescriptor descriptor)
+    public void setDescriptor(@NotNull TagDescriptor<?> descriptor)
     {
         if (descriptor == null)
             throw new NullPointerException("cannot set a null descriptor");

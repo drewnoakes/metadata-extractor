@@ -46,7 +46,7 @@ public abstract class HeifHandler<T extends HeifDirectory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Box box);
 
-    protected abstract HeifHandler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException;
+    protected abstract HeifHandler<?> processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException;
 
     /**
      * There is potential for a box to both contain other boxes and contain information, so this method will

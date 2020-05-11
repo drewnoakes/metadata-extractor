@@ -28,14 +28,14 @@ public class HeifHandlerFactory
 {
     private static final String HANDLER_PICTURE             = "pict";
 
-    private HeifHandler caller;
+    private HeifHandler<?> caller;
 
-    public HeifHandlerFactory(HeifHandler caller)
+    public HeifHandlerFactory(HeifHandler<?> caller)
     {
         this.caller = caller;
     }
 
-    public HeifHandler getHandler(HandlerBox box, Metadata metadata)
+    public HeifHandler<?> getHandler(HandlerBox box, Metadata metadata)
     {
         String type = box.getHandlerType();
         if (type.equals(HANDLER_PICTURE)) {

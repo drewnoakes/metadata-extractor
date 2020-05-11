@@ -40,14 +40,14 @@ public class QuickTimeHandlerFactory
     private static final String HANDLER_SUBTITLE_MEDIA          = "sbtl";
     private static final String HANDLER_MUSIC_MEDIA             = "musi";
 
-    private QuickTimeHandler caller;
+    private QuickTimeHandler<?> caller;
 
-    public QuickTimeHandlerFactory(QuickTimeHandler caller)
+    public QuickTimeHandlerFactory(QuickTimeHandler<?> caller)
     {
         this.caller = caller;
     }
 
-    public QuickTimeHandler getHandler(String type, Metadata metadata, QuickTimeContext context)
+    public QuickTimeHandler<?> getHandler(String type, Metadata metadata, QuickTimeContext context)
     {
         if (type.equals(HANDLER_METADATA_DIRECTORY)) {
             return new QuickTimeDirectoryHandler(metadata);
