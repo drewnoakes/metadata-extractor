@@ -113,7 +113,7 @@ public class WebpRiffHandler implements RiffHandler
                 _metadata.addDirectory(directory);
 
             } catch (IOException e) {
-                e.printStackTrace(System.err);
+                directory.addError(e.getMessage());
             }
         } else if (fourCC.equals(WebpDirectory.CHUNK_VP8L) && payload.length > 4) {
             RandomAccessReader reader = new ByteArrayReader(payload);
@@ -140,7 +140,7 @@ public class WebpRiffHandler implements RiffHandler
                 _metadata.addDirectory(directory);
 
             } catch (IOException e) {
-                e.printStackTrace(System.err);
+                directory.addError(e.getMessage());
             }
         } else if (fourCC.equals(WebpDirectory.CHUNK_VP8) && payload.length > 9) {
             RandomAccessReader reader = new ByteArrayReader(payload);

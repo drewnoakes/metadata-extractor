@@ -22,6 +22,7 @@ package com.drew.imaging.png;
 
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.file.FileSystemMetadataReader;
@@ -102,7 +103,7 @@ public class PngMetadataReader
             try {
                 processChunk(metadata, chunk);
             } catch (Exception e) {
-                e.printStackTrace(System.err);
+                metadata.addDirectory(new ErrorDirectory(e.getMessage()));
             }
         }
 

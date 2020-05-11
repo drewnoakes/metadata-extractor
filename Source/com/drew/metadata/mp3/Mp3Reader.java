@@ -149,9 +149,9 @@ public class Mp3Reader
                 directory.setString(Mp3Directory.TAG_FRAME_SIZE, frameSize + " bytes");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            directory.addError(e.getMessage());
         } catch (ImageProcessingException e) {
-            e.printStackTrace();
+            directory.addError(e.getMessage());
         }
     }
 

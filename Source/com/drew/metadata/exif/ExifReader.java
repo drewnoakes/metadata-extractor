@@ -98,12 +98,8 @@ public class ExifReader implements JpegSegmentMetadataReader
             );
         } catch (TiffProcessingException e) {
             exifTiffHandler.error("Exception processing TIFF data: " + e.getMessage());
-            // TODO what do to with this error state?
-            e.printStackTrace(System.err);
         } catch (IOException e) {
             exifTiffHandler.error("Exception processing TIFF data: " + e.getMessage());
-            // TODO what do to with this error state?
-            e.printStackTrace(System.err);
         }
     }
 }

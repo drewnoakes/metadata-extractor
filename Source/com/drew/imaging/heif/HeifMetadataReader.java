@@ -21,6 +21,7 @@
 package com.drew.imaging.heif;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.HeifBoxHandler;
 
@@ -33,13 +34,13 @@ public class HeifMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException
     {
+        Metadata metadata = new Metadata();
         try {
-            Metadata metadata = new Metadata();
             new HeifReader().extract(metadata, inputStream, new HeifBoxHandler(metadata));
             return metadata;
         } catch (DataFormatException e) {
-            e.printStackTrace();
+            metadata.addDirectory(new ErrorDirectory(e.getMessage()));
         }
-        return null;
+        return metadata;
     }
 }
