@@ -31,14 +31,14 @@ import java.io.IOException;
  */
 public class PngHeader
 {
-    private int _imageWidth;
-    private int _imageHeight;
-    private byte _bitsPerSample;
+    private final int _imageWidth;
+    private final int _imageHeight;
+    private final byte _bitsPerSample;
     @NotNull
-    private PngColorType _colorType;
-    private byte _compressionType;
-    private byte _filterMethod;
-    private byte _interlaceMethod;
+    private final PngColorType _colorType;
+    private final byte _compressionType;
+    private final byte _filterMethod;
+    private final byte _interlaceMethod;
 
     public PngHeader(@NotNull byte[] bytes) throws PngProcessingException
     {
