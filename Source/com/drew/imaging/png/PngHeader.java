@@ -51,11 +51,7 @@ public class PngHeader
             _imageHeight = reader.getInt32();
             _bitsPerSample = reader.getInt8();
             byte colorTypeNumber = reader.getInt8();
-            PngColorType colorType = PngColorType.fromNumericValue(colorTypeNumber);
-            if (colorType == null) {
-                throw new PngProcessingException("Unexpected PNG color type: " + colorTypeNumber);
-            }
-            _colorType = colorType;
+            _colorType = PngColorType.fromNumericValue(colorTypeNumber);
             _compressionType = reader.getInt8();
             _filterMethod = reader.getInt8();
             _interlaceMethod = reader.getInt8();
