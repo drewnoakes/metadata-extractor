@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.exif.makernotes;
 
+import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
@@ -46,6 +47,8 @@ public class AppleMakernoteDescriptor extends TagDescriptor<AppleMakernoteDirect
         switch (tagType) {
             case AppleMakernoteDirectory.TAG_HDR_IMAGE_TYPE:
                 return getHdrImageTypeDescription();
+            case AppleMakernoteDirectory.TAG_ACCELERATION_VECTOR:
+                return getAccelerationVectorDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -55,5 +58,16 @@ public class AppleMakernoteDescriptor extends TagDescriptor<AppleMakernoteDirect
     public String getHdrImageTypeDescription()
     {
         return getIndexedDescription(AppleMakernoteDirectory.TAG_HDR_IMAGE_TYPE, 3, "HDR Image", "Original Image");
+    }
+
+    @Nullable
+    public String getAccelerationVectorDescription()
+    {
+        Rational[] values = _directory.getRationalArray(AppleMakernoteDirectory.TAG_ACCELERATION_VECTOR);
+        if (values == null || values.length != 3)
+            return null;
+        return String.format("%.2fg %s, ", values[0].getAbsolute().doubleValue(), values[0].isPositive() ? "left" : "right") +
+               String.format("%.2fg %s, ", values[1].getAbsolute().doubleValue(), values[1].isPositive() ? "down" : "up") +
+               String.format("%.2fg %s",   values[2].getAbsolute().doubleValue(), values[2].isPositive() ? "forward" : "backward");
     }
 }

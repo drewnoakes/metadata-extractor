@@ -36,8 +36,11 @@ import java.util.HashMap;
 public class AppleMakernoteDirectory extends Directory
 {
     public static final int TAG_RUN_TIME = 0x0003;
+    public static final int TAG_ACCELERATION_VECTOR = 0x0008;
     public static final int TAG_HDR_IMAGE_TYPE = 0x000a;
     public static final int TAG_BURST_UUID = 0x000b;
+    public static final int TAG_CONTENT_IDENTIFIER = 0x0011;
+    public static final int TAG_IMAGE_UNIQUE_ID = 0x0015;
 
     @NotNull
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -45,8 +48,11 @@ public class AppleMakernoteDirectory extends Directory
     static
     {
         _tagNameMap.put(TAG_RUN_TIME, "Run Time");
+        _tagNameMap.put(TAG_ACCELERATION_VECTOR, "Acceleration Vector");
         _tagNameMap.put(TAG_HDR_IMAGE_TYPE, "HDR Image Type");
         _tagNameMap.put(TAG_BURST_UUID, "Burst UUID");
+        _tagNameMap.put(TAG_CONTENT_IDENTIFIER, "Content Identifier");
+        _tagNameMap.put(TAG_IMAGE_UNIQUE_ID, "Image Unique ID");
     }
 
     public AppleMakernoteDirectory()
