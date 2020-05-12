@@ -272,7 +272,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     @Override
     public boolean equals(@Nullable Object obj)
     {
-        if (obj==null || !(obj instanceof Rational))
+        if (!(obj instanceof Rational))
             return false;
         Rational that = (Rational) obj;
         return this.doubleValue() == that.doubleValue();
