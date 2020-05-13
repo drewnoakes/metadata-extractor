@@ -36,7 +36,7 @@ public class HeifMetadataReader
     {
         Metadata metadata = new Metadata();
         try {
-            new HeifReader().extract(metadata, inputStream, new HeifBoxHandler(metadata));
+            new HeifReader().extract(inputStream, new HeifBoxHandler(metadata));
             return metadata;
         } catch (DataFormatException e) {
             metadata.addDirectory(new ErrorDirectory(e.getMessage()));

@@ -21,7 +21,6 @@
 package com.drew.imaging.heif;
 
 import com.drew.lang.StreamReader;
-import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.boxes.Box;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ import java.util.zip.DataFormatException;
 
 public class HeifReader
 {
-    public void extract(Metadata metadata, InputStream inputStream, HeifHandler<?> handler) throws IOException, DataFormatException
+    public void extract(InputStream inputStream, HeifHandler<?> handler) throws IOException, DataFormatException
     {
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
