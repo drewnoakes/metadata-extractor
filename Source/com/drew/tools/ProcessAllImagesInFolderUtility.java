@@ -179,7 +179,8 @@ public class ProcessAllImagesInFolderUtility
                 "mp3",
                 "j2c", "jp2", "jpf", "jpm", "mj2",
                 "3g2", "3gp", "m4v", "mov", "mp4", "m2v", "m2ts", "mts",
-                "pbm", "pnm", "pgm", "ppm"));
+                "pbm", "pnm", "pgm", "ppm",
+                "avi"));
 
         private int _processedFileCount = 0;
         private int _exceptionCount = 0;
