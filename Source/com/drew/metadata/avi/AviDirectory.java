@@ -66,7 +66,7 @@ public class AviDirectory extends Directory
         _tagNameMap.put(TAG_WIDTH, "Width");
         _tagNameMap.put(TAG_HEIGHT, "Height");
         _tagNameMap.put(TAG_STREAMS, "Stream Count");
-        _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Datetime Original");
+        _tagNameMap.put(TAG_DATETIME_ORIGINAL, "Date/Time Original");
     }
 
     public AviDirectory()
