@@ -41,7 +41,7 @@ public class HeifReader
     private void processBoxes(StreamReader reader, long atomEnd, HeifHandler<?> handler)
     {
         try {
-            while ((atomEnd == -1) ? true : reader.getPosition() < atomEnd) {
+            while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
                 Box box = new Box(reader);
 
