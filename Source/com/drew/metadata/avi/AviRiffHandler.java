@@ -48,9 +48,6 @@ public class AviRiffHandler implements RiffHandler
     @NotNull
     private final AviDirectory _directory;
 
-//    @NotNull
-//    private String _currentList = "";
-
     public AviRiffHandler(@NotNull Metadata metadata)
     {
         _directory = new AviDirectory();
@@ -71,11 +68,6 @@ public class AviRiffHandler implements RiffHandler
 
     public boolean shouldAcceptList(@NotNull String fourCC)
     {
-//        if (fourCC.equals(AviDirectory.LIST_HEADER) || fourCC.equals(AviDirectory.LIST_STREAM_HEADER) || fourCC.equals(AviDirectory.FORMAT)) {
-//            _currentList = fourCC;
-//        } else {
-//            _currentList = "";
-//        }
         return fourCC.equals(AviDirectory.LIST_HEADER)
             || fourCC.equals(AviDirectory.LIST_STREAM_HEADER)
             || fourCC.equals(AviDirectory.FORMAT);
