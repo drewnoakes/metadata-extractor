@@ -100,9 +100,9 @@ public class AviRiffHandler implements RiffHandler
                         _directory.setDouble(AviDirectory.TAG_FRAMES_PER_SECOND, (dwRate / dwScale));
 
                         double duration = dwLength / (dwRate / dwScale);
-                        Integer hours = (int) duration / (int) (Math.pow(60, 2));
-                        Integer minutes = ((int) duration / (int) (Math.pow(60, 1))) - (hours * 60);
-                        Integer seconds = (int) Math.round((duration / (Math.pow(60, 0))) - (minutes * 60));
+                        int hours = (int) duration / (int) (Math.pow(60, 2));
+                        int minutes = ((int) duration / (int) (Math.pow(60, 1))) - (hours * 60);
+                        int seconds = (int) Math.round((duration / (Math.pow(60, 0))) - (minutes * 60));
                         String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
 
                         _directory.setString(AviDirectory.TAG_DURATION, time);
