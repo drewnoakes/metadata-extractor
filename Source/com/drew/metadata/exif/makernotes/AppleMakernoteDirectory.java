@@ -40,7 +40,7 @@ public class AppleMakernoteDirectory extends Directory
     public static final int TAG_HDR_IMAGE_TYPE = 0x000a;
     public static final int TAG_BURST_UUID = 0x000b;
     public static final int TAG_CONTENT_IDENTIFIER = 0x0011;
-    public static final int TAG_IMAGE_UNIQUE_ID = 0x0015;
+    public static final int TAG_IMAGE_UNIQUE_ID = 0x0015; // TODO is this actually 0x0016?
 
     @NotNull
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();

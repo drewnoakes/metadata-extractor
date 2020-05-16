@@ -140,7 +140,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     return true;
             }
         }
-        
+
         return false;
     }
 
@@ -236,30 +236,29 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
         }
-        
+
         // Custom processing for Apple RunTime tag
-        if(tagId == AppleMakernoteDirectory.TAG_RUN_TIME && _currentDirectory instanceof AppleMakernoteDirectory) {
+        if (tagId == AppleMakernoteDirectory.TAG_RUN_TIME && _currentDirectory instanceof AppleMakernoteDirectory) {
             // Read the byte array into the parent tag
-            _currentDirectory.setByteArray(tagId, reader.getBytes(tagOffset, byteCount));
-            
+            byte[] bytes = reader.getBytes(tagOffset, byteCount);
+            _currentDirectory.setByteArray(tagId, bytes);
+
             AppleRunTimeMakernoteDirectory directory = new AppleRunTimeMakernoteDirectory();
             directory.setParent(_currentDirectory);
-            
-            try {
-                processAppleRunTime(directory, _currentDirectory.getByteArray(AppleMakernoteDirectory.TAG_RUN_TIME));
 
-                if(directory.getTagCount() > 0)
-                {
+            try {
+                processAppleRunTime(directory, bytes);
+
+                if (directory.getTagCount() > 0) {
                     _metadata.addDirectory(directory);
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 directory.addError("Error processing BPLIST: " + e.getMessage());
             }
-            
+
             return true;
         }
-        
+
         if (handlePrintIM(_currentDirectory, tagId))
         {
             PrintIMDirectory printIMDirectory = new PrintIMDirectory();
@@ -355,11 +354,11 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         return false;
     }
-    
+
     /**
      * Process the BPLIST containing the RUN_TIME tag. The directory will only be populated with values
      * if the <tt>flag</tt> indicates that the CMTime structure is &quot;valid&quot;.
-     * 
+     *
      * @param directory The <tt>AppleRunTimeMakernoteDirectory</tt> to set values onto.
      * @param bplist The BPLIST
      * @throws IOException Thrown if an error occurs parsing the BPLIST as a CMTime structure.
@@ -369,8 +368,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         final CMTime runTime = BinaryPropertyListUtil.parseAsCMTime(bplist);
 
         final byte flags = runTime.getFlags();
-        if((flags & 0x1) == 0x1)
-        {
+        if ((flags & 0x1) == 0x1) {
             directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
             directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, runTime.getEpoch());
             directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, runTime.getTimeScale());
@@ -672,7 +670,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         return false;
     }
-    
+
     /// <summary>
     /// Process PrintIM IFD
     /// </summary>
