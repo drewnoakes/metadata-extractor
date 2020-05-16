@@ -23,6 +23,8 @@ package com.drew.metadata.exif;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
@@ -45,8 +47,7 @@ import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
-import com.drew.tools.BinaryPropertyListUtil;
-import com.drew.tools.BinaryPropertyListUtil.CMTime;
+import com.drew.metadata.plist.BplistReader;
 
 /**
  * Implementation of {@link com.drew.imaging.tiff.TiffHandler} used for handling TIFF tags according to the Exif
@@ -365,14 +366,30 @@ public class ExifTiffHandler extends DirectoryTiffHandler
      */
     private static void processAppleRunTime(@NotNull final AppleRunTimeMakernoteDirectory directory, @NotNull final byte[] bplist) throws IOException
     {
-        final CMTime runTime = BinaryPropertyListUtil.parseAsCMTime(bplist);
+        final BplistReader.PropertyListResults results = BplistReader.parse(bplist);
 
-        final byte flags = runTime.getFlags();
-        if ((flags & 0x1) == 0x1) {
-            directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
-            directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, runTime.getEpoch());
-            directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, runTime.getTimeScale());
-            directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, runTime.getValue());
+        final Set<Map.Entry<Byte, Byte>> entrySet = results.getEntrySet();
+
+        if (entrySet != null) {
+            HashMap<String, Object> values = new HashMap<String, Object>(entrySet.size());
+
+            for (Map.Entry<Byte, Byte> entry : entrySet) {
+                String key = (String)results.getObjects().get(entry.getKey());
+                Object value = results.getObjects().get(entry.getValue());
+
+                values.put(key, value);
+            }
+
+            // https://developer.apple.com/documentation/coremedia/cmtime-u58
+
+            byte flags = (Byte)values.get("flags");
+
+            if ((flags & 0x1) == 0x1) {
+                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
+                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, (Byte)values.get("epoch"));
+                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, (Long)values.get("timescale"));
+                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, (Long)values.get("value"));
+            }
         }
     }
 

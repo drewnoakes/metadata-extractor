@@ -18,19 +18,16 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.tools;
+package com.drew.metadata.plist;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.annotations.Nullable;
 
 /**
- * A limited-functionality binary property list (BPLIST) utility for Apple makernotes.
+ * A limited-functionality binary property list (BPLIST) utility.
  * Parser functionality accounts for &quot;dict&quot; (with simple integer and string values) and &quot;data&quot;.
  *
  * @author Bob Johnson
@@ -38,85 +35,14 @@ import com.drew.lang.SequentialByteArrayReader;
  * @see https://opensource.apple.com/source/CF/CF-550/CFBinaryPList.c
  * @see https://synalysis.com/how-to-decode-apple-binary-property-list-files/
  */
-public class BinaryPropertyListUtil
+public class BplistReader
 {
     private static final String PLIST_DTD = "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
 
     private static final byte[] BPLIST_HEADER = {'b', 'p', 'l', 'i', 's', 't', '0', '0'};
 
     /**
-     * Parse and return the binary property list in XML format.
-     *
-     * @param bplist A byte array containing the binary property list.
-     * @return
-     * @throws IOException Thrown if the parse fails.
-     */
-    public static String parseAsXML(byte[] bplist) throws IOException
-    {
-        final PropertyListResults results = parse(bplist);
-        final Object topObject = results.getObjects().get((int)results.getTrailer().topObject);
-
-        final StringBuilder xml = new StringBuilder()
-            .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-            .append(PLIST_DTD)
-            .append("<plist version=\"1.0\">");
-
-        if (topObject instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<Byte, Byte> dict = (Map<Byte, Byte>)topObject;
-            xml.append("<dict>");
-
-            for (Map.Entry<Byte, Byte> entry : dict.entrySet()) {
-                xml.append("<key>").append((String)results.getObjects().get(entry.getKey())).append("</key>");
-
-                xml.append("<integer>").append(results.getObjects().get(entry.getValue()).toString()).append("</integer>");
-            }
-
-            xml.append("</dict>");
-        }
-
-        xml.append("</plist>");
-
-        return xml.toString();
-    }
-
-    /**
-     * A special case parser for situations where you can expect a CMTime value in the bplist.
-     *
-     * @param bplist
-     * @return Returns a <tt>CMTime</tt> object with its values parsed from the bplist.
-     * @throws IOException        Thrown if any error is encountered parsing the array.
-     * @throws ClassCastException Thrown if the &quot;top object&quot; is not a dictionary.
-     */
-    public static CMTime parseAsCMTime(byte[] bplist) throws IOException
-    {
-        final PropertyListResults results = parse(bplist);
-
-        @SuppressWarnings("unchecked")
-        Map<Byte, Byte> dict = (Map<Byte, Byte>)results.getObjects().get((int)results.getTrailer().topObject);
-
-        HashMap<String, Object> values = new HashMap<String, Object>(dict.size());
-        for (Map.Entry<Byte, Byte> entry : dict.entrySet()) {
-            String key = (String)results.getObjects().get(entry.getKey());
-            Object value = results.getObjects().get(entry.getValue());
-
-            values.put(key, value);
-        }
-
-        final CMTime t = new CMTime();
-        t.setEpoch((Byte)values.get("epoch"));
-        t.setFlags((Byte)values.get("flags"));
-        t.setTimeScale((Long)values.get("timescale"));
-        t.setValue((Long)values.get("value"));
-
-        return t;
-    }
-
-    /**
      * Ensure that a BPLIST is valid.
-     *
-     * @param bplist
-     * @return
      */
     public static boolean isValid(byte[] bplist)
     {
@@ -135,7 +61,7 @@ public class BinaryPropertyListUtil
         return valid;
     }
 
-    private static PropertyListResults parse(byte[] bplist) throws IOException
+    public static PropertyListResults parse(byte[] bplist) throws IOException
     {
         if (!isValid(bplist)) {
             throw new IllegalArgumentException("Input is not a bplist");
@@ -234,8 +160,8 @@ public class BinaryPropertyListUtil
 
     public static class PropertyListResults
     {
-        private List<Object> objects;
-        private Trailer trailer;
+        private final List<Object> objects;
+        private final Trailer trailer;
 
         public PropertyListResults(List<Object> objects, Trailer trailer)
         {
@@ -251,6 +177,52 @@ public class BinaryPropertyListUtil
         public Trailer getTrailer()
         {
             return trailer;
+        }
+
+        @Nullable
+        public Set<Map.Entry<Byte, Byte>> getEntrySet()
+        {
+            final Object topObject = this.getObjects().get((int)this.getTrailer().topObject);
+
+            if (topObject instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Byte, Byte> dict = (Map<Byte, Byte>)topObject;
+                return dict.entrySet();
+            }
+
+            return null;
+        }
+
+        /**
+         * Returns this result object in XML format.
+         */
+        public String toXML()
+        {
+            final StringBuilder xml = new StringBuilder()
+                .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+                .append(PLIST_DTD)
+                .append("<plist version=\"1.0\">");
+
+            final Set<Map.Entry<Byte, Byte>> entrySet = getEntrySet();
+
+            if (entrySet != null) {
+                xml.append("<dict>");
+
+                for (Map.Entry<Byte, Byte> entry : entrySet) {
+                    xml.append("<key>")
+                       .append((String)this.getObjects().get(entry.getKey()))
+                       .append("</key>");
+                    xml.append("<integer>")
+                       .append(this.getObjects().get(entry.getValue()).toString())
+                       .append("</integer>");
+                }
+
+                xml.append("</dict>");
+            }
+
+            xml.append("</plist>");
+
+            return xml.toString();
         }
     }
 
@@ -291,63 +263,5 @@ public class BinaryPropertyListUtil
         long numObjects;
         long topObject;
         long offsetTableOffset;
-    }
-
-    /**
-     * CMTime class, derived from referenced Apple documentation.
-     *
-     * @see https://developer.apple.com/documentation/coremedia/cmtime-u58
-     */
-    public static class CMTime
-    {
-        private int epoch;
-        private byte flags;
-        private long timeScale;
-        private long value;
-
-        public boolean isValid()
-        {
-            return ((flags & 0x01) == 1);
-        }
-
-        public int getEpoch()
-        {
-            return epoch;
-        }
-
-        public void setEpoch(int epoch)
-        {
-            this.epoch = epoch;
-        }
-
-        public byte getFlags()
-        {
-            return flags;
-        }
-
-        public void setFlags(byte flags)
-        {
-            this.flags = flags;
-        }
-
-        public long getTimeScale()
-        {
-            return timeScale;
-        }
-
-        public void setTimeScale(long timeScale)
-        {
-            this.timeScale = timeScale;
-        }
-
-        public long getValue()
-        {
-            return value;
-        }
-
-        public void setValue(long value)
-        {
-            this.value = value;
-        }
     }
 }
