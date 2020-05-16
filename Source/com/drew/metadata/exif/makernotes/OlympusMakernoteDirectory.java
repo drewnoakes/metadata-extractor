@@ -698,6 +698,7 @@ public class OlympusMakernoteDirectory extends Directory
         OlympusCameraTypes.put("D4586", "TG-4");
         OlympusCameraTypes.put("D4587", "TG-860");
         OlympusCameraTypes.put("D4591", "TG-870");
+        OlympusCameraTypes.put("D4593", "TG-5");
         OlympusCameraTypes.put("D4809", "C2500L");
         OlympusCameraTypes.put("D4842", "E-10");
         OlympusCameraTypes.put("D4856", "C-1");

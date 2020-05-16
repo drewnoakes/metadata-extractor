@@ -20,10 +20,15 @@
  */
 package com.drew.metadata.exif;
 
-import com.drew.imaging.tiff.TiffProcessingException;
-import com.drew.imaging.tiff.TiffReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.imaging.tiff.TiffProcessingException;
+import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
@@ -40,11 +45,8 @@ import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
+import com.drew.tools.BinaryPropertyListUtil;
+import com.drew.tools.BinaryPropertyListUtil.CMTime;
 
 /**
  * Implementation of {@link com.drew.imaging.tiff.TiffHandler} used for handling TIFF tags according to the Exif
@@ -138,7 +140,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     return true;
             }
         }
-
+        
         return false;
     }
 
@@ -234,7 +236,30 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
         }
+        
+        // Custom processing for Apple RunTime tag
+        if(tagId == AppleMakernoteDirectory.TAG_RUN_TIME && _currentDirectory instanceof AppleMakernoteDirectory) {
+            // Read the byte array into the parent tag
+            _currentDirectory.setByteArray(tagId, reader.getBytes(tagOffset, byteCount));
+            
+            AppleRunTimeMakernoteDirectory directory = new AppleRunTimeMakernoteDirectory();
+            directory.setParent(_currentDirectory);
+            
+            try {
+                processAppleRunTime(directory, _currentDirectory.getByteArray(AppleMakernoteDirectory.TAG_RUN_TIME));
 
+                if(directory.getTagCount() > 0)
+                {
+                    _metadata.addDirectory(directory);
+                }
+            }
+            catch (IOException e) {
+                directory.addError("Error processing BPLIST: " + e.getMessage());
+            }
+            
+            return true;
+        }
+        
         if (handlePrintIM(_currentDirectory, tagId))
         {
             PrintIMDirectory printIMDirectory = new PrintIMDirectory();
@@ -329,6 +354,28 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
 
         return false;
+    }
+    
+    /**
+     * Process the BPLIST containing the RUN_TIME tag. The directory will only be populated with values
+     * if the <tt>flag</tt> indicates that the CMTime structure is &quot;valid&quot;.
+     * 
+     * @param directory The <tt>AppleRunTimeMakernoteDirectory</tt> to set values onto.
+     * @param bplist The BPLIST
+     * @throws IOException Thrown if an error occurs parsing the BPLIST as a CMTime structure.
+     */
+    private static void processAppleRunTime(@NotNull final AppleRunTimeMakernoteDirectory directory, @NotNull final byte[] bplist) throws IOException
+    {
+        final CMTime runTime = BinaryPropertyListUtil.parseAsCMTime(bplist);
+
+        final byte flags = runTime.getFlags();
+        if((flags & 0x1) == 0x1)
+        {
+            directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
+            directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, runTime.getEpoch());
+            directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, runTime.getTimeScale());
+            directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, runTime.getValue());
+        }
     }
 
     private static void processBinary(@NotNull final Directory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount, final Boolean isSigned, final int arrayLength) throws IOException
@@ -625,7 +672,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         return false;
     }
-
+    
     /// <summary>
     /// Process PrintIM IFD
     /// </summary>
