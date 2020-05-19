@@ -31,7 +31,10 @@ import com.drew.metadata.heif.boxes.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Payton Garland
@@ -127,7 +130,7 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
                     reader.skip(bytesToSkip);
                 }
                 if (shouldHandleItem(infoEntry)) {
-                    handleItem(infoEntry, reader.getBytes((int) extent.getLength()));
+                    handleItem(infoEntry, new SequentialByteArrayReader(reader.getBytes((int) extent.getLength())));
                 }
             }
         }
@@ -137,9 +140,18 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
         return itemsCanProcess.contains(infoEntry.getItemType());
     }
 
-    private void handleItem(ItemInfoBox.ItemInfoEntry entry, byte[] payload) {
+    private void handleItem(@NotNull ItemInfoBox.ItemInfoEntry entry,
+                            @NotNull SequentialByteArrayReader payloadReader) throws IOException {
         if (entry.getItemType().equals(HeifItemTypes.ITEM_EXIF)) {
-            new ExifReader().extract(new RandomAccessStreamReader(new ByteArrayInputStream(payload)), metadata);
+            // ISO/IEC 23008-12:2017 Annex A: First 4 bytes will ALWAYS be an offset to the Tiff header in the payload
+            long tiffHeaderOffset = payloadReader.getUInt32();
+            if (tiffHeaderOffset > payloadReader.available()) {
+                // This Exif item is not laid out according to spec
+                return;
+            }
+            payloadReader.skip(tiffHeaderOffset);
+            ByteArrayInputStream tiffStream = new ByteArrayInputStream(payloadReader.getBytes(payloadReader.available()));
+            new ExifReader().extract(new RandomAccessStreamReader(tiffStream), metadata);
         }
     }
 

@@ -47,27 +47,18 @@ public class TiffReader
      */
     public void processTiff(@NotNull final RandomAccessReader reader,
                             @NotNull final TiffHandler handler,
-                            int tiffHeaderOffset) throws TiffProcessingException, IOException
+                            final int tiffHeaderOffset) throws TiffProcessingException, IOException
     {
-        boolean foundBom = false;
+        // This must be either "MM" or "II".
+        short byteOrderIdentifier = reader.getInt16(tiffHeaderOffset);
 
-        do {
-            if (tiffHeaderOffset > reader.getLength()) {
-                throw new TiffProcessingException("Can't find Motorola/Intel byte order marking...");
-            }
-            short byteOrderIdentifier = reader.getInt16(tiffHeaderOffset);
-            if (byteOrderIdentifier == 0x4d4d) { // "MM"
-                reader.setMotorolaByteOrder(true);
-                foundBom = true;
-            } else if (byteOrderIdentifier == 0x4949) { // "II"
-                reader.setMotorolaByteOrder(false);
-                foundBom = true;
-            } else {
-                // We'll creep through these bytes looking for Byte Order Markings in case there is some preamble
-                // Only really need to do this because sometimes EXIF shows up in HEIF images with or without the EXIF\0\0 header...
-                tiffHeaderOffset++;
-            }
-        } while (!foundBom);
+        if (byteOrderIdentifier == 0x4d4d) { // "MM"
+            reader.setMotorolaByteOrder(true);
+        } else if (byteOrderIdentifier == 0x4949) { // "II"
+            reader.setMotorolaByteOrder(false);
+        } else {
+            throw new TiffProcessingException("Unclear distinction between Motorola/Intel byte ordering: " + byteOrderIdentifier);
+        }
 
         // Check the next two values for correctness.
         final int tiffMarker = reader.getUInt16(2 + tiffHeaderOffset);
