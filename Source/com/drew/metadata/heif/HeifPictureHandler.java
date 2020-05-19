@@ -31,10 +31,7 @@ import com.drew.metadata.heif.boxes.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Payton Garland
@@ -53,7 +50,7 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
         HeifBoxTypes.BOX_PIXEL_INFORMATION
     ));
 
-    private static final Set<String> itemsCanProcess = new HashSet<String>(Arrays.asList(
+    private static final Set<String> itemsCanProcess = new HashSet<String>(Collections.singletonList(
         HeifItemTypes.ITEM_EXIF
     ));
 
@@ -126,8 +123,10 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
             for (ItemLocationBox.Extent extent : itemLocationBox.getExtents()) {
                 ItemInfoBox.ItemInfoEntry infoEntry = itemInfoBox.getEntry(extent.getItemId());
                 long bytesToSkip = extent.getOffset() - reader.getPosition();
-                if (shouldHandleItem(infoEntry) && bytesToSkip > 0) {
+                if (bytesToSkip > 0) {
                     reader.skip(bytesToSkip);
+                }
+                if (shouldHandleItem(infoEntry)) {
                     handleItem(infoEntry, reader.getBytes((int) extent.getLength()));
                 }
             }
