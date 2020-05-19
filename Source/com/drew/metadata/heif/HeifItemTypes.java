@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2020 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,23 +20,12 @@
  */
 package com.drew.metadata.heif;
 
-import java.util.ArrayList;
-
 /**
- * @author Payton Garland
+ * @author Arthur Normand
+ *
+ * Describes the types of items that can be found in the "mdat" HEIF container.
  */
-public class HeifContainerTypes
+public class HeifItemTypes
 {
-    public static final String BOX_METADATA                         = "meta";
-    public static final String BOX_IMAGE_PROPERTY                   = "iprp";
-    public static final String BOX_ITEM_PROPERTY                    = "ipco";
-    public static final String BOX_MEDIA_DATA                       = "mdat";
-
-    private static final ArrayList<String> _containerList = new ArrayList<String>();
-
-    static {
-        _containerList.add(BOX_METADATA);
-        _containerList.add(BOX_IMAGE_PROPERTY);
-        _containerList.add(BOX_ITEM_PROPERTY);
-    }
+    public static final String ITEM_EXIF                        = "Exif";
 }
