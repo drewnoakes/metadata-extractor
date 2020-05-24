@@ -30,10 +30,11 @@ import com.drew.lang.annotations.Nullable;
  * A limited-functionality binary property list (BPLIST) utility.
  * Parser functionality accounts for &quot;dict&quot; (with simple integer and string values) and &quot;data&quot;.
  *
+ * https://opensource.apple.com/source/CF/CF-550/ForFoundationOnly.h
+ * https://opensource.apple.com/source/CF/CF-550/CFBinaryPList.c
+ * https://synalysis.com/how-to-decode-apple-binary-property-list-files/
+ *
  * @author Bob Johnson
- * @see https://opensource.apple.com/source/CF/CF-550/ForFoundationOnly.h
- * @see https://opensource.apple.com/source/CF/CF-550/CFBinaryPList.c
- * @see https://synalysis.com/how-to-decode-apple-binary-property-list-files/
  */
 public class BplistReader
 {
