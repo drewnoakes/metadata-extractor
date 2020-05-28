@@ -20,11 +20,14 @@
  */
 package com.drew.imaging.png;
 
+import com.drew.imaging.tiff.TiffProcessingException;
+import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
@@ -74,6 +77,7 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.tIME);
         desiredChunkTypes.add(PngChunkType.pHYs);
         desiredChunkTypes.add(PngChunkType.sBIT);
+        desiredChunkTypes.add(PngChunkType.eXIF);
 
         _desiredChunkTypes = Collections.unmodifiableSet(desiredChunkTypes);
     }
@@ -323,6 +327,21 @@ public class PngMetadataReader
             PngDirectory directory = new PngDirectory(PngChunkType.sBIT);
             directory.setByteArray(PngDirectory.TAG_SIGNIFICANT_BITS, bytes);
             metadata.addDirectory(directory);
+        } else if (chunkType.equals(PngChunkType.eXIF)) {
+            try {
+                ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
+                RandomAccessStreamReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(bytes));
+                int tiffHeaderOffset = 0;
+                new TiffReader().processTiff(reader, handler, tiffHeaderOffset);
+            } catch (TiffProcessingException e) {
+                PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
+                directory.addError("Exception processing the PNG image exif information.");
+                metadata.addDirectory(directory);
+            } catch (IOException e) {
+                PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
+                directory.addError("Exception reading the PNG image exif information.");
+                metadata.addDirectory(directory);
+            }
         }
     }
 }
