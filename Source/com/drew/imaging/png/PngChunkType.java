@@ -87,7 +87,7 @@ public class PngChunkType
     public static final PngChunkType sPLT;
     public static final PngChunkType tIME;
     public static final PngChunkType iTXt;
-    public static final PngChunkType eXIF;
+    public static final PngChunkType eXIf;
 
     /**
      * Denotes an ancillary {@link PngChunk} that contains textual data, having first a keyword and then a value.
@@ -125,7 +125,7 @@ public class PngChunkType
             iTXt = new PngChunkType("iTXt", true);
             tEXt = new PngChunkType("tEXt", true);
             zTXt = new PngChunkType("zTXt", true);
-            eXIF = new PngChunkType("eXIf");
+            eXIf = new PngChunkType("eXIf");
         } catch (PngProcessingException e) {
             throw new IllegalArgumentException(e);
         }

@@ -77,7 +77,7 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.tIME);
         desiredChunkTypes.add(PngChunkType.pHYs);
         desiredChunkTypes.add(PngChunkType.sBIT);
-        desiredChunkTypes.add(PngChunkType.eXIF);
+        desiredChunkTypes.add(PngChunkType.eXIf);
 
         _desiredChunkTypes = Collections.unmodifiableSet(desiredChunkTypes);
     }
@@ -327,16 +327,16 @@ public class PngMetadataReader
             PngDirectory directory = new PngDirectory(PngChunkType.sBIT);
             directory.setByteArray(PngDirectory.TAG_SIGNIFICANT_BITS, bytes);
             metadata.addDirectory(directory);
-        } else if (chunkType.equals(PngChunkType.eXIF)) {
+        } else if (chunkType.equals(PngChunkType.eXIf)) {
             try {
                 ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
                 new TiffReader().processTiff(new ByteArrayReader(bytes), handler, 0);
             } catch (TiffProcessingException ex) {
-                PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
+                PngDirectory directory = new PngDirectory(PngChunkType.eXIf);
                 directory.addError(ex.getMessage());
                 metadata.addDirectory(directory);
             } catch (IOException ex) {
-                PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
+                PngDirectory directory = new PngDirectory(PngChunkType.eXIf);
                 directory.addError(ex.getMessage());
                 metadata.addDirectory(directory);
             }
