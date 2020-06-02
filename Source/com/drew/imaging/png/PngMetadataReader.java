@@ -330,16 +330,10 @@ public class PngMetadataReader
         } else if (chunkType.equals(PngChunkType.eXIF)) {
             try {
                 ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
-                RandomAccessStreamReader reader = new RandomAccessStreamReader(new ByteArrayInputStream(bytes));
-                int tiffHeaderOffset = 0;
-                new TiffReader().processTiff(reader, handler, tiffHeaderOffset);
-            } catch (TiffProcessingException e) {
+                new TiffReader().processTiff(new ByteArrayReader(bytes), handler, 0);
+            } catch (TiffProcessingException | IOException e) {
                 PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
-                directory.addError("Exception processing the PNG image exif information.");
-                metadata.addDirectory(directory);
-            } catch (IOException e) {
-                PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
-                directory.addError("Exception reading the PNG image exif information.");
+                directory.addError(ex.getMessage());
                 metadata.addDirectory(directory);
             }
         }
