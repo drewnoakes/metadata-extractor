@@ -331,7 +331,11 @@ public class PngMetadataReader
             try {
                 ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
                 new TiffReader().processTiff(new ByteArrayReader(bytes), handler, 0);
-            } catch (TiffProcessingException | IOException e) {
+            } catch (TiffProcessingException ex) {
+                PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
+                directory.addError(ex.getMessage());
+                metadata.addDirectory(directory);
+            } catch (IOException ex) {
                 PngDirectory directory = new PngDirectory(PngChunkType.eXIF);
                 directory.addError(ex.getMessage());
                 metadata.addDirectory(directory);
