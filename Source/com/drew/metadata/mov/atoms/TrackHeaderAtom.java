@@ -24,7 +24,6 @@ import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mp4.Mp4Directory;
 
-import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -57,10 +56,10 @@ public class TrackHeaderAtom extends FullAtom {
 
     public void addMetadata(QuickTimeDirectory directory) {
         if (width != 0 && height != 0 && directory.getDoubleObject(Mp4Directory.TAG_ROTATION) == null) {
-            Point p = new Point(matrix[1] + matrix[4], matrix[0] + matrix[3]);
-            double theta = Math.atan2(p.y, p.x);
-            double degree = Math.toDegrees(theta);
-            degree -= 45;
+            double x = matrix[1] + matrix[4];
+            double y = matrix[0] + matrix[3];
+            double theta = Math.atan2(y, x);
+            double degree = Math.toDegrees(theta) - 45;
             directory.setDouble(QuickTimeDirectory.TAG_ROTATION, Math.abs(degree));
         }
     }
