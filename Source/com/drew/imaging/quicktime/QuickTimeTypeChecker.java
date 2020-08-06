@@ -41,6 +41,7 @@ public class QuickTimeTypeChecker implements TypeChecker
         _ftypMap.put("ftypmdat", FileType.QuickTime);
         _ftypMap.put("ftypfree", FileType.QuickTime);
         _ftypMap.put("ftypqt  ", FileType.QuickTime);
+        _ftypMap.put("ftyp3g2a", FileType.QuickTime);
 
         // MP4
         _ftypMap.put("ftypavc1", FileType.Mp4);
@@ -68,6 +69,7 @@ public class QuickTimeTypeChecker implements TypeChecker
         _ftypMap.put("ftypNDXM", FileType.Mp4);
         _ftypMap.put("ftypNDXP", FileType.Mp4);
         _ftypMap.put("ftypNDXS", FileType.Mp4);
+        _ftypMap.put("ftypnvr1", FileType.Mp4);
 
         // HEIF
         _ftypMap.put("ftypmif1", FileType.Heif);
@@ -76,6 +78,9 @@ public class QuickTimeTypeChecker implements TypeChecker
         _ftypMap.put("ftypheix", FileType.Heif);
         _ftypMap.put("ftyphevc", FileType.Heif);
         _ftypMap.put("ftyphevx", FileType.Heif);
+
+        // CRX
+        _ftypMap.put("ftypcrx ", FileType.Crx);
     }
 
     @Override

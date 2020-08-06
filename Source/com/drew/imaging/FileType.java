@@ -64,6 +64,8 @@ public enum FileType
     Raf("RAF", "FujiFilm Camera Raw", null, "raf"),
     /** Panasonic camera raw. */
     Rw2("RW2", "Panasonic Camera Raw", null, "rw2"),
+    /** Canon camera raw (version 3). Shared by CR3 (image) and CRM (video). */
+    Crx("CRX", "Canon Camera Raw", null, "cr3", "crm"),
 
     // Only file detection
     Aac("AAC", "Advanced Audio Coding", "audio/aac", "m4a"),
