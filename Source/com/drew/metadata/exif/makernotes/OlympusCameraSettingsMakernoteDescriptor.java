@@ -351,10 +351,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return getIndexedDescription(TagAfSearch, "Not Ready", "Ready");
     }
 
-    /// <summary>
-    /// coordinates range from 0 to 255
-    /// </summary>
-    /// <returns></returns>
+    /** coordinates range from 0 to 255 */
     @Nullable
     public String getAfAreasDescription()
     {
@@ -386,10 +383,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return sb.length() == 0 ? null : sb.toString();
     }
 
-    /// <summary>
-    /// coordinates expressed as a percent
-    /// </summary>
-    /// <returns></returns>
+    /** coordinates expressed as a percent */
     @Nullable
     public String getAfPointSelectedDescription()
     {
@@ -484,10 +478,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         }
     }
 
-    /// <summary>
-    /// 3 or 4 values
-    /// </summary>
-    /// <returns></returns>
+    /** 3 or 4 values */
     @Nullable
     public String getFlashControlModeDescription()
     {
@@ -524,10 +515,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return sb.toString();
     }
 
-    /// <summary>
-    /// 3 or 4 values
-    /// </summary>
-    /// <returns></returns>
+    /** 3 or 4 values */
     @Nullable
     public String getFlashIntensityDescription()
     {
@@ -839,10 +827,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return getIndexedDescription(TagShadingCompensation, "Off", "On");
     }
 
-    /// <summary>
-    /// 3 or 4 values
-    /// </summary>
-    /// <returns></returns>
+    /** 3 or 4 values */
     @Nullable
     public String getGradationDescription()
     {
@@ -875,10 +860,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return ret;
     }
 
-    /// <summary>
-    /// 1 or 2 values
-    /// </summary>
-    /// <returns></returns>
+    /** 1 or 2 values */
     @Nullable
     public String getPictureModeDescription()
     {
@@ -1124,10 +1106,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return sb.substring(0, sb.length() - 2);
     }
 
-    /// <summary>
-    /// 2 or 3 numbers: 1. Mode, 2. Shot number, 3. Mode bits
-    /// </summary>
-    /// <returns></returns>
+    /** 2 or 3 numbers: 1. Mode, 2. Shot number, 3. Mode bits */
     @Nullable
     public String getDriveModeDescription()
     {
@@ -1174,10 +1153,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return a.toString();
     }
 
-    /// <summary>
-    /// 2 numbers: 1. Mode, 2. Shot number
-    /// </summary>
-    /// <returns></returns>
+    /** 2 numbers: 1. Mode, 2. Shot number */
     @Nullable
     public String getPanoramaModeDescription()
     {
@@ -1279,13 +1255,8 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return getIndexedDescription(TagExtendedWBDetect, "Off", "On");
     }
 
-    /// <summary>
-    /// converted to degrees of clockwise camera rotation
-    /// </summary>
-    /// <remarks>
-    /// TODO: need better image examples to test this function
-    /// </remarks>
-    /// <returns></returns>
+    /** converted to degrees of clockwise camera rotation */
+    // TODO: need better image examples to test this function
     @Nullable
     public String getRollAngleDescription()
     {
@@ -1300,13 +1271,8 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
         return String.format("%s %d", ret, values[1]);
     }
 
-    /// <summary>
-    /// converted to degrees of upward camera tilt
-    /// </summary>
-    /// <remarks>
-    /// TODO: need better image examples to test this function
-    /// </remarks>
-    /// <returns></returns>
+    /** converted to degrees of upward camera tilt */
+    // TODO: need better image examples to test this function
     @Nullable
     public String getPitchAngleDescription()
     {

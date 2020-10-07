@@ -527,16 +527,15 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
     }
 
-    /// <summary>
-    /// String description of CFA Pattern
-    /// </summary>
-    /// <remarks>
-    /// Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
-    /// It does not apply to all sensing methods.
-    ///
-    /// ExifDirectoryBase.TAG_CFA_PATTERN_2 holds only the pixel pattern. ExifDirectoryBase.TAG_CFA_REPEAT_PATTERN_DIM is expected to exist and pass
-    /// some conditional tests.
-    /// </remarks>
+    /**
+     * String description of CFA Pattern
+     *
+     * Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
+     * It does not apply to all sensing methods.
+     *
+     * ExifDirectoryBase.TAG_CFA_PATTERN_2 holds only the pixel pattern. ExifDirectoryBase.TAG_CFA_REPEAT_PATTERN_DIM is expected to exist and pass
+     * some conditional tests.
+     */
     @Nullable
     public String getCfaPattern2Description()
     {
@@ -1097,35 +1096,33 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         );
     }
 
-    /// <summary>
-    /// String description of CFA Pattern
-    /// </summary>
-    /// <remarks>
-    /// Converted from Exiftool version 10.33 created by Phil Harvey
-    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
-    /// lib\Image\ExifTool\Exif.pm
-    ///
-    /// Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
-    /// It does not apply to all sensing methods.
-    /// </remarks>
+    /**
+     * String description of CFA Pattern
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\Exif.pm
+     *
+     * Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
+     * It does not apply to all sensing methods.
+     */
     @Nullable
     public String getCfaPatternDescription()
     {
         return formatCFAPattern(decodeCfaPattern(TAG_CFA_PATTERN));
     }
 
-    /// <summary>
-    /// Decode raw CFAPattern value
-    /// </summary>
-    /// <remarks>
-    /// Converted from Exiftool version 10.33 created by Phil Harvey
-    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
-    /// lib\Image\ExifTool\Exif.pm
-    ///
-    /// The value consists of:
-    /// - Two short, being the grid width and height of the repeated pattern.
-    /// - Next, for every pixel in that pattern, an identification code.
-    /// </remarks>
+    /**
+     * Decode raw CFAPattern value
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\Exif.pm
+     *
+     * The value consists of:
+     * - Two short, being the grid width and height of the repeated pattern.
+     * - Next, for every pixel in that pattern, an identification code.
+     */
     @Nullable
     private int[] decodeCfaPattern(int tagType)
     {

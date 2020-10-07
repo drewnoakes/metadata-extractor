@@ -504,17 +504,17 @@ public class OlympusMakernoteDirectory extends Directory
         return _tagNameMap;
     }
 
-    // <summary>
-    // These values are currently decoded only for Olympus models.  Models with
-    // Olympus-style maker notes from other brands such as Acer, BenQ, Hitachi, HP,
-    // Premier, Konica-Minolta, Maginon, Ricoh, Rollei, SeaLife, Sony, Supra,
-    // Vivitar are not listed.
-    // </summary>
-    // <remarks>
-    // Converted from Exiftool version 10.33 created by Phil Harvey
-    // http://www.sno.phy.queensu.ca/~phil/exiftool/
-    // lib\Image\ExifTool\Olympus.pm
-    // </remarks>
+    /**
+     * These values are currently decoded only for Olympus models.  Models with
+     * Olympus-style maker notes from other brands such as Acer, BenQ, Hitachi, HP,
+     * Premier, Konica-Minolta, Maginon, Ricoh, Rollei, SeaLife, Sony, Supra,
+     * Vivitar are not listed.
+     *
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\Olympus.pm
+     */
     static final HashMap<String, String> OlympusCameraTypes = new HashMap<String, String>();
 
     static {

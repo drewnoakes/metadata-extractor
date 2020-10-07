@@ -688,14 +688,13 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return false;
     }
 
-    /// <summary>
-    /// Process PrintIM IFD
-    /// </summary>
-    /// <remarks>
-    /// Converted from Exiftool version 10.33 created by Phil Harvey
-    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
-    /// lib\Image\ExifTool\PrintIM.pm
-    /// </remarks>
+    /**
+     * Process PrintIM IFD
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\PrintIM.pm
+     */
     private static void processPrintIM(@NotNull final PrintIMDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount) throws IOException
     {
         Boolean resetByteOrder = null;
