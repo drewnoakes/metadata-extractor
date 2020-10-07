@@ -1149,7 +1149,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             short item0 = reader.getInt16(0);
             short item1 = reader.getInt16(2);
 
-            Boolean copyArray = false;
+            boolean copyArray = false;
             int end = 2 + item0 * item1;
             if (end > values.length) // sanity check in case of byte order problems; calculated 'end' should be <= length of the values
             {
