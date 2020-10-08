@@ -652,7 +652,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             ReconyxUltraFireMakernoteDirectory directory = new ReconyxUltraFireMakernoteDirectory();
             _metadata.addDirectory(directory);
             processReconyxUltraFireMakernote(directory, makernoteOffset, reader);
-        } else if ("SAMSUNG".equals(cameraMake)) {
+        } else if ("SAMSUNG".equalsIgnoreCase(cameraMake)) {
             // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
             pushDirectory(SamsungType2MakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
