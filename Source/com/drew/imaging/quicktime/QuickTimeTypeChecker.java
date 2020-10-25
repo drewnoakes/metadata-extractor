@@ -36,51 +36,51 @@ public class QuickTimeTypeChecker implements TypeChecker
         // http://www.ftyps.com
 
         // QuickTime Mov
-        _ftypMap.put("ftypmoov", FileType.QuickTime);
-        _ftypMap.put("ftypwide", FileType.QuickTime);
-        _ftypMap.put("ftypmdat", FileType.QuickTime);
-        _ftypMap.put("ftypfree", FileType.QuickTime);
-        _ftypMap.put("ftypqt  ", FileType.QuickTime);
-        _ftypMap.put("ftyp3g2a", FileType.QuickTime);
+        _ftypMap.put("moov", FileType.QuickTime);
+        _ftypMap.put("wide", FileType.QuickTime);
+        _ftypMap.put("mdat", FileType.QuickTime);
+        _ftypMap.put("free", FileType.QuickTime);
+        _ftypMap.put("qt  ", FileType.QuickTime);
+        _ftypMap.put("3g2a", FileType.QuickTime);
 
         // MP4
-        _ftypMap.put("ftypavc1", FileType.Mp4);
-        _ftypMap.put("ftypiso2", FileType.Mp4);
-        _ftypMap.put("ftypisom", FileType.Mp4);
-        _ftypMap.put("ftypM4A ", FileType.Mp4);
-        _ftypMap.put("ftypM4B ", FileType.Mp4);
-        _ftypMap.put("ftypM4P ", FileType.Mp4);
-        _ftypMap.put("ftypM4V ", FileType.Mp4);
-        _ftypMap.put("ftypM4VH", FileType.Mp4);
-        _ftypMap.put("ftypM4VP", FileType.Mp4);
-        _ftypMap.put("ftypmmp4", FileType.Mp4);
-        _ftypMap.put("ftypmp41", FileType.Mp4);
-        _ftypMap.put("ftypmp42", FileType.Mp4);
-        _ftypMap.put("ftypmp71", FileType.Mp4);
-        _ftypMap.put("ftypMSNV", FileType.Mp4);
-        _ftypMap.put("ftypNDAS", FileType.Mp4);
-        _ftypMap.put("ftypNDSC", FileType.Mp4);
-        _ftypMap.put("ftypNDSH", FileType.Mp4);
-        _ftypMap.put("ftypNDSM", FileType.Mp4);
-        _ftypMap.put("ftypNDSP", FileType.Mp4);
-        _ftypMap.put("ftypNDSS", FileType.Mp4);
-        _ftypMap.put("ftypNDXC", FileType.Mp4);
-        _ftypMap.put("ftypNDXH", FileType.Mp4);
-        _ftypMap.put("ftypNDXM", FileType.Mp4);
-        _ftypMap.put("ftypNDXP", FileType.Mp4);
-        _ftypMap.put("ftypNDXS", FileType.Mp4);
-        _ftypMap.put("ftypnvr1", FileType.Mp4);
+        _ftypMap.put("avc1", FileType.Mp4);
+        _ftypMap.put("iso2", FileType.Mp4);
+        _ftypMap.put("isom", FileType.Mp4);
+        _ftypMap.put("M4A ", FileType.Mp4);
+        _ftypMap.put("M4B ", FileType.Mp4);
+        _ftypMap.put("M4P ", FileType.Mp4);
+        _ftypMap.put("M4V ", FileType.Mp4);
+        _ftypMap.put("M4VH", FileType.Mp4);
+        _ftypMap.put("M4VP", FileType.Mp4);
+        _ftypMap.put("mmp4", FileType.Mp4);
+        _ftypMap.put("mp41", FileType.Mp4);
+        _ftypMap.put("mp42", FileType.Mp4);
+        _ftypMap.put("mp71", FileType.Mp4);
+        _ftypMap.put("MSNV", FileType.Mp4);
+        _ftypMap.put("NDAS", FileType.Mp4);
+        _ftypMap.put("NDSC", FileType.Mp4);
+        _ftypMap.put("NDSH", FileType.Mp4);
+        _ftypMap.put("NDSM", FileType.Mp4);
+        _ftypMap.put("NDSP", FileType.Mp4);
+        _ftypMap.put("NDSS", FileType.Mp4);
+        _ftypMap.put("NDXC", FileType.Mp4);
+        _ftypMap.put("NDXH", FileType.Mp4);
+        _ftypMap.put("NDXM", FileType.Mp4);
+        _ftypMap.put("NDXP", FileType.Mp4);
+        _ftypMap.put("NDXS", FileType.Mp4);
+        _ftypMap.put("nvr1", FileType.Mp4);
 
         // HEIF
-        _ftypMap.put("ftypmif1", FileType.Heif);
-        _ftypMap.put("ftypmsf1", FileType.Heif);
-        _ftypMap.put("ftypheic", FileType.Heif);
-        _ftypMap.put("ftypheix", FileType.Heif);
-        _ftypMap.put("ftyphevc", FileType.Heif);
-        _ftypMap.put("ftyphevx", FileType.Heif);
+        _ftypMap.put("mif1", FileType.Heif);
+        _ftypMap.put("msf1", FileType.Heif);
+        _ftypMap.put("heic", FileType.Heif);
+        _ftypMap.put("heix", FileType.Heif);
+        _ftypMap.put("hevc", FileType.Heif);
+        _ftypMap.put("hevx", FileType.Heif);
 
         // CRX
-        _ftypMap.put("ftypcrx ", FileType.Crx);
+        _ftypMap.put("crx ", FileType.Crx);
     }
 
     @Override
@@ -92,12 +92,21 @@ public class QuickTimeTypeChecker implements TypeChecker
     @Override
     public FileType checkType(byte[] bytes)
     {
-        String eightCC = new String(bytes, 4, 8);
+        // Test at offset 4 for Base Media Format (i.e. QuickTime, MP4, etc...) identifier "ftyp"
+        // plus four identifying characters.
 
-        // Test at offset 4 for Base Media Format (i.e. QuickTime, MP4, etc...) identifier "ftyp" plus four identifying characters
-        FileType t = _ftypMap.get(eightCC);
-        if (t != null)
-            return t;
+        if (bytes[4] == 'f' &&
+            bytes[5] == 't' &&
+            bytes[6] == 'y' &&
+            bytes[7] == 'p') {
+
+            String fourCC = new String(bytes, 8, 4);
+
+            FileType t = _ftypMap.get(fourCC);
+
+            if (t != null)
+                return t;
+        }
 
         return FileType.Unknown;
     }
