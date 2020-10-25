@@ -106,6 +106,8 @@ public class QuickTimeTypeChecker implements TypeChecker
 
             if (t != null)
                 return t;
+
+            return FileType.QuickTime;
         }
 
         return FileType.Unknown;
