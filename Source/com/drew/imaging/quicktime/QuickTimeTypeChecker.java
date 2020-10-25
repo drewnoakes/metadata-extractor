@@ -44,6 +44,7 @@ public class QuickTimeTypeChecker implements TypeChecker
         _ftypMap.put("3g2a", FileType.QuickTime);
 
         // MP4
+        _ftypMap.put("3gp5", FileType.Mp4);
         _ftypMap.put("avc1", FileType.Mp4);
         _ftypMap.put("iso2", FileType.Mp4);
         _ftypMap.put("isom", FileType.Mp4);
