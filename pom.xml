@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.adobe.xmp</groupId>
             <artifactId>xmpcore</artifactId>
-            <version>6.0.6</version>
+            <version>6.1.11</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
