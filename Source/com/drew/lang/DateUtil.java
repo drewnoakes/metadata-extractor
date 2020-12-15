@@ -33,7 +33,7 @@ public class DateUtil
      * The offset (in milliseconds) to add to a MP4 date/time integer value to
      * align with Java's Epoch.
      */
-    private static final long EPOCH_1_JAN_1904 = -2082844799175L;
+    private static final long EPOCH_1_JAN_1904 = -2082844800000L;
 
     public static boolean isValidDate(int year, int month, int day)
     {

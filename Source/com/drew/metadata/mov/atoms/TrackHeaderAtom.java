@@ -60,7 +60,7 @@ public class TrackHeaderAtom extends FullAtom {
             double y = matrix[0] + matrix[3];
             double theta = Math.atan2(y, x);
             double degree = Math.toDegrees(theta) - 45;
-            directory.setDouble(QuickTimeDirectory.TAG_ROTATION, Math.abs(degree));
+            directory.setDouble(QuickTimeDirectory.TAG_ROTATION, degree);
         }
     }
 }

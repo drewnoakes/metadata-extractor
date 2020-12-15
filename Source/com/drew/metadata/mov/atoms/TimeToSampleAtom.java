@@ -34,15 +34,14 @@ import java.util.ArrayList;
  */
 public class TimeToSampleAtom extends FullAtom
 {
-    long numberOfEntries;
-    ArrayList<Entry> entries;
+    private final ArrayList<Entry> entries;
 
     public TimeToSampleAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
-        numberOfEntries = reader.getUInt32();
-        entries = new ArrayList<Entry>();
+        long numberOfEntries = reader.getUInt32();
+        entries = new ArrayList<Entry>((int)numberOfEntries);
         for (int i = 0; i < numberOfEntries; i++) {
             entries.add(new Entry(reader));
         }

@@ -53,7 +53,7 @@ public class QuickTimeMetadataDescriptor extends QuickTimeDescriptor
         return getByteLengthDescription(TAG_ARTWORK);
     }
 
-    private String getLocationRoleDescription()
+    public String getLocationRoleDescription()
     {
         return getIndexedDescription(TAG_LOCATION_ROLE, 0,
             "Shooting location",
