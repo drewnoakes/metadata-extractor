@@ -33,11 +33,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HeifReader {
+public class HeifReader
+{
     private static final Set<String> ACCEPTABLE_PRE_META_BOX_TYPES =
         new HashSet<String>(Arrays.asList(HeifBoxTypes.BOX_FILE_TYPE, HeifContainerTypes.BOX_METADATA));
 
-    public void extract(InputStream inputStream, HeifHandler<?> handler) {
+    public void extract(InputStream inputStream, HeifHandler<?> handler)
+    {
         // We need to read through the input stream to find the meta box which will tell us what handler to use
 
         // The meta box is not necessarily the first box, so we need to mark the input stream (if we can)
@@ -63,7 +65,8 @@ public class HeifReader {
                                       SequentialReader reader,
                                       long atomEnd,
                                       HeifHandler<?> handler,
-                                      boolean markSupported) throws IOException {
+                                      boolean markSupported) throws IOException
+    {
         boolean foundMetaBox = false;
         boolean needToReset = false;
         try {
@@ -99,7 +102,8 @@ public class HeifReader {
         }
     }
 
-    private HeifHandler<?> processBoxes(SequentialReader reader, long atomEnd, HeifHandler<?> handler) {
+    private HeifHandler<?> processBoxes(SequentialReader reader, long atomEnd, HeifHandler<?> handler)
+    {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
@@ -113,7 +117,8 @@ public class HeifReader {
         return handler;
     }
 
-    private HeifHandler<?> processBox(SequentialReader reader, Box box, HeifHandler<?> handler) throws IOException {
+    private HeifHandler<?> processBox(SequentialReader reader, Box box, HeifHandler<?> handler) throws IOException
+    {
         if (handler.shouldAcceptContainer(box)) {
             handler.processContainer(box, reader);
             handler = processBoxes(reader, box.size + reader.getPosition() - 8, handler);
