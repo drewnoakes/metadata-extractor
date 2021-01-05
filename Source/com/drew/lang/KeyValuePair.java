@@ -50,4 +50,10 @@ public class KeyValuePair
     {
         return _value;
     }
+    
+    @Override
+    public String toString()
+    {
+        return _key + ": " + _value;
+    }
 }
