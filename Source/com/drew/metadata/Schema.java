@@ -38,4 +38,6 @@ public class Schema
     public static final String EXIF_TIFF_PROPERTIES = "http://ns.adobe.com/tiff/1.0/";
     @NotNull
     public static final String DUBLIN_CORE_SPECIFIC_PROPERTIES = "http://purl.org/dc/elements/1.1/";
+    @NotNull
+    public static final String PHOTOSHOP_PROPERTIES = "http://ns.adobe.com/photoshop/1.0/";
 }
