@@ -34,6 +34,10 @@ matrix:
 
 install: mvn install -DskipTests=true -Dgpg.skip=true
 
+cache:
+  directories:
+  - $HOME/.m2
+
 script:
   - mvn clean verify -Dgpg.skip=true
 
