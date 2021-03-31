@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampl
         directory.setInt(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, description.sampleSize);
     }
 
-    class SoundSampleDescription extends SampleDescription
+    static class SoundSampleDescription extends SampleDescription
     {
         int version;
         int revisionLevel;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -76,10 +76,14 @@ public class WebpRiffHandler implements RiffHandler
 
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
-//        System.out.println("Chunk " + fourCC + " " + payload.length + " bytes");
         WebpDirectory directory = new WebpDirectory();
         if (fourCC.equals(WebpDirectory.CHUNK_EXIF)) {
-            new ExifReader().extract(new ByteArrayReader(payload), _metadata);
+            // We have seen WebP images with and without the preamble here. It's likely that some software incorrectly
+            // copied an entire JPEG segment into the WebP image. Regardless, we can handle it here.
+            ByteArrayReader reader = ExifReader.startsWithJpegExifPreamble(payload)
+                ? new ByteArrayReader(payload, ExifReader.JPEG_SEGMENT_PREAMBLE.length())
+                : new ByteArrayReader(payload);
+            new ExifReader().extract(reader, _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_ICCP)) {
             new IccReader().extract(new ByteArrayReader(payload), _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_XMP)) {
@@ -109,7 +113,7 @@ public class WebpRiffHandler implements RiffHandler
                 _metadata.addDirectory(directory);
 
             } catch (IOException e) {
-                e.printStackTrace(System.err);
+                directory.addError(e.getMessage());
             }
         } else if (fourCC.equals(WebpDirectory.CHUNK_VP8L) && payload.length > 4) {
             RandomAccessReader reader = new ByteArrayReader(payload);
@@ -136,7 +140,7 @@ public class WebpRiffHandler implements RiffHandler
                 _metadata.addDirectory(directory);
 
             } catch (IOException e) {
-                e.printStackTrace(System.err);
+                directory.addError(e.getMessage());
             }
         } else if (fourCC.equals(WebpDirectory.CHUNK_VP8) && payload.length > 9) {
             RandomAccessReader reader = new ByteArrayReader(payload);

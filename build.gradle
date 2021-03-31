@@ -31,12 +31,16 @@ compileJava {
     options.encoding = 'UTF-8'
 }
 
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
 dependencies {
-    compile 'com.adobe.xmp:xmpcore:5.1.3'
+    compile 'com.adobe.xmp:xmpcore:6.0.6'
     testCompile 'junit:junit:4.12'
 }
 
-task wrapper(type: Wrapper) {
+wrapper {
     gradleVersion = '3.3'
 }
 

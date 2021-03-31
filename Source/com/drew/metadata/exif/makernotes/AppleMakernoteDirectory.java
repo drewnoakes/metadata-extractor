@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -40,10 +40,11 @@ public class AppleMakernoteDirectory extends Directory
     public static final int TAG_HDR_IMAGE_TYPE = 0x000a;
     public static final int TAG_BURST_UUID = 0x000b;
     public static final int TAG_CONTENT_IDENTIFIER = 0x0011;
-    public static final int TAG_IMAGE_UNIQUE_ID = 0x0016;
+    public static final int TAG_IMAGE_UNIQUE_ID = 0x0015; // TODO is this actually 0x0016?
+    public static final int TAG_LIVE_PHOTO_ID = 0x0017;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
@@ -53,6 +54,7 @@ public class AppleMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_BURST_UUID, "Burst UUID");
         _tagNameMap.put(TAG_CONTENT_IDENTIFIER, "Content Identifier");
         _tagNameMap.put(TAG_IMAGE_UNIQUE_ID, "Image Unique ID");
+        _tagNameMap.put(TAG_LIVE_PHOTO_ID, "Live Photo ID");
     }
 
     public AppleMakernoteDirectory()

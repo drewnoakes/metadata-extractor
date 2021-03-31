@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -64,16 +64,6 @@ public class PanasonicRawDistortionDescriptor extends TagDescriptor<PanasonicRaw
             default:
                 return super.getDescription(tagType);
         }
-    }
-
-    @Nullable
-    public String getWbTypeDescription(int tagType)
-    {
-        Integer wbtype = _directory.getInteger(tagType);
-        if (wbtype == null)
-            return null;
-
-        return super.getLightSourceDescription(wbtype.shortValue());
     }
 
     @Nullable

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -138,31 +138,28 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsDestLatitudeDescription()
     {
-        Rational[] latitudes = _directory.getRationalArray(TAG_DEST_LATITUDE);
-        String latitudeRef = _directory.getString(TAG_DEST_LATITUDE_REF);
-
-        if (latitudes == null || latitudes.length != 3 || latitudeRef == null)
-            return null;
-
-        Double lat = GeoLocation.degreesMinutesSecondsToDecimal(
-            latitudes[0], latitudes[1], latitudes[2], latitudeRef.equalsIgnoreCase("S"));
-
-        return lat == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(lat);
+        return getGeoLocationDimension(TAG_DEST_LATITUDE, TAG_DEST_LATITUDE_REF, "S");
     }
 
     @Nullable
     public String getGpsDestLongitudeDescription()
     {
-        Rational[] longitudes = _directory.getRationalArray(TAG_LONGITUDE);
-        String longitudeRef = _directory.getString(TAG_LONGITUDE_REF);
+        return getGeoLocationDimension(TAG_DEST_LONGITUDE, TAG_DEST_LONGITUDE_REF, "W");
+    }
 
-        if (longitudes == null || longitudes.length != 3 || longitudeRef == null)
+    @Nullable
+    private String getGeoLocationDimension(int tagValue, int tagRef, String positiveRef)
+    {
+        Rational[] values = _directory.getRationalArray(tagValue);
+        String ref = _directory.getString(tagRef);
+
+        if (values == null || values.length != 3 || ref == null)
             return null;
 
-        Double lon = GeoLocation.degreesMinutesSecondsToDecimal(
-            longitudes[0], longitudes[1], longitudes[2], longitudeRef.equalsIgnoreCase("W"));
+        Double dec = GeoLocation.degreesMinutesSecondsToDecimal(
+            values[0], values[1], values[2], ref.equalsIgnoreCase(positiveRef));
 
-        return lon == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(lon);
+        return dec == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(dec);
     }
 
     @Nullable

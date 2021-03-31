@@ -106,7 +106,7 @@ public class OlympusCameraSettingsMakernoteDirectory extends Directory
     public static final int TagDateTimeUtc = 0x908;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TagCameraSettingsVersion, "Camera Settings Version");

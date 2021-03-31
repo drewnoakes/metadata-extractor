@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public abstract class Directory
     private final Collection<String> _errorList = new ArrayList<String>(4);
 
     /** The descriptor used to interpret tag values. */
-    protected TagDescriptor _descriptor;
+    protected TagDescriptor<?> _descriptor;
 
     @Nullable
     private Directory _parent;
@@ -137,7 +137,7 @@ public abstract class Directory
      * @param descriptor the descriptor used to interpret tag values
      */
     @java.lang.SuppressWarnings({ "ConstantConditions" })
-    public void setDescriptor(@NotNull TagDescriptor descriptor)
+    public void setDescriptor(@NotNull TagDescriptor<?> descriptor)
     {
         if (descriptor == null)
             throw new NullPointerException("cannot set a null descriptor");
@@ -896,7 +896,7 @@ public abstract class Directory
             }
 
             // if the date string has time zone information, it supersedes the timeZone parameter
-            Pattern timeZonePattern = Pattern.compile("(Z|[+-]\\d\\d:\\d\\d)$");
+            Pattern timeZonePattern = Pattern.compile("(Z|[+-]\\d\\d:\\d\\d|[+-]\\d\\d\\d\\d)$");
             Matcher timeZoneMatcher = timeZonePattern.matcher(dateString);
             if (timeZoneMatcher.find()) {
                 timeZone = TimeZone.getTimeZone("GMT" + timeZoneMatcher.group().replaceAll("Z", ""));

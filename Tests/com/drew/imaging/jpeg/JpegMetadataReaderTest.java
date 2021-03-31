@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,7 +50,13 @@ public class JpegMetadataReaderTest
     @Test
     public void testExtractMetadataUsingInputStream() throws Exception
     {
-        validate(JpegMetadataReader.readMetadata(new FileInputStream((new File("Tests/Data/withExif.jpg")))));
+        FileInputStream stream = new FileInputStream((new File("Tests/Data/withExif.jpg")));
+
+        try {
+            validate(JpegMetadataReader.readMetadata(stream));
+        } finally {
+            stream.close();
+        }
     }
 
     @Test

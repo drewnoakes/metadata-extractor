@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ package com.drew.imaging.quicktime;
 
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.mov.QuickTimeDirectory;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.atoms.Atom;
 
 import java.io.IOException;
@@ -36,15 +35,17 @@ public class QuickTimeReader
 {
     private QuickTimeReader() {}
 
-    public static void extract(@NotNull InputStream inputStream, @NotNull QuickTimeHandler handler)
+    public static void extract(@NotNull InputStream inputStream, @NotNull QuickTimeHandler<?> handler)
     {
         StreamReader reader = new StreamReader(inputStream);
         reader.setMotorolaByteOrder(true);
 
-        processAtoms(reader, -1, handler);
+        QuickTimeContext context = new QuickTimeContext();
+
+        processAtoms(reader, -1, handler, context);
     }
 
-    private static void processAtoms(StreamReader reader, long atomEnd, QuickTimeHandler handler)
+    private static void processAtoms(StreamReader reader, long atomEnd, QuickTimeHandler<?> handler, QuickTimeContext context)
     {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
@@ -55,9 +56,9 @@ public class QuickTimeReader
                 // Unknown atoms will be skipped
 
                 if (handler.shouldAcceptContainer(atom)) {
-                    processAtoms(reader, atom.size + reader.getPosition() - 8, handler.processContainer(atom));
+                    processAtoms(reader, atom.size + reader.getPosition() - 8, handler.processContainer(atom, context), context);
                 } else if (handler.shouldAcceptAtom(atom)) {
-                    handler = handler.processAtom(atom, reader.getBytes((int)atom.size - 8));
+                    handler = handler.processAtom(atom, reader.getBytes((int)atom.size - 8), context);
                 } else if (atom.size > 1) {
                     reader.skip(atom.size - 8);
                 } else if (atom.size == -1) {

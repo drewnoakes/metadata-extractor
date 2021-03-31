@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -62,10 +62,9 @@ public class PanasonicRawWbInfoDescriptor extends TagDescriptor<PanasonicRawWbIn
     @Nullable
     public String getWbTypeDescription(int tagType)
     {
-        Integer wbtype = _directory.getInteger(tagType);
-        if (wbtype == null)
+        Integer value = _directory.getInteger(tagType);
+        if (value == null)
             return null;
-
-        return super.getLightSourceDescription(wbtype.shortValue());
+        return ExifDescriptorBase.getWhiteBalanceDescription(value);
     }
 }

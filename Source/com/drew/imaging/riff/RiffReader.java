@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ public class RiffReader
                     reader.skip(size);
                 }
                 // Bytes read must be even - skip one if not
-                if (size % 2 == 1) {
+                if ((size & 1) == 1) {
                     reader.skip(1);
                 }
             }

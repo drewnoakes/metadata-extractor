@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public class HeifBoxHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    public boolean shouldAcceptContainer(Box box)
+    public boolean shouldAcceptContainer(@NotNull Box box)
     {
         return box.type.equals(HeifContainerTypes.BOX_METADATA)
             || box.type.equals(HeifContainerTypes.BOX_IMAGE_PROPERTY)
@@ -70,13 +70,13 @@ public class HeifBoxHandler extends HeifHandler<HeifDirectory>
     }
 
     @Override
-    public HeifHandler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
+    public HeifHandler<?> processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
             if (box.type.equals(HeifBoxTypes.BOX_FILE_TYPE)) {
                 processFileType(reader, box);
-            }else if (box.type.equals(HeifBoxTypes.BOX_HANDLER)) {
+            } else if (box.type.equals(HeifBoxTypes.BOX_HANDLER)) {
                 handlerBox = new HandlerBox(reader, box);
                 return handlerFactory.getHandler(handlerBox, metadata);
             }

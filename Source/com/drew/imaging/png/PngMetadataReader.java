@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,10 +20,14 @@
  */
 package com.drew.imaging.png;
 
+import com.drew.imaging.tiff.TiffProcessingException;
+import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
+import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
@@ -73,6 +77,7 @@ public class PngMetadataReader
         desiredChunkTypes.add(PngChunkType.tIME);
         desiredChunkTypes.add(PngChunkType.pHYs);
         desiredChunkTypes.add(PngChunkType.sBIT);
+        desiredChunkTypes.add(PngChunkType.eXIf);
 
         _desiredChunkTypes = Collections.unmodifiableSet(desiredChunkTypes);
     }
@@ -102,7 +107,7 @@ public class PngMetadataReader
             try {
                 processChunk(metadata, chunk);
             } catch (Exception e) {
-                e.printStackTrace(System.err);
+                metadata.addDirectory(new ErrorDirectory("Exception reading PNG chunk: " + e.getMessage()));
             }
         }
 
@@ -219,7 +224,6 @@ public class PngMetadataReader
                 try {
                     textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
                 } catch(java.util.zip.ZipException zex) {
-                    textBytes = null;
                     PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
                     directory.addError(String.format("Exception decompressing PNG zTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
                     metadata.addDirectory(directory);
@@ -264,7 +268,6 @@ public class PngMetadataReader
                     try {
                         textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
                     } catch(java.util.zip.ZipException zex) {
-                        textBytes = null;
                         PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                         directory.addError(String.format("Exception decompressing PNG iTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
                         metadata.addDirectory(directory);
@@ -324,6 +327,19 @@ public class PngMetadataReader
             PngDirectory directory = new PngDirectory(PngChunkType.sBIT);
             directory.setByteArray(PngDirectory.TAG_SIGNIFICANT_BITS, bytes);
             metadata.addDirectory(directory);
+        } else if (chunkType.equals(PngChunkType.eXIf)) {
+            try {
+                ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
+                new TiffReader().processTiff(new ByteArrayReader(bytes), handler, 0);
+            } catch (TiffProcessingException ex) {
+                PngDirectory directory = new PngDirectory(PngChunkType.eXIf);
+                directory.addError(ex.getMessage());
+                metadata.addDirectory(directory);
+            } catch (IOException ex) {
+                PngDirectory directory = new PngDirectory(PngChunkType.eXIf);
+                directory.addError(ex.getMessage());
+                metadata.addDirectory(directory);
+            }
         }
     }
 }

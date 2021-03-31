@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -37,10 +37,12 @@ public final class Iso2022Converter
     private static final int DOT = 0xe280a2;
     private static final byte LATIN_CAPITAL_G = 0x47;
     private static final byte PERCENT_SIGN = 0x25;
+    private static final byte DOT_SIGN = 0x2E;
     private static final byte ESC = 0x1B;
 
     /**
      * Converts the given ISO2022 char set to a Java charset name.
+     * A reference of valid charsets can be found here: http://nozer0.github.io/en/technology/system/character-encoding/#ISO/IEC%202022
      *
      * @param bytes string data encoded using ISO2022
      * @return the Java charset name as a string, or <code>null</code> if the conversion was not possible
@@ -50,6 +52,9 @@ public final class Iso2022Converter
     {
         if (bytes.length > 2 && bytes[0] == ESC && bytes[1] == PERCENT_SIGN && bytes[2] == LATIN_CAPITAL_G)
             return UTF_8;
+
+        if (bytes.length > 2 && bytes[0] == ESC && bytes[1] == DOT_SIGN && bytes[2] == LATIN_CAPITAL_A)
+            return ISO_8859_1;
 
         if (bytes.length > 3 && bytes[0] == ESC && (bytes[3] & 0xFF | ((bytes[2] & 0xFF) << 8) | ((bytes[1] & 0xFF) << 16)) == DOT && bytes[4] == LATIN_CAPITAL_A)
             return ISO_8859_1;

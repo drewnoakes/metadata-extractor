@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
+import com.drew.metadata.mp4.Mp4Context;
 import com.drew.metadata.mp4.Mp4MediaHandler;
 import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.boxes.TimeToSampleBox;
@@ -34,9 +35,9 @@ import java.io.IOException;
 
 public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
 {
-    public Mp4VideoHandler(Metadata metadata)
+    public Mp4VideoHandler(Metadata metadata, Mp4Context context)
     {
-        super(metadata);
+        super(metadata, context);
     }
 
     @Override
@@ -67,9 +68,9 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     }
 
     @Override
-    public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box, Mp4Context context) throws IOException
     {
         TimeToSampleBox timeToSampleBox = new TimeToSampleBox(reader, box);
-        timeToSampleBox.addMetadata(directory);
+        timeToSampleBox.addMetadata(directory, context);
     }
 }

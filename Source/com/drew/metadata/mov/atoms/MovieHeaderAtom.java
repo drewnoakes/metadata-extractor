@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,14 +20,11 @@
  */
 package com.drew.metadata.mov.atoms;
 
+import com.drew.lang.DateUtil;
 import com.drew.lang.Rational;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mov.QuickTimeDirectory;
-
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-
 import static com.drew.metadata.mov.QuickTimeDirectory.*;
 
 /**
@@ -37,20 +34,21 @@ import static com.drew.metadata.mov.QuickTimeDirectory.*;
  */
 public class MovieHeaderAtom extends FullAtom
 {
-    long creationTime;
-    long modificationTime;
-    long timescale;
-    long duration;
-    int preferredRate;
-    int preferredVolume;
-    int[] matrixStructure;
-    long previewTime;
-    long previewDuration;
-    long posterTime;
-    long selectionTime;
-    long selectionDuration;
-    long currentTime;
-    long nextTrackID;
+    private long creationTime;
+    private long modificationTime;
+    private long timescale;
+    private long duration;
+    private int preferredRate;
+    private int preferredVolume;
+    // TODO this matrix data is not currently used anywhere
+    private int[] matrixStructure;
+    private long previewTime;
+    private long previewDuration;
+    private long posterTime;
+    private long selectionTime;
+    private long selectionDuration;
+    private long currentTime;
+    private long nextTrackID;
 
     public MovieHeaderAtom(SequentialReader reader, Atom atom) throws IOException
     {
@@ -86,26 +84,22 @@ public class MovieHeaderAtom extends FullAtom
     public void addMetadata(QuickTimeDirectory directory)
     {
         // Get creation/modification times
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-        Date date = calendar.getTime();
-        long macToUnixEpochOffset = date.getTime();
-        directory.setDate(TAG_CREATION_TIME, new Date((creationTime * 1000) + macToUnixEpochOffset));
-        directory.setDate(TAG_MODIFICATION_TIME, new Date((modificationTime * 1000) + macToUnixEpochOffset));
+        directory.setDate(TAG_CREATION_TIME, DateUtil.get1Jan1904EpochDate(creationTime));
+        directory.setDate(TAG_MODIFICATION_TIME, DateUtil.get1Jan1904EpochDate(modificationTime));
 
         // Get duration and time scale
         directory.setLong(TAG_DURATION, duration);
         directory.setLong(TAG_TIME_SCALE, timescale);
-        directory.setRational(QuickTimeDirectory.TAG_DURATION_SECONDS, new Rational(duration, timescale));
+        directory.setRational(TAG_DURATION_SECONDS, new Rational(duration, timescale));
 
         // Calculate preferred rate fixed point
         double preferredRateInteger = (preferredRate & 0xFFFF0000) >> 16;
-        double preferredRateFraction = (preferredRate & 0x0000FFFF) / Math.pow(2, 4);
+        double preferredRateFraction = (preferredRate & 0x0000FFFF) / 16.0d;
         directory.setDouble(TAG_PREFERRED_RATE, preferredRateInteger + preferredRateFraction);
 
         // Calculate preferred volume fixed point
         double preferredVolumeInteger = (preferredVolume & 0xFF00) >> 8;
-        double preferredVolumeFraction = (preferredVolume & 0x00FF) / Math.pow(2, 2);
+        double preferredVolumeFraction = (preferredVolume & 0x00FF) / 8.0d;
         directory.setDouble(TAG_PREFERRED_VOLUME, preferredVolumeInteger + preferredVolumeFraction);
 
         directory.setLong(TAG_PREVIEW_TIME, previewTime);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,48 +21,48 @@
 package com.drew.imaging.png;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public enum PngColorType
+public class PngColorType
 {
     /**
      * Each pixel is a greyscale sample.
      */
-    Greyscale(0, "Greyscale", 1,2,4,8,16),
+    public static final PngColorType GREYSCALE = new PngColorType(0, "Greyscale", 1,2,4,8,16);
 
     /**
      * Each pixel is an R,G,B triple.
      */
-    TrueColor(2, "True Color", 8,16),
+    public static final PngColorType TRUE_COLOR = new PngColorType(2, "True Color", 8,16);
 
     /**
      * Each pixel is a palette index. Seeing this value indicates that a <code>PLTE</code> chunk shall appear.
      */
-    IndexedColor(3, "Indexed Color", 1,2,4,8),
+    public static final PngColorType INDEXED_COLOR = new PngColorType(3, "Indexed Color", 1,2,4,8);
 
     /**
      * Each pixel is a greyscale sample followed by an alpha sample.
      */
-    GreyscaleWithAlpha(4, "Greyscale with Alpha", 8,16),
+    public static final PngColorType GREYSCALE_WITH_ALPHA = new PngColorType(4, "Greyscale with Alpha", 8,16);
 
     /**
      * Each pixel is an R,G,B triple followed by an alpha sample.
      */
-    TrueColorWithAlpha(6, "True Color with Alpha", 8,16);
+    public static final PngColorType TRUE_COLOR_WITH_ALPHA = new PngColorType(6, "True Color with Alpha", 8,16);
 
-    @Nullable
+    @NotNull
     public static PngColorType fromNumericValue(int numericValue)
     {
-        PngColorType[] colorTypes = PngColorType.class.getEnumConstants();
-        for (PngColorType colorType : colorTypes) {
-            if (colorType.getNumericValue() == numericValue) {
-                return colorType;
-            }
+        switch (numericValue) {
+            case 0: return GREYSCALE;
+            case 2: return TRUE_COLOR;
+            case 3: return INDEXED_COLOR;
+            case 4: return GREYSCALE_WITH_ALPHA;
+            case 6: return TRUE_COLOR_WITH_ALPHA;
         }
-        return null;
+        return new PngColorType(numericValue, "Unknown (" + numericValue + ")");
     }
 
     private final int _numericValue;

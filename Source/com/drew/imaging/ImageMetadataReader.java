@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.file.FileSystemMetadataReader;
@@ -172,7 +171,7 @@ public class ImageMetadataReader
                 return AviMetadataReader.readMetadata(inputStream);
             case Wav:
                 return WavMetadataReader.readMetadata(inputStream);
-            case Mov:
+            case QuickTime:
                 return QuickTimeMetadataReader.readMetadata(inputStream);
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);
@@ -228,7 +227,7 @@ public class ImageMetadataReader
      *
      * @param args the command line arguments
      */
-    public static void main(@NotNull String[] args) throws MetadataException, IOException
+    public static void main(@NotNull String[] args)
     {
         Collection<String> argList = new ArrayList<String>(Arrays.asList(args));
         boolean markdownFormat = argList.remove("-markdown");
@@ -247,7 +246,7 @@ public class ImageMetadataReader
             File file = new File(filePath);
 
             if (!markdownFormat && argList.size()>1)
-                System.out.printf("\n***** PROCESSING: %s%n%n", filePath);
+                System.out.printf("%n***** PROCESSING: %s%n%n", filePath);
 
             Metadata metadata = null;
             try {

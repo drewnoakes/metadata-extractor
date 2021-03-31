@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ package com.drew.metadata.heif.boxes;
 import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
+import java.util.*;
 
 /**
  * ISO/IEC 14496-12:2015 pg.77-80
@@ -37,9 +38,14 @@ public class ItemLocationBox extends FullBox
     long itemID;
     int constructionMethod;
     int dataReferenceIndex;
-    byte[] baseOffset;
+    long baseOffset;
     int extentCount;
-    Extent[] extents;
+    SortedSet<Extent> extents = new TreeSet<Extent>(new Comparator<Extent>() {
+        @Override
+        public int compare(Extent left, Extent right) {
+            return (left.offset < right.offset) ? -1 : ((left.offset == right.offset) ? 0 : 1);
+        }
+    });
 
     public ItemLocationBox(SequentialReader reader, Box box) throws IOException
     {
@@ -72,20 +78,25 @@ public class ItemLocationBox extends FullBox
                 constructionMethod = (holder & 0x000F);
             }
             dataReferenceIndex = reader.getUInt16();
-            baseOffset = reader.getBytes(baseOffsetSize);
+            if (baseOffsetSize == 4) {
+                baseOffset = reader.getInt32();
+            } else if (baseOffsetSize == 8){
+                baseOffset = reader.getInt64();
+            } else {
+                baseOffset = 0;
+            }
             extentCount = reader.getUInt16();
 
             Long extentIndex = null;
             long extentOffset;
             long extentLength;
-            extents = new Extent[extentCount];
             for (int j = 0; j < extentCount; j++) {
                 if ((version == 1) || (version == 2) && (indexSize > 0)) {
                     extentIndex = getIntFromUnknownByte(indexSize, reader);
                 }
                 extentOffset = getIntFromUnknownByte(offsetSize, reader);
                 extentLength = getIntFromUnknownByte(lengthSize, reader);
-                extents[j] = new Extent(extentIndex == null ? null : extentIndex, extentOffset, extentLength);
+                extents.add(new Extent(itemID, extentIndex, extentOffset + baseOffset, extentLength));
             }
         }
     }
@@ -106,16 +117,34 @@ public class ItemLocationBox extends FullBox
         }
     }
 
-    class Extent
+    public static class Extent
     {
+        long itemId;
         Long index;
         long offset;
         long length;
 
-        public Extent(Long index, long offset, long length) {
+        public Extent(long itemId, Long index, long offset, long length) {
+            this.itemId = itemId;
             this.index = index;
             this.offset = offset;
             this.length = length;
         }
+
+        public long getOffset() {
+            return offset;
+        }
+
+        public long getLength() {
+            return length;
+        }
+
+        public long getItemId() {
+            return itemId;
+        }
+    }
+
+    public SortedSet<Extent> getExtents() {
+        return extents;
     }
 }

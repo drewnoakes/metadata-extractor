@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class XmpReaderTest
     @Test
     public void testExtract_PropertyCount() throws Exception
     {
-        assertEquals(168, _directory.getInt(XmpDirectory.TAG_XMP_VALUE_COUNT));
+        assertEquals(167, _directory.getInt(XmpDirectory.TAG_XMP_VALUE_COUNT));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class XmpReaderTest
     {
         Map<String,String> propertyMap = _directory.getXmpProperties();
 
-        assertEquals(168, propertyMap.size());
+        assertEquals(167, propertyMap.size());
 
         assertTrue(propertyMap.containsKey("photoshop:Country"));
         assertEquals("Deutschland", propertyMap.get("photoshop:Country"));

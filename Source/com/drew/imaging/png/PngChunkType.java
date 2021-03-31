@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ public class PngChunkType
     public static final PngChunkType sPLT;
     public static final PngChunkType tIME;
     public static final PngChunkType iTXt;
+    public static final PngChunkType eXIf;
 
     /**
      * Denotes an ancillary {@link PngChunk} that contains textual data, having first a keyword and then a value.
@@ -124,6 +125,7 @@ public class PngChunkType
             iTXt = new PngChunkType("iTXt", true);
             tEXt = new PngChunkType("tEXt", true);
             zTXt = new PngChunkType("zTXt", true);
+            eXIf = new PngChunkType("eXIf");
         } catch (PngProcessingException e) {
             throw new IllegalArgumentException(e);
         }

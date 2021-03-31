@@ -21,7 +21,13 @@ public class EpsMetadataReader {
     {
         Metadata metadata = new Metadata();
 
-        new EpsReader().extract(new FileInputStream(file), metadata);
+        FileInputStream stream = new FileInputStream(file);
+
+        try {
+            new EpsReader().extract(stream, metadata);
+        } finally {
+            stream.close();
+        }
 
         new FileSystemMetadataReader().read(file, metadata);
         return metadata;

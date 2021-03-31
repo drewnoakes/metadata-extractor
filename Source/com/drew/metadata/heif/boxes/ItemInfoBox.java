@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import com.drew.lang.SequentialReader;
 import com.drew.metadata.heif.HeifDirectory;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ISO/IEC 14496-12:2015 pg.81-83
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class ItemInfoBox extends FullBox
 {
     long entryCount;
-    ArrayList<ItemInfoEntry> entries;
+    Map<Long, ItemInfoEntry> entries;
 
     public ItemInfoBox(SequentialReader reader, Box box) throws IOException
     {
@@ -46,16 +46,17 @@ public class ItemInfoBox extends FullBox
         } else {
             entryCount = reader.getUInt32();
         }
-        entries = new ArrayList<ItemInfoEntry>();
+        entries = new HashMap<Long, ItemInfoEntry>();
         for (int i = 1; i <= entryCount; i++)
         {
             Box entryBox = new Box(reader);
             SequentialByteArrayReader byteReader = new SequentialByteArrayReader(reader.getBytes((int)entryBox.size - 8));
-            entries.add(new ItemInfoEntry(byteReader, entryBox));
+            ItemInfoEntry itemInfoEntry = new ItemInfoEntry(byteReader, entryBox);
+            entries.put(itemInfoEntry.itemID, itemInfoEntry);
         }
     }
 
-    class ItemInfoEntry extends FullBox
+    public static class ItemInfoEntry extends FullBox
     {
         long itemID;
         long itemProtectionIndex;
@@ -70,13 +71,16 @@ public class ItemInfoBox extends FullBox
         {
             super(reader, box);
 
+            // 4 Bytes for length, 4 Bytes for type. Reader is indexed from AFTER type but box.size INCLUDES the aforementioned 8 bytes
+            int headerLength = 8;
+
             if ((version == 0) || (version == 1)) {
                 itemID = reader.getUInt16();
                 itemProtectionIndex = reader.getUInt16();
-                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
-                contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
-                if (box.size - reader.getPosition() > 0) {
-                    extensionType = reader.getNullTerminatedString((int) (box.size - reader.getPosition()), Charsets.UTF_8);
+                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                if (box.size - reader.getPosition() - headerLength > 0) {
+                    extensionType = reader.getNullTerminatedString((int) (box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
                 }
             }
             if (version == 1) {
@@ -93,21 +97,29 @@ public class ItemInfoBox extends FullBox
                 itemProtectionIndex = reader.getUInt16();
                 itemType = reader.getString(4);
 
-                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
+                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
                 if (itemType.equals("mime")) {
-                    contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
-                    if (box.size - reader.getPosition() > 0) {
-                        contentEncoding = reader.getNullTerminatedString((int)(box.size - reader.getPosition()), Charsets.UTF_8);
+                    contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                    if (box.size - reader.getPosition() - headerLength > 0) {
+                        contentEncoding = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
                     }
                 } else if (itemType.equals("uri ")) {
-                    itemUriType = reader.getString((int)(box.size - reader.getPosition()));
+                    itemUriType = reader.getString((int)(box.size - reader.getPosition() - headerLength));
                 }
             }
+        }
+
+        public String getItemType() {
+            return itemType;
         }
     }
 
     public void addMetadata(HeifDirectory directory)
     {
 
+    }
+
+    public ItemInfoEntry getEntry(final long id) {
+        return entries.get(id);
     }
 }

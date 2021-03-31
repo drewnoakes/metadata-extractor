@@ -51,7 +51,7 @@ public class OlympusRawDevelopmentMakernoteDirectory extends Directory
     public static final int TagRawDevSettings = 0x010c;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TagRawDevVersion, "Raw Dev Version");

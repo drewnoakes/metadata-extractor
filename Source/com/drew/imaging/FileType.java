@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -44,11 +44,11 @@ public enum FileType
     Wav("WAV", "Waveform Audio File Format", "audio/vnd.wave", "wav", "wave"),
     Avi("AVI", "Audio Video Interleaved", "video/vnd.avi", "avi"),
     WebP("WebP", "WebP", "image/webp", "webp"),
-    Mov("MOV", "QuickTime Movie", "video/quicktime", "mov", "qt"),
+    QuickTime("MOV", "QuickTime Movie", "video/quicktime", "mov", "qt"),
     Mp4("MP4", "MPEG-4 Part 14", "video/mp4", "mp4", "m4a", "m4p", "m4b", "m4r", "m4v"),
     Heif("HEIF", "High Efficiency Image File Format", "image/heif", "heif", "heic"),
     Eps("EPS", "Encapsulated PostScript", "application/postscript", "eps", "epsf", "epsi"),
-    Mp3("MP3", "MP3", "audio/mpeg", "mp3"),
+    Mp3("MP3", "MPEG Audio Layer III", "audio/mpeg", "mp3"),
 
     /** Sony camera raw. */
     Arw("ARW", "Sony Camera Raw", null, "arw"),
@@ -64,6 +64,8 @@ public enum FileType
     Raf("RAF", "FujiFilm Camera Raw", null, "raf"),
     /** Panasonic camera raw. */
     Rw2("RW2", "Panasonic Camera Raw", null, "rw2"),
+    /** Canon camera raw (version 3). Shared by CR3 (image) and CRM (video). */
+    Crx("CRX", "Canon Camera Raw", null, "cr3", "crm"),
 
     // Only file detection
     Aac("AAC", "Advanced Audio Coding", "audio/aac", "m4a"),

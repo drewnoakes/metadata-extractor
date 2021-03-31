@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -407,60 +407,6 @@ public class TagDescriptor<T extends Directory>
         sb.append(" sec");
         return sb.toString();
 */
-    }
-
-    // EXIF LightSource
-    @Nullable
-    protected String getLightSourceDescription(short wbtype)
-    {
-        switch (wbtype) {
-            case 0:
-                return "Unknown";
-            case 1:
-                return "Daylight";
-            case 2:
-                return "Fluorescent";
-            case 3:
-                return "Tungsten (Incandescent)";
-            case 4:
-                return "Flash";
-            case 9:
-                return "Fine Weather";
-            case 10:
-                return "Cloudy";
-            case 11:
-                return "Shade";
-            case 12:
-                return "Daylight Fluorescent";    // (D 5700 - 7100K)
-            case 13:
-                return "Day White Fluorescent";   // (N 4600 - 5500K)
-            case 14:
-                return "Cool White Fluorescent";  // (W 3800 - 4500K)
-            case 15:
-                return "White Fluorescent";       // (WW 3250 - 3800K)
-            case 16:
-                return "Warm White Fluorescent";  // (L 2600 - 3250K)
-            case 17:
-                return "Standard Light A";
-            case 18:
-                return "Standard Light B";
-            case 19:
-                return "Standard Light C";
-            case 20:
-                return "D55";
-            case 21:
-                return "D65";
-            case 22:
-                return "D75";
-            case 23:
-                return "D50";
-            case 24:
-                return "ISO Studio Tungsten";
-            case 255:
-                return "Other";
-        }
-
-        return getDescription(wbtype);
     }
 
     // EXIF UserComment, GPSProcessingMethod and GPSAreaInformation

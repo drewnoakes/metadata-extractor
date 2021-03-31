@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,9 +35,9 @@ import java.io.IOException;
  */
 public class QuickTimeSoundHandler extends QuickTimeMediaHandler<QuickTimeSoundDirectory>
 {
-    public QuickTimeSoundHandler(Metadata metadata)
+    public QuickTimeSoundHandler(Metadata metadata, QuickTimeContext context)
     {
-        super(metadata);
+        super(metadata, context);
     }
 
     @NotNull
@@ -68,8 +68,8 @@ public class QuickTimeSoundHandler extends QuickTimeMediaHandler<QuickTimeSoundD
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom, QuickTimeContext context) throws IOException
     {
-        directory.setDouble(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_RATE, QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE);
+        directory.setDouble(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_RATE, context.timeScale);
     }
 }

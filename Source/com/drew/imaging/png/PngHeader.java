@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,14 +31,14 @@ import java.io.IOException;
  */
 public class PngHeader
 {
-    private int _imageWidth;
-    private int _imageHeight;
-    private byte _bitsPerSample;
+    private final int _imageWidth;
+    private final int _imageHeight;
+    private final byte _bitsPerSample;
     @NotNull
-    private PngColorType _colorType;
-    private byte _compressionType;
-    private byte _filterMethod;
-    private byte _interlaceMethod;
+    private final PngColorType _colorType;
+    private final byte _compressionType;
+    private final byte _filterMethod;
+    private final byte _interlaceMethod;
 
     public PngHeader(@NotNull byte[] bytes) throws PngProcessingException
     {
@@ -51,11 +51,7 @@ public class PngHeader
             _imageHeight = reader.getInt32();
             _bitsPerSample = reader.getInt8();
             byte colorTypeNumber = reader.getInt8();
-            PngColorType colorType = PngColorType.fromNumericValue(colorTypeNumber);
-            if (colorType == null) {
-                throw new PngProcessingException("Unexpected PNG color type: " + colorTypeNumber);
-            }
-            _colorType = colorType;
+            _colorType = PngColorType.fromNumericValue(colorTypeNumber);
             _compressionType = reader.getInt8();
             _filterMethod = reader.getInt8();
             _interlaceMethod = reader.getInt8();

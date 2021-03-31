@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,13 +20,12 @@
  */
 package com.drew.metadata.mp4.boxes;
 
+import com.drew.lang.DateUtil;
 import com.drew.lang.Rational;
 import com.drew.lang.SequentialReader;
 import com.drew.metadata.mp4.Mp4Directory;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * ISO/IED 14496-12:2015 pg.23
@@ -77,12 +76,8 @@ public class MovieHeaderBox extends FullBox
     public void addMetadata(Mp4Directory directory)
     {
         // Get creation/modification times
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-        Date date = calendar.getTime();
-        long macToUnixEpochOffset = date.getTime();
-        directory.setDate(Mp4Directory.TAG_CREATION_TIME, new Date((creationTime * 1000) + macToUnixEpochOffset));
-        directory.setDate(Mp4Directory.TAG_MODIFICATION_TIME, new Date((modificationTime * 1000) + macToUnixEpochOffset));
+        directory.setDate(Mp4Directory.TAG_CREATION_TIME, DateUtil.get1Jan1904EpochDate(creationTime));
+        directory.setDate(Mp4Directory.TAG_MODIFICATION_TIME, DateUtil.get1Jan1904EpochDate(modificationTime));
 
         // Get duration and time scale
         directory.setLong(Mp4Directory.TAG_DURATION, duration);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 package com.drew.metadata.mov;
 
 import com.drew.imaging.quicktime.QuickTimeHandler;
+import com.drew.lang.DateUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
@@ -28,10 +29,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.Atom;
 import com.drew.metadata.mov.media.QuickTimeMediaDirectory;
-
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Classes that extend this class should be from the media dat atom types:
@@ -41,19 +39,20 @@ import java.util.Date;
  */
 public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extends QuickTimeHandler<T>
 {
-    public QuickTimeMediaHandler(Metadata metadata)
+    public QuickTimeMediaHandler(Metadata metadata, QuickTimeContext context)
     {
         super(metadata);
-        if (QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME != null && QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME != null) {
+
+        if (context.creationTime != null && context.modificationTime != null) {
             // Get creation/modification times
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-            Date date = calendar.getTime();
-            long macToUnixEpochOffset = date.getTime();
-            String creationTimeStamp = new Date(QuickTimeHandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            String modificationTimeStamp = new Date(QuickTimeHandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            directory.setString(QuickTimeMediaDirectory.TAG_CREATION_TIME, creationTimeStamp);
-            directory.setString(QuickTimeMediaDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
+            directory.setDate(
+                QuickTimeMediaDirectory.TAG_CREATION_TIME,
+                DateUtil.get1Jan1904EpochDate(context.creationTime)
+            );
+            directory.setDate(
+                QuickTimeMediaDirectory.TAG_MODIFICATION_TIME,
+                DateUtil.get1Jan1904EpochDate(context.modificationTime)
+            );
         }
     }
 
@@ -75,7 +74,7 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
     }
 
     @Override
-    public QuickTimeMediaHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
+    public QuickTimeMediaHandler<?> processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
@@ -84,7 +83,7 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_SAMPLE_DESCRIPTION)) {
                 processSampleDescription(reader, atom);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_TIME_TO_SAMPLE)) {
-                processTimeToSample(reader, atom);
+                processTimeToSample(reader, atom, context);
             }
         }
         return this;
@@ -96,5 +95,5 @@ public abstract class QuickTimeMediaHandler<T extends QuickTimeDirectory> extend
 
     protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Atom atom, QuickTimeContext context) throws IOException;
 }

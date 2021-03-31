@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -46,11 +46,11 @@ public abstract class HeifHandler<T extends HeifDirectory>
 
     protected abstract boolean shouldAcceptContainer(@NotNull Box box);
 
-    protected abstract HeifHandler processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException;
+    protected abstract HeifHandler<?> processBox(@NotNull Box box, @NotNull byte[] payload) throws IOException;
 
     /**
      * There is potential for a box to both contain other boxes and contain information, so this method will
-     * handle those occurences.
+     * handle those occurrences.
      */
     protected abstract void processContainer(@NotNull Box box, @NotNull SequentialReader reader) throws IOException;
 }

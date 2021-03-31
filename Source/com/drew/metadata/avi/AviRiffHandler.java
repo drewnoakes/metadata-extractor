@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -48,9 +48,6 @@ public class AviRiffHandler implements RiffHandler
     @NotNull
     private final AviDirectory _directory;
 
-//    @NotNull
-//    private String _currentList = "";
-
     public AviRiffHandler(@NotNull Metadata metadata)
     {
         _directory = new AviDirectory();
@@ -71,11 +68,6 @@ public class AviRiffHandler implements RiffHandler
 
     public boolean shouldAcceptList(@NotNull String fourCC)
     {
-//        if (fourCC.equals(AviDirectory.LIST_HEADER) || fourCC.equals(AviDirectory.LIST_STREAM_HEADER) || fourCC.equals(AviDirectory.FORMAT)) {
-//            _currentList = fourCC;
-//        } else {
-//            _currentList = "";
-//        }
         return fourCC.equals(AviDirectory.LIST_HEADER)
             || fourCC.equals(AviDirectory.LIST_STREAM_HEADER)
             || fourCC.equals(AviDirectory.FORMAT);
@@ -108,9 +100,9 @@ public class AviRiffHandler implements RiffHandler
                         _directory.setDouble(AviDirectory.TAG_FRAMES_PER_SECOND, (dwRate / dwScale));
 
                         double duration = dwLength / (dwRate / dwScale);
-                        Integer hours = (int) duration / (int) (Math.pow(60, 2));
-                        Integer minutes = ((int) duration / (int) (Math.pow(60, 1))) - (hours * 60);
-                        Integer seconds = (int) Math.round((duration / (Math.pow(60, 0))) - (minutes * 60));
+                        int hours = (int) duration / (int) (Math.pow(60, 2));
+                        int minutes = ((int) duration / (int) (Math.pow(60, 1))) - (hours * 60);
+                        int seconds = (int) Math.round((duration / (Math.pow(60, 0))) - (minutes * 60));
                         String time = String.format("%1$02d:%2$02d:%3$02d", hours, minutes, seconds);
 
                         _directory.setString(AviDirectory.TAG_DURATION, time);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -38,8 +38,10 @@ public class Mp4BoxTypes
     public static final String BOX_TIME_TO_SAMPLE                   = "stts";
     public static final String BOX_MEDIA_HEADER                     = "mdhd";
     public static final String BOX_TRACK_HEADER                     = "tkhd";
+    public static final String BOX_USER_DEFINED                     = "uuid";
+    public static final String BOX_USER_DATA                        = "udta";
 
-    public static ArrayList<String> _boxList = new ArrayList<String>();
+    private static final ArrayList<String> _boxList = new ArrayList<String>();
 
     static {
         _boxList.add(BOX_FILE_TYPE);
@@ -53,5 +55,6 @@ public class Mp4BoxTypes
         _boxList.add(BOX_TIME_TO_SAMPLE);
         _boxList.add(BOX_MEDIA_HEADER);
         _boxList.add(BOX_TRACK_HEADER);
+        _boxList.add(BOX_USER_DEFINED);
     }
 }

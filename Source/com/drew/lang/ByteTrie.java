@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -57,9 +57,25 @@ public class ByteTrie<T>
     @Nullable
     public T find(byte[] bytes)
     {
+        return find(bytes, 0, bytes.length);
+    }
+
+    /**
+     * Return the most specific value stored for this byte sequence.
+     * If not found, returns <code>null</code> or a default values as specified by
+     * calling {@link ByteTrie#setDefaultValue}.
+     */
+    @Nullable
+    public T find(byte[] bytes, int offset, int count)
+    {
+        int maxIndex = offset + count;
+        if (maxIndex > bytes.length)
+            throw new IndexOutOfBoundsException();
+
         ByteTrieNode<T> node = _root;
         T value = node._value;
-        for (byte b : bytes) {
+        for (int i = offset; i < maxIndex; i++) {
+            byte b = bytes[i];
             ByteTrieNode<T> child = node._children.get(b);
             if (child == null)
                 break;

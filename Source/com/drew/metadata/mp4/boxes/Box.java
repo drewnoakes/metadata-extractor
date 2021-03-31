@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public class Box
     public long size;
     public String type;
     public String usertype;
+    public boolean isLargeSize;
 
     public Box(SequentialReader reader) throws IOException
     {
@@ -39,11 +40,9 @@ public class Box
         this.type = reader.getString(4);
         if (size == 1) {
             size = reader.getInt64();
+            isLargeSize = true;
         } else if (size == 0) {
             size = -1;
-        }
-        if (type.equals("uuid")) {
-            usertype = reader.getString(16);
         }
     }
 

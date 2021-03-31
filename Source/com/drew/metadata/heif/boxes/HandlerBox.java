@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.drew.lang.Charsets;
 import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * ISO/IEC 14496-12:2015 pg.30

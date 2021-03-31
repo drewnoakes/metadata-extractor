@@ -78,7 +78,7 @@ public class OlympusRawInfoMakernoteDirectory extends Directory
     public static final int TagCmSharpness = 0x2023;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TagRawInfoVersion, "Raw Info Version");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -167,6 +167,16 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
         return new Rational(this._denominator, this._numerator);
     }
 
+    /**
+     * Returns the absolute value of this object as a new Rational.
+     *
+     * @return the absolute value in a new object
+     */
+    public Rational getAbsolute()
+    {
+        return new Rational(Math.abs(this._numerator), Math.abs(this._denominator));
+    }
+
     /** Checks if this {@link Rational} number is an Integer, either positive or negative. */
     public boolean isInteger()
     {
@@ -179,6 +189,12 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     public boolean isZero()
     {
         return _numerator == 0 || _denominator == 0;
+    }
+
+    /** True if the value is non-zero and numerator and denominator are either both positive or both negative. */
+    public boolean isPositive()
+    {
+        return !isZero() && (_numerator > 0 == _denominator > 0);
     }
 
     /**
@@ -272,7 +288,7 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     @Override
     public boolean equals(@Nullable Object obj)
     {
-        if (obj==null || !(obj instanceof Rational))
+        if (!(obj instanceof Rational))
             return false;
         Rational that = (Rational) obj;
         return this.doubleValue() == that.doubleValue();

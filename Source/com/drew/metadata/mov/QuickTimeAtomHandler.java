@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.atoms.*;
 import com.drew.metadata.mov.atoms.canon.CanonThumbnailAtom;
+import com.drew.metadata.xmp.XmpReader;
 
 import java.io.IOException;
 
@@ -57,7 +58,9 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
             || atom.type.equals(QuickTimeAtomTypes.ATOM_MOVIE_HEADER)
             || atom.type.equals(QuickTimeAtomTypes.ATOM_HANDLER)
             || atom.type.equals(QuickTimeAtomTypes.ATOM_MEDIA_HEADER)
-            || atom.type.equals(QuickTimeAtomTypes.ATOM_CANON_THUMBNAIL);
+            || atom.type.equals(QuickTimeAtomTypes.ATOM_CANON_THUMBNAIL)
+            || atom.type.equals(QuickTimeAtomTypes.ATOM_ADOBE_XMP)
+            || atom.type.equals(QuickTimeAtomTypes.ATOM_TRACK_HEADER);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
     }
 
     @Override
-    public QuickTimeHandler processAtom(@NotNull Atom atom, @Nullable byte[] payload) throws IOException
+    public QuickTimeHandler<?> processAtom(@NotNull Atom atom, @Nullable byte[] payload, QuickTimeContext context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
@@ -84,12 +87,17 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
                 fileTypeCompatibilityAtom.addMetadata(directory);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_HANDLER)) {
                 HandlerReferenceAtom handlerReferenceAtom = new HandlerReferenceAtom(reader, atom);
-                return handlerFactory.getHandler(handlerReferenceAtom.getComponentType(), metadata);
+                return handlerFactory.getHandler(handlerReferenceAtom.getComponentType(), metadata, context);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_MEDIA_HEADER)) {
-                new MediaHeaderAtom(reader, atom);
+                new MediaHeaderAtom(reader, atom, context);
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_CANON_THUMBNAIL)) {
                 CanonThumbnailAtom canonThumbnailAtom = new CanonThumbnailAtom(reader);
                 canonThumbnailAtom.addMetadata(directory);
+            } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_ADOBE_XMP)) {
+                new XmpReader().extract(payload, metadata, directory);
+            } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_TRACK_HEADER)) {
+                TrackHeaderAtom trackHeaderAtom = new TrackHeaderAtom(reader, atom);
+                trackHeaderAtom.addMetadata(directory);
             }
         } else {
             if (atom.type.equals(QuickTimeContainerTypes.ATOM_COMPRESSED_MOVIE)) {

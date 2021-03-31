@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     }
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
@@ -94,7 +94,7 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     {
         Directory parent = getParent();
         if (parent instanceof ExifIFD0Directory) {
-            TimeZone timeZoneModified = getTimeZone(TAG_OFFSET_TIME);
+            TimeZone timeZoneModified = getTimeZone(TAG_TIME_ZONE);
             return parent.getDate(TAG_DATETIME, getString(TAG_SUBSECOND_TIME),
                 (timeZoneModified != null) ? timeZoneModified : timeZone);
         } else {
@@ -128,7 +128,7 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     @Nullable
     public Date getDateOriginal(@Nullable TimeZone timeZone)
     {
-        TimeZone timeZoneOriginal = getTimeZone(TAG_OFFSET_TIME_ORIGINAL);
+        TimeZone timeZoneOriginal = getTimeZone(TAG_TIME_ZONE_ORIGINAL);
         return getDate(TAG_DATETIME_ORIGINAL, getString(TAG_SUBSECOND_TIME_ORIGINAL),
             (timeZoneOriginal != null) ? timeZoneOriginal : timeZone);
     }
@@ -159,7 +159,7 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     @Nullable
     public Date getDateDigitized(@Nullable TimeZone timeZone)
     {
-        TimeZone timeZoneDigitized = getTimeZone(TAG_OFFSET_TIME_DIGITIZED);
+        TimeZone timeZoneDigitized = getTimeZone(TAG_TIME_ZONE_DIGITIZED);
         return getDate(TAG_DATETIME_DIGITIZED, getString(TAG_SUBSECOND_TIME_DIGITIZED),
             (timeZoneDigitized != null) ? timeZoneDigitized : timeZone);
     }

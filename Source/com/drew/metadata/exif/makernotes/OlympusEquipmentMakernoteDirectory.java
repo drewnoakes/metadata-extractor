@@ -67,7 +67,7 @@ public class OlympusEquipmentMakernoteDirectory extends Directory
     public static final int TAG_FLASH_SERIAL_NUMBER = 0x1003;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_EQUIPMENT_VERSION, "Equipment Version");

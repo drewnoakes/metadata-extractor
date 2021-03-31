@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,6 +43,8 @@ public class Mp4Directory extends Directory {
     public static final int TAG_NEXT_TRACK_ID                           = 0x010E;
     public static final int TAG_TRANSFORMATION_MATRIX                   = 0x010F;
     public static final int TAG_ROTATION                                = 0x0200;
+    public static final int TAG_LATITUDE                                = 0x2001;
+    public static final int TAG_LONGITUDE                               = 0x2002;
     public static final int TAG_MEDIA_TIME_SCALE                        = 0x0306;
 
     public static final int TAG_MAJOR_BRAND                             = 1;
@@ -50,7 +52,8 @@ public class Mp4Directory extends Directory {
     public static final int TAG_COMPATIBLE_BRANDS                       = 3;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+
 
     static {
         _tagNameMap.put(TAG_MAJOR_BRAND, "Major Brand");
@@ -73,13 +76,15 @@ public class Mp4Directory extends Directory {
         _tagNameMap.put(TAG_NEXT_TRACK_ID, "Next Track ID");
         _tagNameMap.put(TAG_TRANSFORMATION_MATRIX, "Transformation Matrix");
         _tagNameMap.put(TAG_ROTATION, "Rotation");
+        _tagNameMap.put(TAG_LATITUDE, "Latitude");
+        _tagNameMap.put(TAG_LONGITUDE, "Longitude");
 
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
     }
 
     public Mp4Directory()
     {
-        this.setDescriptor(new Mp4Descriptor(this));
+        this.setDescriptor(new Mp4Descriptor<Mp4Directory>(this));
     }
 
     @Override

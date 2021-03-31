@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                 pos += 2;
 
                 // A variable number of bytes holding a pascal string (two leading bytes for length).
-                short descriptionLength = reader.getUInt8();
+                int descriptionLength = reader.getUInt8();
                 pos += 1;
                 // Some basic bounds checking
                 if (descriptionLength < 0 || descriptionLength + pos > length)

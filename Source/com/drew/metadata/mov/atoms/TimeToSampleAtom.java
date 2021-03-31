@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
-import com.drew.metadata.mov.QuickTimeHandlerFactory;
+import com.drew.metadata.mov.QuickTimeContext;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
 import java.io.IOException;
@@ -34,23 +34,20 @@ import java.util.ArrayList;
  */
 public class TimeToSampleAtom extends FullAtom
 {
-    long numberOfEntries;
-    ArrayList<Entry> entries;
-    long sampleCount;
-    long sampleDuration;
+    private final ArrayList<Entry> entries;
 
     public TimeToSampleAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
-        numberOfEntries = reader.getUInt32();
-        entries = new ArrayList<Entry>();
+        long numberOfEntries = reader.getUInt32();
+        entries = new ArrayList<Entry>((int)numberOfEntries);
         for (int i = 0; i < numberOfEntries; i++) {
             entries.add(new Entry(reader));
         }
     }
 
-    class Entry
+    static class Entry
     {
         long sampleCount;
         long sampleDuration;
@@ -62,9 +59,9 @@ public class TimeToSampleAtom extends FullAtom
         }
     }
 
-    public void addMetadata(QuickTimeVideoDirectory directory)
+    public void addMetadata(QuickTimeVideoDirectory directory, QuickTimeContext context)
     {
-        float frameRate = (float) QuickTimeHandlerFactory.HANDLER_PARAM_TIME_SCALE/(float)entries.get(0).sampleDuration;
+        float frameRate = (float) context.timeScale / (float)entries.get(0).sampleDuration;
         directory.setFloat(QuickTimeVideoDirectory.TAG_FRAME_RATE, frameRate);
     }
 }

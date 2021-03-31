@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -290,7 +290,7 @@ public class OlympusMakernoteDirectory extends Directory
     }
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_MAKERNOTE_VERSION, "Makernote Version");
@@ -488,7 +488,6 @@ public class OlympusMakernoteDirectory extends Directory
             }
         } catch (IOException e) {
             // Should never happen, given that we check the length of the bytes beforehand.
-            e.printStackTrace();
         }
     }
 
@@ -505,18 +504,18 @@ public class OlympusMakernoteDirectory extends Directory
         return _tagNameMap;
     }
 
-    // <summary>
-    // These values are currently decoded only for Olympus models.  Models with
-    // Olympus-style maker notes from other brands such as Acer, BenQ, Hitachi, HP,
-    // Premier, Konica-Minolta, Maginon, Ricoh, Rollei, SeaLife, Sony, Supra,
-    // Vivitar are not listed.
-    // </summary>
-    // <remarks>
-    // Converted from Exiftool version 10.33 created by Phil Harvey
-    // http://www.sno.phy.queensu.ca/~phil/exiftool/
-    // lib\Image\ExifTool\Olympus.pm
-    // </remarks>
-    public static final HashMap<String, String> OlympusCameraTypes = new HashMap<String, String>();
+    /**
+     * These values are currently decoded only for Olympus models.  Models with
+     * Olympus-style maker notes from other brands such as Acer, BenQ, Hitachi, HP,
+     * Premier, Konica-Minolta, Maginon, Ricoh, Rollei, SeaLife, Sony, Supra,
+     * Vivitar are not listed.
+     *
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\Olympus.pm
+     */
+    static final HashMap<String, String> OlympusCameraTypes = new HashMap<String, String>();
 
     static {
         OlympusCameraTypes.put("D4028", "X-2,C-50Z");

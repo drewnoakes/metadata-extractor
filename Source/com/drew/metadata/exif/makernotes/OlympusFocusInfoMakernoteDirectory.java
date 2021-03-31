@@ -63,7 +63,7 @@ public class OlympusFocusInfoMakernoteDirectory extends Directory
     public static final int TagImageStabilization = 0x1600;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TagFocusInfoVersion, "Focus Info Version");

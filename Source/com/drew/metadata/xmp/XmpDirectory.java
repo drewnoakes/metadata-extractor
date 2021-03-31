@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 package com.drew.metadata.xmp;
 
 import com.adobe.internal.xmp.XMPException;
+import com.adobe.internal.xmp.XMPIterator;
 import com.adobe.internal.xmp.XMPMeta;
 import com.adobe.internal.xmp.impl.XMPMetaImpl;
 import com.adobe.internal.xmp.options.IteratorOptions;
@@ -31,7 +32,6 @@ import com.drew.metadata.Directory;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -50,7 +50,7 @@ public class XmpDirectory extends Directory
     public static final int TAG_XMP_VALUE_COUNT = 0xFFFF;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_XMP_VALUE_COUNT, "XMP Value Count");
@@ -93,7 +93,7 @@ public class XmpDirectory extends Directory
         {
             try {
                 IteratorOptions options = new IteratorOptions().setJustLeafnodes(true);
-                for (Iterator i = _xmpMeta.iterator(options); i.hasNext(); ) {
+                for (XMPIterator i = _xmpMeta.iterator(options); i.hasNext(); ) {
                     XMPPropertyInfo prop = (XMPPropertyInfo)i.next();
                     String path = prop.getPath();
                     String value = prop.getValue();
@@ -115,7 +115,7 @@ public class XmpDirectory extends Directory
         try {
             int valueCount = 0;
             IteratorOptions options = new IteratorOptions().setJustLeafnodes(true);
-            for (Iterator i = _xmpMeta.iterator(options); i.hasNext(); ) {
+            for (XMPIterator i = _xmpMeta.iterator(options); i.hasNext(); ) {
                 XMPPropertyInfo prop = (XMPPropertyInfo)i.next();
                 if (prop.getPath() != null) {
                     valueCount++;

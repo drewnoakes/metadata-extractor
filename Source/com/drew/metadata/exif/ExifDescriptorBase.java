@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -527,16 +527,15 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
     }
 
-    /// <summary>
-    /// String description of CFA Pattern
-    /// </summary>
-    /// <remarks>
-    /// Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
-    /// It does not apply to all sensing methods.
-    ///
-    /// ExifDirectoryBase.TAG_CFA_PATTERN_2 holds only the pixel pattern. ExifDirectoryBase.TAG_CFA_REPEAT_PATTERN_DIM is expected to exist and pass
-    /// some conditional tests.
-    /// </remarks>
+    /**
+     * String description of CFA Pattern
+     *
+     * Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
+     * It does not apply to all sensing methods.
+     *
+     * ExifDirectoryBase.TAG_CFA_PATTERN_2 holds only the pixel pattern. ExifDirectoryBase.TAG_CFA_REPEAT_PATTERN_DIM is expected to exist and pass
+     * some conditional tests.
+     */
     @Nullable
     public String getCfaPattern2Description()
     {
@@ -778,33 +777,39 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getWhiteBalanceDescription()
     {
-        // See http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
         final Integer value = _directory.getInteger(TAG_WHITE_BALANCE);
         if (value == null)
             return null;
+        return getWhiteBalanceDescription(value);
+    }
+
+    static String getWhiteBalanceDescription(int value)
+    {
+        // See http://web.archive.org/web/20131018091152/http://exif.org/Exif2-2.PDF page 35
+
         switch (value) {
             case 0: return "Unknown";
             case 1: return "Daylight";
             case 2: return "Florescent";
-            case 3: return "Tungsten";
+            case 3: return "Tungsten (Incandescent)";
             case 4: return "Flash";
             case 9: return "Fine Weather";
             case 10: return "Cloudy";
             case 11: return "Shade";
-            case 12: return "Daylight Fluorescent";
-            case 13: return "Day White Fluorescent";
-            case 14: return "Cool White Fluorescent";
-            case 15: return "White Fluorescent";
-            case 16: return "Warm White Fluorescent";
-            case 17: return "Standard light";
-            case 18: return "Standard light (B)";
-            case 19: return "Standard light (C)";
+            case 12: return "Daylight Fluorescent";   // (D 5700 - 7100K)
+            case 13: return "Day White Fluorescent";  // (N 4600 - 5500K)
+            case 14: return "Cool White Fluorescent"; // (W 3800 - 4500K)
+            case 15: return "White Fluorescent";      // (WW 3250 - 3800K)
+            case 16: return "Warm White Fluorescent"; // (L 2600 - 3250K)
+            case 17: return "Standard light A";
+            case 18: return "Standard light B";
+            case 19: return "Standard light C";
             case 20: return "D55";
             case 21: return "D65";
             case 22: return "D75";
             case 23: return "D50";
-            case 24: return "Studio Tungsten";
-            case 255: return "(Other)";
+            case 24: return "ISO Studio Tungsten";
+            case 255: return "Other";
             default:
                 return "Unknown (" + value + ")";
         }
@@ -1091,35 +1096,33 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         );
     }
 
-    /// <summary>
-    /// String description of CFA Pattern
-    /// </summary>
-    /// <remarks>
-    /// Converted from Exiftool version 10.33 created by Phil Harvey
-    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
-    /// lib\Image\ExifTool\Exif.pm
-    ///
-    /// Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
-    /// It does not apply to all sensing methods.
-    /// </remarks>
+    /**
+     * String description of CFA Pattern
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\Exif.pm
+     *
+     * Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used.
+     * It does not apply to all sensing methods.
+     */
     @Nullable
     public String getCfaPatternDescription()
     {
         return formatCFAPattern(decodeCfaPattern(TAG_CFA_PATTERN));
     }
 
-    /// <summary>
-    /// Decode raw CFAPattern value
-    /// </summary>
-    /// <remarks>
-    /// Converted from Exiftool version 10.33 created by Phil Harvey
-    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
-    /// lib\Image\ExifTool\Exif.pm
-    ///
-    /// The value consists of:
-    /// - Two short, being the grid width and height of the repeated pattern.
-    /// - Next, for every pixel in that pattern, an identification code.
-    /// </remarks>
+    /**
+     * Decode raw CFAPattern value
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\Exif.pm
+     *
+     * The value consists of:
+     * - Two short, being the grid width and height of the repeated pattern.
+     * - Next, for every pixel in that pattern, an identification code.
+     */
     @Nullable
     private int[] decodeCfaPattern(int tagType)
     {
@@ -1146,7 +1149,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             short item0 = reader.getInt16(0);
             short item1 = reader.getInt16(2);
 
-            Boolean copyArray = false;
+            boolean copyArray = false;
             int end = 2 + item0 * item1;
             if (end > values.length) // sanity check in case of byte order problems; calculated 'end' should be <= length of the values
             {

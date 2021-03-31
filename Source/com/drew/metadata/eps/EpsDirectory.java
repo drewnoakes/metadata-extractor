@@ -62,10 +62,10 @@ public class EpsDirectory extends Directory
 //    public static final int TAG_AI9_END_PRIVATE_DATA                        = 42;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     @NotNull
-    protected static final HashMap<String, Integer> _tagIntegerMap = new HashMap<String, Integer>();
+    static final HashMap<String, Integer> _tagIntegerMap = new HashMap<String, Integer>();
 
     static {
         _tagIntegerMap.put("%!PS-Adobe-", TAG_DSC_VERSION);

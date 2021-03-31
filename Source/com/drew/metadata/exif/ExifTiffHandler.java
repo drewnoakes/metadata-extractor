@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ package com.drew.metadata.exif;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
@@ -45,8 +47,7 @@ import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.tiff.DirectoryTiffHandler;
 import com.drew.metadata.xmp.XmpReader;
-import com.drew.tools.BinaryPropertyListUtil;
-import com.drew.tools.BinaryPropertyListUtil.CMTime;
+import com.drew.metadata.plist.BplistReader;
 
 /**
  * Implementation of {@link com.drew.imaging.tiff.TiffHandler} used for handling TIFF tags according to the Exif
@@ -140,7 +141,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     return true;
             }
         }
-        
+
         return false;
     }
 
@@ -236,30 +237,29 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
         }
-        
+
         // Custom processing for Apple RunTime tag
-        if(tagId == AppleMakernoteDirectory.TAG_RUN_TIME && _currentDirectory instanceof AppleMakernoteDirectory) {
+        if (tagId == AppleMakernoteDirectory.TAG_RUN_TIME && _currentDirectory instanceof AppleMakernoteDirectory) {
             // Read the byte array into the parent tag
-            _currentDirectory.setByteArray(tagId, reader.getBytes(tagOffset, byteCount));
-            
+            byte[] bytes = reader.getBytes(tagOffset, byteCount);
+            _currentDirectory.setByteArray(tagId, bytes);
+
             AppleRunTimeMakernoteDirectory directory = new AppleRunTimeMakernoteDirectory();
             directory.setParent(_currentDirectory);
-            
-            try {
-                processAppleRunTime(directory, _currentDirectory.getByteArray(AppleMakernoteDirectory.TAG_RUN_TIME));
 
-                if(directory.getTagCount() > 0)
-                {
+            try {
+                processAppleRunTime(directory, bytes);
+
+                if (directory.getTagCount() > 0) {
                     _metadata.addDirectory(directory);
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 directory.addError("Error processing BPLIST: " + e.getMessage());
             }
-            
+
             return true;
         }
-        
+
         if (handlePrintIM(_currentDirectory, tagId))
         {
             PrintIMDirectory printIMDirectory = new PrintIMDirectory();
@@ -355,26 +355,41 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         return false;
     }
-    
+
     /**
      * Process the BPLIST containing the RUN_TIME tag. The directory will only be populated with values
      * if the <tt>flag</tt> indicates that the CMTime structure is &quot;valid&quot;.
-     * 
+     *
      * @param directory The <tt>AppleRunTimeMakernoteDirectory</tt> to set values onto.
      * @param bplist The BPLIST
      * @throws IOException Thrown if an error occurs parsing the BPLIST as a CMTime structure.
      */
     private static void processAppleRunTime(@NotNull final AppleRunTimeMakernoteDirectory directory, @NotNull final byte[] bplist) throws IOException
     {
-        final CMTime runTime = BinaryPropertyListUtil.parseAsCMTime(bplist);
+        final BplistReader.PropertyListResults results = BplistReader.parse(bplist);
 
-        final byte flags = runTime.getFlags();
-        if((flags & 0x1) == 0x1)
-        {
-            directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
-            directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, runTime.getEpoch());
-            directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, runTime.getTimeScale());
-            directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, runTime.getValue());
+        final Set<Map.Entry<Byte, Byte>> entrySet = results.getEntrySet();
+
+        if (entrySet != null) {
+            HashMap<String, Object> values = new HashMap<String, Object>(entrySet.size());
+
+            for (Map.Entry<Byte, Byte> entry : entrySet) {
+                String key = (String)results.getObjects().get(entry.getKey());
+                Object value = results.getObjects().get(entry.getValue());
+
+                values.put(key, value);
+            }
+
+            // https://developer.apple.com/documentation/coremedia/cmtime-u58
+
+            byte flags = (Byte)values.get("flags");
+
+            if ((flags & 0x1) == 0x1) {
+                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
+                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, (Byte)values.get("epoch"));
+                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, (Long)values.get("timescale"));
+                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, (Long)values.get("value"));
+            }
         }
     }
 
@@ -637,7 +652,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             ReconyxUltraFireMakernoteDirectory directory = new ReconyxUltraFireMakernoteDirectory();
             _metadata.addDirectory(directory);
             processReconyxUltraFireMakernote(directory, makernoteOffset, reader);
-        } else if ("SAMSUNG".equals(cameraMake)) {
+        } else if ("SAMSUNG".equalsIgnoreCase(cameraMake)) {
             // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
             pushDirectory(SamsungType2MakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
@@ -672,15 +687,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         return false;
     }
-    
-    /// <summary>
-    /// Process PrintIM IFD
-    /// </summary>
-    /// <remarks>
-    /// Converted from Exiftool version 10.33 created by Phil Harvey
-    /// http://www.sno.phy.queensu.ca/~phil/exiftool/
-    /// lib\Image\ExifTool\PrintIM.pm
-    /// </remarks>
+
+    /**
+     * Process PrintIM IFD
+     *
+     * Converted from Exiftool version 10.33 created by Phil Harvey
+     * http://www.sno.phy.queensu.ca/~phil/exiftool/
+     * lib\Image\ExifTool\PrintIM.pm
+     */
     private static void processPrintIM(@NotNull final PrintIMDirectory directory, final int tagValueOffset, @NotNull final RandomAccessReader reader, final int byteCount) throws IOException
     {
         Boolean resetByteOrder = null;

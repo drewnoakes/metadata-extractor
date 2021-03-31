@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import java.util.HashMap;
  */
 public class Mp3Directory extends Directory
 {
-
     public static final int TAG_ID = 1;
     public static final int TAG_LAYER = 2;
     public static final int TAG_BITRATE = 3;
@@ -41,7 +40,7 @@ public class Mp3Directory extends Directory
     public static final int TAG_FRAME_SIZE = 8;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {

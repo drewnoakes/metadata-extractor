@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 package com.drew.metadata.mp4;
 
 import com.drew.imaging.mp4.Mp4Handler;
+import com.drew.lang.DateUtil;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
@@ -30,26 +31,23 @@ import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Handler<T>
 {
-    public Mp4MediaHandler(Metadata metadata)
+    public Mp4MediaHandler(Metadata metadata, Mp4Context context)
     {
         super(metadata);
-        if (Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME != null && Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME != null) {
+        if (context.creationTime != null && context.modificationTime != null) {
             // Get creation/modification times
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(1904, 0, 1, 0, 0, 0);      // January 1, 1904  -  Macintosh Time Epoch
-            Date date = calendar.getTime();
-            long macToUnixEpochOffset = date.getTime();
-            String creationTimeStamp = new Date(Mp4HandlerFactory.HANDLER_PARAM_CREATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            String modificationTimeStamp = new Date(Mp4HandlerFactory.HANDLER_PARAM_MODIFICATION_TIME * 1000 + macToUnixEpochOffset).toString();
-            String language = Mp4HandlerFactory.HANDLER_PARAM_LANGUAGE;
-            directory.setString(Mp4MediaDirectory.TAG_CREATION_TIME, creationTimeStamp);
-            directory.setString(Mp4MediaDirectory.TAG_MODIFICATION_TIME, modificationTimeStamp);
-            directory.setString(Mp4MediaDirectory.TAG_LANGUAGE_CODE, language);
+            directory.setDate(
+                Mp4MediaDirectory.TAG_CREATION_TIME,
+                DateUtil.get1Jan1904EpochDate(context.creationTime)
+            );
+            directory.setDate(
+                Mp4MediaDirectory.TAG_MODIFICATION_TIME,
+                DateUtil.get1Jan1904EpochDate(context.modificationTime)
+            );
+            directory.setString(Mp4MediaDirectory.TAG_LANGUAGE_CODE, context.language);
         }
     }
 
@@ -69,7 +67,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     }
 
     @Override
-    public Mp4Handler processBox(@NotNull Box box, @Nullable byte[] payload) throws IOException
+    public Mp4Handler<?> processBox(@NotNull Box box, @Nullable byte[] payload, Mp4Context context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
@@ -78,7 +76,7 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
             } else if (box.type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)) {
                 processSampleDescription(reader, box);
             } else if (box.type.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE)) {
-                processTimeToSample(reader, box);
+                processTimeToSample(reader, box, context);
             }
         }
         return this;
@@ -90,5 +88,5 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
 
     protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box, Mp4Context context) throws IOException;
 }

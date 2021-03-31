@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ public class IccDirectory extends Directory
     public static final int TAG_APPLE_MULTI_LANGUAGE_PROFILE_NAME = 0x6473636d;
 
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_PROFILE_BYTE_COUNT, "Profile Size");
@@ -143,7 +143,7 @@ public class IccDirectory extends Directory
         _tagNameMap.put(TAG_TAG_targ, "Char Target");
         _tagNameMap.put(TAG_TAG_chad, "Chromatic Adaptation");
         _tagNameMap.put(TAG_TAG_chrm, "Chromaticity");
-        _tagNameMap.put(TAG_TAG_cprt, "Copyright");
+        _tagNameMap.put(TAG_TAG_cprt, "Profile Copyright");
         _tagNameMap.put(TAG_TAG_crdi, "CrdInfo");
         _tagNameMap.put(TAG_TAG_dmnd, "Device Mfg Description");
         _tagNameMap.put(TAG_TAG_dmdd, "Device Model Description");

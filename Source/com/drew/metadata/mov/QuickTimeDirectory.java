@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 Drew Noakes
+ * Copyright 2002-2019 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ public class QuickTimeDirectory extends Directory {
     public static final int TAG_SELECTION_DURATION                      = 0x010B;
     public static final int TAG_CURRENT_TIME                            = 0x010C;
     public static final int TAG_NEXT_TRACK_ID                           = 0x010D;
+    public static final int TAG_ROTATION                                = 0x010E;
 
     public static final int TAG_MEDIA_TIME_SCALE                        = 0x0306;
 
@@ -54,8 +55,10 @@ public class QuickTimeDirectory extends Directory {
 
     public static final int TAG_CANON_THUMBNAIL_DT                      = 0x2000;
 
+    public static final int TAG_ADOBE_XMP                               = 0x3000;
+
     @NotNull
-    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
+    private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
         _tagNameMap.put(TAG_MAJOR_BRAND, "Major Brand");
@@ -76,10 +79,13 @@ public class QuickTimeDirectory extends Directory {
         _tagNameMap.put(TAG_SELECTION_DURATION, "Selection Duration");
         _tagNameMap.put(TAG_CURRENT_TIME, "Current Time");
         _tagNameMap.put(TAG_NEXT_TRACK_ID, "Next Track ID");
+        _tagNameMap.put(TAG_ROTATION, "Rotation");
 
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
-        
+
         _tagNameMap.put(TAG_CANON_THUMBNAIL_DT, "Canon Thumbnail DateTime");
+
+        _tagNameMap.put(TAG_ADOBE_XMP, "Adobe Bridge XMP");
     }
 
     public QuickTimeDirectory()
