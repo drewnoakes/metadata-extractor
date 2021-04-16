@@ -78,7 +78,7 @@ public class TrackHeaderBox extends FullBox
             double theta = Math.atan2(y, x);
             double degree = Math.toDegrees(theta);
             degree -= 45;
-            directory.setDouble(Mp4Directory.TAG_ROTATION, Math.abs(degree));
+            directory.setDouble(Mp4Directory.TAG_ROTATION, degree);
         }
     }
 }
