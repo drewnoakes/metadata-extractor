@@ -113,7 +113,7 @@ public class PngChunkReaderTest
     public void testCorruptedFile() throws Exception
     {
         // One desired chunk specified, only given chunk read, other types skipped.
-        Set<PngChunkType> desiredChunkTypes = new HashSet<>();
+        Set<PngChunkType> desiredChunkTypes = new HashSet<PngChunkType>();
         desiredChunkTypes.add(PngChunkType.IHDR);
         processFile("Tests/Data/icon-96x96-corrupted-data.png", desiredChunkTypes);
     }
