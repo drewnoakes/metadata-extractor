@@ -22,6 +22,10 @@ package com.drew.imaging.png;
 
 import com.drew.lang.Iterables;
 import com.drew.lang.StreamReader;
+import java.io.EOFException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -35,12 +39,20 @@ import static org.junit.Assert.assertEquals;
  */
 public class PngChunkReaderTest
 {
-    public static List<PngChunk> processFile(String filePath) throws PngProcessingException, IOException
+
+    public static List<PngChunk> processFile(String filePath)
+        throws PngProcessingException, IOException {
+        return processFile(filePath, null);
+    }
+
+    public static List<PngChunk> processFile(String filePath, Set<PngChunkType> desiredChunkTypes)
+        throws PngProcessingException, IOException
     {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(filePath);
-            return Iterables.toList(new PngChunkReader().extract(new StreamReader(inputStream), null));
+            return Iterables.toList(new PngChunkReader().extract(new StreamReader(inputStream),
+                desiredChunkTypes));
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -95,5 +107,14 @@ public class PngChunkReaderTest
 
         assertEquals(PngChunkType.IEND, chunks.get(4).getType());
         assertEquals(0, chunks.get(4).getBytes().length);
+    }
+
+    @Test(expected = EOFException.class)
+    public void testCorruptedFile() throws Exception
+    {
+        // One desired chunk specified, only given chunk read, other types skipped.
+        Set<PngChunkType> desiredChunkTypes = new HashSet<>();
+        desiredChunkTypes.add(PngChunkType.IHDR);
+        processFile("Tests/Data/icon-96x96-corrupted-data.png", desiredChunkTypes);
     }
 }
