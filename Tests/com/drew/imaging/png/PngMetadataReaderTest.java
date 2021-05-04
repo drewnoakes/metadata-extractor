@@ -24,7 +24,6 @@ import com.drew.lang.KeyValuePair;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.png.PngDirectory;
-import java.io.EOFException;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -114,10 +113,5 @@ public class PngMetadataReaderTest
         } finally {
             TimeZone.setDefault(timeZone);
         }
-    }
-
-    @Test(expected = EOFException.class)
-    public void corruptedFileTest() throws PngProcessingException, IOException {
-        processFile("Tests/Data/icon-96x96-corrupted-data.png");
     }
 }
