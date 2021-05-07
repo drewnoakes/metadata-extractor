@@ -97,7 +97,7 @@ public class StreamReader extends SequentialReader
         long skippedCount = skipInternal(n);
 
         if (skippedCount != n)
-            throw new EOFException(String.format("Unable to skip. Requested %d bytes but skipped %d.", n, skippedCount));
+            throw new EOFException(String.format("Unable to skip. Requested %d bytes but only %d remained.", n, skippedCount));
     }
 
     @Override
