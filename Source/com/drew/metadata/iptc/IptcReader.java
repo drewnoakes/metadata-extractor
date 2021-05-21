@@ -66,7 +66,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the IPTC marker byte

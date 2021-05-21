@@ -26,6 +26,7 @@ import com.drew.lang.Charsets;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class DuckyReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPC);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 

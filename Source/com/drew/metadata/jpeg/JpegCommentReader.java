@@ -23,6 +23,7 @@ package com.drew.metadata.jpeg;
 import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 
@@ -43,7 +44,7 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.COM);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             JpegCommentDirectory directory = new JpegCommentDirectory();

@@ -26,6 +26,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
@@ -50,7 +51,7 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPE);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
     {
         for (byte[] bytes : segments) {
             if (bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(bytes, 0, PREAMBLE.length())))

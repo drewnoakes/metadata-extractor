@@ -25,6 +25,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 
@@ -45,7 +46,7 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.DNL);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             extract(segmentBytes, metadata, segmentType);

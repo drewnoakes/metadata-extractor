@@ -91,7 +91,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      * @param segmentType The {@link JpegSegmentType} being read.
      * @param locale
      */
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
     {
         final int preambleLength = XMP_JPEG_PREAMBLE.length();
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();

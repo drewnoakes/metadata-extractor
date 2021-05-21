@@ -25,6 +25,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
 
@@ -52,7 +53,7 @@ public class JfxxReader implements JpegSegmentMetadataReader, MetadataReader
         return Collections.singletonList(JpegSegmentType.APP0);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header
