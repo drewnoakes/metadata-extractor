@@ -1,6 +1,7 @@
 package com.drew.imaging.jpeg;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 
 import java.util.Locale;
@@ -25,5 +26,5 @@ public interface JpegSegmentMetadataReader
      * @param segmentType The {@link JpegSegmentType} being read.
      * @param locale TODO document this
      */
-    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, Locale locale);
+    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @Nullable Locale locale);
 }
