@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  * Represents a latitude and longitude pair, giving a position on earth in spherical coordinates.
@@ -74,15 +76,23 @@ public final class GeoLocation
         return _latitude == 0 && _longitude == 0;
     }
 
+    // TODO document this
+    @NotNull
+    public static String decimalToDegreesMinutesSecondsString(double decimal)
+    {
+        return decimalToDegreesMinutesSecondsString(decimal, null);
+    }
+
     /**
      * Converts a decimal degree angle into its corresponding DMS (degrees-minutes-seconds) representation as a string,
      * of format: {@code -1° 23' 4.56"}
      */
     @NotNull
-    public static String decimalToDegreesMinutesSecondsString(double decimal)
+    public static String decimalToDegreesMinutesSecondsString(double decimal, Locale locale)
     {
         double[] dms = decimalToDegreesMinutesSeconds(decimal);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormatSymbols symbols = locale == null ? DecimalFormatSymbols.getInstance() : DecimalFormatSymbols.getInstance(locale);
+        DecimalFormat format = new DecimalFormat("0.##", symbols);
         return String.format("%s\u00B0 %s' %s\"", format.format(dms[0]), format.format(dms[1]), format.format(dms[2]));
     }
 
@@ -158,6 +168,7 @@ public final class GeoLocation
     @NotNull
     public String toDMSString()
     {
+        // TODO add a Locale version of this method?
         return decimalToDegreesMinutesSecondsString(_latitude) + ", " + decimalToDegreesMinutesSecondsString(_longitude);
     }
 }

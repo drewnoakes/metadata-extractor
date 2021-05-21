@@ -33,6 +33,7 @@ import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Reads an ICC profile.
@@ -57,7 +58,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         return Collections.singletonList(JpegSegmentType.APP2);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 

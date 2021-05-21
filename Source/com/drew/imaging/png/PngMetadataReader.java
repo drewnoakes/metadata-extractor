@@ -329,7 +329,7 @@ public class PngMetadataReader
             metadata.addDirectory(directory);
         } else if (chunkType.equals(PngChunkType.eXIf)) {
             try {
-                ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
+                ExifTiffHandler handler = new ExifTiffHandler(metadata, null, null);
                 new TiffReader().processTiff(new ByteArrayReader(bytes), handler, 0);
             } catch (TiffProcessingException ex) {
                 PngDirectory directory = new PngDirectory(PngChunkType.eXIf);

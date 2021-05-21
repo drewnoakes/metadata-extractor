@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import static com.drew.metadata.exif.GpsDirectory.*;
 
@@ -38,9 +39,13 @@ import static com.drew.metadata.exif.GpsDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class GpsDescriptor extends TagDescriptor<GpsDirectory>
 {
-    public GpsDescriptor(@NotNull GpsDirectory directory)
+    private Locale _locale;
+
+    public GpsDescriptor(@NotNull GpsDirectory directory, @Nullable Locale locale)
     {
         super(directory);
+        // TODO add locale to TagDescriptor superclass?
+        _locale = locale;
     }
 
     @Override
@@ -111,14 +116,14 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     public String getGpsLatitudeDescription()
     {
         GeoLocation location = _directory.getGeoLocation();
-        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLatitude());
+        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLatitude(), _locale);
     }
 
     @Nullable
     public String getGpsLongitudeDescription()
     {
         GeoLocation location = _directory.getGeoLocation();
-        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLongitude());
+        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLongitude(), _locale);
     }
 
     @Nullable
@@ -159,7 +164,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         Double dec = GeoLocation.degreesMinutesSecondsToDecimal(
             values[0], values[1], values[2], ref.equalsIgnoreCase(positiveRef));
 
-        return dec == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(dec);
+        return dec == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(dec, _locale);
     }
 
     @Nullable

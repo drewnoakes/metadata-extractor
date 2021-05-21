@@ -40,6 +40,7 @@ import com.drew.metadata.StringValue;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Extracts XMP data from JPEG APP1 segments.
@@ -85,12 +86,12 @@ public class XmpReader implements JpegSegmentMetadataReader
     /**
      * Version specifically for dealing with XMP found in JPEG segments. This form of XMP has a peculiar preamble, which
      * must be removed before parsing the XML.
-     *
      * @param segments The byte array from which the metadata should be extracted.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
+     * @param locale
      */
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         final int preambleLength = XMP_JPEG_PREAMBLE.length();
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();

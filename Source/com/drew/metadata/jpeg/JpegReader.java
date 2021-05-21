@@ -29,6 +29,7 @@ import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * Decodes JPEG SOFn data, populating a {@link Metadata} object with tag values in a {@link JpegDirectory}.
@@ -62,7 +63,7 @@ public class JpegReader implements JpegSegmentMetadataReader
         );
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             extract(segmentBytes, metadata, segmentType);

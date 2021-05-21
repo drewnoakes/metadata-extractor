@@ -30,6 +30,7 @@ import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Reader for JFIF data, found in the APP0 JPEG segment.
@@ -51,7 +52,7 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
         return Collections.singletonList(JpegSegmentType.APP0);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header

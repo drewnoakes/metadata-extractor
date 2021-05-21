@@ -27,6 +27,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Decodes the comment stored within JPEG files, populating a {@link Metadata} object with tag values in a
@@ -42,7 +43,7 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.COM);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             JpegCommentDirectory directory = new JpegCommentDirectory();

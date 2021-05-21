@@ -146,9 +146,14 @@ public class GpsDirectory extends ExifDirectoryBase
         _tagNameMap.put(TAG_H_POSITIONING_ERROR, "GPS H Positioning Error");
     }
 
+    // TODO remove this constructor?
     public GpsDirectory()
     {
-        this.setDescriptor(new GpsDescriptor(this));
+        this(null);
+    }
+
+    public GpsDirectory(@Nullable Locale locale) {
+        this.setDescriptor(new GpsDescriptor(this, locale));
     }
 
     @Override

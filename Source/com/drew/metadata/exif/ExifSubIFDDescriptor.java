@@ -21,6 +21,9 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+
+import java.util.Locale;
 
 /**
  * Provides human-readable string representations of tag values stored in a {@link ExifSubIFDDirectory}.
@@ -32,6 +35,11 @@ public class ExifSubIFDDescriptor extends ExifDescriptorBase<ExifSubIFDDirectory
 {
     public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory)
     {
-        super(directory);
+        this(directory, null);
+    }
+
+    public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory, @Nullable Locale locale)
+    {
+        super(directory, locale);
     }
 }

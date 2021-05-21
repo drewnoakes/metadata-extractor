@@ -30,6 +30,7 @@ import java.lang.reflect.Array;
 import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -303,7 +304,14 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFStopDescription(double fStop)
     {
-        DecimalFormat format = new DecimalFormat("0.0");
+        return getFStopDescription(fStop, null);
+    }
+
+    @Nullable
+    protected static String getFStopDescription(double fStop, Locale locale)
+    {
+        DecimalFormatSymbols symbols = locale == null ? DecimalFormatSymbols.getInstance() : DecimalFormatSymbols.getInstance(locale);
+        DecimalFormat format = new DecimalFormat("0.0", symbols);
         format.setRoundingMode(RoundingMode.HALF_UP);
         return "f/" + format.format(fStop);
     }

@@ -26,6 +26,7 @@ import com.drew.metadata.Directory;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -42,6 +43,11 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     public ExifSubIFDDirectory()
     {
         this.setDescriptor(new ExifSubIFDDescriptor(this));
+    }
+
+    public ExifSubIFDDirectory(@Nullable Locale locale)
+    {
+        this.setDescriptor(new ExifSubIFDDescriptor(this, locale));
     }
 
     @NotNull

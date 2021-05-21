@@ -22,7 +22,9 @@ package com.drew.imaging.jpeg;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable;
 import com.drew.metadata.xmp.XmpDirectory;
@@ -30,6 +32,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -93,5 +96,51 @@ public class JpegMetadataReaderTest
         directory = metadata.getFirstDirectoryOfType(HuffmanTablesDirectory.class);
         assertNotNull(directory);
         assertTrue(((HuffmanTablesDirectory) directory).isOptimized());
+    }
+
+    @Test
+    public void testConfigurableLocaleEnglish() throws Exception {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            // set default Locale to Dutch, configure English -> expect period
+            Locale.setDefault(new Locale("nl"));
+            Locale configuredLocale = Locale.ENGLISH;
+            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), configuredLocale);
+
+            Directory gps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            assertEquals("54° 59' 22.8\"", gps.getDescription(GpsDirectory.TAG_LATITUDE));
+            assertEquals("-1° 54' 51\"", gps.getDescription(GpsDirectory.TAG_LONGITUDE));
+
+            Directory subIFD = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            assertEquals("f/0.6", subIFD.getDescription(ExifDirectoryBase.TAG_FNUMBER));
+
+        }
+        finally {
+            // reset default locale
+            Locale.setDefault(defaultLocale);
+        }
+    }
+
+    @Test
+    public void testConfigurableLocaleDutch() throws Exception {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            // set default Locale to Dutch, configure English -> expect comma
+            Locale.setDefault(Locale.ENGLISH);
+            Locale configuredLocale = new Locale("nl");
+            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), configuredLocale);
+
+            Directory gps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            assertEquals("54° 59' 22,8\"", gps.getDescription(GpsDirectory.TAG_LATITUDE));
+            assertEquals("-1° 54' 51\"", gps.getDescription(GpsDirectory.TAG_LONGITUDE));
+
+            Directory subIFD = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            assertEquals("f/0,6", subIFD.getDescription(ExifDirectoryBase.TAG_FNUMBER));
+
+        }
+        finally {
+            // reset default locale
+            Locale.setDefault(defaultLocale);
+        }
     }
 }

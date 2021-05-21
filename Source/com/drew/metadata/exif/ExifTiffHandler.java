@@ -59,9 +59,9 @@ import com.drew.metadata.plist.BplistReader;
  */
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
-    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory, @Nullable Locale locale)
     {
-        super(metadata, parentDirectory);
+        super(metadata, parentDirectory, locale);
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException

@@ -63,7 +63,7 @@ public class ExifReaderTest
     public void testExtractWithNullDataThrows() throws Exception
     {
         try{
-            new ExifReader().readJpegSegments(null, new Metadata(), JpegSegmentType.APP1);
+            new ExifReader().readJpegSegments(null, new Metadata(), JpegSegmentType.APP1, null);
             fail("Exception expected");
         } catch (NullPointerException npe) {
             // passed
@@ -89,7 +89,7 @@ public class ExifReaderTest
         Metadata metadata = new Metadata();
         ArrayList<byte[]> segments = new ArrayList<byte[]>();
         segments.add(badExifData);
-        new ExifReader().readJpegSegments(segments, metadata, JpegSegmentType.APP1);
+        new ExifReader().readJpegSegments(segments, metadata, JpegSegmentType.APP1, null);
         assertEquals(0, metadata.getDirectoryCount());
         assertFalse(metadata.hasErrors());
     }

@@ -59,7 +59,7 @@ public class CanonThumbnailAtom extends Atom
             // TODO should we keep all extracted metadata here?
             Metadata metadata = new Metadata();
             for (JpegSegmentType segmentType : exifReader.getSegmentTypes()) {
-                exifReader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType);
+                exifReader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType, null);
             }
 
             Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);

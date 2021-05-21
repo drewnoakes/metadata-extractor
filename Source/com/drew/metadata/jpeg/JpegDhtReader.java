@@ -30,6 +30,7 @@ import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable.HuffmanTableClass;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Reader for JPEG Huffman tables, found in the DHT JPEG segment.
@@ -44,7 +45,7 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.DHT);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             extract(new SequentialByteArrayReader(segmentBytes), metadata);

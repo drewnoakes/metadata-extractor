@@ -62,7 +62,7 @@ public class IccReaderTest
         byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
 
         Metadata metadata = new Metadata();
-        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2, null);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
@@ -76,7 +76,7 @@ public class IccReaderTest
         byte[] app2Bytes = FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2");
 
         Metadata metadata = new Metadata();
-        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2, null);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 

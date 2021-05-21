@@ -30,6 +30,7 @@ import com.drew.metadata.Metadata;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Decodes JPEG DNL data, adjusting the image height with information missing from the JPEG SOFx segment.
@@ -44,7 +45,7 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.DNL);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             extract(segmentBytes, metadata, segmentType);

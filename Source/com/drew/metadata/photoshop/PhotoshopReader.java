@@ -37,6 +37,7 @@ import com.drew.metadata.xmp.XmpReader;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Reads metadata created by Photoshop and stored in the APPD segment of JPEG files.
@@ -58,7 +59,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 

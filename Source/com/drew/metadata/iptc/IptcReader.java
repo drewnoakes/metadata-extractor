@@ -33,6 +33,7 @@ import com.drew.metadata.StringValue;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Decodes IPTC binary data, populating a {@link Metadata} object with tag values in an {@link IptcDirectory}.
@@ -65,7 +66,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, Locale locale)
     {
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the IPTC marker byte

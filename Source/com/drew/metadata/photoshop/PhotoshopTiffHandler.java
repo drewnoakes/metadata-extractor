@@ -33,7 +33,7 @@ public class PhotoshopTiffHandler extends ExifTiffHandler
 
     public PhotoshopTiffHandler(Metadata metadata, Directory parentDirectory)
     {
-        super(metadata, parentDirectory);
+        super(metadata, parentDirectory, null);
     }
 
     public boolean customProcessTag(final int tagOffset,

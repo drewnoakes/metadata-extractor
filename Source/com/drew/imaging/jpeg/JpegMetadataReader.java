@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -71,45 +72,72 @@ public class JpegMetadataReader
     );
 
     @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers, @Nullable Locale locale) throws JpegProcessingException, IOException
+    {
+        // TODO idea: store Locale in Metadata, since that is passed everywhere anyway? (for now: pass along as parameter)
+        Metadata metadata = new Metadata();
+        process(metadata, inputStream, readers, locale);
+        return metadata;
+    }
+
+    @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
-        Metadata metadata = new Metadata();
-        process(metadata, inputStream, readers);
-        return metadata;
+        return readMetadata(inputStream, readers, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Locale locale) throws JpegProcessingException, IOException
+    {
+        return readMetadata(inputStream, null, locale);
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        return readMetadata(inputStream, null);
+        return readMetadata(inputStream, null, null);
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers, @Nullable Locale locale) throws JpegProcessingException, IOException
     {
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream, readers);
+            metadata = readMetadata(inputStream, readers, locale);
         } finally {
             inputStream.close();
         }
+        // TODO pass locale?
         new FileSystemMetadataReader().read(file, metadata);
         return metadata;
     }
 
     @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        return readMetadata(file, readers, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable Locale locale) throws JpegProcessingException, IOException
+    {
+        return readMetadata(file, null, locale);
+    }
+
+    @NotNull
     public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
-        return readMetadata(file, null);
+        return readMetadata(file, null, null);
     }
 
     public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        process(metadata, inputStream, null);
+        process(metadata, inputStream, null, null);
     }
 
-    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    // TODO create method with original signature for backwards compatibility
+    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers, @Nullable Locale locale) throws JpegProcessingException, IOException
     {
         if (readers == null)
             readers = ALL_READERS;
@@ -123,15 +151,16 @@ public class JpegMetadataReader
 
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), segmentTypes);
 
-        processJpegSegmentData(metadata, readers, segmentData);
+        processJpegSegmentData(metadata, readers, segmentData, locale);
     }
 
-    public static void processJpegSegmentData(Metadata metadata, Iterable<JpegSegmentMetadataReader> readers, JpegSegmentData segmentData)
+    // TODO create method with original signature for backwards compatibility
+    public static void processJpegSegmentData(Metadata metadata, Iterable<JpegSegmentMetadataReader> readers, JpegSegmentData segmentData, Locale locale)
     {
         // Pass the appropriate byte arrays to each reader.
         for (JpegSegmentMetadataReader reader : readers) {
             for (JpegSegmentType segmentType : reader.getSegmentTypes()) {
-                reader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType);
+                reader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType, locale);
             }
         }
     }

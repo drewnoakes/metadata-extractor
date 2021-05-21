@@ -32,6 +32,7 @@ import com.drew.metadata.TagDescriptor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import static com.drew.metadata.exif.ExifDirectoryBase.*;
 
@@ -48,6 +49,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
      * where decimal notation is elegant (such as 1/2 -> 0.5, but not 1/3).
      */
     private final boolean _allowDecimalRepresentationOfRationals = true;
+    private Locale _locale;
 
     // Note for the potential addition of brightness presentation in eV:
     // Brightness of taken subject. To calculate Exposure(Ev) from BrightnessValue(Bv),
@@ -58,6 +60,12 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     public ExifDescriptorBase(@NotNull T directory)
     {
         super(directory);
+    }
+
+    public ExifDescriptorBase(@NotNull T directory, @Nullable Locale locale)
+    {
+        super(directory);
+        _locale = locale;
     }
 
     @Nullable
@@ -610,7 +618,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_FNUMBER);
         if (value == null)
             return null;
-        return getFStopDescription(value.doubleValue());
+        return getFStopDescription(value.doubleValue(), _locale);
     }
 
     @Nullable
