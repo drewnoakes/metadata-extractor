@@ -125,7 +125,7 @@ public class JpegMetadataReaderTest
     public void testConfigurableLocaleDutch() throws Exception {
         Locale defaultLocale = Locale.getDefault();
         try {
-            // set default Locale to Dutch, configure English -> expect comma
+            // set default Locale to English, configure Dutch -> expect comma
             Locale.setDefault(Locale.ENGLISH);
             Locale configuredLocale = new Locale("nl");
             Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), configuredLocale);
