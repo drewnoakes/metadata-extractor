@@ -79,13 +79,13 @@ public class ExifReader implements JpegSegmentMetadataReader
         extract(reader, metadata, 0);
     }
 
-    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset)
     {
         extract(reader, metadata, readerOffset, null);
     }
 
-    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory)
     {
         extract(reader, metadata, readerOffset, parentDirectory, null);
