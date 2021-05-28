@@ -47,7 +47,7 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     @Nullable private Directory _rootParentDirectory;
     @Nullable protected Directory _currentDirectory;
     protected final Metadata _metadata;
-    private MetadataContext _context;
+    protected MetadataContext _context;
 
     protected DirectoryTiffHandler(Metadata metadata, @Nullable Directory parentDirectory, @Nullable MetadataContext context)
     {

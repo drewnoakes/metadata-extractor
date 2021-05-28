@@ -155,7 +155,7 @@ public class CasioType1MakernoteDescriptor extends TagDescriptor<CasioType1Maker
     public String getObjectDistanceDescription()
     {
         Integer value = _directory.getInteger(TAG_OBJECT_DISTANCE);
-        return value == null ? null : getFocalLengthDescription(value);
+        return value == null ? null : getFocalLengthDescription(value, getContext().locale());
     }
 
     @Nullable

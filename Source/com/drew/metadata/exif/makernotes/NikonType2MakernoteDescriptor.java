@@ -338,7 +338,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getLensDescription()
     {
-        return getLensSpecificationDescription(TAG_LENS);
+        return getLensSpecificationDescription(TAG_LENS, getContext().locale());
     }
 
     @Nullable

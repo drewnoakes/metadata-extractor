@@ -521,7 +521,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
             return null;
         if (value > 512)
             return String.format("Unknown (%d)", value);
-        return getFStopDescription(Math.exp(decodeCanonEv(value) * Math.log(2.0) / 2.0));
+        return getFStopDescription(Math.exp(decodeCanonEv(value) * Math.log(2.0) / 2.0), getContext().locale());
     }
 
     @Nullable
@@ -532,7 +532,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
             return null;
         if (value > 512)
             return String.format("Unknown (%d)", value);
-        return getFStopDescription(Math.exp(decodeCanonEv(value) * Math.log(2.0) / 2.0));
+        return getFStopDescription(Math.exp(decodeCanonEv(value) * Math.log(2.0) / 2.0), getContext().locale());
     }
 
     @Nullable
@@ -849,7 +849,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
 
         if (value == 0xFFFF)
             return value.toString();
-        return getFStopDescription(value / 10f);
+        return getFStopDescription(value / 10f, getContext().locale());
     }
 
     @Nullable

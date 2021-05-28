@@ -701,7 +701,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getShutterSpeedDescription()
     {
-        return super.getShutterSpeedDescription(TAG_SHUTTER_SPEED);
+        return super.getShutterSpeedDescription(TAG_SHUTTER_SPEED, getContext().locale());
     }
 
     @Nullable
@@ -711,7 +711,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return getFStopDescription(fStop);
+        return getFStopDescription(fStop, getContext().locale());
     }
 
     @Nullable
@@ -742,7 +742,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return getFStopDescription(fStop);
+        return getFStopDescription(fStop, getContext().locale());
     }
 
     @Nullable
@@ -870,7 +870,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     public String getFocalLengthDescription()
     {
         Rational value = _directory.getRational(TAG_FOCAL_LENGTH);
-        return value == null ? null : getFocalLengthDescription(value.doubleValue());
+        return value == null ? null : getFocalLengthDescription(value.doubleValue(), getContext().locale());
     }
 
     @Nullable
@@ -1233,7 +1233,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             ? null
             : value == 0
                 ? "Unknown"
-                : getFocalLengthDescription(value);
+                : getFocalLengthDescription(value, getContext().locale());
     }
 
     @Nullable
@@ -1303,6 +1303,6 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getLensSpecificationDescription()
     {
-        return getLensSpecificationDescription(TAG_LENS_SPECIFICATION);
+        return getLensSpecificationDescription(TAG_LENS_SPECIFICATION, getContext().locale());
     }
 }

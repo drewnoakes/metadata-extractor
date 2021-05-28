@@ -114,7 +114,6 @@ public class JpegMetadataReaderTest
 
             Directory subIFD = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
             assertEquals("f/0.6", subIFD.getDescription(ExifDirectoryBase.TAG_FNUMBER));
-
         }
         finally {
             // reset default locale
@@ -137,7 +136,6 @@ public class JpegMetadataReaderTest
 
             Directory subIFD = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
             assertEquals("f/0,6", subIFD.getDescription(ExifDirectoryBase.TAG_FNUMBER));
-
         }
         finally {
             // reset default locale

@@ -53,7 +53,7 @@ public class TagDescriptor<T extends Directory>
     @NotNull
     protected final MetadataContext _context;
 
-    // TODO remove contructor once all sub-classes actually use MetadataContext?
+    // TODO remove constructor once all sub-classes actually use MetadataContext?
     public TagDescriptor(@NotNull T directory)
     {
         // TODO discuss: acceptable to use default here?
@@ -88,19 +88,30 @@ public class TagDescriptor<T extends Directory>
         if (object.getClass().isArray()) {
             final int length = Array.getLength(object);
             if (length > 16) {
-                return String.format("[%d values]", length);
+                return String.format("[%d values]", length, getContext().locale());
             }
         }
 
         if (object instanceof Date) {
             // Produce a date string having a format that includes the offset in form "+00:00"
-            return new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy")
+            return new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", getContext().locale())
                 .format((Date) object)
                 .replaceAll("([0-9]{2} [^ ]+)$", ":$1");
         }
 
         // no special handling required, so use default conversion to a string
         return _directory.getString(tagType);
+    }
+
+    /**
+     * Gets the {@link MetadataContext}.
+     *
+     * @return the metadata context.
+     */
+    @NotNull
+    public MetadataContext getContext()
+    {
+        return _context;
     }
 
     /**
@@ -170,7 +181,7 @@ public class TagDescriptor<T extends Directory>
         byte[] bytes = _directory.getByteArray(tagType);
         if (bytes == null)
             return null;
-        return String.format("(%d byte%s)", bytes.length, bytes.length == 1 ? "" : "s");
+        return String.format("(%d byte%s)", bytes.length, bytes.length == 1 ? "" : "s", getContext().locale());
     }
 
     @Nullable
@@ -188,7 +199,7 @@ public class TagDescriptor<T extends Directory>
         Rational value = _directory.getRational(tagType);
         if (value == null)
             return null;
-        return String.format("%." + decimalPlaces + "f", value.doubleValue());
+        return String.format("%." + decimalPlaces + "f", value.doubleValue(), getContext().locale());
     }
 
     @Nullable
@@ -197,7 +208,7 @@ public class TagDescriptor<T extends Directory>
         Integer value = _directory.getInteger(tagType);
         if (value == null)
             return null;
-        return String.format(format, value);
+        return String.format(format, value, getContext().locale());
     }
 
     @Nullable
@@ -206,7 +217,7 @@ public class TagDescriptor<T extends Directory>
         Float value = _directory.getFloatObject(tagType);
         if (value == null)
             return null;
-        return String.format(format, value);
+        return String.format(format, value, getContext().locale());
     }
 
     @Nullable
@@ -215,7 +226,7 @@ public class TagDescriptor<T extends Directory>
         String value = _directory.getString(tagType);
         if (value == null)
             return null;
-        return String.format(format, value);
+        return String.format(format, value, getContext().locale());
     }
 
     @Nullable
@@ -296,8 +307,19 @@ public class TagDescriptor<T extends Directory>
         }
     }
 
+    // TODO: discuss deprecation
+    @Deprecated
     @Nullable
+    /**
+     * @deprecated Use {@link #getRationalOrDoubleString(int, Locale)}.
+     */
     protected String getRationalOrDoubleString(int tagType)
+    {
+        return getRationalOrDoubleString(tagType, null);
+    }
+
+    @Nullable
+    protected String getRationalOrDoubleString(int tagType, Locale locale)
     {
         Rational rational = _directory.getRational(tagType);
         if (rational != null)
@@ -305,14 +327,19 @@ public class TagDescriptor<T extends Directory>
 
         Double d = _directory.getDoubleObject(tagType);
         if (d != null) {
-            DecimalFormat format = new DecimalFormat("0.###");
+            DecimalFormat format = new DecimalFormat("0.###", getDecimalFormatSymbols(locale));
             return format.format(d);
         }
 
         return null;
     }
 
+    // TODO: discuss deprecation
+    @Deprecated
     @Nullable
+    /**
+     * @deprecated Use {@link #getFStopDescription(double, Locale)}.
+     */
     protected static String getFStopDescription(double fStop)
     {
         return getFStopDescription(fStop, null);
@@ -321,22 +348,42 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected static String getFStopDescription(double fStop, Locale locale)
     {
-        DecimalFormatSymbols symbols = locale == null ? DecimalFormatSymbols.getInstance() : DecimalFormatSymbols.getInstance(locale);
-        DecimalFormat format = new DecimalFormat("0.0", symbols);
+        DecimalFormat format = new DecimalFormat("0.0", getDecimalFormatSymbols(locale));
         format.setRoundingMode(RoundingMode.HALF_UP);
         return "f/" + format.format(fStop);
     }
-
+    // TODO: discuss deprecation
+    @Deprecated
     @Nullable
+    /**
+     * @deprecated Use {@link #getFocalLengthDescription(double, Locale)}.
+     */
     protected static String getFocalLengthDescription(double mm)
     {
-        DecimalFormat format = new DecimalFormat("0.#");
+        return getFocalLengthDescription(mm, null);
+    }
+
+    @Nullable
+    protected static String getFocalLengthDescription(double mm, Locale locale)
+    {
+        DecimalFormat format = new DecimalFormat("0.#", getDecimalFormatSymbols(locale));
         format.setRoundingMode(RoundingMode.HALF_UP);
         return format.format(mm) + " mm";
     }
 
+    // TODO: discuss deprecation
+    @Deprecated
     @Nullable
+    /**
+     * @deprecated Use {@link #getLensSpecificationDescription(int, Locale)}.
+     */
     protected String getLensSpecificationDescription(int tag)
+    {
+        return getLensSpecificationDescription(tag, null);
+    }
+
+    @Nullable
+    protected String getLensSpecificationDescription(int tag, Locale locale)
     {
         Rational[] values = _directory.getRationalArray(tag);
 
@@ -353,11 +400,11 @@ public class TagDescriptor<T extends Directory>
         if (!values[2].isZero()) {
             sb.append(' ');
 
-            DecimalFormat format = new DecimalFormat("0.0");
+            DecimalFormat format = new DecimalFormat("0.0", getDecimalFormatSymbols(locale));
             format.setRoundingMode(RoundingMode.HALF_UP);
 
             if (values[2].equals(values[3]))
-                sb.append(getFStopDescription(values[2].doubleValue()));
+                sb.append(getFStopDescription(values[2].doubleValue(), getContext().locale()));
             else
                 sb.append("f/").append(format.format(values[2].doubleValue())).append('-').append(format.format(values[3].doubleValue()));
         }
@@ -379,8 +426,19 @@ public class TagDescriptor<T extends Directory>
             "Left side, bottom (Rotate 270 CW)");
     }
 
+    // TODO: discuss deprecation
+    @Deprecated
     @Nullable
+    /**
+     * @deprecated Use {@link #getShutterSpeedDescription(int, Locale)}.
+     */
     protected String getShutterSpeedDescription(int tag)
+    {
+        return getShutterSpeedDescription(tag, null);
+    }
+
+    @Nullable
+    protected String getShutterSpeedDescription(int tag, Locale locale)
     {
         // I believe this method to now be stable, but am leaving some alternative snippets of
         // code in here, to assist anyone who's looking into this (given that I don't have a public CVS).
@@ -399,7 +457,7 @@ public class TagDescriptor<T extends Directory>
             float apexPower = (float)(1 / (Math.exp(apexValue * Math.log(2))));
             long apexPower10 = Math.round((double)apexPower * 10.0);
             float fApexPower = (float)apexPower10 / 10.0f;
-            DecimalFormat format = new DecimalFormat("0.##");
+            DecimalFormat format = new DecimalFormat("0.##", getDecimalFormatSymbols(locale));
             format.setRoundingMode(RoundingMode.HALF_UP);
             return format.format(fApexPower) + " sec";
         } else {
@@ -468,4 +526,10 @@ public class TagDescriptor<T extends Directory>
             return null;
         }
     }
+
+    private static DecimalFormatSymbols getDecimalFormatSymbols(Locale locale)
+    {
+        return locale == null ? DecimalFormatSymbols.getInstance() : DecimalFormatSymbols.getInstance(locale);
+    }
+
 }
