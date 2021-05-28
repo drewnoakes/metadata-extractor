@@ -114,4 +114,8 @@ public class PngMetadataReaderTest
             TimeZone.setDefault(timeZone);
         }
     }
+
+    // TODO [locale tests] Double use case:
+    // PngDirectory.TAG_GAMMA in Tests/Data/gimp-8x12-greyscale-alpha-time-background.png
+
 }

@@ -84,4 +84,10 @@ public class IccReaderTest
         assertEquals("1998:02:09 06:49:00", directory.getString(IccDirectory.TAG_PROFILE_DATETIME));
         assertEquals(887006940000L, directory.getDate(IccDirectory.TAG_PROFILE_DATETIME).getTime());
     }
+
+    // TODO [locale tests] Float array use case:
+    // IccDirectory.TAG_XYZ_VALUES in Tests/Data/withIptcExifGps.jpg
+    // Directory icc = metadata.getFirstDirectoryOfType(IccDirectory.class);
+    // assertEquals("0,964 1 0,825", icc.getString(IccDirectory.TAG_XYZ_VALUES));
+
 }
