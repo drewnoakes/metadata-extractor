@@ -33,6 +33,8 @@ import com.drew.metadata.TagDescriptor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import static com.drew.metadata.exif.ExifDirectoryBase.*;
 
@@ -429,9 +431,11 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (value == null)
             return null;
         final String unit = getResolutionDescription();
+        final Locale locale = getContext().locale();
         return String.format("%s dots per %s",
             value.toSimpleString(_allowDecimalRepresentationOfRationals),
-            unit == null ? "unit" : unit.toLowerCase());
+            unit == null ? "unit" : unit.toLowerCase(locale),
+            locale);
     }
 
     @Nullable
@@ -441,9 +445,11 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         if (value==null)
             return null;
         final String unit = getResolutionDescription();
+        final Locale locale = getContext().locale();
         return String.format("%s dots per %s",
             value.toSimpleString(_allowDecimalRepresentationOfRationals),
-            unit == null ? "unit" : unit.toLowerCase());
+            unit == null ? "unit" : unit.toLowerCase(locale),
+            locale);
     }
 
     @Nullable
@@ -531,7 +537,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         int whiteG = ints[3];
         int blackB = ints[4];
         int whiteB = ints[5];
-        return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
+        return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB, getContext().locale());
     }
 
     /**
@@ -552,7 +558,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
 
         int[] repeatPattern = _directory.getIntArray(TAG_CFA_REPEAT_PATTERN_DIM);
         if (repeatPattern == null)
-            return String.format("Repeat Pattern not found for CFAPattern (%s)", super.getDescription(TAG_CFA_PATTERN_2));
+            return String.format("Repeat Pattern not found for CFAPattern (%s)", super.getDescription(TAG_CFA_PATTERN_2), getContext().locale());
 
         if (repeatPattern.length == 2 && values.length == (repeatPattern[0] * repeatPattern[1]))
         {
@@ -566,7 +572,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return formatCFAPattern(intpattern);
         }
 
-        return String.format("Unknown Pattern (%s)", super.getDescription(TAG_CFA_PATTERN_2));
+        return String.format("Unknown Pattern (%s)", super.getDescription(TAG_CFA_PATTERN_2), getContext().locale());
     }
 
     @Nullable
@@ -617,7 +623,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         Rational value = _directory.getRational(TAG_FNUMBER);
         if (value == null)
             return null;
-        return getFStopDescription(value.doubleValue(), _context.locale());
+        return getFStopDescription(value.doubleValue(), getContext().locale());
     }
 
     @Nullable
@@ -722,7 +728,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         if (value.getNumerator() == 0xFFFFFFFFL)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue());
     }
 
@@ -755,7 +761,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return "Infinity";
         if (value.getNumerator() == 0)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue()) + " metres";
     }
 
@@ -887,7 +893,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         if (value.getDenominator() == 0xFFFFFFFFL)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.0");
+        DecimalFormat formatter = new DecimalFormat("0.0", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue()) + " °C";
     }
 
@@ -899,7 +905,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         if (value.getDenominator() == 0xFFFFFFFFL)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.0");
+        DecimalFormat formatter = new DecimalFormat("0.0", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue()) + " %";
     }
 
@@ -911,7 +917,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         if (value.getDenominator() == 0xFFFFFFFFL)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.0");
+        DecimalFormat formatter = new DecimalFormat("0.0", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue()) + " hPa";
     }
 
@@ -923,7 +929,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         if (value.getDenominator() == 0xFFFFFFFFL)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue()) + " metres";
     }
 
@@ -935,7 +941,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         if (value.getDenominator() == 0xFFFFFFFFL)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.0##");
+        DecimalFormat formatter = new DecimalFormat("0.0##", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue()) + " mGal";
     }
 
@@ -947,7 +953,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         if (value.getDenominator() == 0xFFFFFFFFL)
             return "Unknown";
-        DecimalFormat formatter = new DecimalFormat("0.##");
+        DecimalFormat formatter = new DecimalFormat("0.##", getDecimalFormatSymbols());
         return formatter.format(value.doubleValue()) + " degrees";
     }
 
@@ -1037,7 +1043,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         final String unit = getFocalPlaneResolutionUnitDescription();
         return rational.getReciprocal().toSimpleString(_allowDecimalRepresentationOfRationals)
-            + (unit == null ? "" : " " + unit.toLowerCase());
+            + (unit == null ? "" : " " + unit.toLowerCase(getContext().locale()));
     }
 
     @Nullable
@@ -1048,7 +1054,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         final String unit = getFocalPlaneResolutionUnitDescription();
         return rational.getReciprocal().toSimpleString(_allowDecimalRepresentationOfRationals)
-            + (unit == null ? "" : " " + unit.toLowerCase());
+            + (unit == null ? "" : " " + unit.toLowerCase(getContext().locale()));
     }
 
     @Nullable
@@ -1222,7 +1228,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             ? null
             : value.getNumerator() == 0
                 ? "Digital zoom not used"
-                : new DecimalFormat("0.#").format(value.doubleValue());
+                : new DecimalFormat("0.#", getDecimalFormatSymbols()).format(value.doubleValue());
     }
 
     @Nullable
@@ -1304,5 +1310,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     public String getLensSpecificationDescription()
     {
         return getLensSpecificationDescription(TAG_LENS_SPECIFICATION, getContext().locale());
+    }
+
+    private DecimalFormatSymbols getDecimalFormatSymbols()
+    {
+        return DecimalFormatSymbols.getInstance(getContext().locale());
     }
 }
