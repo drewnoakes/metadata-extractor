@@ -28,10 +28,10 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Locale;
 
 /**
  * Reads Photoshop "ducky" segments, created during Save-for-Web.
@@ -50,7 +50,7 @@ public class DuckyReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPC);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable Locale locale)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable MetadataContext context)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 

@@ -24,6 +24,7 @@ import com.drew.lang.GeoLocation;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -149,11 +150,12 @@ public class GpsDirectory extends ExifDirectoryBase
     // TODO remove this constructor?
     public GpsDirectory()
     {
-        this(null);
+        this(new MetadataContext());
     }
 
-    public GpsDirectory(@Nullable Locale locale) {
-        this.setDescriptor(new GpsDescriptor(this, locale));
+    public GpsDirectory(@NotNull MetadataContext context)
+    {
+        this.setDescriptor(new GpsDescriptor(this, context));
     }
 
     @Override

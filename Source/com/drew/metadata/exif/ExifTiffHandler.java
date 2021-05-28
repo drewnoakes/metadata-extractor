@@ -41,6 +41,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.exif.makernotes.*;
 import com.drew.metadata.icc.IccReader;
@@ -60,9 +61,9 @@ import com.drew.metadata.plist.BplistReader;
  */
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
-    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory, @Nullable Locale locale)
+    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
     {
-        super(metadata, parentDirectory, locale);
+        super(metadata, parentDirectory, context);
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException

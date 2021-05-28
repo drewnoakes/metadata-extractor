@@ -50,10 +50,20 @@ public class TagDescriptor<T extends Directory>
 {
     @NotNull
     protected final T _directory;
+    @NotNull
+    protected final MetadataContext _context;
 
+    // TODO remove contructor once all sub-classes actually use MetadataContext?
     public TagDescriptor(@NotNull T directory)
     {
+        // TODO discuss: acceptable to use default here?
+        this(directory, new MetadataContext());
+    }
+
+    public TagDescriptor(@NotNull T directory, @NotNull MetadataContext context)
+    {
         _directory = directory;
+        _context = context;
     }
 
     /**

@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.StringValue;
 
 import java.lang.reflect.Constructor;
@@ -46,13 +47,13 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     @Nullable private Directory _rootParentDirectory;
     @Nullable protected Directory _currentDirectory;
     protected final Metadata _metadata;
-    @Nullable private Locale _locale;
+    private MetadataContext _context;
 
-    protected DirectoryTiffHandler(Metadata metadata, @Nullable Directory parentDirectory, @Nullable Locale locale)
+    protected DirectoryTiffHandler(Metadata metadata, @Nullable Directory parentDirectory, @Nullable MetadataContext context)
     {
         _metadata = metadata;
         _rootParentDirectory = parentDirectory;
-        _locale = locale;
+        _context = context;
     }
 
     public void endingIFD()
@@ -86,12 +87,12 @@ public abstract class DirectoryTiffHandler implements TiffHandler
         Constructor<?>[] constructors = directoryClass.getConstructors();
 
         try {
-            // pass locale to directory, if it has a constructor that can receive it
+            // pass context to directory, if it has a constructor that can receive it
             // TODO improve?
             for (Constructor<?> constructor : constructors) {
                 Class<?>[] parameterTypes = constructor.getParameterTypes();
-                if (parameterTypes.length == 1 && parameterTypes[0] == Locale.class) {
-                    return (Directory) constructor.newInstance(_locale);
+                if (parameterTypes.length == 1 && parameterTypes[0] == MetadataContext.class) {
+                    return (Directory) constructor.newInstance(_context);
                 }
             }
 

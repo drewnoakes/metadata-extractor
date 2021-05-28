@@ -22,6 +22,7 @@ package com.drew.metadata.exif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 
 import java.util.Locale;
 
@@ -38,8 +39,8 @@ public class ExifSubIFDDescriptor extends ExifDescriptorBase<ExifSubIFDDirectory
         this(directory, null);
     }
 
-    public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory, @Nullable Locale locale)
+    public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory, locale);
+        super(directory, context);
     }
 }

@@ -22,6 +22,7 @@ package com.drew.imaging.jpeg;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
@@ -104,8 +105,8 @@ public class JpegMetadataReaderTest
         try {
             // set default Locale to Dutch, configure English -> expect period
             Locale.setDefault(new Locale("nl"));
-            Locale configuredLocale = Locale.ENGLISH;
-            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), configuredLocale);
+            MetadataContext context = new MetadataContext().locale(Locale.ENGLISH);
+            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), context);
 
             Directory gps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             assertEquals("54° 59' 22.8\"", gps.getDescription(GpsDirectory.TAG_LATITUDE));
@@ -127,8 +128,8 @@ public class JpegMetadataReaderTest
         try {
             // set default Locale to English, configure Dutch -> expect comma
             Locale.setDefault(Locale.ENGLISH);
-            Locale configuredLocale = new Locale("nl");
-            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), configuredLocale);
+            MetadataContext context = new MetadataContext().locale(new Locale("nl"));
+            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), context);
 
             Directory gps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             assertEquals("54° 59' 22,8\"", gps.getDescription(GpsDirectory.TAG_LATITUDE));

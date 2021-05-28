@@ -30,10 +30,10 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Locale;
 
 /**
  * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifSubIFDDirectory},
@@ -54,14 +54,14 @@ public class ExifReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APP1);
     }
 
-    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @Nullable Locale locale)
+    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @Nullable MetadataContext context)
     {
         assert(segmentType == JpegSegmentType.APP1);
 
         for (byte[] segmentBytes : segments) {
             // Segment must have the expected preamble
             if (startsWithJpegExifPreamble(segmentBytes)) {
-                extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length(), null, locale);
+                extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length(), null, context);
             }
         }
     }
@@ -92,9 +92,9 @@ public class ExifReader implements JpegSegmentMetadataReader
     }
 
     /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory, @Nullable Locale locale)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
     {
-        ExifTiffHandler exifTiffHandler = new ExifTiffHandler(metadata, parentDirectory, locale);
+        ExifTiffHandler exifTiffHandler = new ExifTiffHandler(metadata, parentDirectory, context);
 
         try {
             // Read the TIFF-formatted Exif data
