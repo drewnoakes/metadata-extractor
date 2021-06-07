@@ -13,18 +13,16 @@ import com.drew.metadata.exif.makernotes.AppleRunTimeMakernoteDirectory;
 import com.drew.metadata.plist.BplistReader;
 
 /**
- * Reads the AppleRunTime data and adds <tt>AppleRunTimeMakernoteDirectory</tt> to the 
- * parent <tt>AppleMakernoteDirectory</tt> if it can be parsed with no errors.
- * 
+ * Reads the <tt>AppleRunTime</tt> data and adds {@link AppleRunTimeMakernoteDirectory} to the
+ * parent {@link AppleMakernoteDirectory} if it can be parsed with no errors.
  */
-public class AppleRunTimeReader 
+public class AppleRunTimeReader
 {
-
     public void extract(@NotNull byte[] bytes, @NotNull final Metadata metadata, @NotNull final Directory parentDirectory)
     {
         parentDirectory.setByteArray(AppleMakernoteDirectory.TAG_RUN_TIME, bytes);
-        if(!BplistReader.isValid(bytes))
-        {
+
+        if (!BplistReader.isValid(bytes)) {
         	parentDirectory.addError("Input array is not a bplist");
         	return;
         }
@@ -35,13 +33,10 @@ public class AppleRunTimeReader
         try {
             processAppleRunTime(directory, bytes);
 
-            if (directory.getTagCount() > 0) 
-            {
+            if (directory.getTagCount() > 0) {
                 metadata.addDirectory(directory);
             }
-        } 
-        catch (IOException e) 
-        {
+        } catch (IOException e) {
             parentDirectory.addError("Error processing TAG_RUN_TIME: " + e.getMessage());
         }
     }
