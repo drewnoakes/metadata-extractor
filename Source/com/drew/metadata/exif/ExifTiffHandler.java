@@ -231,7 +231,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
 
         // Custom processing for embedded XMP data
-        if (tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && _currentDirectory instanceof ExifIFD0Directory) {
+        if (tagId == ExifSubIFDDirectory.TAG_APPLICATION_NOTES && (_currentDirectory instanceof ExifIFD0Directory || _currentDirectory instanceof ExifSubIFDDirectory)) {
             new XmpReader().extract(reader.getNullTerminatedBytes(tagOffset, byteCount), _metadata, _currentDirectory);
             return true;
         }
