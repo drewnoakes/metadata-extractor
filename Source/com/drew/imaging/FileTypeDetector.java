@@ -26,7 +26,7 @@ import com.drew.imaging.riff.RiffTypeChecker;
 import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
 
-import java.io.FilterInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 /**
@@ -119,15 +119,16 @@ public class FileTypeDetector
     /**
      * Examines the file's bytes and estimates the file's type.
      * <p>
-     * Requires a {@link FilterInputStream} in order to mark and reset the stream to the position
-     * at which it was provided to this method once completed.
+     * The input stream must support mark and reset, in order to
+     * return the stream to the position at which it was provided
+     * to this method once completed.
      * <p>
      * Requires the stream to contain at least eight bytes.
      *
      * @throws IOException if the stream does not support mark/reset.
      */
     @NotNull
-    public static FileType detectFileType(@NotNull final FilterInputStream inputStream) throws IOException
+    public static FileType detectFileType(@NotNull final InputStream inputStream) throws IOException
     {
         if (!inputStream.markSupported())
             throw new IOException("Stream must support mark/reset");
