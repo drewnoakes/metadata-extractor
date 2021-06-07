@@ -29,7 +29,6 @@ import com.drew.lang.annotations.Nullable;
 /**
  * A limited-functionality binary property list (BPLIST) utility.
  * Parser functionality accounts for &quot;dict&quot; (with simple integer and string values) and &quot;data&quot;.
- * <b>NOTE:</b> Callers should call the {@link #isValid(byte[])} method before attempting to parse.
  *
  * https://opensource.apple.com/source/CF/CF-550/ForFoundationOnly.h
  * https://opensource.apple.com/source/CF/CF-550/CFBinaryPList.c
@@ -65,6 +64,10 @@ public class BplistReader
 
     public static PropertyListResults parse(byte[] bplist) throws IOException
     {
+        if (!isValid(bplist)) {
+            throw new IllegalArgumentException("Input is not a bplist");
+        }
+
         final ArrayList<Object> objects = new ArrayList<Object>();
         final Trailer trailer = readTrailer(bplist);
 
