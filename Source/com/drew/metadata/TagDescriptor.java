@@ -88,7 +88,7 @@ public class TagDescriptor<T extends Directory>
         if (object.getClass().isArray()) {
             final int length = Array.getLength(object);
             if (length > 16) {
-                return String.format("[%d values]", length, getContext().locale());
+                return String.format(getContext().locale(), "[%d values]", length);
             }
         }
 
@@ -181,7 +181,7 @@ public class TagDescriptor<T extends Directory>
         byte[] bytes = _directory.getByteArray(tagType);
         if (bytes == null)
             return null;
-        return String.format("(%d byte%s)", bytes.length, bytes.length == 1 ? "" : "s", getContext().locale());
+        return String.format(getContext().locale(), "(%d byte%s)", bytes.length, bytes.length == 1 ? "" : "s");
     }
 
     @Nullable
@@ -199,7 +199,7 @@ public class TagDescriptor<T extends Directory>
         Rational value = _directory.getRational(tagType);
         if (value == null)
             return null;
-        return String.format("%." + decimalPlaces + "f", value.doubleValue(), getContext().locale());
+        return String.format(getContext().locale(), "%." + decimalPlaces + "f", value.doubleValue());
     }
 
     @Nullable
@@ -208,7 +208,7 @@ public class TagDescriptor<T extends Directory>
         Integer value = _directory.getInteger(tagType);
         if (value == null)
             return null;
-        return String.format(format, value, getContext().locale());
+        return String.format(getContext().locale(), format, value);
     }
 
     @Nullable
@@ -217,7 +217,7 @@ public class TagDescriptor<T extends Directory>
         Float value = _directory.getFloatObject(tagType);
         if (value == null)
             return null;
-        return String.format(format, value, getContext().locale());
+        return String.format(getContext().locale(), format, value);
     }
 
     @Nullable
@@ -226,7 +226,7 @@ public class TagDescriptor<T extends Directory>
         String value = _directory.getString(tagType);
         if (value == null)
             return null;
-        return String.format(format, value, getContext().locale());
+        return String.format(getContext().locale(), format, value);
     }
 
     @Nullable

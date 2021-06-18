@@ -432,10 +432,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         final String unit = getResolutionDescription();
         final Locale locale = getContext().locale();
-        return String.format("%s dots per %s",
+        return String.format(locale,
+            "%s dots per %s",
             value.toSimpleString(_allowDecimalRepresentationOfRationals),
-            unit == null ? "unit" : unit.toLowerCase(locale),
-            locale);
+            unit == null ? "unit" : unit.toLowerCase(locale));
     }
 
     @Nullable
@@ -446,10 +446,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return null;
         final String unit = getResolutionDescription();
         final Locale locale = getContext().locale();
-        return String.format("%s dots per %s",
+        return String.format(locale,
+            "%s dots per %s",
             value.toSimpleString(_allowDecimalRepresentationOfRationals),
-            unit == null ? "unit" : unit.toLowerCase(locale),
-            locale);
+            unit == null ? "unit" : unit.toLowerCase(locale));
     }
 
     @Nullable
@@ -537,7 +537,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
         int whiteG = ints[3];
         int blackB = ints[4];
         int whiteB = ints[5];
-        return String.format("[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB, getContext().locale());
+        return String.format(getContext().locale(), "[%d,%d,%d] [%d,%d,%d]", blackR, blackG, blackB, whiteR, whiteG, whiteB);
     }
 
     /**
@@ -558,7 +558,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
 
         int[] repeatPattern = _directory.getIntArray(TAG_CFA_REPEAT_PATTERN_DIM);
         if (repeatPattern == null)
-            return String.format("Repeat Pattern not found for CFAPattern (%s)", super.getDescription(TAG_CFA_PATTERN_2), getContext().locale());
+            return String.format(getContext().locale(), "Repeat Pattern not found for CFAPattern (%s)", super.getDescription(TAG_CFA_PATTERN_2));
 
         if (repeatPattern.length == 2 && values.length == (repeatPattern[0] * repeatPattern[1]))
         {
@@ -572,7 +572,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             return formatCFAPattern(intpattern);
         }
 
-        return String.format("Unknown Pattern (%s)", super.getDescription(TAG_CFA_PATTERN_2), getContext().locale());
+        return String.format(getContext().locale(), "Unknown Pattern (%s)", super.getDescription(TAG_CFA_PATTERN_2));
     }
 
     @Nullable
