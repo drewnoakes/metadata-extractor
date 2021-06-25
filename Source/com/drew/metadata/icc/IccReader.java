@@ -34,6 +34,7 @@ import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Reads an ICC profile.
@@ -87,7 +88,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         }
 
         if (buffer != null)
-            extract(new ByteArrayReader(buffer), metadata);
+            extract(new ByteArrayReader(buffer), metadata, null, context);
     }
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
@@ -97,9 +98,14 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory)
     {
+        extract(reader, metadata, parentDirectory, new MetadataContext());
+    }
+
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory, @NotNull final MetadataContext context)
+    {
         // TODO review whether the 'tagPtr' values below really do require RandomAccessReader or whether SequentialReader may be used instead
 
-        IccDirectory directory = new IccDirectory();
+        IccDirectory directory = new IccDirectory(context);
 
         if (parentDirectory != null)
             directory.setParent(parentDirectory);
@@ -114,7 +120,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
             set4ByteString(directory, IccDirectory.TAG_PROFILE_CLASS, reader);
             set4ByteString(directory, IccDirectory.TAG_COLOR_SPACE, reader);
             set4ByteString(directory, IccDirectory.TAG_PROFILE_CONNECTION_SPACE, reader);
-            setDate(directory, IccDirectory.TAG_PROFILE_DATETIME, reader);
+            setDate(directory, IccDirectory.TAG_PROFILE_DATETIME, reader, context.locale());
             set4ByteString(directory, IccDirectory.TAG_SIGNATURE, reader);
             set4ByteString(directory, IccDirectory.TAG_PLATFORM, reader);
             setInt32(directory, IccDirectory.TAG_CMM_FLAGS, reader);
@@ -181,7 +187,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
     }
 
     @SuppressWarnings({"SameParameterValue", "MagicConstant"})
-    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader) throws IOException
+    private void setDate(@NotNull final IccDirectory directory, final int tagType, @NotNull RandomAccessReader reader, @NotNull Locale locale) throws IOException
     {
         final int y = reader.getUInt16(tagType);
         final int m = reader.getUInt16(tagType + 2);
@@ -192,12 +198,13 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 
         if (DateUtil.isValidDate(y, m - 1, d) && DateUtil.isValidTime(h, M, s))
         {
-            String dateString = String.format("%04d:%02d:%02d %02d:%02d:%02d", y, m, d, h, M, s);
+            String dateString = String.format(locale, "%04d:%02d:%02d %02d:%02d:%02d", y, m, d, h, M, s);
             directory.setString(tagType, dateString);
         }
         else
         {
             directory.addError(String.format(
+                locale,
                 "ICC data describes an invalid date/time: year=%d month=%d day=%d hour=%d minute=%d second=%d",
                 y, m, d, h, M, s));
         }

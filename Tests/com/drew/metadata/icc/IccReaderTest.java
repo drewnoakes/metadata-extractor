@@ -24,6 +24,7 @@ package com.drew.metadata.icc;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.testing.TestHelper;
 import com.drew.tools.FileUtil;
 import org.junit.Test;
@@ -62,7 +63,8 @@ public class IccReaderTest
         byte[] app2Bytes = FileUtil.readBytes("Tests/Data/iccDataInvalid1.jpg.app2");
 
         Metadata metadata = new Metadata();
-        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2, null);
+        MetadataContext context = new MetadataContext();
+        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2, context);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
@@ -76,7 +78,8 @@ public class IccReaderTest
         byte[] app2Bytes = FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2");
 
         Metadata metadata = new Metadata();
-        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2, null);
+        MetadataContext context = new MetadataContext();
+        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2, context);
 
         IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
 
