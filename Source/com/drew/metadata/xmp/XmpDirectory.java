@@ -29,6 +29,7 @@ import com.adobe.internal.xmp.properties.XMPPropertyInfo;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,9 +60,9 @@ public class XmpDirectory extends Directory
     @Nullable
     private XMPMeta _xmpMeta;
 
-    public XmpDirectory()
+    public XmpDirectory(MetadataContext context)
     {
-        this.setDescriptor(new XmpDescriptor(this));
+        this.setDescriptor(new XmpDescriptor(this, context));
     }
 
     @Override
