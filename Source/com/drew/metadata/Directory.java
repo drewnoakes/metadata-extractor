@@ -193,7 +193,7 @@ public abstract class Directory
         _parent = parent;
     }
 
-    private Locale getLocale()
+    protected Locale getLocale()
     {
         // TODO discuss: is it acceptable to use a default here?
         return _descriptor != null ? _descriptor.getContext().locale() : new MetadataContext().locale();
