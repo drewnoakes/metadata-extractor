@@ -94,7 +94,7 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        return readMetadata(inputStream, null, null);
+        return readMetadata(inputStream, null, new MetadataContext());
     }
 
     @NotNull
@@ -115,7 +115,7 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
-        return readMetadata(file, readers, null);
+        return readMetadata(file, readers, new MetadataContext());
     }
 
     @NotNull
@@ -127,12 +127,12 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
-        return readMetadata(file, null, null);
+        return readMetadata(file, null, new MetadataContext());
     }
 
     public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        process(metadata, inputStream, null, null);
+        process(metadata, inputStream, null, new MetadataContext());
     }
 
     // TODO create method with original signature for backwards compatibility
