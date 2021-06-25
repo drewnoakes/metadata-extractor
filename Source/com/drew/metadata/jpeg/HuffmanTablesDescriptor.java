@@ -22,6 +22,7 @@ package com.drew.metadata.jpeg;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import static com.drew.metadata.jpeg.HuffmanTablesDirectory.*;
@@ -39,9 +40,9 @@ import static com.drew.metadata.jpeg.HuffmanTablesDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class HuffmanTablesDescriptor extends TagDescriptor<HuffmanTablesDirectory>
 {
-    public HuffmanTablesDescriptor(@NotNull HuffmanTablesDirectory directory)
+    public HuffmanTablesDescriptor(@NotNull HuffmanTablesDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override

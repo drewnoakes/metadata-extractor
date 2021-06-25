@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.MetadataException;
 
 /**
@@ -128,9 +129,16 @@ public class HuffmanTablesDirectory extends Directory
         _tagNameMap.put(TAG_NUMBER_OF_TABLES, "Number of Tables");
     }
 
+    // TODO remove this constructor, or document its deprecation?
+    @Deprecated
     public HuffmanTablesDirectory()
     {
-        this.setDescriptor(new HuffmanTablesDescriptor(this));
+        this(new MetadataContext());
+    }
+
+    public HuffmanTablesDirectory(@NotNull MetadataContext context)
+    {
+        this.setDescriptor(new HuffmanTablesDescriptor(this, context));
     }
 
     @Override

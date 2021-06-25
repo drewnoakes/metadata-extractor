@@ -49,7 +49,7 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
-            extract(new SequentialByteArrayReader(segmentBytes), metadata);
+            extract(new SequentialByteArrayReader(segmentBytes), metadata, context);
         }
     }
 
@@ -57,11 +57,11 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
      * Performs the DHT tables extraction, adding found tables to the specified
      * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @NotNull MetadataContext context)
     {
         HuffmanTablesDirectory directory = metadata.getFirstDirectoryOfType(HuffmanTablesDirectory.class);
         if (directory == null) {
-            directory = new HuffmanTablesDirectory();
+            directory = new HuffmanTablesDirectory(context);
             metadata.addDirectory(directory);
         }
 
