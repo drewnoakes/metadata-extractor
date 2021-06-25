@@ -58,7 +58,7 @@ public class AdobeJpegDirectory extends Directory {
         _tagNameMap.put(TAG_COLOR_TRANSFORM, "Color Transform");
     }
 
-    public AdobeJpegDirectory(MetadataContext context) {
+    public AdobeJpegDirectory(@NotNull MetadataContext context) {
         this.setDescriptor(new AdobeJpegDescriptor(this, context));
     }
 

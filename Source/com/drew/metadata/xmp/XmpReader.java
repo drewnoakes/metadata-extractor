@@ -138,7 +138,8 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
-        extract(xmpBytes, metadata, null, null);
+        // TODO document this default context?
+        extract(xmpBytes, metadata, null, new MetadataContext());
     }
 
     /**
@@ -159,7 +160,6 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @NotNull MetadataContext context)
     {
-        // TODO document this default context?
         extract(xmpBytes, metadata, null, context);
     }
 
@@ -234,7 +234,8 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final StringValue xmpString, @NotNull Metadata metadata)
     {
-        extract(xmpString.getBytes(), metadata, null, null);
+        // TODO document this default context?
+        extract(xmpString.getBytes(), metadata, null, new MetadataContext());
     }
 
     /**

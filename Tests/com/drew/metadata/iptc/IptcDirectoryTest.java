@@ -40,8 +40,7 @@ public class IptcDirectoryTest
     @Before
     public void setUp()
     {
-        MetadataContext context = new MetadataContext();
-        _directory = new IptcDirectory(context);
+        _directory = new IptcDirectory(new MetadataContext());
     }
 
     @Test

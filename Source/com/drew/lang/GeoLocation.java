@@ -79,8 +79,6 @@ public final class GeoLocation
         return _latitude == 0 && _longitude == 0;
     }
 
-    // TODO document this deprecation
-
     /**
      * Converts a decimal degree angle into its corresponding DMS (degrees-minutes-seconds) representation as a string,
      * of format: {@code -1° 23' 4.56"}

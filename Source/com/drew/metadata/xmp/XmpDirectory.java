@@ -60,7 +60,7 @@ public class XmpDirectory extends Directory
     @Nullable
     private XMPMeta _xmpMeta;
 
-    public XmpDirectory(MetadataContext context)
+    public XmpDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new XmpDescriptor(this, context));
     }
