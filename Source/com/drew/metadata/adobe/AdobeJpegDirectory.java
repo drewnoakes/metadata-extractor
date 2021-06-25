@@ -23,6 +23,7 @@ package com.drew.metadata.adobe;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 
 import java.util.HashMap;
 
@@ -57,8 +58,8 @@ public class AdobeJpegDirectory extends Directory {
         _tagNameMap.put(TAG_COLOR_TRANSFORM, "Color Transform");
     }
 
-    public AdobeJpegDirectory() {
-        this.setDescriptor(new AdobeJpegDescriptor(this));
+    public AdobeJpegDirectory(MetadataContext context) {
+        this.setDescriptor(new AdobeJpegDescriptor(this, context));
     }
 
     @NotNull
