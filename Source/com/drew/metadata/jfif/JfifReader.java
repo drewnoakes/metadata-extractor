@@ -53,7 +53,7 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
         return Collections.singletonList(JpegSegmentType.APP0);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable MetadataContext context)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header

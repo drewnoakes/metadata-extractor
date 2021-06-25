@@ -54,7 +54,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APP1);
     }
 
-    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @Nullable MetadataContext context)
+    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         assert(segmentType == JpegSegmentType.APP1);
 

@@ -46,7 +46,7 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.DNL);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable MetadataContext context)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
             extract(segmentBytes, metadata, segmentType, context);

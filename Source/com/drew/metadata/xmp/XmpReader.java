@@ -91,7 +91,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      * @param segmentType The {@link JpegSegmentType} being read.
      * @param context The {@link MetadataContext} to use for parsing and formatting.
      */
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable MetadataContext context)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         final int preambleLength = XMP_JPEG_PREAMBLE.length();
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
@@ -127,7 +127,7 @@ public class XmpReader implements JpegSegmentMetadataReader
 
         // Now that the Extended XMP chunks have been concatenated, let's parse and merge with the Standard XMP.
         if (extendedXMPBuffer != null) {
-            extract(extendedXMPBuffer, metadata);
+            extract(extendedXMPBuffer, metadata, context);
         }
     }
 
@@ -138,7 +138,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
-        extract(xmpBytes, metadata, null);
+        extract(xmpBytes, metadata, null, null);
     }
 
     /**
@@ -150,6 +150,17 @@ public class XmpReader implements JpegSegmentMetadataReader
     {
         // TODO document this default context?
         extract(xmpBytes, metadata, parentDirectory, new MetadataContext());
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @NotNull MetadataContext context)
+    {
+        // TODO document this default context?
+        extract(xmpBytes, metadata, null, context);
     }
 
     /**
@@ -223,7 +234,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final StringValue xmpString, @NotNull Metadata metadata)
     {
-        extract(xmpString.getBytes(), metadata, null);
+        extract(xmpString.getBytes(), metadata, null, null);
     }
 
     /**
@@ -288,7 +299,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      * at page 19
      */
     @Nullable
-    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer, MetadataContext context)
+    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer, @NotNull MetadataContext context)
     {
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         final int segmentLength = segmentBytes.length;

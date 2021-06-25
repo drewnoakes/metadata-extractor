@@ -25,5 +25,5 @@ public interface JpegSegmentMetadataReader
      * @param segmentType The {@link JpegSegmentType} being read.
      * @param context The {@link MetadataContext} to use for parsing and formatting.
      */
-    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @Nullable MetadataContext context);
+    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @NotNull MetadataContext context);
 }

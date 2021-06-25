@@ -154,8 +154,7 @@ public class JpegMetadataReader
     }
 
     // TODO create method with original signature for backwards compatibility
-    // TODO consider @NotNull / @Nullable annotations
-    public static void processJpegSegmentData(Metadata metadata, Iterable<JpegSegmentMetadataReader> readers, JpegSegmentData segmentData, MetadataContext context)
+    public static void processJpegSegmentData(@NotNull Metadata metadata, @NotNull Iterable<JpegSegmentMetadataReader> readers, @NotNull JpegSegmentData segmentData, @NotNull MetadataContext context)
     {
         // Pass the appropriate byte arrays to each reader.
         for (JpegSegmentMetadataReader reader : readers) {
