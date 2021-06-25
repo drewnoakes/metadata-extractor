@@ -47,7 +47,7 @@ public class JpegCommentReader implements JpegSegmentMetadataReader
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
-            JpegCommentDirectory directory = new JpegCommentDirectory();
+            JpegCommentDirectory directory = new JpegCommentDirectory(context);
             metadata.addDirectory(directory);
 
             // The entire contents of the directory are the comment
