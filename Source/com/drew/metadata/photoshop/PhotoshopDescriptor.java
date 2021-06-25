@@ -25,6 +25,7 @@ import com.drew.lang.Charsets;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.IOException;
@@ -41,9 +42,9 @@ import static com.drew.metadata.photoshop.PhotoshopDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
 {
-    public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory)
+    public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory, MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override
@@ -144,14 +145,14 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                     format = "Progressive";
                     break;
                 default:
-                    format = String.format("Unknown 0x%04X", f);
+                    format = String.format(getContext().locale(), "Unknown 0x%04X", f);
             }
 
             String scans = s >= 1 && s <= 3
-                    ? String.format("%d", s + 2)
-                    : String.format("Unknown 0x%04X", s);
+                    ? String.format(getContext().locale(), "%d", s + 2)
+                    : String.format(getContext().locale(), "Unknown 0x%04X", s);
 
-            return String.format("%d (%s), %s format, %s scans", q1, quality, format, scans);
+            return String.format(getContext().locale(), "%d (%s), %s format, %s scans", q1, quality, format, scans);
         } catch (IOException e) {
             return null;
         }
@@ -190,9 +191,9 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
                 case 1:
                     return "Size to fit";
                 case 2:
-                    return String.format("User defined, X:%s Y:%s, Scale:%s", locX, locY, scale);
+                    return String.format(getContext().locale(), "User defined, X:%s Y:%s, Scale:%s", locX, locY, scale);
                 default:
-                    return String.format("Unknown %04X, X:%s Y:%s, Scale:%s", style, locX, locY, scale);
+                    return String.format(getContext().locale(), "Unknown %04X, X:%s Y:%s, Scale:%s", style, locX, locY, scale);
             }
         } catch (Exception e) {
             return null;
@@ -209,7 +210,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             RandomAccessReader reader = new ByteArrayReader(bytes);
             float resX = reader.getS15Fixed16(0);
             float resY = reader.getS15Fixed16(8); // is this the correct offset? it's only reading 4 bytes each time
-            DecimalFormat format = new DecimalFormat("0.##");
+            DecimalFormat format = new DecimalFormat("0.##", getDecimalFormatSymbols(getContext().locale()));
             return format.format(resX) + "x" + format.format(resY) + " DPI";
         } catch (Exception e) {
             return null;
@@ -237,7 +238,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             String writerStr = reader.getString(pos, writerLength * 2, "UTF-16");
             pos += writerLength * 2;
             int fileVersion = reader.getInt32(pos);
-            return String.format("%d (%s, %s) %d", ver, readerStr, writerStr, fileVersion);
+            return String.format(getContext().locale(), "%d (%s, %s) %d", ver, readerStr, writerStr, fileVersion);
         } catch (IOException e) {
             return null;
         }
@@ -255,7 +256,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             String name = reader.getString(24, nameLength * 2, "UTF-16");
             int pos = 24 + nameLength * 2;
             int sliceCount = reader.getInt32(pos);
-            return String.format("%s (%d,%d,%d,%d) %d Slices",
+            return String.format(getContext().locale(), "%s (%d,%d,%d,%d) %d Slices",
                     name, reader.getInt32(4), reader.getInt32(8), reader.getInt32(12), reader.getInt32(16), sliceCount);
         } catch (IOException e) {
             return null;
@@ -278,7 +279,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             int compSize = reader.getInt32(20);
             int bpp = reader.getInt32(24);
             //skip Number of planes
-            return String.format("%s, %dx%d, Decomp %d bytes, %d bpp, %d bytes",
+            return String.format(getContext().locale(), "%s, %dx%d, Decomp %d bytes, %d bpp, %d bytes",
                     format == 1 ? "JpegRGB" : "RawRGB",
                     width, height, totalSize, bpp, compSize);
         } catch (IOException e) {
@@ -303,7 +304,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
             return null;
         RandomAccessReader reader = new ByteArrayReader(bytes);
         try {
-            return String.format("%d", reader.getInt32(0));
+            return String.format(getContext().locale(), "%d", reader.getInt32(0));
         } catch (IOException e) {
             return null;
         }
@@ -324,7 +325,7 @@ public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
         final byte[] bytes = _directory.getByteArray(tagType);
         if (bytes == null)
             return null;
-        return String.format("%d bytes binary data", bytes.length);
+        return String.format(getContext().locale(), "%d bytes binary data", bytes.length);
     }
 
     @Nullable

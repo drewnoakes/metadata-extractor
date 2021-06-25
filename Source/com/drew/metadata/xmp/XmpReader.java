@@ -149,7 +149,17 @@ public class XmpReader implements JpegSegmentMetadataReader
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
         // TODO document this default context?
-        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory, new MetadataContext());
+        extract(xmpBytes, metadata, parentDirectory, new MetadataContext());
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
+    {
+        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory, context);
     }
 
     /**

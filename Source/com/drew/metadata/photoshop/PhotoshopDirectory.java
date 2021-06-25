@@ -24,6 +24,7 @@ package com.drew.metadata.photoshop;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 
 import java.util.HashMap;
 
@@ -224,9 +225,9 @@ public class PhotoshopDirectory extends Directory
         _tagNameMap.put(TAG_PRINT_FLAGS_INFO, "Print Flags Information");
     }
 
-    public PhotoshopDirectory()
+    public PhotoshopDirectory(MetadataContext context)
     {
-        this.setDescriptor(new PhotoshopDescriptor(this));
+        this.setDescriptor(new PhotoshopDescriptor(this, context));
     }
 
     @Override
