@@ -58,17 +58,21 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header
             if (segmentBytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
-                extract(new ByteArrayReader(segmentBytes), metadata);
+                extract(new ByteArrayReader(segmentBytes), metadata, context);
         }
+    }
+
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata) {
+        extract(reader, metadata, new MetadataContext());
     }
 
     /**
      * Performs the Jfif data extraction, adding found values to the specified
      * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @NotNull final MetadataContext context)
     {
-        JfifDirectory directory = new JfifDirectory();
+        JfifDirectory directory = new JfifDirectory(context);
         metadata.addDirectory(directory);
 
         try {

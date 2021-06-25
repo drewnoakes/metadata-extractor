@@ -22,6 +22,7 @@ package com.drew.metadata.jfif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import static com.drew.metadata.jfif.JfifDirectory.*;
@@ -39,9 +40,9 @@ import static com.drew.metadata.jfif.JfifDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class JfifDescriptor extends TagDescriptor<JfifDirectory>
 {
-    public JfifDescriptor(@NotNull JfifDirectory directory)
+    public JfifDescriptor(@NotNull JfifDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class JfifDescriptor extends TagDescriptor<JfifDirectory>
         Integer value = _directory.getInteger(TAG_VERSION);
         if (value==null)
             return null;
-        return String.format("%d.%d", (value & 0xFF00) >> 8, value & 0xFF);
+        return String.format(getContext().locale(), "%d.%d", (value & 0xFF00) >> 8, value & 0xFF);
     }
 
     @Nullable
@@ -77,7 +78,8 @@ public class JfifDescriptor extends TagDescriptor<JfifDirectory>
         Integer value = _directory.getInteger(TAG_RESY);
         if (value==null)
             return null;
-        return String.format("%d dot%s",
+        return String.format(getContext().locale(),
+                "%d dot%s",
                 value,
                 value==1 ? "" : "s");
     }
@@ -88,7 +90,8 @@ public class JfifDescriptor extends TagDescriptor<JfifDirectory>
         Integer value = _directory.getInteger(TAG_RESX);
         if (value==null)
             return null;
-        return String.format("%d dot%s",
+        return String.format(getContext().locale(),
+                "%d dot%s",
                 value,
                 value==1 ? "" : "s");
     }

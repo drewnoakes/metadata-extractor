@@ -22,6 +22,7 @@ package com.drew.metadata.jfif;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.MetadataException;
 
 import java.util.HashMap;
@@ -55,9 +56,9 @@ public class JfifDirectory extends Directory
         _tagNameMap.put(TAG_THUMB_HEIGHT, "Thumbnail Height Pixels");
     }
 
-    public JfifDirectory()
+    public JfifDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new JfifDescriptor(this));
+        this.setDescriptor(new JfifDescriptor(this, context));
     }
 
     @Override
