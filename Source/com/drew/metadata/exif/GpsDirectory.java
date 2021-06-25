@@ -147,7 +147,11 @@ public class GpsDirectory extends ExifDirectoryBase
         _tagNameMap.put(TAG_H_POSITIONING_ERROR, "GPS H Positioning Error");
     }
 
-    // TODO remove this constructor?
+    @NotNull
+    private final MetadataContext _context;
+
+    // TODO remove this constructor, or document its deprecation?
+    @Deprecated
     public GpsDirectory()
     {
         this(new MetadataContext());
@@ -156,6 +160,7 @@ public class GpsDirectory extends ExifDirectoryBase
     public GpsDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new GpsDescriptor(this, context));
+        _context = context;
     }
 
     @Override
@@ -201,7 +206,7 @@ public class GpsDirectory extends ExifDirectoryBase
         if (lat == null || lon == null)
             return null;
 
-        return new GeoLocation(lat, lon);
+        return new GeoLocation(lat, lon, _context);
     }
 
     /**
@@ -225,7 +230,7 @@ public class GpsDirectory extends ExifDirectoryBase
         String dateTime = String.format(Locale.US, "%s %02d:%02d:%02.3f UTC",
             date, timeComponents[0].intValue(), timeComponents[1].intValue(), timeComponents[2].doubleValue());
         try {
-            DateFormat parser = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.S z");
+            DateFormat parser = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.S z", _context.locale());
             return parser.parse(dateTime);
         } catch (ParseException e) {
             return null;

@@ -527,7 +527,7 @@ public class TagDescriptor<T extends Directory>
         }
     }
 
-    private static DecimalFormatSymbols getDecimalFormatSymbols(Locale locale)
+    protected static DecimalFormatSymbols getDecimalFormatSymbols(Locale locale)
     {
         return locale == null ? DecimalFormatSymbols.getInstance() : DecimalFormatSymbols.getInstance(locale);
     }

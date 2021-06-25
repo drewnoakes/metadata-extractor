@@ -23,6 +23,7 @@ package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -39,17 +40,20 @@ public final class GeoLocation
 {
     private final double _latitude;
     private final double _longitude;
+    private final MetadataContext _context;
 
     /**
      * Instantiates a new instance of {@link GeoLocation}.
      *
      * @param latitude the latitude, in degrees
      * @param longitude the longitude, in degrees
+     * @param context the current metadata context
      */
-    public GeoLocation(double latitude, double longitude)
+    public GeoLocation(double latitude, double longitude, MetadataContext context)
     {
         _latitude = latitude;
         _longitude = longitude;
+        _context = context;
     }
 
     /**
@@ -76,8 +80,9 @@ public final class GeoLocation
         return _latitude == 0 && _longitude == 0;
     }
 
-    // TODO document this
+    // TODO document this deprecation
     @NotNull
+    @Deprecated
     public static String decimalToDegreesMinutesSecondsString(double decimal)
     {
         return decimalToDegreesMinutesSecondsString(decimal, null);
@@ -168,7 +173,8 @@ public final class GeoLocation
     @NotNull
     public String toDMSString()
     {
-        // TODO add a Locale version of this method?
-        return decimalToDegreesMinutesSecondsString(_latitude) + ", " + decimalToDegreesMinutesSecondsString(_longitude);
+        return decimalToDegreesMinutesSecondsString(_latitude, _context.locale())
+            + ", "
+            + decimalToDegreesMinutesSecondsString(_longitude, _context.locale());
     }
 }
