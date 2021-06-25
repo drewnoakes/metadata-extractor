@@ -144,7 +144,7 @@ public class GpsDirectory extends ExifDirectoryBase
         _tagNameMap.put(TAG_AREA_INFORMATION, "GPS Area Information");
         _tagNameMap.put(TAG_DATE_STAMP, "GPS Date Stamp");
         _tagNameMap.put(TAG_DIFFERENTIAL, "GPS Differential");
-        _tagNameMap.put(TAG_H_POSITIONING_ERROR, "GPS H Positioning Error");
+        _tagNameMap.put(TAG_H_POSITIONING_ERROR, "GPS Horizontal Positioning Error");
     }
 
     public GpsDirectory(@NotNull MetadataContext context)
