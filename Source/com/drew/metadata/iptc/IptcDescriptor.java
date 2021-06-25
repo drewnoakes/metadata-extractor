@@ -23,6 +23,7 @@ package com.drew.metadata.iptc;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import static com.drew.metadata.iptc.IptcDirectory.*;
@@ -37,9 +38,9 @@ import static com.drew.metadata.iptc.IptcDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class IptcDescriptor extends TagDescriptor<IptcDirectory>
 {
-    public IptcDescriptor(@NotNull IptcDirectory directory)
+    public IptcDescriptor(@NotNull IptcDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override

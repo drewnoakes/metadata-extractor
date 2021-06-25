@@ -71,7 +71,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the IPTC marker byte
             if (segmentBytes.length != 0 && segmentBytes[0] == IptcMarkerByte) {
-                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
+                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length, context);
             }
         }
     }
@@ -81,7 +81,8 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
     {
-        extract(reader, metadata, length, null);
+        // TODO document this default context?
+        extract(reader, metadata, length, null, new MetadataContext());
     }
 
     /**
@@ -89,7 +90,24 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory)
     {
-        IptcDirectory directory = new IptcDirectory();
+        // TODO document this default context?
+        extract(reader, metadata, length, parentDirectory, new MetadataContext());
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @NotNull MetadataContext context)
+    {
+        extract(reader, metadata, length, null, context);
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
+    {
+        IptcDirectory directory = new IptcDirectory(context);
         metadata.addDirectory(directory);
 
         if (parentDirectory != null)

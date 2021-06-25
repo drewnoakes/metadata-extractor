@@ -158,7 +158,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 if (signature.equals("8BIM")) {
                     if (tagType == PhotoshopDirectory.TAG_IPTC)
-                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory);
+                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory, context);
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
                         new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory, context);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
