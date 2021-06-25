@@ -34,11 +34,6 @@ import java.util.Locale;
 @SuppressWarnings("WeakerAccess")
 public class ExifSubIFDDescriptor extends ExifDescriptorBase<ExifSubIFDDirectory>
 {
-    public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory)
-    {
-        this(directory, null);
-    }
-
     public ExifSubIFDDescriptor(@NotNull ExifSubIFDDirectory directory, @NotNull MetadataContext context)
     {
         super(directory, context);

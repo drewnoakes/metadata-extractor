@@ -42,7 +42,7 @@ import static com.drew.metadata.photoshop.PhotoshopDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class PhotoshopDescriptor extends TagDescriptor<PhotoshopDirectory>
 {
-    public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory, MetadataContext context)
+    public PhotoshopDescriptor(@NotNull PhotoshopDirectory directory, @NotNull MetadataContext context)
     {
         super(directory, context);
     }

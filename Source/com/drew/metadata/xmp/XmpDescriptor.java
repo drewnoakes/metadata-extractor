@@ -33,7 +33,7 @@ import com.drew.metadata.TagDescriptor;
 @SuppressWarnings("WeakerAccess")
 public class XmpDescriptor extends TagDescriptor<XmpDirectory>
 {
-    public XmpDescriptor(@NotNull XmpDirectory directory, MetadataContext context)
+    public XmpDescriptor(@NotNull XmpDirectory directory, @NotNull MetadataContext context)
     {
         super(directory, context);
     }

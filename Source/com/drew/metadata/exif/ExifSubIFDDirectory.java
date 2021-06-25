@@ -41,11 +41,6 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     /** This tag is a pointer to the Exif Interop IFD. */
     public static final int TAG_INTEROP_OFFSET = 0xA005;
 
-    public ExifSubIFDDirectory()
-    {
-        this.setDescriptor(new ExifSubIFDDescriptor(this));
-    }
-
     public ExifSubIFDDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new ExifSubIFDDescriptor(this, context));

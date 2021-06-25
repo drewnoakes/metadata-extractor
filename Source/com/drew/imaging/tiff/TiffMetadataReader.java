@@ -67,7 +67,7 @@ public class TiffMetadataReader
     public static Metadata readMetadata(@NotNull RandomAccessReader reader) throws IOException, TiffProcessingException
     {
         Metadata metadata = new Metadata();
-        ExifTiffHandler handler = new ExifTiffHandler(metadata, null, null);
+        ExifTiffHandler handler = new ExifTiffHandler(metadata, null);
         new TiffReader().processTiff(reader, handler, 0);
         return metadata;
     }

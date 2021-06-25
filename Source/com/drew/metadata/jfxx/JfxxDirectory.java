@@ -45,7 +45,7 @@ public class JfxxDirectory extends Directory
         _tagNameMap.put(TAG_EXTENSION_CODE, "Extension Code");
     }
 
-    public JfxxDirectory(MetadataContext context)
+    public JfxxDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new JfxxDescriptor(this, context));
     }

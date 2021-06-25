@@ -40,7 +40,7 @@ import static com.drew.metadata.jfxx.JfxxDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class JfxxDescriptor extends TagDescriptor<JfxxDirectory>
 {
-    public JfxxDescriptor(@NotNull JfxxDirectory directory, MetadataContext context)
+    public JfxxDescriptor(@NotNull JfxxDirectory directory, @NotNull MetadataContext context)
     {
         super(directory, context);
     }

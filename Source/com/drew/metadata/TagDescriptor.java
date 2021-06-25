@@ -307,7 +307,6 @@ public class TagDescriptor<T extends Directory>
         }
     }
 
-    // TODO: discuss deprecation
     @Deprecated
     @Nullable
     /**
@@ -334,7 +333,6 @@ public class TagDescriptor<T extends Directory>
         return null;
     }
 
-    // TODO: discuss deprecation
     @Deprecated
     @Nullable
     /**
@@ -352,7 +350,7 @@ public class TagDescriptor<T extends Directory>
         format.setRoundingMode(RoundingMode.HALF_UP);
         return "f/" + format.format(fStop);
     }
-    // TODO: discuss deprecation
+
     @Deprecated
     @Nullable
     /**
@@ -371,7 +369,6 @@ public class TagDescriptor<T extends Directory>
         return format.format(mm) + " mm";
     }
 
-    // TODO: discuss deprecation
     @Deprecated
     @Nullable
     /**
@@ -426,7 +423,6 @@ public class TagDescriptor<T extends Directory>
             "Left side, bottom (Rotate 270 CW)");
     }
 
-    // TODO: discuss deprecation
     @Deprecated
     @Nullable
     /**
@@ -531,5 +527,4 @@ public class TagDescriptor<T extends Directory>
     {
         return locale == null ? DecimalFormatSymbols.getInstance() : DecimalFormatSymbols.getInstance(locale);
     }
-
 }

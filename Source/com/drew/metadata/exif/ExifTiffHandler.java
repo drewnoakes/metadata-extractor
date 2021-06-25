@@ -60,6 +60,12 @@ import com.drew.metadata.plist.BplistReader;
  */
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
+    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    {
+        // TODO document this default context?
+        super(metadata, parentDirectory, new MetadataContext());
+    }
+
     public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
     {
         super(metadata, parentDirectory, context);

@@ -147,13 +147,6 @@ public class GpsDirectory extends ExifDirectoryBase
         _tagNameMap.put(TAG_H_POSITIONING_ERROR, "GPS H Positioning Error");
     }
 
-    // TODO remove this constructor, or document its deprecation?
-    @Deprecated
-    public GpsDirectory()
-    {
-        this(new MetadataContext());
-    }
-
     public GpsDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new GpsDescriptor(this, context));

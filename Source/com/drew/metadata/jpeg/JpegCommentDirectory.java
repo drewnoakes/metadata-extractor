@@ -47,13 +47,6 @@ public class JpegCommentDirectory extends Directory
         _tagNameMap.put(TAG_COMMENT, "JPEG Comment");
     }
 
-    // TODO remove this constructor, or document its deprecation?
-    @Deprecated
-    public JpegCommentDirectory()
-    {
-        this(new MetadataContext());
-    }
-
     public JpegCommentDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new JpegCommentDescriptor(this, context));

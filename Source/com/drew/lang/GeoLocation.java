@@ -80,6 +80,13 @@ public final class GeoLocation
     }
 
     // TODO document this deprecation
+
+    /**
+     * Converts a decimal degree angle into its corresponding DMS (degrees-minutes-seconds) representation as a string,
+     * of format: {@code -1° 23' 4.56"}
+     *
+     * @deprecated Use {@link #decimalToDegreesMinutesSecondsString(double, Locale)} instead
+     */
     @NotNull
     @Deprecated
     public static String decimalToDegreesMinutesSecondsString(double decimal)

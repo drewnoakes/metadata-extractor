@@ -21,15 +21,22 @@
 
 package com.drew.metadata.icc;
 
+import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataContext;
+import com.drew.metadata.exif.ExifDirectoryBase;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.GpsDirectory;
 import com.drew.testing.TestHelper;
 import com.drew.tools.FileUtil;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -88,9 +95,39 @@ public class IccReaderTest
         assertEquals(887006940000L, directory.getDate(IccDirectory.TAG_PROFILE_DATETIME).getTime());
     }
 
-    // TODO [locale tests] Float array use case:
-    // IccDirectory.TAG_XYZ_VALUES in Tests/Data/withIptcExifGps.jpg
-    // Directory icc = metadata.getFirstDirectoryOfType(IccDirectory.class);
-    // assertEquals("0,964 1 0,825", icc.getString(IccDirectory.TAG_XYZ_VALUES));
+    @Test
+    public void testConfigurableLocaleEnglish() throws Exception {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            // set default Locale to Dutch, configure English -> expect period
+            Locale.setDefault(new Locale("nl"));
+            MetadataContext context = new MetadataContext().locale(Locale.ENGLISH);
+            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), context);
 
+            Directory icc = metadata.getFirstDirectoryOfType(IccDirectory.class);
+            assertEquals("0.964 1 0.825", icc.getString(IccDirectory.TAG_XYZ_VALUES));
+        }
+        finally {
+            // reset default locale
+            Locale.setDefault(defaultLocale);
+        }
+    }
+
+    @Test
+    public void testConfigurableLocaleDutch() throws Exception {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            // set default Locale to English, configure Dutch -> expect comma
+            Locale.setDefault(Locale.ENGLISH);
+            MetadataContext context = new MetadataContext().locale(new Locale("nl"));
+            Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/withIptcExifGps.jpg"), context);
+
+            Directory icc = metadata.getFirstDirectoryOfType(IccDirectory.class);
+            assertEquals("0,964 1 0,825", icc.getString(IccDirectory.TAG_XYZ_VALUES));
+        }
+        finally {
+            // reset default locale
+            Locale.setDefault(defaultLocale);
+        }
+    }
 }

@@ -94,6 +94,7 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
+        // TODO document this default context?
         return readMetadata(inputStream, null, new MetadataContext());
     }
 
@@ -115,6 +116,7 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
+        // TODO document this default context?
         return readMetadata(file, readers, new MetadataContext());
     }
 
@@ -127,15 +129,22 @@ public class JpegMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
+        // TODO document this default context?
         return readMetadata(file, null, new MetadataContext());
     }
 
     public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
+        // TODO document this default context?
         process(metadata, inputStream, null, new MetadataContext());
     }
 
-    // TODO create method with original signature for backwards compatibility
+    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        // TODO document this default context?
+        process(metadata, inputStream, readers, new MetadataContext());
+    }
+
     public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers, @NotNull MetadataContext context) throws JpegProcessingException, IOException
     {
         if (readers == null)

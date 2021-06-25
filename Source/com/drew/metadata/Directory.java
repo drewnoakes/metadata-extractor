@@ -1163,12 +1163,12 @@ public abstract class Directory
     @Override
     public String toString()
     {
-        return String.format("%s Directory (%d %s)",
+        return String.format(getLocale(),
+            "%s Directory (%d %s)",
             getName(),
             _tagMap.size(),
             _tagMap.size() == 1
                 ? "tag"
-                : "tags",
-            getLocale());
+                : "tags");
     }
 }

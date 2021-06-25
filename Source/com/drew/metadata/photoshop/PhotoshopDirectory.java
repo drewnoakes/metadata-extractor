@@ -225,7 +225,7 @@ public class PhotoshopDirectory extends Directory
         _tagNameMap.put(TAG_PRINT_FLAGS_INFO, "Print Flags Information");
     }
 
-    public PhotoshopDirectory(MetadataContext context)
+    public PhotoshopDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new PhotoshopDescriptor(this, context));
     }

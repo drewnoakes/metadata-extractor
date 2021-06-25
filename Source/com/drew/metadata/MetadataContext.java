@@ -5,7 +5,7 @@ import com.drew.lang.annotations.NotNull;
 import java.util.Locale;
 
 /**
- * Context class for metadata. Contains settings used while parsing and formatting metadata.
+ * Context class for metadata. Contains settings used while extracting and formatting metadata.
  *
  * @author Roel van Dijk
  */
@@ -35,7 +35,7 @@ public class MetadataContext
     }
 
     /**
-     * Configure the {@link Locale} to use for parsing and formatting metadata.
+     * Configure the {@link Locale} to use for extracting and formatting metadata.
      *
      * @param locale the locale to use
      * @return this context

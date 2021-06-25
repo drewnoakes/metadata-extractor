@@ -36,8 +36,7 @@ public class JpegDirectoryTest
     @Before
     public void setUp()
     {
-        MetadataContext context = new MetadataContext();
-        _directory = new JpegDirectory(context);
+        _directory = new JpegDirectory(new MetadataContext());
     }
 
     @Test

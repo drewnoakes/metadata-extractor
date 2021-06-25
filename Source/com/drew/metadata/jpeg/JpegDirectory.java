@@ -80,13 +80,6 @@ public class JpegDirectory extends Directory
         _tagNameMap.put(TAG_COMPONENT_DATA_4, "Component 4");
     }
 
-    // TODO remove this constructor, or document its deprecation?
-    @Deprecated
-    public JpegDirectory()
-    {
-        this(new MetadataContext());
-    }
-
     public JpegDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new JpegDescriptor(this, context));
