@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.MetadataException;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +40,9 @@ public class JpegDescriptorTest
     @Before
     public void setUp() throws Exception
     {
-        _directory = new JpegDirectory();
-        _descriptor = new JpegDescriptor(_directory);
+        MetadataContext context = new MetadataContext();
+        _directory = new JpegDirectory(context);
+        _descriptor = new JpegDescriptor(_directory, context);
     }
 
     @Test
