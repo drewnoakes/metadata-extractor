@@ -49,11 +49,11 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @Nullable MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
-            extract(segmentBytes, metadata, segmentType);
+            extract(segmentBytes, metadata, segmentType, context);
         }
     }
 
-    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType)
+    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType, MetadataContext context)
     {
         JpegDirectory directory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         if (directory == null) {
