@@ -62,6 +62,7 @@ public class JfifReader implements JpegSegmentMetadataReader, MetadataReader
     }
 
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata) {
+        // TODO document this default context?
         extract(reader, metadata, new MetadataContext());
     }
 

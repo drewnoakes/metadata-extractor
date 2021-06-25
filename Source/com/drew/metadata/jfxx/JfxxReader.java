@@ -65,6 +65,7 @@ public class JfxxReader implements JpegSegmentMetadataReader, MetadataReader
     @Override
     public void extract(RandomAccessReader reader, Metadata metadata)
     {
+        // TODO document this default context?
         extract(reader, metadata, new MetadataContext());
     }
 

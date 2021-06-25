@@ -129,13 +129,6 @@ public class HuffmanTablesDirectory extends Directory
         _tagNameMap.put(TAG_NUMBER_OF_TABLES, "Number of Tables");
     }
 
-    // TODO remove this constructor, or document its deprecation?
-    @Deprecated
-    public HuffmanTablesDirectory()
-    {
-        this(new MetadataContext());
-    }
-
     public HuffmanTablesDirectory(@NotNull MetadataContext context)
     {
         this.setDescriptor(new HuffmanTablesDescriptor(this, context));

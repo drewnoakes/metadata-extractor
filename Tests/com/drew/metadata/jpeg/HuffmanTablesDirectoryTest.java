@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.metadata.MetadataContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +39,7 @@ public class HuffmanTablesDirectoryTest
     @Before
     public void setUp()
     {
-        _directory = new HuffmanTablesDirectory();
+        _directory = new HuffmanTablesDirectory(new MetadataContext());
     }
 
     @Test
