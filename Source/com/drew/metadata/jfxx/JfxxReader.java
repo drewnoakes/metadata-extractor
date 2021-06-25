@@ -58,17 +58,23 @@ public class JfxxReader implements JpegSegmentMetadataReader, MetadataReader
         for (byte[] segmentBytes : segments) {
             // Skip segments not starting with the required header
             if (segmentBytes.length >= PREAMBLE.length() && PREAMBLE.equals(new String(segmentBytes, 0, PREAMBLE.length())))
-                extract(new ByteArrayReader(segmentBytes), metadata);
+                extract(new ByteArrayReader(segmentBytes), metadata, context);
         }
+    }
+
+    @Override
+    public void extract(RandomAccessReader reader, Metadata metadata)
+    {
+        extract(reader, metadata, new MetadataContext());
     }
 
     /**
      * Performs the JFXX data extraction, adding found values to the specified
      * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @NotNull final MetadataContext context)
     {
-        JfxxDirectory directory = new JfxxDirectory();
+        JfxxDirectory directory = new JfxxDirectory(context);
         metadata.addDirectory(directory);
 
         try {

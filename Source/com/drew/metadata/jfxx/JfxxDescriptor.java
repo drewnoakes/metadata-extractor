@@ -22,6 +22,7 @@ package com.drew.metadata.jfxx;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import static com.drew.metadata.jfxx.JfxxDirectory.*;
@@ -39,9 +40,9 @@ import static com.drew.metadata.jfxx.JfxxDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class JfxxDescriptor extends TagDescriptor<JfxxDirectory>
 {
-    public JfxxDescriptor(@NotNull JfxxDirectory directory)
+    public JfxxDescriptor(@NotNull JfxxDirectory directory, MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override

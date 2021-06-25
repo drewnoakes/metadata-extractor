@@ -22,6 +22,7 @@ package com.drew.metadata.jfxx;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.MetadataException;
 
 import java.util.HashMap;
@@ -44,9 +45,9 @@ public class JfxxDirectory extends Directory
         _tagNameMap.put(TAG_EXTENSION_CODE, "Extension Code");
     }
 
-    public JfxxDirectory()
+    public JfxxDirectory(MetadataContext context)
     {
-        this.setDescriptor(new JfxxDescriptor(this));
+        this.setDescriptor(new JfxxDescriptor(this, context));
     }
 
     @Override
