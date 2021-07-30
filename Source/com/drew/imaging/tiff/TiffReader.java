@@ -300,7 +300,7 @@ public class TiffReader
                 } else {
                     double[] array = new double[componentCount];
                     for (int i = 0; i < componentCount; i++)
-                        array[i] = reader.getDouble64(tagValueOffset + (i * 4));
+                        array[i] = reader.getDouble64(tagValueOffset + (i * 8));
                     handler.setDoubleArray(tagId, array);
                 }
                 break;
