@@ -219,6 +219,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
                 return getSubjectDistanceRangeDescription();
             case TAG_LENS_SPECIFICATION:
                 return getLensSpecificationDescription();
+            case TAG_EXTRA_SAMPLES:
+                return getExtraSamplesDescription();
+            case TAG_SAMPLE_FORMAT:
+                return getSampleFormatDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -1297,5 +1301,42 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     public String getLensSpecificationDescription()
     {
         return getLensSpecificationDescription(TAG_LENS_SPECIFICATION);
+    }
+
+    @Nullable
+    public String getExtraSamplesDescription()
+    {
+        return getIndexedDescription(TAG_EXTRA_SAMPLES,
+            "Unspecified",
+            "Associated alpha",
+            "Unassociated alpha"
+        );
+    }
+
+    @Nullable
+    public String getSampleFormatDescription()
+    {
+        int[] values = _directory.getIntArray(TAG_SAMPLE_FORMAT);
+
+        if (values == null)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int value : values) {
+            if (sb.length() != 0)
+                sb.append(", ");
+            switch (value){
+                case 1: sb.append("Unsigned"); break;
+                case 2: sb.append("Signed"); break;
+                case 3: sb.append("Float"); break;
+                case 4: sb.append("Undefined"); break;
+                case 5: sb.append("Complex int"); break;
+                case 6: sb.append("Complex float"); break;
+                default: sb.append("Unknown (").append(value).append(")"); break;
+            }
+        }
+
+        return sb.toString();
     }
 }
