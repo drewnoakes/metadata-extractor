@@ -598,6 +598,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             ReconyxUltraFireMakernoteDirectory directory = new ReconyxUltraFireMakernoteDirectory();
             _metadata.addDirectory(directory);
             processReconyxUltraFireMakernote(directory, makernoteOffset, reader);
+        } else if (firstNineChars.equalsIgnoreCase("RECONYXH2")) {
+            ReconyxHyperFire2MakernoteDirectory directory = new ReconyxHyperFire2MakernoteDirectory();
+            _metadata.addDirectory(directory);
+            processReconyxHyperFire2Makernote(directory, makernoteOffset, reader);
         } else if ("SAMSUNG".equalsIgnoreCase(cameraMake)) {
             // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
             pushDirectory(SamsungType2MakernoteDirectory.class);
@@ -797,6 +801,82 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         directory.setDouble(ReconyxHyperFireMakernoteDirectory.TAG_BATTERY_VOLTAGE, reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_BATTERY_VOLTAGE) / 1000.0);
         directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_USER_LABEL, reader.getNullTerminatedString(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_USER_LABEL, 44, Charsets.UTF_8));
     }
+
+    private static void processReconyxHyperFire2Makernote(@NotNull final ReconyxHyperFire2MakernoteDirectory directory, final int makernoteOffset, @NotNull final RandomAccessReader reader) throws IOException
+    {
+
+        int major = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_FIRMWARE_VERSION);
+        int minor = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_FIRMWARE_VERSION + 2);
+        int revision = reader.getUInt16(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_FIRMWARE_VERSION + 4);
+        String buildYear = String.format("%04X", reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_FIRMWARE_VERSION + 6));
+        String buildDate = String.format("%04X", reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_FIRMWARE_VERSION + 8));
+        String buildYearAndDate = buildYear + buildDate;
+        Integer build;
+        try {
+            build = Integer.parseInt(buildYearAndDate);
+        } catch (NumberFormatException e) {
+            build = null;
+        }
+
+        if (build != null) {
+            directory.setString(ReconyxHyperFire2MakernoteDirectory.TAG_FIRMWARE_VERSION, String.format("%d.%d.%d.%s", major, minor, revision, build));
+        } else {
+            directory.setString(ReconyxHyperFire2MakernoteDirectory.TAG_FIRMWARE_VERSION, String.format("%d.%d.%d", major, minor, revision));
+            directory.addError("Error processing Reconyx HyperFire 2 makernote data: build '" + buildYearAndDate + "' is not in the expected format and will be omitted from Firmware Version.");
+        }
+
+        directory.setIntArray(ReconyxHyperFire2MakernoteDirectory.TAG_SEQUENCE,
+                      new int[]
+                      {
+                          reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_SEQUENCE),
+                          reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_SEQUENCE + 2)
+                      });
+
+        int eventNumberHigh = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_EVENT_NUMBER);
+        int eventNumberLow = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_EVENT_NUMBER + 2);
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_EVENT_NUMBER, (eventNumberHigh << 16) + eventNumberLow);
+
+        int seconds = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_DATE_TIME_ORIGINAL);
+        int minutes = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 2);
+        int hour = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 4);
+        int month = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 6);
+        int day = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 8);
+        int year = reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_DATE_TIME_ORIGINAL + 10);
+
+        if ((seconds >= 0 && seconds < 60) &&
+            (minutes >= 0 && minutes < 60) &&
+            (hour >= 0 && hour < 24) &&
+            (month >= 1 && month < 13) &&
+            (day >= 1 && day < 32) &&
+            (year >= 1 && year <= 9999)) {
+            directory.setString(ReconyxHyperFire2MakernoteDirectory.TAG_DATE_TIME_ORIGINAL,
+                    String.format("%4d:%2d:%2d %2d:%2d:%2d", year, month, day, hour, minutes, seconds));
+        } else {
+            directory.addError("Error processing Reconyx HyperFire 2 makernote data: Date/Time Original " + year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds + " is not a valid date/time.");
+        }
+
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_MOON_PHASE, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_MOON_PHASE));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_TEMPERATURE_FAHRENHEIT, reader.getInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_TEMPERATURE_FAHRENHEIT));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_TEMPERATURE, reader.getInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_TEMPERATURE));
+
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_CONTRAST, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_CONTRAST));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_BRIGHTNESS, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_BRIGHTNESS));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_SHARPNESS, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_SHARPNESS));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_SATURATION, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_SATURATION));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_FLASH, reader.getByte(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_FLASH));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_INFRARED, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_INFRARED));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_LIGHT, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_AMBIENT_LIGHT));
+        directory.setInt(ReconyxHyperFire2MakernoteDirectory.TAG_MOTION_SENSITIVITY, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_MOTION_SENSITIVITY));
+        directory.setDouble(ReconyxHyperFire2MakernoteDirectory.TAG_BATTERY_VOLTAGE, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_BATTERY_VOLTAGE) / 1000.0);
+        directory.setDouble(ReconyxHyperFire2MakernoteDirectory.TAG_BATTERY_VOLTAGE_AVG, reader.getUInt16(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_BATTERY_VOLTAGE_AVG) / 1000.0);
+
+
+        directory.setString(ReconyxHyperFireMakernoteDirectory.TAG_USER_LABEL, reader.getNullTerminatedString(makernoteOffset + ReconyxHyperFireMakernoteDirectory.TAG_USER_LABEL, 44, Charsets.UTF_8));
+        directory.setStringValue(ReconyxHyperFire2MakernoteDirectory.TAG_SERIAL_NUMBER, new StringValue(reader.getBytes(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_SERIAL_NUMBER, 28), Charsets.UTF_16LE));
+        // two unread bytes: the serial number's terminating null
+    }
+
+
 
     private static void processReconyxUltraFireMakernote(@NotNull final ReconyxUltraFireMakernoteDirectory directory, final int makernoteOffset, @NotNull final RandomAccessReader reader) throws IOException
     {
