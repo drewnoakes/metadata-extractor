@@ -57,7 +57,7 @@ public class ReconyxHyperFire2MakernoteDirectory extends Directory
     public static final int TAG_BATTERY_TYPE = 102;
     public static final int TAG_USER_LABEL = 104;
     public static final int TAG_SERIAL_NUMBER = 126;
-   
+
     @NotNull
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -84,7 +84,7 @@ public class ReconyxHyperFire2MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_AMBIENT_LIGHT, "Ambient Light");
         _tagNameMap.put(TAG_MOTION_SENSITIVITY, "Motion Sensitivity");
         _tagNameMap.put(TAG_BATTERY_VOLTAGE, "Battery Voltage");
-        _tagNameMap.put(TAG_BATTERY_VOLTAGE_AVG, "Battery Voltage Avg");
+        _tagNameMap.put(TAG_BATTERY_VOLTAGE_AVG, "Battery Voltage Average");
         _tagNameMap.put(TAG_BATTERY_TYPE, "Battery Type");
         _tagNameMap.put(TAG_USER_LABEL, "User Label");
         _tagNameMap.put(TAG_SERIAL_NUMBER, "Serial Number");
@@ -99,7 +99,7 @@ public class ReconyxHyperFire2MakernoteDirectory extends Directory
     @NotNull
     public String getName()
     {
-        return "Reconyx HyperFire2 Makernote";
+        return "Reconyx HyperFire 2 Makernote";
     }
 
     @Override
