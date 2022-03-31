@@ -40,7 +40,7 @@ public abstract class SequentialAccessTestBase
     @Test
     public void testDefaultEndianness()
     {
-        assertEquals(true, createReader(new byte[1]).isMotorolaByteOrder());
+        assertTrue(createReader(new byte[1]).isMotorolaByteOrder());
     }
 
     @Test
@@ -269,10 +269,17 @@ public abstract class SequentialAccessTestBase
     @Test
     public void testOverflowBoundsCalculation()
     {
-        SequentialReader reader = createReader(new byte[10]);
+        try {
+            SequentialReader reader = createReader(new byte[10]);
+            reader.getBytes(15);
+        } catch (IOException e) {
+            assertEquals("End of data reached.", e.getMessage());
+        }
 
         try {
-            reader.getBytes(15);
+            SequentialReader reader = createReader(new byte[10]);
+            reader.getBytes(5);
+            reader.getBytes(Integer.MAX_VALUE);
         } catch (IOException e) {
             assertEquals("End of data reached.", e.getMessage());
         }
@@ -325,6 +332,13 @@ public abstract class SequentialAccessTestBase
             reader.skip(1);
             fail("Expecting exception");
         } catch (EOFException ignored) {}
+
+        try {
+            reader = createReader(new byte[100]);
+            reader.skip(50);
+            reader.skip(Integer.MAX_VALUE);
+            fail("Expecting exception");
+        } catch (EOFException ignored) {}
     }
 
     @Test
@@ -336,5 +350,9 @@ public abstract class SequentialAccessTestBase
         assertTrue(reader.trySkip(1));
         assertTrue(reader.trySkip(1));
         assertFalse(reader.trySkip(1));
+
+        reader = createReader(new byte[100]);
+        reader.getBytes(50);
+        assertFalse(reader.trySkip(Integer.MAX_VALUE));
     }
 }

@@ -68,9 +68,14 @@ public class StreamReader extends SequentialReader
     @Override
     public byte[] getBytes(int count) throws IOException
     {
-        byte[] bytes = new byte[count];
-        getBytes(bytes, 0, count);
-        return bytes;
+        try {
+            byte[] bytes = new byte[count];
+            getBytes(bytes, 0, count);
+            return bytes;
+        } catch (OutOfMemoryError e) {
+            throw new EOFException("End of data reached.");
+        }
+
     }
 
     @Override
