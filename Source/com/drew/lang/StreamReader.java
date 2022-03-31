@@ -26,6 +26,8 @@ import com.drew.lang.annotations.NotNull;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -33,6 +35,8 @@ import java.io.InputStream;
  */
 public class StreamReader extends SequentialReader
 {
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
+
     @NotNull
     private final InputStream _stream;
 
@@ -68,14 +72,33 @@ public class StreamReader extends SequentialReader
     @Override
     public byte[] getBytes(int count) throws IOException
     {
-        try {
-            byte[] bytes = new byte[count];
-            getBytes(bytes, 0, count);
-            return bytes;
-        } catch (OutOfMemoryError e) {
-            throw new EOFException("End of data reached.");
+        if (count <= DEFAULT_BUFFER_SIZE) {
+            byte[] result = new byte[count];
+            getBytes(result, 0, count);
+            return result;
         }
 
+        int totalBytesRead = 0;
+
+        List<byte[]> byteArrays = new ArrayList<byte[]>();
+
+        while (totalBytesRead != count)
+        {
+            int n = Math.min(count - totalBytesRead, DEFAULT_BUFFER_SIZE);
+            byte[] bytesRead = new byte[n];
+            getBytes(bytesRead, 0, n);
+            totalBytesRead += n;
+            byteArrays.add (bytesRead);
+        }
+
+        byte[] result = new byte[count];
+        int offset = 0;
+        for (byte[] b : byteArrays) {
+            System.arraycopy(b, 0, result, offset, b.length);
+            offset += b.length;
+        }
+
+        return result;
     }
 
     @Override
