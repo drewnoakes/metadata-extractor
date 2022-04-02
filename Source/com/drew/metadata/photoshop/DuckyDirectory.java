@@ -23,6 +23,7 @@ package com.drew.metadata.photoshop;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import java.util.HashMap;
@@ -48,9 +49,9 @@ public class DuckyDirectory extends Directory
         _tagNameMap.put(TAG_COPYRIGHT, "Copyright");
     }
 
-    public DuckyDirectory()
+    public DuckyDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new TagDescriptor<DuckyDirectory>(this));
+        this.setDescriptor(new TagDescriptor<DuckyDirectory>(this, context));
     }
 
     @Override

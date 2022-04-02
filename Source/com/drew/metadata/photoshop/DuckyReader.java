@@ -27,6 +27,7 @@ import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -48,7 +49,7 @@ public class DuckyReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPC);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
@@ -59,13 +60,14 @@ public class DuckyReader implements JpegSegmentMetadataReader
 
             extract(
                 new SequentialByteArrayReader(segmentBytes, preambleLength),
-                metadata);
+                metadata,
+                context);
         }
     }
 
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @NotNull MetadataContext context)
     {
-        DuckyDirectory directory = new DuckyDirectory();
+        DuckyDirectory directory = new DuckyDirectory(context);
         metadata.addDirectory(directory);
 
         try

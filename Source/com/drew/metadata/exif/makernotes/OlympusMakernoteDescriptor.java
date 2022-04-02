@@ -321,7 +321,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
             return null;
 
         double fStop = Math.pow((value/16d) - 0.5, 2);
-        return getFStopDescription(fStop);
+        return getFStopDescription(fStop, getContext().locale());
     }
 
     @Nullable
@@ -374,7 +374,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     public String getFocalLengthDescription()
     {
         Long value = _directory.getLongObject(CameraSettings.TAG_FOCAL_LENGTH);
-        return value == null ? null : getFocalLengthDescription(value/256d);
+        return value == null ? null : getFocalLengthDescription(value/256d, getContext().locale());
     }
 
     @Nullable
@@ -442,7 +442,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (value == null)
             return null;
         double fStop = Math.pow((value/16d) - 0.5, 2);
-        return getFStopDescription(fStop);
+        return getFStopDescription(fStop, getContext().locale());
     }
 
     @Nullable
@@ -828,7 +828,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
     @Nullable
     public String getShutterSpeedDescription()
     {
-        return super.getShutterSpeedDescription(TAG_SHUTTER_SPEED_VALUE);
+        return super.getShutterSpeedDescription(TAG_SHUTTER_SPEED_VALUE, getContext().locale());
     }
 
     @Nullable
@@ -848,7 +848,7 @@ public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDi
         if (aperture == null)
             return null;
         double fStop = PhotographicConversions.apertureToFStop(aperture);
-        return getFStopDescription(fStop);
+        return getFStopDescription(fStop, getContext().locale());
     }
 
     @Nullable

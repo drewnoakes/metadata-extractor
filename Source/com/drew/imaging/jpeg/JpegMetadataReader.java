@@ -24,6 +24,7 @@ import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.adobe.AdobeJpegReader;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.file.FileSystemMetadataReader;
@@ -71,45 +72,80 @@ public class JpegMetadataReader
     );
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers, @NotNull MetadataContext context) throws JpegProcessingException, IOException
     {
         Metadata metadata = new Metadata();
-        process(metadata, inputStream, readers);
+        process(metadata, inputStream, readers, context);
         return metadata;
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        return readMetadata(inputStream, readers, null);
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @NotNull MetadataContext context) throws JpegProcessingException, IOException
+    {
+        return readMetadata(inputStream, null, context);
     }
 
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        return readMetadata(inputStream, null);
+        // TODO document this default context?
+        return readMetadata(inputStream, null, new MetadataContext());
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers, @NotNull MetadataContext context) throws JpegProcessingException, IOException
     {
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream, readers);
+            metadata = readMetadata(inputStream, readers, context);
         } finally {
             inputStream.close();
         }
+        // TODO pass locale?
         new FileSystemMetadataReader().read(file, metadata);
         return metadata;
     }
 
     @NotNull
+    public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        // TODO document this default context?
+        return readMetadata(file, readers, new MetadataContext());
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull File file, @NotNull MetadataContext context) throws JpegProcessingException, IOException
+    {
+        return readMetadata(file, null, context);
+    }
+
+    @NotNull
     public static Metadata readMetadata(@NotNull File file) throws JpegProcessingException, IOException
     {
-        return readMetadata(file, null);
+        // TODO document this default context?
+        return readMetadata(file, null, new MetadataContext());
     }
 
     public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream) throws JpegProcessingException, IOException
     {
-        process(metadata, inputStream, null);
+        // TODO document this default context?
+        process(metadata, inputStream, null, new MetadataContext());
     }
 
     public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        // TODO document this default context?
+        process(metadata, inputStream, readers, new MetadataContext());
+    }
+
+    public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers, @NotNull MetadataContext context) throws JpegProcessingException, IOException
     {
         if (readers == null)
             readers = ALL_READERS;
@@ -123,15 +159,16 @@ public class JpegMetadataReader
 
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), segmentTypes);
 
-        processJpegSegmentData(metadata, readers, segmentData);
+        processJpegSegmentData(metadata, readers, segmentData, context);
     }
 
-    public static void processJpegSegmentData(Metadata metadata, Iterable<JpegSegmentMetadataReader> readers, JpegSegmentData segmentData)
+    // TODO create method with original signature for backwards compatibility
+    public static void processJpegSegmentData(@NotNull Metadata metadata, @NotNull Iterable<JpegSegmentMetadataReader> readers, @NotNull JpegSegmentData segmentData, @NotNull MetadataContext context)
     {
         // Pass the appropriate byte arrays to each reader.
         for (JpegSegmentMetadataReader reader : readers) {
             for (JpegSegmentType segmentType : reader.getSegmentTypes()) {
-                reader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType);
+                reader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType, context);
             }
         }
     }

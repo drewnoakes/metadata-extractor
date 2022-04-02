@@ -22,6 +22,7 @@ package com.drew.metadata.xmp;
 
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.tools.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,9 +42,10 @@ public class XmpReaderTest
     public void setUp() throws Exception
     {
         Metadata metadata = new Metadata();
+        MetadataContext context = new MetadataContext();
         List<byte[]> jpegSegments = new ArrayList<byte[]>();
         jpegSegments.add(FileUtil.readBytes("Tests/Data/withXmpAndIptc.jpg.app1.1"));
-        new XmpReader().readJpegSegments(jpegSegments, metadata, JpegSegmentType.APP1);
+        new XmpReader().readJpegSegments(jpegSegments, metadata, JpegSegmentType.APP1, context);
 
         Collection<XmpDirectory> xmpDirectories = metadata.getDirectoriesOfType(XmpDirectory.class);
 

@@ -23,6 +23,7 @@ package com.drew.metadata.iptc;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -210,9 +211,9 @@ public class IptcDirectory extends Directory
         _tagNameMap.put(TAG_OBJECT_PREVIEW_DATA, "Object Data Preview Data");
     }
 
-    public IptcDirectory()
+    public IptcDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new IptcDescriptor(this));
+        this.setDescriptor(new IptcDescriptor(this, context));
     }
 
     @Override

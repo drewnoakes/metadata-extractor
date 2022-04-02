@@ -25,6 +25,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  * Represents a latitude and longitude pair, giving a position on earth in spherical coordinates.
@@ -37,17 +39,20 @@ public final class GeoLocation
 {
     private final double _latitude;
     private final double _longitude;
+    private final Locale _locale;
 
     /**
      * Instantiates a new instance of {@link GeoLocation}.
      *
      * @param latitude the latitude, in degrees
      * @param longitude the longitude, in degrees
+     * @param locale the locale to use
      */
-    public GeoLocation(double latitude, double longitude)
+    public GeoLocation(double latitude, double longitude, Locale locale)
     {
         _latitude = latitude;
         _longitude = longitude;
+        _locale = locale;
     }
 
     /**
@@ -77,12 +82,26 @@ public final class GeoLocation
     /**
      * Converts a decimal degree angle into its corresponding DMS (degrees-minutes-seconds) representation as a string,
      * of format: {@code -1° 23' 4.56"}
+     *
+     * @deprecated Use {@link #decimalToDegreesMinutesSecondsString(double, Locale)} instead
      */
     @NotNull
+    @Deprecated
     public static String decimalToDegreesMinutesSecondsString(double decimal)
     {
+        return decimalToDegreesMinutesSecondsString(decimal, null);
+    }
+
+    /**
+     * Converts a decimal degree angle into its corresponding DMS (degrees-minutes-seconds) representation as a string,
+     * of format: {@code -1° 23' 4.56"}
+     */
+    @NotNull
+    public static String decimalToDegreesMinutesSecondsString(double decimal, Locale locale)
+    {
         double[] dms = decimalToDegreesMinutesSeconds(decimal);
-        DecimalFormat format = new DecimalFormat("0.##");
+        DecimalFormatSymbols symbols = locale == null ? DecimalFormatSymbols.getInstance() : DecimalFormatSymbols.getInstance(locale);
+        DecimalFormat format = new DecimalFormat("0.##", symbols);
         return String.format("%s\u00B0 %s' %s\"", format.format(dms[0]), format.format(dms[1]), format.format(dms[2]));
     }
 
@@ -158,6 +177,8 @@ public final class GeoLocation
     @NotNull
     public String toDMSString()
     {
-        return decimalToDegreesMinutesSecondsString(_latitude) + ", " + decimalToDegreesMinutesSecondsString(_longitude);
+        return decimalToDegreesMinutesSecondsString(_latitude, _locale)
+            + ", "
+            + decimalToDegreesMinutesSecondsString(_longitude, _locale);
     }
 }

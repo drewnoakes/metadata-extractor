@@ -24,9 +24,11 @@ import com.drew.lang.GeoLocation;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import static com.drew.metadata.exif.GpsDirectory.*;
 
@@ -38,9 +40,10 @@ import static com.drew.metadata.exif.GpsDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class GpsDescriptor extends TagDescriptor<GpsDirectory>
 {
-    public GpsDescriptor(@NotNull GpsDirectory directory)
+
+    public GpsDescriptor(@NotNull GpsDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override
@@ -111,14 +114,14 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     public String getGpsLatitudeDescription()
     {
         GeoLocation location = _directory.getGeoLocation();
-        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLatitude());
+        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLatitude(), _context.locale());
     }
 
     @Nullable
     public String getGpsLongitudeDescription()
     {
         GeoLocation location = _directory.getGeoLocation();
-        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLongitude());
+        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLongitude(), _context.locale());
     }
 
     @Nullable
@@ -126,10 +129,11 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     {
         // time in hour, min, sec
         Rational[] timeComponents = _directory.getRationalArray(TAG_TIME_STAMP);
-        DecimalFormat df = new DecimalFormat("00.000");
+        DecimalFormat df = new DecimalFormat("00.000", getDecimalFormatSymbols(_context.locale()));
         return timeComponents == null
             ? null
-            : String.format("%02d:%02d:%s UTC",
+            : String.format(_context.locale(),
+                "%02d:%02d:%s UTC",
                 timeComponents[0].intValue(),
                 timeComponents[1].intValue(),
                 df.format(timeComponents[2].doubleValue()));
@@ -159,7 +163,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         Double dec = GeoLocation.degreesMinutesSecondsToDecimal(
             values[0], values[1], values[2], ref.equalsIgnoreCase(positiveRef));
 
-        return dec == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(dec);
+        return dec == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(dec, _context.locale());
     }
 
     @Nullable
@@ -187,9 +191,10 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         if (value == null)
             return null;
         final String unit = getGpsDestinationReferenceDescription();
-        return String.format("%s %s",
-            new DecimalFormat("0.##").format(value.doubleValue()),
-            unit == null ? "unit" : unit.toLowerCase());
+        return String.format(_context.locale(),
+            "%s %s",
+            new DecimalFormat("0.##", getDecimalFormatSymbols(_context.locale())).format(value.doubleValue()),
+            unit == null ? "unit" : unit.toLowerCase(_context.locale()));
     }
 
     @Nullable
@@ -198,7 +203,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         Rational angle = _directory.getRational(tagType);
         // provide a decimal version of rational numbers in the description, to avoid strings like "35334/199 degrees"
         String value = angle != null
-            ? new DecimalFormat("0.##").format(angle.doubleValue())
+            ? new DecimalFormat("0.##", getDecimalFormatSymbols(_context.locale())).format(angle.doubleValue())
             : _directory.getString(tagType);
         return value == null || value.trim().length() == 0 ? null : value.trim() + " degrees";
     }
@@ -223,7 +228,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     public String getGpsDopDescription()
     {
         final Rational value = _directory.getRational(TAG_DOP);
-        return value == null ? null : new DecimalFormat("0.##").format(value.doubleValue());
+        final DecimalFormatSymbols symbols = getDecimalFormatSymbols(_context.locale());
+        return value == null ? null : new DecimalFormat("0.##", symbols).format(value.doubleValue());
     }
 
     @Nullable
@@ -252,8 +258,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
             return null;
         final String unit = getGpsSpeedRefDescription();
         return String.format("%s %s",
-            new DecimalFormat("0.##").format(value.doubleValue()),
-            unit == null ? "unit" : unit.toLowerCase());
+            new DecimalFormat("0.##", getDecimalFormatSymbols(_context.locale())).format(value.doubleValue()),
+            unit == null ? "unit" : unit.toLowerCase(_context.locale()));
     }
 
     @Nullable
@@ -298,7 +304,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     public String getGpsAltitudeDescription()
     {
         final Rational value = _directory.getRational(TAG_ALTITUDE);
-        return value == null ? null : new DecimalFormat("0.##").format(value.doubleValue()) + " metres";
+        final DecimalFormatSymbols symbols = getDecimalFormatSymbols(_context.locale());
+        return value == null ? null : new DecimalFormat("0.##", symbols).format(value.doubleValue()) + " metres";
     }
 
     @Nullable
@@ -323,7 +330,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     public String getGpsHPositioningErrorDescription()
     {
         final Rational value = _directory.getRational(TAG_H_POSITIONING_ERROR);
-        return value == null ? null : new DecimalFormat("0.##").format(value.doubleValue()) + " metres";
+        final DecimalFormatSymbols symbols = getDecimalFormatSymbols(_context.locale());
+        return value == null ? null : new DecimalFormat("0.##", symbols).format(value.doubleValue()) + " metres";
     }
 
     @Nullable

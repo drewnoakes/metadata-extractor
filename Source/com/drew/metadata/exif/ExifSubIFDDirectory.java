@@ -23,9 +23,11 @@ package com.drew.metadata.exif;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -39,9 +41,9 @@ public class ExifSubIFDDirectory extends ExifDirectoryBase
     /** This tag is a pointer to the Exif Interop IFD. */
     public static final int TAG_INTEROP_OFFSET = 0xA005;
 
-    public ExifSubIFDDirectory()
+    public ExifSubIFDDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new ExifSubIFDDescriptor(this));
+        this.setDescriptor(new ExifSubIFDDescriptor(this, context));
     }
 
     @NotNull

@@ -30,6 +30,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
@@ -58,7 +59,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
 
@@ -70,18 +71,30 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
             extract(
                 new SequentialByteArrayReader(segmentBytes, preambleLength + 1),
                 segmentBytes.length - preambleLength - 1,
-                metadata);
+                metadata,
+                context);
         }
     }
 
     public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata)
     {
-        extract(reader, length, metadata, null);
+        extract(reader, length, metadata, null, null);
     }
 
     public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata, @Nullable final Directory parentDirectory)
     {
-        PhotoshopDirectory directory = new PhotoshopDirectory();
+        // TODO document this default context?
+        extract(reader, length, metadata, parentDirectory, new MetadataContext());
+    }
+
+    public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata, @NotNull MetadataContext context)
+    {
+        extract(reader, length, metadata, null, context);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, int length, @NotNull final Metadata metadata, @Nullable final Directory parentDirectory, @NotNull MetadataContext context)
+    {
+        PhotoshopDirectory directory = new PhotoshopDirectory(context);
         metadata.addDirectory(directory);
 
         if (parentDirectory != null)
@@ -145,13 +158,13 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
 
                 if (signature.equals("8BIM")) {
                     if (tagType == PhotoshopDirectory.TAG_IPTC)
-                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory);
+                        new IptcReader().extract(new SequentialByteArrayReader(tagBytes), metadata, tagBytes.length, directory, context);
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
-                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
+                        new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory, context);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
-                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
+                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory, context);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
-                        new XmpReader().extract(tagBytes, metadata, directory);
+                        new XmpReader().extract(tagBytes, metadata, directory, context);
                     else if (tagType >= 0x07D0 && tagType <= 0x0BB6) {
                         clippingPathCount++;
                         tagBytes = Arrays.copyOf(tagBytes, tagBytes.length + description.length() + 1);
@@ -169,7 +182,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                         directory.setByteArray(tagType, tagBytes);
 
                     if (tagType >= 0x0fa0 && tagType <= 0x1387)
-                        PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));
+                        PhotoshopDirectory._tagNameMap.put(tagType, String.format(context.locale(), "Plug-in %d Data", tagType - 0x0fa0 + 1));
                 }
             } catch (Exception ex) {
                 directory.addError(ex.getMessage());

@@ -22,6 +22,7 @@ package com.drew.metadata.icc;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 
 import java.util.HashMap;
 
@@ -187,9 +188,9 @@ public class IccDirectory extends Directory
         _tagNameMap.put(TAG_APPLE_MULTI_LANGUAGE_PROFILE_NAME, "Apple Multi-language Profile Name");
     }
 
-    public IccDirectory()
+    public IccDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new IccDescriptor(this));
+        this.setDescriptor(new IccDescriptor(this, context));
     }
 
     @Override

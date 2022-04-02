@@ -25,7 +25,9 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable.HuffmanTableClass;
 import java.io.IOException;
@@ -44,10 +46,10 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.DHT);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
-            extract(new SequentialByteArrayReader(segmentBytes), metadata);
+            extract(new SequentialByteArrayReader(segmentBytes), metadata, context);
         }
     }
 
@@ -55,11 +57,11 @@ public class JpegDhtReader implements JpegSegmentMetadataReader
      * Performs the DHT tables extraction, adding found tables to the specified
      * instance of {@link Metadata}.
      */
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, @NotNull MetadataContext context)
     {
         HuffmanTablesDirectory directory = metadata.getFirstDirectoryOfType(HuffmanTablesDirectory.class);
         if (directory == null) {
-            directory = new HuffmanTablesDirectory();
+            directory = new HuffmanTablesDirectory(context);
             metadata.addDirectory(directory);
         }
 

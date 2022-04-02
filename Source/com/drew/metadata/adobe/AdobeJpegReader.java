@@ -28,6 +28,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -49,17 +50,17 @@ public class AdobeJpegReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPE);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         for (byte[] bytes : segments) {
             if (bytes.length == 12 && PREAMBLE.equalsIgnoreCase(new String(bytes, 0, PREAMBLE.length())))
-                extract(new SequentialByteArrayReader(bytes), metadata);
+                extract(new SequentialByteArrayReader(bytes), metadata, context);
         }
     }
 
-    public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata)
+    public void extract(@NotNull SequentialReader reader, @NotNull Metadata metadata, @NotNull MetadataContext context)
     {
-        Directory directory = new AdobeJpegDirectory();
+        Directory directory = new AdobeJpegDirectory(context);
         metadata.addDirectory(directory);
 
         try {

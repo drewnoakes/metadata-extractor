@@ -22,6 +22,7 @@ package com.drew.metadata.jpeg;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 /**
@@ -32,9 +33,9 @@ import com.drew.metadata.TagDescriptor;
 @SuppressWarnings("WeakerAccess")
 public class JpegCommentDescriptor extends TagDescriptor<JpegCommentDirectory>
 {
-    public JpegCommentDescriptor(@NotNull JpegCommentDirectory directory)
+    public JpegCommentDescriptor(@NotNull JpegCommentDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Nullable

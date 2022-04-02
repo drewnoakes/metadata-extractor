@@ -35,6 +35,7 @@ import com.drew.metadata.Directory;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.StringValue;
 
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class XmpReader implements JpegSegmentMetadataReader
     private static final String SCHEMA_XMP_NOTES = "http://ns.adobe.com/xmp/note/";
     @NotNull
     private static final String ATTRIBUTE_EXTENDED_XMP = "xmpNote:HasExtendedXMP";
-    // Limit photoshop:DocumentAncestors node as it can reach over 100000 items and make parsing extremely slow. 
+    // Limit photoshop:DocumentAncestors node as it can reach over 100000 items and make parsing extremely slow.
     // This is not a typical value but it may happen https://forums.adobe.com/thread/2081839
     @NotNull
     private static final ParseOptions PARSE_OPTIONS = new ParseOptions().setXMPNodesToLimit(Collections.singletonMap("photoshop:DocumentAncestors", 1000));
@@ -85,12 +86,12 @@ public class XmpReader implements JpegSegmentMetadataReader
     /**
      * Version specifically for dealing with XMP found in JPEG segments. This form of XMP has a peculiar preamble, which
      * must be removed before parsing the XML.
-     *
      * @param segments The byte array from which the metadata should be extracted.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
+     * @param context The {@link MetadataContext} to use for parsing and formatting.
      */
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         final int preambleLength = XMP_JPEG_PREAMBLE.length();
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
@@ -120,13 +121,13 @@ public class XmpReader implements JpegSegmentMetadataReader
                 segmentBytes.length >= extensionPreambleLength &&
                 XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, extensionPreambleLength))) {
 
-                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer);
+                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer, context);
             }
         }
 
         // Now that the Extended XMP chunks have been concatenated, let's parse and merge with the Standard XMP.
         if (extendedXMPBuffer != null) {
-            extract(extendedXMPBuffer, metadata);
+            extract(extendedXMPBuffer, metadata, context);
         }
     }
 
@@ -137,7 +138,8 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata)
     {
-        extract(xmpBytes, metadata, null);
+        // TODO document this default context?
+        extract(xmpBytes, metadata, null, new MetadataContext());
     }
 
     /**
@@ -147,7 +149,28 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
-        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory);
+        // TODO document this default context?
+        extract(xmpBytes, metadata, parentDirectory, new MetadataContext());
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @NotNull MetadataContext context)
+    {
+        extract(xmpBytes, metadata, null, context);
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, @NotNull Metadata metadata, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
+    {
+        extract(xmpBytes, 0, xmpBytes.length, metadata, parentDirectory, context);
     }
 
     /**
@@ -157,7 +180,18 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final byte[] xmpBytes, int offset, int length, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
-        XmpDirectory directory = new XmpDirectory();
+        // TODO document this default context?
+        extract(xmpBytes, offset, length, metadata, parentDirectory, new MetadataContext());
+    }
+
+    /**
+     * Performs the XMP data extraction, adding found values to the specified instance of {@link Metadata}.
+     * <p>
+     * The extraction is done with Adobe's XMPCore library.
+     */
+    public void extract(@NotNull final byte[] xmpBytes, int offset, int length, @NotNull Metadata metadata, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
+    {
+        XmpDirectory directory = new XmpDirectory(context);
 
         if (parentDirectory != null)
             directory.setParent(parentDirectory);
@@ -189,7 +223,8 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final String xmpString, @NotNull Metadata metadata)
     {
-        extract(xmpString, metadata, null);
+        // TODO document this default context?
+        extract(xmpString, metadata, null, new MetadataContext());
     }
 
     /**
@@ -199,7 +234,8 @@ public class XmpReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final StringValue xmpString, @NotNull Metadata metadata)
     {
-        extract(xmpString.getBytes(), metadata, null);
+        // TODO document this default context?
+        extract(xmpString.getBytes(), metadata, null, new MetadataContext());
     }
 
     /**
@@ -207,9 +243,9 @@ public class XmpReader implements JpegSegmentMetadataReader
      * <p>
      * The extraction is done with Adobe's XMPCore library.
      */
-    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    public void extract(@NotNull final String xmpString, @NotNull Metadata metadata, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
     {
-        XmpDirectory directory = new XmpDirectory();
+        XmpDirectory directory = new XmpDirectory(context);
 
         if (parentDirectory != null)
             directory.setParent(parentDirectory);
@@ -264,7 +300,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      * at page 19
      */
     @Nullable
-    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer)
+    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer, @NotNull MetadataContext context)
     {
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         final int segmentLength = segmentBytes.length;
@@ -295,13 +331,13 @@ public class XmpReader implements JpegSegmentMetadataReader
                     if (extendedXMPBuffer.length == fullLength) {
                         System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, segmentLength - totalOffset);
                     } else {
-                        XmpDirectory directory = new XmpDirectory();
-                        directory.addError(String.format("Inconsistent length for the Extended XMP buffer: %d instead of %d", fullLength, extendedXMPBuffer.length));
+                        XmpDirectory directory = new XmpDirectory(context);
+                        directory.addError(String.format(context.locale(), "Inconsistent length for the Extended XMP buffer: %d instead of %d", fullLength, extendedXMPBuffer.length));
                         metadata.addDirectory(directory);
                     }
                 }
             } catch (IOException ex) {
-                XmpDirectory directory = new XmpDirectory();
+                XmpDirectory directory = new XmpDirectory(context);
                 directory.addError(ex.getMessage());
                 metadata.addDirectory(directory);
             }

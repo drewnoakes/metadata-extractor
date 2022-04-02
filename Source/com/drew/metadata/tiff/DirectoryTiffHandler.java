@@ -27,8 +27,12 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.StringValue;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 import java.util.Stack;
 
 /**
@@ -43,11 +47,13 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     @Nullable private Directory _rootParentDirectory;
     @Nullable protected Directory _currentDirectory;
     protected final Metadata _metadata;
+    protected MetadataContext _context;
 
-    protected DirectoryTiffHandler(Metadata metadata, @Nullable Directory parentDirectory)
+    protected DirectoryTiffHandler(Metadata metadata, @Nullable Directory parentDirectory, @Nullable MetadataContext context)
     {
         _metadata = metadata;
         _rootParentDirectory = parentDirectory;
+        _context = context;
     }
 
     public void endingIFD()
@@ -57,15 +63,7 @@ public abstract class DirectoryTiffHandler implements TiffHandler
 
     protected void pushDirectory(@NotNull Class<? extends Directory> directoryClass)
     {
-        Directory newDirectory;
-
-        try {
-            newDirectory = directoryClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        Directory newDirectory = getDirectoryInstance(directoryClass);
 
         // If this is the first directory, don't add to the stack
         if (_currentDirectory == null) {
@@ -83,6 +81,29 @@ public abstract class DirectoryTiffHandler implements TiffHandler
 
         _currentDirectory = newDirectory;
         _metadata.addDirectory(_currentDirectory);
+    }
+
+    private Directory getDirectoryInstance(Class<? extends Directory> directoryClass) {
+        Constructor<?>[] constructors = directoryClass.getConstructors();
+
+        try {
+            // pass context to directory, if it has a constructor that can receive it
+            // TODO improve?
+            for (Constructor<?> constructor : constructors) {
+                Class<?>[] parameterTypes = constructor.getParameterTypes();
+                if (parameterTypes.length == 1 && parameterTypes[0] == MetadataContext.class) {
+                    return (Directory) constructor.newInstance(_context);
+                }
+            }
+
+            return directoryClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void warn(@NotNull String message)

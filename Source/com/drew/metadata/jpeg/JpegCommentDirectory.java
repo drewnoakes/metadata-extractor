@@ -22,6 +22,7 @@ package com.drew.metadata.jpeg;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 
 import java.util.HashMap;
 
@@ -46,9 +47,9 @@ public class JpegCommentDirectory extends Directory
         _tagNameMap.put(TAG_COMMENT, "JPEG Comment");
     }
 
-    public JpegCommentDirectory()
+    public JpegCommentDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new JpegCommentDescriptor(this));
+        this.setDescriptor(new JpegCommentDescriptor(this, context));
     }
 
     @Override

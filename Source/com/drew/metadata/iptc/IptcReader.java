@@ -28,6 +28,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.StringValue;
 
 import java.io.IOException;
@@ -65,12 +66,12 @@ public class IptcReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
             // Ensure data starts with the IPTC marker byte
             if (segmentBytes.length != 0 && segmentBytes[0] == IptcMarkerByte) {
-                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length);
+                extract(new SequentialByteArrayReader(segmentBytes), metadata, segmentBytes.length, context);
             }
         }
     }
@@ -80,7 +81,8 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length)
     {
-        extract(reader, metadata, length, null);
+        // TODO document this default context?
+        extract(reader, metadata, length, null, new MetadataContext());
     }
 
     /**
@@ -88,7 +90,24 @@ public class IptcReader implements JpegSegmentMetadataReader
      */
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory)
     {
-        IptcDirectory directory = new IptcDirectory();
+        // TODO document this default context?
+        extract(reader, metadata, length, parentDirectory, new MetadataContext());
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @NotNull MetadataContext context)
+    {
+        extract(reader, metadata, length, null, context);
+    }
+
+    /**
+     * Performs the IPTC data extraction, adding found values to the specified instance of {@link Metadata}.
+     */
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata, long length, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
+    {
+        IptcDirectory directory = new IptcDirectory(context);
         metadata.addDirectory(directory);
 
         if (parentDirectory != null)

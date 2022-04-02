@@ -26,6 +26,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.jpeg.HuffmanTablesDirectory.HuffmanTable.HuffmanTableClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,13 +44,14 @@ public class JpegDhtReaderTest
     public static HuffmanTablesDirectory processBytes(String filePath) throws Exception
     {
         Metadata metadata = new Metadata();
+        MetadataContext context = new MetadataContext();
         JpegSegmentData segmentData = JpegSegmentReader.readSegments(
             new File(filePath),
             Collections.singletonList(JpegSegmentType.DHT));
 
         Iterable<byte[]> segments = segmentData.getSegments(JpegSegmentType.DHT);
         for (byte[] segment : segments) {
-            new JpegDhtReader().extract(new SequentialByteArrayReader(segment), metadata);
+            new JpegDhtReader().extract(new SequentialByteArrayReader(segment), metadata, context);
         }
 
 

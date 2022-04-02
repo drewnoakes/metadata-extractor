@@ -25,6 +25,7 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import java.io.IOException;
@@ -40,9 +41,9 @@ import static com.drew.metadata.icc.IccDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class IccDescriptor extends TagDescriptor<IccDirectory>
 {
-    public IccDescriptor(@NotNull IccDirectory directory)
+    public IccDescriptor(@NotNull IccDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override
@@ -114,7 +115,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                             observerString = "1964 10\u00B0";
                             break;
                         default:
-                            observerString = String.format("Unknown %d", observerType);
+                            observerString = String.format(getContext().locale(), "Unknown %d", observerType);
                     }
                     String geometryString;
                     switch (geometryType) {
@@ -128,7 +129,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                             geometryString = "0/d or d/0";
                             break;
                         default:
-                            geometryString = String.format("Unknown %d", observerType);
+                            geometryString = String.format(getContext().locale(), "Unknown %d", observerType);
                     }
                     String illuminantString;
                     switch (illuminantType) {
@@ -160,16 +161,16 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                             illuminantString = "F8";
                             break;
                         default:
-                            illuminantString = String.format("Unknown %d", illuminantType);
+                            illuminantString = String.format(getContext().locale(), "Unknown %d", illuminantType);
                             break;
                     }
-                    DecimalFormat format = new DecimalFormat("0.###");
-                    return String.format("%s Observer, Backing (%s, %s, %s), Geometry %s, Flare %d%%, Illuminant %s",
+                    DecimalFormat format = new DecimalFormat("0.###", getDecimalFormatSymbols(getContext().locale()));
+                    return String.format(getContext().locale(), "%s Observer, Backing (%s, %s, %s), Geometry %s, Flare %d%%, Illuminant %s",
                             observerString, format.format(x), format.format(y), format.format(z), geometryString, Math.round(flare * 100), illuminantString);
                 }
                 case ICC_TAG_TYPE_XYZ_ARRAY: {
                     StringBuilder res = new StringBuilder();
-                    DecimalFormat format = new DecimalFormat("0.####");
+                    DecimalFormat format = new DecimalFormat("0.####", getDecimalFormatSymbols(getContext().locale()));
                     int count = (bytes.length - 8) / 12;
                     for (int i = 0; i < count; i++) {
                         float x = reader.getS15Fixed16(8 + i * 12);
@@ -214,7 +215,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                     return res.toString();
                 }
                 default:
-                    return String.format("%s (0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
+                    return String.format(getContext().locale(), "%s (0x%08X): %d bytes", IccReader.getStringFromInt32(iccTagType), iccTagType, bytes.length);
             }
         } catch (IOException e) {
             // TODO decode these values during IccReader.extract so we can report any errors at that time
@@ -281,7 +282,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
             case 0x54474E54:
                 return "Taligent, Inc.";
             default:
-                return String.format("Unknown (%s)", str);
+                return String.format(getContext().locale(), "Unknown (%s)", str);
         }
     }
 
@@ -315,7 +316,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
             case 0x6E6D636C:
                 return "Named Color";
             default:
-                return String.format("Unknown (%s)", str);
+                return String.format(getContext().locale(), "Unknown (%s)", str);
         }
     }
 
@@ -331,7 +332,7 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
         int r = (value & 0x00F00000) >> 20;
         int R = (value & 0x000F0000) >> 16;
 
-        return String.format("%d.%d.%d", m, r, R);
+        return String.format(getContext().locale(), "%d.%d.%d", m, r, R);
     }
 
     private static int getInt32FromString(@NotNull String string) throws IOException

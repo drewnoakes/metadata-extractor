@@ -22,6 +22,7 @@
 package com.drew.metadata.adobe;
 
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import static com.drew.metadata.adobe.AdobeJpegDirectory.*;
@@ -32,9 +33,9 @@ import static com.drew.metadata.adobe.AdobeJpegDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class AdobeJpegDescriptor extends TagDescriptor<AdobeJpegDirectory>
 {
-    public AdobeJpegDescriptor(AdobeJpegDirectory directory)
+    public AdobeJpegDescriptor(AdobeJpegDirectory directory, MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override

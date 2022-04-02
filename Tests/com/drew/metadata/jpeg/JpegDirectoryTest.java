@@ -20,6 +20,7 @@
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.metadata.MetadataContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class JpegDirectoryTest
     @Before
     public void setUp()
     {
-        _directory = new JpegDirectory();
+        _directory = new JpegDirectory(new MetadataContext());
     }
 
     @Test

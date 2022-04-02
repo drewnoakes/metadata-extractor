@@ -22,6 +22,7 @@ package com.drew.metadata.jpeg;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.TagDescriptor;
 
 import static com.drew.metadata.jpeg.JpegDirectory.*;
@@ -35,9 +36,9 @@ import static com.drew.metadata.jpeg.JpegDirectory.*;
 @SuppressWarnings("WeakerAccess")
 public class JpegDescriptor extends TagDescriptor<JpegDirectory>
 {
-    public JpegDescriptor(@NotNull JpegDirectory directory)
+    public JpegDescriptor(@NotNull JpegDirectory directory, @NotNull MetadataContext context)
     {
-        super(directory);
+        super(directory, context);
     }
 
     @Override

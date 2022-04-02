@@ -29,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -190,6 +191,12 @@ public abstract class Directory
     public void setParent(@NotNull Directory parent)
     {
         _parent = parent;
+    }
+
+    protected Locale getLocale()
+    {
+        // TODO discuss: is it acceptable to use a default here?
+        return _descriptor != null ? _descriptor.getContext().locale() : new MetadataContext().locale();
     }
 
 // TAG SETTERS
@@ -1024,7 +1031,7 @@ public abstract class Directory
                     string.append(Array.getLong(o, i));
                 }
             } else if (componentType.getName().equals("float")) {
-                DecimalFormat format = new DecimalFormat(_floatFormatPattern);
+                DecimalFormat format = getFloatFormat();
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
@@ -1032,7 +1039,7 @@ public abstract class Directory
                     string.append(s.equals("-0") ? "0" : s);
                 }
             } else if (componentType.getName().equals("double")) {
-                DecimalFormat format = new DecimalFormat(_floatFormatPattern);
+                DecimalFormat format = getFloatFormat();
                 for (int i = 0; i < arrayLength; i++) {
                     if (i != 0)
                         string.append(' ');
@@ -1053,16 +1060,22 @@ public abstract class Directory
         }
 
         if (o instanceof Double)
-            return new DecimalFormat(_floatFormatPattern).format(((Double)o).doubleValue());
+            return getFloatFormat().format(((Double) o).doubleValue());
 
         if (o instanceof Float)
-            return new DecimalFormat(_floatFormatPattern).format(((Float)o).floatValue());
+            return getFloatFormat().format(((Float) o).floatValue());
 
         // Note that several cameras leave trailing spaces (Olympus, Nikon) but this library is intended to show
         // the actual data within the file.  It is not inconceivable that whitespace may be significant here, so we
         // do not trim.  Also, if support is added for writing data back to files, this may cause issues.
         // We leave trimming to the presentation layer.
         return o.toString();
+    }
+
+    private DecimalFormat getFloatFormat()
+    {
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(getLocale());
+        return new DecimalFormat(_floatFormatPattern, symbols);
     }
 
     @Nullable
@@ -1150,7 +1163,8 @@ public abstract class Directory
     @Override
     public String toString()
     {
-        return String.format("%s Directory (%d %s)",
+        return String.format(getLocale(),
+            "%s Directory (%d %s)",
             getName(),
             _tagMap.size(),
             _tagMap.size() == 1

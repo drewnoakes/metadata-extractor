@@ -27,6 +27,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -44,14 +45,14 @@ public class JpegDnlReader implements JpegSegmentMetadataReader
         return Collections.singletonList(JpegSegmentType.DNL);
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
-            extract(segmentBytes, metadata, segmentType);
+            extract(segmentBytes, metadata, segmentType, context);
         }
     }
 
-    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType)
+    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType, MetadataContext context)
     {
         JpegDirectory directory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         if (directory == null) {

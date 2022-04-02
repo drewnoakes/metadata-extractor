@@ -231,7 +231,7 @@ public class OlympusCameraSettingsMakernoteDescriptor extends TagDescriptor<Olym
     @Nullable
     public String getExposureShiftDescription()
     {
-        return getRationalOrDoubleString(TagExposureShift);
+        return getRationalOrDoubleString(TagExposureShift, getContext().locale());
     }
 
     @Nullable

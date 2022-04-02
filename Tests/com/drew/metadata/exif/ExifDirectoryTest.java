@@ -24,7 +24,9 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.MetadataException;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -41,13 +43,20 @@ import static org.junit.Assert.*;
 @SuppressWarnings("ConstantConditions")
 public class ExifDirectoryTest
 {
+    private MetadataContext _context;
+
+    @Before
+    public void setUp() {
+        _context = new MetadataContext();
+    }
+
     @Test
     public void testGetDirectoryName() throws Exception
     {
-        Directory subIFDDirectory = new ExifSubIFDDirectory();
+        Directory subIFDDirectory = new ExifSubIFDDirectory(_context);
         Directory ifd0Directory = new ExifIFD0Directory();
         Directory thumbDirectory = new ExifThumbnailDirectory();
-        Directory gpsDirectory = new GpsDirectory();
+        Directory gpsDirectory = new GpsDirectory(_context);
 
         assertFalse(subIFDDirectory.hasErrors());
         assertFalse(ifd0Directory.hasErrors());

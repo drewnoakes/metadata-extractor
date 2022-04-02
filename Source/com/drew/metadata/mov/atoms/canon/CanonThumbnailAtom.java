@@ -15,6 +15,7 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.StreamReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -58,8 +59,10 @@ public class CanonThumbnailAtom extends Atom
 
             // TODO should we keep all extracted metadata here?
             Metadata metadata = new Metadata();
+            // TODO document this default context?
+            MetadataContext context = new MetadataContext();
             for (JpegSegmentType segmentType : exifReader.getSegmentTypes()) {
-                exifReader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType);
+                exifReader.readJpegSegments(segmentData.getSegments(segmentType), metadata, segmentType, context);
             }
 
             Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);

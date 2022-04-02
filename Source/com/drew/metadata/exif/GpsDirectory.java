@@ -24,6 +24,7 @@ import com.drew.lang.GeoLocation;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataContext;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -146,9 +147,9 @@ public class GpsDirectory extends ExifDirectoryBase
         _tagNameMap.put(TAG_H_POSITIONING_ERROR, "GPS Horizontal Positioning Error");
     }
 
-    public GpsDirectory()
+    public GpsDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new GpsDescriptor(this));
+        this.setDescriptor(new GpsDescriptor(this, context));
     }
 
     @Override
@@ -194,7 +195,7 @@ public class GpsDirectory extends ExifDirectoryBase
         if (lat == null || lon == null)
             return null;
 
-        return new GeoLocation(lat, lon);
+        return new GeoLocation(lat, lon, getLocale());
     }
 
     /**
@@ -218,7 +219,7 @@ public class GpsDirectory extends ExifDirectoryBase
         String dateTime = String.format(Locale.US, "%s %02d:%02d:%02.3f UTC",
             date, timeComponents[0].intValue(), timeComponents[1].intValue(), timeComponents[2].doubleValue());
         try {
-            DateFormat parser = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.S z");
+            DateFormat parser = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.S z", getLocale());
             return parser.parse(dateTime);
         } catch (ParseException e) {
             return null;

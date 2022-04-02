@@ -2,6 +2,7 @@ package com.drew.imaging.jpeg;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 
 /**
  * Defines an object that extracts metadata from in JPEG segments.
@@ -21,6 +22,7 @@ public interface JpegSegmentMetadataReader
      *                 encountered in the original file.
      * @param metadata The {@link Metadata} object into which extracted values should be merged.
      * @param segmentType The {@link JpegSegmentType} being read.
+     * @param context The {@link MetadataContext} to use for parsing and formatting.
      */
-    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType);
+    void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType, @NotNull MetadataContext context);
 }

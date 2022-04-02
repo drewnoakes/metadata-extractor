@@ -38,6 +38,12 @@ import static org.junit.Assert.*;
  */
 public class MetadataTest
 {
+    private MetadataContext _context;
+
+    public void setUp() {
+        _context = new MetadataContext();
+    }
+
     @Test
     public void testGetDirectoryWhenNotExists()
     {
@@ -47,7 +53,7 @@ public class MetadataTest
     @Test
     public void testHasErrors() throws Exception
     {
-        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
+        ExifSubIFDDirectory directory = new ExifSubIFDDirectory(_context);
         directory.addError("Test Error 1");
 
         Metadata metadata = new Metadata();
@@ -66,7 +72,7 @@ public class MetadataTest
         metadata.addDirectory(new ExifIFD0Directory());
         assertEquals("Metadata (1 directory)", metadata.toString());
 
-        metadata.addDirectory(new ExifSubIFDDirectory());
+        metadata.addDirectory(new ExifSubIFDDirectory(_context));
         assertEquals("Metadata (2 directories)", metadata.toString());
     }
 
@@ -74,9 +80,9 @@ public class MetadataTest
     public void testOrderOfSameType()
     {
         Metadata metadata = new Metadata();
-        Directory directory2 = new ExifSubIFDDirectory();
-        Directory directory3 = new ExifSubIFDDirectory();
-        Directory directory1 = new ExifSubIFDDirectory();
+        Directory directory2 = new ExifSubIFDDirectory(_context);
+        Directory directory3 = new ExifSubIFDDirectory(_context);
+        Directory directory1 = new ExifSubIFDDirectory(_context);
 
         metadata.addDirectory(directory1);
         metadata.addDirectory(directory2);
@@ -95,7 +101,7 @@ public class MetadataTest
     public void testOrderOfDifferentTypes()
     {
         Metadata metadata = new Metadata();
-        Directory directory1 = new ExifSubIFDDirectory();
+        Directory directory1 = new ExifSubIFDDirectory(_context);
         Directory directory2 = new ExifThumbnailDirectory();
         Directory directory3 = new ExifIFD0Directory();
 

@@ -23,6 +23,7 @@ package com.drew.metadata.jpeg;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.MetadataException;
 
 import java.util.HashMap;
@@ -79,9 +80,9 @@ public class JpegDirectory extends Directory
         _tagNameMap.put(TAG_COMPONENT_DATA_4, "Component 4");
     }
 
-    public JpegDirectory()
+    public JpegDirectory(@NotNull MetadataContext context)
     {
-        this.setDescriptor(new JpegDescriptor(this));
+        this.setDescriptor(new JpegDescriptor(this, context));
     }
 
     @Override

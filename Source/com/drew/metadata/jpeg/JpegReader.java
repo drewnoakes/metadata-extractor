@@ -25,7 +25,9 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -62,16 +64,16 @@ public class JpegReader implements JpegSegmentMetadataReader
         );
     }
 
-    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType, @NotNull MetadataContext context)
     {
         for (byte[] segmentBytes : segments) {
-            extract(segmentBytes, metadata, segmentType);
+            extract(segmentBytes, metadata, segmentType, context);
         }
     }
 
-    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType)
+    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType, MetadataContext context)
     {
-        JpegDirectory directory = new JpegDirectory();
+        JpegDirectory directory = new JpegDirectory(context);
         metadata.addDirectory(directory);
 
         // The value of TAG_COMPRESSION_TYPE is determined by the segment type found

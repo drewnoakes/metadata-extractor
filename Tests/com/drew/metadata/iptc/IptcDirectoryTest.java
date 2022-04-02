@@ -21,6 +21,7 @@
 
 package com.drew.metadata.iptc;
 
+import com.drew.metadata.MetadataContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class IptcDirectoryTest
     @Before
     public void setUp()
     {
-        _directory = new IptcDirectory();
+        _directory = new IptcDirectory(new MetadataContext());
     }
 
     @Test

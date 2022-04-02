@@ -38,6 +38,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataContext;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.apple.AppleRunTimeReader;
 import com.drew.metadata.exif.makernotes.*;
@@ -59,7 +60,13 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 {
     public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory)
     {
-        super(metadata, parentDirectory);
+        // TODO document this default context?
+        super(metadata, parentDirectory, new MetadataContext());
+    }
+
+    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory, @NotNull MetadataContext context)
+    {
+        super(metadata, parentDirectory, context);
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException
@@ -79,7 +86,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 pushDirectory(PanasonicRawIFD0Directory.class);
                 break;
             default:
-                throw new TiffProcessingException(String.format("Unexpected TIFF marker: 0x%X", marker));
+                throw new TiffProcessingException(String.format(_context.locale(), "Unexpected TIFF marker: 0x%X", marker));
         }
     }
 
