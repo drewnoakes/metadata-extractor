@@ -20,11 +20,11 @@
  */
 package com.drew.metadata.heif;
 
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 public class HeifDescriptor extends TagDescriptor<HeifDirectory>
 {
-
     public HeifDescriptor(HeifDirectory directory)
     {
         super(directory);
@@ -38,7 +38,7 @@ public class HeifDescriptor extends TagDescriptor<HeifDirectory>
             case HeifDirectory.TAG_IMAGE_HEIGHT:
                 return getPixelDescription(tagType);
             case HeifDirectory.TAG_IMAGE_ROTATION:
-                return getRotationDescription(tagType);
+                return getRotationDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -49,8 +49,14 @@ public class HeifDescriptor extends TagDescriptor<HeifDirectory>
         return _directory.getString(tagType) + " pixels";
     }
 
-    public String getRotationDescription(int tagType)
+    @Nullable
+    public String getRotationDescription()
     {
-        return (_directory.getInteger(tagType) * 90) + " degrees";
+        Integer value = _directory.getInteger(HeifDirectory.TAG_IMAGE_ROTATION);
+
+        if (value == null)
+            return null;
+
+        return (value * 90) + " degrees";
     }
 }

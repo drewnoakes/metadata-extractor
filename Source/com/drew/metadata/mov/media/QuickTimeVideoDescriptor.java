@@ -91,7 +91,8 @@ public class QuickTimeVideoDescriptor extends QuickTimeDescriptor
 
         switch (value) {
             case (-1):
-                if (_directory.getInteger(TAG_DEPTH) < 16) {
+                Integer depth = _directory.getInteger(TAG_DEPTH);
+                if (depth != null && depth < 16) {
                     return "Default";
                 } else {
                     return "None";

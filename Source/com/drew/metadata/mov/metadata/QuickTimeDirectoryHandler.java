@@ -38,6 +38,7 @@ import java.io.IOException;
  */
 public class QuickTimeDirectoryHandler extends QuickTimeMetadataHandler
 {
+    @Nullable
     private String currentData;
 
     public QuickTimeDirectoryHandler(Metadata metadata)
@@ -85,7 +86,11 @@ public class QuickTimeDirectoryHandler extends QuickTimeMetadataHandler
         // 4 bytes: locale indicator
         reader.skip(8);
         String value = new String(reader.getBytes(payload.length - 8));
-        directory.setString(QuickTimeMetadataDirectory._tagIntegerMap.get(currentData), value);
+
+        Integer tagType = QuickTimeMetadataDirectory._tagIntegerMap.get(currentData);
+        if (tagType != null) {
+            directory.setString(tagType, value);
+        }
     }
 
     @Override
