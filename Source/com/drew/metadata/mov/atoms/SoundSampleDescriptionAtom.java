@@ -46,11 +46,14 @@ public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampl
 
     public void addMetadata(QuickTimeSoundDirectory directory)
     {
-        SoundSampleDescription description = sampleDescriptions.get(0);
+        if (sampleDescriptions.size() > 0) {
+            // TODO why only the first one?
+            SoundSampleDescription description = sampleDescriptions.get(0);
 
-        QuickTimeDictionary.setLookup(QuickTimeSoundDirectory.TAG_AUDIO_FORMAT, description.dataFormat, directory);
-        directory.setInt(QuickTimeSoundDirectory.TAG_NUMBER_OF_CHANNELS, description.numberOfChannels);
-        directory.setInt(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, description.sampleSize);
+            QuickTimeDictionary.setLookup(QuickTimeSoundDirectory.TAG_AUDIO_FORMAT, description.dataFormat, directory);
+            directory.setInt(QuickTimeSoundDirectory.TAG_NUMBER_OF_CHANNELS, description.numberOfChannels);
+            directory.setInt(QuickTimeSoundDirectory.TAG_AUDIO_SAMPLE_SIZE, description.sampleSize);
+        }
     }
 
     static class SoundSampleDescription extends SampleDescription
