@@ -47,6 +47,10 @@ public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleD
 
     public void addMetadata(QuickTimeTextDirectory directory)
     {
+        if (sampleDescriptions.size() == 0) {
+            return;
+        }
+
         TextSampleDescription description = sampleDescriptions.get(0);
 
         directory.setBoolean(QuickTimeTextDirectory.TAG_AUTO_SCALE, (description.displayFlags & 0x0002) == 0x0002);
