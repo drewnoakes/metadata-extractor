@@ -59,7 +59,7 @@ public class QuickTimeReader
                     processAtoms(reader, atom.size + reader.getPosition() - 8, handler.processContainer(atom, context), context);
                 } else if (handler.shouldAcceptAtom(atom)) {
                     handler = handler.processAtom(atom, reader.getBytes((int)atom.size - 8), context);
-                } else if (atom.size > 1) {
+                } else if (atom.size > 8) {
                     reader.skip(atom.size - 8);
                 } else if (atom.size == -1) {
                     break;
