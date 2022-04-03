@@ -55,6 +55,16 @@ public class QuickTimeReader
                 // Determine if fourCC is container/atom and process accordingly.
                 // Unknown atoms will be skipped
 
+                if (atom.size > Integer.MAX_VALUE) {
+                    handler.addError("Atom size too large.");
+                    break;
+                }
+
+                if (atom.size < 8) {
+                    handler.addError("Atom size too small.");
+                    break;
+                }
+
                 if (handler.shouldAcceptContainer(atom)) {
                     processAtoms(reader, atom.size + reader.getPosition() - 8, handler.processContainer(atom, context), context);
                 } else if (handler.shouldAcceptAtom(atom)) {
