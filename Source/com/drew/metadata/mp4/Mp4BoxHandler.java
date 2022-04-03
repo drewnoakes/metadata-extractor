@@ -90,8 +90,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
 
                 // ISO/IED 14496-12:2015 pg.7
 
-                int version = reader.getUInt8();
-                byte[] flags = reader.getBytes(3);
+                reader.skip(4); // one byte version, three bytes flags
 
                 // ISO/IED 14496-12:2015 pg.30
 
@@ -195,7 +194,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         // ISO/IED 14496-12:2015 pg.23
 
         short version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+
+        reader.skip(3); // flags
 
         long creationTime;
         long modificationTime;
@@ -261,7 +261,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         // ISO/IED 14496-12:2015 pg.7
 
         int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+
+        reader.skip(3); // flags
 
         // ISO/IED 14496-12:2015 pg.29
 
@@ -292,7 +293,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         // ISO/IED 14496-12:2015 pg.7
 
         int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+
+        reader.skip(3); // flags
 
         // ISO/IED 14496-12:2005 pg.17-18
 

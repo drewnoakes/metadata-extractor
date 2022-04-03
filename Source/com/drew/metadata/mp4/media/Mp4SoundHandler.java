@@ -29,7 +29,6 @@ import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.Mp4MediaHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
 {
@@ -56,8 +55,7 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
     {
         // ISO/IED 14496-12:2015 pg.7
 
-        int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+        reader.skip(4); // one byte version, three bytes flags
 
         // ISO/IED 14496-12:2015 pg.33
 
@@ -70,11 +68,11 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
         // ISO/IED 14496-12:2015 pg.161
 
         reader.skip(8); // Reserved
-        int channelcount = reader.getUInt16();
-        int samplesize = reader.getInt16();
+        int channelCount = reader.getUInt16();
+        int sampleSize = reader.getInt16();
         reader.skip(2); // Pre-defined
         reader.skip(2); // Reserved
-        long samplerate = reader.getUInt32();
+        long sampleRate = reader.getUInt32();
         // ChannelLayout()
         // DownMix and/or DRC boxes
         // More boxes as needed
@@ -82,8 +80,8 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
         // TODO review this
         Mp4Dictionary.setLookup(Mp4SoundDirectory.TAG_AUDIO_FORMAT, format, directory);
 
-        directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, channelcount);
-        directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, samplesize);
+        directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, channelCount);
+        directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSize);
     }
 
     @Override
@@ -91,8 +89,7 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
     {
         // ISO/IED 14496-12:2015 pg.7
 
-        int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+        reader.skip(4); // one byte version, three bytes flags
 
         // ISO/IED 14496-12:2015 pg.159
 
@@ -109,31 +106,17 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
     {
         // ISO/IED 14496-12:2015 pg.7
 
-        int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+        reader.skip(4); // one byte version, three bytes flags
 
         // ISO/IED 14496-12:2015 pg.37
 
         long entryCount = reader.getUInt32();
-        ArrayList<EntryCount> entries = new ArrayList<EntryCount>();
-        for (int i = 0; i < entryCount; i++) {
-            entries.add(new EntryCount(reader.getUInt32(), reader.getUInt32()));
-        }
+
+        // skip entries (4 bytes sample count, 4 bytes sample delta, per entry)
+        reader.skip(entryCount * 8);
 
         if (context.timeScale != null) {
             directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, context.timeScale);
-        }
-    }
-
-    static class EntryCount
-    {
-        long sampleCount;
-        long sampleDelta;
-
-        public EntryCount(long sampleCount, long sampleDelta)
-        {
-            this.sampleCount = sampleCount;
-            this.sampleDelta = sampleDelta;
         }
     }
 }

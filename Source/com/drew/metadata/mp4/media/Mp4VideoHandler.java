@@ -111,8 +111,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     {
         // ISO/IED 14496-12:2015 pg.7
 
-        int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+        reader.skip(4); // 1 byte header, 3 bytes flags
 
         // ISO/IED 14496-12:2015 pg.155
 
@@ -128,38 +127,22 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     {
         // ISO/IED 14496-12:2015 pg.7
 
-        int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+        reader.skip(4); // 1 byte header, 3 bytes flags
 
         // ISO/IED 14496-12:2015 pg.37
 
-        long entryCount = reader.getUInt32();
-        ArrayList<EntryCount> entries = new ArrayList<EntryCount>((int)entryCount);
-        for (int i = 0; i < entryCount; i++) {
-            entries.add(new EntryCount(reader.getUInt32(), reader.getUInt32()));
-        }
-
         float sampleCount = 0;
 
-        for (EntryCount ec : entries) {
-            sampleCount += ec.sampleCount;
+        long entryCount = reader.getUInt32();
+
+        for (int i = 0; i < entryCount; i++) {
+            sampleCount += reader.getUInt32();
+            reader.skip(4); // sample delta
         }
 
         if (context.timeScale != null && context.duration != null) {
             float frameRate = (float)context.timeScale / ((float)context.duration / sampleCount);
             directory.setFloat(Mp4VideoDirectory.TAG_FRAME_RATE, frameRate);
-        }
-    }
-
-    static class EntryCount
-    {
-        long sampleCount;
-        long sampleDelta;
-
-        public EntryCount(long sampleCount, long sampleDelta)
-        {
-            this.sampleCount = sampleCount;
-            this.sampleDelta = sampleDelta;
         }
     }
 }

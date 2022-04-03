@@ -59,8 +59,7 @@ public class Mp4HintHandler extends Mp4MediaHandler<Mp4HintDirectory>
     {
         // ISO/IED 14496-12:2015 pg.169
 
-        int version = reader.getUInt8();
-        byte[] flags = reader.getBytes(3);
+        reader.skip(4); // one byte version, three bytes flags
 
         int maxPduSize = reader.getUInt16();
         int avgPduSize = reader.getUInt16();
