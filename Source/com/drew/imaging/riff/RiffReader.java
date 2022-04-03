@@ -77,32 +77,44 @@ public class RiffReader
 
     public void processChunks(SequentialReader reader, int sectionSize, RiffHandler handler) throws IOException
     {
-        while (reader.getPosition() < sectionSize) {
-            String fourCC = new String(reader.getBytes(4));
-            int size = reader.getInt32();
-            if (fourCC.equals("LIST") || fourCC.equals("RIFF")) {
-                String listName = new String(reader.getBytes(4));
-                if (handler.shouldAcceptList(listName)) {
-                    processChunks(reader, size - 4, handler);
+        try {
+            while (reader.getPosition() < sectionSize) {
+                String fourCC = new String(reader.getBytes(4));
+                int size = reader.getInt32();
+                if (fourCC.equals("LIST") || fourCC.equals("RIFF")) {
+                    String listName = new String(reader.getBytes(4));
+                    if (size < 4) {
+                        handler.addError("Chunk size too small.");
+                    } else {
+                        if (handler.shouldAcceptList(listName)) {
+                            processChunks(reader, size - 4, handler);
+                        } else {
+                            reader.skip(size - 4);
+                        }
+                    }
+                } else if (fourCC.equals("IDIT")) {
+                    // Avi DateTimeOriginal
+                    if (size < 2) {
+                        handler.addError("Chunk size too small.");
+                    } else {
+                        handler.processChunk(fourCC, reader.getBytes(size - 2));
+                        reader.skip(2); // ?0A 00?
+                    }
                 } else {
-                    reader.skip(size - 4);
-                }
-            } else if (fourCC.equals("IDIT")) {
-                // Avi DateTimeOriginal
-                handler.processChunk(fourCC, reader.getBytes(size-2));
-                reader.skip(2); // ?0A 00?
-            } else {
-                if (handler.shouldAcceptChunk(fourCC)) {
-                    // TODO is it feasible to avoid copying the chunk here, and to pass the sequential reader to the handler?
-                    handler.processChunk(fourCC, reader.getBytes(size));
-                } else {
-                    reader.skip(size);
-                }
-                // Bytes read must be even - skip one if not
-                if ((size & 1) == 1) {
-                    reader.skip(1);
+                    if (handler.shouldAcceptChunk(fourCC)) {
+                        // TODO is it feasible to avoid copying the chunk here, and to pass the sequential reader to the handler?
+                        handler.processChunk(fourCC, reader.getBytes(size));
+                    } else {
+                        reader.skip(size);
+                    }
+                    // Bytes read must be even - skip one if not
+                    if ((size & 1) == 1) {
+                        reader.skip(1);
+                    }
                 }
             }
+        } catch (IOException e) {
+            handler.addError(e.getMessage());
         }
     }
 }
