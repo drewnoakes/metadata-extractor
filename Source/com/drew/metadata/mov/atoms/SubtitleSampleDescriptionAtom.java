@@ -40,7 +40,7 @@ public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<Subtitl
     @Override
     SubtitleSampleDescription getSampleDescription(SequentialReader reader) throws IOException
     {
-        return null;
+        return new SubtitleSampleDescription(reader);
     }
 
     static class SubtitleSampleDescription extends SampleDescription
