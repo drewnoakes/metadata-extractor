@@ -22,7 +22,6 @@ package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
