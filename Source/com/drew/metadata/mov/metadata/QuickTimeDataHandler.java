@@ -90,8 +90,12 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
         int entryCount = reader.getInt32();
         for (int i = 0; i < entryCount; i++) {
             int keySize = reader.getInt32();
+            if (keySize < 8) {
+                directory.addError("Key size too small: " + keySize);
+                break;
+            }
             reader.skip(4); // key namespace
-            String keyValue = new String(reader.getBytes(keySize - 8));
+            String keyValue = reader.getString(keySize - 8, "UTF-8");
             keys.add(keyValue);
         }
     }
