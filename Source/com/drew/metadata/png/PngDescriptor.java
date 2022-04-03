@@ -79,8 +79,6 @@ public class PngDescriptor extends TagDescriptor<PngDirectory>
         if (value == null)
             return null;
         PngColorType colorType = PngColorType.fromNumericValue(value);
-        if (colorType == null)
-            return null;
         return colorType.getDescription();
     }
 
