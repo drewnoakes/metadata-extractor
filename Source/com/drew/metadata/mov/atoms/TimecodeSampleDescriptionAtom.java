@@ -21,6 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mov.media.QuickTimeTimecodeDirectory;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<Timecod
         super(reader, atom);
     }
 
+    @NotNull
     @Override
     TimecodeSampleDescription getSampleDescription(SequentialReader reader) throws IOException
     {

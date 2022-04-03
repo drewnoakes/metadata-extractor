@@ -21,6 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mov.QuickTimeDictionary;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 
@@ -38,6 +39,7 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
         super(reader, atom);
     }
 
+    @NotNull
     @Override
     VideoSampleDescription getSampleDescription(SequentialReader reader) throws IOException
     {

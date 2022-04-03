@@ -21,6 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mov.QuickTimeDictionary;
 import com.drew.metadata.mov.media.QuickTimeSoundDirectory;
 
@@ -38,6 +39,7 @@ public class SoundSampleDescriptionAtom extends SampleDescriptionAtom<SoundSampl
         super(reader, atom);
     }
 
+    @NotNull
     @Override
     SoundSampleDescription getSampleDescription(SequentialReader reader) throws IOException
     {

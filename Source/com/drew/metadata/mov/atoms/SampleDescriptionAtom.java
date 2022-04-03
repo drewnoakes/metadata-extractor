@@ -21,6 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
@@ -54,6 +55,6 @@ public abstract class SampleDescriptionAtom<T extends SampleDescription> extends
         }
     }
 
-    @Nullable
+    @NotNull
     abstract T getSampleDescription(SequentialReader reader) throws IOException;
 }

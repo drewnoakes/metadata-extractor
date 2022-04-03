@@ -21,6 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mov.media.QuickTimeMusicDirectory;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class MusicSampleDescriptionAtom extends SampleDescriptionAtom<MusicSampl
         super(reader, atom);
     }
 
+    @NotNull
     @Override
     MusicSampleDescription getSampleDescription(SequentialReader reader) throws IOException
     {

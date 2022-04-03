@@ -21,6 +21,7 @@
 package com.drew.metadata.mov.atoms;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mov.media.QuickTimeTextDirectory;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class TextSampleDescriptionAtom extends SampleDescriptionAtom<TextSampleD
         super(reader, atom);
     }
 
+    @NotNull
     @Override
     TextSampleDescription getSampleDescription(SequentialReader reader) throws IOException
     {
