@@ -72,4 +72,10 @@ public interface RiffHandler
      * @param payload they payload of the chunk as a byte array
      */
     void processChunk(@NotNull String fourCC, @NotNull byte[] payload);
+
+    /**
+     * Registers an error message for consumption after extraction.
+     * @param message the error message
+     */
+    void addError(@NotNull String message);
 }

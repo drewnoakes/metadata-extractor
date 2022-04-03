@@ -114,4 +114,10 @@ public class WavRiffHandler implements RiffHandler
             _directory.addError(ex.getMessage());
         }
     }
+
+    @Override
+    public void addError(@NotNull String message)
+    {
+        _directory.addError(message);
+    }
 }

@@ -168,4 +168,12 @@ public class WebpRiffHandler implements RiffHandler
             }
         }
     }
+
+    @Override
+    public void addError(@NotNull String message)
+    {
+        WebpDirectory directory = new WebpDirectory();
+        directory.addError(message);
+        _metadata.addDirectory(directory);
+    }
 }
