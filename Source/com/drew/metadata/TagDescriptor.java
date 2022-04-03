@@ -300,7 +300,7 @@ public class TagDescriptor<T extends Directory>
         return null;
     }
 
-    @Nullable
+    @NotNull
     protected static String getFStopDescription(double fStop)
     {
         DecimalFormat format = new DecimalFormat("0.0");
@@ -308,7 +308,7 @@ public class TagDescriptor<T extends Directory>
         return "f/" + format.format(fStop);
     }
 
-    @Nullable
+    @NotNull
     protected static String getFocalLengthDescription(double mm)
     {
         DecimalFormat format = new DecimalFormat("0.#");
