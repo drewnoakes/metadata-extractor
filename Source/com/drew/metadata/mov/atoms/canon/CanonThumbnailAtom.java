@@ -13,6 +13,7 @@ import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.StreamReader;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
@@ -23,11 +24,12 @@ import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mov.atoms.Atom;
 
 /**
- * 
+ *
  * @author PerB
  */
 public class CanonThumbnailAtom extends Atom
 {
+    @Nullable
     private String dateTime;
 
     public CanonThumbnailAtom(SequentialReader reader) throws IOException
@@ -75,6 +77,8 @@ public class CanonThumbnailAtom extends Atom
 
     public void addMetadata(QuickTimeDirectory directory)
     {
-        directory.setString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT, dateTime);
+        if (dateTime != null) {
+            directory.setString(QuickTimeDirectory.TAG_CANON_THUMBNAIL_DT, dateTime);
+        }
     }
 }
