@@ -99,6 +99,10 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
     @Override
     protected void processData(@NotNull byte[] payload, @NotNull SequentialByteArrayReader reader) throws IOException
     {
+        if (currentIndex >= keys.size()) {
+            return;
+        }
+
         int type = reader.getInt32();
         // 4 bytes: locale indicator
         reader.skip(4);
