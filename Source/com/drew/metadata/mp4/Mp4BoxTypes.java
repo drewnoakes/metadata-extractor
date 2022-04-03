@@ -20,8 +20,6 @@
  */
 package com.drew.metadata.mp4;
 
-import java.util.ArrayList;
-
 /**
  * @author Payton Garland
  */
@@ -40,21 +38,4 @@ public class Mp4BoxTypes
     public static final String BOX_TRACK_HEADER                     = "tkhd";
     public static final String BOX_USER_DEFINED                     = "uuid";
     public static final String BOX_USER_DATA                        = "udta";
-
-    private static final ArrayList<String> _boxList = new ArrayList<String>();
-
-    static {
-        _boxList.add(BOX_FILE_TYPE);
-        _boxList.add(BOX_MOVIE_HEADER);
-        _boxList.add(BOX_VIDEO_MEDIA_INFO);
-        _boxList.add(BOX_SOUND_MEDIA_INFO);
-        _boxList.add(BOX_HINT_MEDIA_INFO);
-        _boxList.add(BOX_NULL_MEDIA_INFO);
-        _boxList.add(BOX_HANDLER);
-        _boxList.add(BOX_SAMPLE_DESCRIPTION);
-        _boxList.add(BOX_TIME_TO_SAMPLE);
-        _boxList.add(BOX_MEDIA_HEADER);
-        _boxList.add(BOX_TRACK_HEADER);
-        _boxList.add(BOX_USER_DEFINED);
-    }
 }
