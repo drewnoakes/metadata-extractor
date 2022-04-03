@@ -81,6 +81,10 @@ public class RiffReader
             while (reader.getPosition() < sectionSize) {
                 String fourCC = new String(reader.getBytes(4));
                 int size = reader.getInt32();
+                if (size <= 0) {
+                    handler.addError("Invalid chunk size: " + size);
+                    break;
+                }
                 if (fourCC.equals("LIST") || fourCC.equals("RIFF")) {
                     String listName = new String(reader.getBytes(4));
                     if (size < 4) {
