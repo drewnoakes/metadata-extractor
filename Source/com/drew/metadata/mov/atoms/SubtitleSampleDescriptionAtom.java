@@ -74,6 +74,10 @@ public class SubtitleSampleDescriptionAtom extends SampleDescriptionAtom<Subtitl
 
     public void addMetadata(QuickTimeSubtitleDirectory directory)
     {
+        if (sampleDescriptions.size() == 0) {
+            return;
+        }
+
         SubtitleSampleDescription description = sampleDescriptions.get(0);
 
         directory.setBoolean(QuickTimeSubtitleDirectory.TAG_VERTICAL_PLACEMENT, (description.displayFlags & 0x20000000) == 0x20000000);
