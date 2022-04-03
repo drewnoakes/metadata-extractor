@@ -92,14 +92,18 @@ public class Mp3Reader
             int[][] frequencyMapping = new int[2][3];
             frequencyMapping[0] = new int[]{44100, 48000, 32000};
             frequencyMapping[1] = new int[]{22050, 24000, 16000};
-            if (id == 2) {
-                directory.setInt(Mp3Directory.TAG_FREQUENCY, frequencyMapping[1][frequency]);
-                frequency = frequencyMapping[1][frequency];
-            } else if (id == 1) {
-                directory.setInt(Mp3Directory.TAG_FREQUENCY, frequencyMapping[0][frequency]);
-                frequency = frequencyMapping[0][frequency];
+            if (frequency <= 2) {
+                if (id == 2) {
+                    directory.setInt(Mp3Directory.TAG_FREQUENCY, frequencyMapping[1][frequency]);
+                    frequency = frequencyMapping[1][frequency];
+                } else if (id == 1) {
+                    directory.setInt(Mp3Directory.TAG_FREQUENCY, frequencyMapping[0][frequency]);
+                    frequency = frequencyMapping[0][frequency];
+                }
+            } else {
+                directory.addError("Invalid frequency index.");
+                frequency = -1;
             }
-
 
             int paddingBit = ((header & 0x00000200) >> 9);
 
@@ -144,7 +148,7 @@ public class Mp3Reader
                     break;
             }
 
-            if (bitrate != 0 && bitrate != 15) {
+            if (frequency != -1 && bitrate != 0 && bitrate != 15) {
                 int frameSize = ((setBitrate(bitrate, layer, id) * 1000) * 144) / frequency;
                 directory.setString(Mp3Directory.TAG_FRAME_SIZE, frameSize + " bytes");
             }
