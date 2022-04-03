@@ -362,6 +362,10 @@ public class BmpReader
                 if (csType == ColorSpaceType.PROFILE_EMBEDDED.getValue() || csType == ColorSpaceType.PROFILE_LINKED.getValue()) {
                     long profileOffset = reader.getUInt32();
                     int profileSize = reader.getInt32();
+                    if (profileSize < 0) {
+                        directory.addError("Invalid profile size " + profileSize);
+                        return;
+                    }
                     if (reader.getPosition() > headerOffset + profileOffset) {
                         directory.addError("Invalid profile data offset 0x" + Long.toHexString(headerOffset + profileOffset));
                         return;
