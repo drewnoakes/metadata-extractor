@@ -47,12 +47,14 @@ public class TimecodeSampleDescriptionAtom extends SampleDescriptionAtom<Timecod
 
     public void addMetadata(QuickTimeTimecodeDirectory directory)
     {
-        TimecodeSampleDescription description = sampleDescriptions.get(0);
+        if (sampleDescriptions.size() > 0) {
+            TimecodeSampleDescription description = sampleDescriptions.get(0);
 
-        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_DROP_FRAME,        (description.flags & 0x0001) == 0x0001);
-        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_24_HOUR_MAX,       (description.flags & 0x0002) == 0x0002);
-        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_NEGATIVE_TIMES_OK, (description.flags & 0x0004) == 0x0004);
-        directory.setBoolean(QuickTimeTimecodeDirectory.TAG_COUNTER,           (description.flags & 0x0008) == 0x0008);
+            directory.setBoolean(QuickTimeTimecodeDirectory.TAG_DROP_FRAME, (description.flags & 0x0001) == 0x0001);
+            directory.setBoolean(QuickTimeTimecodeDirectory.TAG_24_HOUR_MAX, (description.flags & 0x0002) == 0x0002);
+            directory.setBoolean(QuickTimeTimecodeDirectory.TAG_NEGATIVE_TIMES_OK, (description.flags & 0x0004) == 0x0004);
+            directory.setBoolean(QuickTimeTimecodeDirectory.TAG_COUNTER, (description.flags & 0x0008) == 0x0008);
+        }
     }
 
     static class TimecodeSampleDescription extends SampleDescription
