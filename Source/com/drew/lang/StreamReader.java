@@ -134,7 +134,6 @@ public class StreamReader extends SequentialReader
         long skippedTotal = 0;
         while (skippedTotal != n) {
             long skipped = _stream.skip(n - skippedTotal);
-            assert(skipped >= 0);
             skippedTotal += skipped;
             if (skipped == 0)
                 break;
