@@ -48,6 +48,10 @@ public class VideoSampleDescriptionAtom extends SampleDescriptionAtom<VideoSampl
 
     public void addMetadata(QuickTimeVideoDirectory directory)
     {
+        if (sampleDescriptions.size() == 0) {
+            return;
+        }
+
         VideoSampleDescription sampleDescription = sampleDescriptions.get(0);
 
         QuickTimeDictionary.setLookup(QuickTimeVideoDirectory.TAG_VENDOR, sampleDescription.vendor, directory);
