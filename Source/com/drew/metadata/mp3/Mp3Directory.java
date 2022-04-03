@@ -59,12 +59,14 @@ public class Mp3Directory extends Directory
         this.setDescriptor(new Mp3Descriptor(this));
     }
 
+    @NotNull
     @Override
     public String getName()
     {
         return "MP3";
     }
 
+    @NotNull
     @Override
     protected HashMap<Integer, String> getTagNameMap()
     {
