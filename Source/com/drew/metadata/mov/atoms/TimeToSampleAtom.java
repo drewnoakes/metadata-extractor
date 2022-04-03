@@ -41,9 +41,14 @@ public class TimeToSampleAtom extends FullAtom
         super(reader, atom);
 
         long numberOfEntries = reader.getUInt32();
-        entries = new ArrayList<Entry>((int)numberOfEntries);
-        for (int i = 0; i < numberOfEntries; i++) {
-            entries.add(new Entry(reader));
+        if (numberOfEntries < Integer.MAX_VALUE) {
+            entries = new ArrayList<Entry>((int)numberOfEntries);
+            for (int i = 0; i < numberOfEntries; i++) {
+                entries.add(new Entry(reader));
+            }
+        } else {
+            entries = new ArrayList<Entry>();
+            // TODO surface this error somewhere
         }
     }
 
