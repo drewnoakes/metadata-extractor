@@ -44,7 +44,7 @@ public class QuickTimeMusicHandler extends QuickTimeMediaHandler<QuickTimeMusicD
     @Override
     protected QuickTimeMusicDirectory createDirectory()
     {
-        return directory;
+        return new QuickTimeMusicDirectory();
     }
 
     @Override
