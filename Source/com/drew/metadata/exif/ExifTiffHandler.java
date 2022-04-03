@@ -680,7 +680,9 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             }
         }
 
-        directory.setObject(PrintIMDirectory.TagPrintImVersion, header.substring(8, 12));
+        if (header.length() >= 12) {
+            directory.setObject(PrintIMDirectory.TagPrintImVersion, header.substring(8, 12));
+        }
 
         for (int n = 0; n < num; n++) {
             int pos = tagValueOffset + 16 + n * 6;
