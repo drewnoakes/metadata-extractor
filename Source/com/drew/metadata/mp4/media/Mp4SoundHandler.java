@@ -25,13 +25,11 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4Context;
+import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.Mp4MediaHandler;
-import com.drew.metadata.mp4.boxes.AudioSampleEntry;
-import com.drew.metadata.mp4.boxes.Box;
-import com.drew.metadata.mp4.boxes.SoundMediaHeaderBox;
-import com.drew.metadata.mp4.boxes.TimeToSampleBox;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
 {
@@ -54,23 +52,88 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
     }
 
     @Override
-    public void processSampleDescription(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        AudioSampleEntry audioSampleEntry = new AudioSampleEntry(reader, box);
-        audioSampleEntry.addMetadata(directory);
+        // ISO/IED 14496-12:2015 pg.7
+
+        int version = reader.getUInt8();
+        byte[] flags = reader.getBytes(3);
+
+        // ISO/IED 14496-12:2015 pg.33
+
+        long numberOfEntries = reader.getUInt32();
+        long sampleDescriptionSize = reader.getUInt32();
+        String format = reader.getString(4);
+        reader.skip(6); // Reserved
+        int dataReferenceIndex = reader.getUInt16();
+
+        // ISO/IED 14496-12:2015 pg.161
+
+        reader.skip(8); // Reserved
+        int channelcount = reader.getUInt16();
+        int samplesize = reader.getInt16();
+        reader.skip(2); // Pre-defined
+        reader.skip(2); // Reserved
+        long samplerate = reader.getUInt32();
+        // ChannelLayout()
+        // DownMix and/or DRC boxes
+        // More boxes as needed
+
+        // TODO review this
+        Mp4Dictionary.setLookup(Mp4SoundDirectory.TAG_AUDIO_FORMAT, format, directory);
+
+        directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, channelcount);
+        directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, samplesize);
     }
 
     @Override
-    public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        SoundMediaHeaderBox soundMediaHeaderBox = new SoundMediaHeaderBox(reader, box);
-        soundMediaHeaderBox.addMetadata(directory);
+        // ISO/IED 14496-12:2015 pg.7
+
+        int version = reader.getUInt8();
+        byte[] flags = reader.getBytes(3);
+
+        // ISO/IED 14496-12:2015 pg.159
+
+        int balance = reader.getInt16();
+        reader.skip(2); // Reserved
+
+        double integer = balance & 0xFFFF0000;
+        double fraction = (balance & 0x0000FFFF) / Math.pow(2, 4);
+        directory.setDouble(Mp4SoundDirectory.TAG_SOUND_BALANCE, integer + fraction);
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box, Mp4Context context) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader, Mp4Context context) throws IOException
     {
-        TimeToSampleBox timeToSampleBox = new TimeToSampleBox(reader, box);
-        timeToSampleBox.addMetadata(directory, context);
+        // ISO/IED 14496-12:2015 pg.7
+
+        int version = reader.getUInt8();
+        byte[] flags = reader.getBytes(3);
+
+        // ISO/IED 14496-12:2015 pg.37
+
+        long entryCount = reader.getUInt32();
+        ArrayList<EntryCount> entries = new ArrayList<EntryCount>();
+        for (int i = 0; i < entryCount; i++) {
+            entries.add(new EntryCount(reader.getUInt32(), reader.getUInt32()));
+        }
+
+        if (context.timeScale != null) {
+            directory.setDouble(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_RATE, context.timeScale);
+        }
+    }
+
+    static class EntryCount
+    {
+        long sampleCount;
+        long sampleDelta;
+
+        public EntryCount(long sampleCount, long sampleDelta)
+        {
+            this.sampleCount = sampleCount;
+            this.sampleDelta = sampleDelta;
+        }
     }
 }

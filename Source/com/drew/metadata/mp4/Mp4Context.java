@@ -20,11 +20,13 @@
  */
 package com.drew.metadata.mp4;
 
+import com.drew.lang.annotations.Nullable;
+
 public class Mp4Context
 {
-    public Long creationTime;
-    public Long modificationTime;
-    public Long timeScale;
-    public Long duration;
-    public String language;
+    @Nullable public Long creationTime;
+    @Nullable public Long modificationTime;
+    @Nullable public Long timeScale;
+    @Nullable public Long duration;
+    @Nullable public String language;
 }

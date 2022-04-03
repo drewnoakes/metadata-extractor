@@ -23,7 +23,6 @@ package com.drew.imaging.mp4;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.mp4.Mp4Context;
-import com.drew.metadata.mp4.boxes.Box;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,25 +49,42 @@ public class Mp4Reader
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
-                Box box = new Box(reader);
+                long boxSize = reader.getUInt32();
+
+                String boxType = reader.getString(4);
+
+                boolean isLargeSize = boxSize == 1;
+
+                if (isLargeSize) {
+                    boxSize = reader.getInt64();
+                }
+
+                if (boxSize > Integer.MAX_VALUE) {
+                    handler.addError("Box size too large.");
+                    break;
+                }
+
+                if (boxSize < 8) {
+                    handler.addError("Box size too small.");
+                    break;
+                }
 
                 // Determine if fourCC is container/atom and process accordingly.
                 // Unknown atoms will be skipped
 
-                if (handler.shouldAcceptContainer(box)) {
-                    processBoxes(reader, box.size + reader.getPosition() - 8, handler.processContainer(box, context), context);
-                } else if (handler.shouldAcceptBox(box)) {
-                    handler = handler.processBox(box, reader.getBytes((int)box.size - 8), context);
-                } else if (box.usertype != null) {
-                    reader.skip(box.size - 24);
-                } else if (box.size > 1) {
-                    if (box.isLargeSize) {
-                        reader.skip(box.size - 16);
-                    } else {
-                        reader.skip(box.size - 8);
+                if (handler.shouldAcceptContainer(boxType)) {
+                    // Recur, to process nested boxes within container box
+                    processBoxes(reader, boxSize + reader.getPosition() - 8, handler.processContainer(boxType, boxSize, context), context);
+                } else if (handler.shouldAcceptBox(boxType)) {
+                    handler = handler.processBox(boxType, reader.getBytes((int)boxSize - 8), boxSize, context);
+                } else if (isLargeSize) {
+                    if (boxSize < 16) {
+                        // TODO capture this error in a directory
+                        break;
                     }
-                } else if (box.size == -1) {
-                    break;
+                    reader.skip(boxSize - 16);
+                } else {
+                    reader.skip(boxSize - 8);
                 }
             }
         } catch (IOException e) {

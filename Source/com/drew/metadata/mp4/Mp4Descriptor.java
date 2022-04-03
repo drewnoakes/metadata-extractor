@@ -22,7 +22,6 @@ package com.drew.metadata.mp4;
 
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 import com.drew.metadata.TagDescriptor;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import java.util.Arrays;
 
 import static com.drew.metadata.mp4.Mp4Directory.*;
 
-public class Mp4Descriptor<T extends Directory> extends TagDescriptor<Mp4Directory> {
+public class Mp4Descriptor extends TagDescriptor<Mp4Directory> {
 
     public Mp4Descriptor(@NotNull Mp4Directory directory)
     {

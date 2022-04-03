@@ -27,7 +27,6 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mp4.boxes.Box;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 
 import java.io.IOException;
@@ -37,46 +36,53 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
     public Mp4MediaHandler(Metadata metadata, Mp4Context context)
     {
         super(metadata);
-        if (context.creationTime != null && context.modificationTime != null) {
-            // Get creation/modification times
+
+        // Get creation/modification times
+        if (context.creationTime != null) {
             directory.setDate(
                 Mp4MediaDirectory.TAG_CREATION_TIME,
                 DateUtil.get1Jan1904EpochDate(context.creationTime)
             );
+        }
+
+        if (context.modificationTime != null) {
             directory.setDate(
                 Mp4MediaDirectory.TAG_MODIFICATION_TIME,
                 DateUtil.get1Jan1904EpochDate(context.modificationTime)
             );
+        }
+
+        if (context.language != null) {
             directory.setString(Mp4MediaDirectory.TAG_LANGUAGE_CODE, context.language);
         }
     }
 
     @Override
-    public boolean shouldAcceptBox(@NotNull Box box)
+    public boolean shouldAcceptBox(@NotNull String type)
     {
-        return box.type.equals(getMediaInformation())
-            || box.type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)
-            || box.type.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE);
+        return type.equals(getMediaInformation())
+            || type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)
+            || type.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE);
     }
 
     @Override
-    public boolean shouldAcceptContainer(@NotNull Box box)
+    public boolean shouldAcceptContainer(@NotNull String type)
     {
-        return box.type.equals(Mp4ContainerTypes.BOX_SAMPLE_TABLE)
-            || box.type.equals(Mp4ContainerTypes.BOX_MEDIA_INFORMATION);
+        return type.equals(Mp4ContainerTypes.BOX_SAMPLE_TABLE)
+            || type.equals(Mp4ContainerTypes.BOX_MEDIA_INFORMATION);
     }
 
     @Override
-    public Mp4Handler<?> processBox(@NotNull Box box, @Nullable byte[] payload, Mp4Context context) throws IOException
+    public Mp4Handler<?> processBox(@NotNull String type, @Nullable byte[] payload, long boxSize, Mp4Context context) throws IOException
     {
         if (payload != null) {
             SequentialReader reader = new SequentialByteArrayReader(payload);
-            if (box.type.equals(getMediaInformation())) {
-                processMediaInformation(reader, box);
-            } else if (box.type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)) {
-                processSampleDescription(reader, box);
-            } else if (box.type.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE)) {
-                processTimeToSample(reader, box, context);
+            if (type.equals(getMediaInformation())) {
+                processMediaInformation(reader);
+            } else if (type.equals(Mp4BoxTypes.BOX_SAMPLE_DESCRIPTION)) {
+                processSampleDescription(reader);
+            } else if (type.equals(Mp4BoxTypes.BOX_TIME_TO_SAMPLE)) {
+                processTimeToSample(reader, context);
             }
         }
         return this;
@@ -84,9 +90,9 @@ public abstract class Mp4MediaHandler<T extends Mp4MediaDirectory> extends Mp4Ha
 
     protected abstract String getMediaInformation();
 
-    protected abstract void processSampleDescription(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
+    protected abstract void processSampleDescription(@NotNull SequentialReader reader) throws IOException;
 
-    protected abstract void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException;
+    protected abstract void processMediaInformation(@NotNull SequentialReader reader) throws IOException;
 
-    protected abstract void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box, Mp4Context context) throws IOException;
+    protected abstract void processTimeToSample(@NotNull SequentialReader reader, Mp4Context context) throws IOException;
 }

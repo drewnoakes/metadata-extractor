@@ -84,7 +84,7 @@ public class Mp4Directory extends Directory {
 
     public Mp4Directory()
     {
-        this.setDescriptor(new Mp4Descriptor<Mp4Directory>(this));
+        this.setDescriptor(new Mp4Descriptor(this));
     }
 
     @Override

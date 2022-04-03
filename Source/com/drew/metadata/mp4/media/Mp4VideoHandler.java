@@ -25,13 +25,11 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4Context;
+import com.drew.metadata.mp4.Mp4Dictionary;
 import com.drew.metadata.mp4.Mp4MediaHandler;
-import com.drew.metadata.mp4.boxes.Box;
-import com.drew.metadata.mp4.boxes.TimeToSampleBox;
-import com.drew.metadata.mp4.boxes.VideoMediaHeaderBox;
-import com.drew.metadata.mp4.boxes.VisualSampleEntry;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
 {
@@ -54,23 +52,114 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
     }
 
     @Override
-    public void processSampleDescription(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    public void processSampleDescription(@NotNull SequentialReader reader) throws IOException
     {
-        VisualSampleEntry visualSampleEntry = new VisualSampleEntry(reader, box);
-        visualSampleEntry.addMetadata(directory);
+        // ISO/IED 14496-12:2015 pg.7
+
+        reader.skip(4); // 1 byte header, 3 bytes flags
+
+        // ISO/IED 14496-12:2015 pg.33
+
+        long numberOfEntries = reader.getUInt32();
+        long sampleDescriptionSize = reader.getUInt32();
+        String format = reader.getString(4);
+        reader.skip(6); // Reserved
+        int dataReferenceIndex = reader.getUInt16();
+
+        // ISO/IED 14496-12:2015 pg.156
+
+        int version = reader.getInt16();
+        int revisionLevel = reader.getInt16();
+        String vendor = reader.getString(4);
+        int temporalQuality = reader.getInt32();
+        int spatialQuality = reader.getInt32();
+        int width = reader.getUInt16();
+        int height = reader.getUInt16();
+        long horizresolution = reader.getUInt32();
+        long vertresolution = reader.getUInt32();
+        reader.skip(4); // Reserved
+        int frameCount = reader.getUInt16();
+        String compressorname = reader.getString(32);
+        int depth = reader.getUInt16();
+        reader.skip(2); // Pre-defined
+
+        // TODO review this
+        Mp4Dictionary.setLookup(Mp4VideoDirectory.TAG_COMPRESSION_TYPE, format, directory);
+
+        directory.setInt(Mp4VideoDirectory.TAG_WIDTH, width);
+        directory.setInt(Mp4VideoDirectory.TAG_HEIGHT, height);
+
+        String compressorName = compressorname.trim();
+        if (!compressorName.isEmpty()) {
+            directory.setString(Mp4VideoDirectory.TAG_COMPRESSOR_NAME, compressorName);
+        }
+
+        directory.setInt(Mp4VideoDirectory.TAG_DEPTH, depth);
+
+        // Calculate horizontal res
+        double horizontalInteger = (horizresolution & 0xFFFF0000) >> 16;
+        double horizontalFraction = (horizresolution & 0xFFFF) / Math.pow(2, 4);
+        directory.setDouble(Mp4VideoDirectory.TAG_HORIZONTAL_RESOLUTION, horizontalInteger + horizontalFraction);
+
+        double verticalInteger = (vertresolution & 0xFFFF0000) >> 16;
+        double verticalFraction = (vertresolution & 0xFFFF) / Math.pow(2, 4);
+        directory.setDouble(Mp4VideoDirectory.TAG_VERTICAL_RESOLUTION, verticalInteger + verticalFraction);
     }
 
     @Override
-    public void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    public void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        VideoMediaHeaderBox videoMediaHeaderBox = new VideoMediaHeaderBox(reader, box);
-        videoMediaHeaderBox.addMetadata(directory);
+        // ISO/IED 14496-12:2015 pg.7
+
+        int version = reader.getUInt8();
+        byte[] flags = reader.getBytes(3);
+
+        // ISO/IED 14496-12:2015 pg.155
+
+        int graphicsMode = reader.getUInt16();
+        int[] opcolor = new int[]{reader.getUInt16(), reader.getUInt16(), reader.getUInt16()};
+
+        directory.setIntArray(Mp4VideoDirectory.TAG_OPCOLOR, opcolor);
+        directory.setInt(Mp4VideoDirectory.TAG_GRAPHICS_MODE, graphicsMode);
     }
 
     @Override
-    public void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box, Mp4Context context) throws IOException
+    public void processTimeToSample(@NotNull SequentialReader reader, Mp4Context context) throws IOException
     {
-        TimeToSampleBox timeToSampleBox = new TimeToSampleBox(reader, box);
-        timeToSampleBox.addMetadata(directory, context);
+        // ISO/IED 14496-12:2015 pg.7
+
+        int version = reader.getUInt8();
+        byte[] flags = reader.getBytes(3);
+
+        // ISO/IED 14496-12:2015 pg.37
+
+        long entryCount = reader.getUInt32();
+        ArrayList<EntryCount> entries = new ArrayList<EntryCount>((int)entryCount);
+        for (int i = 0; i < entryCount; i++) {
+            entries.add(new EntryCount(reader.getUInt32(), reader.getUInt32()));
+        }
+
+        float sampleCount = 0;
+
+        for (EntryCount ec : entries) {
+            sampleCount += ec.sampleCount;
+        }
+
+        if (context.timeScale != null && context.duration != null) {
+            float frameRate = (float)context.timeScale / ((float)context.duration / sampleCount);
+            directory.setFloat(Mp4VideoDirectory.TAG_FRAME_RATE, frameRate);
+        }
+    }
+
+    static class EntryCount
+    {
+        long sampleCount;
+        long sampleDelta;
+
+        public EntryCount(long sampleCount, long sampleDelta)
+        {
+            this.sampleCount = sampleCount;
+            this.sampleDelta = sampleDelta;
+        }
     }
 }

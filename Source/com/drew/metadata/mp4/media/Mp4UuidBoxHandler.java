@@ -25,17 +25,21 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.ByteTrie;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4Context;
-import com.drew.metadata.mp4.boxes.Box;
-import com.drew.metadata.mp4.boxes.UuidBox;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.UUID;
+
+import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.TAG_USER_DATA;
+import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.TAG_UUID;
 
 public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
 {
@@ -79,6 +83,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
         super(metadata);
     }
 
+    @NotNull
     @Override
     protected Mp4UuidBoxDirectory getDirectory()
     {
@@ -86,24 +91,28 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
     }
 
     @Override
-    protected boolean shouldAcceptBox(Box box)
+    protected boolean shouldAcceptBox(@NotNull String type)
     {
-        return box.type.equals(Mp4BoxTypes.BOX_USER_DEFINED);
+        return type.equals(Mp4BoxTypes.BOX_USER_DEFINED);
     }
 
     @Override
-    protected boolean shouldAcceptContainer(Box box)
+    protected boolean shouldAcceptContainer(@NotNull String type)
     {
         return false;
     }
 
     @Override
-    public Mp4Handler<?> processBox(Box box, byte[] payload, Mp4Context context) throws IOException
+    public Mp4Handler<?> processBox(@NotNull String type, byte[] payload, long boxSize, Mp4Context context) throws IOException
     {
         if (payload != null && payload.length >= 16) {
-            UuidType type = _uuidLookup.find(payload);
+            UuidType uuidType = _uuidLookup.find(payload);
 
-            switch (type) {
+            if (uuidType == null) {
+                return this;
+            }
+
+            switch (uuidType) {
                 case Exif:
                     new ExifReader().extract(new ByteArrayReader(payload, 16), metadata, 0, directory);
                     break;
@@ -118,12 +127,21 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
                     break;
                 default:
                     SequentialReader reader = new SequentialByteArrayReader(payload);
-                    UuidBox userBox = new UuidBox(reader, box);
-                    userBox.addMetadata(directory);
+                    String usertype = getUuid(reader.getBytes(16));
+                    byte[] userData = reader.getBytes(reader.available());
+                    directory.setString(TAG_UUID, usertype);
+                    directory.setByteArray(TAG_USER_DATA, userData);
                     break;
             }
         }
 
         return this;
+    }
+
+    private static String getUuid(byte[] bytes) {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        UUID uuid = new UUID(bb.getLong(), bb.getLong());
+
+        return uuid.toString();
     }
 }

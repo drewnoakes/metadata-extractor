@@ -26,8 +26,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4Context;
 import com.drew.metadata.mp4.Mp4MediaHandler;
-import com.drew.metadata.mp4.boxes.Box;
-import com.drew.metadata.mp4.boxes.HintMediaHeaderBox;
 
 import java.io.IOException;
 
@@ -52,19 +50,31 @@ public class Mp4HintHandler extends Mp4MediaHandler<Mp4HintDirectory>
     }
 
     @Override
-    protected void processSampleDescription(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    protected void processSampleDescription(@NotNull SequentialReader reader)
     {
     }
 
     @Override
-    protected void processMediaInformation(@NotNull SequentialReader reader, @NotNull Box box) throws IOException
+    protected void processMediaInformation(@NotNull SequentialReader reader) throws IOException
     {
-        HintMediaHeaderBox hintMediaHeaderBox = new HintMediaHeaderBox(reader, box);
-        hintMediaHeaderBox.addMetadata(directory);
+        // ISO/IED 14496-12:2015 pg.169
+
+        int version = reader.getUInt8();
+        byte[] flags = reader.getBytes(3);
+
+        int maxPduSize = reader.getUInt16();
+        int avgPduSize = reader.getUInt16();
+        long maxBitrate = reader.getUInt32();
+        long avgBitrate = reader.getUInt32();
+
+        directory.setInt(Mp4HintDirectory.TAG_MAX_PDU_SIZE, maxPduSize);
+        directory.setInt(Mp4HintDirectory.TAG_AVERAGE_PDU_SIZE, avgPduSize);
+        directory.setLong(Mp4HintDirectory.TAG_MAX_BITRATE, maxBitrate);
+        directory.setLong(Mp4HintDirectory.TAG_AVERAGE_BITRATE, avgBitrate);
     }
 
     @Override
-    protected void processTimeToSample(@NotNull SequentialReader reader, @NotNull Box box, Mp4Context context) throws IOException
+    protected void processTimeToSample(@NotNull SequentialReader reader, Mp4Context context) throws IOException
     {
     }
 }
