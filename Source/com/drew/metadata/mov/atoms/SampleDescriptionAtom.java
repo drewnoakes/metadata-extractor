@@ -33,17 +33,24 @@ import java.util.ArrayList;
  */
 public abstract class SampleDescriptionAtom<T extends SampleDescription> extends FullAtom
 {
-    long numberOfEntries;
-    ArrayList<T> sampleDescriptions;
+    protected long numberOfEntries;
+    protected ArrayList<T> sampleDescriptions;
 
     public SampleDescriptionAtom(SequentialReader reader, Atom atom) throws IOException
     {
         super(reader, atom);
 
         numberOfEntries = reader.getUInt32();
-        sampleDescriptions = new ArrayList<T>((int)numberOfEntries);
-        for (int i = 0; i < numberOfEntries; i++) {
-            sampleDescriptions.add(getSampleDescription(reader));
+
+        if (numberOfEntries <= Integer.MAX_VALUE) {
+            sampleDescriptions = new ArrayList<T>((int)numberOfEntries);
+            for (long i = 0; i < numberOfEntries; i++) {
+                sampleDescriptions.add(getSampleDescription(reader));
+            }
+        } else {
+            // TODO surface an error here
+            numberOfEntries = 0;
+            sampleDescriptions = new ArrayList<T>();
         }
     }
 
