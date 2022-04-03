@@ -82,6 +82,10 @@ public final class Metadata
      */
     public <T extends Directory> void addDirectory(@NotNull T directory)
     {
+        if (directory == null) {
+            throw new IllegalArgumentException("Directory may not be null.");
+        }
+
         _directories.add(directory);
     }
 
