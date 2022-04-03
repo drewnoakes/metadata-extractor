@@ -44,7 +44,7 @@ public class QuickTimeTimecodeHandler extends QuickTimeMediaHandler<QuickTimeTim
 
     @NotNull
     @Override
-    protected QuickTimeTimecodeDirectory getDirectory()
+    protected QuickTimeTimecodeDirectory createDirectory()
     {
         return new QuickTimeTimecodeDirectory();
     }

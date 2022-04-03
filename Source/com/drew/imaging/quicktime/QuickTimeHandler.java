@@ -40,12 +40,12 @@ public abstract class QuickTimeHandler<T extends QuickTimeDirectory>
     public QuickTimeHandler(@NotNull Metadata metadata)
     {
         this.metadata = metadata;
-        this.directory = getDirectory();
+        this.directory = createDirectory();
         metadata.addDirectory(directory);
     }
 
     @NotNull
-    protected abstract T getDirectory();
+    protected abstract T createDirectory();
 
     protected abstract boolean shouldAcceptAtom(@NotNull Atom atom);
 

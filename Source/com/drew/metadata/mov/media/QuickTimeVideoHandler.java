@@ -51,7 +51,7 @@ public class QuickTimeVideoHandler extends QuickTimeMediaHandler<QuickTimeVideoD
 
     @NotNull
     @Override
-    protected QuickTimeVideoDirectory getDirectory()
+    protected QuickTimeVideoDirectory createDirectory()
     {
         return new QuickTimeVideoDirectory();
     }

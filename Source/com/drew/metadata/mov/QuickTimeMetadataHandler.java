@@ -42,7 +42,7 @@ public abstract class QuickTimeMetadataHandler extends QuickTimeHandler<QuickTim
 
     @NotNull
     @Override
-    protected QuickTimeDirectory getDirectory()
+    protected QuickTimeDirectory createDirectory()
     {
         return new QuickTimeMetadataDirectory();
     }

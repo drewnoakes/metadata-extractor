@@ -43,7 +43,7 @@ public class QuickTimeTextHandler extends QuickTimeMediaHandler<QuickTimeTextDir
 
     @NotNull
     @Override
-    protected QuickTimeTextDirectory getDirectory()
+    protected QuickTimeTextDirectory createDirectory()
     {
         return new QuickTimeTextDirectory();
     }
