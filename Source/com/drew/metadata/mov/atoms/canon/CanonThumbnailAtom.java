@@ -43,7 +43,10 @@ public class CanonThumbnailAtom extends Atom
      */
     private void readCNDA(SequentialReader reader) throws IOException
     {
-        if (this.type.compareTo("CNDA") == 0) {
+        if (this.type.equals("CNDA")) {
+            if (this.size > Integer.MAX_VALUE || this.size <= 0)
+                return;
+
             // From JpegMetadataReader
             JpegSegmentMetadataReader exifReader = new ExifReader();
             InputStream exifStream = new ByteArrayInputStream(reader.getBytes((int) this.size));
