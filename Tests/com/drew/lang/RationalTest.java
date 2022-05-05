@@ -72,6 +72,10 @@ public class RationalTest
         Rational twoThirds = new Rational(10, 15);
         assertEquals("2/3", twoThirds.toSimpleString(true));
 
+        Rational twoSixths = new Rational(2, 6);
+        assertEquals("1/3", twoSixths.toSimpleString(true));
+        assertEquals("1/3", twoSixths.toSimpleString(false));
+
         Rational two = new Rational(10, 5);
         assertTrue(two.isInteger());
         assertEquals("2", two.toSimpleString(true));
@@ -93,10 +97,6 @@ public class RationalTest
         assertTrue(zero.isInteger());
         assertEquals("0", zero.toSimpleString(true));
         assertEquals("0", zero.toSimpleString(false));
-
-        // not sure this is a nice presentation of rationals.  won't implement it for now.
-//        Rational twoAndAHalf = new Rational(10,4);
-//        assertEquals("2 1/2", twoAndAHalf.toSimpleString());
     }
 
     @Test
@@ -215,7 +215,7 @@ public class RationalTest
             assertEquals(actualSimple.doubleValue(), complex.doubleValue(), 0.0001);
         }
 
-        simple = new Rational(1, -2);
+        simple = new Rational(-1, 2);
 
         for (int prime : _primes)
         {
@@ -226,7 +226,7 @@ public class RationalTest
             assertEquals(actualSimple.doubleValue(), complex.doubleValue(), 0.0001);
         }
 
-        simple = new Rational(-1, -2);
+        simple = new Rational(1, 2);
 
         for (int prime : _primes)
         {
@@ -241,4 +241,25 @@ public class RationalTest
         assertEquals(new Rational(-32768, 32767), new Rational(-32768, 32767).getSimplifiedInstance());
     }
 
+    @Test
+    public void getSimplifiedInstance_FlipsSignsIfNeeded()
+    {
+        Rational r = new Rational(1, -2);
+
+        Rational s = r.getSimplifiedInstance();
+
+        assertEquals(-1, s.getNumerator());
+        assertEquals(2, s.getDenominator());
+    }
+
+    @Test
+    public void getSimplifiedInstance_RemovesSignsIfNeeded()
+    {
+        Rational r = new Rational(-1, -2);
+
+        Rational s = r.getSimplifiedInstance();
+
+        assertEquals(1, s.getNumerator());
+        assertEquals(2, s.getDenominator());
+    }
 }

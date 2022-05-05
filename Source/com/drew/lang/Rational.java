@@ -217,10 +217,6 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
             return toString();
         } else if (isInteger()) {
             return Integer.toString(intValue());
-        } else if (_numerator != 1 && _denominator % _numerator == 0) {
-            // common factor between denominator and numerator
-            long newDenominator = _denominator / _numerator;
-            return new Rational(1, newDenominator).toSimpleString(allowDecimal);
         } else {
             Rational simplifiedInstance = getSimplifiedInstance();
             if (allowDecimal) {
@@ -314,9 +310,17 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     @NotNull
     public Rational getSimplifiedInstance()
     {
-        long gcd = GCD(_numerator, _denominator);
+        long n = _numerator;
+        long d = _denominator;
 
-        return new Rational(_numerator / gcd, _denominator / gcd);
+        if (d < 0) {
+            n = -n;
+            d = -d;
+        }
+
+        long gcd = GCD(n, d);
+
+        return new Rational(n / gcd, d / gcd);
     }
 
     private static long GCD(long a, long b)
