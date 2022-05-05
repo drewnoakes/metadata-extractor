@@ -363,16 +363,9 @@ public class TagDescriptor<T extends Directory>
     @Nullable
     protected String getShutterSpeedDescription(int tag)
     {
-        // I believe this method to now be stable, but am leaving some alternative snippets of
-        // code in here, to assist anyone who's looking into this (given that I don't have a public CVS).
-
-//        float apexValue = _directory.getFloat(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
-//        int apexPower = (int)Math.pow(2.0, apexValue);
-//        return "1/" + apexPower + " sec";
-        // TODO test this method
-        // thanks to Mark Edwards for spotting and patching a bug in the calculation of this
-        // description (spotted bug using a Canon EOS 300D)
-        // thanks also to Gli Blr for spotting this bug
+        // Thanks to Mark Edwards for spotting and patching a bug in the calculation of this
+        // description (spotted bug using a Canon EOS 300D).
+        // Thanks also to Gli Blr for spotting this bug.
         Float apexValue = _directory.getFloatObject(tag);
         if (apexValue == null)
             return null;
@@ -387,26 +380,6 @@ public class TagDescriptor<T extends Directory>
             int apexPower = (int)((Math.exp(apexValue * Math.log(2))));
             return "1/" + apexPower + " sec";
         }
-
-/*
-        // This alternative implementation offered by Bill Richards
-        // TODO determine which is the correct / more-correct implementation
-        double apexValue = _directory.getDouble(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
-        double apexPower = Math.pow(2.0, apexValue);
-
-        StringBuffer sb = new StringBuffer();
-        if (apexPower > 1)
-            apexPower = Math.floor(apexPower);
-
-        if (apexPower < 1) {
-            sb.append((int)Math.round(1/apexPower));
-        } else {
-            sb.append("1/");
-            sb.append((int)apexPower);
-        }
-        sb.append(" sec");
-        return sb.toString();
-*/
     }
 
     // EXIF UserComment, GPSProcessingMethod and GPSAreaInformation
