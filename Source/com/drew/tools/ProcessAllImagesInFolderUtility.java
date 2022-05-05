@@ -174,10 +174,10 @@ public class ProcessAllImagesInFolderUtility
         private final Set<String> _supportedExtensions = new HashSet<String>(
             Arrays.asList(
                 "jpg", "jpeg", "png", "gif", "bmp", "heic", "heif", "ico", "webp", "pcx", "ai", "eps",
-                "nef", "crw", "cr2", "orf", "arw", "raf", "srw", "x3f", "rw2", "rwl", "dcr",
+                "nef", "crw", "cr2", "orf", "arw", "raf", "srw", "x3f", "rw2", "rwl", "dcr", "pef",
                 "tif", "tiff", "psd", "dng",
-                "mp3",
                 "j2c", "jp2", "jpf", "jpm", "mj2",
+                "mp3", "wav",
                 "3g2", "3gp", "m4v", "mov", "mp4", "m2v", "m2ts", "mts",
                 "pbm", "pnm", "pgm", "ppm",
                 "avi",
