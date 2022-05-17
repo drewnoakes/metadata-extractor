@@ -36,6 +36,13 @@ public class SonyType1MakernoteDirectory extends Directory
     public static final int TAG_CAMERA_INFO = 0x0010;
     public static final int TAG_FOCUS_INFO = 0x0020;
 
+    // https://exiftool.org/TagNames/Sony.html#Tag9050a
+    public static final int TAG_9050A = 0x0030;
+    // https://exiftool.org/TagNames/Sony.html#Tag9050b
+    public static final int TAG_9050B = 0x9050;
+    // https://exiftool.org/TagNames/Sony.html#Tag9050c
+    public static final int TAG_9050C = 0x0040;
+
     public static final int TAG_IMAGE_QUALITY = 0x0102;
     public static final int TAG_FLASH_EXPOSURE_COMP = 0x0104;
     public static final int TAG_TELECONVERTER = 0x0105;

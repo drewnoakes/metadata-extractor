@@ -100,16 +100,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 pushDirectory(GpsDirectory.class);
                 return true;
             }
-        }
-
-        if (_currentDirectory instanceof ExifSubIFDDirectory) {
+        } else if (_currentDirectory instanceof ExifSubIFDDirectory) {
             if (tagId == ExifSubIFDDirectory.TAG_INTEROP_OFFSET) {
                 pushDirectory(ExifInteropDirectory.class);
                 return true;
             }
-        }
-
-        if (_currentDirectory instanceof OlympusMakernoteDirectory) {
+        } else if (_currentDirectory instanceof OlympusMakernoteDirectory) {
             // Note: these also appear in customProcessTag because some are IFD pointers while others begin immediately
             // for the same directories
             switch(tagId) {
@@ -333,6 +329,16 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 _currentDirectory.addError("Error processing JpgFromRaw: " + e.getMessage());
             } catch (IOException e) {
                 _currentDirectory.addError("Error reading JpgFromRaw: " + e.getMessage());
+            }
+        }
+
+        if (_currentDirectory instanceof SonyType1MakernoteDirectory) {
+            if (tagId == SonyType1MakernoteDirectory.TAG_9050B) {
+                byte[] bytes = reader.getBytes(tagOffset, byteCount);
+                SonyTag9050bDirectory directory = SonyTag9050bDirectory.read(bytes);
+                directory.setParent(_currentDirectory);
+                _metadata.addDirectory(directory);
+                return true;
             }
         }
 
@@ -877,8 +883,6 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         directory.setStringValue(ReconyxHyperFire2MakernoteDirectory.TAG_SERIAL_NUMBER, new StringValue(reader.getBytes(makernoteOffset + ReconyxHyperFire2MakernoteDirectory.TAG_SERIAL_NUMBER, 28), Charsets.UTF_16LE));
         // two unread bytes: the serial number's terminating null
     }
-
-
 
     private static void processReconyxUltraFireMakernote(@NotNull final ReconyxUltraFireMakernoteDirectory directory, final int makernoteOffset, @NotNull final RandomAccessReader reader) throws IOException
     {
