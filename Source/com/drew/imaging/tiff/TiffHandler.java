@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -57,7 +57,6 @@ public interface TiffHandler
 
     boolean customProcessTag(int tagOffset,
                              @NotNull Set<Integer> processedIfdOffsets,
-                             int tiffHeaderOffset,
                              @NotNull RandomAccessReader reader,
                              int tagId,
                              int byteCount) throws IOException;

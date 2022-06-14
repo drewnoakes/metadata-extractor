@@ -55,7 +55,6 @@ public class PhotoshopTiffHandler extends ExifTiffHandler
                 return true;
         }
 
-
-        return super.customProcessTag(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount);
+        return super.customProcessTag(tagOffset, processedIfdOffsets, reader, tagId, byteCount);
     }
 }

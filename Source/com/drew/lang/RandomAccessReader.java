@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ import java.nio.charset.Charset;
 public abstract class RandomAccessReader
 {
     private boolean _isMotorolaByteOrder = true;
+
+    public abstract RandomAccessReader withShiftedBaseOffset(int shift) throws IOException;
 
     public abstract int toUnshiftedOffset(int localOffset);
 
