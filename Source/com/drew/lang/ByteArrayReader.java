@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -58,6 +58,17 @@ public class ByteArrayReader extends RandomAccessReader
 
         _buffer = buffer;
         _baseOffset = baseOffset;
+    }
+
+    @Override
+    public RandomAccessReader withShiftedBaseOffset(int shift) throws IOException {
+        if (shift == 0) {
+            return this;
+        } else {
+            RandomAccessReader reader = new ByteArrayReader(_buffer, _baseOffset + shift);
+            reader.setMotorolaByteOrder(isMotorolaByteOrder());
+            return reader;
+        }
     }
 
     @Override

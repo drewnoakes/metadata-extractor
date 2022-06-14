@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -335,5 +337,36 @@ public abstract class RandomAccessTestBase
             reader.getInt8(1);
             fail("Expecting exception");
         } catch (IOException ignored) {}
+    }
+
+    @Test
+    public void testWithShiftedBaseOffset() throws Exception
+    {
+        RandomAccessReader reader = createReader(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+        reader.setMotorolaByteOrder(false);
+
+        assertEquals(10, reader.getLength());
+        assertEquals(0, reader.getByte(0));
+        assertEquals(1, reader.getByte(1));
+        assertArrayEquals(new byte[] { 0, 1 }, reader.getBytes(0, 2));
+        assertEquals(4, reader.toUnshiftedOffset(4));
+
+        reader = reader.withShiftedBaseOffset(2);
+
+        assertFalse(reader.isMotorolaByteOrder());
+        assertEquals(8, reader.getLength());
+        assertEquals(2, reader.getByte(0));
+        assertEquals(3, reader.getByte(1));
+        assertArrayEquals(new byte[] { 2, 3 }, reader.getBytes(0, 2));
+        assertEquals(6, reader.toUnshiftedOffset(4));
+
+        reader = reader.withShiftedBaseOffset(2);
+
+        assertFalse(reader.isMotorolaByteOrder());
+        assertEquals(6, reader.getLength());
+        assertEquals(4, reader.getByte(0));
+        assertEquals(5, reader.getByte(1));
+        assertArrayEquals(new byte[] { 4, 5 }, reader.getBytes(0, 2));
+        assertEquals(8, reader.toUnshiftedOffset(4));
     }
 }

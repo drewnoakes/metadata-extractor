@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         _exifStartOffset = exifStartOffset;
     }
 
+    @Override
     public void setTiffMarker(int marker) throws TiffProcessingException
     {
         final int standardTiffMarker = 0x002A;
@@ -86,6 +87,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
     }
 
+    @Override
     public boolean tryEnterSubIfd(int tagId)
     {
         if (tagId == ExifDirectoryBase.TAG_SUB_IFD_OFFSET) {
@@ -142,6 +144,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return false;
     }
 
+    @Override
     public boolean hasFollowerIfd()
     {
         // In Exif, the only known 'follower' IFD is the thumbnail one, however this may not be the case.
@@ -165,6 +168,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return false;
     }
 
+    @Override
     @Nullable
     public Long tryCustomProcessFormat(final int tagId, final int formatCode, final long componentCount)
     {
@@ -178,9 +182,9 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return null;
     }
 
+    @Override
     public boolean customProcessTag(final int tagOffset,
                                     final @NotNull Set<Integer> processedIfdOffsets,
-                                    final int tiffHeaderOffset,
                                     final @NotNull RandomAccessReader reader,
                                     final int tagId,
                                     final int byteCount) throws IOException
@@ -201,7 +205,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         // Custom processing for the Makernote tag
         if (tagId == ExifSubIFDDirectory.TAG_MAKERNOTE && _currentDirectory instanceof ExifSubIFDDirectory) {
-            return processMakernote(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader);
+            return processMakernote(tagOffset, processedIfdOffsets, reader);
         }
 
         // Custom processing for embedded IPTC data
@@ -257,35 +261,35 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             switch (tagId) {
                 case OlympusMakernoteDirectory.TAG_EQUIPMENT:
                     pushDirectory(OlympusEquipmentMakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
                 case OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS:
                     pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
                 case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT:
                     pushDirectory(OlympusRawDevelopmentMakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
                 case OlympusMakernoteDirectory.TAG_RAW_DEVELOPMENT_2:
                     pushDirectory(OlympusRawDevelopment2MakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
                 case OlympusMakernoteDirectory.TAG_IMAGE_PROCESSING:
                     pushDirectory(OlympusImageProcessingMakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
                 case OlympusMakernoteDirectory.TAG_FOCUS_INFO:
                     pushDirectory(OlympusFocusInfoMakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
                 case OlympusMakernoteDirectory.TAG_RAW_INFO:
                     pushDirectory(OlympusRawInfoMakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
                 case OlympusMakernoteDirectory.TAG_MAIN_INFO:
                     pushDirectory(OlympusMakernoteDirectory.class);
-                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset, tiffHeaderOffset);
+                    TiffReader.processIfd(this, reader, processedIfdOffsets, tagOffset);
                     return true;
             }
         }
@@ -425,7 +429,6 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
     private boolean processMakernote(final int makernoteOffset,
                                      final @NotNull Set<Integer> processedIfdOffsets,
-                                     final int tiffHeaderOffset,
                                      final @NotNull RandomAccessReader reader) throws IOException
     {
         assert(_currentDirectory != null);
@@ -453,24 +456,24 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // Olympus Makernote
             // Epson and Agfa use Olympus makernote standard: http://www.ozhiker.com/electronics/pjmt/jpeg_info/
             pushDirectory(OlympusMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8);
         } else if ("OLYMPUS\0II".equals(firstTenChars)) {
             // Olympus Makernote (alternate)
             // Note that data is relative to the beginning of the makernote
             // http://exiv2.org/makernote.html
             pushDirectory(OlympusMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, makernoteOffset);
+            TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 12);
         } else if ("OM SYSTEM\0\0\0II".equals(firstFourteenChars)) {
             // Olympus Makernote (OM SYSTEM)
             // Note that data is relative to the beginning of the makernote
             // http://exiv2.org/makernote.html
             pushDirectory(OlympusMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 14, makernoteOffset);
+            TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 14);
         } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("MINOLTA")) {
             // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
             // area that commences immediately.
             pushDirectory(OlympusMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset);
         } else if (cameraMake != null && cameraMake.trim().toUpperCase().startsWith("NIKON")) {
             if ("Nikon".equals(firstFiveChars)) {
                 /* There are two scenarios here:
@@ -484,11 +487,11 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 switch (reader.getUInt8(makernoteOffset + 6)) {
                     case 1:
                         pushDirectory(NikonType1MakernoteDirectory.class);
-                        TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+                        TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8);
                         break;
                     case 2:
                         pushDirectory(NikonType2MakernoteDirectory.class);
-                        TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 18, makernoteOffset + 10);
+                        TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset + 10), processedIfdOffsets, 8);
                         break;
                     default:
                         _currentDirectory.addError("Unsupported Nikon makernote data ignored.");
@@ -497,26 +500,26 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             } else {
                 // The IFD begins with the first Makernote byte (no ASCII name).  This occurs with CoolPix 775, E990 and D1 models.
                 pushDirectory(NikonType2MakernoteDirectory.class);
-                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset);
             }
         } else if ("SONY CAM".equals(firstEightChars) || "SONY DSC".equals(firstEightChars)) {
             pushDirectory(SonyType1MakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12);
         // Do this check LAST after most other Sony checks
         } else if (cameraMake != null && cameraMake.startsWith("SONY") &&
                 !Arrays.equals(reader.getBytes(makernoteOffset, 2), new byte[]{ 0x01, 0x00 }) ) {
             // The IFD begins with the first Makernote byte (no ASCII name). Used in SR2 and ARW images
             pushDirectory(SonyType1MakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset);
         } else if ("SEMC MS\u0000\u0000\u0000\u0000\u0000".equals(firstTwelveChars)) {
             // force MM for this directory
             reader.setMotorolaByteOrder(true);
             // skip 12 byte header + 2 for "MM" + 6
             pushDirectory(SonyType6MakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 20, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 20);
         } else if ("SIGMA\u0000\u0000\u0000".equals(firstEightChars) || "FOVEON\u0000\u0000".equals(firstEightChars)) {
             pushDirectory(SigmaMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 10, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 10);
         } else if ("KDK".equals(firstThreeChars)) {
             reader.setMotorolaByteOrder(firstSevenChars.equals("KDK INFO"));
             KodakMakernoteDirectory directory = new KodakMakernoteDirectory();
@@ -524,14 +527,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             processKodakMakernote(directory, makernoteOffset, reader);
         } else if ("Canon".equalsIgnoreCase(cameraMake)) {
             pushDirectory(CanonMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset);
         } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("CASIO")) {
             if ("QVC\u0000\u0000\u0000".equals(firstSixChars)) {
                 pushDirectory(CasioType2MakernoteDirectory.class);
-                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 6, tiffHeaderOffset);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 6);
             } else {
                 pushDirectory(CasioType1MakernoteDirectory.class);
-                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset);
             }
         } else if ("FUJIFILM".equals(firstEightChars) || "Fujifilm".equalsIgnoreCase(cameraMake)) {
             // Note that this also applies to certain Leica cameras, such as the Digilux-4.3
@@ -539,13 +542,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // the 4 bytes after "FUJIFILM" in the makernote point to the start of the makernote
             // IFD, though the offset is relative to the start of the makernote, not the TIFF
             // header (like everywhere else)
-            int ifdStart = makernoteOffset + reader.getInt32(makernoteOffset + 8);
+            RandomAccessReader makernoteReader = reader.withShiftedBaseOffset(makernoteOffset);
+            int ifdStart = makernoteReader.getInt32(8);
             pushDirectory(FujifilmMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, ifdStart, makernoteOffset);
+            TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, ifdStart);
         } else if ("KYOCERA".equals(firstSevenChars)) {
             // http://www.ozhiker.com/electronics/pjmt/jpeg_info/kyocera_mn.html
             pushDirectory(KyoceraMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 22, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 22);
         } else if ("LEICA".equals(firstFiveChars)) {
             reader.setMotorolaByteOrder(false);
 
@@ -563,14 +567,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 "LEICA\0\u0007\0".equals(firstEightChars))
             {
                 pushDirectory(LeicaType5MakernoteDirectory.class);
-                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
+                TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 8);
             } else if ("Leica Camera AG".equals(cameraMake)) {
                 pushDirectory(LeicaMakernoteDirectory.class);
-                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8);
             } else if ("LEICA".equals(cameraMake)) {
                 // Some Leica cameras use Panasonic makernote tags
                 pushDirectory(PanasonicMakernoteDirectory.class);
-                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8);
             } else {
                 return false;
             }
@@ -579,7 +583,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // Offsets are relative to the start of the TIFF header at the beginning of the EXIF segment
             // more information here: http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html
             pushDirectory(PanasonicMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12);
         } else if ("AOC\u0000".equals(firstFourChars)) {
             // NON-Standard TIFF IFD Data using Casio Type 2 Tags
             // IFD has no Next-IFD pointer at end of IFD, and
@@ -587,7 +591,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // Observed for:
             // - Pentax ist D
             pushDirectory(CasioType2MakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 6, makernoteOffset);
+            TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 6);
         } else if (cameraMake != null && (cameraMake.toUpperCase().startsWith("PENTAX") || cameraMake.toUpperCase().startsWith("ASAHI"))) {
             // NON-Standard TIFF IFD Data using Pentax Tags
             // IFD has no Next-IFD pointer at end of IFD, and
@@ -596,7 +600,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // - PENTAX Optio 330
             // - PENTAX Optio 430
             pushDirectory(PentaxMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, makernoteOffset);
+            TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 0);
 //        } else if ("KC".equals(firstTwoChars) || "MINOL".equals(firstFiveChars) || "MLY".equals(firstThreeChars) || "+M+M+M+M".equals(firstEightChars)) {
 //            // This Konica data is not understood.  Header identified in accordance with information at this site:
 //            // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html
@@ -604,7 +608,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 //            exifDirectory.addError("Unsupported Konica/Minolta data ignored.");
         } else if ("SANYO\0\1\0".equals(firstEightChars)) {
             pushDirectory(SanyoMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
+            TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 8);
         } else if (cameraMake != null && cameraMake.toLowerCase().startsWith("ricoh")) {
             if (firstTwoChars.equals("Rv") || firstThreeChars.equals("Rev")) {
                 // This is a textual format, where the makernote bytes look like:
@@ -617,14 +621,14 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                 // Always in Motorola byte order
                 reader.setMotorolaByteOrder(true);
                 pushDirectory(RicohMakernoteDirectory.class);
-                TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, makernoteOffset);
+                TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 8);
             }
         } else if (firstTenChars.equals("Apple iOS\0")) {
             // Always in Motorola byte order
             boolean orderBefore = reader.isMotorolaByteOrder();
             reader.setMotorolaByteOrder(true);
             pushDirectory(AppleMakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 14, makernoteOffset);
+            TiffReader.processIfd(this, reader.withShiftedBaseOffset(makernoteOffset), processedIfdOffsets, 14);
             reader.setMotorolaByteOrder(orderBefore);
         } else if (reader.getUInt16(makernoteOffset) == ReconyxHyperFireMakernoteDirectory.MAKERNOTE_VERSION) {
             ReconyxHyperFireMakernoteDirectory directory = new ReconyxHyperFireMakernoteDirectory();
@@ -641,7 +645,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         } else if ("SAMSUNG".equalsIgnoreCase(cameraMake)) {
             // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
             pushDirectory(SamsungType2MakernoteDirectory.class);
-            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset);
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.

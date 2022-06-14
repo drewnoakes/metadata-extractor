@@ -80,7 +80,7 @@ public class EpsReader
                     // Get Tiff metadata
                     try {
                         ByteArrayReader byteArrayReader = new ByteArrayReader(reader.getBytes(tifOffset, tifSize));
-                        new TiffReader().processTiff(byteArrayReader, new PhotoshopTiffHandler(metadata, null), 0);
+                        new TiffReader().processTiff(byteArrayReader, new PhotoshopTiffHandler(metadata, null));
                     } catch (TiffProcessingException ex) {
                         directory.addError("Unable to process TIFF data: " + ex.getMessage());
                     }
