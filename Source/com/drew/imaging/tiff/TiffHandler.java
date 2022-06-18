@@ -20,14 +20,12 @@
  */
 package com.drew.imaging.tiff;
 
-import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.StringValue;
 
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * Interface of an class capable of handling events raised during the reading of a TIFF file
@@ -56,12 +54,20 @@ public interface TiffHandler
     @Nullable
     Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);
 
-    boolean customProcessTag(int tagOffset,
-                             @NotNull Set<Integer> processedIfdOffsets,
-                             @NotNull RandomAccessReader reader,
+    /**
+     * Allows handlers to provide custom logic for a given tag.
+     *
+     * @param context Context for the TIFF read operation.
+     * @param tagId The ID of the tag being processed.
+     * @param valueOffset The offset into the data stream at which the tag's value starts.
+     * @param byteCount The number of bytes that the tag's value spans.
+     * @return {@code true} if processing was successful and default processing should be suppressed, otherwise {@code false}
+     * @throws IOException if any I/O error occurs
+     */
+    boolean customProcessTag(TiffReaderContext context,
                              int tagId,
-                             int byteCount,
-                             boolean isBigTiff) throws IOException;
+                             int valueOffset,
+                             int byteCount) throws IOException;
 
     void warn(@NotNull String message);
     void error(@NotNull String message);
