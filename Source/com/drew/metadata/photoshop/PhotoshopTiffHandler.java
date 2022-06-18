@@ -41,7 +41,8 @@ public class PhotoshopTiffHandler extends ExifTiffHandler
                                     final int tiffHeaderOffset,
                                     final @NotNull RandomAccessReader reader,
                                     final int tagId,
-                                    final int byteCount) throws IOException
+                                    final int byteCount,
+                                    final boolean isBigTiff) throws IOException
     {
         switch (tagId) {
             case TAG_XMP:
@@ -55,6 +56,6 @@ public class PhotoshopTiffHandler extends ExifTiffHandler
                 return true;
         }
 
-        return super.customProcessTag(tagOffset, processedIfdOffsets, reader, tagId, byteCount);
+        return super.customProcessTag(tagOffset, processedIfdOffsets, reader, tagId, byteCount, isBigTiff);
     }
 }
