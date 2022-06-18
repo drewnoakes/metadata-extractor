@@ -128,14 +128,14 @@ public class TiffReader
      *
      * @param handler the {@link com.drew.imaging.tiff.TiffHandler} that will coordinate processing and accept read values
      * @param reader the {@link com.drew.lang.RandomAccessReader} from which the data should be read
-     * @param processedGlobalIfdOffsets the set of visited IFD offsets, to avoid revisiting the same IFD in an endless loop
+     * @param processedIfdOffsets the set of visited IFD offsets, to avoid revisiting the same IFD in an endless loop
      * @param ifdOffset the offset within <code>reader</code> at which the IFD data starts
      * @param isBigTiff Whether the IFD uses the BigTIFF data format.
      * @throws IOException an error occurred while accessing the required data
      */
     public static void processIfd(@NotNull final TiffHandler handler,
                                   @NotNull final RandomAccessReader reader,
-                                  @NotNull final Set<Integer> processedGlobalIfdOffsets,
+                                  @NotNull final Set<Integer> processedIfdOffsets,
                                   final int ifdOffset,
                                   final boolean isBigTiff) throws IOException
     {
@@ -166,12 +166,11 @@ public class TiffReader
             // Check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist.
             // Note that we track these offsets in the global frame, not the reader's local frame.
             int globalIfdOffset = reader.toUnshiftedOffset(ifdOffset);
-            if (processedGlobalIfdOffsets.contains(Integer.valueOf(globalIfdOffset))) {
-                return;
-            }
 
             // remember that we've visited this directory so that we don't visit it again later
-            processedGlobalIfdOffsets.add(globalIfdOffset);
+            if (!processedIfdOffsets.add(globalIfdOffset)) {
+            	return;
+            }
 
             // Validate IFD offset
             if (ifdOffset >= reader.getLength() || ifdOffset < 0) {
@@ -276,13 +275,13 @@ public class TiffReader
                         if (handler.tryEnterSubIfd(tagId)) {
                             isIfdPointer = true;
                             long subDirOffset = reader.getUInt32((int) (tagValueOffset + i*4));
-                            processIfd(handler, reader, processedGlobalIfdOffsets, (int) subDirOffset, isBigTiff);
+                            processIfd(handler, reader, processedIfdOffsets, (int) subDirOffset, isBigTiff);
                         }
                     }
                 }
 
                 // If it wasn't an IFD pointer, allow custom tag processing to occur
-                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedGlobalIfdOffsets, reader, tagId, (int) byteCount, isBigTiff)) {
+                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, reader, tagId, (int) byteCount, isBigTiff)) {
                     // If no custom processing occurred, process the tag in the standard fashion
                     processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
                 }
@@ -308,7 +307,7 @@ public class TiffReader
                 }
 
                 if (handler.hasFollowerIfd()) {
-                    processIfd(handler, reader, processedGlobalIfdOffsets, nextIfdOffset, isBigTiff);
+                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, isBigTiff);
                 }
             }
         } finally {
