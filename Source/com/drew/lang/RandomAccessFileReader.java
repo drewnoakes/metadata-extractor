@@ -52,6 +52,14 @@ public class RandomAccessFileReader extends RandomAccessReader
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public RandomAccessFileReader(@NotNull RandomAccessFile file, int baseOffset) throws IOException
     {
+        this(file, baseOffset, true);
+    }
+
+    @SuppressWarnings({ "ConstantConditions" })
+    @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
+    public RandomAccessFileReader(@NotNull RandomAccessFile file, int baseOffset, boolean isMotorolaByteOrder) throws IOException
+    {
+        super(isMotorolaByteOrder);
         if (file == null)
             throw new NullPointerException();
 
@@ -61,13 +69,20 @@ public class RandomAccessFileReader extends RandomAccessReader
     }
 
     @Override
-    public RandomAccessReader withShiftedBaseOffset(int shift) throws IOException {
+    public RandomAccessFileReader withByteOrder(boolean isMotorolaByteOrder) throws IOException {
+        if (isMotorolaByteOrder == isMotorolaByteOrder()) {
+            return this;
+        } else {
+            return new RandomAccessFileReader(_file, _baseOffset, isMotorolaByteOrder);
+        }
+    }
+
+    @Override
+    public RandomAccessFileReader withShiftedBaseOffset(int shift) throws IOException {
         if (shift == 0) {
             return this;
         } else {
-            RandomAccessReader reader = new RandomAccessFileReader(_file, _baseOffset + shift);
-            reader.setMotorolaByteOrder(isMotorolaByteOrder());
-            return reader;
+            return new RandomAccessFileReader(_file, _baseOffset + shift, isMotorolaByteOrder());
         }
     }
 

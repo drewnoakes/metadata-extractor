@@ -44,7 +44,7 @@ public class TiffReader
      *                                 ignored or recovered from
      * @throws IOException an error occurred while accessing the required data
      */
-    public void processTiff(@NotNull final RandomAccessReader reader,
+    public void processTiff(@NotNull RandomAccessReader reader,
                             @NotNull final TiffHandler handler) throws TiffProcessingException, IOException
     {
         // Standard TIFF
@@ -67,9 +67,9 @@ public class TiffReader
         short byteOrderIdentifier = reader.getInt16(0);
 
         if (byteOrderIdentifier == 0x4d4d) { // "MM"
-            reader.setMotorolaByteOrder(true);
+            reader = reader.withByteOrder(true);
         } else if (byteOrderIdentifier == 0x4949) { // "II"
-            reader.setMotorolaByteOrder(false);
+            reader = reader.withByteOrder(false);
         } else {
             throw new TiffProcessingException("Unclear distinction between Motorola/Intel byte ordering: " + byteOrderIdentifier);
         }
@@ -134,7 +134,7 @@ public class TiffReader
      * @throws IOException an error occurred while accessing the required data
      */
     public static void processIfd(@NotNull final TiffHandler handler,
-                                  @NotNull final RandomAccessReader reader,
+                                  @NotNull RandomAccessReader reader,
                                   @NotNull final Set<Integer> processedIfdOffsets,
                                   final int ifdOffset,
                                   final boolean isBigTiff) throws IOException
@@ -161,7 +161,6 @@ public class TiffReader
         //   - 8 bytes: component count
         //   - 8 bytes: inline value, or offset pointer if too large to fit in eight bytes
 
-        Boolean resetByteOrder = null;
         try {
             // Check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist.
             // Note that we track these offsets in the global frame, not the reader's local frame.
@@ -169,7 +168,7 @@ public class TiffReader
 
             // remember that we've visited this directory so that we don't visit it again later
             if (!processedIfdOffsets.add(globalIfdOffset)) {
-            	return;
+                return;
             }
 
             // Validate IFD offset
@@ -188,9 +187,8 @@ public class TiffReader
             // Here we detect switched bytes that suggest this problem, and temporarily swap the byte order.
             // This was discussed in GitHub issue #136.
             if (!isBigTiff && dirTagCount > 0xFF && (dirTagCount & 0xFF) == 0) {
-                resetByteOrder = reader.isMotorolaByteOrder();
                 dirTagCount >>= 8;
-                reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
+                reader = reader.withByteOrder(!reader.isMotorolaByteOrder());
             }
 
             int dirLength = isBigTiff
@@ -312,8 +310,6 @@ public class TiffReader
             }
         } finally {
             handler.endingIFD();
-            if (resetByteOrder != null)
-                reader.setMotorolaByteOrder(resetByteOrder);
         }
     }
 
