@@ -46,7 +46,7 @@ public interface TiffHandler
      * @param marker the 2-byte value found at position 2 of the TIFF header
      * @return The TIFF standard via which to interpret the data stream.
      */
-    TiffStandard processTiffMarker(int marker) throws TiffProcessingException;
+    TiffStandard processTiffMarker(short marker) throws TiffProcessingException;
 
     boolean tryEnterSubIfd(int tagId);
     boolean hasFollowerIfd();

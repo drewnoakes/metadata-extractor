@@ -67,13 +67,13 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     }
 
     @Override
-    public TiffStandard processTiffMarker(int marker) throws TiffProcessingException
+    public TiffStandard processTiffMarker(short marker) throws TiffProcessingException
     {
-        final int standardTiffMarker = 0x002A;
-        final int bigTiffMarker       = 0x002B;
-        final int olympusRawTiffMarker = 0x4F52; // for ORF files
-        final int olympusRawTiffMarker2 = 0x5352; // for ORF files
-        final int panasonicRawTiffMarker = 0x0055; // for RW2 files
+        final short standardTiffMarker = 0x002A;
+        final short bigTiffMarker       = 0x002B;
+        final short olympusRawTiffMarker = 0x4F52; // for ORF files
+        final short olympusRawTiffMarker2 = 0x5352; // for ORF files
+        final short panasonicRawTiffMarker = 0x0055; // for RW2 files
 
         switch (marker) {
             case standardTiffMarker:

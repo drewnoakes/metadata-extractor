@@ -75,7 +75,7 @@ public class TiffReader
         }
 
         // Check the next two values for correctness.
-        final int tiffMarker = reader.getUInt16(2);
+        final short tiffMarker = (short) reader.getUInt16(2);
         final TiffStandard tiffStandard = handler.processTiffMarker(tiffMarker);
 
         boolean isBigTiff;
