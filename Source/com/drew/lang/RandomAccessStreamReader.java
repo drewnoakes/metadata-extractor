@@ -55,6 +55,12 @@ public class RandomAccessStreamReader extends RandomAccessReader
 
     public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength, long streamLength)
     {
+        this(stream, chunkLength, streamLength, true);
+    }
+
+    public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength, long streamLength, boolean isMotorolaByteOrder)
+    {
+        super(isMotorolaByteOrder);
         if (stream == null)
             throw new NullPointerException();
         if (chunkLength <= 0)
@@ -214,13 +220,20 @@ public class RandomAccessStreamReader extends RandomAccessReader
     }
 
     @Override
+    public RandomAccessReader withByteOrder(boolean isMotorolaByteOrder) {
+        if (isMotorolaByteOrder == isMotorolaByteOrder()) {
+            return this;
+        } else {
+            return new ShiftedRandomAccessStreamReader(this, 0, isMotorolaByteOrder);
+        }
+    }
+
+    @Override
     public RandomAccessReader withShiftedBaseOffset(int shift) {
         if (shift == 0) {
             return this;
         } else {
-            RandomAccessReader reader = new ShiftedRandomAccessStreamReader(this, shift);
-            reader.setMotorolaByteOrder(isMotorolaByteOrder());
-            return reader;
+            return new ShiftedRandomAccessStreamReader(this, shift, isMotorolaByteOrder());
         }
     }
 
@@ -229,8 +242,9 @@ public class RandomAccessStreamReader extends RandomAccessReader
         private final RandomAccessStreamReader _baseReader;
         private final int _baseOffset;
 
-        public ShiftedRandomAccessStreamReader(RandomAccessStreamReader baseReader, int baseOffset)
+        public ShiftedRandomAccessStreamReader(RandomAccessStreamReader baseReader, int baseOffset, boolean isMotorolaByteOrder)
         {
+            super(isMotorolaByteOrder);
             if (baseOffset < 0)
                 throw new IllegalArgumentException("Must be zero or greater.");
 
@@ -239,13 +253,20 @@ public class RandomAccessStreamReader extends RandomAccessReader
         }
 
         @Override
-        public RandomAccessReader withShiftedBaseOffset(int shift) {
+        public ShiftedRandomAccessStreamReader withByteOrder(boolean isMotorolaByteOrder) throws IOException {
+            if (isMotorolaByteOrder == isMotorolaByteOrder()) {
+                return this;
+            } else {
+                return new ShiftedRandomAccessStreamReader(_baseReader, _baseOffset, isMotorolaByteOrder);
+            }
+        }
+
+        @Override
+        public ShiftedRandomAccessStreamReader withShiftedBaseOffset(int shift) {
             if (shift == 0) {
                 return this;
             } else {
-                RandomAccessReader reader = new ShiftedRandomAccessStreamReader(_baseReader, _baseOffset + shift);
-                reader.setMotorolaByteOrder(isMotorolaByteOrder());
-                return reader;
+                return new ShiftedRandomAccessStreamReader(_baseReader, _baseOffset + shift, isMotorolaByteOrder());
             }
         }
 

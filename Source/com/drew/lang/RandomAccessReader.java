@@ -45,7 +45,14 @@ import java.nio.charset.Charset;
  */
 public abstract class RandomAccessReader
 {
-    private boolean _isMotorolaByteOrder = true;
+    private final boolean _isMotorolaByteOrder;
+
+    protected RandomAccessReader(boolean isMotorolaByteOrder)
+    {
+        _isMotorolaByteOrder = isMotorolaByteOrder;
+    }
+
+    public abstract RandomAccessReader withByteOrder(boolean isMotorolaByteOrder) throws IOException;
 
     public abstract RandomAccessReader withShiftedBaseOffset(int shift) throws IOException;
 
@@ -105,20 +112,6 @@ public abstract class RandomAccessReader
      * @return the length of the data source, in bytes.
      */
     public abstract long getLength() throws IOException;
-
-    /**
-     * Sets the endianness of this reader.
-     * <ul>
-     * <li><code>true</code> for Motorola (or big) endianness (also known as network byte order), with MSB before LSB.</li>
-     * <li><code>false</code> for Intel (or little) endianness, with LSB before MSB.</li>
-     * </ul>
-     *
-     * @param motorolaByteOrder <code>true</code> for Motorola/big endian, <code>false</code> for Intel/little endian
-     */
-    public void setMotorolaByteOrder(boolean motorolaByteOrder)
-    {
-        _isMotorolaByteOrder = motorolaByteOrder;
-    }
 
     /**
      * Gets the endianness of this reader.

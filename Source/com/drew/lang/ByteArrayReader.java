@@ -51,6 +51,14 @@ public class ByteArrayReader extends RandomAccessReader
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public ByteArrayReader(@NotNull byte[] buffer, int baseOffset)
     {
+        this(buffer, baseOffset, true);
+    }
+
+    @SuppressWarnings({ "ConstantConditions" })
+    @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
+    public ByteArrayReader(@NotNull byte[] buffer, int baseOffset, boolean isMotorolaByteOrder)
+    {
+        super(isMotorolaByteOrder);
         if (buffer == null)
             throw new NullPointerException();
         if (baseOffset < 0)
@@ -61,13 +69,20 @@ public class ByteArrayReader extends RandomAccessReader
     }
 
     @Override
-    public RandomAccessReader withShiftedBaseOffset(int shift) throws IOException {
+    public ByteArrayReader withByteOrder(boolean isMotorolaByteOrder) {
+        if (isMotorolaByteOrder == isMotorolaByteOrder()) {
+            return this;
+        } else {
+            return new ByteArrayReader(_buffer, _baseOffset, isMotorolaByteOrder);
+        }
+    }
+
+    @Override
+    public ByteArrayReader withShiftedBaseOffset(int shift) throws IOException {
         if (shift == 0) {
             return this;
         } else {
-            RandomAccessReader reader = new ByteArrayReader(_buffer, _baseOffset + shift);
-            reader.setMotorolaByteOrder(isMotorolaByteOrder());
-            return reader;
+            return new ByteArrayReader(_buffer, _baseOffset + shift, isMotorolaByteOrder());
         }
     }
 

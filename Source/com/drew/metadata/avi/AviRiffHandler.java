@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -54,11 +54,13 @@ public class AviRiffHandler implements RiffHandler
         metadata.addDirectory(_directory);
     }
 
+    @Override
     public boolean shouldAcceptRiffIdentifier(@NotNull String identifier)
     {
         return identifier.equals(AviDirectory.FORMAT);
     }
 
+    @Override
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals(AviDirectory.CHUNK_STREAM_HEADER)
@@ -66,6 +68,7 @@ public class AviRiffHandler implements RiffHandler
             || fourCC.equals(AviDirectory.CHUNK_DATETIME_ORIGINAL);
     }
 
+    @Override
     public boolean shouldAcceptList(@NotNull String fourCC)
     {
         return fourCC.equals(AviDirectory.LIST_HEADER)
@@ -73,12 +76,12 @@ public class AviRiffHandler implements RiffHandler
             || fourCC.equals(AviDirectory.FORMAT);
     }
 
+    @Override
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
         try {
             if (fourCC.equals(AviDirectory.CHUNK_STREAM_HEADER)) {
-                ByteArrayReader reader = new ByteArrayReader(payload);
-                reader.setMotorolaByteOrder(false);
+                ByteArrayReader reader = new ByteArrayReader(payload, 0, false);
 
                 String fccType = new String(reader.getBytes(0, 4));
                 String fccHandler = new String(reader.getBytes(4, 4));
@@ -114,8 +117,7 @@ public class AviRiffHandler implements RiffHandler
                     }
                 }
             } else if (fourCC.equals(AviDirectory.CHUNK_MAIN_HEADER)) {
-                ByteArrayReader reader = new ByteArrayReader(payload);
-                reader.setMotorolaByteOrder(false);
+                ByteArrayReader reader = new ByteArrayReader(payload, 0, false);
 
 //                int dwMicroSecPerFrame = reader.getInt32(0);
 //                int dwMaxBytesPerSec = reader.getInt32(4);
