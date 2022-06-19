@@ -301,7 +301,7 @@ public class TiffReader
                 }
             }
         } finally {
-            handler.endingIFD();
+            handler.endingIFD(context);
         }
     }
 

@@ -49,7 +49,7 @@ public interface TiffHandler
     boolean tryEnterSubIfd(int tagId);
     boolean hasFollowerIfd();
 
-    void endingIFD();
+    void endingIFD(TiffReaderContext context);
 
     @Nullable
     Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);

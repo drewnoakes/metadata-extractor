@@ -21,6 +21,7 @@
 package com.drew.metadata.tiff;
 
 import com.drew.imaging.tiff.TiffHandler;
+import com.drew.imaging.tiff.TiffReaderContext;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -51,7 +52,7 @@ public abstract class DirectoryTiffHandler implements TiffHandler
     }
 
     @Override
-    public void endingIFD()
+    public void endingIFD(TiffReaderContext context)
     {
         _currentDirectory = _directoryStack.empty() ? null : _directoryStack.pop();
     }
