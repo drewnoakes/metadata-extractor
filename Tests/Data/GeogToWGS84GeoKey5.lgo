@@ -1,0 +1,31 @@
+Geotiff_Information:
+   Version: 1
+   Key_Revision: 1.0
+   Tagged_Information:
+      ModelTiepointTag (2,3):
+         50.5             50.5             0                
+         9.00105738       52.001376        0                
+      ModelPixelScaleTag (1,3):
+         2.77777778e-005  2.77777778e-005  1                
+      End_Of_Tags.
+   Keyed_Information:
+      GTModelTypeGeoKey (Short,1): ModelTypeGeographic
+      GTRasterTypeGeoKey (Short,1): RasterPixelIsArea
+      GeographicTypeGeoKey (Short,1): User-Defined
+      GeogGeodeticDatumGeoKey (Short,1): User-Defined
+      GeogAngularUnitsGeoKey (Short,1): Angular_Degree
+      GeogEllipsoidGeoKey (Short,1): Ellipse_Bessel_1841
+      Unknown-2062 (Double,7): 598.1            73.7             418.2            
+0.202            0.045            -2.455           
+6.7              
+      End_Of_Keys.
+   End_Of_Geotiff.
+
+Ellipsoid: 7004/(unknown) (0.00,0.00)
+
+Corner Coordinates:
+Upper Left    (  8d59'58.76"E, 52d 0'10.00"N)
+Lower Left    (  8d59'58.76"E, 51d59'59.90"N)
+Upper Right   (  9d 0' 8.86"E, 52d 0'10.00"N)
+Lower Right   (  9d 0' 8.86"E, 51d59'59.90"N)
+Center        (  9d 0' 3.81"E, 52d 0' 4.95"N)
