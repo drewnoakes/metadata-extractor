@@ -23,6 +23,8 @@ package com.drew.metadata.exif;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -42,6 +44,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.apple.AppleRunTimeReader;
 import com.drew.metadata.exif.makernotes.*;
+import com.drew.metadata.geotiff.GeoTiffDirectory;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
@@ -173,6 +176,103 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         // This should not happen, as Exif doesn't use follower IFDs apart from that above.
         // NOTE have seen the CanonMakernoteDirectory IFD have a follower pointer, but it points to invalid data.
         return false;
+    }
+
+    @Override
+    public void endingIFD(TiffReaderContext context)
+    {
+        if (_currentDirectory instanceof ExifIFD0Directory)
+        {
+            ExifIFD0Directory directory = (ExifIFD0Directory) _currentDirectory;
+            int[] geoKeys = directory.getIntArray(ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS);
+            if (geoKeys != null)
+            {
+                // GetTIFF stores data in its own format within TIFF. It is TIFF-like, but different.
+                // It can reference data from tags that have not been visited yet, so we must unpack it
+                // once the directory is complete.
+                processGeoTiff(geoKeys, directory);
+            }
+        }
+
+        super.endingIFD(context);
+    }
+
+    private void processGeoTiff(int[] geoKeys, ExifIFD0Directory sourceDirectory)
+    {
+        if (geoKeys.length < 4)
+            return;
+
+        pushDirectory(GeoTiffDirectory.class);
+
+        int i = 0;
+
+        int directoryVersion = geoKeys[i++];
+        int revision = geoKeys[i++];
+        int minorRevision = geoKeys[i++];
+        int numberOfKeys = geoKeys[i++];
+
+        // TODO store these values in negative tag IDs
+
+        Set<Integer> sourceTags = new HashSet<Integer>(ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS);
+
+        for (int j = 0; j < numberOfKeys; j++)
+        {
+            int keyId = geoKeys[i++];
+            int tiffTagLocation = geoKeys[i++];
+            int valueCount = geoKeys[i++];
+            int valueOffset = geoKeys[i++];
+
+            if (tiffTagLocation == 0)
+            {
+                // Identifies the tag containing the value. If zero, then the value is ushort and stored
+                // in valueOffset directly, and the value count is implied as 1.
+                _currentDirectory.setInt(keyId, valueOffset);
+            }
+            else
+            {
+                // The value is stored in another tag.
+                int sourceTagId = tiffTagLocation;
+                sourceTags.add(sourceTagId);
+                Object sourceValue = sourceDirectory.getObject(sourceTagId);
+                if (sourceValue instanceof StringValue)
+                {
+                    StringValue sourceString = (StringValue) sourceValue;
+                    int sourceStringBytesLength = sourceString.getBytes().length;
+                    if (valueOffset + valueCount <= sourceStringBytesLength)
+                    {
+                        // ASCII values appear to have a | character and the end, so we trim it off here
+                        _currentDirectory.setString(keyId, sourceString.toString(valueOffset, valueCount).replaceAll("\\|$", ""));
+                    }
+                    else
+                    {
+                        _currentDirectory.addError("GeoTIFF key "+keyId+" with offset "+valueOffset+" and count "+valueCount+" extends beyond length of source value ("+sourceStringBytesLength+")");
+                    }
+                }
+                else if (sourceValue instanceof double[])
+                {
+                    double[] sourceArray = (double[]) sourceValue;
+                    if (valueOffset + valueCount <= sourceArray.length)
+                    {
+                        double[] array = new double[valueCount];
+                        System.arraycopy(sourceArray, valueOffset, array, 0, valueCount);
+                        _currentDirectory.setDoubleArray(keyId, array);
+                    }
+                    else
+                    {
+                        _currentDirectory.addError("GeoTIFF key "+keyId+" with offset "+valueOffset+" and count "+valueCount+" extends beyond length of source value ("+sourceArray.length+")");
+                    }
+                }
+                else
+                {
+                    _currentDirectory.addError("GeoTIFF key "+keyId+" references tag "+sourceTagId+" which has unsupported type of "+sourceValue.getClass());
+                }
+            }
+        }
+
+        for (Integer sourceTag : sourceTags)
+        {
+            sourceDirectory.removeTag(sourceTag);
+        }
     }
 
     @Override
