@@ -176,6 +176,7 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_RELATED_IMAGE_HEIGHT              = 0x1002;
 
     public static final int TAG_RATING                            = 0x4746;
+    public static final int TAG_RATING_PERCENT                    = 0x4749;
 
     public static final int TAG_CFA_REPEAT_PATTERN_DIM            = 0x828D;
     /** There are two definitions for CFA pattern, I don't know the difference... */
@@ -679,6 +680,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_RELATED_IMAGE_WIDTH, "Related Image Width");
         map.put(TAG_RELATED_IMAGE_HEIGHT, "Related Image Height");
         map.put(TAG_RATING, "Rating");
+        map.put(TAG_RATING_PERCENT, "Rating Percent");
         map.put(TAG_CFA_REPEAT_PATTERN_DIM, "CFA Repeat Pattern Dim");
         map.put(TAG_CFA_PATTERN_2, "CFA Pattern");
         map.put(TAG_BATTERY_LEVEL, "Battery Level");
