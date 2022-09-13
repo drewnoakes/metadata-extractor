@@ -16,13 +16,15 @@ import com.drew.metadata.plist.BplistReader;
  * Reads the <tt>AppleRunTime</tt> data and adds {@link AppleRunTimeMakernoteDirectory} to the
  * parent {@link AppleMakernoteDirectory} if it can be parsed with no errors.
  */
-public class AppleRunTimeReader {
-    public void extract(@NotNull byte[] bytes, @NotNull final Metadata metadata, @NotNull final Directory parentDirectory) {
+public class AppleRunTimeReader
+{
+    public void extract(@NotNull byte[] bytes, @NotNull final Metadata metadata, @NotNull final Directory parentDirectory)
+    {
         parentDirectory.setByteArray(AppleMakernoteDirectory.TAG_RUN_TIME, bytes);
 
         if (!BplistReader.isValid(bytes)) {
-            parentDirectory.addError("Input array is not a bplist");
-            return;
+        	parentDirectory.addError("Input array is not a bplist");
+        	return;
         }
 
         AppleRunTimeMakernoteDirectory directory = new AppleRunTimeMakernoteDirectory();
@@ -44,10 +46,11 @@ public class AppleRunTimeReader {
      * if the <tt>flag</tt> indicates that the CMTime structure is &quot;valid&quot;.
      *
      * @param directory The <tt>AppleRunTimeMakernoteDirectory</tt> to set values onto.
-     * @param bplist    The BPLIST
+     * @param bplist The BPLIST
      * @throws IOException Thrown if an error occurs parsing the BPLIST as a CMTime structure.
      */
-    private static void processAppleRunTime(@NotNull final AppleRunTimeMakernoteDirectory directory, @NotNull final byte[] bplist) throws IOException {
+    private static void processAppleRunTime(@NotNull final AppleRunTimeMakernoteDirectory directory, @NotNull final byte[] bplist) throws IOException
+    {
         final BplistReader.PropertyListResults results = BplistReader.parse(bplist);
 
         final Set<Map.Entry<Byte, Byte>> entrySet = results.getEntrySet();
@@ -56,7 +59,7 @@ public class AppleRunTimeReader {
             HashMap<String, Object> values = new HashMap<String, Object>(entrySet.size());
 
             for (Map.Entry<Byte, Byte> entry : entrySet) {
-                String key = (String) results.getObjects().get(entry.getKey());
+                String key = (String)results.getObjects().get(entry.getKey());
                 Object value = results.getObjects().get(entry.getValue());
 
                 values.put(key, value);
@@ -64,23 +67,13 @@ public class AppleRunTimeReader {
 
             // https://developer.apple.com/documentation/coremedia/cmtime-u58
 
-            Object flagsObject = values.get("flags");
-            if (flagsObject instanceof Byte) {
-                byte flags = (Byte) flagsObject;
-                if ((flags & 0x1) == 0x1) {
-                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
-                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, (Byte) values.get("epoch"));
-                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, (Long) values.get("timescale"));
-                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, (Long) values.get("value"));
-                }
-            } else if (flagsObject instanceof String) {
-                byte flags = Byte.parseByte((String) flagsObject);
-                if ((flags & 0x1) == 0x1) {
-                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
-                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, Byte.parseByte((String) values.get("epoch")));
-                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, Long.parseLong((String) values.get("timescale")));
-                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, Long.parseLong((String) values.get("value")));
-                }
+            byte flags = (Byte)values.get("flags");
+
+            if ((flags & 0x1) == 0x1) {
+                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
+                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, (Byte)values.get("epoch"));
+                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, (Long)values.get("timescale"));
+                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, (Long)values.get("value"));
             }
         }
     }
