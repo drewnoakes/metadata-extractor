@@ -67,13 +67,23 @@ public class AppleRunTimeReader
 
             // https://developer.apple.com/documentation/coremedia/cmtime-u58
 
-            byte flags = (Byte)values.get("flags");
-
-            if ((flags & 0x1) == 0x1) {
-                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
-                directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, (Byte)values.get("epoch"));
-                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, (Long)values.get("timescale"));
-                directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, (Long)values.get("value"));
+            Object flagsObject = values.get("flags");
+            if (flagsObject instanceof Byte) {
+                byte flags = (Byte) flagsObject;
+                if ((flags & 0x1) == 0x1) {
+                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
+                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, (Byte) values.get("epoch"));
+                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, (Long) values.get("timescale"));
+                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, (Long) values.get("value"));
+                }
+            } else if (flagsObject instanceof String) {
+                byte flags = Byte.parseByte((String) flagsObject);
+                if ((flags & 0x1) == 0x1) {
+                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeFlags, flags);
+                    directory.setInt(AppleRunTimeMakernoteDirectory.CMTimeEpoch, Byte.parseByte((String) values.get("epoch")));
+                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeScale, Long.parseLong((String) values.get("timescale")));
+                    directory.setLong(AppleRunTimeMakernoteDirectory.CMTimeValue, Long.parseLong((String) values.get("value")));
+                }
             }
         }
     }
