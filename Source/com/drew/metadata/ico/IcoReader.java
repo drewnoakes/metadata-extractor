@@ -34,10 +34,8 @@ import java.io.IOException;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class IcoReader
-{
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
-    {
+public class IcoReader {
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata) {
         reader.setMotorolaByteOrder(false);
 
         int type;
@@ -85,8 +83,11 @@ public class IcoReader
             try {
                 directory.setInt(IcoDirectory.TAG_IMAGE_TYPE, type);
 
-                directory.setInt(IcoDirectory.TAG_IMAGE_WIDTH, reader.getUInt8());
-                directory.setInt(IcoDirectory.TAG_IMAGE_HEIGHT, reader.getUInt8());
+                //See https://docs.fileformat.com/image/ico/ - An image width/height of 0 means 256
+                int imageWidth = reader.getUInt8();
+                int imageHeight = reader.getUInt8();
+                directory.setInt(IcoDirectory.TAG_IMAGE_WIDTH, imageWidth == 0 ? 256 : imageWidth);
+                directory.setInt(IcoDirectory.TAG_IMAGE_HEIGHT, imageHeight == 0 ? 256 : imageHeight);
                 directory.setInt(IcoDirectory.TAG_COLOUR_PALETTE_SIZE, reader.getUInt8());
                 // Ignore this byte (normally zero, though .NET's System.Drawing.Icon.Save method writes 255)
                 reader.getUInt8();
