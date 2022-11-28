@@ -34,8 +34,10 @@ import java.io.IOException;
  *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class IcoReader {
-    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata) {
+public class IcoReader
+{
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    {
         reader.setMotorolaByteOrder(false);
 
         int type;
