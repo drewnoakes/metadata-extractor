@@ -289,24 +289,24 @@ public class BmpReader
                  * that BITMAPCOREHEADER has signed width and height while
                  * in OS21XBITMAPHEADER they are unsigned. Since BITMAPCOREHEADER,
                  * the Windows version, is most common, read them as signed.
+                 *
+                 * Unless BITMAPCOREHEADER is used, uncompressed Windows bitmaps also can
+                 * be stored from the top to bottom, when the Image Height value is negative.
+                 * For this reason we use the absolute value of the height
                  */
-                int imageWidth = Math.abs(reader.getInt16());
-                int imageHeight = Math.abs(reader.getInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, imageWidth);
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, imageHeight);
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt16());
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, reader.getInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getUInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getUInt16());
             } else if (headerSize == 12) { // OS21XBITMAPHEADER
-                int imageWith = Math.abs(reader.getUInt16());
                 int imageHeight = Math.abs(reader.getUInt16());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, imageWith);
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getUInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, imageHeight);
                 directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getUInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getUInt16());
             } else if (headerSize == 16 || headerSize == 64) { // OS22XBITMAPHEADER
-                int imageWith = Math.abs(reader.getInt32());
                 int imageHeight = Math.abs(reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, imageWith);
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt32());
                 directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, imageHeight);
                 directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getUInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getUInt16());
@@ -331,9 +331,8 @@ public class BmpReader
                 headerSize == 40 || headerSize == 52 || headerSize == 56 ||
                 headerSize == 108 || headerSize == 124
             ) { // BITMAPINFOHEADER V1-5
-                int imageWith = Math.abs(reader.getInt32());
                 int imageHeight = Math.abs(reader.getInt32());
-                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, imageWith);
+                directory.setInt(BmpHeaderDirectory.TAG_IMAGE_WIDTH, reader.getInt32());
                 directory.setInt(BmpHeaderDirectory.TAG_IMAGE_HEIGHT, imageHeight);
                 directory.setInt(BmpHeaderDirectory.TAG_COLOUR_PLANES, reader.getUInt16());
                 directory.setInt(BmpHeaderDirectory.TAG_BITS_PER_PIXEL, reader.getUInt16());
