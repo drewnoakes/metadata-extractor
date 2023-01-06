@@ -1147,6 +1147,26 @@ public abstract class Directory
         return _descriptor.getDescription(tagType);
     }
 
+    /**
+     * Provides a mapping from tag name to it's value.
+     * Only nonnull values are returned.
+     *
+     * @return Map<String, Object>
+     */
+    public Map<String, Object> getTagMap()
+    {
+        final Map<String, Object> tagMap = new HashMap<String, Object>();
+        for (Map.Entry<Integer, String> entry : getTagNameMap().entrySet())
+        {
+            final Object value = _tagMap.get(entry.getKey());
+            if (value != null)
+            {
+                tagMap.put(entry.getValue(), value);
+            }
+        }
+        return Collections.unmodifiableMap(tagMap);
+    }
+
     @Override
     public String toString()
     {
