@@ -58,6 +58,7 @@ public class PngMetadataReader
      * For more guidance: http://www.w3.org/TR/PNG-Decoders.html#D.Text-chunk-processing
      */
     private static Charset _latin1Encoding = Charsets.ISO_8859_1;
+    private static Charset _utf8Encoding = Charsets.UTF_8;
 
     static
     {
@@ -249,7 +250,7 @@ public class PngMetadataReader
             SequentialReader reader = new SequentialByteArrayReader(bytes);
 
             // Keyword is 1-79 bytes, followed by the 1 byte null character
-            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding);
+            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _utf8Encoding);
             String keyword = keywordsv.toString();
             byte compressionFlag = reader.getInt8();
             byte compressionMethod = reader.getInt8();
@@ -289,7 +290,7 @@ public class PngMetadataReader
                     new XmpReader().extract(textBytes, metadata);
                 } else {
                     List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
-                    textPairs.add(new KeyValuePair(keyword, new StringValue(textBytes, _latin1Encoding)));
+                    textPairs.add(new KeyValuePair(keyword, new StringValue(textBytes, _utf8Encoding)));
                     PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                     directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
                     metadata.addDirectory(directory);
