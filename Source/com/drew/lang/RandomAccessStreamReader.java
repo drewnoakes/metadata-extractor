@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -55,6 +55,12 @@ public class RandomAccessStreamReader extends RandomAccessReader
 
     public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength, long streamLength)
     {
+        this(stream, chunkLength, streamLength, true);
+    }
+
+    public RandomAccessStreamReader(@NotNull InputStream stream, int chunkLength, long streamLength, boolean isMotorolaByteOrder)
+    {
+        super(isMotorolaByteOrder);
         if (stream == null)
             throw new NullPointerException();
         if (chunkLength <= 0)
@@ -107,7 +113,7 @@ public class RandomAccessStreamReader extends RandomAccessReader
         if (!isValidIndex(index, bytesRequested)) {
             assert(_isStreamFinished);
             // TODO test that can continue using an instance of this type after this exception
-            throw new BufferBoundsException(index, bytesRequested, _streamLength);
+            throw new BufferBoundsException(toUnshiftedOffset(index), bytesRequested, _streamLength);
         }
     }
 
@@ -211,5 +217,87 @@ public class RandomAccessStreamReader extends RandomAccessReader
         }
 
         return bytes;
+    }
+
+    @Override
+    public RandomAccessReader withByteOrder(boolean isMotorolaByteOrder) {
+        if (isMotorolaByteOrder == isMotorolaByteOrder()) {
+            return this;
+        } else {
+            return new ShiftedRandomAccessStreamReader(this, 0, isMotorolaByteOrder);
+        }
+    }
+
+    @Override
+    public RandomAccessReader withShiftedBaseOffset(int shift) {
+        if (shift == 0) {
+            return this;
+        } else {
+            return new ShiftedRandomAccessStreamReader(this, shift, isMotorolaByteOrder());
+        }
+    }
+
+    private static class ShiftedRandomAccessStreamReader extends RandomAccessReader
+    {
+        private final RandomAccessStreamReader _baseReader;
+        private final int _baseOffset;
+
+        public ShiftedRandomAccessStreamReader(RandomAccessStreamReader baseReader, int baseOffset, boolean isMotorolaByteOrder)
+        {
+            super(isMotorolaByteOrder);
+            if (baseOffset < 0)
+                throw new IllegalArgumentException("Must be zero or greater.");
+
+            _baseReader = baseReader;
+            _baseOffset = baseOffset;
+        }
+
+        @Override
+        public ShiftedRandomAccessStreamReader withByteOrder(boolean isMotorolaByteOrder) throws IOException {
+            if (isMotorolaByteOrder == isMotorolaByteOrder()) {
+                return this;
+            } else {
+                return new ShiftedRandomAccessStreamReader(_baseReader, _baseOffset, isMotorolaByteOrder);
+            }
+        }
+
+        @Override
+        public ShiftedRandomAccessStreamReader withShiftedBaseOffset(int shift) {
+            if (shift == 0) {
+                return this;
+            } else {
+                return new ShiftedRandomAccessStreamReader(_baseReader, _baseOffset + shift, isMotorolaByteOrder());
+            }
+        }
+
+        @Override
+        public int toUnshiftedOffset(int localOffset) {
+            return localOffset + _baseOffset;
+        }
+
+        @Override
+        public byte getByte(int index) throws IOException {
+            return _baseReader.getByte(_baseOffset + index);
+        }
+
+        @Override
+        public byte[] getBytes(int index, int count) throws IOException {
+            return _baseReader.getBytes(_baseOffset + index, count);
+        }
+
+        @Override
+        protected void validateIndex(int index, int bytesRequested) throws IOException {
+            _baseReader.validateIndex(index + _baseOffset, bytesRequested);
+        }
+
+        @Override
+        protected boolean isValidIndex(int index, int bytesRequested) throws IOException {
+            return _baseReader.isValidIndex(index + _baseOffset, bytesRequested);
+        }
+
+        @Override
+        public long getLength() throws IOException {
+            return _baseReader.getLength() - _baseOffset;
+        }
     }
 }

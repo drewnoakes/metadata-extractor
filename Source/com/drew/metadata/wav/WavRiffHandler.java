@@ -2,6 +2,7 @@ package com.drew.metadata.wav;
 
 import com.drew.imaging.riff.RiffHandler;
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -39,11 +40,13 @@ public class WavRiffHandler implements RiffHandler
         metadata.addDirectory(_directory);
     }
 
+    @Override
     public boolean shouldAcceptRiffIdentifier(@NotNull String identifier)
     {
         return identifier.equals(WavDirectory.FORMAT);
     }
 
+    @Override
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals(WavDirectory.CHUNK_FORMAT)
@@ -63,12 +66,12 @@ public class WavRiffHandler implements RiffHandler
         }
     }
 
+    @Override
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
         try {
             if (fourCC.equals(WavDirectory.CHUNK_FORMAT)) {
-                ByteArrayReader reader = new ByteArrayReader(payload);
-                reader.setMotorolaByteOrder(false);
+                ByteArrayReader reader = new ByteArrayReader(payload, 0, false);
                 int wFormatTag = reader.getInt16(0);
                 int wChannels = reader.getInt16(2);
                 int dwSamplesPerSec = reader.getInt32(4);
