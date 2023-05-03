@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,6 +42,10 @@ public class TiffDataFormat
     public static final int CODE_RATIONAL_S = 10;
     public static final int CODE_SINGLE = 11;
     public static final int CODE_DOUBLE = 12;
+    // From BigTIFF
+    public static final int CODE_INT64_U = 16;
+    public static final int CODE_INT64_S = 17;
+    public static final int CODE_IFD8 = 18;
 
     @NotNull public static final TiffDataFormat INT8_U = new TiffDataFormat("BYTE", CODE_INT8_U, 1);
     @NotNull public static final TiffDataFormat STRING = new TiffDataFormat("STRING", CODE_STRING, 1);
@@ -55,6 +59,10 @@ public class TiffDataFormat
     @NotNull public static final TiffDataFormat RATIONAL_S = new TiffDataFormat("SRATIONAL", CODE_RATIONAL_S, 8);
     @NotNull public static final TiffDataFormat SINGLE = new TiffDataFormat("SINGLE", CODE_SINGLE, 4);
     @NotNull public static final TiffDataFormat DOUBLE = new TiffDataFormat("DOUBLE", CODE_DOUBLE, 8);
+    // From BigTIFF
+    @NotNull public static final TiffDataFormat INT64_U = new TiffDataFormat("ULONG8", CODE_INT64_U, 8);
+    @NotNull public static final TiffDataFormat INT64_S = new TiffDataFormat("SLONG8", CODE_INT64_S, 8);
+    @NotNull public static final TiffDataFormat IFD8    = new TiffDataFormat("IFD8",   CODE_IFD8,    8);
 
     @NotNull
     private final String _name;
@@ -62,7 +70,7 @@ public class TiffDataFormat
     private final int _componentSizeBytes;
 
     @Nullable
-    public static TiffDataFormat fromTiffFormatCode(int tiffFormatCode)
+    public static TiffDataFormat fromTiffFormatCode(int tiffFormatCode, boolean isBigTiff)
     {
         switch (tiffFormatCode) {
             case 1: return INT8_U;
@@ -77,6 +85,10 @@ public class TiffDataFormat
             case 10: return RATIONAL_S;
             case 11: return SINGLE;
             case 12: return DOUBLE;
+            // From BigTIFF
+            case 16: return isBigTiff ? INT64_U : null;
+            case 17: return isBigTiff ? INT64_S : null;
+            case 18: return isBigTiff ? IFD8 : null;
         }
         return null;
     }
