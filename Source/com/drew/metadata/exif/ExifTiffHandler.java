@@ -57,9 +57,12 @@ import com.drew.metadata.xmp.XmpReader;
  */
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
-    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory)
+    private final int _exifStartOffset;
+
+    public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory, int exifStartOffset)
     {
         super(metadata, parentDirectory);
+        _exifStartOffset = exifStartOffset;
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException
@@ -149,7 +152,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             if (_currentDirectory.containsTag(ExifDirectoryBase.TAG_PAGE_NUMBER))
                 pushDirectory(ExifImageDirectory.class);
             else
-                pushDirectory(ExifThumbnailDirectory.class);
+                pushDirectory(new ExifThumbnailDirectory(_exifStartOffset));
             return true;
         }
 

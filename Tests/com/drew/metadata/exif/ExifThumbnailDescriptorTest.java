@@ -36,7 +36,7 @@ public class ExifThumbnailDescriptorTest
     @Test
     public void testGetYCbCrSubsamplingDescription() throws Exception
     {
-        ExifThumbnailDirectory directory = new ExifThumbnailDirectory();
+        ExifThumbnailDirectory directory = new ExifThumbnailDirectory(0);
         directory.setIntArray(TAG_YCBCR_SUBSAMPLING, new int[]{2, 1});
 
         ExifThumbnailDescriptor descriptor = new ExifThumbnailDescriptor(directory);

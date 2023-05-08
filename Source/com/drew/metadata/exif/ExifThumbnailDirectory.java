@@ -34,7 +34,11 @@ import java.util.HashMap;
 public class ExifThumbnailDirectory extends ExifDirectoryBase
 {
     /**
-     * The offset to thumbnail image bytes.
+     * The offset to thumbnail image bytes, relative to the start of the IFD.
+     *
+     * To obtain the offset relative to the start of the TIFF data stream, use
+     * <code>getAdjustedThumbnailOffset</code>, which includes the value of
+     * <code>getExifStartOffset</code>.
      */
     public static final int TAG_THUMBNAIL_OFFSET = 0x0201;
     /**
@@ -59,8 +63,11 @@ public class ExifThumbnailDirectory extends ExifDirectoryBase
         _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
     }
 
-    public ExifThumbnailDirectory()
+    private final int _exifStartOffset;
+
+    public ExifThumbnailDirectory(int exifStartOffset)
     {
+        _exifStartOffset = exifStartOffset;
         this.setDescriptor(new ExifThumbnailDescriptor(this));
     }
 
@@ -76,5 +83,36 @@ public class ExifThumbnailDirectory extends ExifDirectoryBase
     protected HashMap<Integer, String> getTagNameMap()
     {
         return _tagNameMap;
+    }
+
+    /**
+     * Gets the offset at which the Exif data stream commenced within any containing stream.
+     */
+    public int getExifStartOffset()
+    {
+        return _exifStartOffset;
+    }
+
+    /**
+     * Returns the offset to thumbnail data within the outermost data stream.
+     *
+     * The value for <code>TagThumbnailOffset</code> is relative to the Exif data stream.
+     * Generally, consumers of thumbnail data need this value relative to the outermost stream,
+     * so that the thumbnail data may be extracted from that stream.
+     *
+     * This property adds the value of <code>ExifStartOffset</code> to this tag's value in order
+     * to produce that value.
+     *
+     * Returns <code>null</code> when the tag is not defined in this directory.
+     */
+    public Integer getAdjustedThumbnailOffset()
+    {
+        Integer offset = this.getInteger(TAG_THUMBNAIL_OFFSET);
+
+        if (offset == null) {
+            return null;
+        }
+
+        return offset.intValue() + _exifStartOffset;
     }
 }

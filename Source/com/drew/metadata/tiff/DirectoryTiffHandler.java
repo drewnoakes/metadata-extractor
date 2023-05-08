@@ -67,21 +67,26 @@ public abstract class DirectoryTiffHandler implements TiffHandler
             throw new RuntimeException(e);
         }
 
+        pushDirectory(newDirectory);
+    }
+
+    protected void pushDirectory(@NotNull Directory directory)
+    {
         // If this is the first directory, don't add to the stack
         if (_currentDirectory == null) {
             // Apply any pending root parent to this new directory
             if (_rootParentDirectory != null) {
-                newDirectory.setParent(_rootParentDirectory);
+                directory.setParent(_rootParentDirectory);
                 _rootParentDirectory = null;
             }
         }
         else {
             // The current directory is pushed onto the stack, and set as the new directory's parent
             _directoryStack.push(_currentDirectory);
-            newDirectory.setParent(_currentDirectory);
+            directory.setParent(_currentDirectory);
         }
 
-        _currentDirectory = newDirectory;
+        _currentDirectory = directory;
         _metadata.addDirectory(_currentDirectory);
     }
 

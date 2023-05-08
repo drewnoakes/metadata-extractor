@@ -46,7 +46,7 @@ public class ExifDirectoryTest
     {
         Directory subIFDDirectory = new ExifSubIFDDirectory();
         Directory ifd0Directory = new ExifIFD0Directory();
-        Directory thumbDirectory = new ExifThumbnailDirectory();
+        Directory thumbDirectory = new ExifThumbnailDirectory(0);
         Directory gpsDirectory = new GpsDirectory();
 
         assertFalse(subIFDDirectory.hasErrors());

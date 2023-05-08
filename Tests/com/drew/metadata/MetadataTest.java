@@ -96,7 +96,7 @@ public class MetadataTest
     {
         Metadata metadata = new Metadata();
         Directory directory1 = new ExifSubIFDDirectory();
-        Directory directory2 = new ExifThumbnailDirectory();
+        Directory directory2 = new ExifThumbnailDirectory(0);
         Directory directory3 = new ExifIFD0Directory();
 
         metadata.addDirectory(directory1);
