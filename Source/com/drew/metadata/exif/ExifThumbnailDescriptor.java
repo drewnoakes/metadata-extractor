@@ -63,7 +63,8 @@ public class ExifThumbnailDescriptor extends ExifDescriptorBase<ExifThumbnailDir
     @Nullable
     public String getThumbnailOffsetDescription()
     {
-        String value = _directory.getString(TAG_THUMBNAIL_OFFSET);
-        return value == null ? null : value + " bytes";
+        Integer offset = _directory.getAdjustedThumbnailOffset();
+
+        return offset == null ? null : offset.intValue() + " bytes";
     }
 }
