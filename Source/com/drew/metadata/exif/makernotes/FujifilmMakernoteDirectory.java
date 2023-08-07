@@ -93,6 +93,7 @@ public class FujifilmMakernoteDirectory extends Directory
     public static final int TAG_FRAME_NUMBER = 0x8003;
 
     public static final int TAG_PARALLAX = 0xb211;
+    public static final int TAG_IMAGE_NUMBER = 0x1438;
 
     @NotNull
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -156,6 +157,7 @@ public class FujifilmMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_FRAME_NUMBER, "Frame Number");
 
         _tagNameMap.put(TAG_PARALLAX, "Parallax");
+        _tagNameMap.put(TAG_IMAGE_NUMBER, "Image Number");
     }
 
     public FujifilmMakernoteDirectory()

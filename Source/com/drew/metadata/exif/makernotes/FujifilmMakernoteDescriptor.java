@@ -115,7 +115,7 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
     }
 
     @Nullable
-    private String getMakernoteVersionDescription()
+    public String getMakernoteVersionDescription()
     {
         return getVersionBytesDescription(TAG_MAKERNOTE_VERSION, 2);
     }
@@ -444,6 +444,11 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
             case 0x400: return "F4/Velvia";
             case 0x500: return "Pro Neg. Std";
             case 0x501: return "Pro Neg. Hi";
+            case 0x600: return "Classic Chrome";
+            case 0x700: return "Eterna";
+            case 0x800: return "Classic Negative";
+            case 0x900: return "Bleach Bypass";
+            case 0xa00: return "Nostalgic Neg";
             default:
                 return "Unknown (" + value + ")";
         }
@@ -466,4 +471,11 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
                 return "Unknown (" + value + ")";
         }
     }
+    @Nullable
+    public int getImageNumber()
+    {
+        final Integer value = _directory.getInteger(TAG_IMAGE_NUMBER);
+        return value;
+    }
 }
+
