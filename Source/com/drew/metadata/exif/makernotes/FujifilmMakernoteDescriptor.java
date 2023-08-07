@@ -471,11 +471,5 @@ public class FujifilmMakernoteDescriptor extends TagDescriptor<FujifilmMakernote
                 return "Unknown (" + value + ")";
         }
     }
-    @Nullable
-    public int getImageNumber()
-    {
-        final Integer value = _directory.getInteger(TAG_IMAGE_NUMBER);
-        return value;
-    }
 }
 
