@@ -177,7 +177,7 @@ public class ProcessAllImagesInFolderUtility
                 "nef", "crw", "cr2", "orf", "arw", "raf", "srw", "x3f", "rw2", "rwl", "dcr", "pef",
                 "tif", "tiff", "psd", "dng",
                 "j2c", "jp2", "jpf", "jpm", "mj2",
-                "mp3", "wav",
+                "mp3", "wav", "m4a",
                 "3g2", "3gp", "m4v", "mov", "mp4", "m2v", "m2ts", "mts",
                 "pbm", "pnm", "pgm", "ppm",
                 "avi",
