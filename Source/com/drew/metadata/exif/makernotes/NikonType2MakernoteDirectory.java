@@ -352,7 +352,7 @@ public class NikonType2MakernoteDirectory extends Directory
     public static final int TAG_COLOR_SPACE = 0x001e;
     public static final int TAG_VR_INFO = 0x001f;
     public static final int TAG_IMAGE_AUTHENTICATION = 0x0020;
-    public static final int TAG_UNKNOWN_35 = 0x0021;
+    public static final int TAG_FACE_DETECT = 0x0021;
 
     /**
      * The active D-Lighting setting.
@@ -386,7 +386,7 @@ public class NikonType2MakernoteDirectory extends Directory
      * </ul>
      */
     public static final int TAG_VIGNETTE_CONTROL = 0x002a;
-    public static final int TAG_UNKNOWN_40 = 0x002b;
+    public static final int TAG_DISTORT_INFO = 0x002b;
     public static final int TAG_UNKNOWN_41 = 0x002c;
     public static final int TAG_UNKNOWN_42 = 0x002d;
     public static final int TAG_UNKNOWN_43 = 0x002e;
@@ -641,7 +641,7 @@ public class NikonType2MakernoteDirectory extends Directory
     public static final int TAG_SENSOR_PIXEL_SIZE = 0x009A;
     public static final int TAG_UNKNOWN_10 = 0x009B;
     public static final int TAG_SCENE_ASSIST = 0x009C;
-    public static final int TAG_UNKNOWN_11 = 0x009D;
+    public static final int TAG_DATE_STAMP_MODE = 0x009D;
     public static final int TAG_RETOUCH_HISTORY = 0x009E;
     public static final int TAG_UNKNOWN_12 = 0x009F;
 
@@ -751,15 +751,15 @@ public class NikonType2MakernoteDirectory extends Directory
      */
     public static final int TAG_HIGH_ISO_NOISE_REDUCTION = 0x00B1;
     public static final int TAG_UNKNOWN_31 = 0x00B2;
-    public static final int TAG_UNKNOWN_32 = 0x00B3;
+    public static final int TAG_TONING_EFFECT = 0x00B3;
     public static final int TAG_UNKNOWN_33 = 0x00B4;
     public static final int TAG_UNKNOWN_48 = 0x00B5;
     public static final int TAG_POWER_UP_TIME = 0x00B6;
     public static final int TAG_AF_INFO_2 = 0x00B7;
     public static final int TAG_FILE_INFO = 0x00B8;
     public static final int TAG_AF_TUNE = 0x00B9;
-    public static final int TAG_UNKNOWN_49 = 0x00BB;
-    public static final int TAG_UNKNOWN_50 = 0x00BD;
+    public static final int TAG_RETOUCH_INFO = 0x00BB;
+    public static final int TAG_PICTURE_CONTROL_2 = 0x00BD;
     public static final int TAG_UNKNOWN_51 = 0x0103;
     public static final int TAG_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
@@ -812,7 +812,7 @@ public class NikonType2MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_SENSOR_PIXEL_SIZE, "Sensor Pixel Size");
         _tagNameMap.put(TAG_UNKNOWN_10, "Unknown 10");
         _tagNameMap.put(TAG_SCENE_ASSIST, "Scene Assist");
-        _tagNameMap.put(TAG_UNKNOWN_11, "Unknown 11");
+        _tagNameMap.put(TAG_DATE_STAMP_MODE, "Date Stamp Mode");
         _tagNameMap.put(TAG_RETOUCH_HISTORY, "Retouch History");
         _tagNameMap.put(TAG_UNKNOWN_12, "Unknown 12");
         _tagNameMap.put(TAG_FLASH_SYNC_MODE, "Flash Sync Mode");
@@ -833,7 +833,7 @@ public class NikonType2MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_COLOR_SPACE, "Color Space");
         _tagNameMap.put(TAG_VR_INFO, "VR Info");
         _tagNameMap.put(TAG_IMAGE_AUTHENTICATION, "Image Authentication");
-        _tagNameMap.put(TAG_UNKNOWN_35, "Unknown 35");
+        _tagNameMap.put(TAG_FACE_DETECT, "Face Detect");
         _tagNameMap.put(TAG_ACTIVE_D_LIGHTING, "Active D-Lighting");
         _tagNameMap.put(TAG_PICTURE_CONTROL, "Picture Control");
         _tagNameMap.put(TAG_WORLD_TIME, "World Time");
@@ -843,7 +843,7 @@ public class NikonType2MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_UNKNOWN_38, "Unknown 38");
         _tagNameMap.put(TAG_UNKNOWN_39, "Unknown 39");
         _tagNameMap.put(TAG_VIGNETTE_CONTROL, "Vignette Control");
-        _tagNameMap.put(TAG_UNKNOWN_40, "Unknown 40");
+        _tagNameMap.put(TAG_DISTORT_INFO, "Distort Info");
         _tagNameMap.put(TAG_UNKNOWN_41, "Unknown 41");
         _tagNameMap.put(TAG_UNKNOWN_42, "Unknown 42");
         _tagNameMap.put(TAG_UNKNOWN_43, "Unknown 43");
@@ -868,7 +868,7 @@ public class NikonType2MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_MULTI_EXPOSURE, "Multi Exposure");
         _tagNameMap.put(TAG_HIGH_ISO_NOISE_REDUCTION, "High ISO Noise Reduction");
         _tagNameMap.put(TAG_UNKNOWN_31, "Unknown 31");
-        _tagNameMap.put(TAG_UNKNOWN_32, "Unknown 32");
+        _tagNameMap.put(TAG_TONING_EFFECT, "Toning Effect");
         _tagNameMap.put(TAG_UNKNOWN_33, "Unknown 33");
         _tagNameMap.put(TAG_UNKNOWN_48, "Unknown 48");
         _tagNameMap.put(TAG_POWER_UP_TIME, "Power Up Time");
@@ -891,8 +891,8 @@ public class NikonType2MakernoteDirectory extends Directory
         _tagNameMap.put(TAG_NOISE_REDUCTION, "Noise Reduction");
         _tagNameMap.put(TAG_LINEARIZATION_TABLE, "Linearization Table");
         _tagNameMap.put(TAG_NIKON_CAPTURE_DATA, "Nikon Capture Data");
-        _tagNameMap.put(TAG_UNKNOWN_49, "Unknown 49");
-        _tagNameMap.put(TAG_UNKNOWN_50, "Unknown 50");
+        _tagNameMap.put(TAG_RETOUCH_INFO, "Retouch Info");
+        _tagNameMap.put(TAG_PICTURE_CONTROL_2, "Picture Control 2");
         _tagNameMap.put(TAG_UNKNOWN_51, "Unknown 51");
         _tagNameMap.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print IM");
         _tagNameMap.put(TAG_UNKNOWN_52, "Unknown 52");
