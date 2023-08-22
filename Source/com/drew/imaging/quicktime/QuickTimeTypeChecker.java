@@ -81,7 +81,7 @@ public class QuickTimeTypeChecker implements TypeChecker
         _ftypMap.put("hevx", FileType.Heif);
 
         // CRX
-        _ftypMap.put("crx ", FileType.Crx);
+        _ftypMap.put("crx", FileType.Crx);
     }
 
     @Override
