@@ -141,4 +141,12 @@ public class StreamReader extends SequentialReader
         _pos += skippedTotal;
         return skippedTotal;
     }
+
+    public ByteArrayReader asByteArrayReader(int size) {
+        try {
+            return new ByteArrayReader(this.getBytes(size));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

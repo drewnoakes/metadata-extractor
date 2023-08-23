@@ -151,6 +151,8 @@ public class ImageMetadataReader
             case Orf:
             case Rw2:
                 return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
+            case Crx:
+                return QuickTimeMetadataReader.readMetadata(inputStream);
             case Psd:
                 return PsdMetadataReader.readMetadata(inputStream);
             case Png:
