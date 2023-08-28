@@ -20,8 +20,6 @@ public class AppleRunTimeReader
 {
     public void extract(@NotNull byte[] bytes, @NotNull final Metadata metadata, @NotNull final Directory parentDirectory)
     {
-        parentDirectory.setByteArray(AppleMakernoteDirectory.TAG_RUN_TIME, bytes);
-
         if (!BplistReader.isValid(bytes)) {
             parentDirectory.addError("Input array is not a bplist");
             return;
