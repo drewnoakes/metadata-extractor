@@ -40,9 +40,9 @@ public class AppleRunTimeMakernoteDescriptor extends TagDescriptor<AppleRunTimeM
     {
         switch (tagType) {
             case AppleRunTimeMakernoteDirectory.CMTimeFlags:
-                return flagsDescription();
+                return getFlagsDescription();
             case AppleRunTimeMakernoteDirectory.CMTimeValue:
-                return calculateTimeInSeconds();
+                return getValueDescription();
             default:
                 return super.getDescription(tagType);
         }
@@ -55,7 +55,7 @@ public class AppleRunTimeMakernoteDescriptor extends TagDescriptor<AppleRunTimeM
     // 0000 1000 = Negative Infinity
     // 0001 0000 = Indefinite
     @Nullable
-    private String flagsDescription()
+    public String getFlagsDescription()
     {
         try {
             final int value = _directory.getInt(AppleRunTimeMakernoteDirectory.CMTimeFlags);
@@ -86,7 +86,7 @@ public class AppleRunTimeMakernoteDescriptor extends TagDescriptor<AppleRunTimeM
     }
 
     @Nullable
-    private String calculateTimeInSeconds()
+    public String getValueDescription()
     {
         try {
             long value = _directory.getLong(AppleRunTimeMakernoteDirectory.CMTimeValue);
