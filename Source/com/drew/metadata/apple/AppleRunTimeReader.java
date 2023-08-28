@@ -23,8 +23,8 @@ public class AppleRunTimeReader
         parentDirectory.setByteArray(AppleMakernoteDirectory.TAG_RUN_TIME, bytes);
 
         if (!BplistReader.isValid(bytes)) {
-        	parentDirectory.addError("Input array is not a bplist");
-        	return;
+            parentDirectory.addError("Input array is not a bplist");
+            return;
         }
 
         AppleRunTimeMakernoteDirectory directory = new AppleRunTimeMakernoteDirectory();
