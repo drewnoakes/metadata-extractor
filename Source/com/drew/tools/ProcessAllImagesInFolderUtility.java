@@ -51,6 +51,9 @@ public class ProcessAllImagesInFolderUtility
 {
     public static void main(String[] args) throws IOException
     {
+        Locale.setDefault(new Locale("en", "US"));
+        System.setProperty("user.timezone", "Australia/Sydney");
+
         List<String> directories = new ArrayList<String>();
 
         FileHandler handler = null;
