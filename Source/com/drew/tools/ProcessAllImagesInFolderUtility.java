@@ -51,6 +51,8 @@ public class ProcessAllImagesInFolderUtility
 {
     public static void main(String[] args) throws IOException
     {
+        Locale.setDefault(new Locale("en", "US"));
+
         List<String> directories = new ArrayList<String>();
 
         FileHandler handler = null;
