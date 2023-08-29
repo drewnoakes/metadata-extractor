@@ -20,6 +20,8 @@
  */
 package com.drew.imaging.quicktime;
 
+import com.drew.imaging.FileType;
+import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -39,7 +41,8 @@ public class QuickTimeMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream);
+            FileType fileType = FileTypeDetector.detectFileType(inputStream);
+            metadata = readMetadata(inputStream, fileType);
         } finally {
             inputStream.close();
         }
@@ -48,10 +51,10 @@ public class QuickTimeMetadataReader
     }
 
     @NotNull
-    public static Metadata readMetadata(@NotNull InputStream inputStream)
+    public static Metadata readMetadata(@NotNull InputStream inputStream, FileType fileType)
     {
         Metadata metadata = new Metadata();
-        QuickTimeReader.extract(inputStream, new QuickTimeAtomHandler(metadata));
+        QuickTimeReader.extract(inputStream, new QuickTimeAtomHandler(metadata), fileType);
         return metadata;
     }
 }

@@ -152,7 +152,7 @@ public class ImageMetadataReader
             case Rw2:
                 return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
             case Crx:
-                return QuickTimeMetadataReader.readMetadata(inputStream);
+                return QuickTimeMetadataReader.readMetadata(inputStream, fileType);
             case Psd:
                 return PsdMetadataReader.readMetadata(inputStream);
             case Png:
@@ -174,7 +174,7 @@ public class ImageMetadataReader
             case Wav:
                 return WavMetadataReader.readMetadata(inputStream);
             case QuickTime:
-                return QuickTimeMetadataReader.readMetadata(inputStream);
+                return QuickTimeMetadataReader.readMetadata(inputStream, fileType);
             case Mp4:
                 return Mp4MetadataReader.readMetadata(inputStream);
             case Mp3:
