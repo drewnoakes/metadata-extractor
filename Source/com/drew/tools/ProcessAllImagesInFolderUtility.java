@@ -51,6 +51,9 @@ public class ProcessAllImagesInFolderUtility
 {
     public static void main(String[] args) throws IOException
     {
+        Locale.setDefault(new Locale("en", "US"));
+        System.setProperty("user.timezone", "Australia/Sydney");
+
         List<String> directories = new ArrayList<String>();
 
         FileHandler handler = null;
@@ -173,15 +176,62 @@ public class ProcessAllImagesInFolderUtility
         // TODO obtain these from FileType enum directly
         private final Set<String> _supportedExtensions = new HashSet<String>(
             Arrays.asList(
-                "jpg", "jpeg", "png", "gif", "bmp", "heic", "heif", "ico", "webp", "pcx", "ai", "eps",
-                "nef", "crw", "cr2", "orf", "arw", "raf", "srw", "x3f", "rw2", "rwl", "dcr", "pef",
-                "tif", "tiff", "psd", "dng",
-                "j2c", "jp2", "jpf", "jpm", "mj2",
-                "mp3", "wav", "m4a",
-                "3g2", "3gp", "m4v", "mov", "mp4", "m2v", "m2ts", "mts",
-                "pbm", "pnm", "pgm", "ppm",
+                "3fr",
+                "3g2",
+                "3gp",
+                "ai",
+                "arw",
                 "avi",
-                "fuzzed"));
+                "bmp",
+                "cam",
+                "cr2",
+                "cr3",
+                "crw",
+                "dcr",
+                "dng",
+                "eps",
+                "fuzzed",
+                "gif",
+                "gpr",
+                "heic",
+                "heif",
+                "ico",
+                "j2c",
+                "jp2",
+                "jpeg",
+                "jpf",
+                "jpg",
+                "jpm",
+                "kdc",
+                "m2ts",
+                "m2v",
+                "m4a",
+                "m4v",
+                "mj2",
+                "mov",
+                "mp3",
+                "mp4",
+                "mpg",
+                "mts",
+                "nef",
+                "orf",
+                "pbm",
+                "pcx",
+                "pef",
+                "pgm",
+                "png",
+                "pnm",
+                "ppm",
+                "psd",
+                "raf",
+                "rw2",
+                "rwl",
+                "srw",
+                "tif",
+                "tiff",
+                "wav",
+                "webp",
+                "x3f"));
 
         private int _processedFileCount = 0;
         private int _exceptionCount = 0;
