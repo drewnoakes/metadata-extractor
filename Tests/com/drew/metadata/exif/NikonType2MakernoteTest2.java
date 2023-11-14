@@ -63,7 +63,7 @@ public class NikonType2MakernoteTest2
 
 
     @Test
-    public void testNikonPictureControlNeutral() throws Exception {
+    public void testNikonPictureControl1Directory() throws Exception {
         Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/Nikon D610.jpg"));
 
 
@@ -75,7 +75,7 @@ public class NikonType2MakernoteTest2
         assertEquals( "Default Settings", directory.getDescription(NikonPictureControl1Directory.TAG_PICTURE_CONTROL_ADJUST));
     }
     @Test
-    public void testNikonPictureControlStandard() throws Exception {
+    public void testNikonPictureControl2Directory() throws Exception {
         Metadata metadata = JpegMetadataReader.readMetadata(new File("Tests/Data/Nikon D750.jpg"));
         Directory directory = metadata.getFirstDirectoryOfType(NikonPictureControl2Directory.class);
         assertNotNull(directory);

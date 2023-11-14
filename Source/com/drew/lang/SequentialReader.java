@@ -391,7 +391,7 @@ public abstract class SequentialReader
     }
 
     /**
-     * Read until the null terminated byte and automatically move the end of the requested position
+     * Read until the null terminated byte and automatically move the end of the requested position.
      * @param maxLengthBytes
      * @param charset
      * @return
