@@ -362,6 +362,9 @@ public abstract class SequentialReader
 
     /**
      * Returns the sequence of bytes punctuated by a <code>\0</code> value.
+     * It will place the cursor after the first occurrence of  <code>\0</code>.
+     * <br/>
+     * Use <code>getNullTerminatedStringAndSkipToNextPosition</code> if you want the cursor to move moved at the end of <code>maxLengthBytes</code>.
      *
      * @param maxLengthBytes The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
      * the returned array will be <code>maxLengthBytes</code> long.
@@ -385,5 +388,20 @@ public abstract class SequentialReader
         if (length > 0)
             System.arraycopy(buffer, 0, bytes, 0, length);
         return bytes;
+    }
+
+    /**
+     * Read until the null terminated byte and automatically move the end of the requested position
+     * @param maxLengthBytes
+     * @param charset
+     * @return
+     * @throws IOException
+     */
+    public StringValue getNullTerminatedStringAndSkipToNextPosition(int maxLengthBytes, Charset charset) throws IOException {
+        byte[] bytes = this.getNullTerminatedBytes(maxLengthBytes);
+        if (bytes.length < maxLengthBytes - 1) {
+            this.trySkip(maxLengthBytes - bytes.length - 1);
+        }
+        return new StringValue(bytes, charset);
     }
 }
