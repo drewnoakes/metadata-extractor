@@ -21,10 +21,7 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.makernotes.NikonPictureControl1Directory;
-import com.drew.metadata.exif.makernotes.NikonPictureControl2Directory;
 import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
 import org.junit.Before;
 import org.junit.Test;
