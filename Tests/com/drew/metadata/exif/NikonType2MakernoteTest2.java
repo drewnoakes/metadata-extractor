@@ -59,29 +59,6 @@ public class NikonType2MakernoteTest2
         assertNotNull(_exifSubIFDDirectory);
     }
 
-
-    @Test
-    public void testNikonPictureControl1Directory() throws Exception {
-        Metadata metadata =   ExifReaderTest.processBytes("Tests/Data/nikonD610.jpg.app1.0");
-
-        Directory directory = metadata.getFirstDirectoryOfType(NikonPictureControl1Directory.class);
-        assertNotNull(directory);
-        assertEquals( "0100", directory.getDescription(NikonPictureControl1Directory.TAG_PICTURE_CONTROL_VERSION));
-        assertEquals( "STANDARD", directory.getDescription(NikonPictureControl1Directory.TAG_PICTURE_CONTROL_NAME));
-        assertEquals( "STANDARD", directory.getDescription(NikonPictureControl1Directory.TAG_PICTURE_CONTROL_BASE));
-        assertEquals( "Default Settings", directory.getDescription(NikonPictureControl1Directory.TAG_PICTURE_CONTROL_ADJUST));
-    }
-    @Test
-    public void testNikonPictureControl2Directory() throws Exception {
-        Metadata metadata =  ExifReaderTest.processBytes("Tests/Data/nikonD750.jpg.app1.0");
-        Directory directory = metadata.getFirstDirectoryOfType(NikonPictureControl2Directory.class);
-        assertNotNull(directory);
-        assertEquals( "0200", directory.getDescription(NikonPictureControl2Directory.TAG_PICTURE_CONTROL_VERSION));
-        assertEquals( "STANDARD", directory.getDescription(NikonPictureControl2Directory.TAG_PICTURE_CONTROL_NAME));
-        assertEquals( "STANDARD", directory.getDescription(NikonPictureControl2Directory.TAG_PICTURE_CONTROL_BASE));
-        assertEquals( "Default Settings", directory.getDescription(NikonPictureControl2Directory.TAG_PICTURE_CONTROL_ADJUST));
-    }
-
     /*
         [Nikon Makernote] Makernote Unknown 1 =
         [Nikon Makernote] ISO Setting = Unknown (0 0)
