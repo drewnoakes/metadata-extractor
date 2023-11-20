@@ -266,17 +266,6 @@ public abstract class SequentialAccessTestBase
     }
 
     @Test
-    public void testGetNullTerminatedStringAndSkipToNextPosition() throws IOException {
-        byte NULL = 0x00;
-        byte[] bytes = new byte[]{0x41, 0x42, NULL, NULL, NULL, 0x43, 0x44, NULL, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
-        SequentialReader reader = createReader(bytes);
-
-        assertEquals("AB", reader.getNullTerminatedStringAndSkipToNextPosition(5, Charsets.UTF_8).toString());
-        assertEquals("CD", reader.getNullTerminatedStringAndSkipToNextPosition(3, Charsets.UTF_8).toString());
-        assertEquals("ABCDEF", reader.getNullTerminatedStringAndSkipToNextPosition(6, Charsets.UTF_8).toString());
-    }
-
-    @Test
     public void testGetString() throws IOException
     {
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47};

@@ -6,13 +6,16 @@ import static com.drew.metadata.exif.makernotes.NikonPictureControl2Directory.TA
 import static com.drew.metadata.exif.makernotes.NikonPictureControl2Directory.TAG_PICTURE_CONTROL_ADJUST;
 import static com.drew.metadata.exif.makernotes.NikonPictureControl2Directory.TAG_TONING_EFFECT;
 
-public final class NikonPictureControl2Descriptor extends TagDescriptor<NikonPictureControl2Directory> {
-    public NikonPictureControl2Descriptor(NikonPictureControl2Directory directory) {
+public final class NikonPictureControl2Descriptor extends TagDescriptor<NikonPictureControl2Directory>
+{
+    public NikonPictureControl2Descriptor(NikonPictureControl2Directory directory)
+    {
         super(directory);
     }
 
     @Override
-    public String getDescription(int tagType) {
+    public String getDescription(int tagType)
+    {
         switch (tagType) {
             case TAG_PICTURE_CONTROL_ADJUST:
                 return getPictureControlAdjustDescription();
@@ -25,7 +28,8 @@ public final class NikonPictureControl2Descriptor extends TagDescriptor<NikonPic
         }
     }
 
-    public String getPictureControlAdjustDescription() {
+    public String getPictureControlAdjustDescription()
+    {
         return getIndexedDescription(
             TAG_PICTURE_CONTROL_ADJUST,
             "Default Settings",
@@ -34,7 +38,8 @@ public final class NikonPictureControl2Descriptor extends TagDescriptor<NikonPic
         );
     }
 
-    public String getFilterEffectDescription() {
+    public String getFilterEffectDescription()
+    {
         byte[] value = _directory.getByteArray(TAG_FILTER_EFFECT);
         if (value == null) {
             return null;
@@ -58,7 +63,8 @@ public final class NikonPictureControl2Descriptor extends TagDescriptor<NikonPic
         }
     }
 
-    public String getToningEffectDescription() {
+    public String getToningEffectDescription()
+    {
         byte[] value = _directory.getByteArray(TAG_TONING_EFFECT);
         if (value == null) {
             return null;

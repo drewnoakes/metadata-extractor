@@ -22,12 +22,10 @@
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.StringValue;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
 /**
  *
@@ -143,5 +141,4 @@ public class StreamReader extends SequentialReader
         _pos += skippedTotal;
         return skippedTotal;
     }
-
 }

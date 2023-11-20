@@ -360,7 +360,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                     _metadata.addDirectory(directory);
                     return true;
                 } else if (byteCount == 74) {
-                    //TODO:
+                    //TODO NikonPictureControl3Directory
                 }
             }
         }
