@@ -241,28 +241,24 @@ public abstract class SequentialAccessTestBase
     }
 
     @Test
-    public void testGetNullTerminatedStringCursorPositionTest() throws IOException {
+    public void testGetNullTerminatedStringCursorPositionTest() throws IOException
+    {
         byte NULL = 0x00;
         byte[] bytes = new byte[]{0x41, 0x42, NULL, NULL, NULL, 0x43, 0x44, NULL, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46}; //AB\0\0\0CD\0ABCDEF
         SequentialReader reader = createReader(bytes);
 
-        /*
-        tried to read first five values
-         */
-        assertEquals("AB", reader.getNullTerminatedString(5, Charsets.UTF_8).toString());
+        // try to read first five values
+        assertEquals("AB", reader.getNullTerminatedString(5, Charsets.UTF_8));
 
-        /*
-        the cursor is after B (third) position
-         */
+        // the cursor is after B (third) position
         assertEquals(reader.getPosition(), 3);
         reader.skip(2);
 
-        assertEquals("CD", reader.getNullTerminatedString(3, Charsets.UTF_8).toString());
+        assertEquals("CD", reader.getNullTerminatedString(3, Charsets.UTF_8));
 
         assertEquals(reader.getPosition(), 8);
         //no need to skip to next position. since there's only one \0 character after "CD"
-
-        assertEquals("ABCDEF", reader.getNullTerminatedString(6, Charsets.UTF_8).toString());
+        assertEquals("ABCDEF", reader.getNullTerminatedString(6, Charsets.UTF_8));
     }
 
     @Test
