@@ -345,6 +345,26 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             }
         }
 
+        if (_currentDirectory instanceof NikonType2MakernoteDirectory) {
+            if (tagId == NikonType2MakernoteDirectory.TAG_PICTURE_CONTROL || tagId == NikonType2MakernoteDirectory.TAG_PICTURE_CONTROL_2) {
+                if (byteCount == 58) {
+                    byte[] bytes = reader.getBytes(tagOffset, byteCount);
+                    NikonPictureControl1Directory directory = NikonPictureControl1Directory.read(bytes);
+                    directory.setParent(_currentDirectory);
+                    _metadata.addDirectory(directory);
+                    return true;
+                } else if (byteCount == 68) {
+                    byte[] bytes = reader.getBytes(tagOffset, byteCount);
+                    NikonPictureControl2Directory directory = NikonPictureControl2Directory.read(bytes);
+                    directory.setParent(_currentDirectory);
+                    _metadata.addDirectory(directory);
+                    return true;
+                } else if (byteCount == 74) {
+                    //TODO NikonPictureControl3Directory
+                }
+            }
+        }
+
         return false;
     }
 
