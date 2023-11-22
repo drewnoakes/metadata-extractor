@@ -23,7 +23,6 @@ package com.drew.metadata;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
@@ -64,11 +63,7 @@ public final class StringValue
     public String toString(@Nullable Charset charset)
     {
         if (charset != null) {
-            try {
-                return new String(_bytes, charset.name());
-            } catch (UnsupportedEncodingException ex) {
-                // fall through
-            }
+            return new String(_bytes, charset);
         }
 
         return new String(_bytes);
