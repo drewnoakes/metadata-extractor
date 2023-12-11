@@ -735,7 +735,7 @@ public class SonyType1MakernoteDescriptor extends TagDescriptor<SonyType1Makerno
     @Nullable
     public String getSequenceNumberDescription()
     {
-        Integer value = _directory.getInteger(TAG_RELEASE_MODE);
+        Integer value = _directory.getInteger(TAG_SEQUENCE_NUMBER);
 
         if (value == null)
             return null;
