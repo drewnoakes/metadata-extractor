@@ -435,16 +435,17 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 
         String cameraMake = ifd0Directory == null ? null : ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 
-        final String firstTwoChars    = getReaderString(reader, makernoteOffset, 2);
-        final String firstThreeChars  = getReaderString(reader, makernoteOffset, 3);
-        final String firstFourChars   = getReaderString(reader, makernoteOffset, 4);
-        final String firstFiveChars   = getReaderString(reader, makernoteOffset, 5);
-        final String firstSixChars    = getReaderString(reader, makernoteOffset, 6);
-        final String firstSevenChars  = getReaderString(reader, makernoteOffset, 7);
-        final String firstEightChars  = getReaderString(reader, makernoteOffset, 8);
-        final String firstNineChars   = getReaderString(reader, makernoteOffset, 9);
-        final String firstTenChars    = getReaderString(reader, makernoteOffset, 10);
-        final String firstTwelveChars = getReaderString(reader, makernoteOffset, 12);
+        final String firstTwoChars      = getReaderString(reader, makernoteOffset, 2);
+        final String firstThreeChars    = getReaderString(reader, makernoteOffset, 3);
+        final String firstFourChars     = getReaderString(reader, makernoteOffset, 4);
+        final String firstFiveChars     = getReaderString(reader, makernoteOffset, 5);
+        final String firstSixChars      = getReaderString(reader, makernoteOffset, 6);
+        final String firstSevenChars    = getReaderString(reader, makernoteOffset, 7);
+        final String firstEightChars    = getReaderString(reader, makernoteOffset, 8);
+        final String firstNineChars     = getReaderString(reader, makernoteOffset, 9);
+        final String firstTenChars      = getReaderString(reader, makernoteOffset, 10);
+        final String firstTwelveChars   = getReaderString(reader, makernoteOffset, 12);
+        final String firstFourteenChars = getReaderString(reader, makernoteOffset, 14);
 
         boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
@@ -459,6 +460,12 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // http://exiv2.org/makernote.html
             pushDirectory(OlympusMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, makernoteOffset);
+        } else if ("OM SYSTEM\0\0\0II".equals(firstFourteenChars)) {
+            // Olympus Makernote (OM SYSTEM)
+            // Note that data is relative to the beginning of the makernote
+            // http://exiv2.org/makernote.html
+            pushDirectory(OlympusMakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 14, makernoteOffset);
         } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("MINOLTA")) {
             // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
             // area that commences immediately.
