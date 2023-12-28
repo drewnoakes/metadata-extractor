@@ -181,6 +181,8 @@ public class ImageMetadataReader
                 return EpsMetadataReader.readMetadata(inputStream);
             case Heif:
                 return HeifMetadataReader.readMetadata(inputStream);
+            case Crx:
+            	return Mp4MetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
             default:
