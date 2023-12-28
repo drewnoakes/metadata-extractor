@@ -181,7 +181,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
           case CANON_METADATA_GPS:
             return new CanonCrxTiffHandler(new GpsDirectory(), metadata, null, 0);
         }
-        
+
         return null;
     }
     
@@ -192,11 +192,8 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
     {
         try {
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
-
                 long boxSize = reader.getUInt32();
-
                 String boxType = reader.getString(4);
-
                 boolean isLargeSize = boxSize == 1;
 
                 if (isLargeSize) {
@@ -215,11 +212,12 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
 
                 // Determine if fourCC is container/atom and process accordingly.
                 // Unknown atoms will be skipped
-                
+                long dataSize = (isLargeSize ? boxSize - 16 : boxSize - 8);
+
                 if (CANON_METADATA_BOXES.contains(boxType)) {
                   CanonCrxTiffHandler subHandler = createCanonHandler(boxType);
-                  RandomAccessStreamReader subReader = new RandomAccessStreamReader(new ByteArrayInputStream(reader.getBytes((int) boxSize - 8)));
-                	
+                  RandomAccessStreamReader subReader = new RandomAccessStreamReader(new ByteArrayInputStream(reader.getBytes((int) dataSize)));
+
                   try {
                     new TiffReader().processTiff(subReader, subHandler, 0);
                   }
@@ -232,9 +230,9 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
                         // TODO capture this error in a directory
                         break;
                     }
-                    reader.skip(boxSize - 16);
+                    reader.skip(dataSize);
                 } else {
-                    reader.skip(boxSize - 8);
+                    reader.skip(dataSize);
                 }
             }
         } catch (IOException e) {
