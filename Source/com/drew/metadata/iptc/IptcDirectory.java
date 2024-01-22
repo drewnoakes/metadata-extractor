@@ -128,7 +128,7 @@ public class IptcDirectory extends Directory
 
     static
     {
-        _tagNameMap.put(TAG_ENVELOPE_RECORD_VERSION, "Enveloped Record Version");
+        _tagNameMap.put(TAG_ENVELOPE_RECORD_VERSION, "Envelope Record Version");
         _tagNameMap.put(TAG_DESTINATION, "Destination");
         _tagNameMap.put(TAG_FILE_FORMAT, "File Format");
         _tagNameMap.put(TAG_FILE_VERSION, "File Version");
