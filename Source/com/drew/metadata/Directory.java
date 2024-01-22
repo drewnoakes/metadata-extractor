@@ -762,7 +762,15 @@ public abstract class Directory
             try {
                 return Long.parseLong(o.toString());
             } catch (NumberFormatException nfe) {
-                return null;
+                // convert the char array to an int
+                String s = o.toString();
+                byte[] bytes = s.getBytes();
+                long val = 0;
+                for (byte aByte : bytes) {
+                    val = val << 8;
+                    val += (aByte & 0xff);
+                }
+                return val;
             }
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
