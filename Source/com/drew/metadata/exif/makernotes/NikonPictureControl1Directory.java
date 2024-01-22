@@ -78,9 +78,9 @@ public final class NikonPictureControl1Directory extends Directory
 
         NikonPictureControl1Directory directory = new NikonPictureControl1Directory();
 
-        directory.setObject(TAG_PICTURE_CONTROL_VERSION, reader.getStringValue(4, Charsets.UTF_8));
-        directory.setObject(TAG_PICTURE_CONTROL_NAME, reader.getStringValue(20, Charsets.UTF_8));
-        directory.setObject(TAG_PICTURE_CONTROL_BASE, reader.getStringValue(20, Charsets.UTF_8));
+        directory.setObject(TAG_PICTURE_CONTROL_VERSION, reader.getNullTerminatedStringValue(4, Charsets.UTF_8, true));
+        directory.setObject(TAG_PICTURE_CONTROL_NAME, reader.getNullTerminatedStringValue(20, Charsets.UTF_8, true));
+        directory.setObject(TAG_PICTURE_CONTROL_BASE, reader.getNullTerminatedStringValue(20, Charsets.UTF_8, true));
         reader.skip(4);
         directory.setObject(TAG_PICTURE_CONTROL_ADJUST, reader.getUInt8());
         directory.setObject(TAG_PICTURE_CONTROL_QUICK_ADJUST, reader.getUInt8());
