@@ -41,7 +41,7 @@ public class HandlerBox extends FullBox
         reader.skip(4); // Pre-defined
         handlerType = reader.getString(4);
         reader.skip(12); // Reserved
-        name = reader.getNullTerminatedString((int)box.size - 32, Charsets.UTF_8);
+        name = reader.getNullTerminatedString((int)box.size - 32, Charsets.UTF_8, false);
     }
 
     public String getHandlerType()

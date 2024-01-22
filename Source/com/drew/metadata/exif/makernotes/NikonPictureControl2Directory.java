@@ -86,9 +86,9 @@ public final class NikonPictureControl2Directory extends Directory
 
         NikonPictureControl2Directory directory = new NikonPictureControl2Directory();
 
-        directory.setString(TAG_PICTURE_CONTROL_VERSION, reader.getStringValue(4, Charsets.UTF_8).toString());
-        directory.setString(TAG_PICTURE_CONTROL_NAME, reader.getStringValue(20, Charsets.UTF_8).toString());
-        directory.setString(TAG_PICTURE_CONTROL_BASE, reader.getStringValue(20, Charsets.UTF_8).toString());
+        directory.setStringValue(TAG_PICTURE_CONTROL_VERSION, reader.getNullTerminatedStringValue(4, Charsets.UTF_8, true));
+        directory.setStringValue(TAG_PICTURE_CONTROL_NAME, reader.getNullTerminatedStringValue(20, Charsets.UTF_8, true));
+        directory.setStringValue(TAG_PICTURE_CONTROL_BASE, reader.getNullTerminatedStringValue(20, Charsets.UTF_8, true));
 
         reader.skip(4);
         directory.setObject(TAG_PICTURE_CONTROL_ADJUST, reader.getByte());

@@ -371,7 +371,7 @@ public class BmpReader
                     }
                     reader.skip(headerOffset + profileOffset - reader.getPosition());
                     if (csType == ColorSpaceType.PROFILE_LINKED.getValue()) {
-                        directory.setString(BmpHeaderDirectory.TAG_LINKED_PROFILE, reader.getNullTerminatedString(profileSize, Charsets.WINDOWS_1252));
+                        directory.setString(BmpHeaderDirectory.TAG_LINKED_PROFILE, reader.getNullTerminatedString(profileSize, Charsets.WINDOWS_1252, true));
                     } else {
                         ByteArrayReader randomAccessReader = new ByteArrayReader(reader.getBytes(profileSize));
                         new IccReader().extract(randomAccessReader, metadata, directory);

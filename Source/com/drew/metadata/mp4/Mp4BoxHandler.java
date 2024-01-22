@@ -97,7 +97,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 reader.skip(4); // Pre-defined
                 String handlerType = reader.getString(4);
                 reader.skip(12); // Reserved
-                String name = reader.getNullTerminatedString((int)boxSize - 32, Charset.defaultCharset());
+                String name = reader.getNullTerminatedString((int)boxSize - 32, Charset.defaultCharset(), false);
 
                 final String HANDLER_SOUND_MEDIA             = "soun";
                 final String HANDLER_VIDEO_MEDIA             = "vide";
