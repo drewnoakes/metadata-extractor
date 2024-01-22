@@ -24,7 +24,6 @@ import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
-import com.drew.metadata.Directory;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -121,7 +120,7 @@ public class BmpReader
             return;
         }
 
-        Directory directory = null;
+        BmpHeaderDirectory directory = null;
         try {
             switch (magicNumber) {
                 case OS2_BITMAP_ARRAY:
@@ -153,11 +152,11 @@ public class BmpReader
                     directory.setInt(BmpHeaderDirectory.TAG_BITMAP_TYPE, magicNumber);
                     // skip past the rest of the file header
                     reader.skip(4 + 2 + 2 + 4);
-                    readBitmapHeader(reader, (BmpHeaderDirectory) directory, metadata);
+                    readBitmapHeader(reader, directory, metadata);
                     break;
                 default:
                     metadata.addDirectory(new ErrorDirectory("Invalid BMP magic number 0x" + Integer.toHexString(magicNumber)));
-                    return;
+                    break;
             }
         } catch (IOException e) {
             if (directory == null) {
