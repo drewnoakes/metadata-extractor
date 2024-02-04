@@ -936,10 +936,14 @@ public abstract class Directory
                      */
                     parser.setLenient(false);
 
+                    /*
+                     * If the metadata has set a time zone we use that, and otherwise
+                     * we assume that computer and image belong to the same geographical area.
+                     */
                     if (timeZone != null)
                         parser.setTimeZone(timeZone);
                     else
-                        parser.setTimeZone(TimeZone.getTimeZone("GMT")); // don't interpret zone time
+                        parser.setTimeZone(TimeZone.getDefault());
 
                     date = parser.parse(dateString);
                     break;

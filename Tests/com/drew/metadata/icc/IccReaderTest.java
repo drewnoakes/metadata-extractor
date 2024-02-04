@@ -29,6 +29,7 @@ import com.drew.tools.FileUtil;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -73,15 +74,26 @@ public class IccReaderTest
     @Test
     public void testExtract_ProfileDateTime() throws Exception
     {
-        byte[] app2Bytes = FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2");
 
-        Metadata metadata = new Metadata();
-        new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+        TimeZone defaultTimeZone = TimeZone.getDefault();
 
-        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+        try {
 
-        assertNotNull(directory);
-        assertEquals("1998:02:09 06:49:00", directory.getString(IccDirectory.TAG_PROFILE_DATETIME));
-        assertEquals(887006940000L, directory.getDate(IccDirectory.TAG_PROFILE_DATETIME).getTime());
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+
+            byte[] app2Bytes = FileUtil.readBytes("Tests/Data/withExifAndIptc.jpg.app2");
+
+            Metadata metadata = new Metadata();
+            new IccReader().readJpegSegments(Arrays.asList(app2Bytes), metadata, JpegSegmentType.APP2);
+
+            IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+
+            assertNotNull(directory);
+            assertEquals("1998:02:09 06:49:00", directory.getString(IccDirectory.TAG_PROFILE_DATETIME));
+            assertEquals(887006940000L, directory.getDate(IccDirectory.TAG_PROFILE_DATETIME).getTime());
+
+        } finally {
+            TimeZone.setDefault(defaultTimeZone);
+        }
     }
 }
