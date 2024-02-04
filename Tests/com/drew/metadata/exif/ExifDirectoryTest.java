@@ -63,38 +63,48 @@ public class ExifDirectoryTest
     @Test
     public void testDateTime() throws JpegProcessingException, IOException, MetadataException
     {
-        Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2a.jpg.app1");
+        TimeZone defaultTimeZone = TimeZone.getDefault();
 
-        ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-        ExifSubIFDDirectory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+        try {
 
-        assertNotNull(exifIFD0Directory);
-        assertNotNull(exifSubIFDDirectory);
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
 
-        assertEquals("2003:10:15 10:37:08", exifIFD0Directory.getString(ExifIFD0Directory.TAG_DATETIME));
-        assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME));
-        assertEquals("2003:10:15 10:37:08", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
-        assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME_ORIGINAL));
-        assertEquals("2003:10:15 10:37:08", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED));
-        assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME_DIGITIZED));
+            Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType2a.jpg.app1");
 
-        assertEquals(1066214228800L, exifIFD0Directory.getDate(
-            ExifIFD0Directory.TAG_DATETIME,
-            exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME),
-            null
-        ).getTime());
-        assertEquals(1066210628800L, exifIFD0Directory.getDate(
-            ExifIFD0Directory.TAG_DATETIME,
-            exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME),
-            TimeZone.getTimeZone("GMT+0100")
-        ).getTime());
+            ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            ExifSubIFDDirectory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 
-        assertEquals(1066214228800L, exifSubIFDDirectory.getDateModified().getTime());
-        assertEquals(1066210628800L, exifSubIFDDirectory.getDateModified(TimeZone.getTimeZone("GMT+0100")).getTime());
-        assertEquals(1066214228800L, exifSubIFDDirectory.getDateOriginal().getTime());
-        assertEquals(1066210628800L, exifSubIFDDirectory.getDateOriginal(TimeZone.getTimeZone("GMT+0100")).getTime());
-        assertEquals(1066214228800L, exifSubIFDDirectory.getDateDigitized().getTime());
-        assertEquals(1066210628800L, exifSubIFDDirectory.getDateDigitized(TimeZone.getTimeZone("GMT+0100")).getTime());
+            assertNotNull(exifIFD0Directory);
+            assertNotNull(exifSubIFDDirectory);
+
+            assertEquals("2003:10:15 10:37:08", exifIFD0Directory.getString(ExifIFD0Directory.TAG_DATETIME));
+            assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME));
+            assertEquals("2003:10:15 10:37:08", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+            assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME_ORIGINAL));
+            assertEquals("2003:10:15 10:37:08", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED));
+            assertEquals("80", exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME_DIGITIZED));
+
+            assertEquals(1066214228800L, exifIFD0Directory.getDate(
+                ExifIFD0Directory.TAG_DATETIME,
+                exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME),
+                null
+            ).getTime());
+            assertEquals(1066210628800L, exifIFD0Directory.getDate(
+                ExifIFD0Directory.TAG_DATETIME,
+                exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SUBSECOND_TIME),
+                TimeZone.getTimeZone("GMT+0100")
+            ).getTime());
+
+            assertEquals(1066214228800L, exifSubIFDDirectory.getDateModified().getTime());
+            assertEquals(1066210628800L, exifSubIFDDirectory.getDateModified(TimeZone.getTimeZone("GMT+0100")).getTime());
+            assertEquals(1066214228800L, exifSubIFDDirectory.getDateOriginal().getTime());
+            assertEquals(1066210628800L, exifSubIFDDirectory.getDateOriginal(TimeZone.getTimeZone("GMT+0100")).getTime());
+            assertEquals(1066214228800L, exifSubIFDDirectory.getDateDigitized().getTime());
+            assertEquals(1066210628800L, exifSubIFDDirectory.getDateDigitized(TimeZone.getTimeZone("GMT+0100")).getTime());
+
+        } finally {
+            TimeZone.setDefault(defaultTimeZone);
+        }
     }
 
     @Test

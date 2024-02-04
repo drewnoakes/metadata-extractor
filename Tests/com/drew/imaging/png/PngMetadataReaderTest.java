@@ -58,7 +58,7 @@ public class PngMetadataReaderTest
     @Test
     public void testGimpGreyscaleWithManyChunks() throws Exception
     {
-        TimeZone timeZone = TimeZone.getDefault();
+        TimeZone defaultTimeZone = TimeZone.getDefault();
 
         try {
             TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
@@ -111,7 +111,7 @@ public class PngMetadataReaderTest
             assertEquals("Comment", pairs.get(0).getKey().toString());
             assertEquals("Created with GIMP", pairs.get(0).getValue().toString());
         } finally {
-            TimeZone.setDefault(timeZone);
+            TimeZone.setDefault(defaultTimeZone);
         }
     }
 }
