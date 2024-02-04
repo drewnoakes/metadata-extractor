@@ -895,6 +895,12 @@ public abstract class Directory
 
             String dateString = o.toString();
 
+            /*
+             * This is a common NULL value known for cameras like Olympus C750UZ.
+             */
+            if (dateString.equals("0000:00:00 00:00:00"))
+                return null;
+
             // if the date string has subsecond information, it supersedes the subsecond parameter
             Pattern subsecondPattern = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)(\\.\\d+)");
             Matcher subsecondMatcher = subsecondPattern.matcher(dateString);
@@ -913,7 +919,23 @@ public abstract class Directory
 
             for (String datePattern : datePatterns) {
                 try {
+
                     DateFormat parser = new SimpleDateFormat(datePattern);
+
+                    /*
+                     * Some older digital cameras, such as the Olympus C750UZ, may not have recorded a proper
+                     * exif:DateTimeOriginal value. Instead of leaving this field empty, they used
+                     * 0000:00:00 00:00:00 as a placeholder.
+                     *
+                     * "0000:00:00 00:00:00" will result in "Sun Nov 30 00:00:00 GMT 2",
+                     * which is not what a user would expect.
+                     *
+                     * Any illegal formats should result in an exception and not be parsed.
+                     *
+                     * It's best to turn lenient mode off.
+                     */
+                    parser.setLenient(false);
+
                     if (timeZone != null)
                         parser.setTimeZone(timeZone);
                     else
