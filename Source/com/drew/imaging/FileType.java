@@ -47,6 +47,7 @@ public enum FileType
     QuickTime("MOV", "QuickTime Movie", "video/quicktime", "mov", "qt"),
     Mp4("MP4", "MPEG-4 Part 14", "video/mp4", "mp4", "m4a", "m4p", "m4b", "m4r", "m4v"),
     Heif("HEIF", "High Efficiency Image File Format", "image/heif", "heif", "heic"),
+    Avif("AVIF", "AV1 Image File Format", "image/avif", "avif"),
     Eps("EPS", "Encapsulated PostScript", "application/postscript", "eps", "epsf", "epsi"),
     Mp3("MP3", "MPEG Audio Layer III", "audio/mpeg", "mp3"),
 
