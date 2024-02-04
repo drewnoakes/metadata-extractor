@@ -182,6 +182,7 @@ public class ProcessAllImagesInFolderUtility
                 "ai",
                 "arw",
                 "avi",
+                "avif",
                 "bmp",
                 "cam",
                 "cr2",
