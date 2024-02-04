@@ -77,6 +77,13 @@ public class JpegReader implements JpegSegmentMetadataReader
         // The value of TAG_COMPRESSION_TYPE is determined by the segment type found
         directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);
 
+        final int JPEG_HEADER_SIZE = 1 + 2 + 2 + 1;
+
+        if (segmentBytes.length < JPEG_HEADER_SIZE) {
+            directory.addError("Insufficient bytes for JPEG segment header.");
+            return;
+        }
+
         SequentialReader reader = new SequentialByteArrayReader(segmentBytes);
 
         try {
@@ -85,6 +92,13 @@ public class JpegReader implements JpegSegmentMetadataReader
             directory.setInt(JpegDirectory.TAG_IMAGE_WIDTH, reader.getUInt16());
             short componentCount = reader.getUInt8();
             directory.setInt(JpegDirectory.TAG_NUMBER_OF_COMPONENTS, componentCount);
+
+            final int JPEG_COMPONENT_SIZE = 1 + 1 + 1;
+
+            if (reader.available() < componentCount * JPEG_COMPONENT_SIZE) {
+                directory.addError("Insufficient bytes for JPEG the requested number of JPEG components.");
+                return;
+            }
 
             // for each component, there are three bytes of data:
             // 1 - Component ID: 1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q
