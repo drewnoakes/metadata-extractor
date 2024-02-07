@@ -36,8 +36,8 @@ compileTestJava {
 }
 
 dependencies {
-    compile 'com.adobe.xmp:xmpcore:6.0.6'
-    testCompile 'junit:junit:4.12'
+    compile 'com.adobe.xmp:xmpcore:6.1.11'
+    testCompile 'junit:junit:4.13.1'
 }
 
 wrapper {

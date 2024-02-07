@@ -762,7 +762,15 @@ public abstract class Directory
             try {
                 return Long.parseLong(o.toString());
             } catch (NumberFormatException nfe) {
-                return null;
+                // convert the char array to an int
+                String s = o.toString();
+                byte[] bytes = s.getBytes();
+                long val = 0;
+                for (byte aByte : bytes) {
+                    val = val << 8;
+                    val += (aByte & 0xff);
+                }
+                return val;
             }
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
@@ -887,6 +895,12 @@ public abstract class Directory
 
             String dateString = o.toString();
 
+            /*
+             * This is a common NULL value known for cameras like Olympus C750UZ.
+             */
+            if (dateString.equals("0000:00:00 00:00:00"))
+                return null;
+
             // if the date string has subsecond information, it supersedes the subsecond parameter
             Pattern subsecondPattern = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)(\\.\\d+)");
             Matcher subsecondMatcher = subsecondPattern.matcher(dateString);
@@ -905,11 +919,31 @@ public abstract class Directory
 
             for (String datePattern : datePatterns) {
                 try {
+
                     DateFormat parser = new SimpleDateFormat(datePattern);
+
+                    /*
+                     * Some older digital cameras, such as the Olympus C750UZ, may not have recorded a proper
+                     * exif:DateTimeOriginal value. Instead of leaving this field empty, they used
+                     * 0000:00:00 00:00:00 as a placeholder.
+                     *
+                     * "0000:00:00 00:00:00" will result in "Sun Nov 30 00:00:00 GMT 2",
+                     * which is not what a user would expect.
+                     *
+                     * Any illegal formats should result in an exception and not be parsed.
+                     *
+                     * It's best to turn lenient mode off.
+                     */
+                    parser.setLenient(false);
+
+                    /*
+                     * If the metadata has set a time zone we use that, and otherwise
+                     * we assume that computer and image belong to the same geographical area.
+                     */
                     if (timeZone != null)
                         parser.setTimeZone(timeZone);
                     else
-                        parser.setTimeZone(TimeZone.getTimeZone("GMT")); // don't interpret zone time
+                        parser.setTimeZone(TimeZone.getDefault());
 
                     date = parser.parse(dateString);
                     break;

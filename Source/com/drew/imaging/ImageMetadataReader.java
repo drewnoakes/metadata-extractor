@@ -180,6 +180,7 @@ public class ImageMetadataReader
             case Eps:
                 return EpsMetadataReader.readMetadata(inputStream);
             case Heif:
+            case Avif:
                 return HeifMetadataReader.readMetadata(inputStream);
             case Crx:
             	return Mp4MetadataReader.readMetadata(inputStream);

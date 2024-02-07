@@ -166,7 +166,7 @@ public class PngMetadataReader
             SequentialReader reader = new SequentialByteArrayReader(bytes);
 
             // Profile Name is 1-79 bytes, followed by the 1 byte null character
-            byte[] profileNameBytes = reader.getNullTerminatedBytes(79 + 1);
+            byte[] profileNameBytes = reader.getNullTerminatedBytes(79 + 1, false);
             PngDirectory directory = new PngDirectory(PngChunkType.iCCP);
             directory.setStringValue(PngDirectory.TAG_ICC_PROFILE_NAME, new StringValue(profileNameBytes, _latin1Encoding));
             byte compressionMethod = reader.getInt8();
@@ -197,13 +197,13 @@ public class PngMetadataReader
             SequentialReader reader = new SequentialByteArrayReader(bytes);
 
             // Keyword is 1-79 bytes, followed by the 1 byte null character
-            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding);
+            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding, false);
             String keyword = keywordsv.toString();
 
             // bytes left for text is:
             // total bytes length - (Keyword length + null byte)
             int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1);
-            StringValue value = reader.getNullTerminatedStringValue(bytesLeft, _latin1Encoding);
+            StringValue value = reader.getNullTerminatedStringValue(bytesLeft, _latin1Encoding, false);
             List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
             textPairs.add(new KeyValuePair(keyword, value));
             PngDirectory directory = new PngDirectory(PngChunkType.tEXt);
@@ -213,7 +213,7 @@ public class PngMetadataReader
             SequentialReader reader = new SequentialByteArrayReader(bytes);
 
             // Keyword is 1-79 bytes, followed by the 1 byte null character
-            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding);
+            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _latin1Encoding, false);
             String keyword = keywordsv.toString();
             byte compressionMethod = reader.getInt8();
 
@@ -250,20 +250,20 @@ public class PngMetadataReader
             SequentialReader reader = new SequentialByteArrayReader(bytes);
 
             // Keyword is 1-79 bytes, followed by the 1 byte null character
-            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _utf8Encoding);
+            StringValue keywordsv = reader.getNullTerminatedStringValue(79 + 1, _utf8Encoding, false);
             String keyword = keywordsv.toString();
             byte compressionFlag = reader.getInt8();
             byte compressionMethod = reader.getInt8();
             // TODO we currently ignore languageTagBytes and translatedKeywordBytes
-            byte[] languageTagBytes = reader.getNullTerminatedBytes(bytes.length);
-            byte[] translatedKeywordBytes = reader.getNullTerminatedBytes(bytes.length);
+            byte[] languageTagBytes = reader.getNullTerminatedBytes(bytes.length, false);
+            byte[] translatedKeywordBytes = reader.getNullTerminatedBytes(bytes.length, false);
 
             // bytes left for compressed text is:
             // total bytes length - (Keyword length + null byte + comp flag byte + comp method byte + lang length + null byte + translated length + null byte)
             int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1 + 1 + 1 + languageTagBytes.length + 1 + translatedKeywordBytes.length + 1);
             byte[] textBytes = null;
             if (compressionFlag == 0) {
-                textBytes = reader.getNullTerminatedBytes(bytesLeft);
+                textBytes = reader.getNullTerminatedBytes(bytesLeft, false);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
                     try {

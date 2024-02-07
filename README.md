@@ -61,6 +61,7 @@ It will process files of type:
 * PNG
 * BMP
 * GIF
+* HEIF (HEIC & AVIF)
 * ICO
 * PCX
 * QuickTime

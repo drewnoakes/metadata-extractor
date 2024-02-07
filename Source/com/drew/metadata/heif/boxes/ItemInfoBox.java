@@ -77,10 +77,10 @@ public class ItemInfoBox extends FullBox
             if ((version == 0) || (version == 1)) {
                 itemID = reader.getUInt16();
                 itemProtectionIndex = reader.getUInt16();
-                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
-                contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8, false);
+                contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8, false);
                 if (box.size - reader.getPosition() - headerLength > 0) {
-                    extensionType = reader.getNullTerminatedString((int) (box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                    extensionType = reader.getNullTerminatedString((int) (box.size - reader.getPosition() - headerLength), Charsets.UTF_8, false);
                 }
             }
             if (version == 1) {
@@ -97,11 +97,11 @@ public class ItemInfoBox extends FullBox
                 itemProtectionIndex = reader.getUInt16();
                 itemType = reader.getString(4);
 
-                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                itemName = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8, false);
                 if (itemType.equals("mime")) {
-                    contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                    contentType = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8, false);
                     if (box.size - reader.getPosition() - headerLength > 0) {
-                        contentEncoding = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8);
+                        contentEncoding = reader.getNullTerminatedString((int)(box.size - reader.getPosition() - headerLength), Charsets.UTF_8, false);
                     }
                 } else if (itemType.equals("uri ")) {
                     itemUriType = reader.getString((int)(box.size - reader.getPosition() - headerLength));

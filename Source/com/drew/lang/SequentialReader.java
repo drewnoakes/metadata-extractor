@@ -331,31 +331,35 @@ public abstract class SequentialReader
     /**
      * Creates a String from the stream, ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
      *
-     * @param maxLengthBytes The maximum number of bytes to read.  If a zero-byte is not reached within this limit,
-     *                       reading will stop and the string will be truncated to this length.
+     * @param maxLengthBytes  The maximum number of bytes to read.  If a zero-byte is not reached within this limit,
+     *                        reading will stop and the string will be truncated to this length.
+     * @param moveToMaxLength When true, the reader progresses maxLengthBytes on every call. When false, the reader
+     *                        stops when the first null is encountered (or the maximum is reached).
      * @return The read string.
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public String getNullTerminatedString(int maxLengthBytes, Charset charset) throws IOException
+    public String getNullTerminatedString(int maxLengthBytes, Charset charset, boolean moveToMaxLength) throws IOException
     {
-       return getNullTerminatedStringValue(maxLengthBytes, charset).toString();
+       return getNullTerminatedStringValue(maxLengthBytes, charset, moveToMaxLength).toString();
     }
 
     /**
      * Creates a String from the stream, ending where <code>byte=='\0'</code> or where <code>length==maxLength</code>.
      *
-     * @param maxLengthBytes The maximum number of bytes to read.  If a <code>\0</code> byte is not reached within this limit,
-     *                       reading will stop and the string will be truncated to this length.
-     * @param charset The <code>Charset</code> to register with the returned <code>StringValue</code>, or <code>null</code> if the encoding
-     *                is unknown
+     * @param maxLengthBytes  The maximum number of bytes to read.  If a <code>\0</code> byte is not reached within this limit,
+     *                        reading will stop and the string will be truncated to this length.
+     * @param charset         The <code>Charset</code> to register with the returned <code>StringValue</code>, or <code>null</code> if the encoding
+     *                        is unknown
+     * @param moveToMaxLength When true, the reader progresses maxLengthBytes on every call. When false, the reader
+     *                        stops when the first null is encountered (or the maximum is reached).
      * @return The read string.
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public StringValue getNullTerminatedStringValue(int maxLengthBytes, Charset charset) throws IOException
+    public StringValue getNullTerminatedStringValue(int maxLengthBytes, Charset charset, boolean moveToMaxLength) throws IOException
     {
-        byte[] bytes = getNullTerminatedBytes(maxLengthBytes);
+        byte[] bytes = getNullTerminatedBytes(maxLengthBytes, moveToMaxLength);
 
         return new StringValue(bytes, charset);
     }
@@ -363,20 +367,29 @@ public abstract class SequentialReader
     /**
      * Returns the sequence of bytes punctuated by a <code>\0</code> value.
      *
-     * @param maxLengthBytes The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
-     * the returned array will be <code>maxLengthBytes</code> long.
+     * @param maxLengthBytes  The maximum number of bytes to read. If a <code>\0</code> byte is not reached within this limit,
+     *                        the returned array will be <code>maxLengthBytes</code> long.
+     * @param moveToMaxLength When true, the reader progresses maxLengthBytes on every call. When false, the reader
+     *                        stops when the first null is encountered (or the maximum is reached).
      * @return The read byte array, excluding the null terminator.
      * @throws IOException The buffer does not contain enough bytes to satisfy this request.
      */
     @NotNull
-    public byte[] getNullTerminatedBytes(int maxLengthBytes) throws IOException
+    public byte[] getNullTerminatedBytes(int maxLengthBytes, boolean moveToMaxLength) throws IOException
     {
-        byte[] buffer = new byte[maxLengthBytes];
-
         // Count the number of non-null bytes
         int length = 0;
-        while (length < buffer.length && (buffer[length] = getByte()) != 0)
-            length++;
+        byte[] buffer;
+
+        if (moveToMaxLength) {
+            buffer = getBytes(maxLengthBytes);
+            while (length < buffer.length && buffer[length] != 0)
+                length++;
+        } else {
+            buffer = new byte[maxLengthBytes];
+            while (length < buffer.length && (buffer[length] = getByte()) != 0)
+                length++;
+        }
 
         if (length == maxLengthBytes)
             return buffer;
