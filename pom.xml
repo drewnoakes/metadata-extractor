@@ -147,6 +147,7 @@
                             <Implementation-Title>metadata-extractor</Implementation-Title>
                             <Implementation-Vendor>Drew Noakes</Implementation-Vendor>
                             <Implementation-Version>${project.version}</Implementation-Version>
+                            <Automatic-Module-Name>com.drew.metadata</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>
