@@ -41,6 +41,7 @@ import com.drew.lang.DateUtil;
 import com.drew.lang.Rational;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
+import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -272,7 +273,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
 			int val_type = reader.getUInt16();
 			result.add(reader.getString((int) value_size - 6, "UTF-8"));
 		}
-		return String.join(" | ", result);
+		return StringUtil.join(result, " | ");
 	}
 
     private void processFileType(@NotNull SequentialReader reader, long boxSize) throws IOException
