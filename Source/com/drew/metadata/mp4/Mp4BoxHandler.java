@@ -271,7 +271,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
 		for (long i = 0; i < entry_count; ++i) {
 			long value_size = reader.getUInt32();
 			int val_type = reader.getUInt16();
-			result.add(reader.getString((int) value_size - 6, "UTF-8"));
+			result.add(reader.getString((int) value_size - 6,"UTF-16LE"));
 		}
 		return StringUtil.join(result, " | ");
 	}
