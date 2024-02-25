@@ -20,6 +20,22 @@
  */
 package com.drew.metadata.mp4;
 
+import static com.drew.metadata.mp4.Mp4Directory.TAG_CATEGORY;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_COMMENT;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_LATITUDE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_LONGITUDE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_MOOD;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_SUBTITLE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_TITLE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_USER_RATING;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.drew.imaging.mp4.Mp4Handler;
 import com.drew.lang.DateUtil;
 import com.drew.lang.Rational;
@@ -28,16 +44,12 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mp4.media.*;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.drew.metadata.mp4.Mp4Directory.TAG_LATITUDE;
-import static com.drew.metadata.mp4.Mp4Directory.TAG_LONGITUDE;
+import com.drew.metadata.mp4.media.Mp4HintHandler;
+import com.drew.metadata.mp4.media.Mp4MetaHandler;
+import com.drew.metadata.mp4.media.Mp4SoundHandler;
+import com.drew.metadata.mp4.media.Mp4TextHandler;
+import com.drew.metadata.mp4.media.Mp4UuidBoxHandler;
+import com.drew.metadata.mp4.media.Mp4VideoHandler;
 
 /**
  * @author Payton Garland
@@ -140,6 +152,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     private void processUserData(@NotNull SequentialReader reader, int length) throws IOException
     {
         final int LOCATION_CODE = 0xA978797A; // "©xyz"
+		final int META_TYPE = 0x6D657461; // "meta"
+		final int XTRA_TYPE = 0x58747261; // "Xtra"
 
         String coordinateString = null;
 
@@ -152,11 +166,16 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 int xyzLength = reader.getUInt16();
                 reader.skip(2);
                 coordinateString = reader.getString(xyzLength, "UTF-8");
-            } else if (size >= 8) {
-                reader.skip(size - 8);
-            } else {
-                return;
-            }
+            } else if (kind == META_TYPE && size > 16) {
+				reader.skip(4);
+				processUserDataMeta(reader, length, size - 12);
+			} else if (kind == XTRA_TYPE && size > 16) {
+				processUserDataMetaXtra(reader, length, size - 8);
+			} else if (size >= 8) {
+				reader.skip(size - 8);
+			} else {
+				return;
+			}
         }
 
         if (coordinateString != null) {
@@ -170,6 +189,91 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
             }
         }
     }
+    
+    private void processUserDataMeta(@NotNull SequentialReader reader, int length, long blockSize) throws IOException {
+		final int HDLR_TYPE = 0x68646C72; // "hdlr"
+		final int ILST_TYPE = 0x696C7374; // "ilst"
+
+		long initialPosition = reader.getPosition();
+
+		while (reader.getPosition() < length && (reader.getPosition() - initialPosition) < blockSize) {
+			long size = reader.getUInt32();
+			if (size <= 4)
+				break;
+			int kind = reader.getInt32();
+			if (kind == HDLR_TYPE) {
+				// nothing
+				reader.skip(size - 8);
+			} else if (kind == ILST_TYPE && size > 16) {
+				processUserDataMetaIList(reader, length, size - 8);
+			}
+		}
+	}
+
+	private void processUserDataMetaIList(@NotNull SequentialReader reader, int length, long blockSize)
+			throws IOException {
+		final int CNAM_TYPE = 0xA96E616D; // "©nam"
+		final int CCMT_TYPE = 0xA9636D74; // "©cmt"
+		long initialPosition = reader.getPosition();
+
+		while (reader.getPosition() < length && (reader.getPosition() - initialPosition) < blockSize) {
+			long size = reader.getUInt32();
+			if (size <= 4)
+				break;
+			int kind = reader.getInt32();
+			if (kind == CNAM_TYPE) {
+				long cnamSize = reader.getUInt32();
+				if (cnamSize > 16) {
+					reader.skip(12);
+					directory.setString(TAG_TITLE, reader.getString((int) cnamSize - 16, "UTF-8"));
+				}
+			} else if (kind == CCMT_TYPE) {
+				long ccmtSize = reader.getUInt32();
+				if (ccmtSize > 16) {
+					reader.skip(12);
+					directory.setString(TAG_COMMENT, reader.getString((int) ccmtSize - 16, "UTF-8"));
+				}
+			} else {
+				// nothing
+			}
+		}
+	}
+
+	private void processUserDataMetaXtra(@NotNull SequentialReader reader, int length, long blockSize)
+			throws IOException {
+		long initialPosition = reader.getPosition();
+		while (reader.getPosition() < length && (reader.getPosition() - initialPosition) < blockSize) {
+			long key_size = reader.getUInt32();
+			long key_name_size = reader.getUInt32();
+			String key_name = reader.getString((int) key_name_size, "UTF-8");
+			long entry_count = reader.getUInt32();
+			if (key_name.equals("WM/SubTitle")) {
+				String value = getProcessUserDataMetaXtraValue(reader, entry_count);
+				directory.setString(TAG_SUBTITLE, value);
+			} else if (key_name.equals("WM/SharedUserRating")) {
+				long value_size = reader.getUInt32();
+				int value_type = reader.getUInt16();
+				directory.setLong(TAG_USER_RATING, reader.getInt64());
+			} else if (key_name.equals("WM/Category")) {
+				String value = getProcessUserDataMetaXtraValue(reader, entry_count);
+				directory.setString(TAG_CATEGORY, value);
+			} else if (key_name.equals("WM/Mood")) {
+				String value = getProcessUserDataMetaXtraValue(reader, entry_count);
+				directory.setString(TAG_MOOD, value);
+			}
+		}
+	}
+
+	private String getProcessUserDataMetaXtraValue(@NotNull SequentialReader reader, long entry_count)
+			throws IOException {
+		List<String> result = new ArrayList<>();
+		for (long i = 0; i < entry_count; ++i) {
+			long value_size = reader.getUInt32();
+			int val_type = reader.getUInt16();
+			result.add(reader.getString((int) value_size - 6, "UTF-8"));
+		}
+		return String.join(" | ", result);
+	}
 
     private void processFileType(@NotNull SequentialReader reader, long boxSize) throws IOException
     {
