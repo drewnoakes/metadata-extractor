@@ -266,8 +266,9 @@ public class PngMetadataReader
                 textBytes = reader.getNullTerminatedBytes(bytesLeft, false);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    try {
-                        textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft);
+                            InflaterInputStream inflateStream = new InflaterInputStream(bais)) {
+                        textBytes = StreamUtil.readAllBytes(inflateStream);
                     } catch(java.util.zip.ZipException zex) {
                         PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                         directory.addError(String.format("Exception decompressing PNG iTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
