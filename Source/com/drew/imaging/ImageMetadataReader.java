@@ -132,17 +132,17 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength, @Nullable String filePath) throws ImageProcessingException, IOException
     {
-        BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
-            ? (BufferedInputStream)inputStream
-            : new BufferedInputStream(inputStream);
+        try (BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
+                ? (BufferedInputStream)inputStream : new BufferedInputStream(inputStream)) {
 
         FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream, filePath);
 
-        Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
+           Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
 
-        metadata.addDirectory(new FileTypeDirectory(fileType));
+           metadata.addDirectory(new FileTypeDirectory(fileType));
 
-        return metadata;
+           return metadata;
+       }
     }
 
     /**
