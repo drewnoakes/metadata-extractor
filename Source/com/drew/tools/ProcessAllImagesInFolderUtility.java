@@ -203,6 +203,7 @@ public class ProcessAllImagesInFolderUtility
                 "jpf",
                 "jpg",
                 "jpm",
+                "jxr",
                 "kdc",
                 "m2ts",
                 "m2v",
