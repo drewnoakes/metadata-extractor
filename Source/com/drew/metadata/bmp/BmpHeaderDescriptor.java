@@ -143,7 +143,12 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
 
     @NotNull
     public static String formatHex(long value, int digits) {
-        return String.format("0x%0"+ digits + "X", value);
+        StringBuilder sb = new StringBuilder();
+        sb.append("0x");
+        long maskedValue = value & ((1L << (digits * 4)) - 1);
+        int leadingZeros = Long.numberOfLeadingZeros(maskedValue) >> 2; 
+        sb.append(Long.toHexString(maskedValue | (1L << (digits * 4))).substring(leadingZeros));
+        return sb.toString();
     }
 
     @Nullable
