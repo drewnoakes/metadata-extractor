@@ -42,6 +42,7 @@ public class QuickTimeAtomTypes
     public static final String ATOM_CANON_THUMBNAIL          = "CNTH";
     public static final String ATOM_ADOBE_XMP                = "XMP_";
     public static final String ATOM_TRACK_HEADER             = "tkhd";
+    public static final String ATOM_UUID             = "uuid";
 
     private static final ArrayList<String> _atomList = new ArrayList<String>();
 
