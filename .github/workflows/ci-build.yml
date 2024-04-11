@@ -1,0 +1,36 @@
+name: 'CI Build'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [ opened, reopened, edited ]
+    branches:
+      - master
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: false
+
+jobs:
+  compile-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java and Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+          cache: 'maven'
+          cache-dependency-path: 'pom.xml'
+
+      - name: Compile
+        run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+      - name: Run tests
+        run: mvn test -B

@@ -1,0 +1,44 @@
+name: 'CI Publish to Maven Central'
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'release/*'
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
+  cancel-in-progress: false
+
+jobs:
+  compile-test-and-publish-to-maven-central:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java and Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+          cache: 'maven'
+          cache-dependency-path: 'pom.xml'
+
+      - name: Compile
+        run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+      - name: Run tests
+        run: mvn test -B
+
+      - name: Copy publishing-config settings.xml into place
+        run: cp .ci.settings.xml $HOME/.m2/settings.xml
+
+      - name: Publish to Maven Central
+        run: ./publish.sh
+        env:
+          SONATYPE_GPGKEY_FILE_ENCRYPTION_KEY: ${{ secrets.SONATYPE_GPGKEY_FILE_ENCRYPTION_KEY }}
+          SONATYPE_GPGKEY_FILE_ENCRYPTION_IV: ${{ secrets.SONATYPE_GPGKEY_FILE_ENCRYPTION_IV }}
+          SONATYPE_GPGKEY_PASSPHRASE: ${{ secrets.SONATYPE_GPGKEY_PASSPHRASE }}
+          SONATYPE_USERNAME: ${{ vars.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}

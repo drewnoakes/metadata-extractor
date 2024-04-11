@@ -177,10 +177,9 @@ public class PngMetadataReader
                 int bytesLeft = bytes.length - (profileNameBytes.length + 1 + 1);
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
 
-                try {
-                    InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile));
+                try (ByteArrayInputStream bais = new ByteArrayInputStream(compressedProfile);
+                        InflaterInputStream inflateStream = new InflaterInputStream(bais)) {
                     new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
-                    inflateStream.close();
                 } catch(java.util.zip.ZipException zex) {
                     directory.addError(String.format("Exception decompressing PNG iCCP chunk : %s", zex.getMessage()));
                     metadata.addDirectory(directory);
@@ -222,8 +221,9 @@ public class PngMetadataReader
             int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1 + 1);
             byte[] textBytes = null;
             if (compressionMethod == 0) {
-                try {
-                    textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft);
+                        InflaterInputStream inflateStream = new InflaterInputStream(bais)) {
+                    textBytes = StreamUtil.readAllBytes(inflateStream);
                 } catch(java.util.zip.ZipException zex) {
                     PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
                     directory.addError(String.format("Exception decompressing PNG zTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
@@ -266,8 +266,9 @@ public class PngMetadataReader
                 textBytes = reader.getNullTerminatedBytes(bytesLeft, false);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    try {
-                        textBytes = StreamUtil.readAllBytes(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)));
+                    try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft);
+                            InflaterInputStream inflateStream = new InflaterInputStream(bais)) {
+                        textBytes = StreamUtil.readAllBytes(inflateStream);
                     } catch(java.util.zip.ZipException zex) {
                         PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
                         directory.addError(String.format("Exception decompressing PNG iTXt chunk with keyword \"%s\": %s", keyword, zex.getMessage()));
