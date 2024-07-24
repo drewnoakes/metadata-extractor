@@ -63,7 +63,7 @@ public class ExifReader implements JpegSegmentMetadataReader
         for (byte[] segmentBytes : segments) {
             // Segment must have the expected preamble
             if (startsWithJpegExifPreamble(segmentBytes)) {
-                extract(new ByteArrayReader(segmentBytes, JPEG_SEGMENT_PREAMBLE.length()), metadata);
+                extract(new ByteArrayReader(segmentBytes, JPEG_SEGMENT_PREAMBLE.length()), metadata, JPEG_SEGMENT_PREAMBLE.length());
             }
         }
     }
@@ -76,15 +76,15 @@ public class ExifReader implements JpegSegmentMetadataReader
     }
 
     /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int preambleLength)
     {
-        extract(reader, metadata, null);
+        extract(reader, metadata, null, preambleLength);
     }
 
     /** Reads TIFF formatted Exif data at a specified offset within a {@link RandomAccessReader}. */
-    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory)
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, @Nullable Directory parentDirectory, int exifStartOffset)
     {
-        ExifTiffHandler exifTiffHandler = new ExifTiffHandler(metadata, parentDirectory, /*readerOffset*/ 0); // FIXME what to do?
+        ExifTiffHandler exifTiffHandler = new ExifTiffHandler(metadata, parentDirectory, exifStartOffset);
 
         try {
             // Read the TIFF-formatted Exif data

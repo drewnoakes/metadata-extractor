@@ -151,7 +151,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
                         new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
-                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
+                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, directory, 0);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
                         new XmpReader().extract(tagBytes, metadata, directory);
                     else if (tagType >= 0x07D0 && tagType <= 0x0BB6) {

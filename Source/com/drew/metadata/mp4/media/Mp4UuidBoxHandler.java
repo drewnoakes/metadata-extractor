@@ -114,7 +114,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
 
             switch (uuidType) {
                 case Exif:
-                    new ExifReader().extract(new ByteArrayReader(payload, 16), metadata, directory);
+                    new ExifReader().extract(new ByteArrayReader(payload, 16), metadata, directory, 0);
                     break;
                 case IptcIim:
                     new IptcReader().extract(new SequentialByteArrayReader(payload, 16), metadata, payload.length - 16, directory);

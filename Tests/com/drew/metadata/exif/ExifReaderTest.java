@@ -46,7 +46,7 @@ public class ExifReaderTest
     {
         Metadata metadata = new Metadata();
         byte[] bytes = FileUtil.readBytes(filePath);
-        new ExifReader().extract(new ByteArrayReader(bytes, ExifReader.JPEG_SEGMENT_PREAMBLE.length()), metadata, null);
+        new ExifReader().extract(new ByteArrayReader(bytes, ExifReader.JPEG_SEGMENT_PREAMBLE.length()), metadata, null, ExifReader.JPEG_SEGMENT_PREAMBLE.length());
         return metadata;
     }
 
