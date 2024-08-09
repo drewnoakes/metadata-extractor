@@ -69,7 +69,6 @@ public class QuickTimeMetadataDirectory extends QuickTimeDirectory
     public static final int TAG_MODEL                   = 0x051E;
     public static final int TAG_ORIGINATING_SIGNATURE   = 0x051F;
     public static final int TAG_PIXEL_DENSITY           = 0x0520;
-
     public static final int TAG_SPATIAL_FORMAT_VERSION  = 0x0521;
     public static final int TAG_SPATIAL_AGGRESSORS_SEEN = 0x0522;
 
