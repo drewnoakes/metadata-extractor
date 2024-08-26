@@ -71,7 +71,7 @@ public enum FileType
     // Only file detection
     Aac("AAC", "Advanced Audio Coding", "audio/aac", "m4a"),
     Asf("ASF", "Advanced Systems Format", "video/x-ms-asf", "asf", "wma", "wmv"),
-    Cfbf("CFBF", "Compound File Binary Format", null, (String[])null),
+    Cfbf("CFBF", "Compound File Binary Format", null),
     Flv("FLV", "Flash Video", "video/x-flv", ".flv", ".f4v,"),
     Indd("INDD", "INDesign Document", "application/octet-stream", ".indd"),
     Mxf("MXF", "Material Exchange Format", "application/mxf", "mxf"),
@@ -88,9 +88,9 @@ public enum FileType
     @NotNull private final String _name;
     @NotNull private final String _longName;
     @Nullable private final String _mimeType;
-    private final String[] _extensions;
+    @NotNull private final String[] _extensions;
 
-    FileType(@NotNull String name, @NotNull String longName, @Nullable String mimeType, String... extensions)
+    FileType(@NotNull String name, @NotNull String longName, @Nullable String mimeType, @NotNull String... extensions)
     {
         _name = name;
         _longName = longName;
