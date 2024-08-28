@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -54,6 +54,8 @@ public class FileTypeDetector
         _root.addPath(FileType.Jpeg, new byte[]{(byte)0xff, (byte)0xd8});
         _root.addPath(FileType.Tiff, "II".getBytes(), new byte[]{0x2a, 0x00});
         _root.addPath(FileType.Tiff, "MM".getBytes(), new byte[]{0x00, 0x2a});
+        _root.addPath(FileType.Tiff, "II".getBytes(), new byte[]{0x2b, 0x00}); // BigTIFF
+        _root.addPath(FileType.Tiff, "MM".getBytes(), new byte[]{0x00, 0x2b}); // BigTIFF
         _root.addPath(FileType.Psd, "8BPS".getBytes());
         _root.addPath(FileType.Png, new byte[]{(byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52});
         _root.addPath(FileType.Bmp, "BM".getBytes()); // Standard Bitmap Windows and OS/2

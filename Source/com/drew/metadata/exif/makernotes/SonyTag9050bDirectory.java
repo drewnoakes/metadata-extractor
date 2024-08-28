@@ -1,6 +1,7 @@
 package com.drew.metadata.exif.makernotes;
 
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
@@ -72,8 +73,7 @@ public class SonyTag9050bDirectory extends SonyEncodedDataDirectoryBase
             // First, decipher the bytes
             decipherInPlace(bytes);
 
-            ByteArrayReader reader = new ByteArrayReader(bytes);
-            reader.setMotorolaByteOrder(false);
+            ByteArrayReader reader = new ByteArrayReader(bytes).withByteOrder(false);
 
             // Shutter
             int offset = TAG_SHUTTER;

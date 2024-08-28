@@ -53,7 +53,7 @@ public class EpsReader
      */
     public void extract(@NotNull final InputStream inputStream, @NotNull final Metadata metadata) throws IOException
     {
-        RandomAccessStreamReader reader = new RandomAccessStreamReader(inputStream);
+        RandomAccessReader reader = new RandomAccessStreamReader(inputStream);
         EpsDirectory directory = new EpsDirectory();
         metadata.addDirectory(directory);
 
@@ -64,7 +64,7 @@ public class EpsReader
          */
         switch (reader.getInt32(0)) {
             case 0xC5D0D3C6:
-                reader.setMotorolaByteOrder(false);
+                reader = reader.withByteOrder(false);
                 int postScriptOffset = reader.getInt32(4);
                 int postScriptLength = reader.getInt32(8);
                 int wmfOffset = reader.getInt32(12);
@@ -80,7 +80,7 @@ public class EpsReader
                     // Get Tiff metadata
                     try {
                         ByteArrayReader byteArrayReader = new ByteArrayReader(reader.getBytes(tifOffset, tifSize));
-                        new TiffReader().processTiff(byteArrayReader, new PhotoshopTiffHandler(metadata, null), 0);
+                        new TiffReader().processTiff(byteArrayReader, new PhotoshopTiffHandler(metadata, null));
                     } catch (TiffProcessingException ex) {
                         directory.addError("Unable to process TIFF data: " + ex.getMessage());
                     }

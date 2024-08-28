@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -51,6 +51,14 @@ public class ByteArrayReader extends RandomAccessReader
     @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public ByteArrayReader(@NotNull byte[] buffer, int baseOffset)
     {
+        this(buffer, baseOffset, true);
+    }
+
+    @SuppressWarnings({ "ConstantConditions" })
+    @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
+    public ByteArrayReader(@NotNull byte[] buffer, int baseOffset, boolean isMotorolaByteOrder)
+    {
+        super(isMotorolaByteOrder);
         if (buffer == null)
             throw new NullPointerException();
         if (baseOffset < 0)
@@ -58,6 +66,24 @@ public class ByteArrayReader extends RandomAccessReader
 
         _buffer = buffer;
         _baseOffset = baseOffset;
+    }
+
+    @Override
+    public ByteArrayReader withByteOrder(boolean isMotorolaByteOrder) {
+        if (isMotorolaByteOrder == isMotorolaByteOrder()) {
+            return this;
+        } else {
+            return new ByteArrayReader(_buffer, _baseOffset, isMotorolaByteOrder);
+        }
+    }
+
+    @Override
+    public ByteArrayReader withShiftedBaseOffset(int shift) throws IOException {
+        if (shift == 0) {
+            return this;
+        } else {
+            return new ByteArrayReader(_buffer, _baseOffset + shift, isMotorolaByteOrder());
+        }
     }
 
     @Override

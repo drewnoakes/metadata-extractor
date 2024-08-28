@@ -56,7 +56,7 @@ public abstract class Directory
      * defined tags.
      */
     @NotNull
-    protected final Collection<Tag> _definedTagList = new ArrayList<Tag>();
+    protected final List<Tag> _definedTagList = new ArrayList<Tag>();
 
     @NotNull
     private final Collection<String> _errorList = new ArrayList<String>(4);
@@ -1135,6 +1135,21 @@ public abstract class Directory
     }
 
 // OTHER METHODS
+
+    public void removeTag(int tagId)
+    {
+        if (_tagMap.remove(tagId) != null)
+        {
+            for (int i = 0; i < _definedTagList.size(); i++)
+            {
+                if (_definedTagList.get(i).getTagType() == tagId)
+                {
+                    _definedTagList.remove(i);
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      * Returns the name of a specified tag as a String.

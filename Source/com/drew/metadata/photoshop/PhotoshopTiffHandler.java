@@ -1,5 +1,6 @@
 package com.drew.metadata.photoshop;
 
+import com.drew.imaging.tiff.TiffReaderContext;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
@@ -36,26 +37,25 @@ public class PhotoshopTiffHandler extends ExifTiffHandler
         super(metadata, parentDirectory, 0);
     }
 
-    public boolean customProcessTag(final int tagOffset,
-                                    final @NotNull Set<Integer> processedIfdOffsets,
-                                    final int tiffHeaderOffset,
-                                    final @NotNull RandomAccessReader reader,
+    @Override
+    public boolean customProcessTag(final TiffReaderContext context,
                                     final int tagId,
+                                    final int valueOffset,
                                     final int byteCount) throws IOException
     {
+        final RandomAccessReader reader = context.getReader();
         switch (tagId) {
             case TAG_XMP:
-                new XmpReader().extract(reader.getBytes(tagOffset, byteCount), _metadata);
+                new XmpReader().extract(reader.getBytes(valueOffset, byteCount), _metadata);
                 return true;
             case TAG_PHOTOSHOP_IMAGE_RESOURCES:
-                new PhotoshopReader().extract(new SequentialByteArrayReader(reader.getBytes(tagOffset, byteCount)), byteCount, _metadata);
+                new PhotoshopReader().extract(new SequentialByteArrayReader(reader.getBytes(valueOffset, byteCount)), byteCount, _metadata);
                 return true;
             case TAG_ICC_PROFILES:
-                new IccReader().extract(new ByteArrayReader(reader.getBytes(tagOffset, byteCount)), _metadata);
+                new IccReader().extract(new ByteArrayReader(reader.getBytes(valueOffset, byteCount)), _metadata);
                 return true;
         }
 
-
-        return super.customProcessTag(tagOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, byteCount);
+        return super.customProcessTag(context, tagId, valueOffset, byteCount);
     }
 }
