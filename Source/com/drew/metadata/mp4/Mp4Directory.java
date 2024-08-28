@@ -20,10 +20,10 @@
  */
 package com.drew.metadata.mp4;
 
+import java.util.HashMap;
+
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
-
-import java.util.HashMap;
 
 public class Mp4Directory extends Directory {
 
@@ -46,6 +46,12 @@ public class Mp4Directory extends Directory {
     public static final int TAG_LATITUDE                                = 0x2001;
     public static final int TAG_LONGITUDE                               = 0x2002;
     public static final int TAG_MEDIA_TIME_SCALE                        = 0x0306;
+	public static final int TAG_TITLE									= 0x3000;
+	public static final int TAG_COMMENT									= 0x3001;
+	public static final int TAG_SUBTITLE								= 0x3002;
+	public static final int TAG_USER_RATING								= 0x3003;
+	public static final int TAG_CATEGORY								= 0x3004;
+	public static final int TAG_MOOD									= 0x3005;
 
     public static final int TAG_MAJOR_BRAND                             = 1;
     public static final int TAG_MINOR_VERSION                           = 2;
@@ -78,6 +84,12 @@ public class Mp4Directory extends Directory {
         _tagNameMap.put(TAG_ROTATION, "Rotation");
         _tagNameMap.put(TAG_LATITUDE, "Latitude");
         _tagNameMap.put(TAG_LONGITUDE, "Longitude");
+		_tagNameMap.put(TAG_TITLE, "Title");
+		_tagNameMap.put(TAG_COMMENT, "Comment");
+		_tagNameMap.put(TAG_SUBTITLE, "Subtitle");
+		_tagNameMap.put(TAG_USER_RATING, "User rating");
+		_tagNameMap.put(TAG_CATEGORY, "Tags");
+		_tagNameMap.put(TAG_MOOD, "Mood");
 
         _tagNameMap.put(TAG_MEDIA_TIME_SCALE, "Media Time Scale");
     }
