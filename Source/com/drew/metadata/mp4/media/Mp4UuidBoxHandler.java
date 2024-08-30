@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
 
             switch (uuidType) {
                 case Exif:
-                    new ExifReader().extract(new ByteArrayReader(payload, 16), metadata, 0, directory);
+                    new ExifReader().extract(new ByteArrayReader(payload, 16), metadata, directory, 0);
                     break;
                 case IptcIim:
                     new IptcReader().extract(new SequentialByteArrayReader(payload, 16), metadata, payload.length - 16, directory);

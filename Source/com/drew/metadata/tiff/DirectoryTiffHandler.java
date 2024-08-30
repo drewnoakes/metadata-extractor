@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ public abstract class DirectoryTiffHandler implements TiffHandler
         _rootParentDirectory = parentDirectory;
     }
 
+    @Override
     public void endingIFD()
     {
         _currentDirectory = _directoryStack.empty() ? null : _directoryStack.pop();
@@ -90,11 +91,13 @@ public abstract class DirectoryTiffHandler implements TiffHandler
         _metadata.addDirectory(_currentDirectory);
     }
 
+    @Override
     public void warn(@NotNull String message)
     {
         getCurrentOrErrorDirectory().addError(message);
     }
 
+    @Override
     public void error(@NotNull String message)
     {
         getCurrentOrErrorDirectory().addError(message);
@@ -112,112 +115,156 @@ public abstract class DirectoryTiffHandler implements TiffHandler
         return _currentDirectory;
     }
 
+    @Override
     public void setByteArray(int tagId, @NotNull byte[] bytes)
     {
         _currentDirectory.setByteArray(tagId, bytes);
     }
 
+    @Override
     public void setString(int tagId, @NotNull StringValue string)
     {
         _currentDirectory.setStringValue(tagId, string);
     }
 
+    @Override
     public void setRational(int tagId, @NotNull Rational rational)
     {
         _currentDirectory.setRational(tagId, rational);
     }
 
+    @Override
     public void setRationalArray(int tagId, @NotNull Rational[] array)
     {
         _currentDirectory.setRationalArray(tagId, array);
     }
 
+    @Override
     public void setFloat(int tagId, float float32)
     {
         _currentDirectory.setFloat(tagId, float32);
     }
 
+    @Override
     public void setFloatArray(int tagId, @NotNull float[] array)
     {
         _currentDirectory.setFloatArray(tagId, array);
     }
 
+    @Override
     public void setDouble(int tagId, double double64)
     {
         _currentDirectory.setDouble(tagId, double64);
     }
 
+    @Override
     public void setDoubleArray(int tagId, @NotNull double[] array)
     {
         _currentDirectory.setDoubleArray(tagId, array);
     }
 
+    @Override
     public void setInt8s(int tagId, byte int8s)
     {
         // NOTE Directory stores all integral types as int32s, except for int32u and long
         _currentDirectory.setInt(tagId, int8s);
     }
 
+    @Override
     public void setInt8sArray(int tagId, @NotNull byte[] array)
     {
         // NOTE Directory stores all integral types as int32s, except for int32u and long
         _currentDirectory.setByteArray(tagId, array);
     }
 
+    @Override
     public void setInt8u(int tagId, short int8u)
     {
         // NOTE Directory stores all integral types as int32s, except for int32u and long
         _currentDirectory.setInt(tagId, int8u);
     }
 
+    @Override
     public void setInt8uArray(int tagId, @NotNull short[] array)
     {
         // TODO create and use a proper setter for short[]
         _currentDirectory.setObjectArray(tagId, array);
     }
 
+    @Override
     public void setInt16s(int tagId, int int16s)
     {
         // TODO create and use a proper setter for int16u?
         _currentDirectory.setInt(tagId, int16s);
     }
 
+    @Override
     public void setInt16sArray(int tagId, @NotNull short[] array)
     {
         // TODO create and use a proper setter for short[]
         _currentDirectory.setObjectArray(tagId, array);
     }
 
+    @Override
     public void setInt16u(int tagId, int int16u)
     {
         // TODO create and use a proper setter for
         _currentDirectory.setInt(tagId, int16u);
     }
 
+    @Override
     public void setInt16uArray(int tagId, @NotNull int[] array)
     {
         // TODO create and use a proper setter for short[]
         _currentDirectory.setObjectArray(tagId, array);
     }
 
+    @Override
     public void setInt32s(int tagId, int int32s)
     {
         _currentDirectory.setInt(tagId, int32s);
     }
 
+    @Override
     public void setInt32sArray(int tagId, @NotNull int[] array)
     {
         _currentDirectory.setIntArray(tagId, array);
     }
 
+    @Override
     public void setInt32u(int tagId, long int32u)
     {
         _currentDirectory.setLong(tagId, int32u);
     }
 
+    @Override
     public void setInt32uArray(int tagId, @NotNull long[] array)
     {
         // TODO create and use a proper setter for short[]
+        _currentDirectory.setObjectArray(tagId, array);
+    }
+
+    @Override
+    public void setInt64S(int tagId, long int64S)
+    {
+        _currentDirectory.setLong(tagId, int64S);
+    }
+
+    @Override
+    public void setInt64SArray(int tagId, @NotNull long[] array)
+    {
+        _currentDirectory.setObjectArray(tagId, array);
+    }
+
+    @Override
+    public void setInt64U(int tagId, long int64U)
+    {
+        _currentDirectory.setLong(tagId, int64U);
+    }
+
+    @Override
+    public void setInt64UArray(int tagId, @NotNull long[] array)
+    {
         _currentDirectory.setObjectArray(tagId, array);
     }
 }

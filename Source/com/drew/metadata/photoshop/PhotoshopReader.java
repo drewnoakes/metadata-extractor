@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -52,12 +52,14 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
     @NotNull
     private static final String JPEG_SEGMENT_PREAMBLE = "Photoshop 3.0";
 
+    @Override
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
         return Collections.singletonList(JpegSegmentType.APPD);
     }
 
+    @Override
     public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         final int preambleLength = JPEG_SEGMENT_PREAMBLE.length();
@@ -149,7 +151,7 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                     else if (tagType == PhotoshopDirectory.TAG_ICC_PROFILE_BYTES)
                         new IccReader().extract(new ByteArrayReader(tagBytes), metadata, directory);
                     else if (tagType == PhotoshopDirectory.TAG_EXIF_DATA_1 || tagType == PhotoshopDirectory.TAG_EXIF_DATA_3)
-                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, 0, directory);
+                        new ExifReader().extract(new ByteArrayReader(tagBytes), metadata, directory, 0);
                     else if (tagType == PhotoshopDirectory.TAG_XMP_DATA)
                         new XmpReader().extract(tagBytes, metadata, directory);
                     else if (tagType >= 0x07D0 && tagType <= 0x0BB6) {

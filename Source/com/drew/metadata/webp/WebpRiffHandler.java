@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -53,11 +53,13 @@ public class WebpRiffHandler implements RiffHandler
         _metadata = metadata;
     }
 
+    @Override
     public boolean shouldAcceptRiffIdentifier(@NotNull String identifier)
     {
         return identifier.equals(WebpDirectory.FORMAT);
     }
 
+    @Override
     public boolean shouldAcceptChunk(@NotNull String fourCC)
     {
         return fourCC.equals(WebpDirectory.CHUNK_VP8X)
@@ -74,6 +76,7 @@ public class WebpRiffHandler implements RiffHandler
         return false;
     }
 
+    @Override
     public void processChunk(@NotNull String fourCC, @NotNull byte[] payload)
     {
         WebpDirectory directory = new WebpDirectory();
@@ -83,14 +86,13 @@ public class WebpRiffHandler implements RiffHandler
             ByteArrayReader reader = ExifReader.startsWithJpegExifPreamble(payload)
                 ? new ByteArrayReader(payload, ExifReader.JPEG_SEGMENT_PREAMBLE.length())
                 : new ByteArrayReader(payload);
-            new ExifReader().extract(reader, _metadata);
+            new ExifReader().extract(reader, _metadata, 0);
         } else if (fourCC.equals(WebpDirectory.CHUNK_ICCP)) {
             new IccReader().extract(new ByteArrayReader(payload), _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_XMP)) {
             new XmpReader().extract(payload, _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_VP8X) && payload.length == 10) {
-            RandomAccessReader reader = new ByteArrayReader(payload);
-            reader.setMotorolaByteOrder(false);
+            RandomAccessReader reader = new ByteArrayReader(payload, 0, false);
 
             try {
                 // Flags
@@ -116,8 +118,7 @@ public class WebpRiffHandler implements RiffHandler
                 directory.addError(e.getMessage());
             }
         } else if (fourCC.equals(WebpDirectory.CHUNK_VP8L) && payload.length > 4) {
-            RandomAccessReader reader = new ByteArrayReader(payload);
-            reader.setMotorolaByteOrder(false);
+            RandomAccessReader reader = new ByteArrayReader(payload, 0, false);
 
             try {
                 // https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification#2_riff_header
@@ -143,8 +144,7 @@ public class WebpRiffHandler implements RiffHandler
                 directory.addError(e.getMessage());
             }
         } else if (fourCC.equals(WebpDirectory.CHUNK_VP8) && payload.length > 9) {
-            RandomAccessReader reader = new ByteArrayReader(payload);
-            reader.setMotorolaByteOrder(false);
+            RandomAccessReader reader = new ByteArrayReader(payload, 0, false);
 
             try {
                 // https://tools.ietf.org/html/rfc6386#section-9.1
