@@ -32,6 +32,7 @@ public class VideoDirectory extends Directory
         _tagNameMap.put(RANGE, "Color range");
         _tagNameMap.put(DISPLAY_WIDTH, "Display width");
         _tagNameMap.put(DISPLAY_HEIGHT, "Display height");
+        _tagNameMap.put(DISPLAY_UNIT, "Display unit");
     }
 
     public VideoDirectory()

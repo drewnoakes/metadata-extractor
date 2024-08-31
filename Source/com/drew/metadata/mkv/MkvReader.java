@@ -138,9 +138,11 @@ public class MkvReader
             {
                 case 1:
                     dir = new VideoDirectory();
+                    mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.VIDEO));
                     break;
                 case 2:
                     dir = new AudioDirectory();
+                    mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.AUDIO));
                     break;
             }
             if (dir != null)
@@ -219,6 +221,7 @@ public class MkvReader
         long size = decodeInteger(reader);
         Object value = null;
         EbmlElement element = ELEMENTS.get(eid);
+
         if (element == null)
         {
             element = new EbmlElement(String.format("0x%02X [ unknown ]", eid), UNKNOWN);
@@ -230,6 +233,10 @@ public class MkvReader
                 break;
             case INTEGER:
                 value = DataParser.getLong(reader, size);
+                if (eid == ElementIDs.DISPLAY_WIDTH)
+                {
+                    System.out.println("VALUE " + value);
+                }
                 break;
             case BINARY:
                 value = DataParser.getByteArray(reader, size);
