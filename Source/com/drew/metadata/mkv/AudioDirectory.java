@@ -7,14 +7,12 @@ import java.util.HashMap;
 
 import static com.drew.metadata.mkv.ElementIDs.*;
 
-public class AudioDirectory extends Directory {
+public class AudioDirectory extends Directory
+{
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<>();
 
-    public AudioDirectory(){
-        this.setDescriptor(new TagDescriptor<Directory>(this));
-    }
-    static {
-
+    static
+    {
         _tagNameMap.put(TRACK_NUMBER, "Track number");
         _tagNameMap.put(TRACK_UID, "Track UID");
         _tagNameMap.put(TRACK_TYPE, "Track type");
@@ -26,16 +24,22 @@ public class AudioDirectory extends Directory {
         _tagNameMap.put(CHANNELS, "Channels");
         _tagNameMap.put(SAMPLING_FREQUENCY, "Sampling frequency");
         _tagNameMap.put(BIT_DEPTH, "Bit depth");
+    }
 
+    public AudioDirectory()
+    {
+        this.setDescriptor(new TagDescriptor<Directory>(this));
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Audio";
     }
 
     @Override
-    protected HashMap<Integer, String> getTagNameMap() {
+    protected HashMap<Integer, String> getTagNameMap()
+    {
         return _tagNameMap;
     }
 }

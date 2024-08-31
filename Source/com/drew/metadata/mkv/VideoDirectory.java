@@ -1,22 +1,18 @@
 package com.drew.metadata.mkv;
 
 import com.drew.metadata.Directory;
+import com.drew.metadata.TagDescriptor;
 
 import java.util.HashMap;
 
-import com.drew.metadata.TagDescriptor;
-
 import static com.drew.metadata.mkv.ElementIDs.*;
 
-public class VideoDirectory extends Directory {
+public class VideoDirectory extends Directory
+{
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<>();
 
-    public VideoDirectory() {
-        this.setDescriptor(new TagDescriptor<>(this));
-    }
-
-    static {
-
+    static
+    {
         _tagNameMap.put(TRACK_NUMBER, "Track number");
         _tagNameMap.put(TRACK_UID, "Track UID");
         _tagNameMap.put(TRACK_TYPE, "Track type");
@@ -38,13 +34,20 @@ public class VideoDirectory extends Directory {
         _tagNameMap.put(DISPLAY_HEIGHT, "Display height");
     }
 
+    public VideoDirectory()
+    {
+        this.setDescriptor(new TagDescriptor<>(this));
+    }
+
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "Video";
     }
 
     @Override
-    protected HashMap<Integer, String> getTagNameMap() {
+    protected HashMap<Integer, String> getTagNameMap()
+    {
         return _tagNameMap;
     }
 }

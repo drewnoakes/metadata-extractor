@@ -1,6 +1,7 @@
 package com.drew.metadata.mkv;
 
-public class ElementIDs {
+public class ElementIDs
+{
 
     static final int EBML_HEADER_ELEMENT = 0x1A45DFA3;
     static final int EBML_VERSION = 0x4286;

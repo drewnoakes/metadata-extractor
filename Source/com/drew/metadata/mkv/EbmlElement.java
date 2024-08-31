@@ -1,39 +1,50 @@
 package com.drew.metadata.mkv;
 
-public class EbmlElement {
-    private final String name;
-    private final Type type;
-    private final DirectoryType directory;
+public class EbmlElement
+{
+    private final String _name;
+    private final Type _type;
+    private final DirectoryType _directory;
 
-    public String toString(){
-        return name;
-    }
-    public String getName() {
-        return name;
-    }
-
-    public Type getType() {
-        return type;
+    public EbmlElement(String _name, Type type)
+    {
+        this(_name, type, DirectoryType.UNKNOWN);
     }
 
-    public EbmlElement(String name, Type type) {
-        this(name, type, DirectoryType.UNKNOWN);
-    }
-    public EbmlElement(String name, Type type, DirectoryType directory) {
-        this.name = name;
-        this.type = type;
-        this.directory = directory;
+    public EbmlElement(String name, Type type, DirectoryType directory)
+    {
+        _name = name;
+        _type = type;
+        _directory = directory;
     }
 
-    public DirectoryType getDirectory() {
-        return directory;
+    public String toString()
+    {
+        return _name;
     }
 
-    public enum Type{
+    public String get_name()
+    {
+        return _name;
+    }
+
+    public Type get_type()
+    {
+        return _type;
+    }
+
+    public DirectoryType getDirectory()
+    {
+        return _directory;
+    }
+
+    public enum Type
+    {
         MASTER, STRING, INTEGER, SIGNED_INTEGER, UTF8, BINARY, VOID, UNKNOWN, FLOAT
     }
 
-    public enum DirectoryType{
+    public enum DirectoryType
+    {
         EBML, SEGMENT, VIDEO, AUDIO, UNKNOWN
     }
 }

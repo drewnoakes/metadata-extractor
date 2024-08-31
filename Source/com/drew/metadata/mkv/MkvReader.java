@@ -6,7 +6,6 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -14,15 +13,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.drew.metadata.mkv.DataParser.decodeInteger;
 import static com.drew.metadata.mkv.EbmlElement.DirectoryType.EBML;
 import static com.drew.metadata.mkv.EbmlElement.Type.*;
-import static com.drew.metadata.mkv.DataParser.decodeInteger;
 
-public class MkvReader {
+public class MkvReader
+{
 
     private static final Map<Integer, EbmlElement> ELEMENTS = new HashMap<>();
 
-    static {
+    static
+    {
         // VOID is legit element type in Matroska spec, we're abusing it here to skip parts we don't need
         ELEMENTS.put(ElementIDs.EBML_HEADER_ELEMENT, new EbmlElement("EBML_HEADER", MASTER));
         ELEMENTS.put(ElementIDs.EBML_VERSION, new EbmlElement("EBML_VERSION", INTEGER, EBML));
@@ -88,41 +89,53 @@ public class MkvReader {
         ELEMENTS.put(ElementIDs.TAG_TRACK_UID, new EbmlElement("TAG_TRACK_UID", INTEGER));
     }
 
-    public void extract(final SequentialReader reader, Metadata metadata) throws IOException {
+    public void extract(final SequentialReader reader, Metadata metadata) throws IOException
+    {
         reader.setMotorolaByteOrder(true);
         Map<Integer, Object> data = new HashMap<>();
-        while (reader.available() > 0) {
-            extractSubContext(reader,  data);
+        while (reader.available() > 0)
+        {
+            extractSubContext(reader, data);
         }
         getMetadata(data, metadata);
     }
 
 
-    private void getMetadata(Map<Integer, Object> data, Metadata metadata) throws IOException {
+    private void getMetadata(Map<Integer, Object> data, Metadata metadata) throws IOException
+    {
         createDirectories(data, metadata);
-        for (Map.Entry<Integer, Object> entry: data.entrySet()){
-            if (entry.getValue() instanceof List){
-                for (Object member: (List<?>) entry.getValue()){
-                   doCreateDirectory(member, metadata);
+        for (Map.Entry<Integer, Object> entry : data.entrySet())
+        {
+            if (entry.getValue() instanceof List)
+            {
+                for (Object member : (List<?>) entry.getValue())
+                {
+                    doCreateDirectory(member, metadata);
                 }
-            } else {
+            } else
+            {
                 doCreateDirectory(entry.getValue(), metadata);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void doCreateDirectory(Object data, Metadata metadata) throws IOException {
-        if (data instanceof Map){
+    private void doCreateDirectory(Object data, Metadata metadata) throws IOException
+    {
+        if (data instanceof Map)
+        {
             createDirectories((Map<Integer, Object>) data, metadata);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void createDirectories(Map<Integer, Object> data, Metadata metadata) {
+    private void createDirectories(Map<Integer, Object> data, Metadata metadata)
+    {
         Directory dir = null;
-        if (data.containsKey(ElementIDs.TRACK_TYPE)) {
-            switch (((Long)data.get(ElementIDs.TRACK_TYPE)).intValue()) {
+        if (data.containsKey(ElementIDs.TRACK_TYPE))
+        {
+            switch (((Long) data.get(ElementIDs.TRACK_TYPE)).intValue())
+            {
                 case 1:
                     dir = new VideoDirectory();
                     break;
@@ -130,29 +143,37 @@ public class MkvReader {
                     dir = new AudioDirectory();
                     break;
             }
-            if (dir != null) {
+            if (dir != null)
+            {
                 mapToDirectory(dir, data);
                 metadata.addDirectory(dir);
             }
         }
-        if (data.containsKey(ElementIDs.SEGMENT_INFO)) {
+        if (data.containsKey(ElementIDs.SEGMENT_INFO))
+        {
             dir = new SegmentInfoDirectory();
             createDirectories((Map<Integer, Object>) data.get(ElementIDs.SEGMENT_INFO), metadata);
             mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.SEGMENT_INFO));
             metadata.addDirectory(dir);
         }
-        if (data.containsKey(ElementIDs.EBML_HEADER_ELEMENT)) {
+        if (data.containsKey(ElementIDs.EBML_HEADER_ELEMENT))
+        {
             dir = new EbmlDirectory();
             mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.EBML_HEADER_ELEMENT));
             metadata.addDirectory(dir);
         }
-        if (data.containsKey(ElementIDs.TRACKS)){
+        if (data.containsKey(ElementIDs.TRACKS))
+        {
             createDirectories((Map<Integer, Object>) data.get(ElementIDs.TRACKS), metadata);
         }
-        if (data.containsKey(ElementIDs.TRACK_ENTRY)){
-            if (data.get(ElementIDs.TRACK_ENTRY) instanceof List){
-                for (Object entry: (List<?>) data.get(ElementIDs.TRACK_ENTRY)){
-                    if (entry instanceof Map){
+        if (data.containsKey(ElementIDs.TRACK_ENTRY))
+        {
+            if (data.get(ElementIDs.TRACK_ENTRY) instanceof List)
+            {
+                for (Object entry : (List<?>) data.get(ElementIDs.TRACK_ENTRY))
+                {
+                    if (entry instanceof Map)
+                    {
                         createDirectories((Map<Integer, Object>) entry, metadata);
                     }
                 }
@@ -161,15 +182,19 @@ public class MkvReader {
 
     }
 
-    private void mapToDirectory(Directory directory, Map<Integer, Object> data) {
-        for (Map.Entry<Integer, Object> values : data.entrySet()) {
+    private void mapToDirectory(Directory directory, Map<Integer, Object> data)
+    {
+        for (Map.Entry<Integer, Object> values : data.entrySet())
+        {
             put(directory, values.getKey(), values.getValue());
         }
     }
 
-    private void put(Directory directory, int id, Object value) {
+    private void put(Directory directory, int id, Object value)
+    {
         EbmlElement element = ELEMENTS.get(id);
-        switch (element.getType()) {
+        switch (element.get_type())
+        {
             case INTEGER:
             case SIGNED_INTEGER:
                 directory.setLong(id, (long) value);
@@ -187,16 +212,19 @@ public class MkvReader {
         }
     }
 
-    private void extractSubContext(final SequentialReader reader, Map<Integer, Object> data) throws IOException {
+    private void extractSubContext(final SequentialReader reader, Map<Integer, Object> data) throws IOException
+    {
         reader.setMotorolaByteOrder(true);
         int eid = DataParser.getElementId(reader);
         long size = decodeInteger(reader);
         Object value = null;
         EbmlElement element = ELEMENTS.get(eid);
-        if (element == null) {
+        if (element == null)
+        {
             element = new EbmlElement(String.format("0x%02X [ unknown ]", eid), UNKNOWN);
         }
-        switch (element.getType()) {
+        switch (element.get_type())
+        {
             case STRING:
                 value = DataParser.getString(reader, size);
                 break;
@@ -209,8 +237,7 @@ public class MkvReader {
             case MASTER:
                 StreamReader sc = new StreamReader(new ByteArrayInputStream(reader.getBytes((int) size)));
                 Map<Integer, Object> subData = new HashMap<>();
-                while (sc.available() > 0)
-                    extractSubContext(sc,  subData);
+                while (sc.available() > 0) extractSubContext(sc, subData);
                 value = subData;
                 break;
             case UTF8:
@@ -226,8 +253,10 @@ public class MkvReader {
                 reader.skip(size);
                 return;
         }
-        if (ELEMENTS.containsKey(eid) && value != null) {
-            if (data.containsKey(eid)){
+        if (ELEMENTS.containsKey(eid) && value != null)
+        {
+            if (data.containsKey(eid))
+            {
                 Object previous = data.get(eid);
                 List<Object> list = new ArrayList<>();
                 list.add(previous);
