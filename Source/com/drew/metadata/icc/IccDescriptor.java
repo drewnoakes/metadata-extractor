@@ -21,6 +21,7 @@
 
 package com.drew.metadata.icc;
 
+import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
@@ -91,6 +92,11 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
                     }
                 case ICC_TAG_TYPE_DESC:
                     int stringLength = reader.getInt32(8);
+
+                    if (stringLength < 0 || stringLength > (bytes.length - 12)) {
+                        throw new BufferBoundsException(12, stringLength, bytes.length);
+                    }
+
                     return new String(bytes, 12, stringLength - 1);
                 case ICC_TAG_TYPE_SIG:
                     return IccReader.getStringFromInt32(reader.getInt32(8));
