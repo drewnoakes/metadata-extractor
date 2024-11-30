@@ -103,6 +103,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Swf, "ZWS".getBytes());
         _root.addPath(FileType.Vob, new byte[]{0x00, 0x00, 0x01, (byte)0xBA});
         _root.addPath(FileType.Zip, "PK".getBytes());
+        _root.addPath(FileType.Mkv, new byte[]{0x1A, 0x45, (byte) 0xDF, (byte) 0xA3});
 
         int bytesNeeded = _root.getMaxDepth();
         for (TypeChecker fixedChecker : _fixedCheckers) {
