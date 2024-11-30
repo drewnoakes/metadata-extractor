@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: ['7', '8', '11', '17', '18']
+        java: ['7', '8', '11', '17', '21']
 
     steps:
     - uses: actions/checkout@v3

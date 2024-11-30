@@ -88,6 +88,26 @@
                 <javadoc.opts>-Xdoclint:none</javadoc.opts>
             </properties>
         </profile>
+        <profile>
+            <id>java7-19-compile-java7</id>
+            <activation>
+                <jdk>[1.7,19)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>1.7</maven.compiler.source>
+                <maven.compiler.target>1.7</maven.compiler.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>java20-compile-java8</id>
+            <activation>
+                <jdk>[20,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>1.8</maven.compiler.target>
+            </properties>
+        </profile>
     </profiles>
 
     <build>
@@ -118,10 +138,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -136,7 +152,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.2.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -155,10 +171,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <configuration>
                     <additionalJOption>${javadoc.opts}</additionalJOption>
-                    <source>1.7</source>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <show>public</show>
                     <windowtitle>metadata-extractor - Javadoc - Extracts Exif, IPTC, XMP, ICC and other metadata from image and video files</windowtitle>
