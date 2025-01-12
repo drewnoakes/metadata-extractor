@@ -264,21 +264,22 @@ public class EpsReader
      */
     private static byte[] readUntil(@NotNull SequentialReader reader, @NotNull byte[] sentinel) throws IOException
     {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
+            final int length = sentinel.length;
+            int depth = 0;
 
-        final int length = sentinel.length;
-        int depth = 0;
+            while (depth != length) {
+                byte b = reader.getByte();
+                if (b == sentinel[depth])
+                    depth++;
+                else
+                    depth = 0;
+                bytes.write(b);
+            }
 
-        while (depth != length) {
-            byte b = reader.getByte();
-            if (b == sentinel[depth])
-                depth++;
-            else
-                depth = 0;
-            bytes.write(b);
+            return bytes.toByteArray();
         }
 
-        return bytes.toByteArray();
     }
 
     /**
@@ -303,48 +304,48 @@ public class EpsReader
     @Nullable
     private static byte[] decodeHexCommentBlock(@NotNull SequentialReader reader) throws IOException
     {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
 
-        // Use a state machine to efficiently parse data in a single traversal
+            // Use a state machine to efficiently parse data in a single traversal
 
-        final int AwaitingPercent = 0;
-        final int AwaitingSpace = 1;
-        final int AwaitingHex1 = 2;
-        final int AwaitingHex2 = 3;
+            final int AwaitingPercent = 0;
+            final int AwaitingSpace = 1;
+            final int AwaitingHex1 = 2;
+            final int AwaitingHex2 = 3;
 
-        int state = AwaitingPercent;
+            int state = AwaitingPercent;
 
-        int carry = 0;
-        boolean done = false;
+            int carry = 0;
+            boolean done = false;
 
-        byte b = 0;
-        while (!done) {
-            b = reader.getByte();
+            byte b = 0;
+            while (!done) {
+                b = reader.getByte();
 
-            switch (state) {
+                switch (state) {
                 case AwaitingPercent: {
                     switch (b) {
-                        case '\r':
-                        case '\n':
-                        case ' ':
-                            // skip newline chars and spaces
-                            break;
-                        case '%':
-                            state = AwaitingSpace;
-                            break;
-                        default:
-                            return null;
+                    case '\r':
+                    case '\n':
+                    case ' ':
+                        // skip newline chars and spaces
+                        break;
+                    case '%':
+                        state = AwaitingSpace;
+                        break;
+                    default:
+                        return null;
                     }
                     break;
                 }
                 case AwaitingSpace: {
                     switch (b) {
-                        case ' ':
-                            state = AwaitingHex1;
-                            break;
-                        default:
-                            done = true;
-                            break;
+                    case ' ':
+                        state = AwaitingHex1;
+                        break;
+                    default:
+                        done = true;
+                        break;
                     }
                     break;
                 }
@@ -368,14 +369,17 @@ public class EpsReader
                     state = AwaitingHex1;
                     break;
                 }
+                }
             }
+
+            // skip through the remainder of the last line
+            while (b != '\n')
+                b = reader.getByte();
+
+            return bytes.toByteArray();
+
         }
 
-        // skip through the remainder of the last line
-        while (b != '\n')
-            b = reader.getByte();
-
-        return bytes.toByteArray();
     }
 
     /**

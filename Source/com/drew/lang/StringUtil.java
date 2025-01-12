@@ -81,14 +81,17 @@ public final class StringUtil
     @NotNull
     public static String fromStream(@NotNull InputStream stream) throws IOException
     {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line);
+        try (InputStreamReader inputStreamReader = new InputStreamReader(stream);
+                BufferedReader reader = new BufferedReader(inputStreamReader)) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            return sb.toString();
         }
-        return sb.toString();
     }
+
 
     public static int compare(@Nullable String s1, @Nullable String s2)
     {

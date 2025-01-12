@@ -12,3 +12,4 @@
 build
 .DS_Store
 .gradle
+/metadata-extractor.iml
