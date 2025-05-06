@@ -33,17 +33,35 @@ import java.util.Iterator;
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
-public final class StringUtil
-{
+public final class StringUtil {
+
     @NotNull
-    public static String join(@NotNull Iterable<? extends CharSequence> strings, @NotNull String delimiter)
-    {
+    public static boolean isPalindrome(String input) {
+        String s = input;
+        if (s.length() <= 1 && s == null) {
+            return true;
+        }
+
+        int i = 0, j = s.length() - 1;
+        while (i < j) {
+            if (s.charAt(i) != s.charAt(j)) {
+                return false;
+            }
+            j--;
+            i++;
+        }
+        return true;
+    }
+
+    @NotNull
+    public static String join(@NotNull Iterable<? extends CharSequence> strings, @NotNull String delimiter) {
         int capacity = 0;
         int delimLength = delimiter.length();
 
         Iterator<? extends CharSequence> iter = strings.iterator();
-        if (iter.hasNext())
+        if (iter.hasNext()) {
             capacity += iter.next().length() + delimLength;
+        }
 
         StringBuilder buffer = new StringBuilder(capacity);
         iter = strings.iterator();
@@ -58,12 +76,12 @@ public final class StringUtil
     }
 
     @NotNull
-    public static <T extends CharSequence> String join(@NotNull T[] strings, @NotNull String delimiter)
-    {
+    public static <T extends CharSequence> String join(@NotNull T[] strings, @NotNull String delimiter) {
         int capacity = 0;
         int delimLength = delimiter.length();
-        for (T value : strings)
+        for (T value : strings) {
             capacity += value.length() + delimLength;
+        }
 
         StringBuilder buffer = new StringBuilder(capacity);
         boolean first = true;
@@ -79,8 +97,7 @@ public final class StringUtil
     }
 
     @NotNull
-    public static String fromStream(@NotNull InputStream stream) throws IOException
-    {
+    public static String fromStream(@NotNull InputStream stream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -90,8 +107,7 @@ public final class StringUtil
         return sb.toString();
     }
 
-    public static int compare(@Nullable String s1, @Nullable String s2)
-    {
+    public static int compare(@Nullable String s1, @Nullable String s2) {
         boolean null1 = s1 == null;
         boolean null2 = s2 == null;
 
@@ -107,8 +123,7 @@ public final class StringUtil
     }
 
     @NotNull
-    public static String urlEncode(@NotNull String name)
-    {
+    public static String urlEncode(@NotNull String name) {
         // Sufficient for now, it seems
         return name.replace(" ", "%20");
     }
