@@ -23,31 +23,16 @@ package com.drew.lang;
 
 import org.junit.Test;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
 public class StringUtilTest
 {
-
-    @Test
-    public void test_isPalindrome_returns_trueOnDate()
-    {
-        assertTrue(StringUtil.isPalindrome((LocalDate.now().getYear() - 23) + ""));
-    }
-    @Test
-    public void test_isPalindrome_returns_false()
-    {
-        assertFalse(StringUtil.isPalindrome("isPalindromeCat"));
-    }
-
     @Test public void testJoinIterable()
     {
         List<String> strings = new ArrayList<String>();
