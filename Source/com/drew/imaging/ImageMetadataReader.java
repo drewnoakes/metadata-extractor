@@ -205,6 +205,8 @@ public class ImageMetadataReader
             case Heif:
             case Avif:
                 return HeifMetadataReader.readMetadata(inputStream);
+            case Crx:
+            	return Mp4MetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
             default:
