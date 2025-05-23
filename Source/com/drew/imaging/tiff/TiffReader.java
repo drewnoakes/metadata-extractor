@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -40,17 +40,31 @@ public class TiffReader
      *
      * @param reader the {@link RandomAccessReader} from which the data should be read
      * @param handler the {@link TiffHandler} that will coordinate processing and accept read values
-     * @param tiffHeaderOffset the offset within <code>reader</code> at which the TIFF header starts
      * @throws TiffProcessingException if an error occurred during the processing of TIFF data that could not be
      *                                 ignored or recovered from
      * @throws IOException an error occurred while accessing the required data
      */
     public void processTiff(@NotNull final RandomAccessReader reader,
-                            @NotNull final TiffHandler handler,
-                            final int tiffHeaderOffset) throws TiffProcessingException, IOException
+                            @NotNull final TiffHandler handler) throws TiffProcessingException, IOException
     {
+        // Standard TIFF
+        //
+        // TIFF Header:
+        //   - 2 bytes: byte order (MM or II)
+        //   - 2 bytes: version (always 42)
+        //   - 4 bytes: offset to first IFD
+
+        // Big TIFF
+        //
+        // TIFF Header:
+        //   - 2 bytes: byte order (MM or II)
+        //   - 2 bytes: version (always 43)
+        //   - 2 bytes: byte size of offsets (always 8)
+        //   - 2 bytes: reserved (always 0)
+        //   - 8 bytes: offset to first IFD
+
         // This must be either "MM" or "II".
-        short byteOrderIdentifier = reader.getInt16(tiffHeaderOffset);
+        short byteOrderIdentifier = reader.getInt16(0);
 
         if (byteOrderIdentifier == 0x4d4d) { // "MM"
             reader.setMotorolaByteOrder(true);
@@ -61,102 +75,149 @@ public class TiffReader
         }
 
         // Check the next two values for correctness.
-        final int tiffMarker = reader.getUInt16(2 + tiffHeaderOffset);
-        handler.setTiffMarker(tiffMarker);
+        final short tiffMarker = (short) reader.getUInt16(2);
+        final TiffStandard tiffStandard = handler.processTiffMarker(tiffMarker);
 
-        int firstIfdOffset = reader.getInt32(4 + tiffHeaderOffset) + tiffHeaderOffset;
+        boolean isBigTiff;
 
-        // David Ekholm sent a digital camera image that has this problem
-        // TODO getLength should be avoided as it causes RandomAccessStreamReader to read to the end of the stream
-        if (firstIfdOffset >= reader.getLength() - 1) {
-            handler.warn("First IFD offset is beyond the end of the TIFF data segment -- trying default offset");
-            // First directory normally starts immediately after the offset bytes, so try that
-            firstIfdOffset = tiffHeaderOffset + 2 + 2 + 4;
+        int firstIfdOffset = reader.getInt32(4);
+
+        switch (tiffStandard)
+        {
+            case TIFF:
+                isBigTiff = false;
+                firstIfdOffset = (int) reader.getUInt32(4);
+
+                // David Ekholm sent a digital camera image that has this problem
+                // TODO getLength should be avoided as it causes RandomAccessStreamReader to read to the end of the stream
+                if (firstIfdOffset >= reader.getLength() - 1) {
+                    handler.warn("First IFD offset is beyond the end of the TIFF data segment -- trying default offset");
+                    // First directory normally starts immediately after the offset bytes, so try that
+                    firstIfdOffset = 2 + 2 + 4;
+                }
+
+                break;
+
+            case BIG_TIFF:
+                isBigTiff = true;
+                short offsetByteSize = reader.getInt16(4);
+
+                if (offsetByteSize != 8)
+                {
+                    handler.error("Unsupported offset byte size: {offsetByteSize}");
+                    return;
+                }
+
+                // There are two reserved bytes at offset 6, which are expected to have zero value.
+                // We skip without validation for now, but may change this in future.
+
+                firstIfdOffset = (int) reader.getUInt64(8);
+                break;
+
+            default:
+                handler.error("Unsupported TiffStandard {tiffStandard}.");
+                return;
         }
 
         Set<Integer> processedIfdOffsets = new HashSet<Integer>();
-        processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset);
+        processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, isBigTiff);
     }
 
     /**
      * Processes a TIFF IFD.
      *
-     * IFD Header:
-     * <ul>
-     *     <li><b>2 bytes</b> number of tags</li>
-     * </ul>
-     * Tag structure:
-     * <ul>
-     *     <li><b>2 bytes</b> tag type</li>
-     *     <li><b>2 bytes</b> format code (values 1 to 12, inclusive)</li>
-     *     <li><b>4 bytes</b> component count</li>
-     *     <li><b>4 bytes</b> inline value, or offset pointer if too large to fit in four bytes</li>
-     * </ul>
-     *
-     *
      * @param handler the {@link com.drew.imaging.tiff.TiffHandler} that will coordinate processing and accept read values
      * @param reader the {@link com.drew.lang.RandomAccessReader} from which the data should be read
      * @param processedIfdOffsets the set of visited IFD offsets, to avoid revisiting the same IFD in an endless loop
      * @param ifdOffset the offset within <code>reader</code> at which the IFD data starts
-     * @param tiffHeaderOffset the offset within <code>reader</code> at which the TIFF header starts
+     * @param isBigTiff Whether the IFD uses the BigTIFF data format.
      * @throws IOException an error occurred while accessing the required data
      */
     public static void processIfd(@NotNull final TiffHandler handler,
                                   @NotNull final RandomAccessReader reader,
                                   @NotNull final Set<Integer> processedIfdOffsets,
                                   final int ifdOffset,
-                                  final int tiffHeaderOffset) throws IOException
+                                  final boolean isBigTiff) throws IOException
     {
+        // Standard TIFF
+        //
+        // IFD Header:
+        //   - 2 bytes: number of tags
+        //
+        // Tag structure:
+        //   - 2 bytes: tag type
+        //   - 2 bytes: format code (values 1 to 12, inclusive)
+        //   - 4 bytes: component count
+        //   - 4 bytes: inline value, or offset pointer if too large to fit in four bytes
+
+        // BigTIFF
+        //
+        // IFD Header:
+        //   - 8 bytes: number of tags
+        //
+        // Tag structure:
+        //   - 2 bytes: tag type
+        //   - 2 bytes: format code (values 1 to 12, inclusive)
+        //   - 8 bytes: component count
+        //   - 8 bytes: inline value, or offset pointer if too large to fit in eight bytes
+
         Boolean resetByteOrder = null;
         try {
-            // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
-            if (processedIfdOffsets.contains(Integer.valueOf(ifdOffset))) {
-                return;
-            }
+            // Check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist.
+            // Note that we track these offsets in the global frame, not the reader's local frame.
+            int globalIfdOffset = reader.toUnshiftedOffset(ifdOffset);
 
             // remember that we've visited this directory so that we don't visit it again later
-            processedIfdOffsets.add(ifdOffset);
+            if (!processedIfdOffsets.add(globalIfdOffset)) {
+            	return;
+            }
 
+            // Validate IFD offset
             if (ifdOffset >= reader.getLength() || ifdOffset < 0) {
                 handler.error("Ignored IFD marked to start outside data segment");
                 return;
             }
 
-            // First two bytes in the IFD are the number of tags in this directory
-            int dirTagCount = reader.getUInt16(ifdOffset);
+            // The number of tags in this directory
+            int dirTagCount = isBigTiff
+                    ? (int) reader.getUInt64(ifdOffset)
+                    : reader.getUInt16(ifdOffset);
 
             // Some software modifies the byte order of the file, but misses some IFDs (such as makernotes).
             // The entire test image repository doesn't contain a single IFD with more than 255 entries.
             // Here we detect switched bytes that suggest this problem, and temporarily swap the byte order.
             // This was discussed in GitHub issue #136.
-            if (dirTagCount > 0xFF && (dirTagCount & 0xFF) == 0) {
+            if (!isBigTiff && dirTagCount > 0xFF && (dirTagCount & 0xFF) == 0) {
                 resetByteOrder = reader.isMotorolaByteOrder();
                 dirTagCount >>= 8;
                 reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
             }
 
-            int dirLength = (2 + (12 * dirTagCount) + 4);
+            int dirLength = isBigTiff
+                    ? 8 + 20 * dirTagCount + 8
+                    : 2 + 12 * dirTagCount + 4;
             if (dirLength + ifdOffset > reader.getLength()) {
                 handler.error("Illegally sized IFD");
                 return;
             }
+
+            int inlineValueSize = isBigTiff ? 8 : 4;
 
             //
             // Handle each tag in this directory
             //
             int invalidTiffFormatCodeCount = 0;
             for (int tagNumber = 0; tagNumber < dirTagCount; tagNumber++) {
-                final int tagOffset = calculateTagOffset(ifdOffset, tagNumber);
+                final int tagOffset = calculateTagOffset(ifdOffset, tagNumber, isBigTiff);
 
-                // 2 bytes for the tag id
                 final int tagId = reader.getUInt16(tagOffset);
 
-                // 2 bytes for the format code
                 final int formatCode = reader.getUInt16(tagOffset + 2);
-                final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode);
+                final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode, isBigTiff);
 
-                // 4 bytes dictate the number of components in this tag's data
-                final long componentCount = reader.getUInt32(tagOffset + 4);
+                final long componentCount = isBigTiff
+                        ? reader.getUInt64(tagOffset + 4)
+                        : reader.getUInt32(tagOffset + 4);
 
                 final long byteCount;
                 if (format == null) {
@@ -178,59 +239,66 @@ public class TiffReader
                 }
 
                 final long tagValueOffset;
-                if (byteCount > 4) {
-                    // If it's bigger than 4 bytes, the dir entry contains an offset.
-                    final long offsetVal = reader.getUInt32(tagOffset + 8);
-                    if (offsetVal + byteCount > reader.getLength()) {
-                        // Bogus pointer offset and / or byteCount value
+                if (byteCount > inlineValueSize) {
+                    // Value(s) are too big to fit inline. Follow the pointer.
+                    tagValueOffset = isBigTiff
+                            ? reader.getUInt64(tagOffset + 12)
+                            : reader.getUInt32(tagOffset + 8);
+                    if (tagValueOffset + byteCount > reader.getLength()) {
+                        // Bogus pointer offset and/or byteCount value
                         handler.error("Illegal TIFF tag pointer offset");
                         continue;
                     }
-                    tagValueOffset = tiffHeaderOffset + offsetVal;
                 } else {
-                    // 4 bytes or less and value is in the dir entry itself.
-                    tagValueOffset = tagOffset + 8;
+                    // Value(s) can fit inline.
+                    tagValueOffset = isBigTiff
+                            ? tagOffset + 12
+                            : tagOffset + 8;
                 }
 
-                if (tagValueOffset < 0 || tagValueOffset > reader.getLength()) {
+                if (tagValueOffset > reader.getLength()) {
                     handler.error("Illegal TIFF tag pointer offset");
                     continue;
                 }
 
                 // Check that this tag isn't going to allocate outside the bounds of the data array.
                 // This addresses an uncommon OutOfMemoryError.
-                if (byteCount < 0 || tagValueOffset + byteCount > reader.getLength()) {
+                if (tagValueOffset + byteCount > reader.getLength()) {
                     handler.error("Illegal number of bytes for TIFF tag data: " + byteCount);
                     continue;
                 }
 
                 // Some tags point to one or more additional IFDs to process
                 boolean isIfdPointer = false;
-                if (byteCount == 4 * componentCount) {
+                if (byteCount == 4 * componentCount || formatCode == TiffDataFormat.CODE_IFD8) {
                     for (int i = 0; i < componentCount; i++) {
                         if (handler.tryEnterSubIfd(tagId)) {
                             isIfdPointer = true;
-                            int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
-                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
+                            long subDirOffset = reader.getUInt32((int) (tagValueOffset + i*4));
+                            processIfd(handler, reader, processedIfdOffsets, (int) subDirOffset, isBigTiff);
                         }
                     }
                 }
 
                 // If it wasn't an IFD pointer, allow custom tag processing to occur
-                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
+                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, reader, tagId, (int) byteCount, isBigTiff)) {
                     // If no custom processing occurred, process the tag in the standard fashion
                     processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
                 }
             }
 
             // at the end of each IFD is an optional link to the next IFD
-            final int finalTagOffset = calculateTagOffset(ifdOffset, dirTagCount);
-            int nextIfdOffset = reader.getInt32(finalTagOffset);
-            if (nextIfdOffset != 0) {
-                nextIfdOffset += tiffHeaderOffset;
+            final int finalTagOffset = calculateTagOffset(ifdOffset, dirTagCount, isBigTiff);
+
+            long nextIfdOffsetLong = isBigTiff
+                    ? reader.getUInt64(finalTagOffset)
+                    : reader.getUInt32(finalTagOffset);
+
+            if (nextIfdOffsetLong != 0 && nextIfdOffsetLong <= Integer.MAX_VALUE) {
+                int nextIfdOffset = (int) nextIfdOffsetLong;
+
                 if (nextIfdOffset >= reader.getLength()) {
                     // Last 4 bytes of IFD reference another IFD with an address that is out of bounds
-                    // Note this could have been caused by jhead 1.3 cropping too much
                     return;
                 } else if (nextIfdOffset < ifdOffset) {
                     // TODO is this a valid restriction?
@@ -239,7 +307,7 @@ public class TiffReader
                 }
 
                 if (handler.hasFollowerIfd()) {
-                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, tiffHeaderOffset);
+                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, isBigTiff);
                 }
             }
         } finally {
@@ -326,7 +394,7 @@ public class TiffReader
                 break;
             case TiffDataFormat.CODE_INT16_S:
                 if (componentCount == 1) {
-                    handler.setInt16s(tagId, (int)reader.getInt16(tagValueOffset));
+                    handler.setInt16s(tagId, reader.getInt16(tagValueOffset));
                 } else {
                     short[] array = new short[componentCount];
                     for (int i = 0; i < componentCount; i++)
@@ -366,6 +434,32 @@ public class TiffReader
                     handler.setInt32uArray(tagId, array);
                 }
                 break;
+            case TiffDataFormat.CODE_INT64_S:
+                if (componentCount == 1)
+                {
+                    handler.setInt64S(tagId, reader.getInt64(tagValueOffset));
+                }
+                else
+                {
+                    long[] array = new long[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        array[i] = reader.getInt64(tagValueOffset + i * 8);
+                    handler.setInt64SArray(tagId, array);
+                }
+                break;
+            case TiffDataFormat.CODE_INT64_U:
+                if (componentCount == 1)
+                {
+                    handler.setInt64U(tagId, reader.getUInt64(tagValueOffset));
+                }
+                else
+                {
+                    long[] array = new long[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        array[i] = reader.getUInt64(tagValueOffset + i * 8);
+                    handler.setInt64UArray(tagId, array);
+                }
+                break;
             default:
                 handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
         }
@@ -376,11 +470,14 @@ public class TiffReader
      *
      * @param ifdStartOffset the offset at which the IFD starts
      * @param entryNumber    the zero-based entry number
+     * @param isBigTiff      Whether we are using BigTIFF encoding
      */
-    private static int calculateTagOffset(int ifdStartOffset, int entryNumber)
+    private static int calculateTagOffset(int ifdStartOffset, int entryNumber, boolean isBigTiff)
     {
         // Add 2 bytes for the tag count.
-        // Each entry is 12 bytes.
-        return ifdStartOffset + 2 + (12 * entryNumber);
+        // Each entry is 12 bytes for regular TIFF, or 20 bytes for BigTIFF.
+        return !isBigTiff
+                ? ifdStartOffset + 2 + 12 * entryNumber
+                : ifdStartOffset + 8 + 20 * entryNumber;
     }
 }

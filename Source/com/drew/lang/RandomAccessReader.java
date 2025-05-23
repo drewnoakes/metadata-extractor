@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ import java.nio.charset.Charset;
 public abstract class RandomAccessReader
 {
     private boolean _isMotorolaByteOrder = true;
+
+    public abstract RandomAccessReader withShiftedBaseOffset(int shift) throws IOException;
 
     public abstract int toUnshiftedOffset(int localOffset);
 
@@ -328,6 +330,41 @@ public abstract class RandomAccessReader
                    ((long)getByte(index + 1) << 8  & 0xFF00L) |
                    ((long)getByte(index    )       & 0xFFL);
         }
+    }
+
+    /**
+     * Get an unsigned 64-bit integer from the buffer.
+     *
+     * @param index position within the data buffer to read first byte
+     * @return the 64 bit int value, between 0x0000000000000000 and 0xFFFFFFFFFFFFFFFF
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public long getUInt64(int index) throws IOException
+    {
+        validateIndex(index, 8);
+        if (_isMotorolaByteOrder)
+        {
+            // Motorola - MSB first
+            return
+                (long)getByte(index    ) << 56 |
+                (long)getByte(index + 1) << 48 |
+                (long)getByte(index + 2) << 40 |
+                (long)getByte(index + 3) << 32 |
+                (long)getByte(index + 4) << 24 |
+                (long)getByte(index + 5) << 16 |
+                (long)getByte(index + 6) <<  8 |
+                      getByte(index + 7);
+        }
+        // Intel ordering - LSB first
+        return
+            (long)getByte(index + 7) << 56 |
+            (long)getByte(index + 6) << 48 |
+            (long)getByte(index + 5) << 40 |
+            (long)getByte(index + 4) << 32 |
+            (long)getByte(index + 3) << 24 |
+            (long)getByte(index + 2) << 16 |
+            (long)getByte(index + 1) <<  8 |
+                  getByte(index    );
     }
 
     /**
