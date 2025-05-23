@@ -83,7 +83,7 @@ public class WebpRiffHandler implements RiffHandler
             ByteArrayReader reader = ExifReader.startsWithJpegExifPreamble(payload)
                 ? new ByteArrayReader(payload, ExifReader.JPEG_SEGMENT_PREAMBLE.length())
                 : new ByteArrayReader(payload);
-            new ExifReader().extract(reader, _metadata);
+            new ExifReader().extract(reader, _metadata, 0);
         } else if (fourCC.equals(WebpDirectory.CHUNK_ICCP)) {
             new IccReader().extract(new ByteArrayReader(payload), _metadata);
         } else if (fourCC.equals(WebpDirectory.CHUNK_XMP)) {

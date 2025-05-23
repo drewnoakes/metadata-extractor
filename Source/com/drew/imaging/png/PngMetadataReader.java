@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -331,7 +331,7 @@ public class PngMetadataReader
         } else if (chunkType.equals(PngChunkType.eXIf)) {
             try {
                 ExifTiffHandler handler = new ExifTiffHandler(metadata, null, 0);
-                new TiffReader().processTiff(new ByteArrayReader(bytes), handler, 0);
+                new TiffReader().processTiff(new ByteArrayReader(bytes), handler);
             } catch (TiffProcessingException ex) {
                 PngDirectory directory = new PngDirectory(PngChunkType.eXIf);
                 directory.addError(ex.getMessage());
