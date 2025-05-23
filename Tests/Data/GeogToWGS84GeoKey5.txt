@@ -1,0 +1,10 @@
+GeogToWGS84GeoKey5.tif is an sample GeoTIFF file for the GeogToWGS84GeoKey
+geo key. After datum transformation to the WGS84 reference system the center
+of the image (marked by a red pixel) should be exactly at N 52° E 9° in a
+geographic coordinate system.
+
+The output of listgeo is included as GeogToWGS84GeoKey5.lgo.
+
+The files are placed in the public domain.
+
+Christian Zietz <czietz@gmx.net>

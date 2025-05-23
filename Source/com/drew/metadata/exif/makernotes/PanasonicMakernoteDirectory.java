@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -637,8 +637,7 @@ public class PanasonicMakernoteDirectory extends Directory
         if (bytes==null)
             return null;
 
-        RandomAccessReader reader = new ByteArrayReader(bytes);
-        reader.setMotorolaByteOrder(false);
+        RandomAccessReader reader = new ByteArrayReader(bytes, 0, false);
 
         try {
             int faceCount = reader.getUInt16(0);
@@ -668,8 +667,7 @@ public class PanasonicMakernoteDirectory extends Directory
         if (bytes == null)
             return null;
 
-        RandomAccessReader reader = new ByteArrayReader(bytes);
-        reader.setMotorolaByteOrder(false);
+        RandomAccessReader reader = new ByteArrayReader(bytes, 0, false);
 
         try {
             int faceCount = reader.getUInt16(0);

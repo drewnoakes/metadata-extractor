@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,14 +20,12 @@
  */
 package com.drew.imaging.tiff;
 
-import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.StringValue;
 
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * Interface of an class capable of handling events raised during the reading of a TIFF file
@@ -44,22 +42,31 @@ public interface TiffHandler
      * validation or perhaps differentiating the type of mapping to use for observed tags and IFDs.
      *
      * @param marker the 2-byte value found at position 2 of the TIFF header
+     * @return The TIFF standard via which to interpret the data stream.
      */
-    void setTiffMarker(int marker) throws TiffProcessingException;
+    TiffStandard processTiffMarker(short marker) throws TiffProcessingException;
 
     boolean tryEnterSubIfd(int tagId);
     boolean hasFollowerIfd();
 
-    void endingIFD();
+    void endingIFD(TiffReaderContext context);
 
     @Nullable
     Long tryCustomProcessFormat(int tagId, int formatCode, long componentCount);
 
-    boolean customProcessTag(int tagOffset,
-                             @NotNull Set<Integer> processedIfdOffsets,
-                             int tiffHeaderOffset,
-                             @NotNull RandomAccessReader reader,
+    /**
+     * Allows handlers to provide custom logic for a given tag.
+     *
+     * @param context Context for the TIFF read operation.
+     * @param tagId The ID of the tag being processed.
+     * @param valueOffset The offset into the data stream at which the tag's value starts.
+     * @param byteCount The number of bytes that the tag's value spans.
+     * @return {@code true} if processing was successful and default processing should be suppressed, otherwise {@code false}
+     * @throws IOException if any I/O error occurs
+     */
+    boolean customProcessTag(TiffReaderContext context,
                              int tagId,
+                             int valueOffset,
                              int byteCount) throws IOException;
 
     void warn(@NotNull String message);
@@ -85,4 +92,8 @@ public interface TiffHandler
     void setInt32sArray(int tagId, @NotNull int[] array);
     void setInt32u(int tagId, long int32u);
     void setInt32uArray(int tagId, @NotNull long[] array);
+    void setInt64S(int tagId, long int64S);
+    void setInt64SArray(int tagId, @NotNull long[] array);
+    void setInt64U(int tagId, long int64U);
+    void setInt64UArray(int tagId, @NotNull long[] array);
 }

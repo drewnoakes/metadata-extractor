@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -137,6 +137,13 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_WHITE_POINT                       = 0x013E;
     public static final int TAG_PRIMARY_CHROMATICITIES            = 0x013F;
 
+    /**
+     * A color map for palette color images.
+     * This field defines a Red-Green-Blue color map (often called a lookup table) for palette-color images.
+     * In a palette-color image, a pixel value is used to index into an RGB lookup table.
+     */
+    public static final int TAG_COLOR_MAP                         = 0x0140;
+
     public static final int TAG_TILE_WIDTH                        = 0x0142;
     public static final int TAG_TILE_LENGTH                       = 0x0143;
     public static final int TAG_TILE_OFFSETS                      = 0x0144;
@@ -191,9 +198,22 @@ public abstract class ExifDirectoryBase extends Directory
      * The actual F-number(F-stop) of lens when the image was taken.
      */
     public static final int TAG_FNUMBER                           = 0x829D;
+
+    public static final int TAG_PIXEL_SCALE                       = 0x830E;
+
     public static final int TAG_IPTC_NAA                          = 0x83BB;
+
+    public static final int TAG_MODEL_TIE_POINT                   = 0x8482;
+
     public static final int TAG_PHOTOSHOP_SETTINGS                = 0x8649;
     public static final int TAG_INTER_COLOR_PROFILE               = 0x8773;
+
+    public static final int TAG_GEOTIFF_GEO_KEYS                  = 0x87AF;
+
+    public static final int TAG_GEOTIFF_GEO_DOUBLE_PARAMS         = 0x87B0;
+
+    public static final int TAG_GEOTIFF_GEO_ASCII_PARAMS          = 0x87B1;
+
     /**
      * Exposure program that the camera used when image was taken. '1' means
      * manual control, '2' program normal, '3' aperture priority, '4' shutter
@@ -602,6 +622,10 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_LENS_MODEL                        = 0xA434;
     /** String. */
     public static final int TAG_LENS_SERIAL_NUMBER                = 0xA435;
+
+    public static final int TAG_GDAL_METADATA                     = 0xA480;
+    public static final int TAG_GDAL_NO_DATA                      = 0xA481;
+
     /** Rational64u. */
     public static final int TAG_GAMMA                             = 0xA500;
 
@@ -652,6 +676,7 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_HOST_COMPUTER, "Host Computer");
         map.put(TAG_WHITE_POINT, "White Point");
         map.put(TAG_PRIMARY_CHROMATICITIES, "Primary Chromaticities");
+        map.put(TAG_COLOR_MAP, "Color Map");
         map.put(TAG_TILE_WIDTH, "Tile Width");
         map.put(TAG_TILE_LENGTH, "Tile Length");
         map.put(TAG_TILE_OFFSETS, "Tile Offsets");
@@ -687,9 +712,14 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_COPYRIGHT, "Copyright");
         map.put(TAG_EXPOSURE_TIME, "Exposure Time");
         map.put(TAG_FNUMBER, "F-Number");
+        map.put(TAG_PIXEL_SCALE, "Pixel Scale");
         map.put(TAG_IPTC_NAA, "IPTC/NAA");
+        map.put(TAG_MODEL_TIE_POINT, "Model Tie Point");
         map.put(TAG_PHOTOSHOP_SETTINGS, "Photoshop Settings");
         map.put(TAG_INTER_COLOR_PROFILE, "Inter Color Profile");
+        map.put(TAG_GEOTIFF_GEO_KEYS, "GeoTIFF Geo Keys");
+        map.put(TAG_GEOTIFF_GEO_DOUBLE_PARAMS, "GeoTIFF Geo Double Params");
+        map.put(TAG_GEOTIFF_GEO_ASCII_PARAMS, "GeoTIFF Geo ASCII Params");
         map.put(TAG_EXPOSURE_PROGRAM, "Exposure Program");
         map.put(TAG_SPECTRAL_SENSITIVITY, "Spectral Sensitivity");
         map.put(TAG_ISO_EQUIVALENT, "ISO Speed Ratings");
@@ -783,6 +813,8 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_LENS_MAKE, "Lens Make");
         map.put(TAG_LENS_MODEL, "Lens Model");
         map.put(TAG_LENS_SERIAL_NUMBER, "Lens Serial Number");
+        map.put(TAG_GDAL_METADATA, "GDAL Metadata");
+        map.put(TAG_GDAL_NO_DATA, "GDAL NoData");
         map.put(TAG_GAMMA, "Gamma");
         map.put(TAG_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
         map.put(TAG_PANASONIC_TITLE, "Panasonic Title");
