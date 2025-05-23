@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -44,8 +44,9 @@ public interface TiffHandler
      * validation or perhaps differentiating the type of mapping to use for observed tags and IFDs.
      *
      * @param marker the 2-byte value found at position 2 of the TIFF header
+     * @return The TIFF standard via which to interpret the data stream.
      */
-    void setTiffMarker(int marker) throws TiffProcessingException;
+    TiffStandard processTiffMarker(short marker) throws TiffProcessingException;
 
     boolean tryEnterSubIfd(int tagId);
     boolean hasFollowerIfd();
@@ -57,10 +58,10 @@ public interface TiffHandler
 
     boolean customProcessTag(int tagOffset,
                              @NotNull Set<Integer> processedIfdOffsets,
-                             int tiffHeaderOffset,
                              @NotNull RandomAccessReader reader,
                              int tagId,
-                             int byteCount) throws IOException;
+                             int byteCount,
+                             boolean isBigTiff) throws IOException;
 
     void warn(@NotNull String message);
     void error(@NotNull String message);
@@ -85,4 +86,8 @@ public interface TiffHandler
     void setInt32sArray(int tagId, @NotNull int[] array);
     void setInt32u(int tagId, long int32u);
     void setInt32uArray(int tagId, @NotNull long[] array);
+    void setInt64S(int tagId, long int64S);
+    void setInt64SArray(int tagId, @NotNull long[] array);
+    void setInt64U(int tagId, long int64U);
+    void setInt64UArray(int tagId, @NotNull long[] array);
 }

@@ -21,12 +21,15 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
+import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+
+import java.util.Objects;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -54,6 +57,9 @@ public class NikonType1MakernoteTest
     public void setUp() throws Exception
     {
         Metadata metadata = ExifReaderTest.processBytes("Tests/Data/nikonMakernoteType1.jpg.app1");
+
+        ErrorDirectory error = metadata.getFirstDirectoryOfType(ErrorDirectory.class);
+        assertNull(error != null ? Objects.toString(error.getErrors()) : "", error);
 
         _nikonDirectory = metadata.getFirstDirectoryOfType(NikonType1MakernoteDirectory.class);
         _exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);

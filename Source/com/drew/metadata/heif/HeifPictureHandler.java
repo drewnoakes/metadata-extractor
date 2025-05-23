@@ -151,7 +151,7 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
             }
             payloadReader.skip(tiffHeaderOffset);
             ByteArrayInputStream tiffStream = new ByteArrayInputStream(payloadReader.getBytes(payloadReader.available()));
-            new ExifReader().extract(new RandomAccessStreamReader(tiffStream), metadata);
+            new ExifReader().extract(new RandomAccessStreamReader(tiffStream), metadata, 0);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -1158,7 +1158,7 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
             if (end > values.length) // sanity check in case of byte order problems; calculated 'end' should be <= length of the values
             {
                 // try swapping byte order (I have seen this order different than in EXIF)
-                reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
+                reader = reader.withByteOrder(!reader.isMotorolaByteOrder());
                 item0 = reader.getInt16(0);
                 item1 = reader.getInt16(2);
 

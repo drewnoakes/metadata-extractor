@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2022 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -92,7 +94,7 @@ public abstract class RandomAccessTestBase
         assertEquals((short)0x017F, reader.getInt16(1));
         assertEquals((short)0x7FFF, reader.getInt16(2));
 
-        reader.setMotorolaByteOrder(false);
+        reader = reader.withByteOrder(false);
 
         assertEquals((short)0x0100, reader.getInt16(0));
         assertEquals((short)0x7F01, reader.getInt16(1));
@@ -109,7 +111,7 @@ public abstract class RandomAccessTestBase
         assertEquals(0x017F, reader.getUInt16(1));
         assertEquals(0x7FFF, reader.getUInt16(2));
 
-        reader.setMotorolaByteOrder(false);
+        reader = reader.withByteOrder(false);
 
         assertEquals(0x0100, reader.getUInt16(0));
         assertEquals(0x7F01, reader.getUInt16(1));
@@ -141,7 +143,7 @@ public abstract class RandomAccessTestBase
         assertEquals(0x7FFF0203, reader.getInt32(2));
         assertEquals(0xFF020304, reader.getInt32(3));
 
-        reader.setMotorolaByteOrder(false);
+        reader = reader.withByteOrder(false);
 
         assertEquals(0xFF7F0100, reader.getInt32(0));
         assertEquals(0x02FF7F01, reader.getInt32(1));
@@ -162,7 +164,7 @@ public abstract class RandomAccessTestBase
         assertEquals(0x7FFF0203L, reader.getUInt32(2));
         assertEquals(0xFF020304L, reader.getUInt32(3));
 
-        reader.setMotorolaByteOrder(false);
+        reader = reader.withByteOrder(false);
 
         assertEquals(4286513408L, reader.getUInt32(0));
         assertEquals(0x02FF7F01L, reader.getUInt32(1));
@@ -191,7 +193,7 @@ public abstract class RandomAccessTestBase
         assertEquals(0x0001020304050607L, reader.getInt64(0));
         assertEquals(0x01020304050607FFL, reader.getInt64(1));
 
-        reader.setMotorolaByteOrder(false);
+        reader = reader.withByteOrder(false);
 
         assertEquals(0x0706050403020100L, reader.getInt64(0));
         assertEquals(0xFF07060504030201L, reader.getInt64(1));
@@ -335,5 +337,35 @@ public abstract class RandomAccessTestBase
             reader.getInt8(1);
             fail("Expecting exception");
         } catch (IOException ignored) {}
+    }
+
+    @Test
+    public void testWithShiftedBaseOffset() throws Exception
+    {
+        RandomAccessReader reader = createReader(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}).withByteOrder(false);
+
+        assertEquals(10, reader.getLength());
+        assertEquals(0, reader.getByte(0));
+        assertEquals(1, reader.getByte(1));
+        assertArrayEquals(new byte[] { 0, 1 }, reader.getBytes(0, 2));
+        assertEquals(4, reader.toUnshiftedOffset(4));
+
+        reader = reader.withShiftedBaseOffset(2);
+
+        assertFalse(reader.isMotorolaByteOrder());
+        assertEquals(8, reader.getLength());
+        assertEquals(2, reader.getByte(0));
+        assertEquals(3, reader.getByte(1));
+        assertArrayEquals(new byte[] { 2, 3 }, reader.getBytes(0, 2));
+        assertEquals(6, reader.toUnshiftedOffset(4));
+
+        reader = reader.withShiftedBaseOffset(2);
+
+        assertFalse(reader.isMotorolaByteOrder());
+        assertEquals(6, reader.getLength());
+        assertEquals(4, reader.getByte(0));
+        assertEquals(5, reader.getByte(1));
+        assertArrayEquals(new byte[] { 4, 5 }, reader.getBytes(0, 2));
+        assertEquals(8, reader.toUnshiftedOffset(4));
     }
 }
