@@ -377,7 +377,7 @@ public class TagDescriptor<T extends Directory>
             format.setRoundingMode(RoundingMode.HALF_UP);
             return format.format(fApexPower) + " sec";
         } else {
-            int apexPower = (int)(Math.round(Math.exp(apexValue * Math.log(2))));
+            int apexPower = (int)Math.round(Math.exp(apexValue * Math.log(2)));
             return "1/" + apexPower + " sec";
         }
     }
