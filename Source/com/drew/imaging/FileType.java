@@ -35,6 +35,7 @@ public enum FileType
     Jpeg("JPEG", "Joint Photographic Experts Group", "image/jpeg", "jpg", "jpeg", "jpe"),
     Tiff("TIFF", "Tagged Image File Format", "image/tiff", "tiff", "tif"),
     Psd("PSD", "Photoshop Document", "image/vnd.adobe.photoshop", "psd"),
+    Dng("DNG", "Digital Negative", "image/x-adobe-dng", "dng"),
     Png("PNG", "Portable Network Graphics", "image/png", "png"),
     Bmp("BMP", "Device Independent Bitmap", "image/bmp", "bmp"),
     Gif("GIF", "Graphics Interchange Format", "image/gif", "gif"),
@@ -52,21 +53,31 @@ public enum FileType
     Mp3("MP3", "MPEG Audio Layer III", "audio/mpeg", "mp3"),
 
     /** Sony camera raw. */
-    Arw("ARW", "Sony Camera Raw", null, "arw"),
+    Arw("ARW", "Sony Camera Raw", "image/x-sony-arw", "arw"),
     /** Canon camera raw, version 1. */
-    Crw("CRW", "Canon Camera Raw", null, "crw"),
+    Crw("CRW", "Canon Camera Raw", "image/x-canon-crw", "crw"),
     /** Canon camera raw, version 2. */
-    Cr2("CR2", "Canon Camera Raw", null, "cr2"),
+    Cr2("CR2", "Canon Camera Raw", "image/x-canon-cr2", "cr2"),
     /** Nikon camera raw. */
-    Nef("NEF", "Nikon Camera Raw", null, "nef"),
+    Nef("NEF", "Nikon Camera Raw", "image/x-nikon-nef", "nef"),
     /** Olympus camera raw. */
-    Orf("ORF", "Olympus Camera Raw", null, "orf"),
+    Orf("ORF", "Olympus Camera Raw", "image/x-olympus-orf", "orf"),
     /** FujiFilm camera raw. */
-    Raf("RAF", "FujiFilm Camera Raw", null, "raf"),
+    Raf("RAF", "FujiFilm Camera Raw", "image/x-fuji-raf", "raf"),
     /** Panasonic camera raw. */
     Rw2("RW2", "Panasonic Camera Raw", null, "rw2"),
     /** Canon camera raw (version 3). Shared by CR3 (image) and CRM (video). */
     Crx("CRX", "Canon Camera Raw", null, "cr3", "crm"),
+    /** GoPro camera raw. */
+    GoPro("GPR", "GoPro Raw", "image/x-gopro-gpr", "gpr"),
+    /** Kodak camera raw. */
+    Kdc("KDC", "Kodak Raw", "image/x-kodak-kdc", "kdc"),
+    /** Hasselblad camera raw. */
+    ThreeFR("3FR", "Hasselblad Raw", "image/x-hasselblad-3fr", "3fr"),
+    /** Pentax camera raw. */
+    Pef("PEF", "Pentax Raw", "image/x-pentax-pef", "pef"),
+    /** Samsung camera raw. */
+    Srw("SRW", "Samsung Raw", "image/x-samsung-srw", "srw"),
 
     // Only file detection
     Aac("AAC", "Advanced Audio Coding", "audio/aac", "m4a"),

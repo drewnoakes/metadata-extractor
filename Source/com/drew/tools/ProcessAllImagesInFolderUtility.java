@@ -503,7 +503,7 @@ public class ProcessAllImagesInFolderUtility
             BufferedInputStream stream = null;
             try {
                 stream = new BufferedInputStream(new FileInputStream(file));
-                FileType fileType = FileTypeDetector.detectFileType(stream);
+                FileType fileType = FileTypeDetector.detectFileType(stream, file.getName());
                 writer.write(String.format("TYPE: %s" + NEW_LINE, fileType.toString().toUpperCase()));
                 writer.write(NEW_LINE);
             } finally {
