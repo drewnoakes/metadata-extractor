@@ -642,6 +642,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
             pushDirectory(SamsungType2MakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+        } else if ("DJI".equalsIgnoreCase(cameraMake)) {
+            // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
+            pushDirectory(DjiMakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.
