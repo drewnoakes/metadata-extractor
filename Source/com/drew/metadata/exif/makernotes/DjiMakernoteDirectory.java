@@ -51,7 +51,8 @@ public class DjiMakernoteDirectory extends Directory
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "DJI Makernote";
     }
 
