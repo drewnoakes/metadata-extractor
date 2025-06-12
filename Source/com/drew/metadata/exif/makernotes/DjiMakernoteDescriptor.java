@@ -28,9 +28,6 @@ import com.drew.metadata.TagDescriptor;
  * Provides human-readable string representations of tag values stored in a {@link DjiMakernoteDirectory}.
  * <p>
  * Using information from <a href="https://metacpan.org/pod/distribution/Image-ExifTool/lib/Image/ExifTool/TagNames.pod#DJI-Tags">DJI Tags Documentation</a>.
- *
- * @author SeanJay Zeng
- * @author Adapted from Drew Noakes (https://drewnoakes.com)
  */
 @SuppressWarnings("WeakerAccess")
 public class DjiMakernoteDescriptor extends TagDescriptor<DjiMakernoteDirectory>

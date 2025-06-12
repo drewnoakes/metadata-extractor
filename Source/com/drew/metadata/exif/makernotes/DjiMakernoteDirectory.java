@@ -29,9 +29,6 @@ import java.util.HashMap;
  * Describes tags specific to DJI aircraft cameras.
  * <p>
  * Using information from <a href="https://metacpan.org/pod/distribution/Image-ExifTool/lib/Image/ExifTool/TagNames.pod#DJI-Tags">DJI Tags Documentation</a>.
- *
- * @author SeanJay Zeng
- * @author Adapted from Drew Noakes (<a href="https://drewnoakes.com">https://drewnoakes.com</a>)
  */
 @SuppressWarnings("WeakerAccess")
 public class DjiMakernoteDirectory extends Directory
@@ -52,15 +49,15 @@ public class DjiMakernoteDirectory extends Directory
 
     static
     {
-        _tagNameMap.put(TAG_MAKE, "Make" );
-        _tagNameMap.put(TAG_SPEED_X, "Aircraft X Speed" );
-        _tagNameMap.put(TAG_SPEED_Y, "Aircraft Y Speed" );
-        _tagNameMap.put(TAG_SPEED_Z, "Aircraft Z Speed" );
-        _tagNameMap.put(TAG_AIRCRAFT_PITCH, "Aircraft Pitch" );
-        _tagNameMap.put(TAG_AIRCRAFT_YAW, "Aircraft Yaw" );
-        _tagNameMap.put(TAG_AIRCRAFT_ROLL, "Aircraft Roll" );
-        _tagNameMap.put(TAG_CAMERA_PITCH, "Camera Pitch" );
-        _tagNameMap.put(TAG_CAMERA_YAW, "Camera Yaw" );
+        _tagNameMap.put(TAG_MAKE, "Make");
+        _tagNameMap.put(TAG_SPEED_X, "Aircraft X Speed");
+        _tagNameMap.put(TAG_SPEED_Y, "Aircraft Y Speed");
+        _tagNameMap.put(TAG_SPEED_Z, "Aircraft Z Speed");
+        _tagNameMap.put(TAG_AIRCRAFT_PITCH, "Aircraft Pitch");
+        _tagNameMap.put(TAG_AIRCRAFT_YAW, "Aircraft Yaw");
+        _tagNameMap.put(TAG_AIRCRAFT_ROLL, "Aircraft Roll");
+        _tagNameMap.put(TAG_CAMERA_PITCH, "Camera Pitch");
+        _tagNameMap.put(TAG_CAMERA_YAW, "Camera Yaw");
         _tagNameMap.put(TAG_CAMERA_ROLL, "Camera Roll");
     }
 
