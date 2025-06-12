@@ -16,7 +16,6 @@ import java.util.HashMap;
 @SuppressWarnings("WeakerAccess")
 public class DjiMakernoteDirectory extends Directory
 {
-
     public static final int TAG_MAKE = 0x0001;
     public static final int TAG_SPEED_X = 0x0003;
     public static final int TAG_SPEED_Y = 0x0004;
