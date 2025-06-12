@@ -17,8 +17,8 @@ import com.drew.metadata.TagDescriptor;
 @SuppressWarnings("WeakerAccess")
 public class DjiMakernoteDescriptor extends TagDescriptor<DjiMakernoteDirectory>
 {
-
-    public DjiMakernoteDescriptor(@NotNull DjiMakernoteDirectory directory) {
+    public DjiMakernoteDescriptor(@NotNull DjiMakernoteDirectory directory)
+    {
         super(directory);
     }
 
