@@ -98,6 +98,9 @@ public class QuickTimeAtomHandler extends QuickTimeHandler<QuickTimeDirectory>
             } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_TRACK_HEADER)) {
                 TrackHeaderAtom trackHeaderAtom = new TrackHeaderAtom(reader, atom);
                 trackHeaderAtom.addMetadata(directory);
+            } else if (atom.type.equals(QuickTimeAtomTypes.ATOM_UUID)) {
+                TrackHeaderAtom trackHeaderAtom = new TrackHeaderAtom(reader, atom);
+                trackHeaderAtom.addMetadata(directory);
             }
         } else {
             if (atom.type.equals(QuickTimeContainerTypes.ATOM_COMPRESSED_MOVIE)) {
