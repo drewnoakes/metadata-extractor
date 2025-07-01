@@ -69,6 +69,8 @@ public class QuickTimeMetadataDirectory extends QuickTimeDirectory
     public static final int TAG_MODEL                   = 0x051E;
     public static final int TAG_ORIGINATING_SIGNATURE   = 0x051F;
     public static final int TAG_PIXEL_DENSITY           = 0x0520;
+    public static final int TAG_SPATIAL_FORMAT_VERSION  = 0x0521;
+    public static final int TAG_SPATIAL_AGGRESSORS_SEEN = 0x0522;
 
     public QuickTimeMetadataDirectory()
     {
@@ -116,6 +118,8 @@ public class QuickTimeMetadataDirectory extends QuickTimeDirectory
         _tagIntegerMap.put("com.apple.quicktime.model", TAG_MODEL);
         _tagIntegerMap.put("com.apple.photos.originating.signature", TAG_ORIGINATING_SIGNATURE);
         _tagIntegerMap.put("com.apple.quicktime.pixeldensity", TAG_PIXEL_DENSITY);
+        _tagIntegerMap.put("com.apple.quicktime.spatial.format-version", TAG_SPATIAL_FORMAT_VERSION);
+        _tagIntegerMap.put("com.apple.quicktime.spatial.aggressors-seen", TAG_SPATIAL_AGGRESSORS_SEEN);
 
         _tagIntegerMap.put("----", 0x0400);
         _tagIntegerMap.put("@PST", 0x0401);
@@ -233,6 +237,8 @@ public class QuickTimeMetadataDirectory extends QuickTimeDirectory
         _tagNameMap.put(TAG_MODEL, "Model");
         _tagNameMap.put(TAG_ORIGINATING_SIGNATURE, "Originating Signature");
         _tagNameMap.put(TAG_PIXEL_DENSITY, "Pixel Density");
+        _tagNameMap.put(TAG_SPATIAL_FORMAT_VERSION, "Spatial Format Version");
+        _tagNameMap.put(TAG_SPATIAL_AGGRESSORS_SEEN, "Spatial Aggressors Seen");
 
         _tagNameMap.put(0x0400, "iTunes Info");
         _tagNameMap.put(0x0401, "Parent Short Title");
