@@ -233,10 +233,6 @@ public class MkvReader
                 break;
             case INTEGER:
                 value = DataParser.getLong(reader, size);
-                if (eid == ElementIDs.DISPLAY_WIDTH)
-                {
-                    System.out.println("VALUE " + value);
-                }
                 break;
             case BINARY:
                 value = DataParser.getByteArray(reader, size);
