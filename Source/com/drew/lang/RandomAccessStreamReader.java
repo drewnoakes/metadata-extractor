@@ -79,7 +79,9 @@ public class RandomAccessStreamReader extends RandomAccessReader
         }
 
         isValidIndex(Integer.MAX_VALUE, 1);
-        assert(_isStreamFinished);
+        if (!_isStreamFinished) {
+            throw new IOException("Failed to determine stream length: stream not finished after reading to end");
+        }
         return _streamLength;
     }
 
@@ -105,7 +107,9 @@ public class RandomAccessStreamReader extends RandomAccessReader
         }
 
         if (!isValidIndex(index, bytesRequested)) {
-            assert(_isStreamFinished);
+            if (!_isStreamFinished) {
+                throw new BufferBoundsException("Stream validation failed: not finished reading stream");
+            }
             // TODO test that can continue using an instance of this type after this exception
             throw new BufferBoundsException(index, bytesRequested, _streamLength);
         }
@@ -134,7 +138,9 @@ public class RandomAccessStreamReader extends RandomAccessReader
 
         // TODO test loading several chunks for a single request
         while (chunkIndex >= _chunks.size()) {
-            assert (!_isStreamFinished);
+            if (_isStreamFinished) {
+                throw new BufferBoundsException("Cannot read more chunks: stream already finished");
+            }
 
             byte[] chunk = new byte[_chunkLength];
             int totalBytesRead = 0;
@@ -147,7 +153,9 @@ public class RandomAccessStreamReader extends RandomAccessReader
                     if (_streamLength == -1) {
                         _streamLength = observedStreamLength;
                     } else if (_streamLength != observedStreamLength) {
-                        assert(false);
+                        throw new IOException(String.format(
+                            "Stream length mismatch: expected %d but observed %d",
+                            _streamLength, observedStreamLength));
                     }
 
                     // check we have enough bytes for the requested index
@@ -175,7 +183,12 @@ public class RandomAccessStreamReader extends RandomAccessReader
     @Override
     public byte getByte(int index) throws IOException
     {
-        assert(index >= 0);
+        if (index < 0) {
+            throw new BufferBoundsException(String.format(
+                "Attempt to read from buffer using a negative index (%d)", index));
+        }
+        
+        validateIndex(index, 1);
 
         final int chunkIndex = index / _chunkLength;
         final int innerIndex = index % _chunkLength;

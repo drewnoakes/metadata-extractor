@@ -24,6 +24,9 @@ package com.drew.lang;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -35,6 +38,37 @@ public class RandomAccessStreamReaderTest extends RandomAccessTestBase
     public void testConstructWithNullBufferThrows()
     {
         new RandomAccessStreamReader(null);
+    }
+    
+    @Test(expected = BufferBoundsException.class)
+    public void testGetByteWithNegativeIndexThrowsBufferBoundsException() throws IOException
+    {
+        RandomAccessStreamReader reader = new RandomAccessStreamReader(
+            new ByteArrayInputStream(new byte[]{1, 2, 3, 4, 5}));
+        
+        reader.getByte(-1);
+    }
+    
+    @Test
+    public void testAssertionReplacementWithProperExceptions() throws IOException
+    {
+        // This test verifies that our assertion fixes work properly without throwing AssertionError
+        RandomAccessStreamReader reader = new RandomAccessStreamReader(
+            new ByteArrayInputStream(new byte[]{1, 2, 3, 4, 5}), 2, 5);
+        
+        // Should work without assertions failing
+        assertEquals(5, reader.getLength());
+        assertEquals(1, reader.getByte(0));
+        assertEquals(5, reader.getByte(4));
+    }
+    
+    @Test
+    public void testGetLengthWithEmptyStream() throws IOException
+    {
+        RandomAccessStreamReader reader = new RandomAccessStreamReader(
+            new ByteArrayInputStream(new byte[0]));
+        
+        assertEquals(0, reader.getLength());
     }
 
     @Override
