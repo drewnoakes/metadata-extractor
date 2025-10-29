@@ -356,38 +356,37 @@ public class GifReader
 
     private static byte[] gatherBytes(SequentialReader reader) throws IOException
     {
-        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[257];
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        byte[] buffer = new byte[257];
 
-            while (true)
-            {
-                byte b = reader.getByte();
-                if (b == 0)
-                    return bytes.toByteArray();
+        while (true)
+        {
+            byte b = reader.getByte();
+            if (b == 0)
+                return bytes.toByteArray();
 
-                int bInt = b & 0xFF;
+            int bInt = b & 0xFF;
 
-                buffer[0] = b;
-                reader.getBytes(buffer, 1, bInt);
-                bytes.write(buffer, 0, bInt + 1);
-            }
+            buffer[0] = b;
+            reader.getBytes(buffer, 1, bInt);
+            bytes.write(buffer, 0, bInt + 1);
         }
     }
 
     private static byte[] gatherBytes(SequentialReader reader, int firstLength) throws IOException
     {
-        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-            int length = firstLength;
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-            while (length > 0)
-            {
-                buffer.write(reader.getBytes(length), 0, length);
+        int length = firstLength;
 
-                length = reader.getByte() & 0xff;
-            }
+        while (length > 0)
+        {
+            buffer.write(reader.getBytes(length), 0, length);
 
-            return buffer.toByteArray();
+            length = reader.getByte() & 0xff;
         }
+
+        return buffer.toByteArray();
     }
 
     private static void skipBlocks(SequentialReader reader) throws IOException

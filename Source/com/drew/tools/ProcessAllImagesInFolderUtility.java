@@ -498,8 +498,7 @@ public class ProcessAllImagesInFolderUtility
                 javaDir.mkdir();
 
             String outputPath = String.format("%s/metadata/java/%s.txt", file.getParent(), file.getName());
-            try (FileOutputStream fos = new FileOutputStream(outputPath);
-                    Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(outputPath), StandardCharsets.UTF_8);
                     BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
                 writer.write("FILE: " + file.getName() + NEW_LINE);
 
@@ -659,18 +658,18 @@ public class ProcessAllImagesInFolderUtility
 
                     for (Row row : rows) {
                         writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/metadata/%s.txt)\n",
-                                                   row.file.getName(),
-                                                   row.relativePath,
-                                                   StringUtil.urlEncode(row.file.getName()),
-                                                   row.manufacturer == null ? "" : row.manufacturer,
-                                                   row.model == null ? "" : row.model,
-                                                   row.metadata.getDirectoryCount(),
-                                                   row.exifVersion == null ? "" : row.exifVersion,
-                                                   row.makernote == null ? "" : row.makernote,
-                                                   row.thumbnail == null ? "" : row.thumbnail,
-                                                   row.relativePath,
-                                                   StringUtil.urlEncode(row.file.getName()).toLowerCase()
-                                                  ));
+                                row.file.getName(),
+                                row.relativePath,
+                                StringUtil.urlEncode(row.file.getName()),
+                                row.manufacturer == null ? "" : row.manufacturer,
+                                row.model == null ? "" : row.model,
+                                row.metadata.getDirectoryCount(),
+                                row.exifVersion == null ? "" : row.exifVersion,
+                                row.makernote == null ? "" : row.makernote,
+                                row.thumbnail == null ? "" : row.thumbnail,
+                                row.relativePath,
+                                StringUtil.urlEncode(row.file.getName()).toLowerCase()
+                        ));
                     }
 
                     writer.write('\n');
