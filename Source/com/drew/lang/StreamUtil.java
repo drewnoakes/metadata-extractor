@@ -31,17 +31,16 @@ public final class StreamUtil
 {
     public static byte[] readAllBytes(InputStream stream) throws IOException
     {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            while (true) {
-                int bytesRead = stream.read(buffer);
-                if (bytesRead == -1)
-                    break;
-                outputStream.write(buffer, 0, bytesRead);
-            }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            return outputStream.toByteArray();
+        byte[] buffer = new byte[1024];
+        while (true) {
+            int bytesRead = stream.read(buffer);
+            if (bytesRead == -1)
+                break;
+            outputStream.write(buffer, 0, bytesRead);
         }
 
+        return outputStream.toByteArray();
     }
 }

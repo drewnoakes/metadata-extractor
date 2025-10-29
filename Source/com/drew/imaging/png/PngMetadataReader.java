@@ -177,8 +177,7 @@ public class PngMetadataReader
                 int bytesLeft = bytes.length - (profileNameBytes.length + 1 + 1);
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
 
-                try (ByteArrayInputStream bais = new ByteArrayInputStream(compressedProfile);
-                        InflaterInputStream inflateStream = new InflaterInputStream(bais)) {
+                try (InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile))) {
                     new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
                 } catch(java.util.zip.ZipException zex) {
                     directory.addError(String.format("Exception decompressing PNG iCCP chunk : %s", zex.getMessage()));
@@ -221,8 +220,7 @@ public class PngMetadataReader
             int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1 + 1);
             byte[] textBytes = null;
             if (compressionMethod == 0) {
-                try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft);
-                        InflaterInputStream inflateStream = new InflaterInputStream(bais)) {
+                try (InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft))) {
                     textBytes = StreamUtil.readAllBytes(inflateStream);
                 } catch(java.util.zip.ZipException zex) {
                     PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
@@ -266,8 +264,7 @@ public class PngMetadataReader
                 textBytes = reader.getNullTerminatedBytes(bytesLeft, false);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft);
-                            InflaterInputStream inflateStream = new InflaterInputStream(bais)) {
+                    try (InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft))) {
                         textBytes = StreamUtil.readAllBytes(inflateStream);
                     } catch(java.util.zip.ZipException zex) {
                         PngDirectory directory = new PngDirectory(PngChunkType.iTXt);

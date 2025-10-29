@@ -500,8 +500,7 @@ public class ProcessAllImagesInFolderUtility
             String outputPath = String.format("%s/metadata/java/%s.txt", file.getParent(), file.getName());
             try (FileOutputStream fos = new FileOutputStream(outputPath);
                     Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                    FileInputStream fis =new FileInputStream(file);
-                    BufferedInputStream stream = new BufferedInputStream(fis)) {
+                    BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
                 writer.write("FILE: " + file.getName() + NEW_LINE);
 
                 // Detect file type
