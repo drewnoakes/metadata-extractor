@@ -293,7 +293,17 @@ public class XmpReader implements JpegSegmentMetadataReader
                         extendedXMPBuffer = new byte[fullLength];
 
                     if (extendedXMPBuffer.length == fullLength) {
-                        System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, segmentLength - totalOffset);
+                        int copyLength = segmentLength - totalOffset;
+                        // Validate bounds before arraycopy to prevent ArrayIndexOutOfBoundsException.
+                        // Check for negative chunkOffset (from uint32 > Integer.MAX_VALUE) and use
+                        // subtraction instead of addition to avoid integer overflow.
+                        if (chunkOffset < 0 || chunkOffset > extendedXMPBuffer.length - copyLength) {
+                            XmpDirectory directory = new XmpDirectory();
+                            directory.addError(String.format("Extended XMP chunk would write beyond buffer bounds (offset=%d, length=%d, buffer size=%d)", chunkOffset, copyLength, extendedXMPBuffer.length));
+                            metadata.addDirectory(directory);
+                        } else {
+                            System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, copyLength);
+                        }
                     } else {
                         XmpDirectory directory = new XmpDirectory();
                         directory.addError(String.format("Inconsistent length for the Extended XMP buffer: %d instead of %d", fullLength, extendedXMPBuffer.length));
