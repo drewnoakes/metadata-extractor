@@ -36,7 +36,7 @@ public class ImageMetadataReaderFuzzer {
         } catch (IOException | ImageProcessingException e) {
             // Expected
         } catch (Exception e) {
-            // Unexpected – potential bug
+            // Unexpected -- potential bug
         }
     }
 }
