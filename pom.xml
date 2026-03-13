@@ -88,6 +88,47 @@
                 <javadoc.opts>-Xdoclint:none</javadoc.opts>
             </properties>
         </profile>
+
+        <profile>
+            <id>fuzz</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.code-intelligence</groupId>
+                    <artifactId>jazzer-api</artifactId>
+                    <version>0.22.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.code-intelligence</groupId>
+                    <artifactId>jazzer-junit</artifactId>
+                    <version>0.22.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                    <version>5.10.1</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                    <version>5.10.1</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <testExcludes>
+                                <testExclude>none</testExclude>
+                            </testExcludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
@@ -121,6 +162,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <testExcludes>
+                        <testExclude>com/drew/metadata/fuzzer/**</testExclude>
+                    </testExcludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -226,6 +270,33 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>Output/maven/jacoco.exec</destFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>Output/maven/jacoco.exec</dataFile>
+                            <outputDirectory>Output/maven/site/jacoco</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
