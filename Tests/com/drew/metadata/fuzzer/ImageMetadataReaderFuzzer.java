@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
- * Core entry-point fuzzer — imported from OSS-Fuzz and extended.
+ * Core entry-point fuzzer -- imported from OSS-Fuzz and extended.
  * Targets ImageMetadataReader, which handles detection and dispatching
  * for all supported image and video formats.
  */
