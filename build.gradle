@@ -6,7 +6,8 @@ jar {
     manifest {
         attributes 'Implementation-Title': 'metadata-extractor',
                    'Implementation-Version': version,
-                   'Main-Class': 'com.drew.imaging.ImageMetadataReader'
+                   'Main-Class': 'com.drew.imaging.ImageMetadataReader',
+                   'Automatic-Module-Name': 'com.drew.metadata'
     }
 }
 
