@@ -22,6 +22,7 @@ package com.drew.imaging.heif;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.StreamReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.heif.HeifBoxTypes;
 import com.drew.metadata.heif.HeifContainerTypes;
 import com.drew.metadata.heif.HeifDirectory;
@@ -38,8 +39,15 @@ public class HeifReader
     private static final Set<String> ACCEPTABLE_PRE_META_BOX_TYPES =
         new HashSet<String>(Arrays.asList(HeifBoxTypes.BOX_FILE_TYPE, HeifContainerTypes.BOX_METADATA));
 
-    public void extract(InputStream inputStream, HeifHandler<?> handler)
+    public void extract(@NotNull InputStream inputStream, @NotNull HeifHandler<?> handler)
     {
+        if (inputStream == null) {
+            throw new IllegalArgumentException("inputStream cannot be null");
+        }
+        if (handler == null) {
+            throw new IllegalArgumentException("handler cannot be null");
+        }
+        
         // We need to read through the input stream to find the meta box which will tell us what handler to use
 
         // The meta box is not necessarily the first box, so we need to mark the input stream (if we can)
@@ -49,7 +57,10 @@ public class HeifReader
             boolean markSupported = false;
             if (inputStream.markSupported()) {
                 markSupported = true;
-                inputStream.mark(inputStream.available() + 1); // +1 since we're going to read past the end of the stream by 1 byte
+                int available = inputStream.available();
+                // Some InputStreams return -1 for available(), so use a reasonable default
+                int markReadAheadLimit = (available > 0) ? available + 1 : 8192;
+                inputStream.mark(markReadAheadLimit);
             }
 
             StreamReader reader = new StreamReader(inputStream);
