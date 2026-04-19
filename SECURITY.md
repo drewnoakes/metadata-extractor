@@ -1,0 +1,1 @@
+Since 2.20.0, releases are signed with key 6F3A86F65A2989491CB7B088300CF8643527B294.
