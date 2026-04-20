@@ -24,12 +24,14 @@ import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.*;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.ErrorDirectory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.icc.IccReader;
+import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.png.PngChromaticitiesDirectory;
 import com.drew.metadata.png.PngDirectory;
 import com.drew.metadata.xmp.XmpReader;
@@ -204,11 +206,23 @@ public class PngMetadataReader
             // total bytes length - (Keyword length + null byte)
             int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1);
             StringValue value = reader.getNullTerminatedStringValue(bytesLeft, _latin1Encoding, false);
-            List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
-            textPairs.add(new KeyValuePair(keyword, value));
-            PngDirectory directory = new PngDirectory(PngChunkType.tEXt);
-            directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
-            metadata.addDirectory(directory);
+
+            if (keyword.equals("Raw profile type iptc")) {
+                byte[] iptcBytes = decodeRawProfile(value.toString());
+                if (iptcBytes != null) {
+                    new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), metadata, iptcBytes.length);
+                } else {
+                    PngDirectory directory = new PngDirectory(PngChunkType.tEXt);
+                    directory.addError("Could not decode IPTC raw profile data");
+                    metadata.addDirectory(directory);
+                }
+            } else {
+                List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
+                textPairs.add(new KeyValuePair(keyword, value));
+                PngDirectory directory = new PngDirectory(PngChunkType.tEXt);
+                directory.setObject(PngDirectory.TAG_TEXTUAL_DATA, textPairs);
+                metadata.addDirectory(directory);
+            }
         } else if (chunkType.equals(PngChunkType.zTXt)) {
             SequentialReader reader = new SequentialByteArrayReader(bytes);
 
@@ -238,6 +252,15 @@ public class PngMetadataReader
                 if (keyword.equals("XML:com.adobe.xmp")) {
                     // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
                     new XmpReader().extract(textBytes, metadata);
+                } else if (keyword.equals("Raw profile type iptc")) {
+                    byte[] iptcBytes = decodeRawProfile(new String(textBytes, _latin1Encoding));
+                    if (iptcBytes != null) {
+                        new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), metadata, iptcBytes.length);
+                    } else {
+                        PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
+                        directory.addError("Could not decode IPTC raw profile data");
+                        metadata.addDirectory(directory);
+                    }
                 } else {
                     List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
                     textPairs.add(new KeyValuePair(keyword, new StringValue(textBytes, _latin1Encoding)));
@@ -288,6 +311,15 @@ public class PngMetadataReader
                 if (keyword.equals("XML:com.adobe.xmp")) {
                     // NOTE in testing images, the XMP has parsed successfully, but we are not extracting tags from it as necessary
                     new XmpReader().extract(textBytes, metadata);
+                } else if (keyword.equals("Raw profile type iptc")) {
+                    byte[] iptcBytes = decodeRawProfile(new String(textBytes, _utf8Encoding));
+                    if (iptcBytes != null) {
+                        new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), metadata, iptcBytes.length);
+                    } else {
+                        PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
+                        directory.addError("Could not decode IPTC raw profile data");
+                        metadata.addDirectory(directory);
+                    }
                 } else {
                     List<KeyValuePair> textPairs = new ArrayList<KeyValuePair>();
                     textPairs.add(new KeyValuePair(keyword, new StringValue(textBytes, _utf8Encoding)));
@@ -342,5 +374,59 @@ public class PngMetadataReader
                 metadata.addDirectory(directory);
             }
         }
+    }
+
+    /**
+     * Decodes a "raw profile" as stored in a PNG text chunk. This format is used by ImageMagick/GIMP to embed
+     * binary data (such as IPTC) in PNG text chunks. The format is:
+     * <pre>
+     * \n
+     * &lt;type&gt;\n
+     * &lt;      length&gt;\n
+     * &lt;hex data&gt;\n
+     * </pre>
+     *
+     * @param rawProfile the raw profile string
+     * @return the decoded binary data, or {@code null} if the profile could not be decoded
+     */
+    @Nullable
+    private static byte[] decodeRawProfile(String rawProfile)
+    {
+        String[] lines = rawProfile.split("\n");
+
+        if (lines.length < 3) {
+            return null;
+        }
+
+        // Line 0 is empty, line 1 is the type identifier, line 2 is the length
+        int expectedByteCount;
+        try {
+            expectedByteCount = Integer.parseInt(lines[2].trim());
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+
+        // Remaining lines are hex-encoded data
+        StringBuilder hexBuilder = new StringBuilder(expectedByteCount * 2);
+        for (int i = 3; i < lines.length; i++) {
+            hexBuilder.append(lines[i]);
+        }
+
+        String hexString = hexBuilder.toString().trim();
+        if (hexString.length() != expectedByteCount * 2) {
+            return null;
+        }
+
+        byte[] result = new byte[expectedByteCount];
+        for (int i = 0; i < expectedByteCount; i++) {
+            int high = Character.digit(hexString.charAt(i * 2), 16);
+            int low = Character.digit(hexString.charAt(i * 2 + 1), 16);
+            if (high == -1 || low == -1) {
+                return null;
+            }
+            result[i] = (byte) ((high << 4) | low);
+        }
+
+        return result;
     }
 }
