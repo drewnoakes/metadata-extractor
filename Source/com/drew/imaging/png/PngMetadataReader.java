@@ -100,6 +100,10 @@ public class PngMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws PngProcessingException, IOException
     {
+        if (inputStream == null) {
+            throw new IllegalArgumentException("inputStream cannot be null");
+        }
+        
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), _desiredChunkTypes);
 
         Metadata metadata = new Metadata();
