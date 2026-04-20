@@ -234,21 +234,17 @@ public class IccDescriptor extends TagDescriptor<IccDirectory>
     public static String formatDoubleAsString(double value, int precision, boolean zeroes)
     {
         if (precision < 1)
-            return "" + Math.round(value);
-        long intPart = Math.abs((long)value);
-        long rest = (int)Math.round((Math.abs(value) - intPart) * Math.pow(10, precision));
-        long restKept = rest;
-        String res = "";
-        byte cour;
-        for (int i = precision; i > 0; i--) {
-            cour = (byte)(Math.abs(rest % 10));
-            rest /= 10;
-            if (res.length() > 0 || zeroes || cour != 0 || i == 1)
-                res = cour + res;
+            return String.valueOf(Math.round(value));
+        String formatted = String.format("%." + precision + "f", value);
+        if (zeroes)
+            return formatted;
+        // Strip trailing zeros, keeping at least one decimal place
+        int dotIndex = formatted.indexOf('.');
+        int end = formatted.length();
+        while (end > dotIndex + 2 && formatted.charAt(end - 1) == '0') {
+            end--;
         }
-        intPart += rest;
-        boolean isNegative = ((value < 0) && (intPart != 0 || restKept != 0));
-        return (isNegative ? "-" : "") + intPart + "." + res;
+        return formatted.substring(0, end);
     }
 
     @Nullable
