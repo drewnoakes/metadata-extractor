@@ -392,7 +392,7 @@ public class PngMetadataReader
     @Nullable
     private static byte[] decodeRawProfile(String rawProfile)
     {
-        String[] lines = rawProfile.split("\\r?\\n");
+        String[] lines = rawProfile.split("\\r\\n|\\r|\\n");
 
         if (lines.length < 3) {
             return null;
