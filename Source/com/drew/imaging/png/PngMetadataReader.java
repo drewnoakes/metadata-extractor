@@ -392,7 +392,7 @@ public class PngMetadataReader
     @Nullable
     private static byte[] decodeRawProfile(String rawProfile)
     {
-        String[] lines = rawProfile.split("\n");
+        String[] lines = rawProfile.split("\\r?\\n");
 
         if (lines.length < 3) {
             return null;
@@ -407,12 +407,12 @@ public class PngMetadataReader
         }
 
         // Remaining lines are hex-encoded data
-        StringBuilder hexBuilder = new StringBuilder(expectedByteCount * 2);
+        StringBuilder hexBuilder = new StringBuilder();
         for (int i = 3; i < lines.length; i++) {
-            hexBuilder.append(lines[i]);
+            hexBuilder.append(lines[i].trim());
         }
 
-        String hexString = hexBuilder.toString().trim();
+        String hexString = hexBuilder.toString();
         if (hexString.length() != expectedByteCount * 2) {
             return null;
         }

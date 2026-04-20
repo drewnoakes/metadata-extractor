@@ -153,4 +153,23 @@ public class PngMetadataReaderTest
         assertEquals("keyword1", keywords[0]);
         assertEquals("keyword2", keywords[1]);
     }
+
+    @Test
+    public void testIptcInItxtChunk() throws Exception
+    {
+        Metadata metadata = processFile("Tests/Data/png-with-iptc-in-itxt-chunk.png");
+
+        IptcDirectory iptcDirectory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+        assertNotNull("Expected IPTC directory to be extracted from iTXt chunk", iptcDirectory);
+        assertFalse(iptcDirectory.hasErrors());
+
+        assertEquals("Test Image Name", iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
+        assertEquals("Test caption for the image", iptcDirectory.getString(IptcDirectory.TAG_CAPTION));
+
+        String[] keywords = iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS);
+        assertNotNull(keywords);
+        assertEquals(2, keywords.length);
+        assertEquals("keyword1", keywords[0]);
+        assertEquals("keyword2", keywords[1]);
+    }
 }
