@@ -23,6 +23,7 @@ package com.drew.imaging.png;
 import com.drew.lang.KeyValuePair;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.iptc.IptcDirectory;
 import com.drew.metadata.png.PngDirectory;
 import org.junit.Test;
 
@@ -113,5 +114,62 @@ public class PngMetadataReaderTest
         } finally {
             TimeZone.setDefault(defaultTimeZone);
         }
+    }
+
+    @Test
+    public void testIptcInTextChunk() throws Exception
+    {
+        Metadata metadata = processFile("Tests/Data/png-with-iptc-in-text-chunk.png");
+
+        IptcDirectory iptcDirectory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+        assertNotNull("Expected IPTC directory to be extracted from tEXt chunk", iptcDirectory);
+        assertFalse(iptcDirectory.hasErrors());
+
+        assertEquals("Test Image Name", iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
+        assertEquals("Test caption for the image", iptcDirectory.getString(IptcDirectory.TAG_CAPTION));
+
+        String[] keywords = iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS);
+        assertNotNull(keywords);
+        assertEquals(2, keywords.length);
+        assertEquals("keyword1", keywords[0]);
+        assertEquals("keyword2", keywords[1]);
+    }
+
+    @Test
+    public void testIptcInZtxtChunk() throws Exception
+    {
+        Metadata metadata = processFile("Tests/Data/png-with-iptc-in-ztxt-chunk.png");
+
+        IptcDirectory iptcDirectory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+        assertNotNull("Expected IPTC directory to be extracted from zTXt chunk", iptcDirectory);
+        assertFalse(iptcDirectory.hasErrors());
+
+        assertEquals("Test Image Name", iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
+        assertEquals("Test caption for the image", iptcDirectory.getString(IptcDirectory.TAG_CAPTION));
+
+        String[] keywords = iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS);
+        assertNotNull(keywords);
+        assertEquals(2, keywords.length);
+        assertEquals("keyword1", keywords[0]);
+        assertEquals("keyword2", keywords[1]);
+    }
+
+    @Test
+    public void testIptcInItxtChunk() throws Exception
+    {
+        Metadata metadata = processFile("Tests/Data/png-with-iptc-in-itxt-chunk.png");
+
+        IptcDirectory iptcDirectory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+        assertNotNull("Expected IPTC directory to be extracted from iTXt chunk", iptcDirectory);
+        assertFalse(iptcDirectory.hasErrors());
+
+        assertEquals("Test Image Name", iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
+        assertEquals("Test caption for the image", iptcDirectory.getString(IptcDirectory.TAG_CAPTION));
+
+        String[] keywords = iptcDirectory.getStringArray(IptcDirectory.TAG_KEYWORDS);
+        assertNotNull(keywords);
+        assertEquals(2, keywords.length);
+        assertEquals("keyword1", keywords[0]);
+        assertEquals("keyword2", keywords[1]);
     }
 }
