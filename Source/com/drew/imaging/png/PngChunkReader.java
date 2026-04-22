@@ -86,7 +86,6 @@ public class PngChunkReader
         boolean seenImageTrailer = false;
 
         List<PngChunk> chunks = new ArrayList<PngChunk>();
-        Set<PngChunkType> seenChunkTypes = new HashSet<PngChunkType>();
 
         while (!seenImageTrailer) {
             // Process the next chunk.
@@ -111,10 +110,6 @@ public class PngChunkReader
             // TODO consider verifying the CRC value to determine if we're processing bad data
             reader.skip(4);
 
-            if (willStoreChunk && seenChunkTypes.contains(chunkType) && !chunkType.areMultipleAllowed()) {
-                throw new PngProcessingException(String.format("Observed multiple instances of PNG chunk '%s', for which multiples are not allowed", chunkType));
-            }
-
             if (chunkType.equals(PngChunkType.IHDR)) {
                 seenImageHeader = true;
             } else if (!seenImageHeader) {
@@ -128,8 +123,6 @@ public class PngChunkReader
             if (willStoreChunk) {
                 chunks.add(new PngChunk(chunkType, chunkData));
             }
-
-            seenChunkTypes.add(chunkType);
         }
 
         return chunks;
