@@ -111,7 +111,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
         // e.g., 2011:04:25 01:54:58
 
         byte[] values = _directory.getByteArray(TAG_POWER_UP_TIME);
-        if (values == null) {
+        if (values == null || values.length < 7) {
             return null;
         }
         short year = ByteBuffer.wrap(new byte[]{values[0], values[1]}).getShort();
