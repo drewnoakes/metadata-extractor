@@ -112,7 +112,10 @@ public class PngChunkReader
             reader.skip(4);
 
             if (willStoreChunk && seenChunkTypes.contains(chunkType) && !chunkType.areMultipleAllowed()) {
-                throw new PngProcessingException(String.format("Observed multiple instances of PNG chunk '%s', for which multiples are not allowed", chunkType));
+                // Skip duplicate chunks rather than throwing, to tolerate invalid PNG data produced by some software.
+                // The chunk type is already in seenChunkTypes from its first occurrence, so subsequent
+                // duplicates will also be skipped correctly.
+                continue;
             }
 
             if (chunkType.equals(PngChunkType.IHDR)) {
