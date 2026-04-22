@@ -98,10 +98,10 @@ public class PngChunkReaderTest
     }
 
     @Test
-    public void testDuplicateChunkTypesAreSkipped() throws Exception
+    public void testDuplicateChunkTypesAreKept() throws Exception
     {
         // Some software produces invalid PNG data with duplicate chunks that are only supposed to appear once.
-        // The reader should tolerate this and skip the duplicate rather than throwing an exception.
+        // The reader should tolerate this and return all instances rather than throwing an exception.
         List<PngChunk> chunks = processFile("Tests/Data/png-with-duplicate-exif-chunk.png");
 
         long eXIfCount = 0;
@@ -111,6 +111,6 @@ public class PngChunkReaderTest
             }
         }
 
-        assertEquals("Only the first eXIf chunk should be kept; the duplicate should be skipped", 1, eXIfCount);
+        assertEquals("Both eXIf chunks should be returned so that all EXIF data can be processed", 2, eXIfCount);
     }
 }
