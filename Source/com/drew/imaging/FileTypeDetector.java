@@ -180,9 +180,11 @@ public class FileTypeDetector
         }
 
         for (TypeChecker checker : _fixedCheckers) {
-            fileType = checker.checkType(bytes);
-            if (fileType != FileType.Unknown)
-                return fileType;
+            if (offset >= checker.getByteCount()) {
+                fileType = checker.checkType(bytes);
+                if (fileType != FileType.Unknown)
+                    return fileType;
+            }
         }
 
         return fileType;

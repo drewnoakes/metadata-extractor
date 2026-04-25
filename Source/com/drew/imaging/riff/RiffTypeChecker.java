@@ -34,6 +34,9 @@ public class RiffTypeChecker implements TypeChecker
     @Override
     public FileType checkType(byte[] bytes)
     {
+        if (bytes.length < getByteCount())
+            return FileType.Unknown;
+            
         String firstFour = new String(bytes, 0, 4);
         if (!firstFour.equals("RIFF"))
             return FileType.Unknown;
