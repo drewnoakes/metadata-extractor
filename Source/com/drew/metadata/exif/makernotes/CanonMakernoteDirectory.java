@@ -112,7 +112,12 @@ public class CanonMakernoteDirectory extends Directory
     public static final int TAG_LIGHTING_OPTIMIZER_ARRAY        = 0x4018; // not currently decoded
     public static final int TAG_LENS_INFO_ARRAY                 = 0x4019; // not currently decoded
     public static final int TAG_AMBIANCE_INFO_ARRAY             = 0x4020; // not currently decoded
+    public static final int TAG_MULTI_EXPOSURE_ARRAY            = 0x4021; // not currently decoded
     public static final int TAG_FILTER_INFO_ARRAY               = 0x4024; // not currently decoded
+    public static final int TAG_HDR_INFO_ARRAY                  = 0x4025; // not currently decoded
+    public static final int TAG_AF_CONFIG_ARRAY                 = 0x4028; // not currently decoded
+    public static final int TAG_RAW_BURST_MODE_ROLL             = 0x403F; // not currently decoded
+    public static final int TAG_LEVEL_INFO_ARRAY                = 0x4059; // not currently decoded
 
     public final static class CameraSettings
     {
@@ -275,6 +280,23 @@ public class CanonMakernoteDirectory extends Directory
 
         public static final int TAG_COLOR_TONE = OFFSET + 0x29;
         public static final int TAG_SRAW_QUALITY = OFFSET + 0x2D;
+
+        /**
+         * 0 = Disable
+         * 1 = Enable
+         */
+        public static final int TAG_FOCUS_BRACKETING = OFFSET + 0x2F;
+
+        /**
+         * Signed numeric clarity offset. 0x7FFF = n/a.
+         */
+        public static final int TAG_CLARITY = OFFSET + 0x33;
+
+        /**
+         * 0 = Off
+         * 1 = On
+         */
+        public static final int TAG_HDR_PQ = OFFSET + 0x34;
     }
 
     public final static class FocalLength
@@ -283,6 +305,11 @@ public class CanonMakernoteDirectory extends Directory
 
         private static final int OFFSET = 0xC200;
 
+        /**
+         * 0 = Fixed
+         * 2 = Zoom
+         */
+        public static final int TAG_FOCAL_TYPE = OFFSET + 0x00;
         /**
          * 0 = Auto
          * 1 = Sunny
@@ -544,7 +571,11 @@ public class CanonMakernoteDirectory extends Directory
         _tagNameMap.put(CameraSettings.TAG_MANUAL_FLASH_OUTPUT, "Manual Flash Output");
         _tagNameMap.put(CameraSettings.TAG_COLOR_TONE, "Color Tone");
         _tagNameMap.put(CameraSettings.TAG_SRAW_QUALITY, "SRAW Quality");
+        _tagNameMap.put(CameraSettings.TAG_FOCUS_BRACKETING, "Focus Bracketing");
+        _tagNameMap.put(CameraSettings.TAG_CLARITY, "Clarity");
+        _tagNameMap.put(CameraSettings.TAG_HDR_PQ, "HDR PQ");
 
+        _tagNameMap.put(FocalLength.TAG_FOCAL_TYPE, "Focal Type");
         _tagNameMap.put(FocalLength.TAG_WHITE_BALANCE, "White Balance");
         _tagNameMap.put(FocalLength.TAG_SEQUENCE_NUMBER, "Sequence Number");
         _tagNameMap.put(FocalLength.TAG_AF_POINT_USED, "AF Point Used");
@@ -664,7 +695,12 @@ public class CanonMakernoteDirectory extends Directory
         _tagNameMap.put(TAG_LIGHTING_OPTIMIZER_ARRAY, "Lighting Optimizer Array");
         _tagNameMap.put(TAG_LENS_INFO_ARRAY, "Lens Info Array");
         _tagNameMap.put(TAG_AMBIANCE_INFO_ARRAY, "Ambiance Info Array");
+        _tagNameMap.put(TAG_MULTI_EXPOSURE_ARRAY, "Multi Exposure Array");
         _tagNameMap.put(TAG_FILTER_INFO_ARRAY, "Filter Info Array");
+        _tagNameMap.put(TAG_HDR_INFO_ARRAY, "HDR Info Array");
+        _tagNameMap.put(TAG_AF_CONFIG_ARRAY, "AF Config Array");
+        _tagNameMap.put(TAG_RAW_BURST_MODE_ROLL, "Raw Burst Mode Roll");
+        _tagNameMap.put(TAG_LEVEL_INFO_ARRAY, "Level Info Array");
     }
 
     public CanonMakernoteDirectory()
