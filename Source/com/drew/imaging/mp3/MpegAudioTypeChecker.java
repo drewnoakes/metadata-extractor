@@ -52,6 +52,9 @@ public class MpegAudioTypeChecker implements TypeChecker
     @Override
     public FileType checkType(byte[] bytes)
     {
+        if (bytes.length < getByteCount())
+            return FileType.Unknown;
+            
         // MPEG audio requires the first 11 bits to be set
         if (bytes[0] != (byte)0xFF || (bytes[1] & 0xE0) != 0xE0)
             return FileType.Unknown;

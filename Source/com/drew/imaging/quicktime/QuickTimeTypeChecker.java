@@ -98,6 +98,9 @@ public class QuickTimeTypeChecker implements TypeChecker
     {
         // Test at offset 4 for Base Media Format (i.e. QuickTime, MP4, etc...) identifier "ftyp"
         // plus four identifying characters.
+        
+        if (bytes.length < getByteCount())
+            return FileType.Unknown;
 
         if (bytes[4] == 'f' &&
             bytes[5] == 't' &&
