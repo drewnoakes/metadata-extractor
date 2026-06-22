@@ -36,8 +36,6 @@ import java.io.IOException;
  */
 public class IcoReader
 {
-    private static final int ICO_DIRECTORY_ENTRY_SIZE_BYTES = 16;
-
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
         reader.setMotorolaByteOrder(false);
@@ -70,16 +68,6 @@ public class IcoReader
             if (imageCount == 0) {
                 IcoDirectory directory = new IcoDirectory();
                 directory.addError("Image count cannot be zero");
-                metadata.addDirectory(directory);
-                return;
-            }
-
-            int available = reader.available();
-            long requiredBytes = (long)imageCount * ICO_DIRECTORY_ENTRY_SIZE_BYTES;
-
-            if (available > 0 && requiredBytes > available) {
-                IcoDirectory directory = new IcoDirectory();
-                directory.addError("Image count " + imageCount + " cannot be satisfied by the remaining data");
                 metadata.addDirectory(directory);
                 return;
             }

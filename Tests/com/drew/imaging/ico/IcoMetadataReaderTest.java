@@ -30,19 +30,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class IcoMetadataReaderTest
 {
     @Test
-    public void testReadMetadataRejectsTruncatedDirectoryTable() throws Exception
+    public void testReadMetadataDoesNotTreatUnavailableBytesAsTruncated() throws Exception
     {
-        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(createMalformedIcoBytes()));
+        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(createValidIcoBytes())
+        {
+            @Override
+            public synchronized int available()
+            {
+                return 0;
+            }
+        });
 
         Collection<IcoDirectory> directories = metadata.getDirectoriesOfType(IcoDirectory.class);
+        ArrayList<IcoDirectory> directoryList = new ArrayList<IcoDirectory>(directories);
 
         assertEquals(1, directories.size());
-        assertTrue(directories.iterator().next().hasErrors());
+        assertFalse(directoryList.get(0).hasErrors());
+        assertEquals(16, directoryList.get(0).getInt(IcoDirectory.TAG_IMAGE_WIDTH));
+        assertEquals(24, directoryList.get(0).getInt(IcoDirectory.TAG_IMAGE_HEIGHT));
     }
 
     @Test
@@ -72,5 +83,22 @@ public class IcoMetadataReaderTest
         bytes[5] = (byte)0xD6;
         bytes[7] = (byte)0xFF;
         return bytes;
+    }
+
+    private static byte[] createValidIcoBytes()
+    {
+        return new byte[] {
+            0, 0,
+            1, 0,
+            1, 0,
+            16,
+            24,
+            0,
+            0,
+            1, 0,
+            32, 0,
+            4, 0, 0, 0,
+            22, 0, 0, 0
+        };
     }
 }
