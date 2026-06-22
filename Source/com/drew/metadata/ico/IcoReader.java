@@ -36,6 +36,8 @@ import java.io.IOException;
  */
 public class IcoReader
 {
+    private static final int ICO_DIRECTORY_ENTRY_SIZE_BYTES = 16;
+
     public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
     {
         reader.setMotorolaByteOrder(false);
@@ -72,6 +74,16 @@ public class IcoReader
                 return;
             }
 
+            int available = reader.available();
+            long requiredBytes = (long)imageCount * ICO_DIRECTORY_ENTRY_SIZE_BYTES;
+
+            if (available > 0 && requiredBytes > available) {
+                IcoDirectory directory = new IcoDirectory();
+                directory.addError("Image count " + imageCount + " cannot be satisfied by the remaining data");
+                metadata.addDirectory(directory);
+                return;
+            }
+
         } catch (IOException ex) {
             IcoDirectory directory = new IcoDirectory();
             directory.addError("Exception reading ICO file metadata: " + ex.getMessage());
@@ -82,6 +94,7 @@ public class IcoReader
         // Read each embedded image
         for (int imageIndex = 0; imageIndex < imageCount; imageIndex++) {
             IcoDirectory directory = new IcoDirectory();
+            boolean shouldBreak = false;
             try {
                 directory.setInt(IcoDirectory.TAG_IMAGE_TYPE, type);
 
@@ -106,8 +119,11 @@ public class IcoReader
                 directory.setLong(IcoDirectory.TAG_IMAGE_OFFSET_BYTES, reader.getUInt32());
             } catch (IOException ex) {
                 directory.addError("Exception reading ICO file metadata: " + ex.getMessage());
+                shouldBreak = true;
             }
             metadata.addDirectory(directory);
+            if (shouldBreak)
+                break;
         }
     }
 }
