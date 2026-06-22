@@ -87,12 +87,15 @@ public class IcoMetadataReaderTest
 
     private static byte[] createValidIcoBytes()
     {
+        final byte width = 16;
+        final byte height = 24;
+
         return new byte[] {
             0, 0,
             1, 0,
             1, 0,
-            16,
-            24,
+            width,
+            height,
             0,
             0,
             1, 0,
