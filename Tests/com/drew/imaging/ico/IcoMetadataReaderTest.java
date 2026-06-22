@@ -35,8 +35,8 @@ import static org.junit.Assert.assertTrue;
 
 public class IcoMetadataReaderTest
 {
-    private static final byte VALID_ICO_WIDTH = 16;
-    private static final byte VALID_ICO_HEIGHT = 24;
+    private static final byte TEST_IMAGE_WIDTH = 16;
+    private static final byte TEST_IMAGE_HEIGHT = 24;
 
     @Test
     public void testReadMetadataDoesNotTreatUnavailableBytesAsTruncated() throws Exception
@@ -55,8 +55,8 @@ public class IcoMetadataReaderTest
 
         assertEquals(1, directories.size());
         assertFalse(directory.hasErrors());
-        assertEquals(VALID_ICO_WIDTH, directory.getInt(IcoDirectory.TAG_IMAGE_WIDTH));
-        assertEquals(VALID_ICO_HEIGHT, directory.getInt(IcoDirectory.TAG_IMAGE_HEIGHT));
+        assertEquals(TEST_IMAGE_WIDTH, directory.getInt(IcoDirectory.TAG_IMAGE_WIDTH));
+        assertEquals(TEST_IMAGE_HEIGHT, directory.getInt(IcoDirectory.TAG_IMAGE_HEIGHT));
     }
 
     @Test
@@ -94,8 +94,8 @@ public class IcoMetadataReaderTest
             0, 0,
             1, 0,
             1, 0,
-            VALID_ICO_WIDTH,
-            VALID_ICO_HEIGHT,
+            TEST_IMAGE_WIDTH,
+            TEST_IMAGE_HEIGHT,
             0,
             0,
             1, 0,
