@@ -20,31 +20,44 @@
  */
 package com.drew.metadata.mp4.media;
 
+import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.TAG_USER_DATA;
+import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.TAG_UUID;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 import com.drew.imaging.mp4.Mp4Handler;
+import com.drew.imaging.tiff.TiffProcessingException;
+import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.ByteTrie;
+import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.ExifTiffHandler;
+import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.mp4.Mp4BoxTypes;
 import com.drew.metadata.mp4.Mp4Context;
 import com.drew.metadata.photoshop.PhotoshopReader;
 import com.drew.metadata.xmp.XmpReader;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.UUID;
-
-import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.TAG_USER_DATA;
-import static com.drew.metadata.mp4.media.Mp4UuidBoxDirectory.TAG_UUID;
-
 public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
 {
     // http://xhelmboyx.tripod.com/formats/mp4-layout.txt
     // http://fileformats.archiveteam.org/wiki/Boxes/atoms_format#UUID_boxes
+    // https://github.com/lclevy/canon_cr3
 
     private enum UuidType
     {
@@ -58,6 +71,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
         GeoJp2GeoTiffBox,                      // b14bf8bd-083d-4b43-a5ae-8cd7d5a6ce03
         Xmp,                                   // be7acfcb-97a9-42e8-9c71-999491e3afac
         PiffProtectionSystemSpecificHeaderBox, // d08a4f18-10f3-4a82-b6c8-32d8aba183d3
+        CanonCr3Box                            // 85c0b687-820f-11e0-8111-f4ce462b6a48
     }
 
     private final static ByteTrie<UuidType> _uuidLookup;
@@ -76,8 +90,16 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
         _uuidLookup.addPath(UuidType.GeoJp2GeoTiffBox, new byte[] { (byte)0xb1, 0x4b, (byte)0xf8, (byte)0xbd, 0x08, 0x3d, 0x4b, 0x43, (byte)0xa5, (byte)0xae, (byte)0x8c, (byte)0xd7, (byte)0xd5, (byte)0xa6, (byte)0xce, 0x03 });
         _uuidLookup.addPath(UuidType.Xmp, new byte[] { (byte)0xbe, 0x7a, (byte)0xcf, (byte)0xcb, (byte)0x97, (byte)0xa9, 0x42, (byte)0xe8, (byte)0x9c, 0x71, (byte)0x99, (byte)0x94, (byte)0x91, (byte)0xe3, (byte)0xaf, (byte)0xac });
         _uuidLookup.addPath(UuidType.PiffProtectionSystemSpecificHeaderBox, new byte[] { (byte)0xd0, (byte)0x8a, 0x4f, 0x18, 0x10, (byte)0xf3, 0x4a, (byte)0x82, (byte)0xb6, (byte)0xc8, 0x32, (byte)0xd8, (byte)0xab, (byte)0xa1, (byte)0x83, (byte)0xd3 });
+        _uuidLookup.addPath(UuidType.CanonCr3Box, new byte[] { (byte)0x85, (byte)0xc0, (byte)0xb6, (byte)0x87, (byte)0x82, 0x0f, 0x11, (byte)0xe0, (byte)0x81, 0x11, (byte)0xf4, (byte)0xce, 0x46, 0x2b, 0x6a, 0x48 });
     }
-
+    
+    private static final String CANON_METADATA_IFD0 = "CMT1";  // Canon Metadata in TIFF format, Exif IFD0
+    private static final String CANON_METADATA_SUBIFD = "CMT2";  // Canon Metadata in TIFF format, Exif ExifIFD
+    private static final String CANON_METADATA_MAKERNOTE = "CMT3";  // Canon Metadata in TIFF format, Canon Makernotes
+    private static final String CANON_METADATA_GPS = "CMT4";  // Canon Metadata in TIFF format, Exif GPS IFD
+    
+    private List<String> CANON_METADATA_BOXES = Arrays.asList(CANON_METADATA_IFD0, CANON_METADATA_SUBIFD, CANON_METADATA_MAKERNOTE, CANON_METADATA_GPS);
+    
     public Mp4UuidBoxHandler(Metadata metadata)
     {
         super(metadata);
@@ -101,7 +123,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
     {
         return false;
     }
-
+    
     @Override
     public Mp4Handler<?> processBox(@NotNull String type, byte[] payload, long boxSize, Mp4Context context) throws IOException
     {
@@ -111,7 +133,7 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
             if (uuidType == null) {
                 return this;
             }
-
+            
             switch (uuidType) {
                 case Exif:
                     new ExifReader().extract(new ByteArrayReader(payload, 16), metadata, 0, directory);
@@ -125,6 +147,9 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
                 case Xmp:
                     new XmpReader().extract(payload, 16, payload.length - 16,  metadata, directory);
                     break;
+                case CanonCr3Box:
+                	processCanonRawV3(new SequentialByteArrayReader(payload, 16), payload.length - 16);
+                	break;
                 default:
                     SequentialReader reader = new SequentialByteArrayReader(payload);
                     String usertype = getUuid(reader.getBytes(16));
@@ -143,5 +168,95 @@ public class Mp4UuidBoxHandler extends Mp4Handler<Mp4UuidBoxDirectory>
         UUID uuid = new UUID(bb.getLong(), bb.getLong());
 
         return uuid.toString();
+    }
+    
+    private CanonCrxTiffHandler createCanonHandler(String type) {
+        switch (type) {
+          case CANON_METADATA_IFD0:
+            return new CanonCrxTiffHandler(new ExifIFD0Directory(), metadata, null, 0);
+          case CANON_METADATA_SUBIFD:
+            return new CanonCrxTiffHandler(new ExifSubIFDDirectory(), metadata, null, 0);
+          case CANON_METADATA_MAKERNOTE:
+            return new CanonCrxTiffHandler(new CanonMakernoteDirectory(), metadata, null, 0);
+          case CANON_METADATA_GPS:
+            return new CanonCrxTiffHandler(new GpsDirectory(), metadata, null, 0);
+        }
+
+        return null;
+    }
+    
+    // When the UUID box's uuid == CanonCr3Box, it may contain several sub-boxes
+    // This will extract each box and attempt to process with the appropriate
+    // reader, installing/updating the appropriate Directory
+    private void processCanonRawV3(SequentialReader reader, long atomEnd)
+    {
+        try {
+            while (atomEnd == -1 || reader.getPosition() < atomEnd) {
+                long boxSize = reader.getUInt32();
+                String boxType = reader.getString(4);
+                boolean isLargeSize = boxSize == 1;
+
+                if (isLargeSize) {
+                    boxSize = reader.getInt64();
+                }
+
+                if (boxSize > Integer.MAX_VALUE) {
+                    this.addError("Box size too large.");
+                    break;
+                }
+
+                if (boxSize < 8) {
+                    this.addError("Box size too small.");
+                    break;
+                }
+
+                // Determine if fourCC is container/atom and process accordingly.
+                // Unknown atoms will be skipped
+                long dataSize = (isLargeSize ? boxSize - 16 : boxSize - 8);
+
+                if (CANON_METADATA_BOXES.contains(boxType)) {
+                  CanonCrxTiffHandler subHandler = createCanonHandler(boxType);
+                  RandomAccessStreamReader subReader = new RandomAccessStreamReader(new ByteArrayInputStream(reader.getBytes((int) dataSize)));
+
+                  try {
+                    new TiffReader().processTiff(subReader, subHandler, 0);
+                  }
+                  catch (TiffProcessingException ex) {
+                    this.addError(ex.getMessage());
+                  }
+                }
+                else if (isLargeSize) {
+                    if (boxSize < 16) {
+                        // TODO capture this error in a directory
+                        break;
+                    }
+                    reader.skip(dataSize);
+                } else {
+                    reader.skip(dataSize);
+                }
+            }
+        } catch (IOException e) {
+            this.addError(e.getMessage());
+        }    	
+    }
+    
+    private static class CanonCrxTiffHandler extends ExifTiffHandler {
+        private static final int STANDARD_TIFF_MARKER = 0x002A;
+        private Directory directory;
+    	
+        public CanonCrxTiffHandler(Directory directory, Metadata metadata, Directory parentDirectory, int exifStartOffset) {
+            super(metadata, parentDirectory, exifStartOffset);
+            this.directory = directory;
+        }
+    	
+    	@Override
+        public void setTiffMarker(int marker) throws TiffProcessingException {
+            if (marker != STANDARD_TIFF_MARKER)
+            {
+                throw new TiffProcessingException("Unexpected TIFF marker: 0x{marker:X}");
+            }
+
+	        pushDirectory(directory);
+        }
     }
 }
