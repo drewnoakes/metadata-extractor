@@ -99,6 +99,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return getFlashDetailsDescription();
             case CameraSettings.TAG_FOCUS_MODE_2:
                 return getFocusMode2Description();
+            case FocalLength.TAG_FOCAL_TYPE:
+                return getFocalTypeDescription();
             case FocalLength.TAG_WHITE_BALANCE:
                 return getWhiteBalanceDescription();
             case FocalLength.TAG_AF_POINT_USED:
@@ -127,6 +129,12 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return getColorToneDescription();
             case CanonMakernoteDirectory.CameraSettings.TAG_SRAW_QUALITY:
                 return getSRawQualityDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_FOCUS_BRACKETING:
+                return getFocusBracketingDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_CLARITY:
+                return getClarityDescription();
+            case CanonMakernoteDirectory.CameraSettings.TAG_HDR_PQ:
+                return getHdrPqDescription();
 
             // It turns out that these values are dependent upon the camera model and therefore the below code was
             // incorrect for some Canon models.  This needs to be revisited.
@@ -440,17 +448,36 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         Integer value = _directory.getInteger(CameraSettings.TAG_FLASH_DETAILS);
         if (value == null)
             return null;
-        if (((value >> 14) & 1) != 0) {
-            return "External E-TTL";
+        StringBuilder sb = new StringBuilder();
+        if ((value & (1 <<  0)) != 0) {
+            append(sb, "Manual");
         }
-        if (((value >> 13) & 1) != 0) {
-            return "Internal flash";
+        if ((value & (1 <<  1)) != 0) {
+            append(sb, "TTL");
         }
-        if (((value >> 11) & 1) != 0) {
-            return "FP sync used";
+        if ((value & (1 <<  2)) != 0) {
+            append(sb, "A-TTL");
         }
-        if (((value >> 4) & 1) != 0) {
-            return "FP sync enabled";
+        if ((value & (1 <<  3)) != 0) {
+            append(sb, "E-TTL");
+        }
+        if ((value & (1 <<  4)) != 0) {
+            append(sb, "FP sync enabled");
+        }
+        if ((value & (1 <<  7)) != 0) {
+            append(sb, "External");
+        }
+        if ((value & (1 << 11)) != 0) {
+            append(sb, "FP sync used");
+        }
+        if ((value & (1 << 13)) != 0) {
+            append(sb, "Internal");
+        }
+        if ((value & (1 << 14)) != 0) {
+            append(sb, "External E-TTL");
+        }
+        if (sb.length() > 0) {
+            return sb.toString();
         }
         return "Unknown (" + value + ")";
     }
@@ -604,8 +631,10 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return "Normal";
             case 0x001:
                 return "High";
+            case 0x7FFF:
+                return "n/a";
             default:
-                return "Unknown (" + value + ")";
+                return toSignedShortString(value);
         }
     }
 
@@ -622,8 +651,10 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return "Normal";
             case 0x001:
                 return "High";
+            case 0x7FFF:
+                return "n/a";
             default:
-                return "Unknown (" + value + ")";
+                return toSignedShortString(value);
         }
     }
 
@@ -640,8 +671,10 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                 return "Normal";
             case 0x001:
                 return "High";
+            case 0x7FFF:
+                return "n/a";
             default:
-                return "Unknown (" + value + ")";
+                return toSignedShortString(value);
         }
     }
 
@@ -668,12 +701,31 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getImageSizeDescription()
     {
-        return getIndexedDescription(
-            CameraSettings.TAG_IMAGE_SIZE,
-            "Large",
-            "Medium",
-            "Small"
-        );
+        Integer value = _directory.getInteger(CameraSettings.TAG_IMAGE_SIZE);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Large";
+            case 1:
+                return "Medium";
+            case 2:
+                return "Small";
+            case 5:
+                return "Medium 1";
+            case 6:
+                return "Medium 2";
+            case 7:
+                return "Small 1";
+            case 8:
+                return "Small 2";
+            case 9:
+                return "Small 3";
+            case 0xFFFF:
+                return "n/a";
+            default:
+                return "Unknown (" + value + ")";
+        }
     }
 
     @Nullable
@@ -705,6 +757,22 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
                     return delay == 0 ? "Single shot" : "Single shot with self-timer";
             case 1:
                 return "Continuous";
+            case 2:
+                return "Movie";
+            case 3:
+                return "Continuous, Speed Priority";
+            case 4:
+                return "Continuous, Low";
+            case 5:
+                return "Continuous, High";
+            case 6:
+                return "Silent Single";
+            case 8:
+                return "Continuous, High+";
+            case 9:
+                return "Single, Silent";
+            case 10:
+                return "Continuous, Silent";
         }
         return "Unknown (" + value + ")";
     }
@@ -797,7 +865,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getRecordModeDescription()
     {
-        return getIndexedDescription(CameraSettings.TAG_RECORD_MODE, 1, "JPEG", "CRW+THM", "AVI+THM", "TIF", "TIF+JPEG", "CR2", "CR2+JPEG", null, "MOV", "MP4");
+        return getIndexedDescription(CameraSettings.TAG_RECORD_MODE, 1, "JPEG", "CRW+THM", "AVI+THM", "TIF", "TIF+JPEG", "CR2", "CR2+JPEG", null, "MOV", "MP4", "CRM", "CR3", "CR3+JPEG");
     }
 
     @Nullable
@@ -926,7 +994,73 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
     @Nullable
     public String getSRawQualityDescription()
     {
-        return getIndexedDescription(CanonMakernoteDirectory.CameraSettings.TAG_SRAW_QUALITY, 0, "n/a", "sRAW1 (mRAW)", "sRAW2 (sRAW)");
+        Integer value = _directory.getInteger(CameraSettings.TAG_SRAW_QUALITY);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0:
+                return "n/a";
+            case 1:
+                return "sRAW1 (mRAW)";
+            case 2:
+                return "sRAW2 (sRAW)";
+            case 0xFFFF:
+                return "n/a";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    @Nullable
+    public String getFocusBracketingDescription()
+    {
+        return getIndexedDescription(CameraSettings.TAG_FOCUS_BRACKETING, "Disable", "Enable");
+    }
+
+    @Nullable
+    public String getClarityDescription()
+    {
+        Integer value = _directory.getInteger(CameraSettings.TAG_CLARITY);
+        if (value == null)
+            return null;
+        if (value == 0x7FFF)
+            return "n/a";
+        return Integer.toString(value > 32767 ? value - 65536 : value);
+    }
+
+    @Nullable
+    public String getHdrPqDescription()
+    {
+        return getIndexedDescription(CameraSettings.TAG_HDR_PQ, "Off", "On");
+    }
+
+    @Nullable
+    public String getFocalTypeDescription()
+    {
+        Integer value = _directory.getInteger(FocalLength.TAG_FOCAL_TYPE);
+        if (value == null)
+            return null;
+        switch (value) {
+            case 0:
+                return "Fixed";
+            case 2:
+                return "Zoom";
+            default:
+                return "Unknown (" + value + ")";
+        }
+    }
+
+    private static String toSignedShortString(int value)
+    {
+        int signed = value > 32767 ? value - 65536 : value;
+        return String.format("%+d", signed);
+    }
+
+    private static void append(@NotNull StringBuilder sb, @NotNull String bit)
+    {
+        if (sb.length() != 0)
+            sb.append(", ");
+        sb.append(bit);
     }
 
     /**
@@ -1174,6 +1308,43 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         _lensTypeById.put(4154, "Canon EF-S 24mm f/2.8 STM");
         _lensTypeById.put(4156, "Canon EF 50mm f/1.8 STM");
         _lensTypeById.put(36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM");
+
+        // Canon RF lenses
+        _lensTypeById.put(61182, "Canon RF 50mm F1.2L USM");
+        _lensTypeById.put(61183, "Canon RF 24-105mm F4L IS USM");
+        _lensTypeById.put(61184, "Canon RF 28-70mm F2L USM");
+        _lensTypeById.put(61185, "Canon RF 35mm F1.8 Macro IS STM");
+        _lensTypeById.put(61186, "Canon RF 85mm F1.2L USM");
+        _lensTypeById.put(61187, "Canon RF 85mm F1.2L USM DS");
+        _lensTypeById.put(61188, "Canon RF 24-70mm F2.8L IS USM");
+        _lensTypeById.put(61189, "Canon RF 15-35mm F2.8L IS USM");
+        _lensTypeById.put(61190, "Canon RF 24-240mm F4-6.3 IS USM");
+        _lensTypeById.put(61191, "Canon RF 70-200mm F2.8L IS USM");
+        _lensTypeById.put(61195, "Canon RF 85mm F2 Macro IS STM");
+        _lensTypeById.put(61196, "Canon RF 600mm F11 IS STM");
+        _lensTypeById.put(61197, "Canon RF 800mm F11 IS STM");
+        _lensTypeById.put(61198, "Canon RF 24-105mm F4-7.1 IS STM");
+        _lensTypeById.put(61199, "Canon RF 100-500mm F4.5-7.1L IS USM");
+        _lensTypeById.put(61200, "Canon RF 70-200mm F4L IS USM");
+        _lensTypeById.put(61202, "Canon RF 100mm F2.8L Macro IS USM");
+        _lensTypeById.put(61203, "Canon RF 400mm F2.8L IS USM");
+        _lensTypeById.put(61204, "Canon RF 600mm F4L IS USM");
+        _lensTypeById.put(61205, "Canon RF 14-35mm F4L IS USM");
+        _lensTypeById.put(61206, "Canon RF 24mm F1.8 Macro IS STM");
+        _lensTypeById.put(61207, "Canon RF 16mm F2.8 STM");
+        _lensTypeById.put(61208, "Canon RF 100-400mm F5.6-8 IS USM");
+        _lensTypeById.put(61209, "Canon RF 800mm F5.6L IS USM");
+        _lensTypeById.put(61210, "Canon RF 1200mm F8L IS USM");
+        _lensTypeById.put(61211, "Canon RF 5.2mm F2.8L Dual Fisheye");
+        _lensTypeById.put(61213, "Canon RF 15-30mm F4.5-6.3 IS STM");
+        _lensTypeById.put(61215, "Canon RF 135mm F1.8L IS USM");
+        _lensTypeById.put(61217, "Canon RF 100-300mm F2.8L IS USM");
+        _lensTypeById.put(61218, "Canon RF 200-800mm F6.3-9 IS USM");
+        _lensTypeById.put(61220, "Canon RF 35mm F1.4L VCM");
+        _lensTypeById.put(61222, "Canon RF 28mm F2.8 STM");
+        _lensTypeById.put(61224, "Canon RF 10-20mm F4L IS STM");
+        _lensTypeById.put(61226, "Canon RF 24-105mm F2.8L IS USM Z");
+
         _lensTypeById.put(65535, "N/A");
     }
 }

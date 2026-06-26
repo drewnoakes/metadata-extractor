@@ -22,6 +22,7 @@ package com.drew.imaging;
 
 import com.drew.imaging.avi.AviMetadataReader;
 import com.drew.imaging.bmp.BmpMetadataReader;
+import com.drew.imaging.cr3.Cr3MetadataReader;
 import com.drew.imaging.eps.EpsMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.heif.HeifMetadataReader;
@@ -194,6 +195,8 @@ public class ImageMetadataReader
                 return AviMetadataReader.readMetadata(inputStream);
             case Wav:
                 return WavMetadataReader.readMetadata(inputStream);
+            case Crx:
+                return Cr3MetadataReader.readMetadata(inputStream);
             case QuickTime:
                 return QuickTimeMetadataReader.readMetadata(inputStream);
             case Mp4:
