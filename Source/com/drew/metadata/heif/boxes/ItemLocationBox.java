@@ -91,7 +91,7 @@ public class ItemLocationBox extends FullBox
             long extentOffset;
             long extentLength;
             for (int j = 0; j < extentCount; j++) {
-                if ((version == 1) || (version == 2) && (indexSize > 0)) {
+                if (((version == 1) || (version == 2)) && (indexSize > 0)) {
                     extentIndex = getIntFromUnknownByte(indexSize, reader);
                 }
                 extentOffset = getIntFromUnknownByte(offsetSize, reader);
@@ -104,6 +104,10 @@ public class ItemLocationBox extends FullBox
     public Long getIntFromUnknownByte(int variable, SequentialReader reader) throws IOException
     {
         switch(variable) {
+            case (0):
+                // Per ISO/IEC 14496-12, offset_size/length_size/index_size of 0 means the field is
+                // absent and its value is 0 (e.g. the location is carried entirely by base_offset).
+                return 0L;
             case (1):
                 return (long)reader.getUInt8();
             case (2):

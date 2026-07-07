@@ -12,3 +12,4 @@
 build
 .DS_Store
 .gradle
+.flattened-pom.xml

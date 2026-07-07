@@ -143,8 +143,9 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_TILE_BYTE_COUNTS                  = 0x0145;
 
     /**
-     * Tag is a pointer to one or more sub-IFDs.
-     + Seems to be used exclusively by raw formats, referencing one or two IFDs.
+     * Tag is a pointer to one or more sub-IFDs. It was defined by Adobe to enable
+     * "TIFF Trees" within a TIFF file, to be able to link additional information
+     * such as transparency masks or preview images to a main image.
      */
     public static final int TAG_SUB_IFD_OFFSET                    = 0x014a;
 

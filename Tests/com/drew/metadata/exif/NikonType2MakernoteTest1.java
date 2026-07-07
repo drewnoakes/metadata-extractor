@@ -153,4 +153,23 @@ public class NikonType2MakernoteTest1
         directory.setByteArray(NikonType2MakernoteDirectory.TAG_AUTO_FLASH_COMPENSATION, new byte[] { (byte)0xFE, 0x01, 0x06 });
         assertEquals("-0.33 EV", descriptor.getAutoFlashCompensationDescription());
     }
+
+    @Test
+    public void testGetPowerUpTimeDescription() throws Exception
+    {
+        NikonType2MakernoteDirectory directory = new NikonType2MakernoteDirectory();
+        NikonType2MakernoteDescriptor descriptor = new NikonType2MakernoteDescriptor(directory);
+
+        // no entry exists
+        assertNull(descriptor.getPowerUpTimeDescription());
+
+        // too short array
+        directory.setByteArray(NikonType2MakernoteDirectory.TAG_POWER_UP_TIME, new byte[] { 0x07, (byte)0xDB });
+        assertNull(descriptor.getPowerUpTimeDescription());
+
+        // valid 8-byte array: 2011:04:25 01:54:58
+        directory.setByteArray(NikonType2MakernoteDirectory.TAG_POWER_UP_TIME,
+            new byte[] { 0x07, (byte)0xDB, 0x04, 0x19, 0x01, 0x36, 0x3A, 0x00 });
+        assertEquals("2011:04:25 01:54:58", descriptor.getPowerUpTimeDescription());
+    }
 }

@@ -21,6 +21,7 @@
 package com.drew.metadata.gif;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
@@ -65,9 +66,10 @@ public class GifControlDirectory extends Directory
     /**
      * @return The {@link DisposalMethod}.
      */
-    @NotNull
+    @Nullable
     public DisposalMethod getDisposalMethod() {
-        return (DisposalMethod) getObject(TAG_DISPOSAL_METHOD);
+        Integer value = getInteger(TAG_DISPOSAL_METHOD);
+        return value == null ? null : DisposalMethod.typeOf(value);
     }
 
     /**
@@ -108,26 +110,6 @@ public class GifControlDirectory extends Directory
                 case 6:
                 case 7: return TO_BE_DEFINED;
                 default: return INVALID;
-            }
-        }
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case DO_NOT_DISPOSE:
-                    return "Don't Dispose";
-                case INVALID:
-                    return "Invalid value";
-                case NOT_SPECIFIED:
-                    return "Not Specified";
-                case RESTORE_TO_BACKGROUND_COLOR:
-                    return "Restore to Background Color";
-                case RESTORE_TO_PREVIOUS:
-                    return "Restore to Previous";
-                case TO_BE_DEFINED:
-                    return "To Be Defined";
-                default:
-                    return super.toString();
             }
         }
     }

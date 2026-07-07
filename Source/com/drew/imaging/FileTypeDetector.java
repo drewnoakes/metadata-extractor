@@ -25,12 +25,13 @@ import com.drew.imaging.quicktime.QuickTimeTypeChecker;
 import com.drew.imaging.riff.RiffTypeChecker;
 import com.drew.lang.ByteTrie;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.IOException;
 
 /**
- * Examines the a file's first bytes and estimates the file's type.
+ * Examines a file's first bytes and estimates the file's type.
  */
 public class FileTypeDetector
 {
@@ -69,7 +70,8 @@ public class FileTypeDetector
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x02, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x03, 0x01});
         _root.addPath(FileType.Pcx, new byte[]{0x0A, 0x05, 0x01});
-        _root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
+        // NOTE several file types match this, which we handle in TryDisambiguate: DNG, GPR (GoPro), KDC (Kodak), 3FR (Hasselblad)
+        //_root.addPath(FileType.Arw, "II".getBytes(), new byte[]{0x2a, 0x00, 0x08, 0x00});
         _root.addPath(FileType.Crw, "II".getBytes(), new byte[]{0x1a, 0x00, 0x00, 0x00}, "HEAPCCDR".getBytes());
         _root.addPath(FileType.Cr2, "II".getBytes(), new byte[]{0x2a, 0x00, 0x10, 0x00, 0x00, 0x00, 0x43, 0x52});
         // NOTE this doesn't work for NEF as it incorrectly flags many other TIFF files as being NEF
@@ -90,6 +92,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Flv, new byte[]{0x46, 0x4C, 0x56});
         _root.addPath(FileType.Indd, new byte[]{0x06, 0x06, (byte)0xED, (byte)0xF5, (byte)0xD8, 0x1D, 0x46, (byte)0xE5, (byte)0xBD, 0x31, (byte)0xEF, (byte)0xE7, (byte)0xFE, 0x74, (byte)0xB7, 0x1D});
         _root.addPath(FileType.Mxf, new byte[]{0x06, 0x0e, 0x2b, 0x34, 0x02, 0x05, 0x01, 0x01, 0x0d, 0x01, 0x02, 0x01, 0x01, 0x02}); // has offset?
+        _root.addPath(FileType.Pdf, new byte[]{0x25, 0x50, 0x44, 0x46});
         _root.addPath(FileType.Qxp, new byte[]{0x00, 0x00, 0x49, 0x49, 0x58, 0x50, 0x52, 0x33}); // "..IIXPR3" (little-endian - intel)
         _root.addPath(FileType.Qxp, new byte[]{0x00, 0x00, 0x4D, 0x4D, 0x58, 0x50, 0x52, 0x33}); // "..MMXPR3" (big-endian - motorola)
         _root.addPath(FileType.Ram, new byte[]{0x72, 0x74, 0x73, 0x70, 0x3A, 0x2F, 0x2F});
@@ -130,6 +133,25 @@ public class FileTypeDetector
     @NotNull
     public static FileType detectFileType(@NotNull final InputStream inputStream) throws IOException
     {
+        return detectFileType(inputStream, null);
+    }
+
+    /**
+     * Examines the file's bytes and estimates the file's type.
+     * When ambiguous, use the file name extension (if available).
+     * <p>
+     * The input stream must support mark and reset, in order to
+     * return the stream to the position at which it was provided
+     * to this method once completed.
+     * <p>
+     * Requires the stream to contain at least eight bytes.
+     *
+     * @param filePath The file path or file name of the file, if available. Only the extension is used.
+     * @throws IOException if the stream does not support mark/reset.
+     */
+    @NotNull
+    public static FileType detectFileType(@NotNull final InputStream inputStream, @Nullable String filePath) throws IOException
+    {
         if (!inputStream.markSupported())
             throw new IOException("Stream must support mark/reset");
 
@@ -152,14 +174,72 @@ public class FileTypeDetector
 
         assert(fileType != null);
 
-        if (fileType == FileType.Unknown) {
-            for (TypeChecker checker : _fixedCheckers) {
-                fileType = checker.checkType(bytes);
-                if (fileType != FileType.Unknown)
-                    return fileType;
-            }
+        if (fileType != FileType.Unknown) {
+            // Found
+            return filePath == null ? fileType : tryDisambiguate(fileType, filePath);
+        }
+
+        for (TypeChecker checker : _fixedCheckers) {
+            fileType = checker.checkType(bytes);
+            if (fileType != FileType.Unknown)
+                return fileType;
         }
 
         return fileType;
+    }
+
+    private static FileType tryDisambiguate(@NotNull FileType detectedFileType, @NotNull String fileName)
+    {
+        if (detectedFileType == FileType.Tiff)
+        {
+            String extension = getExtension(fileName);
+
+            if (extension.equalsIgnoreCase(".arw"))
+            {
+                return FileType.Arw;
+            }
+            else if (extension.equalsIgnoreCase(".dng"))
+            {
+                return FileType.Dng;
+            }
+            else if (extension.equalsIgnoreCase(".gpr"))
+            {
+                return FileType.GoPro;
+            }
+            else if (extension.equalsIgnoreCase(".kdc"))
+            {
+                return FileType.Kdc;
+            }
+            else if (extension.equalsIgnoreCase(".nef"))
+            {
+                return FileType.Nef;
+            }
+            else if (extension.equalsIgnoreCase(".3fr"))
+            {
+                return FileType.ThreeFR;
+            }
+            else if (extension.equalsIgnoreCase(".pef"))
+            {
+                return FileType.Pef;
+            }
+            else if (extension.equalsIgnoreCase(".srw"))
+            {
+                return FileType.Srw;
+            }
+        }
+
+        return detectedFileType;
+    }
+
+    private static String getExtension(@NotNull String fileName)
+    {
+        int index = fileName.lastIndexOf('.');
+
+        if (index == -1)
+        {
+            return "";
+        }
+
+        return fileName.substring(index);
     }
 }
