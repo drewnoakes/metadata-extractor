@@ -220,4 +220,25 @@ public abstract class DirectoryTiffHandler implements TiffHandler
         // TODO create and use a proper setter for short[]
         _currentDirectory.setObjectArray(tagId, array);
     }
+
+    public void setInt64s(int tagId, long int64s)
+    {
+        _currentDirectory.setLong(tagId, int64s);
+    }
+
+    public void setInt64sArray(int tagId, @NotNull long[] array)
+    {
+        _currentDirectory.setObjectArray(tagId, array);
+    }
+
+    public void setInt64u(int tagId, long int64u)
+    {
+        // values above Long.MAX_VALUE will wrap, but do not occur in practice
+        _currentDirectory.setLong(tagId, int64u);
+    }
+
+    public void setInt64uArray(int tagId, @NotNull long[] array)
+    {
+        _currentDirectory.setObjectArray(tagId, array);
+    }
 }
