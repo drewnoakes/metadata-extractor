@@ -366,6 +366,26 @@ public class TiffReader
                     handler.setInt32uArray(tagId, array);
                 }
                 break;
+            case TiffDataFormat.CODE_INT64_S:
+                if (componentCount == 1) {
+                    handler.setInt64s(tagId, reader.getInt64(tagValueOffset));
+                } else {
+                    long[] array = new long[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        array[i] = reader.getInt64(tagValueOffset + (i * 8));
+                    handler.setInt64sArray(tagId, array);
+                }
+                break;
+            case TiffDataFormat.CODE_INT64_U:
+                if (componentCount == 1) {
+                    handler.setInt64u(tagId, reader.getInt64(tagValueOffset));
+                } else {
+                    long[] array = new long[componentCount];
+                    for (int i = 0; i < componentCount; i++)
+                        array[i] = reader.getInt64(tagValueOffset + (i * 8));
+                    handler.setInt64uArray(tagId, array);
+                }
+                break;
             default:
                 handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
         }

@@ -42,6 +42,10 @@ public class TiffDataFormat
     public static final int CODE_RATIONAL_S = 10;
     public static final int CODE_SINGLE = 11;
     public static final int CODE_DOUBLE = 12;
+    // the following types are defined by BigTIFF, but can also occur in regular
+    // TIFF streams (e.g. Apple maker notes use LONG8 for some tags)
+    public static final int CODE_INT64_U = 16;
+    public static final int CODE_INT64_S = 17;
 
     @NotNull public static final TiffDataFormat INT8_U = new TiffDataFormat("BYTE", CODE_INT8_U, 1);
     @NotNull public static final TiffDataFormat STRING = new TiffDataFormat("STRING", CODE_STRING, 1);
@@ -55,6 +59,8 @@ public class TiffDataFormat
     @NotNull public static final TiffDataFormat RATIONAL_S = new TiffDataFormat("SRATIONAL", CODE_RATIONAL_S, 8);
     @NotNull public static final TiffDataFormat SINGLE = new TiffDataFormat("SINGLE", CODE_SINGLE, 4);
     @NotNull public static final TiffDataFormat DOUBLE = new TiffDataFormat("DOUBLE", CODE_DOUBLE, 8);
+    @NotNull public static final TiffDataFormat INT64_U = new TiffDataFormat("LONG8", CODE_INT64_U, 8);
+    @NotNull public static final TiffDataFormat INT64_S = new TiffDataFormat("SLONG8", CODE_INT64_S, 8);
 
     @NotNull
     private final String _name;
@@ -77,6 +83,8 @@ public class TiffDataFormat
             case 10: return RATIONAL_S;
             case 11: return SINGLE;
             case 12: return DOUBLE;
+            case 16: return INT64_U;
+            case 17: return INT64_S;
         }
         return null;
     }
