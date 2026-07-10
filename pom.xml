@@ -55,7 +55,7 @@
     </developers>
 
     <properties>
-        <revision>0.0.0-SNAPSHOT</revision>
+        <revision>2.20.0-local</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -256,9 +256,13 @@
     </build>
 
     <distributionManagement>
+        <repository>
+            <id>forgejo</id>
+            <url>https://cs-cicd.commoswiss.ch/forgejo/api/packages/commoswiss/maven</url>
+        </repository>
         <snapshotRepository>
-            <id>central</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+            <id>forgejo</id>
+            <url>https://cs-cicd.commoswiss.ch/forgejo/api/packages/commoswiss/maven</url>
         </snapshotRepository>
     </distributionManagement>
 
