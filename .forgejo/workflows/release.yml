@@ -44,7 +44,7 @@ jobs:
       - name: event
         run: |
              cat <<'EOF'
-             ${{ toJSON(secrets) }}
+             ${{ toJSON(vars) }}
              EOF
       - name: Publish
         run: mvn --batch-mode --settings .forgejo/settings.xml clean deploy -Drevision=${{ steps.version.outputs.version }}
