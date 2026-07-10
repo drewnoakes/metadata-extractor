@@ -12,7 +12,9 @@ on:
 jobs:
   publish:
     runs-on: docker-node
-
+    permissions:
+          contents: read
+          packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
