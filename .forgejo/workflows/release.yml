@@ -43,7 +43,7 @@ jobs:
         uses: https://github.com/stCarolas/setup-maven@v5
           
       - name: Publish
-        run: mvn --batch-mode --settings .github/settings.xml clean deploy -Drevision=${{ steps.version.outputs.version }}
+        run: mvn --batch-mode --settings .forgejo/settings.xml clean deploy -Drevision=${{ steps.version.outputs.version }}
         env:
           FORGEJO_TOKEN: ${{ secrets.FORGEJO_TOKEN }}
           FORGEJO_ACTOR: ${{ forgejo.actor }}
