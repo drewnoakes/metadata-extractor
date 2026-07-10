@@ -7,7 +7,7 @@
 	<servers>
 		<server>
 			<id>forgejo</id>
-			<username>${env.AUTH_ACTOR}</username>
+			<username>${env.FORGEJO_ACTOR}</username>
 			<password>${env.AUTH_TOKEN}</password>
 		</server>
 	</servers>
