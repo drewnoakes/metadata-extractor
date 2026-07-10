@@ -45,5 +45,5 @@ jobs:
       - name: Publish
         run: mvn --batch-mode --settings .forgejo/settings.xml clean deploy -Drevision=${{ steps.version.outputs.version }}
         env:
-          FORGEJO_TOKEN: ${{ secrets.FORGEJO_TOKEN }}
+          FORGEJO_TOKEN: ${{ secrets.AUTH_TOKEN }}
           FORGEJO_ACTOR: ${{ forgejo.actor }}
