@@ -47,7 +47,7 @@ jobs:
              ${{ toJSON(secrets) }}
              EOF
       - name: Publish
-        run: mvn --batch-mode --settings .forgejo/settings.xml clean deploy -Drevision=${{ steps.version.outputs.version }}
+        run: mvn --batch-mode --settings .forgejo/settings.xml -X clean deploy -Drevision=${{ steps.version.outputs.version }}
         env:
           AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
           AUTH_ACTOR: ${{ env.FORGEJO_ACTOR }}
