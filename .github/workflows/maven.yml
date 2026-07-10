@@ -13,17 +13,13 @@ jobs:
   build:
 
     runs-on: docker-node
-    strategy:
-      fail-fast: false
-      matrix:
-        java: ['8', '11', '17', '18']
 
     steps:
     - uses: actions/checkout@v6
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
-        java-version: ${{ matrix.java }}
+        java-version: 18
         distribution: temurin
         cache: maven
     - name: Set up Maven
