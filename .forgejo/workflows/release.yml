@@ -41,6 +41,13 @@ jobs:
 
       - name: Set up Maven
         uses: https://github.com/stCarolas/setup-maven@v5
-          
+      - name: event
+        run: |
+             cat <<'EOF'
+             ${{ toJSON(forgejo) }}
+             EOF
       - name: Publish
         run: mvn --batch-mode --settings .forgejo/settings.xml clean deploy -Drevision=${{ steps.version.outputs.version }}
+        env:
+          FORGEJO_TOKEN: ${{ env.FORGEJO_TOKEN }}
+          FORGEJO_ACTOR: ${{ env.FORGEJO_ACTOR }}
