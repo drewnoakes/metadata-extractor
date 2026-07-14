@@ -42,6 +42,7 @@ import com.drew.metadata.file.FileSystemDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -75,7 +76,11 @@ public class ProcessAllImagesInFolderUtility
                     printUsage();
                     System.exit(1);
                 }
-                log = new PrintStream(new FileOutputStream(args[++i], false), true);
+
+                try (FileOutputStream fos = new FileOutputStream(args[++i], false)) {
+                    log = new PrintStream(fos , true);
+                }
+
             } else {
                 // Treat this argument as a directory
                 directories.add(arg);
@@ -493,26 +498,17 @@ public class ProcessAllImagesInFolderUtility
                 javaDir.mkdir();
 
             String outputPath = String.format("%s/metadata/java/%s.txt", file.getParent(), file.getName());
-            Writer writer = new OutputStreamWriter(
-                new FileOutputStream(outputPath),
-                "UTF-8"
-            );
-            writer.write("FILE: " + file.getName() + NEW_LINE);
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(outputPath), StandardCharsets.UTF_8);
+                    BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+                writer.write("FILE: " + file.getName() + NEW_LINE);
 
-            // Detect file type
-            BufferedInputStream stream = null;
-            try {
-                stream = new BufferedInputStream(new FileInputStream(file));
+                // Detect file type
                 FileType fileType = FileTypeDetector.detectFileType(stream, file.getName());
                 writer.write(String.format("TYPE: %s" + NEW_LINE, fileType.toString().toUpperCase()));
                 writer.write(NEW_LINE);
-            } finally {
-                if (stream != null) {
-                    stream.close();
-                }
-            }
 
-            return new PrintWriter(writer);
+                return new PrintWriter(writer);
+            }
         }
 
         private static void closeWriter(@Nullable Writer writer) throws IOException
@@ -639,46 +635,47 @@ public class ProcessAllImagesInFolderUtility
 
         private void writeOutput(@NotNull PrintStream stream) throws IOException
         {
-            Writer writer = new OutputStreamWriter(stream);
-            writer.write("# Image Database Summary\n\n");
+            try (Writer writer = new OutputStreamWriter(stream)) {
+                writer.write("# Image Database Summary\n\n");
 
-            for (Map.Entry<String, List<Row>> entry : _rowListByExtension.entrySet()) {
-                String extension = entry.getKey();
-                writer.write("## " + extension.toUpperCase() + " Files\n\n");
+                for (Map.Entry<String, List<Row>> entry : _rowListByExtension.entrySet()) {
+                    String extension = entry.getKey();
+                    writer.write("## " + extension.toUpperCase() + " Files\n\n");
 
-                writer.write("File|Manufacturer|Model|Dir Count|Exif?|Makernote|Thumbnail|All Data\n");
-                writer.write("----|------------|-----|---------|-----|---------|---------|--------\n");
+                    writer.write("File|Manufacturer|Model|Dir Count|Exif?|Makernote|Thumbnail|All Data\n");
+                    writer.write("----|------------|-----|---------|-----|---------|---------|--------\n");
 
-                List<Row> rows = entry.getValue();
+                    List<Row> rows = entry.getValue();
 
-                // Order by manufacturer, then model
-                Collections.sort(rows, new Comparator<Row>() {
-                    public int compare(Row o1, Row o2)
-                    {
-                        int c1 = StringUtil.compare(o1.manufacturer, o2.manufacturer);
-                        return c1 != 0 ? c1 : StringUtil.compare(o1.model, o2.model);
+                    // Order by manufacturer, then model
+                    Collections.sort(rows, new Comparator<Row>() {
+                        public int compare(Row o1, Row o2)
+                        {
+                            int c1 = StringUtil.compare(o1.manufacturer, o2.manufacturer);
+                            return c1 != 0 ? c1 : StringUtil.compare(o1.model, o2.model);
+                        }
+                    });
+
+                    for (Row row : rows) {
+                        writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/metadata/%s.txt)\n",
+                                row.file.getName(),
+                                row.relativePath,
+                                StringUtil.urlEncode(row.file.getName()),
+                                row.manufacturer == null ? "" : row.manufacturer,
+                                row.model == null ? "" : row.model,
+                                row.metadata.getDirectoryCount(),
+                                row.exifVersion == null ? "" : row.exifVersion,
+                                row.makernote == null ? "" : row.makernote,
+                                row.thumbnail == null ? "" : row.thumbnail,
+                                row.relativePath,
+                                StringUtil.urlEncode(row.file.getName()).toLowerCase()
+                        ));
                     }
-                });
 
-                for (Row row : rows) {
-                    writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/metadata/%s.txt)\n",
-                            row.file.getName(),
-                            row.relativePath,
-                            StringUtil.urlEncode(row.file.getName()),
-                            row.manufacturer == null ? "" : row.manufacturer,
-                            row.model == null ? "" : row.model,
-                            row.metadata.getDirectoryCount(),
-                            row.exifVersion == null ? "" : row.exifVersion,
-                            row.makernote == null ? "" : row.makernote,
-                            row.thumbnail == null ? "" : row.thumbnail,
-                            row.relativePath,
-                            StringUtil.urlEncode(row.file.getName()).toLowerCase()
-                    ));
+                    writer.write('\n');
                 }
-
-                writer.write('\n');
+                writer.flush();
             }
-            writer.flush();
         }
     }
 
