@@ -20,24 +20,37 @@
  */
 package com.drew.metadata.mp4;
 
+import static com.drew.metadata.mp4.Mp4Directory.TAG_CATEGORY;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_COMMENT;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_LATITUDE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_LONGITUDE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_MOOD;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_SUBTITLE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_TITLE;
+import static com.drew.metadata.mp4.Mp4Directory.TAG_USER_RATING;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.drew.imaging.mp4.Mp4Handler;
 import com.drew.lang.DateUtil;
 import com.drew.lang.Rational;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
+import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.mp4.media.*;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.drew.metadata.mp4.Mp4Directory.TAG_LATITUDE;
-import static com.drew.metadata.mp4.Mp4Directory.TAG_LONGITUDE;
+import com.drew.metadata.mp4.media.Mp4HintHandler;
+import com.drew.metadata.mp4.media.Mp4MetaHandler;
+import com.drew.metadata.mp4.media.Mp4SoundHandler;
+import com.drew.metadata.mp4.media.Mp4TextHandler;
+import com.drew.metadata.mp4.media.Mp4UuidBoxHandler;
+import com.drew.metadata.mp4.media.Mp4VideoHandler;
 
 /**
  * @author Payton Garland
@@ -140,6 +153,8 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
     private void processUserData(@NotNull SequentialReader reader, int length) throws IOException
     {
         final int LOCATION_CODE = 0xA978797A; // "©xyz"
+        final int META_TYPE = 0x6D657461; // "meta"
+        final int XTRA_TYPE = 0x58747261; // "Xtra"
 
         String coordinateString = null;
 
@@ -152,6 +167,11 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 int xyzLength = reader.getUInt16();
                 reader.skip(2);
                 coordinateString = reader.getString(xyzLength, "UTF-8");
+            } else if (kind == META_TYPE && size > 16) {
+                reader.skip(4); // one byte version, three bytes flags
+                processUserDataMeta(reader, length, size - 12);
+            } else if (kind == XTRA_TYPE && size > 16) {
+                processUserDataMetaXtra(reader, length, size - 8);
             } else if (size >= 8) {
                 reader.skip(size - 8);
             } else {
@@ -169,6 +189,115 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 directory.setDouble(TAG_LONGITUDE, longitude);
             }
         }
+    }
+
+    /**
+     * Processes a {@code meta} box nested within {@code udta}, looking for an {@code ilst} box that
+     * carries iTunes-style metadata such as title and comment.
+     */
+    private void processUserDataMeta(@NotNull SequentialReader reader, int length, long blockSize) throws IOException
+    {
+        final int ILST_TYPE = 0x696C7374; // "ilst"
+
+        long initialPosition = reader.getPosition();
+
+        while (reader.getPosition() < length && (reader.getPosition() - initialPosition) < blockSize) {
+            long size = reader.getUInt32();
+            if (size < 8)
+                break;
+            int kind = reader.getInt32();
+            if (kind == ILST_TYPE && size > 16) {
+                processUserDataMetaIlst(reader, length, size - 8);
+            } else {
+                reader.skip(size - 8);
+            }
+        }
+    }
+
+    /**
+     * Processes an {@code ilst} box, reading the title ({@code ©nam}) and comment ({@code ©cmt})
+     * values. Each recognised entry contains a nested {@code data} atom holding a UTF-8 string.
+     */
+    private void processUserDataMetaIlst(@NotNull SequentialReader reader, int length, long blockSize) throws IOException
+    {
+        final int CNAM_TYPE = 0xA96E616D; // "©nam"
+        final int CCMT_TYPE = 0xA9636D74; // "©cmt"
+
+        long initialPosition = reader.getPosition();
+
+        while (reader.getPosition() < length && (reader.getPosition() - initialPosition) < blockSize) {
+            long entryStart = reader.getPosition();
+            long size = reader.getUInt32();
+            if (size < 8)
+                break;
+            int kind = reader.getInt32();
+            if (kind == CNAM_TYPE) {
+                long dataSize = reader.getUInt32();
+                if (dataSize > 16) {
+                    reader.skip(12); // "data" atom: 4 bytes type, 4 bytes version/flags, 4 bytes locale
+                    directory.setString(TAG_TITLE, reader.getString((int) dataSize - 16, "UTF-8"));
+                }
+            } else if (kind == CCMT_TYPE) {
+                long dataSize = reader.getUInt32();
+                if (dataSize > 16) {
+                    reader.skip(12);
+                    directory.setString(TAG_COMMENT, reader.getString((int) dataSize - 16, "UTF-8"));
+                }
+            }
+            // Advance to the end of this entry regardless of which atoms we consumed, so any
+            // trailing atoms or padding don't misalign the reader for subsequent entries.
+            long consumed = reader.getPosition() - entryStart;
+            if (size > consumed)
+                reader.skip(size - consumed);
+        }
+    }
+
+    /**
+     * Processes a Windows {@code Xtra} box nested within {@code udta}. This carries additional
+     * properties surfaced by the Windows file properties dialog, encoded as UTF-16LE strings.
+     */
+    private void processUserDataMetaXtra(@NotNull SequentialReader reader, int length, long blockSize) throws IOException
+    {
+        long initialPosition = reader.getPosition();
+
+        while (reader.getPosition() < length && (reader.getPosition() - initialPosition) < blockSize) {
+            long entryStart = reader.getPosition();
+            long entrySize = reader.getUInt32();
+            if (entrySize < 12)
+                break;
+            long keyNameSize = reader.getUInt32();
+            String keyName = reader.getString((int) keyNameSize, "UTF-8");
+            long entryCount = reader.getUInt32();
+            if (keyName.equals("WM/SubTitle")) {
+                directory.setString(TAG_SUBTITLE, readUserDataMetaXtraValues(reader, entryCount));
+            } else if (keyName.equals("WM/SharedUserRating")) {
+                reader.getUInt32(); // value length
+                reader.getUInt16(); // value type
+                directory.setLong(TAG_USER_RATING, reader.getInt64());
+            } else if (keyName.equals("WM/Category")) {
+                directory.setString(TAG_CATEGORY, readUserDataMetaXtraValues(reader, entryCount));
+            } else if (keyName.equals("WM/Mood")) {
+                directory.setString(TAG_MOOD, readUserDataMetaXtraValues(reader, entryCount));
+            }
+            // Advance to the end of this entry regardless of which values we consumed, so any
+            // padding or additional fields don't misalign the reader for subsequent entries.
+            long consumed = reader.getPosition() - entryStart;
+            if (entrySize > consumed)
+                reader.skip(entrySize - consumed);
+        }
+    }
+
+    private String readUserDataMetaXtraValues(@NotNull SequentialReader reader, long entryCount) throws IOException
+    {
+        List<String> result = new ArrayList<String>();
+        for (long i = 0; i < entryCount; i++) {
+            long valueSize = reader.getUInt32();
+            reader.getUInt16(); // value type
+            if (valueSize < 6)
+                break;
+            result.add(reader.getString((int) valueSize - 6, "UTF-16LE").replace("\0", ""));
+        }
+        return StringUtil.join(result, " | ");
     }
 
     private void processFileType(@NotNull SequentialReader reader, long boxSize) throws IOException
