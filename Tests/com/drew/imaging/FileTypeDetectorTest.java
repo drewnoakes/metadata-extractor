@@ -36,13 +36,13 @@ public class FileTypeDetectorTest
     /** Builds an ISO base media file header: a 4-byte big-endian box size followed by a 4-byte box type. */
     private static byte[] box(int size, String type, String remainder)
     {
-        byte[] tail = remainder.getBytes();
+        byte[] tail = remainder.getBytes(com.drew.lang.Charsets.ISO_8859_1);
         byte[] bytes = new byte[8 + tail.length];
         bytes[0] = (byte) (size >>> 24);
         bytes[1] = (byte) (size >>> 16);
         bytes[2] = (byte) (size >>> 8);
         bytes[3] = (byte) size;
-        System.arraycopy(type.getBytes(), 0, bytes, 4, 4);
+        System.arraycopy(type.getBytes(com.drew.lang.Charsets.ISO_8859_1), 0, bytes, 4, 4);
         System.arraycopy(tail, 0, bytes, 8, tail.length);
         return bytes;
     }
@@ -77,6 +77,8 @@ public class FileTypeDetectorTest
         assertEquals(FileType.QuickTime, detect(box(0x08, "mdat", "\0\0\0\0moov")));
         assertEquals(FileType.QuickTime, detect(box(0x6c, "moov", "\0\0\0\0mvhd")));
         assertEquals(FileType.QuickTime, detect(box(0x08, "free", "\0\0\0\0mdat")));
+        assertEquals(FileType.QuickTime, detect(box(0x08, "skip", "\0\0\0\0mdat")));
+        assertEquals(FileType.QuickTime, detect(box(0x08, "pnot", "\0\0\0\0mdat")));
     }
 
     @Test
