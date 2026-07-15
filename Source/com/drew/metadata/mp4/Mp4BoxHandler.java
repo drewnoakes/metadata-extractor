@@ -226,6 +226,7 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
         long initialPosition = reader.getPosition();
 
         while (reader.getPosition() < length && (reader.getPosition() - initialPosition) < blockSize) {
+            long entryStart = reader.getPosition();
             long size = reader.getUInt32();
             if (size < 8)
                 break;
@@ -235,20 +236,19 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 if (dataSize > 16) {
                     reader.skip(12); // "data" atom: 4 bytes type, 4 bytes version/flags, 4 bytes locale
                     directory.setString(TAG_TITLE, reader.getString((int) dataSize - 16, "UTF-8"));
-                } else {
-                    reader.skip(size - 12);
                 }
             } else if (kind == CCMT_TYPE) {
                 long dataSize = reader.getUInt32();
                 if (dataSize > 16) {
                     reader.skip(12);
                     directory.setString(TAG_COMMENT, reader.getString((int) dataSize - 16, "UTF-8"));
-                } else {
-                    reader.skip(size - 12);
                 }
-            } else {
-                reader.skip(size - 8);
             }
+            // Advance to the end of this entry regardless of which atoms we consumed, so any
+            // trailing atoms or padding don't misalign the reader for subsequent entries.
+            long consumed = reader.getPosition() - entryStart;
+            if (size > consumed)
+                reader.skip(size - consumed);
         }
     }
 
@@ -278,12 +278,12 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 directory.setString(TAG_CATEGORY, readUserDataMetaXtraValues(reader, entryCount));
             } else if (keyName.equals("WM/Mood")) {
                 directory.setString(TAG_MOOD, readUserDataMetaXtraValues(reader, entryCount));
-            } else {
-                // Unrecognised key: skip the remainder of this entry using its declared size.
-                long consumed = reader.getPosition() - entryStart;
-                if (entrySize > consumed)
-                    reader.skip(entrySize - consumed);
             }
+            // Advance to the end of this entry regardless of which values we consumed, so any
+            // padding or additional fields don't misalign the reader for subsequent entries.
+            long consumed = reader.getPosition() - entryStart;
+            if (entrySize > consumed)
+                reader.skip(entrySize - consumed);
         }
     }
 

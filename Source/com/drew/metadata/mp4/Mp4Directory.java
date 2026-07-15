@@ -87,7 +87,7 @@ public class Mp4Directory extends Directory {
         _tagNameMap.put(TAG_TITLE, "Title");
         _tagNameMap.put(TAG_COMMENT, "Comment");
         _tagNameMap.put(TAG_SUBTITLE, "Subtitle");
-        _tagNameMap.put(TAG_USER_RATING, "User rating");
+        _tagNameMap.put(TAG_USER_RATING, "User Rating");
         _tagNameMap.put(TAG_CATEGORY, "Tags");
         _tagNameMap.put(TAG_MOOD, "Mood");
 
