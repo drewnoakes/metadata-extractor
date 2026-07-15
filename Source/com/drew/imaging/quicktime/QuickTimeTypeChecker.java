@@ -23,11 +23,21 @@ package com.drew.imaging.quicktime;
 import com.drew.imaging.FileType;
 import com.drew.imaging.TypeChecker;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class QuickTimeTypeChecker implements TypeChecker
 {
     private static final HashMap<String, FileType> _ftypMap;
+
+    // Top-level atom types that identify a QuickTime file which omits the leading
+    // 'ftyp' box. Real ".mov" recordings (e.g. Apple Live Photo videos) frequently
+    // place 'mdat' first with 'moov' at the end, often preceded by a 'wide'
+    // placeholder, and therefore have no major brand to key off.
+    private static final Set<String> _leadingQuickTimeAtoms = new HashSet<String>(Arrays.asList(
+        "moov", "mdat", "free", "skip", "wide", "pnot"));
 
     static
     {
@@ -113,6 +123,11 @@ public class QuickTimeTypeChecker implements TypeChecker
 
             return FileType.QuickTime;
         }
+
+        // Files without an 'ftyp' box (classic QuickTime .mov) are identified by their
+        // first top-level atom instead.
+        if (_leadingQuickTimeAtoms.contains(new String(bytes, 4, 4)))
+            return FileType.QuickTime;
 
         return FileType.Unknown;
     }
