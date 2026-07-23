@@ -22,7 +22,11 @@
 package com.drew.metadata.exif;
 
 import com.drew.lang.Rational;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Locale;
 
 import static com.drew.metadata.exif.ExifIFD0Directory.*;
 import static org.junit.Assert.assertEquals;
@@ -34,6 +38,20 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExifIFD0DescriptorTest
 {
+    private Locale _originalDefaultLocale;
+
+    @Before
+    public void setUp()
+    {
+        _originalDefaultLocale = Locale.getDefault();
+    }
+
+    @After
+    public void tearDown()
+    {
+        Locale.setDefault(_originalDefaultLocale);
+    }
+
     @Test
     public void testXResolutionDescription() throws Exception
     {
@@ -43,6 +61,22 @@ public class ExifIFD0DescriptorTest
         directory.setInt(TAG_RESOLUTION_UNIT, 2);
         ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
         assertEquals("72 dots per inch", descriptor.getDescription(TAG_X_RESOLUTION));
+    }
+
+    @Test
+    public void testXResolutionDescriptionWithTurkishLocale() throws Exception
+    {
+        // Regression test for https://github.com/drewnoakes/metadata-extractor/issues/364
+        // Turkish case rules lowercase 'I' to a dotless 'ı', which corrupts hardcoded ASCII
+        // description strings such as "Inch" unless the conversion is locale-independent.
+        Locale.setDefault(new Locale("tr", "TR"));
+
+        ExifIFD0Directory directory = new ExifIFD0Directory();
+        directory.setRational(TAG_X_RESOLUTION, new Rational(300, 1));
+        // 2 is for 'Inch'
+        directory.setInt(TAG_RESOLUTION_UNIT, 2);
+        ExifIFD0Descriptor descriptor = new ExifIFD0Descriptor(directory);
+        assertEquals("300 dots per inch", descriptor.getDescription(TAG_X_RESOLUTION));
     }
 
     @Test
