@@ -85,6 +85,7 @@ public class Mp4VideoHandler extends Mp4MediaHandler<Mp4VideoDirectory>
 
         // TODO review this
         Mp4Dictionary.setLookup(Mp4VideoDirectory.TAG_COMPRESSION_TYPE, format, directory);
+        directory.setString(Mp4VideoDirectory.TAG_COMPRESSION_TYPE_RAW, format);
 
         directory.setInt(Mp4VideoDirectory.TAG_WIDTH, width);
         directory.setInt(Mp4VideoDirectory.TAG_HEIGHT, height);
