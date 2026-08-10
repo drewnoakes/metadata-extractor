@@ -29,6 +29,7 @@ public class QuickTimeContainerTypes
 {
     public static final String ATOM_MOVIE                       = "moov";
     public static final String ATOM_USER_DATA                   = "udta";
+    public static final String ATOM_UUID                       = "uuid";
     public static final String ATOM_TRACK                       = "trak";
     public static final String ATOM_MEDIA                       = "mdia";
     public static final String ATOM_MEDIA_INFORMATION           = "minf";
