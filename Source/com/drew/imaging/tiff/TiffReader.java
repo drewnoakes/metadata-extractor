@@ -180,6 +180,9 @@ public class TiffReader
                             }
                             stack.push(new IfdState((int)subDirOffset));
                             break;
+                        } else {
+                            state.componentIndex = state.componentCount;
+                            break;
                         }
                     }
                     if (stack.peek() != state)
@@ -215,7 +218,7 @@ public class TiffReader
                     if (isBigTiff) {
                         final long dirTagCountLong = reader.getInt64(state.ifdOffset);
                         if (dirTagCountLong < 0 || dirTagCountLong > 0xFFFF) {
-                            handler.error("Illegal IFD entry count: " + dirTagCountLong);
+                            handler.error("Unsupported IFD entry count: " + dirTagCountLong);
                             state.finished = true;
                             continue;
                         }
@@ -281,7 +284,12 @@ public class TiffReader
                         }
                         byteCount = byteCountOverride;
                     } else {
-                        byteCount = componentCount * format.getComponentSizeBytes();
+                        final int componentSize = format.getComponentSizeBytes();
+                        if (componentCount > Long.MAX_VALUE / componentSize) {
+                            handler.error(String.format("Illegal component count %d for TIFF tag 0x%04X", componentCount, tagId));
+                            continue;
+                        }
+                        byteCount = componentCount * componentSize;
                     }
 
                     final long tagValueOffset;

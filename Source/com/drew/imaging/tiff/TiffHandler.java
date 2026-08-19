@@ -42,6 +42,10 @@ public interface TiffHandler
      * <p>
      * Implementations are not obligated to use this information for any purpose, though it may be useful for
      * validation or perhaps differentiating the type of mapping to use for observed tags and IFDs.
+     * <p>
+     * This method is invoked by the default implementation of {@link #processTiffMarker(int)}, which the
+     * {@link TiffReader} calls. Handlers that need to signal {@link TiffStandard#BIG_TIFF} should override
+     * {@link #processTiffMarker(int)} instead.
      *
      * @param marker the 2-byte value found at position 2 of the TIFF header
      */

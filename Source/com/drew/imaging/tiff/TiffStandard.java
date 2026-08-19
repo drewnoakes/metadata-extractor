@@ -24,7 +24,7 @@ package com.drew.imaging.tiff;
  * The TIFF format variant of a data stream, as identified by the two-byte marker
  * in the TIFF header.
  *
- * @author Drew Noakes https://drewnoakes.com
+ * @author Dominik Schmidt
  */
 public enum TiffStandard
 {
