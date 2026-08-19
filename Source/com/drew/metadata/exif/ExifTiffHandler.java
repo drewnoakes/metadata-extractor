@@ -268,7 +268,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
 
         // Note: these also appear in tryEnterSubIfd because some are IFD pointers while others begin immediately
-        // for the same directories
+        // for the same directories.
+        // Maker notes are vendor-defined classic-TIFF structures (12-byte entries), independent of the enclosing
+        // container, so these nested IFDs are always parsed with the classic layout (isBigTiff == false) even inside
+        // a BigTIFF file.
         if (_currentDirectory instanceof OlympusMakernoteDirectory) {
             switch (tagId) {
                 case OlympusMakernoteDirectory.TAG_EQUIPMENT:
