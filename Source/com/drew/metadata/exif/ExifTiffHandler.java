@@ -29,6 +29,7 @@ import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
+import com.drew.imaging.tiff.TiffStandard;
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
@@ -63,6 +64,21 @@ public class ExifTiffHandler extends DirectoryTiffHandler
     {
         super(metadata, parentDirectory);
         _exifStartOffset = exifStartOffset;
+    }
+
+    @Override
+    @NotNull
+    public TiffStandard processTiffMarker(int marker) throws TiffProcessingException
+    {
+        final int bigTiffMarker = 0x002B;
+
+        if (marker == bigTiffMarker) {
+            pushDirectory(ExifIFD0Directory.class);
+            return TiffStandard.BIG_TIFF;
+        }
+
+        setTiffMarker(marker);
+        return TiffStandard.TIFF;
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException
