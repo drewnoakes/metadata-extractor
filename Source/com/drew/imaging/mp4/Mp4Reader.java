@@ -32,6 +32,13 @@ import java.io.InputStream;
  */
 public class Mp4Reader
 {
+    /**
+     * The maximum number of levels of nested containers to process. Real files nest only a few
+     * levels deep (such as moov/trak/mdia/minf/stbl), so this limit is only reached by malformed
+     * files, which would otherwise exhaust the stack.
+     */
+    private static final int MAX_BOX_DEPTH = 100;
+
     private Mp4Reader() {}
 
     public static void extract(@NotNull InputStream inputStream, @NotNull Mp4Handler<?> handler)
@@ -41,12 +48,20 @@ public class Mp4Reader
 
         Mp4Context context = new Mp4Context();
 
-        processBoxes(reader, -1, handler, context);
+        processBoxes(reader, -1, 0, handler, context);
     }
 
-    private static void processBoxes(StreamReader reader, long atomEnd, Mp4Handler<?> handler, Mp4Context context)
+    private static void processBoxes(StreamReader reader, long atomEnd, int depth, Mp4Handler<?> handler, Mp4Context context)
     {
         try {
+            if (depth > MAX_BOX_DEPTH) {
+                // Skip this box's contents rather than recurring into them. Only the top level
+                // call passes -1 for atomEnd, and it passes zero for depth, so atomEnd is known here.
+                handler.addError("Box nesting too deep.");
+                reader.skip(atomEnd - reader.getPosition());
+                return;
+            }
+
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
                 long boxSize = reader.getUInt32();
@@ -74,7 +89,7 @@ public class Mp4Reader
 
                 if (handler.shouldAcceptContainer(boxType)) {
                     // Recur, to process nested boxes within container box
-                    processBoxes(reader, boxSize + reader.getPosition() - 8, handler.processContainer(boxType, boxSize, context), context);
+                    processBoxes(reader, boxSize + reader.getPosition() - 8, depth + 1, handler.processContainer(boxType, boxSize, context), context);
                 } else if (handler.shouldAcceptBox(boxType)) {
                     handler = handler.processBox(boxType, reader.getBytes((int)boxSize - 8), boxSize, context);
                 } else if (isLargeSize) {
