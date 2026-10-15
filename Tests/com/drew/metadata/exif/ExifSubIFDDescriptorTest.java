@@ -20,10 +20,12 @@
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.Rational;
 import org.junit.Test;
 
 import static com.drew.metadata.exif.ExifSubIFDDirectory.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * JUnit test case for class ExifSubIFDDescriptor.
@@ -32,6 +34,55 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExifSubIFDDescriptorTest
 {
+    @Test
+    public void testExposureTimeDescription_Subsecond()
+    {
+        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
+        Rational[] values = { new Rational(1, 25), new Rational(4, 100), new Rational(1, 2), new Rational(1, 125), new Rational(3, 10) };
+        String[] descriptions = { "1/25 sec", "1/25 sec", "1/2 sec", "1/125 sec", "3/10 sec" };
+        for (int i = 0; i < values.length; i++) {
+            directory.setRational(TAG_EXPOSURE_TIME, values[i]);
+            assertEquals(descriptions[i], directory.getDescription(TAG_EXPOSURE_TIME));
+        }
+    }
+
+    @Test
+    public void testExposureTimeDescription_OneSecondOrLonger()
+    {
+        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
+        directory.setRational(TAG_EXPOSURE_TIME, new Rational(1, 1));
+        assertEquals("1 sec", directory.getDescription(TAG_EXPOSURE_TIME));
+        directory.setRational(TAG_EXPOSURE_TIME, new Rational(2, 1));
+        assertEquals("2 sec", directory.getDescription(TAG_EXPOSURE_TIME));
+        directory.setRational(TAG_EXPOSURE_TIME, new Rational(3, 2));
+        assertEquals("1.5 sec", directory.getDescription(TAG_EXPOSURE_TIME));
+    }
+
+    @Test
+    public void testExposureTimeDescription_Missing()
+    {
+        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
+        assertNull(directory.getDescription(TAG_EXPOSURE_TIME));
+    }
+
+    @Test
+    public void testExposureTimeRawString()
+    {
+        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
+        directory.setRational(TAG_EXPOSURE_TIME, new Rational(1, 25));
+        assertEquals("0.04", directory.getString(TAG_EXPOSURE_TIME));
+    }
+
+    @Test
+    public void testLensSpecificationDescription_DecimalFocalLength()
+    {
+        ExifSubIFDDirectory directory = new ExifSubIFDDirectory();
+        directory.setRationalArray(TAG_LENS_SPECIFICATION, new Rational[] {
+            new Rational(17, 4), new Rational(17, 4), new Rational(9, 5), new Rational(9, 5)
+        });
+        assertEquals("4.25mm f/1.8", directory.getDescription(TAG_LENS_SPECIFICATION));
+    }
+
     @Test
     public void testUserCommentDescription_EmptyEncoding() throws Exception
     {
