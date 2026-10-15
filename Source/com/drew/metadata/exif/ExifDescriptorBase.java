@@ -604,6 +604,10 @@ public abstract class ExifDescriptorBase<T extends Directory> extends TagDescrip
     @Nullable
     public String getExposureTimeDescription()
     {
+        Rational rational = _directory.getRational(TAG_EXPOSURE_TIME);
+        if (rational != null && rational.doubleValue() < 1)
+            return rational.toSimpleString(false) + " sec";
+
         String value = _directory.getString(TAG_EXPOSURE_TIME);
         return value == null ? null : value + " sec";
     }
