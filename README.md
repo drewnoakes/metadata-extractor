@@ -78,11 +78,6 @@ It will process files of type:
   * RWL (Leica)
   * SRW (Samsung)
 
-BigTIFF supports 8-byte counts and offsets, but the reader still uses signed 32-bit
-indexes. Metadata offsets, component counts, and data byte lengths must fit that
-range; general access beyond the first 2 GiB is not supported. IFD entry counts are
-limited by the available, addressable data rather than the classic TIFF 65,535-entry limit.
-
 Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 * Agfa

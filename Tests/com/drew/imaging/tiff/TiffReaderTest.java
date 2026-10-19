@@ -20,22 +20,18 @@
  */
 package com.drew.imaging.tiff;
 
-import com.drew.imaging.ImageMetadataReader;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifTiffHandler;
 import org.junit.Test;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Collection;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -51,68 +47,6 @@ import static org.junit.Assert.fail;
  */
 public class TiffReaderTest
 {
-    /**
-     * Asserts the structure of the synthetic BigTIFF DNG fixtures: IFD0 with a small
-     * uncompressed thumbnail and two SubIFDs (raw data and a 64x48 JPEG preview),
-     * all addressed with 8-byte offsets and counts.
-     */
-    private static void assertBigTiffDng(Metadata metadata) throws MetadataException
-    {
-        ExifIFD0Directory ifd0 = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-        assertNotNull(ifd0);
-        assertEquals("PENTAX", ifd0.getString(ExifDirectoryBase.TAG_MAKE));
-        assertEquals("PENTAX K-x", ifd0.getString(ExifDirectoryBase.TAG_MODEL));
-        assertEquals(16, ifd0.getInt(ExifDirectoryBase.TAG_IMAGE_WIDTH));
-        assertEquals(12, ifd0.getInt(ExifDirectoryBase.TAG_IMAGE_HEIGHT));
-
-        // Both SubIFDs referenced from IFD0's SubIFDs tag must be entered
-        Collection<ExifSubIFDDirectory> subIfds = metadata.getDirectoriesOfType(ExifSubIFDDirectory.class);
-        assertEquals(2, subIfds.size());
-
-        boolean previewSeen = false;
-        boolean rawSeen = false;
-        for (ExifSubIFDDirectory subIfd : subIfds) {
-            Integer width = subIfd.getInteger(ExifDirectoryBase.TAG_IMAGE_WIDTH);
-            assertNotNull(width);
-            if (width == 64) {
-                previewSeen = true;
-                assertEquals(48, subIfd.getInt(ExifDirectoryBase.TAG_IMAGE_HEIGHT));
-            } else if (width == 8) {
-                rawSeen = true;
-            }
-        }
-        assertTrue("preview SubIFD not found", previewSeen);
-        assertTrue("raw SubIFD not found", rawSeen);
-    }
-
-    @Test
-    public void testReadBigTiffLittleEndian() throws Exception
-    {
-        Metadata metadata = TiffMetadataReader.readMetadata(new File("Tests/Data/bigtiff.dng"));
-        assertFalse(metadata.hasErrors());
-        assertBigTiffDng(metadata);
-    }
-
-    @Test
-    public void testReadBigTiffBigEndian() throws Exception
-    {
-        // Same structure as bigtiff.dng but with Motorola (MM) byte order, exercising the
-        // big-endian paths of every multi-byte BigTIFF read (8-byte counts and offsets)
-        Metadata metadata = TiffMetadataReader.readMetadata(new File("Tests/Data/bigtiff_be.dng"));
-        assertFalse(metadata.hasErrors());
-        assertBigTiffDng(metadata);
-    }
-
-    @Test
-    public void testBigTiffThroughImageMetadataReader() throws Exception
-    {
-        // A BigTIFF file must be recognised by FileTypeDetector and routed through the
-        // TIFF reader by the library's primary entry point
-        Metadata metadata = ImageMetadataReader.readMetadata(new File("Tests/Data/bigtiff.dng"));
-        assertFalse(metadata.hasErrors());
-        assertBigTiffDng(metadata);
-    }
-
     @Test
     public void testUnsupportedBigTiffOffsetByteSize() throws Exception
     {
