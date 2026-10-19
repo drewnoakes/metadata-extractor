@@ -40,6 +40,9 @@ public class Mp4MetadataReaderTest
     private static final int NESTED_BOX_COUNT = 10000;
     private static final long TEST_TIME_SCALE = 600;
     private static final long TEST_DURATION = 1200;
+    private static final int MVHD_PAYLOAD_LENGTH = 100;
+    private static final int FREE_LENGTH = 16;
+    private static final int NESTING_LIMIT = 100;
 
     @Test
     public void testDeeplyNestedBoxesReportErrorRatherThanOverflowingStack() throws Exception
@@ -65,6 +68,42 @@ public class Mp4MetadataReaderTest
         assertFalse(containsError(directory, "Box nesting too deep."));
         assertEquals(TEST_DURATION, (long)directory.getLong(Mp4Directory.TAG_DURATION));
         assertEquals(TEST_TIME_SCALE, (long)directory.getLong(Mp4Directory.TAG_TIME_SCALE));
+    }
+
+    @Test
+    public void testExtendedSizeMovieHeaderIsParsed() throws Exception
+    {
+        // 'moov' holding an 'mvhd' with a 64-bit size, at the end of the file
+        byte[] bytes = new byte[FTYP_LENGTH + 8 + 16 + MVHD_PAYLOAD_LENGTH];
+        writeFileType(bytes);
+        writeBoxHeader(bytes, FTYP_LENGTH, 8 + 16 + MVHD_PAYLOAD_LENGTH, "moov");
+        writeExtendedHeader(bytes, FTYP_LENGTH + 8, 16 + MVHD_PAYLOAD_LENGTH, "mvhd");
+        writeMovieHeaderPayload(bytes, FTYP_LENGTH + 8 + 16);
+
+        assertMovieHeaderParsed(bytes);
+    }
+
+    @Test
+    public void testParsingResumesAfterSkippedExtendedSizeContainer() throws Exception
+    {
+        // 100 nested 'moov' boxs around a 101st with a 64-bit size, which is skipped for depth,
+        // then a 'free' box and a regular 'moov'
+        int chainLength = NESTING_LIMIT * 8 + 16;
+        byte[] bytes = new byte[FTYP_LENGTH + chainLength + FREE_LENGTH + 8 + MVHD_LENGTH];
+        writeFileType(bytes);
+        int offset = FTYP_LENGTH;
+        for (int i = 0; i < NESTING_LIMIT; i++, offset += 8) {
+            writeBoxHeader(bytes, offset, chainLength - i * 8, "moov");
+        }
+        writeExtendedHeader(bytes, offset, 16, "moov");
+        offset += 16;
+        writeBoxHeader(bytes, offset, FREE_LENGTH, "free");
+        offset += FREE_LENGTH;
+        writeBoxHeader(bytes, offset, 8 + MVHD_LENGTH, "moov");
+        writeBoxHeader(bytes, offset + 8, MVHD_LENGTH, "mvhd");
+        writeMovieHeaderPayload(bytes, offset + 16);
+
+        assertMovieHeaderParsed(bytes);
     }
 
     /**
@@ -102,6 +141,37 @@ public class Mp4MetadataReaderTest
         writeUInt32(bytes, FTYP_LENGTH + 8 + 8 + 16, TEST_DURATION);
 
         return bytes;
+    }
+
+    private static void assertMovieHeaderParsed(byte[] bytes) throws Exception
+    {
+        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(bytes));
+        Mp4Directory directory = metadata.getFirstDirectoryOfType(Mp4Directory.class);
+
+        assertNotNull(directory);
+        assertEquals(Long.valueOf(TEST_DURATION), directory.getLongObject(Mp4Directory.TAG_DURATION));
+        assertEquals(Long.valueOf(TEST_TIME_SCALE), directory.getLongObject(Mp4Directory.TAG_TIME_SCALE));
+    }
+
+    private static void writeFileType(byte[] bytes)
+    {
+        writeBoxHeader(bytes, 0, FTYP_LENGTH, "ftyp");
+        writeString(bytes, 8, "isom");
+    }
+
+    /** Writes the 'mvhd' payload that follows its header: version and flags, two times, then the time scale and duration. */
+    private static void writeMovieHeaderPayload(byte[] bytes, int offset)
+    {
+        writeUInt32(bytes, offset + 12, TEST_TIME_SCALE);
+        writeUInt32(bytes, offset + 16, TEST_DURATION);
+    }
+
+    /** Writes a header whose size field is 1, followed by the real size as 64 bits. */
+    private static void writeExtendedHeader(byte[] bytes, int offset, long size, String type)
+    {
+        writeBoxHeader(bytes, offset, 1, type);
+        writeUInt32(bytes, offset + 8, size >> 32);
+        writeUInt32(bytes, offset + 12, size);
     }
 
     /**

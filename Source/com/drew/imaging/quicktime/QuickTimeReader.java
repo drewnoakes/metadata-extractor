@@ -75,17 +75,17 @@ public class QuickTimeReader
                     break;
                 }
 
-                if (atom.size < 8) {
+                if (atom.size < atom.headerSize) {
                     handler.addError("Atom size too small.");
                     break;
                 }
 
                 if (handler.shouldAcceptContainer(atom)) {
-                    processAtoms(reader, atom.size + reader.getPosition() - 8, depth + 1, handler.processContainer(atom, context), context);
+                    processAtoms(reader, atom.size + reader.getPosition() - atom.headerSize, depth + 1, handler.processContainer(atom, context), context);
                 } else if (handler.shouldAcceptAtom(atom)) {
-                    handler = handler.processAtom(atom, reader.getBytes((int)atom.size - 8), context);
-                } else if (atom.size > 8) {
-                    reader.skip(atom.size - 8);
+                    handler = handler.processAtom(atom, reader.getBytes((int)(atom.size - atom.headerSize)), context);
+                } else if (atom.size > atom.headerSize) {
+                    reader.skip(atom.size - atom.headerSize);
                 } else if (atom.size == -1) {
                     break;
                 }
