@@ -27,6 +27,7 @@ import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import static com.drew.metadata.exif.GpsDirectory.*;
 
@@ -189,7 +190,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         final String unit = getGpsDestinationReferenceDescription();
         return String.format("%s %s",
             new DecimalFormat("0.##").format(value.doubleValue()),
-            unit == null ? "unit" : unit.toLowerCase());
+            unit == null ? "unit" : unit.toLowerCase(Locale.ROOT));
     }
 
     @Nullable
@@ -253,7 +254,7 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         final String unit = getGpsSpeedRefDescription();
         return String.format("%s %s",
             new DecimalFormat("0.##").format(value.doubleValue()),
-            unit == null ? "unit" : unit.toLowerCase());
+            unit == null ? "unit" : unit.toLowerCase(Locale.ROOT));
     }
 
     @Nullable
