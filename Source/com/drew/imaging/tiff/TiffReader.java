@@ -23,8 +23,11 @@ package com.drew.imaging.tiff;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -80,6 +83,9 @@ public class TiffReader
 
     /**
      * Processes a TIFF IFD.
+     * <p>
+     * Sub-IFDs and follower IFDs are traversed depth-first using an explicit stack, so the number
+     * of linked directories is not limited by the Java call stack.
      *
      * IFD Header:
      * <ul>
@@ -107,145 +113,213 @@ public class TiffReader
                                   final int ifdOffset,
                                   final int tiffHeaderOffset) throws IOException
     {
-        Boolean resetByteOrder = null;
+        // Keep suspended tag loops and byte-order changes until their child IFDs have finished.
+        Deque<IfdState> stack = new ArrayDeque<IfdState>();
+        stack.push(new IfdState(ifdOffset));
         try {
-            // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
-            if (processedIfdOffsets.contains(Integer.valueOf(ifdOffset))) {
-                return;
-            }
-
-            // remember that we've visited this directory so that we don't visit it again later
-            processedIfdOffsets.add(ifdOffset);
-
-            if (ifdOffset >= reader.getLength() || ifdOffset < 0) {
-                handler.error("Ignored IFD marked to start outside data segment");
-                return;
-            }
-
-            // First two bytes in the IFD are the number of tags in this directory
-            int dirTagCount = reader.getUInt16(ifdOffset);
-
-            // Some software modifies the byte order of the file, but misses some IFDs (such as makernotes).
-            // The entire test image repository doesn't contain a single IFD with more than 255 entries.
-            // Here we detect switched bytes that suggest this problem, and temporarily swap the byte order.
-            // This was discussed in GitHub issue #136.
-            if (dirTagCount > 0xFF && (dirTagCount & 0xFF) == 0) {
-                resetByteOrder = reader.isMotorolaByteOrder();
-                dirTagCount >>= 8;
-                reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
-            }
-
-            int dirLength = (2 + (12 * dirTagCount) + 4);
-            if (dirLength + ifdOffset > reader.getLength()) {
-                handler.error("Illegally sized IFD");
-                return;
-            }
-
-            //
-            // Handle each tag in this directory
-            //
-            int invalidTiffFormatCodeCount = 0;
-            for (int tagNumber = 0; tagNumber < dirTagCount; tagNumber++) {
-                final int tagOffset = calculateTagOffset(ifdOffset, tagNumber);
-
-                // 2 bytes for the tag id
-                final int tagId = reader.getUInt16(tagOffset);
-
-                // 2 bytes for the format code
-                final int formatCode = reader.getUInt16(tagOffset + 2);
-                final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode);
-
-                // 4 bytes dictate the number of components in this tag's data
-                final long componentCount = reader.getUInt32(tagOffset + 4);
-
-                final long byteCount;
-                if (format == null) {
-                    Long byteCountOverride = handler.tryCustomProcessFormat(tagId, formatCode, componentCount);
-                    if (byteCountOverride == null) {
-                        // This error suggests that we are processing at an incorrect index and will generate
-                        // rubbish until we go out of bounds (which may be a while).  Exit now.
-                        handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
-                        // TODO specify threshold as a parameter, or provide some other external control over this behaviour
-                        if (++invalidTiffFormatCodeCount > 5) {
-                            handler.error("Stopping processing as too many errors seen in TIFF IFD");
-                            return;
-                        }
-                        continue;
-                    }
-                    byteCount = byteCountOverride;
-                } else {
-                    byteCount = componentCount * format.getComponentSizeBytes();
+            while (!stack.isEmpty()) {
+                IfdState state = stack.peek();
+                if (state.finished) {
+                    endIfd(handler, reader, stack);
+                    continue;
                 }
 
-                final long tagValueOffset;
-                if (byteCount > 4) {
-                    // If it's bigger than 4 bytes, the dir entry contains an offset.
-                    final long offsetVal = reader.getUInt32(tagOffset + 8);
-                    if (offsetVal + byteCount > reader.getLength()) {
-                        // Bogus pointer offset and / or byteCount value
+                if (state.componentIndex < state.componentCount) {
+                    while (state.componentIndex < state.componentCount) {
+                        int componentIndex = state.componentIndex++;
+                        if (handler.tryEnterSubIfd(state.tagId)) {
+                            state.isIfdPointer = true;
+                            int subDirOffset = tiffHeaderOffset + reader.getInt32(state.tagValueOffset + componentIndex * 4);
+                            stack.push(new IfdState(subDirOffset));
+                            break;
+                        }
+                    }
+                    if (stack.peek() != state)
+                        continue;
+                }
+
+                if (state.componentCount != 0) {
+                    if (!state.isIfdPointer && !handler.customProcessTag(state.tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, state.tagId, state.byteCount))
+                        processTag(handler, state.tagId, state.tagValueOffset, state.componentCount, state.formatCode, reader);
+                    state.componentCount = 0;
+                    state.componentIndex = 0;
+                    state.isIfdPointer = false;
+                }
+
+                if (!state.initialized) {
+                    state.initialized = true;
+                    // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
+                    if (processedIfdOffsets.contains(Integer.valueOf(state.ifdOffset))) {
+                        state.finished = true;
+                        continue;
+                    }
+
+                    // remember that we've visited this directory so that we don't visit it again later
+                    processedIfdOffsets.add(state.ifdOffset);
+
+                    if (state.ifdOffset >= reader.getLength() || state.ifdOffset < 0) {
+                        handler.error("Ignored IFD marked to start outside data segment");
+                        state.finished = true;
+                        continue;
+                    }
+
+                    // First two bytes in the IFD are the number of tags in this directory
+                    int dirTagCount = reader.getUInt16(state.ifdOffset);
+
+                    // Some software modifies the byte order of the file, but misses some IFDs (such as makernotes).
+                    // The entire test image repository doesn't contain a single IFD with more than 255 entries.
+                    // Here we detect switched bytes that suggest this problem, and temporarily swap the byte order.
+                    // This was discussed in GitHub issue #136.
+                    if (dirTagCount > 0xFF && (dirTagCount & 0xFF) == 0) {
+                        state.resetByteOrder = reader.isMotorolaByteOrder();
+                        dirTagCount >>= 8;
+                        reader.setMotorolaByteOrder(!reader.isMotorolaByteOrder());
+                    }
+
+                    int dirLength = (2 + (12 * dirTagCount) + 4);
+                    if (dirLength + state.ifdOffset > reader.getLength()) {
+                        handler.error("Illegally sized IFD");
+                        state.finished = true;
+                        continue;
+                    }
+                    state.dirTagCount = dirTagCount;
+                }
+
+                //
+                // Handle each tag in this directory
+                //
+                if (state.tagNumber < state.dirTagCount) {
+                    final int tagOffset = calculateTagOffset(state.ifdOffset, state.tagNumber++);
+
+                    // 2 bytes for the tag id
+                    final int tagId = reader.getUInt16(tagOffset);
+
+                    // 2 bytes for the format code
+                    final int formatCode = reader.getUInt16(tagOffset + 2);
+                    final TiffDataFormat format = TiffDataFormat.fromTiffFormatCode(formatCode);
+
+                    // 4 bytes dictate the number of components in this tag's data
+                    final long componentCount = reader.getUInt32(tagOffset + 4);
+
+                    final long byteCount;
+                    if (format == null) {
+                        Long byteCountOverride = handler.tryCustomProcessFormat(tagId, formatCode, componentCount);
+                        if (byteCountOverride == null) {
+                            // This error suggests that we are processing at an incorrect index and will generate
+                            // rubbish until we go out of bounds (which may be a while).  Exit now.
+                            handler.error(String.format("Invalid TIFF tag format code %d for tag 0x%04X", formatCode, tagId));
+                            // TODO specify threshold as a parameter, or provide some other external control over this behaviour
+                            if (++state.invalidTiffFormatCodeCount > 5) {
+                                handler.error("Stopping processing as too many errors seen in TIFF IFD");
+                                state.finished = true;
+                            }
+                            continue;
+                        }
+                        byteCount = byteCountOverride;
+                    } else {
+                        byteCount = componentCount * format.getComponentSizeBytes();
+                    }
+
+                    final long tagValueOffset;
+                    if (byteCount > 4) {
+                        // If it's bigger than 4 bytes, the dir entry contains an offset.
+                        final long offsetVal = reader.getUInt32(tagOffset + 8);
+                        if (offsetVal + byteCount > reader.getLength()) {
+                            // Bogus pointer offset and / or byteCount value
+                            handler.error("Illegal TIFF tag pointer offset");
+                            continue;
+                        }
+                        tagValueOffset = tiffHeaderOffset + offsetVal;
+                    } else {
+                        // 4 bytes or less and value is in the dir entry itself.
+                        tagValueOffset = tagOffset + 8;
+                    }
+
+                    if (tagValueOffset < 0 || tagValueOffset > reader.getLength()) {
                         handler.error("Illegal TIFF tag pointer offset");
                         continue;
                     }
-                    tagValueOffset = tiffHeaderOffset + offsetVal;
-                } else {
-                    // 4 bytes or less and value is in the dir entry itself.
-                    tagValueOffset = tagOffset + 8;
-                }
 
-                if (tagValueOffset < 0 || tagValueOffset > reader.getLength()) {
-                    handler.error("Illegal TIFF tag pointer offset");
-                    continue;
-                }
-
-                // Check that this tag isn't going to allocate outside the bounds of the data array.
-                // This addresses an uncommon OutOfMemoryError.
-                if (byteCount < 0 || tagValueOffset + byteCount > reader.getLength()) {
-                    handler.error("Illegal number of bytes for TIFF tag data: " + byteCount);
-                    continue;
-                }
-
-                // Some tags point to one or more additional IFDs to process
-                boolean isIfdPointer = false;
-                if (byteCount == 4 * componentCount) {
-                    for (int i = 0; i < componentCount; i++) {
-                        if (handler.tryEnterSubIfd(tagId)) {
-                            isIfdPointer = true;
-                            int subDirOffset = tiffHeaderOffset + reader.getInt32((int) (tagValueOffset + i * 4));
-                            processIfd(handler, reader, processedIfdOffsets, subDirOffset, tiffHeaderOffset);
-                        }
+                    // Check that this tag isn't going to allocate outside the bounds of the data array.
+                    // This addresses an uncommon OutOfMemoryError.
+                    if (byteCount < 0 || tagValueOffset + byteCount > reader.getLength()) {
+                        handler.error("Illegal number of bytes for TIFF tag data: " + byteCount);
+                        continue;
                     }
+
+                    // Some tags point to one or more additional IFDs to process
+                    if (componentCount != 0 && byteCount == 4 * componentCount) {
+                        state.tagId = tagId;
+                        state.tagValueOffset = (int)tagValueOffset;
+                        state.componentCount = (int)componentCount;
+                        state.byteCount = (int)byteCount;
+                        state.formatCode = formatCode;
+                        continue;
+                    }
+
+                    // If it wasn't an IFD pointer, allow custom tag processing to occur
+                    if (!handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
+                        // If no custom processing occurred, process the tag in the standard fashion
+                        processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
+                    }
+                    continue;
                 }
 
-                // If it wasn't an IFD pointer, allow custom tag processing to occur
-                if (!isIfdPointer && !handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
-                    // If no custom processing occurred, process the tag in the standard fashion
-                    processTag(handler, tagId, (int) tagValueOffset, (int) componentCount, formatCode, reader);
-                }
-            }
+                // at the end of each IFD is an optional link to the next IFD
+                state.finished = true;
+                final int finalTagOffset = calculateTagOffset(state.ifdOffset, state.dirTagCount);
+                int nextIfdOffset = reader.getInt32(finalTagOffset);
+                if (nextIfdOffset != 0) {
+                    nextIfdOffset += tiffHeaderOffset;
+                    if (nextIfdOffset >= reader.getLength()) {
+                        // Last 4 bytes of IFD reference another IFD with an address that is out of bounds
+                        // Note this could have been caused by jhead 1.3 cropping too much
+                        continue;
+                    } else if (nextIfdOffset < state.ifdOffset) {
+                        // TODO is this a valid restriction?
+                        // Last 4 bytes of IFD reference another IFD with an address that is before the start of this directory
+                        continue;
+                    }
 
-            // at the end of each IFD is an optional link to the next IFD
-            final int finalTagOffset = calculateTagOffset(ifdOffset, dirTagCount);
-            int nextIfdOffset = reader.getInt32(finalTagOffset);
-            if (nextIfdOffset != 0) {
-                nextIfdOffset += tiffHeaderOffset;
-                if (nextIfdOffset >= reader.getLength()) {
-                    // Last 4 bytes of IFD reference another IFD with an address that is out of bounds
-                    // Note this could have been caused by jhead 1.3 cropping too much
-                    return;
-                } else if (nextIfdOffset < ifdOffset) {
-                    // TODO is this a valid restriction?
-                    // Last 4 bytes of IFD reference another IFD with an address that is before the start of this directory
-                    return;
-                }
-
-                if (handler.hasFollowerIfd()) {
-                    processIfd(handler, reader, processedIfdOffsets, nextIfdOffset, tiffHeaderOffset);
+                    if (handler.hasFollowerIfd()) {
+                        stack.push(new IfdState(nextIfdOffset));
+                    }
                 }
             }
         } finally {
-            handler.endingIFD();
-            if (resetByteOrder != null)
-                reader.setMotorolaByteOrder(resetByteOrder);
+            while (!stack.isEmpty())
+                endIfd(handler, reader, stack);
+        }
+    }
+
+    private static void endIfd(@NotNull TiffHandler handler, @NotNull RandomAccessReader reader, @NotNull Deque<IfdState> stack)
+    {
+        IfdState state = stack.pop();
+        handler.endingIFD();
+        if (state.resetByteOrder != null)
+            reader.setMotorolaByteOrder(state.resetByteOrder);
+    }
+
+    private static final class IfdState
+    {
+        final int ifdOffset;
+        @Nullable Boolean resetByteOrder;
+        boolean initialized;
+        boolean finished;
+        int dirTagCount;
+        int tagNumber;
+        int invalidTiffFormatCodeCount;
+        int tagId;
+        int tagValueOffset;
+        int componentCount;
+        int componentIndex;
+        int byteCount;
+        int formatCode;
+        boolean isIfdPointer;
+
+        IfdState(int ifdOffset)
+        {
+            this.ifdOffset = ifdOffset;
         }
     }
 
