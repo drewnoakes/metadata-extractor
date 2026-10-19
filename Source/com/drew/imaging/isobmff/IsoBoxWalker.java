@@ -23,6 +23,8 @@ package com.drew.imaging.isobmff;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,11 +38,15 @@ import java.io.InputStream;
  */
 public final class IsoBoxWalker
 {
+    private static final int MAX_DEPTH = 64;
+    private static final int MAX_EOF_PAYLOAD_SIZE = 16 * 1024 * 1024;
+
     private IsoBoxWalker() {}
 
     /**
      * Starts a walk over the boxes in {@code inputStream} using the given visitor.
      * The stream is read with Motorola (big-endian) byte order, which is mandatory for ISOBMFF.
+     * Nesting is limited to 64 containers and buffered EOF-terminated payloads to 16 MiB.
      */
     public static void walk(@NotNull InputStream inputStream, @NotNull IsoBoxVisitor visitor)
     {
@@ -55,15 +61,20 @@ public final class IsoBoxWalker
      */
     static void walk(@NotNull SequentialReader reader, long containerEnd, @NotNull IsoBoxVisitor visitor)
     {
+        walk(reader, containerEnd, visitor, 0);
+    }
+
+    private static void walk(@NotNull SequentialReader reader, long containerEnd, @NotNull IsoBoxVisitor visitor, int depth)
+    {
         try {
             while (containerEnd == -1 || reader.getPosition() < containerEnd) {
+                long boxStart = reader.getPosition();
                 IsoBox box;
                 try {
-                    box = new IsoBox(reader);
+                    box = new IsoBox(reader, containerEnd);
                 } catch (IOException e) {
-                    // Clean EOF when reading the next box header: normal for open-ended containers.
-                    if (containerEnd == -1) break;
-                    visitor.addError(e.getMessage());
+                    if (!(e instanceof EOFException && containerEnd == -1 && reader.getPosition() == boxStart))
+                        visitor.addError(e.getMessage());
                     break;
                 }
 
@@ -72,10 +83,23 @@ public final class IsoBoxWalker
                     break;
                 }
 
-                long payloadEnd = (box.payloadSize == -1) ? -1L : reader.getPosition() + box.payloadSize;
+                long position = reader.getPosition();
+                long payloadSize = box.payloadSize;
+                if (payloadSize == -1 && containerEnd != -1)
+                    payloadSize = containerEnd - position;
+                if (payloadSize != -1 && (payloadSize > Long.MAX_VALUE - position
+                    || (containerEnd != -1 && payloadSize > containerEnd - position))) {
+                    visitor.addError("Box extends beyond its container: " + box.type);
+                    break;
+                }
+                long payloadEnd = payloadSize == -1 ? -1 : position + payloadSize;
 
                 if (visitor.shouldRecurse(box)) {
-                    walk(reader, payloadEnd, visitor.processContainer(box));
+                    if (depth >= MAX_DEPTH) {
+                        visitor.addError("Maximum box nesting depth exceeded");
+                    } else {
+                        walk(reader, payloadEnd, visitor.processContainer(box), depth + 1);
+                    }
                     // After recursion, ensure the reader is positioned at the end of this box.
                     // The inner walk may have stopped early (e.g. on an error), which would leave
                     // the reader in the middle of the container and corrupt all subsequent sibling
@@ -86,14 +110,13 @@ public final class IsoBoxWalker
                             reader.skip(remaining);
                     }
                 } else if (visitor.shouldVisit(box)) {
-                    if (box.payloadSize == -1) {
-                        visitor.addError("Cannot visit EOF-terminated box: " + box.type);
-                        break;
-                    } else if (box.payloadSize > Integer.MAX_VALUE) {
+                    if (payloadSize > Integer.MAX_VALUE) {
                         visitor.addError("Box payload too large to read into memory: " + box.type);
-                        reader.skip(box.payloadSize);
+                        reader.skip(payloadSize);
                     } else {
-                        byte[] payload = reader.getBytes((int) box.payloadSize);
+                        byte[] payload = payloadSize == -1
+                            ? readToEnd(reader)
+                            : reader.getBytes((int)payloadSize);
                         try {
                             visitor.visit(box, payload);
                         } catch (IOException e) {
@@ -102,15 +125,31 @@ public final class IsoBoxWalker
                         }
                     }
                 } else {
-                    if (box.payloadSize > 0) {
-                        reader.skip(box.payloadSize);
-                    } else if (box.payloadSize == -1) {
-                        break; // EOF-terminated box, nothing more to do
-                    }
+                    if (payloadSize > 0)
+                        reader.skip(payloadSize);
                 }
+                if (payloadEnd == -1)
+                    break;
             }
         } catch (IOException e) {
             visitor.addError(e.getMessage());
+        }
+    }
+
+    @NotNull
+    private static byte[] readToEnd(@NotNull SequentialReader reader) throws IOException
+    {
+        ByteArrayOutputStream payload = new ByteArrayOutputStream();
+        while (true) {
+            byte value;
+            try {
+                value = reader.getByte();
+            } catch (EOFException e) {
+                return payload.toByteArray();
+            }
+            if (payload.size() == MAX_EOF_PAYLOAD_SIZE)
+                throw new IOException("EOF-terminated box payload exceeds the 16 MiB limit");
+            payload.write(value);
         }
     }
 }

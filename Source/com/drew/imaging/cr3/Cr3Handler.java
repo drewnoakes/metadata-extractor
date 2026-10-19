@@ -112,7 +112,7 @@ class Cr3Handler extends IsoBoxVisitor
     protected void visit(@NotNull IsoBox box, @NotNull byte[] payload) throws IOException
     {
         if (Cr3BoxTypes.BOX_FILE_TYPE.equals(box.type)) {
-            processFtyp(payload, box.size);
+            processFtyp(payload);
         } else if (box.usertypeMatches(UUID_CANON_XMP)) {
             new XmpReader().extract(payload, metadata);
         } else if (box.usertypeMatches(UUID_CANON_PREVIEW)) {
@@ -126,7 +126,7 @@ class Cr3Handler extends IsoBoxVisitor
         directory.addError(message);
     }
 
-    private void processFtyp(byte[] payload, long boxSize) throws IOException
+    private void processFtyp(byte[] payload) throws IOException
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
         String majorBrand = reader.getString(4);
@@ -134,7 +134,7 @@ class Cr3Handler extends IsoBoxVisitor
 
         ArrayList<String> compatibleBrands = new ArrayList<String>();
         // ftyp payload = major(4) + minor(4) + compatible brands in groups of 4
-        for (int i = 16; i < boxSize; i += 4) {
+        for (int i = 8; i < payload.length; i += 4) {
             compatibleBrands.add(reader.getString(4));
         }
 

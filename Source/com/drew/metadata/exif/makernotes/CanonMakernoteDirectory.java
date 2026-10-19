@@ -285,7 +285,7 @@ public class CanonMakernoteDirectory extends Directory
          * 0 = Disable
          * 1 = Enable
          */
-        public static final int TAG_FOCUS_BRACKETING = OFFSET + 0x2F;
+        public static final int TAG_FOCUS_BRACKETING = OFFSET + 0x32;
 
         /**
          * Signed numeric clarity offset. 0x7FFF = n/a.
@@ -306,7 +306,7 @@ public class CanonMakernoteDirectory extends Directory
         private static final int OFFSET = 0xC200;
 
         /**
-         * 0 = Fixed
+         * 1 = Fixed
          * 2 = Zoom
          */
         public static final int TAG_FOCAL_TYPE = OFFSET + 0x00;

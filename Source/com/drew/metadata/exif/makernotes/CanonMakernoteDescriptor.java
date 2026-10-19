@@ -1041,7 +1041,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         if (value == null)
             return null;
         switch (value) {
-            case 0:
+            case 1:
                 return "Fixed";
             case 2:
                 return "Zoom";
@@ -1309,41 +1309,8 @@ public class CanonMakernoteDescriptor extends TagDescriptor<CanonMakernoteDirect
         _lensTypeById.put(4156, "Canon EF 50mm f/1.8 STM");
         _lensTypeById.put(36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM");
 
-        // Canon RF lenses
-        _lensTypeById.put(61182, "Canon RF 50mm F1.2L USM");
-        _lensTypeById.put(61183, "Canon RF 24-105mm F4L IS USM");
-        _lensTypeById.put(61184, "Canon RF 28-70mm F2L USM");
-        _lensTypeById.put(61185, "Canon RF 35mm F1.8 Macro IS STM");
-        _lensTypeById.put(61186, "Canon RF 85mm F1.2L USM");
-        _lensTypeById.put(61187, "Canon RF 85mm F1.2L USM DS");
-        _lensTypeById.put(61188, "Canon RF 24-70mm F2.8L IS USM");
-        _lensTypeById.put(61189, "Canon RF 15-35mm F2.8L IS USM");
-        _lensTypeById.put(61190, "Canon RF 24-240mm F4-6.3 IS USM");
-        _lensTypeById.put(61191, "Canon RF 70-200mm F2.8L IS USM");
-        _lensTypeById.put(61195, "Canon RF 85mm F2 Macro IS STM");
-        _lensTypeById.put(61196, "Canon RF 600mm F11 IS STM");
-        _lensTypeById.put(61197, "Canon RF 800mm F11 IS STM");
-        _lensTypeById.put(61198, "Canon RF 24-105mm F4-7.1 IS STM");
-        _lensTypeById.put(61199, "Canon RF 100-500mm F4.5-7.1L IS USM");
-        _lensTypeById.put(61200, "Canon RF 70-200mm F4L IS USM");
-        _lensTypeById.put(61202, "Canon RF 100mm F2.8L Macro IS USM");
-        _lensTypeById.put(61203, "Canon RF 400mm F2.8L IS USM");
-        _lensTypeById.put(61204, "Canon RF 600mm F4L IS USM");
-        _lensTypeById.put(61205, "Canon RF 14-35mm F4L IS USM");
-        _lensTypeById.put(61206, "Canon RF 24mm F1.8 Macro IS STM");
-        _lensTypeById.put(61207, "Canon RF 16mm F2.8 STM");
-        _lensTypeById.put(61208, "Canon RF 100-400mm F5.6-8 IS USM");
-        _lensTypeById.put(61209, "Canon RF 800mm F5.6L IS USM");
-        _lensTypeById.put(61210, "Canon RF 1200mm F8L IS USM");
-        _lensTypeById.put(61211, "Canon RF 5.2mm F2.8L Dual Fisheye");
-        _lensTypeById.put(61213, "Canon RF 15-30mm F4.5-6.3 IS STM");
-        _lensTypeById.put(61215, "Canon RF 135mm F1.8L IS USM");
-        _lensTypeById.put(61217, "Canon RF 100-300mm F2.8L IS USM");
-        _lensTypeById.put(61218, "Canon RF 200-800mm F6.3-9 IS USM");
-        _lensTypeById.put(61220, "Canon RF 35mm F1.4L VCM");
-        _lensTypeById.put(61222, "Canon RF 28mm F2.8 STM");
-        _lensTypeById.put(61224, "Canon RF 10-20mm F4L IS STM");
-        _lensTypeById.put(61226, "Canon RF 24-105mm F2.8L IS USM Z");
+        // Multiple RF lens models share this identifier.
+        _lensTypeById.put(61182, "Canon RF Lens");
 
         _lensTypeById.put(65535, "N/A");
     }

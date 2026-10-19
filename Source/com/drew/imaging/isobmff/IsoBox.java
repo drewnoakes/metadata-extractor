@@ -50,8 +50,9 @@ public final class IsoBox
     /** Byte count of the payload (data after the full header). */
     final long payloadSize;
 
-    IsoBox(SequentialReader reader) throws IOException
+    IsoBox(SequentialReader reader, long containerEnd) throws IOException
     {
+        requireBytes(reader, containerEnd, 8);
         int headerSize = 8; // minimum: 4 (size field) + 4 (type field)
 
         long rawSize = reader.getUInt32();
@@ -59,8 +60,11 @@ public final class IsoBox
 
         long resolvedSize;
         if (rawSize == 1) {
+            requireBytes(reader, containerEnd, 8);
             resolvedSize = reader.getInt64();
             headerSize += 8;
+            if (resolvedSize < headerSize)
+                throw new IOException("Invalid large box size for type: " + type);
         } else if (rawSize == 0) {
             resolvedSize = -1; // extends to EOF
         } else {
@@ -69,6 +73,9 @@ public final class IsoBox
         this.size = resolvedSize;
 
         if ("uuid".equals(this.type)) {
+            if (resolvedSize != -1 && resolvedSize - headerSize < 16)
+                throw new IOException("Box size is too small for UUID header");
+            requireBytes(reader, containerEnd, 16);
             this.usertype = reader.getBytes(16);
             headerSize += 16;
         } else {
@@ -76,6 +83,12 @@ public final class IsoBox
         }
 
         this.payloadSize = (resolvedSize == -1) ? -1 : resolvedSize - headerSize;
+    }
+
+    private static void requireBytes(SequentialReader reader, long containerEnd, int count) throws IOException
+    {
+        if (containerEnd != -1 && containerEnd - reader.getPosition() < count)
+            throw new IOException("Box header extends beyond its container");
     }
 
     /** Returns {@code true} if this is a {@code uuid} box whose usertype matches the given 16 bytes. */
