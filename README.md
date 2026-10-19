@@ -72,6 +72,7 @@ It will process files of type:
 * Camera Raw
   * NEF (Nikon)
   * CR2 (Canon)
+  * CR3 (Canon)
   * ORF (Olympus)
   * ARW (Sony)
   * RW2 (Panasonic)
