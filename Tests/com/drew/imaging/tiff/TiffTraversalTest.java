@@ -47,13 +47,30 @@ public class TiffTraversalTest
     @Test
     public void testLongFollowerChain() throws Exception
     {
+        assertLongFollowerChain(false);
+    }
+
+    @Test
+    public void testLongBigTiffFollowerChain() throws Exception
+    {
+        assertLongFollowerChain(true);
+    }
+
+    private static void assertLongFollowerChain(boolean bigTiff) throws Exception
+    {
         int count = 65568;
-        ByteBuffer data = createTiff(8 + 30 * count);
+        ByteBuffer data = createTiff((bigTiff ? 16 : 8) + (bigTiff ? 56 : 30) * count, bigTiff);
         for (int i = 0; i < count; i++) {
-            data.putShort((short)2);
-            putTag(data, ExifDirectoryBase.TAG_IMAGE_WIDTH, i + 1);
-            putTag(data, ExifDirectoryBase.TAG_PAGE_NUMBER, i);
-            data.putInt(i == count - 1 ? 0 : data.position() + 4);
+            if (bigTiff)
+                data.putLong(2);
+            else
+                data.putShort((short)2);
+            putTag(data, ExifDirectoryBase.TAG_IMAGE_WIDTH, i + 1, bigTiff);
+            putTag(data, ExifDirectoryBase.TAG_PAGE_NUMBER, i, bigTiff);
+            if (bigTiff)
+                data.putLong(i == count - 1 ? 0 : data.position() + 8);
+            else
+                data.putInt(i == count - 1 ? 0 : data.position() + 4);
         }
 
         Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(data.array()));
@@ -70,24 +87,36 @@ public class TiffTraversalTest
     @Test
     public void testDeepSubIfdChain() throws Exception
     {
-        assertDeepSubIfdChain(false);
+        assertDeepSubIfdChain(false, false);
     }
 
     @Test
     public void testDeepSubIfdChainInJpeg() throws Exception
     {
-        assertDeepSubIfdChain(true);
+        assertDeepSubIfdChain(true, false);
     }
 
-    private static void assertDeepSubIfdChain(boolean jpeg) throws Exception
+    @Test
+    public void testDeepBigTiffSubIfdChain() throws Exception
+    {
+        assertDeepSubIfdChain(false, true);
+    }
+
+    private static void assertDeepSubIfdChain(boolean jpeg, boolean bigTiff) throws Exception
     {
         int count = 3600;
-        ByteBuffer data = createTiff(8 + 18 * count);
+        ByteBuffer data = createTiff((bigTiff ? 16 : 8) + (bigTiff ? 36 : 18) * count, bigTiff);
         for (int i = 0; i < count; i++) {
-            data.putShort((short)1);
+            if (bigTiff)
+                data.putLong(1);
+            else
+                data.putShort((short)1);
             putTag(data, i == count - 1 ? ExifDirectoryBase.TAG_IMAGE_HEIGHT : ExifDirectoryBase.TAG_SUB_IFD_OFFSET,
-                i == count - 1 ? 123 : data.position() + 16);
-            data.putInt(0);
+                i == count - 1 ? 123 : data.position() + (bigTiff ? 28 : 16), bigTiff);
+            if (bigTiff)
+                data.putLong(0);
+            else
+                data.putInt(0);
         }
 
         Metadata metadata;
@@ -275,14 +304,32 @@ public class TiffTraversalTest
 
     private static ByteBuffer createTiff(int size)
     {
+        return createTiff(size, false);
+    }
+
+    private static ByteBuffer createTiff(int size, boolean bigTiff)
+    {
         ByteBuffer data = ByteBuffer.allocate(size).order(ByteOrder.LITTLE_ENDIAN);
-        data.put((byte)'I').put((byte)'I').putShort((short)42).putInt(8);
+        data.put((byte)'I').put((byte)'I').putShort((short)(bigTiff ? 43 : 42));
+        if (bigTiff)
+            data.putShort((short)8).putShort((short)0).putLong(16);
+        else
+            data.putInt(8);
         return data;
     }
 
     private static void putTag(ByteBuffer data, int tagId, int value)
     {
-        data.putShort((short)tagId).putShort((short)4).putInt(1).putInt(value);
+        putTag(data, tagId, value, false);
+    }
+
+    private static void putTag(ByteBuffer data, int tagId, int value, boolean bigTiff)
+    {
+        data.putShort((short)tagId).putShort((short)(bigTiff && tagId == ExifDirectoryBase.TAG_SUB_IFD_OFFSET ? 18 : 4));
+        if (bigTiff)
+            data.putLong(1).putLong(value);
+        else
+            data.putInt(1).putInt(value);
     }
 
     private static Metadata readTiff(ByteBuffer data) throws Exception

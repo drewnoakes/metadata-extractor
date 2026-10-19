@@ -20,6 +20,9 @@ The easiest way is to install the library via its [Maven package](http://search.
 
 Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
 
+The library targets Java 8. On Android versions below API 24, enable Java 8 interface
+method desugaring to support the default method on `TiffHandler`.
+
 ## Usage
 
 ```java
@@ -53,7 +56,7 @@ The library understands several formats of metadata, many of which may be presen
 It will process files of type:
 
 * JPEG
-* TIFF
+* TIFF (including BigTIFF)
 * WebP
 * WAV
 * AVI
@@ -74,6 +77,11 @@ It will process files of type:
   * RW2 (Panasonic)
   * RWL (Leica)
   * SRW (Samsung)
+
+BigTIFF supports 8-byte counts and offsets, but the reader still uses signed 32-bit
+indexes. Metadata offsets, component counts, and data byte lengths must fit that
+range; general access beyond the first 2 GiB is not supported. IFD entry counts are
+limited by the available, addressable data rather than the classic TIFF 65,535-entry limit.
 
 Camera-specific "makernote" data is decoded for cameras manufactured by:
 
