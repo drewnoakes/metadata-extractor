@@ -40,6 +40,9 @@ public class QuickTimeMetadataReaderTest
     private static final int NESTED_ATOM_COUNT = 10000;
     private static final long TEST_TIME_SCALE = 600;
     private static final long TEST_DURATION = 1200;
+    private static final int MVHD_PAYLOAD_LENGTH = 100;
+    private static final int FREE_LENGTH = 16;
+    private static final int NESTING_LIMIT = 100;
 
     @Test
     public void testDeeplyNestedAtomsReportErrorRatherThanOverflowingStack() throws Exception
@@ -65,6 +68,60 @@ public class QuickTimeMetadataReaderTest
         assertFalse(containsError(directory, "Atom nesting too deep."));
         assertEquals(TEST_DURATION, (long)directory.getLong(QuickTimeDirectory.TAG_DURATION));
         assertEquals(TEST_TIME_SCALE, (long)directory.getLong(QuickTimeDirectory.TAG_TIME_SCALE));
+    }
+
+    @Test
+    public void testExtendedSizeMovieHeaderIsParsed() throws Exception
+    {
+        // 'moov' holding an 'mvhd' with a 64-bit size, at the end of the file
+        byte[] bytes = new byte[FTYP_LENGTH + 8 + 16 + MVHD_PAYLOAD_LENGTH];
+        writeFileType(bytes);
+        writeAtomHeader(bytes, FTYP_LENGTH, 8 + 16 + MVHD_PAYLOAD_LENGTH, "moov");
+        writeExtendedHeader(bytes, FTYP_LENGTH + 8, 16 + MVHD_PAYLOAD_LENGTH, "mvhd");
+        writeMovieHeaderPayload(bytes, FTYP_LENGTH + 8 + 16);
+
+        assertMovieHeaderParsed(bytes);
+    }
+
+    @Test
+    public void testParsingResumesAfterSkippedExtendedSizeContainer() throws Exception
+    {
+        // 100 nested 'moov' atoms around a 101st with a 64-bit size, which is skipped for depth,
+        // then a 'free' atom and a regular 'moov'
+        int chainLength = NESTING_LIMIT * 8 + 16;
+        byte[] bytes = new byte[FTYP_LENGTH + chainLength + FREE_LENGTH + 8 + MVHD_LENGTH];
+        writeFileType(bytes);
+        int offset = FTYP_LENGTH;
+        for (int i = 0; i < NESTING_LIMIT; i++, offset += 8) {
+            writeAtomHeader(bytes, offset, chainLength - i * 8, "moov");
+        }
+        writeExtendedHeader(bytes, offset, 16, "moov");
+        offset += 16;
+        writeAtomHeader(bytes, offset, FREE_LENGTH, "free");
+        offset += FREE_LENGTH;
+        writeAtomHeader(bytes, offset, 8 + MVHD_LENGTH, "moov");
+        writeAtomHeader(bytes, offset + 8, MVHD_LENGTH, "mvhd");
+        writeMovieHeaderPayload(bytes, offset + 16);
+
+        assertMovieHeaderParsed(bytes);
+    }
+
+    @Test
+    public void testExtendedSizeUnknownAtomIsSkipped() throws Exception
+    {
+        // A 'free' atom with a 64-bit size, a regular 'free' atom, then a 'moov'
+        byte[] bytes = new byte[FTYP_LENGTH + 16 + FREE_LENGTH + FREE_LENGTH + 8 + MVHD_LENGTH];
+        writeFileType(bytes);
+        int offset = FTYP_LENGTH;
+        writeExtendedHeader(bytes, offset, 16 + FREE_LENGTH, "free");
+        offset += 16 + FREE_LENGTH;
+        writeAtomHeader(bytes, offset, FREE_LENGTH, "free");
+        offset += FREE_LENGTH;
+        writeAtomHeader(bytes, offset, 8 + MVHD_LENGTH, "moov");
+        writeAtomHeader(bytes, offset + 8, MVHD_LENGTH, "mvhd");
+        writeMovieHeaderPayload(bytes, offset + 16);
+
+        assertMovieHeaderParsed(bytes);
     }
 
     /**
@@ -102,6 +159,37 @@ public class QuickTimeMetadataReaderTest
         writeUInt32(bytes, FTYP_LENGTH + 8 + 8 + 16, TEST_DURATION);
 
         return bytes;
+    }
+
+    private static void assertMovieHeaderParsed(byte[] bytes) throws Exception
+    {
+        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(bytes));
+        QuickTimeDirectory directory = metadata.getFirstDirectoryOfType(QuickTimeDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals(Long.valueOf(TEST_DURATION), directory.getLongObject(QuickTimeDirectory.TAG_DURATION));
+        assertEquals(Long.valueOf(TEST_TIME_SCALE), directory.getLongObject(QuickTimeDirectory.TAG_TIME_SCALE));
+    }
+
+    private static void writeFileType(byte[] bytes)
+    {
+        writeAtomHeader(bytes, 0, FTYP_LENGTH, "ftyp");
+        writeString(bytes, 8, "qt  ");
+    }
+
+    /** Writes the 'mvhd' payload that follows its header: version and flags, two times, then the time scale and duration. */
+    private static void writeMovieHeaderPayload(byte[] bytes, int offset)
+    {
+        writeUInt32(bytes, offset + 12, TEST_TIME_SCALE);
+        writeUInt32(bytes, offset + 16, TEST_DURATION);
+    }
+
+    /** Writes a header whose size field is 1, followed by the real size as 64 bits. */
+    private static void writeExtendedHeader(byte[] bytes, int offset, long size, String type)
+    {
+        writeAtomHeader(bytes, offset, 1, type);
+        writeUInt32(bytes, offset + 8, size >> 32);
+        writeUInt32(bytes, offset + 12, size);
     }
 
     /**

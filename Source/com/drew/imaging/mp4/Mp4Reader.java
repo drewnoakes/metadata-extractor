@@ -74,12 +74,14 @@ public class Mp4Reader
                     boxSize = reader.getInt64();
                 }
 
+                int headerSize = isLargeSize ? 16 : 8;
+
                 if (boxSize > Integer.MAX_VALUE) {
                     handler.addError("Box size too large.");
                     break;
                 }
 
-                if (boxSize < 8) {
+                if (boxSize < headerSize) {
                     handler.addError("Box size too small.");
                     break;
                 }
@@ -89,17 +91,11 @@ public class Mp4Reader
 
                 if (handler.shouldAcceptContainer(boxType)) {
                     // Recur, to process nested boxes within container box
-                    processBoxes(reader, boxSize + reader.getPosition() - 8, depth + 1, handler.processContainer(boxType, boxSize, context), context);
+                    processBoxes(reader, boxSize + reader.getPosition() - headerSize, depth + 1, handler.processContainer(boxType, boxSize, context), context);
                 } else if (handler.shouldAcceptBox(boxType)) {
-                    handler = handler.processBox(boxType, reader.getBytes((int)boxSize - 8), boxSize, context);
-                } else if (isLargeSize) {
-                    if (boxSize < 16) {
-                        // TODO capture this error in a directory
-                        break;
-                    }
-                    reader.skip(boxSize - 16);
+                    handler = handler.processBox(boxType, reader.getBytes((int)(boxSize - headerSize)), boxSize, context);
                 } else {
-                    reader.skip(boxSize - 8);
+                    reader.skip(boxSize - headerSize);
                 }
             }
         } catch (IOException e) {
