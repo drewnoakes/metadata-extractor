@@ -33,9 +33,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Drew Noakes https://drewnoakes.com
- */
 public class Mp4MetadataReaderTest
 {
     private static final int FTYP_LENGTH = 16;
