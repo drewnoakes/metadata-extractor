@@ -46,6 +46,8 @@ public class TiffDataFormat
     // TIFF streams (e.g. Apple maker notes use LONG8 for some tags)
     public static final int CODE_INT64_U = 16;
     public static final int CODE_INT64_S = 17;
+    // 8-byte IFD offset, only valid in BigTIFF streams
+    public static final int CODE_IFD8 = 18;
 
     @NotNull public static final TiffDataFormat INT8_U = new TiffDataFormat("BYTE", CODE_INT8_U, 1);
     @NotNull public static final TiffDataFormat STRING = new TiffDataFormat("STRING", CODE_STRING, 1);
@@ -61,6 +63,7 @@ public class TiffDataFormat
     @NotNull public static final TiffDataFormat DOUBLE = new TiffDataFormat("DOUBLE", CODE_DOUBLE, 8);
     @NotNull public static final TiffDataFormat INT64_U = new TiffDataFormat("LONG8", CODE_INT64_U, 8);
     @NotNull public static final TiffDataFormat INT64_S = new TiffDataFormat("SLONG8", CODE_INT64_S, 8);
+    @NotNull public static final TiffDataFormat IFD8 = new TiffDataFormat("IFD8", CODE_IFD8, 8);
 
     @NotNull
     private final String _name;
@@ -70,6 +73,15 @@ public class TiffDataFormat
     @Nullable
     public static TiffDataFormat fromTiffFormatCode(int tiffFormatCode)
     {
+        return fromTiffFormatCode(tiffFormatCode, false);
+    }
+
+    @Nullable
+    public static TiffDataFormat fromTiffFormatCode(int tiffFormatCode, boolean isBigTiff)
+    {
+        if (tiffFormatCode == CODE_IFD8) {
+            return isBigTiff ? IFD8 : null;
+        }
         switch (tiffFormatCode) {
             case 1: return INT8_U;
             case 2: return STRING;

@@ -20,6 +20,9 @@ The easiest way is to install the library via its [Maven package](http://search.
 
 Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
 
+The library targets Java 8. On Android versions below API 24, enable Java 8 interface
+method desugaring to support the default method on `TiffHandler`.
+
 ## Usage
 
 ```java
@@ -53,7 +56,7 @@ The library understands several formats of metadata, many of which may be presen
 It will process files of type:
 
 * JPEG
-* TIFF
+* TIFF (including BigTIFF)
 * WebP
 * WAV
 * AVI
