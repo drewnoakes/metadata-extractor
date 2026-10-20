@@ -38,6 +38,13 @@ public class HeifReader
     private static final Set<String> ACCEPTABLE_PRE_META_BOX_TYPES =
         new HashSet<String>(Arrays.asList(HeifBoxTypes.BOX_FILE_TYPE, HeifContainerTypes.BOX_METADATA));
 
+    /**
+     * The maximum number of levels of nested containers to process. Real files nest only a few
+     * levels deep (such as meta/iprp/ipco), so this limit is only reached by malformed files,
+     * which would otherwise exhaust the stack.
+     */
+    private static final int MAX_BOX_DEPTH = 100;
+
     public void extract(InputStream inputStream, HeifHandler<?> handler)
     {
         // We need to read through the input stream to find the meta box which will tell us what handler to use
@@ -84,7 +91,7 @@ public class HeifReader
                     foundMetaBox = true;
                 }
 
-                handler = processBox(reader, box, handler);
+                handler = processBox(reader, box, 0, handler);
             }
         } catch (IOException e) {
             // Currently, reader relies on IOException to end
@@ -93,7 +100,7 @@ public class HeifReader
         if (needToReset && markSupported) {
             inputStream.reset();
             reader = new StreamReader(inputStream);
-            processBoxes(reader, -1, handler);
+            processBoxes(reader, -1, 0, handler);
         } else if (needToReset) {
             HeifDirectory heifDirectory = handler.metadata.getFirstDirectoryOfType(HeifDirectory.class);
             if (heifDirectory != null) {
@@ -102,14 +109,22 @@ public class HeifReader
         }
     }
 
-    private HeifHandler<?> processBoxes(SequentialReader reader, long atomEnd, HeifHandler<?> handler)
+    private HeifHandler<?> processBoxes(SequentialReader reader, long atomEnd, int depth, HeifHandler<?> handler)
     {
         try {
+            if (depth > MAX_BOX_DEPTH) {
+                // Skip this box's contents rather than recurring into them. Only the top level
+                // calls pass -1 for atomEnd, and they pass zero for depth, so atomEnd is known here.
+                handler.directory.addError("Box nesting too deep.");
+                reader.skip(atomEnd - reader.getPosition());
+                return handler;
+            }
+
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
                 Box box = new Box(reader);
 
-                handler = processBox(reader, box, handler);
+                handler = processBox(reader, box, depth, handler);
             }
         } catch (IOException e) {
             // Currently, reader relies on IOException to end
@@ -117,11 +132,11 @@ public class HeifReader
         return handler;
     }
 
-    private HeifHandler<?> processBox(SequentialReader reader, Box box, HeifHandler<?> handler) throws IOException
+    private HeifHandler<?> processBox(SequentialReader reader, Box box, int depth, HeifHandler<?> handler) throws IOException
     {
         if (handler.shouldAcceptContainer(box)) {
             handler.processContainer(box, reader);
-            handler = processBoxes(reader, box.size + reader.getPosition() - 8, handler);
+            handler = processBoxes(reader, box.size + reader.getPosition() - 8, depth + 1, handler);
         } else if (handler.shouldAcceptBox(box)) {
             handler = handler.processBox(box, reader.getBytes((int) box.size - 8));
         } else if (box.size > 1) {
