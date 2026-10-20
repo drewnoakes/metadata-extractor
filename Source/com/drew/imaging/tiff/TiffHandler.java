@@ -42,10 +42,33 @@ public interface TiffHandler
      * <p>
      * Implementations are not obligated to use this information for any purpose, though it may be useful for
      * validation or perhaps differentiating the type of mapping to use for observed tags and IFDs.
+     * <p>
+     * This method is invoked by the default implementation of {@link #processTiffMarker(int)}, which the
+     * {@link TiffReader} calls. Handlers that need to signal {@link TiffStandard#BIG_TIFF} should override
+     * {@link #processTiffMarker(int)} instead.
      *
      * @param marker the 2-byte value found at position 2 of the TIFF header
      */
     void setTiffMarker(int marker) throws TiffProcessingException;
+
+    /**
+     * Receives the 2-byte marker found in the TIFF header and returns the {@link TiffStandard}
+     * the data stream is encoded with, which controls how the {@link TiffReader} interprets
+     * IFD structures (BigTIFF uses 64-bit offsets and 20-byte IFD entries).
+     * <p>
+     * The default implementation delegates to {@link #setTiffMarker(int)} and reports
+     * {@link TiffStandard#TIFF}, so existing handlers keep working unchanged. Handlers that
+     * support BigTIFF should override this method.
+     *
+     * @param marker the 2-byte value found at position 2 of the TIFF header
+     * @return the {@link TiffStandard} indicated by the marker
+     */
+    @NotNull
+    default TiffStandard processTiffMarker(int marker) throws TiffProcessingException
+    {
+        setTiffMarker(marker);
+        return TiffStandard.TIFF;
+    }
 
     boolean tryEnterSubIfd(int tagId);
     boolean hasFollowerIfd();
@@ -85,4 +108,8 @@ public interface TiffHandler
     void setInt32sArray(int tagId, @NotNull int[] array);
     void setInt32u(int tagId, long int32u);
     void setInt32uArray(int tagId, @NotNull long[] array);
+    void setInt64s(int tagId, long int64s);
+    void setInt64sArray(int tagId, @NotNull long[] array);
+    void setInt64u(int tagId, long int64u);
+    void setInt64uArray(int tagId, @NotNull long[] array);
 }

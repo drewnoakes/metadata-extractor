@@ -33,6 +33,42 @@ import static org.junit.Assert.assertEquals;
 public class CanonMakernoteDescriptorTest
 {
     @Test
+    public void testFocalType()
+    {
+        CanonMakernoteDirectory directory = new CanonMakernoteDirectory();
+        directory.setInt(FocalLength.TAG_FOCAL_TYPE, 1);
+        assertEquals("Fixed", directory.getDescription(FocalLength.TAG_FOCAL_TYPE));
+        directory.setInt(FocalLength.TAG_FOCAL_TYPE, 2);
+        assertEquals("Zoom", directory.getDescription(FocalLength.TAG_FOCAL_TYPE));
+        directory.setInt(FocalLength.TAG_FOCAL_TYPE, 0);
+        assertEquals("Unknown (0)", directory.getDescription(FocalLength.TAG_FOCAL_TYPE));
+    }
+
+    @Test
+    public void testRfLensTypeIsNotModelSpecific()
+    {
+        CanonMakernoteDirectory directory = new CanonMakernoteDirectory();
+        directory.setInt(CameraSettings.TAG_LENS_TYPE, 61182);
+        assertEquals("Canon RF Lens", directory.getDescription(CameraSettings.TAG_LENS_TYPE));
+        directory.setInt(CameraSettings.TAG_LENS_TYPE, 61183);
+        assertEquals("Unknown (61183)", directory.getDescription(CameraSettings.TAG_LENS_TYPE));
+    }
+
+    @Test
+    public void testFocusBracketingArrayOffset()
+    {
+        CanonMakernoteDirectory directory = new CanonMakernoteDirectory();
+        int[] settings = new int[53];
+        settings[47] = 90;
+        settings[50] = 1;
+        directory.setIntArray(0x0001, settings);
+        assertEquals("Enable", directory.getDescription(CameraSettings.TAG_FOCUS_BRACKETING));
+        settings[50] = 0;
+        directory.setIntArray(0x0001, settings);
+        assertEquals("Disable", directory.getDescription(CameraSettings.TAG_FOCUS_BRACKETING));
+    }
+
+    @Test
     public void testGetFlashBiasDescription() throws Exception
     {
         CanonMakernoteDirectory directory = new CanonMakernoteDirectory();

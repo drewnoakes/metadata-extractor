@@ -95,6 +95,32 @@ public class ExifReaderTest
     }
 
     @Test
+    public void testLong8AndSLong8Values() throws Exception
+    {
+        // LONG8 (16) and SLONG8 (17) are BigTIFF data formats that also occur in
+        // regular TIFF streams, e.g. Apple maker notes store the Live Photo video
+        // index (tag 0x0017) as LONG8
+        byte[] exifData = new byte[] {
+            'E','x','i','f',0,0,
+            'M','M', 0,42, 0,0,0,8,                 // TIFF header, IFD0 at offset 8
+            0,2,                                    // two entries
+            0x10,0x01, 0,16, 0,0,0,1, 0,0,0,38,     // tag 0x1001, LONG8, count 1, value at offset 38
+            0x10,0x02, 0,17, 0,0,0,1, 0,0,0,46,     // tag 0x1002, SLONG8, count 1, value at offset 46
+            0,0,0,0,                                // next IFD offset (none)
+            0,0,0,0, 0,0x50,(byte)0xA0,0x24,        // 5283876
+            (byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF,
+            (byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xD6 // -42
+        };
+        Metadata metadata = new Metadata();
+        new ExifReader().extract(new ByteArrayReader(exifData), metadata, ExifReader.JPEG_SEGMENT_PREAMBLE.length(), null);
+        ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        assertNotNull(directory);
+        assertFalse(metadata.hasErrors());
+        assertEquals(5283876L, directory.getLong(0x1001));
+        assertEquals(-42L, directory.getLong(0x1002));
+    }
+
+    @Test
     public void testCrashRegressionTest() throws Exception
     {
         // This image was created via a resize in ACDSee.

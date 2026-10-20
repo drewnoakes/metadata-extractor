@@ -96,4 +96,21 @@ public class PngChunkReaderTest
         assertEquals(PngChunkType.IEND, chunks.get(4).getType());
         assertEquals(0, chunks.get(4).getBytes().length);
     }
+
+    @Test
+    public void testDuplicateChunkTypesAreKept() throws Exception
+    {
+        // Some software produces invalid PNG data with duplicate chunks that are only supposed to appear once.
+        // The reader should tolerate this and return all instances rather than throwing an exception.
+        List<PngChunk> chunks = processFile("Tests/Data/png-with-duplicate-exif-chunk.png");
+
+        long eXIfCount = 0;
+        for (PngChunk chunk : chunks) {
+            if (chunk.getType().equals(PngChunkType.eXIf)) {
+                eXIfCount++;
+            }
+        }
+
+        assertEquals("Both eXIf chunks should be returned so that all EXIF data can be processed", 2, eXIfCount);
+    }
 }

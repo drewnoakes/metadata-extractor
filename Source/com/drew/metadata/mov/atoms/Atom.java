@@ -33,6 +33,8 @@ public class Atom
 {
     public long size;
     public String type;
+    /** The number of bytes read for this atom's size and type, 16 for an extended size. */
+    public int headerSize = 8;
 
     public Atom(SequentialReader reader) throws IOException
     {
@@ -50,6 +52,7 @@ public class Atom
         this.type = reader.getString(4);
         if (size == 1) {
             size = reader.getInt64();
+            headerSize = 16;
         } else if (size == 0) {
             size = -1;
         }
@@ -59,5 +62,6 @@ public class Atom
     {
         this.size = atom.size;
         this.type = atom.type;
+        this.headerSize = atom.headerSize;
     }
 }
