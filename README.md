@@ -37,6 +37,7 @@ With that `Metadata` instance, you can [iterate or query](https://github.com/dre
 The library understands several formats of metadata, many of which may be present in a single image:
 
 * [Exif](https://en.wikipedia.org/wiki/Exchangeable_image_file_format)
+* [GeoTIFF](https://www.ogc.org/standard/geotiff/) coordinate reference systems and georeferencing metadata
 * [IPTC](https://en.wikipedia.org/wiki/IPTC)
 * [XMP](https://en.wikipedia.org/wiki/Extensible_Metadata_Platform)
 * [JFIF / JFXX](https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format)
@@ -101,6 +102,19 @@ Camera-specific "makernote" data is decoded for cameras manufactured by:
 * Sony
 
 Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/Getting-Started) for an introduction to the basics of using this library.
+
+### GeoTIFF
+
+GeoTIFF 1.0 and 1.1 keys are decoded into a `GeoTiffDirectory` whose parent is the
+image IFD containing them. The original GeoTIFF tags, including pixel scale, tie
+points, transformation matrices, and parameter pools, remain available in that
+IFD. Invalid keys are reported as directory errors without discarding the raw
+metadata or unrelated keys. Unknown keys and coordinate-system codes are retained.
+
+This extracts metadata from TIFF, BigTIFF, and Cloud Optimized GeoTIFF files; it
+does not perform coordinate reprojection, compute geographic bounds, validate COG
+layout, or provide HTTP range access. BigTIFF offsets remain limited by the
+library's integer-indexed readers.
 
 ## Questions & Feedback
 
