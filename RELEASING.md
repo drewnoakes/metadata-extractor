@@ -155,16 +155,21 @@ mvn dependency:resolve
 
 If it downloads the expected version, the release is live.
 
-### First-Time Dry Run (Recommended)
+### Validate Without Publishing (Recommended)
 
-Before your first real release, validate the pipeline using the manual workflow trigger:
+Validate the release build using the manual workflow trigger:
 
 1. Go to **Actions** → **Publish to Maven Central** → **Run workflow**
-2. Leave the version field empty for a timestamped SNAPSHOT (e.g. `0.0.0-20260408120000-SNAPSHOT`),
-   or enter a test version like `2.20.0-rc1`
-3. SNAPSHOT versions go to the snapshots repository (not Maven Central releases),
-   so this is safe to experiment with
-4. Watch the logs to confirm build, signing, and upload all succeed
+2. Select the branch containing the workflow fix (normally `main`)
+3. Enter the version to validate, or leave it empty for a timestamped SNAPSHOT
+4. Leave **dry_run** checked (the default)
+5. Watch **Validate release without publishing** to confirm building, tests,
+   Javadoc generation, and GPG signing succeed
+
+A dry run uses Maven's `verify` phase and does not upload any artifacts or create
+a Sonatype staging repository. It does not validate deployment authentication.
+To actually deploy, uncheck **dry_run**. Publishing a GitHub Release still
+deploys automatically.
 
 ## Troubleshooting
 
@@ -189,7 +194,8 @@ After merging a publishing configuration fix, recover an already-published
 GitHub Release by manually running **Publish to Maven Central** from the fixed
 branch with the existing release version. First confirm that the version is not
 already on Maven Central and that the selected branch contains the intended
-release sources. Re-running the original failed run uses its original workflow
+release sources. Validate with **dry_run** checked first; uncheck it only when
+ready to publish. Re-running the original failed run uses its original workflow
 and commit, so it will not pick up the fix. There is no need to move the release
 tag or create another GitHub Release.
 
