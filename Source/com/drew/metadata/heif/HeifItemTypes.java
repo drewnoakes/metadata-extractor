@@ -28,4 +28,5 @@ package com.drew.metadata.heif;
 public class HeifItemTypes
 {
     public static final String ITEM_EXIF                        = "Exif";
+    public static final String ITEM_MIME                        = "mime";
 }
