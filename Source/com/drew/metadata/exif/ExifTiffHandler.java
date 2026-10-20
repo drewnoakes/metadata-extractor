@@ -320,7 +320,8 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             byte[] jpegrawbytes = reader.getBytes(tagOffset, byteCount);
 
             // Extract information from embedded image since it is metadata-rich
-            try (ByteArrayInputStream jpegmem = new ByteArrayInputStream(jpegrawbytes)) {
+            ByteArrayInputStream jpegmem = new ByteArrayInputStream(jpegrawbytes);
+            try {
                 Metadata jpegDirectory = JpegMetadataReader.readMetadata(jpegmem);
                 for (Directory directory : jpegDirectory.getDirectories()) {
                     directory.setParent(_currentDirectory);

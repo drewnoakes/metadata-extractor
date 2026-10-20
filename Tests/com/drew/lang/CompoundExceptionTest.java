@@ -68,10 +68,10 @@ public class CompoundExceptionTest
         try {
             throw new CompoundException("message", null);
         } catch (CompoundException e) {
-            try (PrintStream nullStream = new PrintStream(new NullOutputStream());
-                    PrintWriter printWriter = new PrintWriter(nullStream)) {
+            try {
+                PrintStream nullStream = new PrintStream(new NullOutputStream());
                 e.printStackTrace(nullStream);
-                e.printStackTrace(printWriter);
+                e.printStackTrace(new PrintWriter(nullStream));
             } catch (Exception e1) {
                 fail("Exception during printStackTrace for CompoundException with no inner exception");
             }

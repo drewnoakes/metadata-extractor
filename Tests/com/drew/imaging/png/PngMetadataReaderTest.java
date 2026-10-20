@@ -20,19 +20,27 @@
  */
 package com.drew.imaging.png;
 
+import com.drew.lang.Charsets;
 import com.drew.lang.KeyValuePair;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.icc.IccDirectory;
 import com.drew.metadata.png.PngDirectory;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.zip.CRC32;
+import java.util.zip.DeflaterOutputStream;
 
 import static org.junit.Assert.*;
 
@@ -41,6 +49,10 @@ import static org.junit.Assert.*;
  */
 public class PngMetadataReaderTest
 {
+    private static final PngChunkType[] COMPRESSED_CHUNK_TYPES = {
+        PngChunkType.iCCP, PngChunkType.zTXt, PngChunkType.iTXt
+    };
+
     @NotNull
     private static Metadata processFile(@NotNull String filePath) throws PngProcessingException, IOException
     {
@@ -113,5 +125,125 @@ public class PngMetadataReaderTest
         } finally {
             TimeZone.setDefault(defaultTimeZone);
         }
+    }
+
+    @Test
+    public void testCompressedIccProfile() throws Exception
+    {
+        byte[] profile = new byte[IccDirectory.TAG_TAG_COUNT + 4];
+        ByteBuffer buffer = ByteBuffer.wrap(profile);
+        buffer.putInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, profile.length);
+        buffer.putShort(IccDirectory.TAG_PROFILE_DATETIME, (short)2026);
+        buffer.putShort(IccDirectory.TAG_PROFILE_DATETIME + 2, (short)10);
+        buffer.putShort(IccDirectory.TAG_PROFILE_DATETIME + 4, (short)20);
+        buffer.putInt(IccDirectory.TAG_SIGNATURE, 0x61637370);
+
+        Metadata metadata = readCompressedChunk(PngChunkType.iCCP, compress(profile));
+
+        assertFalse(metadata.hasErrors());
+        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+        assertNotNull(directory);
+        assertEquals(profile.length, directory.getInt(IccDirectory.TAG_PROFILE_BYTE_COUNT));
+        assertEquals("acsp", directory.getString(IccDirectory.TAG_SIGNATURE));
+    }
+
+    @Test
+    public void testCompressedText() throws Exception
+    {
+        assertCompressedText(PngChunkType.zTXt, "Compressed caf\u00e9");
+        assertCompressedText(PngChunkType.iTXt, "Compressed \u03c0");
+    }
+
+    private static void assertCompressedText(PngChunkType chunkType, String text) throws Exception
+    {
+        byte[] bytes = text.getBytes(chunkType.equals(PngChunkType.iTXt) ? Charsets.UTF_8 : Charsets.ISO_8859_1);
+        Metadata metadata = readCompressedChunk(chunkType, compress(bytes));
+
+        assertFalse(chunkType.toString(), metadata.hasErrors());
+        Collection<PngDirectory> directories = metadata.getDirectoriesOfType(PngDirectory.class);
+        assertEquals(2, directories.size());
+        PngDirectory directory = directories.toArray(new PngDirectory[directories.size()])[1];
+        assertEquals(chunkType, directory.getPngChunkType());
+        @SuppressWarnings("unchecked")
+        List<KeyValuePair> pairs = (List<KeyValuePair>)directory.getObject(PngDirectory.TAG_TEXTUAL_DATA);
+        assertNotNull(pairs);
+        assertEquals(1, pairs.size());
+        assertEquals("Comment", pairs.get(0).getKey());
+        assertEquals(text, pairs.get(0).getValue().toString());
+    }
+
+    @Test
+    public void testCorruptCompressedChunks() throws Exception
+    {
+        for (PngChunkType chunkType : COMPRESSED_CHUNK_TYPES) {
+            Metadata metadata = readCompressedChunk(chunkType, new byte[]{0, 0, 0});
+            assertTrue(chunkType.toString(), metadata.hasErrors());
+        }
+    }
+
+    @Test
+    public void testTruncatedCompressedChunks() throws Exception
+    {
+        for (PngChunkType chunkType : COMPRESSED_CHUNK_TYPES) {
+            Metadata metadata = readCompressedChunk(chunkType, new byte[]{0x78, (byte)0x9c});
+            assertTrue(chunkType.toString(), metadata.hasErrors());
+        }
+    }
+
+    private static Metadata readCompressedChunk(PngChunkType chunkType, byte[] compressedBytes) throws Exception
+    {
+        ByteArrayOutputStream chunkBytes = new ByteArrayOutputStream();
+        chunkBytes.write((chunkType.equals(PngChunkType.iCCP) ? "Profile" : "Comment").getBytes(Charsets.ASCII));
+        chunkBytes.write(0);
+        if (chunkType.equals(PngChunkType.iTXt)) {
+            chunkBytes.write(1);
+        }
+        chunkBytes.write(0);
+        if (chunkType.equals(PngChunkType.iTXt)) {
+            chunkBytes.write(0);
+            chunkBytes.write(0);
+        }
+        chunkBytes.write(compressedBytes);
+
+        ByteArrayOutputStream pngBytes = new ByteArrayOutputStream();
+        DataOutputStream output = new DataOutputStream(pngBytes);
+        output.write(new byte[]{(byte)0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a});
+        writeChunk(output, PngChunkType.IHDR, new byte[]{0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 0, 0, 0});
+        writeChunk(output, chunkType, chunkBytes.toByteArray());
+        writeChunk(output, PngChunkType.IDAT, compress(new byte[]{0, 0, 0, 0}));
+        writeChunk(output, PngChunkType.IEND, new byte[0]);
+        output.write(0x42);
+
+        ByteArrayInputStream input = new ByteArrayInputStream(pngBytes.toByteArray()) {
+            @Override
+            public void close()
+            {
+                fail("The caller-owned PNG input stream must remain open");
+            }
+        };
+        Metadata metadata = PngMetadataReader.readMetadata(input);
+        assertEquals(0x42, input.read());
+        return metadata;
+    }
+
+    private static byte[] compress(byte[] bytes) throws IOException
+    {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (DeflaterOutputStream stream = new DeflaterOutputStream(output)) {
+            stream.write(bytes);
+        }
+        return output.toByteArray();
+    }
+
+    private static void writeChunk(DataOutputStream output, PngChunkType chunkType, byte[] bytes) throws IOException
+    {
+        byte[] typeBytes = chunkType.getIdentifier().getBytes(Charsets.ASCII);
+        output.writeInt(bytes.length);
+        output.write(typeBytes);
+        output.write(bytes);
+        CRC32 crc = new CRC32();
+        crc.update(typeBytes);
+        crc.update(bytes);
+        output.writeInt((int)crc.getValue());
     }
 }
