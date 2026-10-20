@@ -27,12 +27,12 @@ import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifReader;
+import com.drew.metadata.xmp.XmpReader;
 import com.drew.metadata.heif.boxes.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,9 +53,12 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
         HeifBoxTypes.BOX_PIXEL_INFORMATION
     ));
 
-    private static final Set<String> itemsCanProcess = new HashSet<String>(Collections.singletonList(
-        HeifItemTypes.ITEM_EXIF
+    private static final Set<String> itemsCanProcess = new HashSet<String>(Arrays.asList(
+        HeifItemTypes.ITEM_EXIF,
+        HeifItemTypes.ITEM_MIME
     ));
+
+    private static final String XMP_CONTENT_TYPE = "application/rdf+xml";
 
     private static final Set<String> containersCanProcess = new HashSet<String>(Arrays.asList(
         HeifContainerTypes.BOX_IMAGE_PROPERTY,
@@ -137,6 +140,9 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
     }
 
     private boolean shouldHandleItem(ItemInfoBox.ItemInfoEntry infoEntry) {
+        if (HeifItemTypes.ITEM_MIME.equals(infoEntry.getItemType())) {
+            return XMP_CONTENT_TYPE.equals(infoEntry.getContentType());
+        }
         return itemsCanProcess.contains(infoEntry.getItemType());
     }
 
@@ -152,6 +158,8 @@ public class HeifPictureHandler extends HeifHandler<HeifDirectory>
             payloadReader.skip(tiffHeaderOffset);
             ByteArrayInputStream tiffStream = new ByteArrayInputStream(payloadReader.getBytes(payloadReader.available()));
             new ExifReader().extract(new RandomAccessStreamReader(tiffStream), metadata);
+        } else if (entry.getItemType().equals(HeifItemTypes.ITEM_MIME)) {
+            new XmpReader().extract(payloadReader.getBytes(payloadReader.available()), metadata);
         }
     }
 

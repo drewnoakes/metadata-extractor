@@ -112,6 +112,10 @@ public class ItemInfoBox extends FullBox
         public String getItemType() {
             return itemType;
         }
+
+        public String getContentType() {
+            return contentType;
+        }
     }
 
     public void addMetadata(HeifDirectory directory)
