@@ -37,6 +37,7 @@ With that `Metadata` instance, you can [iterate or query](https://github.com/dre
 The library understands several formats of metadata, many of which may be present in a single image:
 
 * [Exif](https://en.wikipedia.org/wiki/Exchangeable_image_file_format)
+* [GeoTIFF](https://www.ogc.org/standard/geotiff/) coordinate reference systems and georeferencing metadata
 * [IPTC](https://en.wikipedia.org/wiki/IPTC)
 * [XMP](https://en.wikipedia.org/wiki/Extensible_Metadata_Platform)
 * [JFIF / JFXX](https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format)
