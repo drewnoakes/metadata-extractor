@@ -103,19 +103,6 @@ Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 Read [getting started](https://github.com/drewnoakes/metadata-extractor/wiki/Getting-Started) for an introduction to the basics of using this library.
 
-### GeoTIFF
-
-GeoTIFF 1.0 and 1.1 keys are decoded into a `GeoTiffDirectory` whose parent is the
-image IFD containing them. The original GeoTIFF tags, including pixel scale, tie
-points, transformation matrices, and parameter pools, remain available in that
-IFD. Invalid keys are reported as directory errors without discarding the raw
-metadata or unrelated keys. Unknown keys and coordinate-system codes are retained.
-
-This extracts metadata from TIFF, BigTIFF, and Cloud Optimized GeoTIFF files; it
-does not perform coordinate reprojection, compute geographic bounds, validate COG
-layout, or provide HTTP range access. BigTIFF offsets remain limited by the
-library's integer-indexed readers.
-
 ## Questions & Feedback
 
 The quickest way to have your questions answered is via [Stack Overflow](http://stackoverflow.com/questions/tagged/metadata-extractor).
