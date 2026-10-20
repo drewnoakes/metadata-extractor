@@ -12,6 +12,12 @@ When you create and publish a GitHub Release, the `release.yml` workflow automat
 
 Artifacts typically appear on Maven Central within 10–30 minutes after deployment.
 
+The workflow uses `.github/maven-settings.xml` for publishing credentials. Its
+`sonatype` server ID matches both the Nexus staging plugin and the snapshot
+repository in `pom.xml`. Credentials are explicitly restricted to the Sonatype
+staging and snapshot origins, rather than reusing Maven's built-in `central`
+download repository ID.
+
 ## One-Time Setup
 
 These steps only need to be done once (or when credentials expire/rotate).
@@ -162,8 +168,34 @@ Before your first real release, validate the pipeline using the manual workflow 
 
 ## Troubleshooting
 
+### Credentials withheld during deploy
+
+Maven 3.10 binds server credentials to repository origins. If the log says
+`Not using credentials of server 'central'` and lists `https://repo.maven.apache.org`,
+Maven is withholding credentials from the Sonatype upload host; this is not
+evidence that the token has expired.
+
+Use the `sonatype` server ID and the checked-in publishing settings:
+
+```bash
+mvn --batch-mode --settings .github/maven-settings.xml clean deploy -Drevision=2.22.0
+```
+
+The environment variables `MAVEN_USERNAME`, `MAVEN_PASSWORD`, and
+`MAVEN_GPG_PASSPHRASE` must be set, and the GPG signing key must be available.
+Do not disable credential-origin checks with `maven.repository.credentialScope=id`.
+
+After merging a publishing configuration fix, recover an already-published
+GitHub Release by manually running **Publish to Maven Central** from the fixed
+branch with the existing release version. First confirm that the version is not
+already on Maven Central and that the selected branch contains the intended
+release sources. Re-running the original failed run uses its original workflow
+and commit, so it will not pick up the fix. There is no need to move the release
+tag or create another GitHub Release.
+
 ### 401 Unauthorized during deploy
 
+- First check for the credential-origin warning described above
 - Sonatype credentials are wrong or expired
 - You must use a **Central Portal token**, not old OSSRH credentials
 - Generate a new token at <https://central.sonatype.com/usertoken>

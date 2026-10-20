@@ -38,14 +38,13 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'maven'
-          server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+          settings-path: .github
+          overwrite-settings: false
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Publish to Maven Central
-        run: mvn --batch-mode clean deploy -Drevision=${{ steps.version.outputs.version }}
+        run: mvn --batch-mode --settings .github/maven-settings.xml clean deploy -Drevision=${{ steps.version.outputs.version }}
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
