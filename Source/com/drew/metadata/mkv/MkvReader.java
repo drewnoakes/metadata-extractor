@@ -179,6 +179,9 @@ public class MkvReader
                         createDirectories((Map<Integer, Object>) entry, metadata);
                     }
                 }
+            } else
+            {
+                createDirectories((Map<Integer, Object>) data.get(ElementIDs.TRACK_ENTRY), metadata);
             }
         }
 
@@ -262,7 +265,10 @@ public class MkvReader
             {
                 Object previous = data.get(eid);
                 List<Object> list = new ArrayList<>();
-                list.add(previous);
+                if (previous instanceof List)
+                    list.addAll((List<?>) previous);
+                else
+                    list.add(previous);
                 list.add(value);
                 value = list;
             }
