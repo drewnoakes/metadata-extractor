@@ -494,16 +494,21 @@ public class MkvReader
 
         private void skip(long size) throws IOException
         {
+            if (size == 0)
+                return;
+            // Some streams can skip past EOF, so verify the final byte with a read.
+            size--;
             while (size > 0) {
                 long start = _reader.getPosition();
                 if (_reader.trySkip(size))
-                    return;
+                    break;
                 size -= _reader.getPosition() - start;
                 if (size > 0) {
                     _reader.getByte();
                     size--;
                 }
             }
+            _reader.getByte();
         }
     }
 }

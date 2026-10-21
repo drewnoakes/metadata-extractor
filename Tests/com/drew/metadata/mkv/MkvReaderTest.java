@@ -335,6 +335,28 @@ public class MkvReaderTest
     }
 
     @Test
+    public void detectsTruncatedPayloadWhenSkipCanSeekPastEof() throws Exception
+    {
+        for (int actualSize : new int[] {0, 2, 100}) {
+            byte[] payload = concat(element(ElementIDs.TRACKS, video(1)),
+                concat(bytes(ElementIDs.CLUSTER), size(100), new byte[actualSize]));
+            byte[] document = concat(header("matroska"), bytes(ElementIDs.SEGMENT),
+                size(payload.length + 100 - actualSize), payload);
+            Metadata metadata = EbmlMetadataReader.readMetadata(new ByteArrayInputStream(document) {
+                @Override
+                public long skip(long count)
+                {
+                    pos += (int)count;
+                    return count;
+                }
+            });
+            assertEquals("Actual payload size: " + actualSize, actualSize != 100, metadata.hasErrors());
+            assertEquals(32, metadata.getFirstDirectoryOfType(MkvVideoDirectory.class)
+                .getInt(MkvVideoDirectory.TAG_PIXEL_WIDTH));
+        }
+    }
+
+    @Test
     public void reportsDuplicateScalarValues() throws Exception
     {
         Metadata metadata = extract(document(element(ElementIDs.SEGMENT_INFO,
