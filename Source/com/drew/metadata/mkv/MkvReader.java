@@ -1,7 +1,18 @@
+/*
+ * Copyright 2026 Drew Noakes and contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ */
 package com.drew.metadata.mkv;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.Charsets;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
@@ -17,94 +28,54 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.drew.metadata.mkv.EbmlElement.DirectoryType.EBML;
-import static com.drew.metadata.mkv.EbmlElement.Type.*;
-
+/**
+ * Reads the supported metadata subset of Matroska and WebM without buffering
+ * media payloads. See RFC 8794 and https://www.matroska.org/technical/elements.html.
+ */
 public class MkvReader
 {
+    private enum ValueType
+    {
+        INTEGER, FLOAT, STRING, UTF8, BINARY
+    }
 
-    private static final Map<Integer, EbmlElement> ELEMENTS = new HashMap<>();
+    @NotNull
+    private static final Map<Integer, ValueType> _elements = new HashMap<Integer, ValueType>();
 
     static
     {
-        // VOID is legit element type in Matroska spec, we're abusing it here to skip parts we don't need
-        ELEMENTS.put(ElementIDs.EBML_HEADER_ELEMENT, new EbmlElement("EBML_HEADER", MASTER));
-        ELEMENTS.put(ElementIDs.EBML_VERSION, new EbmlElement("EBML_VERSION", INTEGER, EBML));
-        ELEMENTS.put(ElementIDs.EBML_READ_VERSION, new EbmlElement("EBML_READ_VERSION", INTEGER, EBML));
-        ELEMENTS.put(ElementIDs.EBML_MAX_ID_LENGTH, new EbmlElement("EBML_MAX_ID_LENGTH", INTEGER, EBML));
-        ELEMENTS.put(ElementIDs.EBML_MAX_SIZE_LENGTH, new EbmlElement("EBML_MAX_SIZE_LENGTH", INTEGER, EBML));
-        ELEMENTS.put(ElementIDs.DOCTYPE, new EbmlElement("DOCTYPE", STRING, EBML));
-        ELEMENTS.put(ElementIDs.DOCTYPE_VERSION, new EbmlElement("DOCTYPE_VERSION", INTEGER, EBML));
-        ELEMENTS.put(ElementIDs.DOCTYPE_READ_VERSION, new EbmlElement("DOCTYPE_READ_VERSION", INTEGER, EBML));
-        ELEMENTS.put(ElementIDs.SEGMENT, new EbmlElement("SEGMENT", MASTER));
-        ELEMENTS.put(ElementIDs.SEGMENT_INFO, new EbmlElement("SEGMENT_INFO", MASTER));
-        ELEMENTS.put(ElementIDs.SEEK_HEAD, new EbmlElement("SEEK_HEAD", VOID));
-        ELEMENTS.put(ElementIDs.SEEK, new EbmlElement("SEEK", MASTER));
-        ELEMENTS.put(ElementIDs.SEEK_ID, new EbmlElement("SEEK_ID", BINARY));
-        ELEMENTS.put(ElementIDs.SEEK_POSITION, new EbmlElement("SEEK_POSITION", INTEGER));
-        ELEMENTS.put(ElementIDs.MUXING_APP, new EbmlElement("MUXING_APP", UTF8));
-        ELEMENTS.put(ElementIDs.WRITING_APP, new EbmlElement("WRITING_APP", UTF8));
-        ELEMENTS.put(ElementIDs.CODEC_ID, new EbmlElement("CODEC_ID", STRING));
-        ELEMENTS.put(ElementIDs.VOID_ELEMENT, new EbmlElement("VOID", VOID));
-        ELEMENTS.put(ElementIDs.TIMESTAMP_SCALE, new EbmlElement("TIMESTAMP_SCALE", INTEGER));
-        ELEMENTS.put(ElementIDs.DURATION, new EbmlElement("DURATION", FLOAT));
-        ELEMENTS.put(ElementIDs.CLUSTER, new EbmlElement("CLUSTER", VOID));
-        ELEMENTS.put(ElementIDs.SEGMENT_UUID, new EbmlElement("SEGMENT_UUID", BINARY));
-        ELEMENTS.put(ElementIDs.TRACKS, new EbmlElement("TRACKS", MASTER));
-        ELEMENTS.put(ElementIDs.TRACK_ENTRY, new EbmlElement("TRACK_ENTRY", MASTER));
-        ELEMENTS.put(ElementIDs.TRACK_NUMBER, new EbmlElement("TRACK_NUMBER", INTEGER));
-        ELEMENTS.put(ElementIDs.TRACK_UID, new EbmlElement("TRACK_UID", INTEGER));
-        ELEMENTS.put(ElementIDs.TRACK_TYPE, new EbmlElement("TRACK_TYPE", INTEGER));
-        ELEMENTS.put(ElementIDs.TAG_LACING, new EbmlElement("TAG_LACING", INTEGER));
-        ELEMENTS.put(ElementIDs.AUDIO, new EbmlElement("AUDIO", MASTER));
-        ELEMENTS.put(ElementIDs.CHANNELS, new EbmlElement("CHANNELS", INTEGER));
-        ELEMENTS.put(ElementIDs.SAMPLING_FREQUENCY, new EbmlElement("SAMPLING_FREQUENCY", FLOAT));
-        ELEMENTS.put(ElementIDs.BIT_DEPTH, new EbmlElement("BIT_DEPTH", INTEGER));
-        ELEMENTS.put(ElementIDs.CODEC_PRIVATE, new EbmlElement("CODEC_PRIVATE", VOID));
-        ELEMENTS.put(ElementIDs.CUES, new EbmlElement("CUES", VOID));
-        ELEMENTS.put(ElementIDs.LANGUAGE, new EbmlElement("LANGUAGE", STRING));
-        ELEMENTS.put(ElementIDs.LANGUAGE_BCP47, new EbmlElement("LANGUAGE_BCP47", STRING));
-        ELEMENTS.put(ElementIDs.DEFAULT_DURATION, new EbmlElement("DEFAULT_DURATION", INTEGER));
-        ELEMENTS.put(ElementIDs.VIDEO, new EbmlElement("VIDEO", MASTER));
-        ELEMENTS.put(ElementIDs.DISPLAY_WIDTH, new EbmlElement("DISPLAY_WIDTH", INTEGER));
-        ELEMENTS.put(ElementIDs.DISPLAY_HEIGHT, new EbmlElement("DISPLAY_HEIGHT", INTEGER));
-        ELEMENTS.put(ElementIDs.DISPLAY_UNIT, new EbmlElement("DISPLAY_UNIT", INTEGER));
-        ELEMENTS.put(ElementIDs.PIXEL_WIDTH, new EbmlElement("PIXEL_WIDTH", INTEGER));
-        ELEMENTS.put(ElementIDs.PIXEL_HEIGHT, new EbmlElement("PIXEL_HEIGHT", INTEGER));
-        ELEMENTS.put(ElementIDs.FLAG_INTERLACED, new EbmlElement("FLAG_INTERLACED", INTEGER));
-        ELEMENTS.put(ElementIDs.COLOR, new EbmlElement("COLOR", MASTER));
-        ELEMENTS.put(ElementIDs.TRANSFER_CHARACTERISTICS, new EbmlElement("TRANSFER_CHARACTERISTICS", INTEGER));
-        ELEMENTS.put(ElementIDs.MATRIX_COEFFICIENTS, new EbmlElement("MATRIX_COEFFICIENTS", INTEGER));
-        ELEMENTS.put(ElementIDs.PRIMARIES, new EbmlElement("PRIMARIES", INTEGER));
-        ELEMENTS.put(ElementIDs.RANGE, new EbmlElement("RANGE", INTEGER));
-        ELEMENTS.put(ElementIDs.CHROMA_SITING_HORZ, new EbmlElement("CHROMA_SITING_HORZ", INTEGER));
-        ELEMENTS.put(ElementIDs.CHROMA_SITING_VERT, new EbmlElement("CHROMA_SITING_VERT", INTEGER));
-        ELEMENTS.put(ElementIDs.CODEC_DELAY, new EbmlElement("CODEC_DELAY", INTEGER));
-        ELEMENTS.put(ElementIDs.SEEK_PRE_ROLL, new EbmlElement("SEEK_PRE_ROLL", INTEGER));
-        ELEMENTS.put(ElementIDs.TAGS, new EbmlElement("TAGS", MASTER));
-        ELEMENTS.put(ElementIDs.TAG, new EbmlElement("TAG", MASTER));
-        ELEMENTS.put(ElementIDs.TARGETS, new EbmlElement("TARGETS", MASTER));
-        ELEMENTS.put(ElementIDs.SIMPLE_TAG, new EbmlElement("SIMPLE_TAG", MASTER));
-        ELEMENTS.put(ElementIDs.TAG_NAME, new EbmlElement("TAG_NAME", UTF8));
-        ELEMENTS.put(ElementIDs.TAG_LANGUAGE, new EbmlElement("TAG_LANGUAGE", STRING));
-        ELEMENTS.put(ElementIDs.TAG_STRING, new EbmlElement("TAG_STRING", UTF8));
-        ELEMENTS.put(ElementIDs.TAG_LANGUAGE_BCP47, new EbmlElement("TAG_LANGUAGE_BCP47", STRING));
-        ELEMENTS.put(ElementIDs.TAG_TRACK_UID, new EbmlElement("TAG_TRACK_UID", INTEGER));
-        ELEMENTS.put(ElementIDs.TARGET_TYPE_VALUE, new EbmlElement("TARGET_TYPE_VALUE", INTEGER));
-        ELEMENTS.put(ElementIDs.TARGET_TYPE, new EbmlElement("TARGET_TYPE", STRING));
-        ELEMENTS.put(ElementIDs.TAG_EDITION_UID, new EbmlElement("TAG_EDITION_UID", INTEGER));
-        ELEMENTS.put(ElementIDs.TAG_CHAPTER_UID, new EbmlElement("TAG_CHAPTER_UID", INTEGER));
-        ELEMENTS.put(ElementIDs.TAG_ATTACHMENT_UID, new EbmlElement("TAG_ATTACHMENT_UID", INTEGER));
-        ELEMENTS.put(ElementIDs.TAG_DEFAULT, new EbmlElement("TAG_DEFAULT", INTEGER));
-        ELEMENTS.put(ElementIDs.TAG_BINARY, new EbmlElement("TAG_BINARY", BINARY));
+        addElements(ValueType.INTEGER,
+            ElementIDs.EBML_VERSION, ElementIDs.EBML_READ_VERSION, ElementIDs.EBML_MAX_ID_LENGTH,
+            ElementIDs.EBML_MAX_SIZE_LENGTH, ElementIDs.DOCTYPE_VERSION, ElementIDs.DOCTYPE_READ_VERSION,
+            ElementIDs.TIMESTAMP_SCALE, ElementIDs.TRACK_NUMBER, ElementIDs.TRACK_UID,
+            ElementIDs.TRACK_TYPE, ElementIDs.TAG_LACING, ElementIDs.CHANNELS, ElementIDs.BIT_DEPTH,
+            ElementIDs.DEFAULT_DURATION, ElementIDs.DISPLAY_WIDTH, ElementIDs.DISPLAY_HEIGHT,
+            ElementIDs.DISPLAY_UNIT, ElementIDs.PIXEL_WIDTH, ElementIDs.PIXEL_HEIGHT,
+            ElementIDs.FLAG_INTERLACED, ElementIDs.TRANSFER_CHARACTERISTICS,
+            ElementIDs.MATRIX_COEFFICIENTS, ElementIDs.PRIMARIES, ElementIDs.RANGE,
+            ElementIDs.CHROMA_SITING_HORZ, ElementIDs.CHROMA_SITING_VERT,
+            ElementIDs.CODEC_DELAY, ElementIDs.SEEK_PRE_ROLL, ElementIDs.TAG_TRACK_UID,
+            ElementIDs.TARGET_TYPE_VALUE, ElementIDs.TAG_EDITION_UID, ElementIDs.TAG_CHAPTER_UID,
+            ElementIDs.TAG_ATTACHMENT_UID, ElementIDs.TAG_DEFAULT);
+        addElements(ValueType.STRING, ElementIDs.DOCTYPE, ElementIDs.CODEC_ID, ElementIDs.LANGUAGE,
+            ElementIDs.LANGUAGE_BCP47, ElementIDs.TAG_LANGUAGE, ElementIDs.TAG_LANGUAGE_BCP47, ElementIDs.TARGET_TYPE);
+        addElements(ValueType.UTF8, ElementIDs.MUXING_APP, ElementIDs.WRITING_APP, ElementIDs.TAG_NAME, ElementIDs.TAG_STRING);
+        addElements(ValueType.FLOAT, ElementIDs.DURATION, ElementIDs.SAMPLING_FREQUENCY);
+        addElements(ValueType.BINARY, ElementIDs.SEGMENT_UUID, ElementIDs.TAG_BINARY);
     }
 
-    public void extract(final SequentialReader reader, Metadata metadata) throws IOException
+    private static void addElements(ValueType type, int... ids)
+    {
+        for (int id : ids)
+            _elements.put(id, type);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, @NotNull Metadata metadata) throws IOException
     {
         new Parser(reader, metadata, false).extract();
     }
 
-    public void extractHeader(final SequentialReader reader, Metadata metadata) throws IOException
+    public void extractHeader(@NotNull final SequentialReader reader, @NotNull Metadata metadata) throws IOException
     {
         new Parser(reader, metadata, true).extract();
     }
@@ -138,10 +109,10 @@ public class MkvReader
 
     private static final class Parser
     {
-        private final SequentialReader _reader;
-        private final Metadata _metadata;
-        private final Deque<Context> _contexts = new ArrayDeque<Context>();
-        private EbmlDirectory _header;
+        @NotNull private final SequentialReader _reader;
+        @NotNull private final Metadata _metadata;
+        @NotNull private final Deque<Context> _contexts = new ArrayDeque<Context>();
+        @Nullable private EbmlDirectory _header;
         private final boolean _headerOnly;
         private boolean _headerComplete;
         private boolean _validHeader;
@@ -231,7 +202,7 @@ public class MkvReader
                 if (size < 0)
                     throw new IOException("Unexpected unknown-sized EBML element.");
 
-                EbmlElement element = ELEMENTS.get(id);
+                ValueType element = _elements.get(id);
                 if (parent.directory != null && accepts(parent, id) && element != null) {
                     if (parent instanceof TargetsContext && isTargetUid(id)) {
                         TargetsContext targets = (TargetsContext)parent;
@@ -243,7 +214,7 @@ public class MkvReader
                         uids.add(DataParser.getUnsignedInteger(_reader, size));
                         continue;
                     }
-                    Object value = readValue(id, size, element.get_type());
+                    Object value = readValue(id, size, element);
                     if (value != null) {
                         if (parent.directory.containsTag(id))
                             parent.directory.addError(String.format("Duplicate EBML element 0x%X.", id));
@@ -440,7 +411,8 @@ public class MkvReader
                 && new BigInteger(value.toString()).compareTo(BigInteger.valueOf(minimum)) >= 0;
         }
 
-        private Object readValue(int id, long size, EbmlElement.Type type) throws IOException
+        @Nullable
+        private Object readValue(int id, long size, ValueType type) throws IOException
         {
             if (size == 0) {
                 Object value = getDefaultValue(id);
@@ -468,11 +440,16 @@ public class MkvReader
         private static void applyDefaults(Directory directory, int... ids)
         {
             for (int id : ids) {
-                if (!directory.containsTag(id))
-                    directory.setObject(id, getDefaultValue(id));
+                if (!directory.containsTag(id)) {
+                    Object value = getDefaultValue(id);
+                    if (value == null)
+                        throw new IllegalArgumentException("No default is defined for EBML element " + id);
+                    directory.setObject(id, value);
+                }
             }
         }
 
+        @Nullable
         private static Object getDefaultValue(int id)
         {
             switch (id) {

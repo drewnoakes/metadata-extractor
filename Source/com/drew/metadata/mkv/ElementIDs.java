@@ -1,7 +1,19 @@
+/*
+ * Copyright 2026 Drew Noakes and contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ */
 package com.drew.metadata.mkv;
 
-public class ElementIDs
+final class ElementIDs
 {
+    private ElementIDs()
+    {
+    }
 
     static final int EBML_HEADER_ELEMENT = 0x1A45DFA3;
     static final int EBML_VERSION = 0x4286;

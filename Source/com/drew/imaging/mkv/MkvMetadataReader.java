@@ -1,3 +1,12 @@
+/*
+ * Copyright 2026 Drew Noakes and contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ */
 package com.drew.imaging.mkv;
 
 import com.drew.lang.StreamReader;
@@ -14,6 +23,10 @@ import java.io.EOFException;
 public class MkvMetadataReader
 {
     private static final int HEADER_PROBE_LIMIT = 65536;
+
+    private MkvMetadataReader()
+    {
+    }
 
     /**
      * Probes only the EBML header, restoring the stream afterwards. Large
