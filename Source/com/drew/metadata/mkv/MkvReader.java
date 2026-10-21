@@ -1,20 +1,18 @@
 package com.drew.metadata.mkv;
 
 import com.drew.lang.SequentialReader;
-import com.drew.lang.StreamReader;
 import com.drew.lang.Charsets;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 
-import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static com.drew.metadata.mkv.DataParser.decodeInteger;
 import static com.drew.metadata.mkv.EbmlElement.DirectoryType.EBML;
 import static com.drew.metadata.mkv.EbmlElement.Type.*;
 
@@ -92,196 +90,214 @@ public class MkvReader
 
     public void extract(final SequentialReader reader, Metadata metadata) throws IOException
     {
-        reader.setMotorolaByteOrder(true);
-        Map<Integer, Object> data = new HashMap<>();
-        while (true)
-        {
-            long position = reader.getPosition();
-            try {
-                extractSubContext(reader, data);
-            } catch (EOFException e) {
-                if (reader.getPosition() != position)
-                    throw e;
-                break;
-            }
-        }
-        getMetadata(data, metadata);
+        new Parser(reader, metadata).extract();
     }
 
-
-    private void getMetadata(Map<Integer, Object> data, Metadata metadata) throws IOException
+    private static final class Context
     {
-        createDirectories(data, metadata);
-        for (Map.Entry<Integer, Object> entry : data.entrySet())
+        final int id;
+        final long end;
+        final boolean unknownSize;
+        final Directory directory;
+
+        Context(int id, long end, boolean unknownSize, Directory directory)
         {
-            if (entry.getValue() instanceof List)
-            {
-                for (Object member : (List<?>) entry.getValue())
-                {
-                    doCreateDirectory(member, metadata);
-                }
-            } else
-            {
-                doCreateDirectory(entry.getValue(), metadata);
-            }
+            this.id = id;
+            this.end = end;
+            this.unknownSize = unknownSize;
+            this.directory = directory;
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void doCreateDirectory(Object data, Metadata metadata) throws IOException
+    private static final class Parser
     {
-        if (data instanceof Map)
-        {
-            createDirectories((Map<Integer, Object>) data, metadata);
-        }
-    }
+        private final SequentialReader _reader;
+        private final Metadata _metadata;
+        private final Deque<Context> _contexts = new ArrayDeque<Context>();
+        private EbmlDirectory _header;
 
-    @SuppressWarnings("unchecked")
-    private void createDirectories(Map<Integer, Object> data, Metadata metadata)
-    {
-        Directory dir = null;
-        if (data.containsKey(ElementIDs.TRACK_TYPE))
+        Parser(SequentialReader reader, Metadata metadata)
         {
-            switch (((Number) data.get(ElementIDs.TRACK_TYPE)).intValue())
-            {
-                case 1:
-                    dir = new MkvVideoDirectory();
-                    mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.VIDEO));
-                    break;
-                case 2:
-                    dir = new MkvAudioDirectory();
-                    mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.AUDIO));
-                    break;
-            }
-            if (dir != null)
-            {
-                mapToDirectory(dir, data);
-                metadata.addDirectory(dir);
-            }
+            _reader = reader;
+            _metadata = metadata;
+            _reader.setMotorolaByteOrder(true);
+            _contexts.push(new Context(0, -1, true, null));
         }
-        if (data.containsKey(ElementIDs.SEGMENT_INFO))
+
+        void extract() throws IOException
         {
-            dir = new MkvSegmentDirectory();
-            createDirectories((Map<Integer, Object>) data.get(ElementIDs.SEGMENT_INFO), metadata);
-            mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.SEGMENT_INFO));
-            metadata.addDirectory(dir);
-        }
-        if (data.containsKey(ElementIDs.EBML_HEADER_ELEMENT))
-        {
-            dir = new EbmlDirectory();
-            mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.EBML_HEADER_ELEMENT));
-            metadata.addDirectory(dir);
-        }
-        if (data.containsKey(ElementIDs.TRACKS))
-        {
-            createDirectories((Map<Integer, Object>) data.get(ElementIDs.TRACKS), metadata);
-        }
-        if (data.containsKey(ElementIDs.TRACK_ENTRY))
-        {
-            if (data.get(ElementIDs.TRACK_ENTRY) instanceof List)
-            {
-                for (Object entry : (List<?>) data.get(ElementIDs.TRACK_ENTRY))
-                {
-                    if (entry instanceof Map)
-                    {
-                        createDirectories((Map<Integer, Object>) entry, metadata);
+            while (true) {
+                while (_contexts.size() > 1 && _contexts.peek().end == _reader.getPosition())
+                    closeContext();
+
+                long start = _reader.getPosition();
+                int id;
+                try {
+                    id = DataParser.getElementId(_reader);
+                } catch (EOFException e) {
+                    if (_reader.getPosition() != start)
+                        throw e;
+                    for (Context context : _contexts) {
+                        if (context.end >= 0 && start < context.end)
+                            throw new EOFException("Unexpected end of an EBML master element.");
                     }
+                    break;
                 }
-            } else
-            {
-                createDirectories((Map<Integer, Object>) data.get(ElementIDs.TRACK_ENTRY), metadata);
+
+                endUnknownContexts(id);
+                Context parent = _contexts.peek();
+                if (parent.end >= 0 && _reader.getPosition() >= parent.end)
+                    throw new IOException("EBML element header exceeds its parent boundary.");
+                long size = DataParser.getElementSize(_reader);
+                long position = _reader.getPosition();
+                if (parent.end >= 0 && (position > parent.end || size > parent.end - position))
+                    throw new IOException("EBML element exceeds its parent boundary.");
+                if (size > Long.MAX_VALUE - position)
+                    throw new IOException("EBML element size overflows its position.");
+                if (size < 0 && id != ElementIDs.SEGMENT && id != ElementIDs.CLUSTER)
+                    throw new IOException("Unknown size is only supported for Segment and Cluster elements.");
+
+                long end = size < 0 ? parent.end : position + size;
+                Context child = createContext(id, end, size < 0, parent);
+                if (child != null) {
+                    _contexts.push(child);
+                    continue;
+                }
+                if (size < 0)
+                    throw new IOException("Unexpected unknown-sized EBML element.");
+
+                EbmlElement element = ELEMENTS.get(id);
+                if (parent.directory != null && accepts(parent, id) && element != null) {
+                    Object value = readValue(id, size, element.get_type());
+                    if (value != null)
+                        parent.directory.setObject(id, value);
+                } else {
+                    skip(size);
+                }
+            }
+            while (_contexts.size() > 1)
+                closeContext();
+        }
+
+        private void endUnknownContexts(int id)
+        {
+            Context context = _contexts.peek();
+            if (context.id == ElementIDs.CLUSTER && context.unknownSize
+                && (isSegmentChild(id) || id == ElementIDs.EBML_HEADER_ELEMENT)) {
+                closeContext();
+                context = _contexts.peek();
+            }
+            if (context.id == ElementIDs.SEGMENT && context.unknownSize
+                && id == ElementIDs.EBML_HEADER_ELEMENT)
+                closeContext();
+        }
+
+        private static boolean isSegmentChild(int id)
+        {
+            return id == ElementIDs.SEEK_HEAD || id == ElementIDs.SEGMENT_INFO
+                || id == ElementIDs.TRACKS || id == ElementIDs.CLUSTER || id == ElementIDs.CUES
+                || id == ElementIDs.TAGS || id == 0x1941A469 || id == 0x1043A770;
+        }
+
+        private Context createContext(int id, long end, boolean unknownSize, Context parent)
+        {
+            Directory directory;
+            if (parent.id == 0 && id == ElementIDs.EBML_HEADER_ELEMENT) {
+                _header = new EbmlDirectory();
+                _metadata.addDirectory(_header);
+                return new Context(id, end, unknownSize, _header);
+            }
+            if (parent.id == 0 && id == ElementIDs.SEGMENT) {
+                directory = new MkvSegmentDirectory();
+                if (_header != null)
+                    directory.setParent(_header);
+                _metadata.addDirectory(directory);
+                return new Context(id, end, unknownSize, directory);
+            }
+            if ((parent.id == ElementIDs.SEGMENT && (id == ElementIDs.SEGMENT_INFO || id == ElementIDs.TRACKS))
+                || (parent.id == ElementIDs.SEGMENT && id == ElementIDs.CLUSTER && unknownSize))
+                return new Context(id, end, unknownSize, parent.directory);
+            if (parent.id == ElementIDs.TRACKS && id == ElementIDs.TRACK_ENTRY)
+                directory = new MkvTrackDirectory();
+            else if (parent.id == ElementIDs.TRACK_ENTRY && id == ElementIDs.VIDEO)
+                directory = new MkvVideoDirectory();
+            else if (parent.id == ElementIDs.TRACK_ENTRY && id == ElementIDs.AUDIO)
+                directory = new MkvAudioDirectory();
+            else
+                return null;
+            if (parent.directory != null)
+                directory.setParent(parent.directory);
+            return new Context(id, end, unknownSize, directory);
+        }
+
+        private static boolean accepts(Context parent, int id)
+        {
+            return parent.id != ElementIDs.SEGMENT && parent.id != ElementIDs.TRACKS
+                && parent.id != ElementIDs.CLUSTER && parent.directory.hasTagName(id);
+        }
+
+        private void closeContext()
+        {
+            Context context = _contexts.pop();
+            Context parent = _contexts.peek();
+            if (context.id == ElementIDs.VIDEO || context.id == ElementIDs.AUDIO) {
+                copyTags(context.directory, parent.directory);
+            } else if (context.id == ElementIDs.TRACK_ENTRY) {
+                Object type = context.directory.getObject(ElementIDs.TRACK_TYPE);
+                Directory track = Long.valueOf(1).equals(type) ? new MkvVideoDirectory()
+                    : Long.valueOf(2).equals(type) ? new MkvAudioDirectory() : context.directory;
+                if (parent.directory != null)
+                    track.setParent(parent.directory);
+                copyTags(context.directory, track);
+                _metadata.addDirectory(track);
             }
         }
 
-    }
-
-    private void mapToDirectory(Directory directory, Map<Integer, Object> data)
-    {
-        for (Map.Entry<Integer, Object> values : data.entrySet())
+        private static void copyTags(Directory source, Directory destination)
         {
-            put(directory, values.getKey(), values.getValue());
-        }
-    }
-
-    private void put(Directory directory, int id, Object value)
-    {
-        EbmlElement element = ELEMENTS.get(id);
-        switch (element.get_type())
-        {
-            case INTEGER:
-            case SIGNED_INTEGER:
-                directory.setObject(id, value);
-                break;
-            case FLOAT:
-                directory.setDouble(id, (double) value);
-                break;
-            case STRING:
-            case UTF8:
-                directory.setString(id, (String) value);
-                break;
-            case BINARY:
-                directory.setByteArray(id, (byte[]) value);
-                break;
-        }
-    }
-
-    private void extractSubContext(final SequentialReader reader, Map<Integer, Object> data) throws IOException
-    {
-        reader.setMotorolaByteOrder(true);
-        int eid = DataParser.getElementId(reader);
-        long size = decodeInteger(reader);
-        Object value = null;
-        EbmlElement element = ELEMENTS.get(eid);
-
-        if (element == null)
-        {
-            element = new EbmlElement(String.format("0x%02X [ unknown ]", eid), UNKNOWN);
-        }
-        switch (element.get_type())
-        {
-            case STRING:
-                value = DataParser.getString(reader, size);
-                break;
-            case INTEGER:
-                value = DataParser.getUnsignedInteger(reader, size);
-                break;
-            case BINARY:
-                value = DataParser.getByteArray(reader, size);
-                break;
-            case MASTER:
-                StreamReader sc = new StreamReader(new ByteArrayInputStream(reader.getBytes((int) size)));
-                Map<Integer, Object> subData = new HashMap<>();
-                while (sc.available() > 0) extractSubContext(sc, subData);
-                value = subData;
-                break;
-            case UTF8:
-                value = DataParser.getString(reader, size, Charsets.UTF_8);
-                break;
-            case VOID:
-                reader.skip(size);
-                break;
-            case FLOAT:
-                value = size == 0 && eid == ElementIDs.SAMPLING_FREQUENCY
-                    ? 8000.0 : DataParser.getDouble(reader, size);
-                break;
-            case UNKNOWN:
-                reader.skip(size);
-                return;
-        }
-        if (ELEMENTS.containsKey(eid) && value != null)
-        {
-            if (data.containsKey(eid))
-            {
-                Object previous = data.get(eid);
-                List<Object> list = new ArrayList<>();
-                if (previous instanceof List)
-                    list.addAll((List<?>) previous);
-                else
-                    list.add(previous);
-                list.add(value);
-                value = list;
+            for (Tag tag : source.getTags()) {
+                Object value = source.getObject(tag.getTagType());
+                if (value != null)
+                    destination.setObject(tag.getTagType(), value);
             }
-            data.put(eid, value);
+            if (source != destination) {
+                for (String error : source.getErrors())
+                    destination.addError(error);
+            }
+        }
+
+        private Object readValue(int id, long size, EbmlElement.Type type) throws IOException
+        {
+            switch (type) {
+                case INTEGER:
+                    return DataParser.getUnsignedInteger(_reader, size);
+                case FLOAT:
+                    return size == 0 && id == ElementIDs.SAMPLING_FREQUENCY
+                        ? 8000.0 : DataParser.getDouble(_reader, size);
+                case STRING:
+                    return DataParser.getString(_reader, size);
+                case UTF8:
+                    return DataParser.getString(_reader, size, Charsets.UTF_8);
+                case BINARY:
+                    return DataParser.getByteArray(_reader, size);
+                default:
+                    skip(size);
+                    return null;
+            }
+        }
+
+        private void skip(long size) throws IOException
+        {
+            while (size > 0) {
+                long start = _reader.getPosition();
+                if (_reader.trySkip(size))
+                    return;
+                size -= _reader.getPosition() - start;
+                if (size > 0) {
+                    _reader.getByte();
+                    size--;
+                }
+            }
         }
     }
 }

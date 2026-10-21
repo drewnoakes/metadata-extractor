@@ -39,6 +39,14 @@ public class DataParser
         return doDecodeInteger(reader, false);
     }
 
+    static long getElementSize(final SequentialReader reader) throws IOException
+    {
+        long start = reader.getPosition();
+        long value = decodeInteger(reader);
+        int width = (int)(reader.getPosition() - start);
+        return value == (1L << (7 * width)) - 1 ? -1 : value;
+    }
+
     static long decodeSignedInteger(final SequentialReader reader) throws IOException
     {
         return doDecodeInteger(reader, true);

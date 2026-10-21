@@ -12,6 +12,7 @@ package com.drew.metadata.mkv;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import com.drew.lang.Charsets;
 import com.drew.lang.SequentialByteArrayReader;
@@ -58,6 +59,14 @@ final class EbmlTestUtil
     {
         byte[] payload = concat(values);
         return concat(bytes(id & 0xFFFFFFFFL), size(payload.length), payload);
+    }
+
+    static byte[] unknownElement(int id, int sizeWidth, byte[]... values) throws IOException
+    {
+        byte[] size = new byte[sizeWidth];
+        Arrays.fill(size, (byte)0xFF);
+        size[0] = (byte)((1 << (9 - sizeWidth)) - 1);
+        return concat(bytes(id & 0xFFFFFFFFL), size, concat(values));
     }
 
     static byte[] unsigned(int id, long value) throws IOException
