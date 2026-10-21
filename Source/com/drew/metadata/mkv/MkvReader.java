@@ -269,9 +269,26 @@ public class MkvReader
         {
             Context context = _contexts.pop();
             Context parent = _contexts.peek();
+            if (context.id == ElementIDs.EBML_HEADER_ELEMENT) {
+                applyDefaults(context.directory, ElementIDs.EBML_VERSION, ElementIDs.EBML_READ_VERSION,
+                    ElementIDs.EBML_MAX_ID_LENGTH, ElementIDs.EBML_MAX_SIZE_LENGTH,
+                    ElementIDs.DOCTYPE_VERSION, ElementIDs.DOCTYPE_READ_VERSION);
+            } else if (context.id == ElementIDs.SEGMENT_INFO || context.id == ElementIDs.SEGMENT) {
+                applyDefaults(context.directory, ElementIDs.TIMESTAMP_SCALE);
+            } else if (context.id == ElementIDs.AUDIO) {
+                applyDefaults(context.directory, ElementIDs.SAMPLING_FREQUENCY, ElementIDs.CHANNELS);
+            } else if (context.id == ElementIDs.VIDEO) {
+                applyDefaults(context.directory, ElementIDs.FLAG_INTERLACED, ElementIDs.DISPLAY_UNIT);
+            } else if (context.id == ElementIDs.COLOR) {
+                applyDefaults(context.directory, ElementIDs.MATRIX_COEFFICIENTS,
+                    ElementIDs.TRANSFER_CHARACTERISTICS, ElementIDs.PRIMARIES, ElementIDs.RANGE,
+                    ElementIDs.CHROMA_SITING_HORZ, ElementIDs.CHROMA_SITING_VERT);
+            }
             if (context.id == ElementIDs.VIDEO || context.id == ElementIDs.AUDIO) {
                 copyTags(context.directory, parent.directory);
             } else if (context.id == ElementIDs.TRACK_ENTRY) {
+                applyDefaults(context.directory, ElementIDs.TAG_LACING, ElementIDs.LANGUAGE,
+                    ElementIDs.CODEC_DELAY, ElementIDs.SEEK_PRE_ROLL);
                 Object type = context.directory.getObject(ElementIDs.TRACK_TYPE);
                 Directory track = Long.valueOf(1).equals(type) ? new MkvVideoDirectory()
                     : Long.valueOf(2).equals(type) ? new MkvAudioDirectory() : context.directory;
@@ -297,6 +314,11 @@ public class MkvReader
 
         private Object readValue(int id, long size, EbmlElement.Type type) throws IOException
         {
+            if (size == 0) {
+                Object value = getDefaultValue(id);
+                if (value != null)
+                    return value;
+            }
             switch (type) {
                 case INTEGER:
                     return DataParser.getUnsignedInteger(_reader, size);
@@ -311,6 +333,51 @@ public class MkvReader
                     return DataParser.getByteArray(_reader, size);
                 default:
                     skip(size);
+                    return null;
+            }
+        }
+
+        private static void applyDefaults(Directory directory, int... ids)
+        {
+            for (int id : ids) {
+                if (!directory.containsTag(id))
+                    directory.setObject(id, getDefaultValue(id));
+            }
+        }
+
+        private static Object getDefaultValue(int id)
+        {
+            switch (id) {
+                case ElementIDs.EBML_VERSION:
+                case ElementIDs.EBML_READ_VERSION:
+                case ElementIDs.DOCTYPE_VERSION:
+                case ElementIDs.DOCTYPE_READ_VERSION:
+                case ElementIDs.TAG_LACING:
+                case ElementIDs.CHANNELS:
+                    return 1L;
+                case ElementIDs.EBML_MAX_ID_LENGTH:
+                    return 4L;
+                case ElementIDs.EBML_MAX_SIZE_LENGTH:
+                    return 8L;
+                case ElementIDs.TIMESTAMP_SCALE:
+                    return 1000000L;
+                case ElementIDs.SAMPLING_FREQUENCY:
+                    return 8000.0;
+                case ElementIDs.LANGUAGE:
+                    return "eng";
+                case ElementIDs.MATRIX_COEFFICIENTS:
+                case ElementIDs.TRANSFER_CHARACTERISTICS:
+                case ElementIDs.PRIMARIES:
+                    return 2L;
+                case ElementIDs.FLAG_INTERLACED:
+                case ElementIDs.DISPLAY_UNIT:
+                case ElementIDs.CODEC_DELAY:
+                case ElementIDs.SEEK_PRE_ROLL:
+                case ElementIDs.RANGE:
+                case ElementIDs.CHROMA_SITING_HORZ:
+                case ElementIDs.CHROMA_SITING_VERT:
+                    return 0L;
+                default:
                     return null;
             }
         }

@@ -28,6 +28,43 @@ import static org.junit.Assert.*;
 public class MkvReaderTest
 {
     @Test
+    public void appliesDeclaredDefaultsToAbsentAndEmptyElements() throws Exception
+    {
+        Metadata metadata = extract(document(
+            element(ElementIDs.SEGMENT_INFO, element(ElementIDs.TIMESTAMP_SCALE)),
+            element(ElementIDs.TRACKS,
+                element(ElementIDs.TRACK_ENTRY,
+                    unsigned(ElementIDs.TRACK_TYPE, 2),
+                    element(ElementIDs.TAG_LACING),
+                    element(ElementIDs.LANGUAGE),
+                    element(ElementIDs.AUDIO, element(ElementIDs.CHANNELS))))));
+        MkvAudioDirectory audio = metadata.getFirstDirectoryOfType(MkvAudioDirectory.class);
+        assertNotNull(audio);
+        assertEquals(8000, audio.getDouble(MkvAudioDirectory.TAG_SAMPLING_FREQUENCY), 0);
+        assertEquals(1, audio.getInt(MkvAudioDirectory.TAG_CHANNELS));
+        assertEquals(1, audio.getInt(MkvTrackDirectory.TAG_FLAG_LACING));
+        assertEquals("eng", audio.getString(MkvTrackDirectory.TAG_LANGUAGE));
+        assertEquals(1000000, metadata.getFirstDirectoryOfType(MkvSegmentDirectory.class)
+            .getLong(MkvSegmentDirectory.TAG_TIMESTAMP_SCALE));
+    }
+
+    @Test
+    public void preservesExplicitNonDefaultValues() throws Exception
+    {
+        Metadata metadata = extract(document(element(ElementIDs.TRACKS,
+            element(ElementIDs.TRACK_ENTRY,
+                unsigned(ElementIDs.TRACK_TYPE, 1),
+                unsigned(ElementIDs.TAG_LACING, 0),
+                string(ElementIDs.LANGUAGE, "fra"),
+                element(ElementIDs.VIDEO, unsigned(ElementIDs.FLAG_INTERLACED, 2))))));
+        MkvVideoDirectory video = metadata.getFirstDirectoryOfType(MkvVideoDirectory.class);
+        assertNotNull(video);
+        assertEquals(0, video.getInt(MkvTrackDirectory.TAG_FLAG_LACING));
+        assertEquals("fra", video.getString(MkvTrackDirectory.TAG_LANGUAGE));
+        assertEquals(2, video.getInt(MkvVideoDirectory.TAG_FLAG_INTERLACED));
+    }
+
+    @Test
     public void exposesNestedColourFields() throws Exception
     {
         Metadata metadata = extract(document(element(ElementIDs.TRACKS,
