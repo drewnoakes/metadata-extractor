@@ -83,11 +83,6 @@ It will process files of type:
   * RWL (Leica)
   * SRW (Samsung)
 
-Matroska and WebM support includes EBML and segment fields, track properties, video colour information,
-and structured tags. Directory parent links preserve tag targets and nesting, while repeated names,
-language variants, and binary values remain separate. Media packets, chapters, and attachments are
-not decoded, but tag target identifiers referring to them are retained.
-
 Camera-specific "makernote" data is decoded for cameras manufactured by:
 
 * Agfa
