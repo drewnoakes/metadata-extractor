@@ -51,6 +51,7 @@ public enum FileType
     Avif("AVIF", "AV1 Image File Format", "image/avif", "avif"),
     Eps("EPS", "Encapsulated PostScript", "application/postscript", "eps", "epsf", "epsi"),
     Mp3("MP3", "MPEG Audio Layer III", "audio/mpeg", "mp3"),
+    /** EBML header recognized, but its document type is unknown or unsupported. */
     Ebml("EBML", "Extensible Binary Meta Language", null),
     Mkv("MKV", "Matroska Container", "video/x-matroska", "mkv", "mka", "mks", "mk3d"),
     Webm("WebM", "WebM Container", "video/webm", "webm"),

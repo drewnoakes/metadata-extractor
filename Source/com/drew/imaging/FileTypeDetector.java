@@ -21,7 +21,7 @@
 package com.drew.imaging;
 
 import com.drew.imaging.mp3.MpegAudioTypeChecker;
-import com.drew.imaging.mkv.MkvMetadataReader;
+import com.drew.imaging.ebml.EbmlMetadataReader;
 import com.drew.imaging.quicktime.QuickTimeTypeChecker;
 import com.drew.imaging.riff.RiffTypeChecker;
 import com.drew.lang.ByteTrie;
@@ -179,7 +179,7 @@ public class FileTypeDetector
         assert(fileType != null);
 
         if (fileType == FileType.Ebml)
-            return MkvMetadataReader.detectFileType(inputStream);
+            return EbmlMetadataReader.detectFileType(inputStream);
 
         if (fileType != FileType.Unknown) {
             // Found

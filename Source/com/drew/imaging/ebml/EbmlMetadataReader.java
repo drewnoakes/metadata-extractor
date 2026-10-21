@@ -7,7 +7,7 @@
  *
  * https://www.apache.org/licenses/LICENSE-2.0
  */
-package com.drew.imaging.mkv;
+package com.drew.imaging.ebml;
 
 import com.drew.lang.StreamReader;
 import com.drew.imaging.FileType;
@@ -20,11 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.EOFException;
 
-public class MkvMetadataReader
+/**
+ * Detects EBML document types and extracts metadata using the supported
+ * Matroska and WebM schemas. Their format-specific parsing is performed by
+ * {@link MkvReader}; other EBML document types are reported as unsupported.
+ */
+public class EbmlMetadataReader
 {
     private static final int HEADER_PROBE_LIMIT = 65536;
 
-    private MkvMetadataReader()
+    private EbmlMetadataReader()
     {
     }
 

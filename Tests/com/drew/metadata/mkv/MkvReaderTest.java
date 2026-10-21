@@ -10,7 +10,7 @@
 package com.drew.metadata.mkv;
 
 import com.drew.metadata.Metadata;
-import com.drew.imaging.mkv.MkvMetadataReader;
+import com.drew.imaging.ebml.EbmlMetadataReader;
 import com.drew.lang.StreamReader;
 import org.junit.Test;
 
@@ -222,7 +222,7 @@ public class MkvReaderTest
     @Test
     public void skipsReadablePayloadWhenInputStreamSkipReturnsZero() throws Exception
     {
-        Metadata metadata = MkvMetadataReader.readMetadata(new ByteArrayInputStream(
+        Metadata metadata = EbmlMetadataReader.readMetadata(new ByteArrayInputStream(
             document(element(ElementIDs.CLUSTER, new byte[32]),
                 element(ElementIDs.TRACKS, video(1)))) {
             @Override
@@ -299,7 +299,7 @@ public class MkvReaderTest
     @Test
     public void readsStreamWhoseAvailableIsZero() throws Exception
     {
-        Metadata metadata = MkvMetadataReader.readMetadata(new ByteArrayInputStream(
+        Metadata metadata = EbmlMetadataReader.readMetadata(new ByteArrayInputStream(
             document(element(ElementIDs.TRACKS, video(1)))) {
             @Override
             public int available()

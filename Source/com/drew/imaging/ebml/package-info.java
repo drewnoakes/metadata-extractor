@@ -7,5 +7,8 @@
  *
  * https://www.apache.org/licenses/LICENSE-2.0
  */
-/** Matroska and WebM file type detection and metadata extraction. */
-package com.drew.imaging.mkv;
+/**
+ * EBML document type detection and metadata extraction for the supported
+ * Matroska and WebM schemas.
+ */
+package com.drew.imaging.ebml;

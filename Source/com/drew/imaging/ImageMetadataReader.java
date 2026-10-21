@@ -28,7 +28,7 @@ import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.heif.HeifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.imaging.mkv.MkvMetadataReader;
+import com.drew.imaging.ebml.EbmlMetadataReader;
 import com.drew.metadata.mkv.MkvAudioDirectory;
 import com.drew.metadata.mkv.MkvVideoDirectory;
 import com.drew.imaging.mp3.Mp3MetadataReader;
@@ -145,7 +145,7 @@ public class ImageMetadataReader
         Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
 
         if (fileType == FileType.Ebml || fileType == FileType.Mkv || fileType == FileType.Webm)
-            fileType = MkvMetadataReader.getFileType(metadata);
+            fileType = EbmlMetadataReader.getFileType(metadata);
         FileTypeDirectory fileTypeDirectory = new FileTypeDirectory(fileType);
         if ((fileType == FileType.Webm || fileType == FileType.Mkv)
             && metadata.containsDirectoryOfType(MkvAudioDirectory.class)
@@ -222,7 +222,7 @@ public class ImageMetadataReader
             case Mkv:
             case Webm:
             case Ebml:
-                return MkvMetadataReader.readMetadata(inputStream);
+                return EbmlMetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
             default:
