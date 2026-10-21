@@ -24,7 +24,7 @@ public class MkvAudioDirectory extends MkvTrackDirectory
 
     public MkvAudioDirectory()
     {
-        setDescriptor(new TagDescriptor<MkvAudioDirectory>(this));
+        setDescriptor(new MkvAudioDescriptor(this));
     }
 
     @Override

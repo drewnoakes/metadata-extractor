@@ -13,6 +13,7 @@ public class MkvSegmentDirectory extends Directory
     public static final int TAG_WRITING_APP = ElementIDs.WRITING_APP;
     public static final int TAG_DURATION = ElementIDs.DURATION;
     public static final int TAG_SEGMENT_UUID = ElementIDs.SEGMENT_UUID;
+    public static final int TAG_DURATION_SECONDS = 1;
 
     @NotNull
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -22,13 +23,14 @@ public class MkvSegmentDirectory extends Directory
         _tagNameMap.put(TAG_TIMESTAMP_SCALE, "Timestamp Scale");
         _tagNameMap.put(TAG_MUXING_APP, "Muxing Application");
         _tagNameMap.put(TAG_WRITING_APP, "Writing Application");
-        _tagNameMap.put(TAG_DURATION, "Duration");
+        _tagNameMap.put(TAG_DURATION, "Duration (Segment Ticks)");
         _tagNameMap.put(TAG_SEGMENT_UUID, "Segment UUID");
+        _tagNameMap.put(TAG_DURATION_SECONDS, "Duration");
     }
 
     public MkvSegmentDirectory()
     {
-        setDescriptor(new TagDescriptor<MkvSegmentDirectory>(this));
+        setDescriptor(new MkvSegmentDescriptor(this));
     }
 
     @Override

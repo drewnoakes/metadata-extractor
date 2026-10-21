@@ -42,7 +42,7 @@ public class MkvTrackDirectory extends Directory
 
     public MkvTrackDirectory()
     {
-        setDescriptor(new TagDescriptor<MkvTrackDirectory>(this));
+        setDescriptor(new MkvTrackDescriptor<MkvTrackDirectory>(this));
     }
 
     protected static void addTrackTags(@NotNull HashMap<Integer, String> map)

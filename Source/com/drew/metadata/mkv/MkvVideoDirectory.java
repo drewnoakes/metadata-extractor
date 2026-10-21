@@ -19,6 +19,8 @@ public class MkvVideoDirectory extends MkvTrackDirectory
     public static final int TAG_DISPLAY_WIDTH = ElementIDs.DISPLAY_WIDTH;
     public static final int TAG_DISPLAY_HEIGHT = ElementIDs.DISPLAY_HEIGHT;
     public static final int TAG_DISPLAY_UNIT = ElementIDs.DISPLAY_UNIT;
+    /** Nominal frame rate derived from DefaultDuration, not a measured average. */
+    public static final int TAG_FRAME_RATE = 1;
 
     @NotNull
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -38,11 +40,12 @@ public class MkvVideoDirectory extends MkvTrackDirectory
         _tagNameMap.put(TAG_DISPLAY_WIDTH, "Display Width");
         _tagNameMap.put(TAG_DISPLAY_HEIGHT, "Display Height");
         _tagNameMap.put(TAG_DISPLAY_UNIT, "Display Unit");
+        _tagNameMap.put(TAG_FRAME_RATE, "Nominal Frame Rate");
     }
 
     public MkvVideoDirectory()
     {
-        setDescriptor(new TagDescriptor<MkvVideoDirectory>(this));
+        setDescriptor(new MkvVideoDescriptor(this));
     }
 
     @Override

@@ -275,6 +275,13 @@ public class MkvReader
                     ElementIDs.DOCTYPE_VERSION, ElementIDs.DOCTYPE_READ_VERSION);
             } else if (context.id == ElementIDs.SEGMENT_INFO || context.id == ElementIDs.SEGMENT) {
                 applyDefaults(context.directory, ElementIDs.TIMESTAMP_SCALE);
+                if (context.id == ElementIDs.SEGMENT) {
+                    Double duration = context.directory.getDoubleObject(ElementIDs.DURATION);
+                    Double scale = context.directory.getDoubleObject(ElementIDs.TIMESTAMP_SCALE);
+                    if (duration != null && scale != null)
+                        context.directory.setDouble(MkvSegmentDirectory.TAG_DURATION_SECONDS,
+                            duration * scale / 1000000000.0);
+                }
             } else if (context.id == ElementIDs.AUDIO) {
                 applyDefaults(context.directory, ElementIDs.SAMPLING_FREQUENCY, ElementIDs.CHANNELS);
             } else if (context.id == ElementIDs.VIDEO) {
@@ -295,6 +302,9 @@ public class MkvReader
                 if (parent.directory != null)
                     track.setParent(parent.directory);
                 copyTags(context.directory, track);
+                Double duration = track.getDoubleObject(ElementIDs.DEFAULT_DURATION);
+                if (track instanceof MkvVideoDirectory && duration != null && duration > 0)
+                    track.setDouble(MkvVideoDirectory.TAG_FRAME_RATE, 1000000000.0 / duration);
                 _metadata.addDirectory(track);
             }
         }
