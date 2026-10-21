@@ -24,6 +24,15 @@ import static org.junit.Assert.*;
 public class MkvFileTypeTest
 {
     @Test
+    public void detectsDocumentTypeWhenAConflictingFilenameIsProvided() throws Exception
+    {
+        ByteArrayInputStream stream = new ByteArrayInputStream(
+            concat(header("webm"), element(ElementIDs.SEGMENT)));
+        assertEquals(FileType.Webm, FileTypeDetector.detectFileType(stream, "sample.mkv"));
+        assertEquals(0x1A, stream.read());
+    }
+
+    @Test
     public void distinguishesWebmFromMatroskaAndRestoresStream() throws Exception
     {
         for (String docType : new String[] {"webm", "matroska", "other"}) {

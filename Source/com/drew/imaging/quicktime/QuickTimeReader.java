@@ -33,6 +33,13 @@ import java.io.InputStream;
  */
 public class QuickTimeReader
 {
+    /**
+     * The maximum number of levels of nested containers to process. Real files nest only a few
+     * levels deep (such as moov/trak/mdia/minf/stbl), so this limit is only reached by malformed
+     * files, which would otherwise exhaust the stack.
+     */
+    private static final int MAX_ATOM_DEPTH = 100;
+
     private QuickTimeReader() {}
 
     public static void extract(@NotNull InputStream inputStream, @NotNull QuickTimeHandler<?> handler)
@@ -42,12 +49,20 @@ public class QuickTimeReader
 
         QuickTimeContext context = new QuickTimeContext();
 
-        processAtoms(reader, -1, handler, context);
+        processAtoms(reader, -1, 0, handler, context);
     }
 
-    private static void processAtoms(StreamReader reader, long atomEnd, QuickTimeHandler<?> handler, QuickTimeContext context)
+    private static void processAtoms(StreamReader reader, long atomEnd, int depth, QuickTimeHandler<?> handler, QuickTimeContext context)
     {
         try {
+            if (depth > MAX_ATOM_DEPTH) {
+                // Skip this atom's contents rather than recurring into them. Only the top level
+                // call passes -1 for atomEnd, and it passes zero for depth, so atomEnd is known here.
+                handler.addError("Atom nesting too deep.");
+                reader.skip(atomEnd - reader.getPosition());
+                return;
+            }
+
             while (atomEnd == -1 || reader.getPosition() < atomEnd) {
 
                 Atom atom = new Atom(reader);
@@ -60,17 +75,17 @@ public class QuickTimeReader
                     break;
                 }
 
-                if (atom.size < 8) {
+                if (atom.size < atom.headerSize) {
                     handler.addError("Atom size too small.");
                     break;
                 }
 
                 if (handler.shouldAcceptContainer(atom)) {
-                    processAtoms(reader, atom.size + reader.getPosition() - 8, handler.processContainer(atom, context), context);
+                    processAtoms(reader, atom.size + reader.getPosition() - atom.headerSize, depth + 1, handler.processContainer(atom, context), context);
                 } else if (handler.shouldAcceptAtom(atom)) {
-                    handler = handler.processAtom(atom, reader.getBytes((int)atom.size - 8), context);
-                } else if (atom.size > 8) {
-                    reader.skip(atom.size - 8);
+                    handler = handler.processAtom(atom, reader.getBytes((int)(atom.size - atom.headerSize)), context);
+                } else if (atom.size > atom.headerSize) {
+                    reader.skip(atom.size - atom.headerSize);
                 } else if (atom.size == -1) {
                     break;
                 }

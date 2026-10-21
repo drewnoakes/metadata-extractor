@@ -58,6 +58,11 @@ public class RationalTest
     {
         Rational rational = new Rational(1, 3);
         assertEquals("1/3", rational.toString());
+
+        // Sign should be in numerator, not denominator
+        assertEquals("-1/2", new Rational(1, -2).toString());
+        assertEquals("1/2", new Rational(-1, -2).toString());
+        assertEquals("-1/2", new Rational(-1, 2).toString());
     }
 
     @Test

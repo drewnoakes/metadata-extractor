@@ -33,6 +33,7 @@ public class Mp4SoundDirectory extends Mp4MediaDirectory
     public static final int TAG_AUDIO_SAMPLE_RATE                       = 304;
 
     public static final int TAG_SOUND_BALANCE                           = 305;
+    public static final int TAG_AUDIO_FORMAT_RAW                        = 306;
 
     public Mp4SoundDirectory()
     {
@@ -46,6 +47,7 @@ public class Mp4SoundDirectory extends Mp4MediaDirectory
     {
         Mp4MediaDirectory.addMp4MediaTags(_tagNameMap);
         _tagNameMap.put(TAG_AUDIO_FORMAT, "Format");
+        _tagNameMap.put(TAG_AUDIO_FORMAT_RAW, "Format (Raw)");
         _tagNameMap.put(TAG_NUMBER_OF_CHANNELS, "Number of Channels");
         _tagNameMap.put(TAG_AUDIO_SAMPLE_SIZE, "Sample Size");
         _tagNameMap.put(TAG_AUDIO_SAMPLE_RATE, "Sample Rate");

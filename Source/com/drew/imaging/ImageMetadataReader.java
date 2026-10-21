@@ -22,6 +22,7 @@ package com.drew.imaging;
 
 import com.drew.imaging.avi.AviMetadataReader;
 import com.drew.imaging.bmp.BmpMetadataReader;
+import com.drew.imaging.cr3.Cr3MetadataReader;
 import com.drew.imaging.eps.EpsMetadataReader;
 import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.heif.HeifMetadataReader;
@@ -43,6 +44,7 @@ import com.drew.imaging.webp.WebpMetadataReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.lang.StringUtil;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
@@ -118,11 +120,27 @@ public class ImageMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength) throws ImageProcessingException, IOException
     {
+        return readMetadata(inputStream, streamLength, (String)null);
+    }
+
+    /**
+     * Reads metadata from an {@link InputStream} of known length.
+     *
+     * @param inputStream a stream from which the file data may be read.  The stream must be positioned at the
+     *                    beginning of the file's data.
+     * @param streamLength the length of the stream, if known, otherwise -1.
+     * @param filePath The file path or file name of the file, if available. Only the extension is used.
+     * @return a populated {@link Metadata} object containing directories of tags with values and any processing errors.
+     * @throws ImageProcessingException if the file type is unknown, or for general processing errors.
+     */
+    @NotNull
+    public static Metadata readMetadata(@NotNull final InputStream inputStream, final long streamLength, @Nullable String filePath) throws ImageProcessingException, IOException
+    {
         BufferedInputStream bufferedInputStream = inputStream instanceof BufferedInputStream
             ? (BufferedInputStream)inputStream
             : new BufferedInputStream(inputStream);
 
-        FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream);
+        FileType fileType = FileTypeDetector.detectFileType(bufferedInputStream, filePath);
 
         Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
 
@@ -161,6 +179,12 @@ public class ImageMetadataReader
             case Nef:
             case Orf:
             case Rw2:
+            case Dng:
+            case GoPro:
+            case Kdc:
+            case ThreeFR:
+            case Pef:
+            case Srw:
                 return TiffMetadataReader.readMetadata(new RandomAccessStreamReader(inputStream, RandomAccessStreamReader.DEFAULT_CHUNK_LENGTH, streamLength));
             case Psd:
                 return PsdMetadataReader.readMetadata(inputStream);
@@ -182,6 +206,8 @@ public class ImageMetadataReader
                 return AviMetadataReader.readMetadata(inputStream);
             case Wav:
                 return WavMetadataReader.readMetadata(inputStream);
+            case Crx:
+                return Cr3MetadataReader.readMetadata(inputStream);
             case QuickTime:
                 return QuickTimeMetadataReader.readMetadata(inputStream);
             case Mp4:
@@ -217,7 +243,7 @@ public class ImageMetadataReader
         InputStream inputStream = new FileInputStream(file);
         Metadata metadata;
         try {
-            metadata = readMetadata(inputStream, file.length());
+            metadata = readMetadata(inputStream, file.length(), file.getName());
         } finally {
             inputStream.close();
         }

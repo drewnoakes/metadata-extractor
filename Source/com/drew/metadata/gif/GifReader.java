@@ -27,7 +27,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import com.drew.metadata.*;
-import com.drew.metadata.gif.GifControlDirectory.DisposalMethod;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -308,7 +307,7 @@ public class GifReader
         GifControlDirectory directory = new GifControlDirectory();
 
         short packedFields = reader.getUInt8();
-        directory.setObject(GifControlDirectory.TAG_DISPOSAL_METHOD, DisposalMethod.typeOf((packedFields >> 2) & 7));
+        directory.setInt(GifControlDirectory.TAG_DISPOSAL_METHOD, (packedFields >> 2) & 7);
         directory.setBoolean(GifControlDirectory.TAG_USER_INPUT_FLAG, (packedFields & 2) >> 1 == 1);
         directory.setBoolean(GifControlDirectory.TAG_TRANSPARENT_COLOR_FLAG, (packedFields & 1) == 1);
         directory.setInt(GifControlDirectory.TAG_DELAY, reader.getUInt16());

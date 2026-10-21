@@ -23,12 +23,14 @@ package com.drew.metadata.exif;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
+import com.drew.imaging.tiff.TiffStandard;
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.Charsets;
@@ -41,6 +43,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.apple.AppleRunTimeReader;
 import com.drew.metadata.exif.makernotes.*;
+import com.drew.metadata.geotiff.GeoTiffDirectory;
 import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.photoshop.PhotoshopReader;
@@ -58,11 +61,28 @@ import com.drew.metadata.xmp.XmpReader;
 public class ExifTiffHandler extends DirectoryTiffHandler
 {
     private final int _exifStartOffset;
+    // Unsigned SHORT and signed LONG arrays both become int[] in Directory.
+    private final Set<Directory> _geoTiffShortDirectories = new HashSet<Directory>();
 
     public ExifTiffHandler(@NotNull Metadata metadata, @Nullable Directory parentDirectory, int exifStartOffset)
     {
         super(metadata, parentDirectory);
         _exifStartOffset = exifStartOffset;
+    }
+
+    @Override
+    @NotNull
+    public TiffStandard processTiffMarker(int marker) throws TiffProcessingException
+    {
+        final int bigTiffMarker = 0x002B;
+
+        if (marker == bigTiffMarker) {
+            pushDirectory(ExifIFD0Directory.class);
+            return TiffStandard.BIG_TIFF;
+        }
+
+        setTiffMarker(marker);
+        return TiffStandard.TIFF;
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException
@@ -165,6 +185,160 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return false;
     }
 
+    @Override
+    public void endingIFD()
+    {
+        boolean hasShortGeoKeys = _geoTiffShortDirectories.remove(_currentDirectory);
+        if ((_currentDirectory instanceof ExifIFD0Directory
+                || _currentDirectory instanceof ExifImageDirectory
+                || _currentDirectory instanceof ExifSubIFDDirectory
+                || _currentDirectory instanceof ExifThumbnailDirectory)
+                && _currentDirectory.containsTag(ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS)) {
+            // GeoKeys may reference parameter tags that occur later in the same IFD.
+            processGeoTiff(_currentDirectory, hasShortGeoKeys);
+        }
+        super.endingIFD();
+    }
+
+    @Override
+    public void setInt16uArray(int tagId, @NotNull int[] array)
+    {
+        super.setInt16uArray(tagId, array);
+        if (tagId == ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS)
+            _geoTiffShortDirectories.add(_currentDirectory);
+    }
+
+    @Override
+    public void setInt16u(int tagId, int value)
+    {
+        super.setInt16u(tagId, value);
+        if (tagId == ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS)
+            _geoTiffShortDirectories.add(_currentDirectory);
+    }
+
+    private void processGeoTiff(@NotNull Directory sourceDirectory, boolean hasShortGeoKeys)
+    {
+        GeoTiffDirectory directory = new GeoTiffDirectory();
+        directory.setParent(sourceDirectory);
+        _metadata.addDirectory(directory);
+
+        Object keys = sourceDirectory.getObject(ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS);
+        if (!hasShortGeoKeys) {
+            directory.addError("GeoTIFF key directory must have type SHORT");
+            return;
+        }
+        if (keys instanceof Integer) {
+            directory.addError("GeoTIFF key directory header is truncated");
+            return;
+        }
+        if (!(keys instanceof int[])) {
+            directory.addError("GeoTIFF key directory must have type SHORT");
+            return;
+        }
+
+        int[] geoKeys = (int[])keys;
+        if (geoKeys.length < 4) {
+            directory.addError("GeoTIFF key directory header is truncated");
+            return;
+        }
+        if (geoKeys[0] != 1 || geoKeys[1] != 1 || (geoKeys[2] != 0 && geoKeys[2] != 1)) {
+            directory.addError("Unsupported GeoTIFF key directory version " + geoKeys[0] + "." + geoKeys[1] + "." + geoKeys[2]);
+            return;
+        }
+
+        int numberOfKeys = geoKeys[3];
+        if (numberOfKeys > (geoKeys.length - 4) / 4) {
+            directory.addError("GeoTIFF key directory declares " + numberOfKeys + " keys but its key table is truncated");
+            return;
+        }
+        int entriesEnd = 4 + 4 * numberOfKeys;
+        Set<Integer> processedKeys = new HashSet<Integer>();
+
+        for (int i = 4; i < entriesEnd; i += 4) {
+            int keyId = geoKeys[i];
+            int location = geoKeys[i + 1];
+            int count = geoKeys[i + 2];
+            int offset = geoKeys[i + 3];
+            String errorPrefix = "GeoTIFF key " + keyId + " ";
+
+            if (!processedKeys.add(keyId)) {
+                directory.addError("Duplicate GeoTIFF key " + keyId);
+                continue;
+            }
+            if (count == 0) {
+                directory.addError(errorPrefix + "has zero count");
+                continue;
+            }
+            if (location == 0 && count != 1) {
+                directory.addError("Inline GeoTIFF key " + keyId + " must have count 1");
+                continue;
+            }
+            if (location == 0) {
+                directory.setInt(keyId, offset);
+            } else if (location == ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS) {
+                if (offset < entriesEnd) {
+                    directory.addError(errorPrefix + "SHORT values overlap the key directory header or entries");
+                    continue;
+                }
+                if (!checkGeoTiffRange(directory, keyId, offset, count, geoKeys.length))
+                    continue;
+                directory.setIntArray(keyId, Arrays.copyOfRange(geoKeys, offset, offset + count));
+            } else if (location == ExifDirectoryBase.TAG_GEOTIFF_GEO_DOUBLE_PARAMS) {
+                Object value = sourceDirectory.getObject(location);
+                if (value instanceof Double) {
+                    if (!checkGeoTiffRange(directory, keyId, offset, count, 1))
+                        continue;
+                    directory.setDoubleArray(keyId, new double[] { (Double)value });
+                } else if (value instanceof double[]) {
+                    double[] values = (double[])value;
+                    if (!checkGeoTiffRange(directory, keyId, offset, count, values.length))
+                        continue;
+                    directory.setDoubleArray(keyId, Arrays.copyOfRange(values, offset, offset + count));
+                } else {
+                    directory.addError(errorPrefix + (value == null
+                        ? "references missing tag " + location
+                        : "references tag " + location + " with an invalid type"));
+                }
+            } else if (location == ExifDirectoryBase.TAG_GEOTIFF_GEO_ASCII_PARAMS) {
+                Object value = sourceDirectory.getObject(location);
+                if (!(value instanceof StringValue)) {
+                    directory.addError(errorPrefix + (value == null
+                        ? "references missing tag " + location
+                        : "references tag " + location + " with an invalid type"));
+                    continue;
+                }
+                byte[] bytes = ((StringValue)value).getBytes();
+                if (!checkGeoTiffRange(directory, keyId, offset, count, bytes.length))
+                    continue;
+                boolean validAscii = true;
+                for (int j = offset; j < offset + count; j++) {
+                    if (bytes[j] <= 0) {
+                        validAscii = false;
+                        break;
+                    }
+                }
+                if (!validAscii) {
+                    directory.addError(errorPrefix + "contains invalid ASCII parameters");
+                    continue;
+                }
+                int length = bytes[offset + count - 1] == '|' ? count - 1 : count;
+                directory.setString(keyId, new String(bytes, offset, length, Charsets.ASCII));
+            } else {
+                directory.addError(errorPrefix + "references unsupported TIFF tag " + location);
+            }
+        }
+    }
+
+    private static boolean checkGeoTiffRange(GeoTiffDirectory directory, int keyId, int offset, int count, int length)
+    {
+        if (offset > length || count > length - offset) {
+            directory.addError("GeoTIFF key " + keyId + " with offset " + offset + " and count " + count
+                + " extends beyond length of source value (" + length + ")");
+            return false;
+        }
+        return true;
+    }
+
     @Nullable
     public Long tryCustomProcessFormat(final int tagId, final int formatCode, final long componentCount)
     {
@@ -186,6 +360,9 @@ public class ExifTiffHandler extends DirectoryTiffHandler
                                     final int byteCount) throws IOException
     {
         assert(_currentDirectory != null);
+
+        if (tagId == ExifDirectoryBase.TAG_GEOTIFF_GEO_KEYS)
+            _geoTiffShortDirectories.remove(_currentDirectory);
 
         // Some 0x0000 tags have a 0 byteCount. Determine whether it's bad.
         if (tagId == 0) {
@@ -252,7 +429,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
 
         // Note: these also appear in tryEnterSubIfd because some are IFD pointers while others begin immediately
-        // for the same directories
+        // for the same directories.
+        // Maker notes are vendor-defined classic-TIFF structures (12-byte entries), independent of the enclosing
+        // container, so these nested IFDs are always parsed with the classic layout (isBigTiff == false) even inside
+        // a BigTIFF file.
         if (_currentDirectory instanceof OlympusMakernoteDirectory) {
             switch (tagId) {
                 case OlympusMakernoteDirectory.TAG_EQUIPMENT:
@@ -642,6 +822,10 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
             pushDirectory(SamsungType2MakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
+        } else if ("DJI".equalsIgnoreCase(cameraMake)) {
+            // Only handles Type2 notes correctly. Others aren't implemented, and it's complex to determine which ones to use
+            pushDirectory(DjiMakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset, tiffHeaderOffset);
         } else {
             // The makernote is not comprehended by this library.
             // If you are reading this and believe a particular camera's image should be processed, get in touch.
@@ -975,4 +1159,3 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         directory.setString(ReconyxUltraFireMakernoteDirectory.TAG_USER_LABEL, reader.getNullTerminatedString(makernoteOffset + ReconyxUltraFireMakernoteDirectory.TAG_USER_LABEL, 20, Charsets.UTF_8));
     }
 }
-

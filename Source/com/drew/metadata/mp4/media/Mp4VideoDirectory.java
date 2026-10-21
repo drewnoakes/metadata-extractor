@@ -43,6 +43,7 @@ public class Mp4VideoDirectory extends Mp4MediaDirectory
     public static final int TAG_OPCOLOR                                 = 212;
     public static final int TAG_COLOR_TABLE                             = 213;
     public static final int TAG_FRAME_RATE                              = 214;
+    public static final int TAG_COMPRESSION_TYPE_RAW                    = 215;
 
     public Mp4VideoDirectory()
     {
@@ -65,6 +66,7 @@ public class Mp4VideoDirectory extends Mp4MediaDirectory
         _tagNameMap.put(TAG_COMPRESSOR_NAME, "Compressor Name");
         _tagNameMap.put(TAG_DEPTH, "Depth");
         _tagNameMap.put(TAG_COMPRESSION_TYPE, "Compression Type");
+        _tagNameMap.put(TAG_COMPRESSION_TYPE_RAW, "Compression Type (Raw)");
 
         _tagNameMap.put(TAG_GRAPHICS_MODE, "Graphics Mode");
         _tagNameMap.put(TAG_OPCOLOR, "Opcolor");

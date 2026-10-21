@@ -79,6 +79,7 @@ public class Mp4SoundHandler extends Mp4MediaHandler<Mp4SoundDirectory>
 
         // TODO review this
         Mp4Dictionary.setLookup(Mp4SoundDirectory.TAG_AUDIO_FORMAT, format, directory);
+        directory.setString(Mp4SoundDirectory.TAG_AUDIO_FORMAT_RAW, format);
 
         directory.setInt(Mp4SoundDirectory.TAG_NUMBER_OF_CHANNELS, channelCount);
         directory.setInt(Mp4SoundDirectory.TAG_AUDIO_SAMPLE_SIZE, sampleSize);

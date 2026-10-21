@@ -206,6 +206,8 @@ public class Rational extends java.lang.Number implements Comparable<Rational>, 
     @NotNull
     public String toString()
     {
+        if (_denominator < 0)
+            return (-_numerator) + "/" + (-_denominator);
         return _numerator + "/" + _denominator;
     }
 

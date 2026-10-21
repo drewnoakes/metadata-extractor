@@ -72,29 +72,31 @@ public class RiffReader
             return;
 
         // PROCESS CHUNKS
-        processChunks(reader, sizeLeft, handler);
+        long maxPosition = reader.getPosition() + sizeLeft;
+        processChunks(reader, maxPosition, handler);
     }
 
-    public void processChunks(SequentialReader reader, int sectionSize, RiffHandler handler) throws IOException
+    public void processChunks(SequentialReader reader, long maxPosition, RiffHandler handler) throws IOException
     {
+        // Processing chunks. Each chunk is 8 bytes header (4 bytes FourCC + 4 bytes size) + data
         try {
-            while (reader.getPosition() < sectionSize) {
+            while (reader.getPosition() < maxPosition - 8) {
                 String fourCC = new String(reader.getBytes(4));
                 int size = reader.getInt32();
-                if (size <= 0) {
-                    handler.addError("Invalid chunk size: " + size);
+                if (size < 0 || (long)size + reader.getPosition() > maxPosition) {
+                    handler.addError("Invalid RIFF chunk size");
                     break;
                 }
                 if (fourCC.equals("LIST") || fourCC.equals("RIFF")) {
-                    String listName = new String(reader.getBytes(4));
                     if (size < 4) {
                         handler.addError("Chunk size too small.");
+                        break;
+                    }
+                    String listName = new String(reader.getBytes(4));
+                    if (handler.shouldAcceptList(listName)) {
+                        processChunks(reader, reader.getPosition() + size - 4, handler);
                     } else {
-                        if (handler.shouldAcceptList(listName)) {
-                            processChunks(reader, size - 4, handler);
-                        } else {
-                            reader.skip(size - 4);
-                        }
+                        reader.skip(size - 4);
                     }
                 } else if (fourCC.equals("IDIT")) {
                     // Avi DateTimeOriginal
@@ -111,7 +113,7 @@ public class RiffReader
                     } else {
                         reader.skip(size);
                     }
-                    // Bytes read must be even - skip one if not
+                    // Skip any padding byte added to keep chunks aligned to even numbers of bytes
                     if ((size & 1) == 1) {
                         reader.skip(1);
                     }

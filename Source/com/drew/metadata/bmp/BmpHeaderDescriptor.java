@@ -143,7 +143,8 @@ public class BmpHeaderDescriptor extends TagDescriptor<BmpHeaderDirectory>
 
     @NotNull
     public static String formatHex(long value, int digits) {
-        return String.format("0x%0"+ digits + "X", value);
+        // Limit digits to the maximum number of hex digits in a long (16) to avoid excessive memory allocation
+        return String.format("0x%0" + Math.min(digits, 16) + "X", value);
     }
 
     @Nullable

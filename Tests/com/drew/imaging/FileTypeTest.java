@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2019 Drew Noakes and contributors
+ * Copyright 2002-2024 Drew Noakes and contributors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class FileTypeTest
@@ -40,5 +41,14 @@ public class FileTypeTest
         assertArrayEquals(new String[]{"jpg", "jpeg", "jpe"}, FileType.Jpeg.getAllExtensions());
 
         assertNull(FileType.Unknown.getCommonExtension());
+    }
+
+    @Test
+    public void testCommonExtension()
+    {
+        for (FileType fileType : FileType.values()) {
+            String[] extensions = fileType.getAllExtensions();
+            assertNotNull(fileType.name(), extensions);
+        }
     }
 }

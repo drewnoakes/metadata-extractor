@@ -1,7 +1,7 @@
 ![metadata-extractor logo](https://cdn.rawgit.com/drewnoakes/metadata-extractor/master/Resources/metadata-extractor-logo.svg)
 
 [![metadata-extractor build status](https://github.com/drewnoakes/metadata-extractor/actions/workflows/maven.yml/badge.svg)](https://github.com/drewnoakes/metadata-extractor/actions/workflows/maven.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/com.drewnoakes/metadata-extractor.svg?maxAge=2592000)](https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor)
+[![Maven Central](https://img.shields.io/maven-central/v/com.drewnoakes/metadata-extractor.svg?maxAge=86400)](https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor)
 [![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=TNXDJKCDV5Z2C&lc=GB&item_name=Drew%20Noakes&item_number=metadata%2dextractor&no_note=0&cn=Add%20a%20message%20%28optional%29%3a&no_shipping=1&currency_code=GBP&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 _metadata-extractor_ is a Java library for reading metadata from media files.
@@ -20,6 +20,9 @@ The easiest way is to install the library via its [Maven package](http://search.
 
 Alternatively, download it from the [releases page](https://github.com/drewnoakes/metadata-extractor/releases).
 
+The library targets Java 8. On Android versions below API 24, enable Java 8 interface
+method desugaring to support the default method on `TiffHandler`.
+
 ## Usage
 
 ```java
@@ -34,6 +37,7 @@ With that `Metadata` instance, you can [iterate or query](https://github.com/dre
 The library understands several formats of metadata, many of which may be present in a single image:
 
 * [Exif](https://en.wikipedia.org/wiki/Exchangeable_image_file_format)
+* [GeoTIFF](https://www.ogc.org/standard/geotiff/) coordinate reference systems and georeferencing metadata
 * [IPTC](https://en.wikipedia.org/wiki/IPTC)
 * [XMP](https://en.wikipedia.org/wiki/Extensible_Metadata_Platform)
 * [JFIF / JFXX](https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format)
@@ -54,7 +58,7 @@ The library understands several formats of metadata, many of which may be presen
 It will process files of type:
 
 * JPEG
-* TIFF
+* TIFF (including BigTIFF)
 * WebP
 * WAV
 * AVI
@@ -72,6 +76,7 @@ It will process files of type:
 * Camera Raw
   * NEF (Nikon)
   * CR2 (Canon)
+  * CR3 (Canon)
   * ORF (Olympus)
   * ARW (Sony)
   * RW2 (Panasonic)
@@ -136,7 +141,7 @@ Wherever possible, they have been credited in the source code and commit logs.
 - .NET  [metadata-extractor-dotnet](https://github.com/drewnoakes/metadata-extractor-dotnet) is a complete port to C#, maintained alongside this library
 - PHP [php-metadata-extractor](https://github.com/gomoob/php-metadata-extractor) wraps this Java project, making it available to users of PHP
 - Clojure [exif-processor](https://github.com/joshuamiller/exif-processor) wraps this Java project, returning a subset of data
-
+- Clojure [beeld](https://github.com/danielsz/beeld) wraps this Java project, returning all of the data. It also defines an interface for low-level image manipulation. It will resize an image while honoring the orientation tag, preserving portrait mode (something Java's _ImageIO_ doesn't do).
 ---
 
 More information about this project is available at:
