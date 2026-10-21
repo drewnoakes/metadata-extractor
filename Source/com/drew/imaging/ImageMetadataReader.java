@@ -29,8 +29,6 @@ import com.drew.imaging.heif.HeifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.ebml.EbmlMetadataReader;
-import com.drew.metadata.mkv.MkvAudioDirectory;
-import com.drew.metadata.mkv.MkvVideoDirectory;
 import com.drew.imaging.mp3.Mp3MetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
@@ -144,15 +142,7 @@ public class ImageMetadataReader
 
         Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
 
-        if (fileType == FileType.Ebml || fileType == FileType.Mkv || fileType == FileType.Webm)
-            fileType = EbmlMetadataReader.getFileType(metadata);
-        FileTypeDirectory fileTypeDirectory = new FileTypeDirectory(fileType);
-        if ((fileType == FileType.Webm || fileType == FileType.Mkv)
-            && metadata.containsDirectoryOfType(MkvAudioDirectory.class)
-            && !metadata.containsDirectoryOfType(MkvVideoDirectory.class))
-            fileTypeDirectory.setString(FileTypeDirectory.TAG_DETECTED_FILE_MIME_TYPE,
-                fileType == FileType.Webm ? "audio/webm" : "audio/x-matroska");
-        metadata.addDirectory(fileTypeDirectory);
+        metadata.addDirectory(new FileTypeDirectory(fileType));
 
         return metadata;
     }

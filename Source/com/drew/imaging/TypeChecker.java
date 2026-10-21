@@ -20,13 +20,18 @@
  */
 package com.drew.imaging;
 
+import com.drew.lang.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Used by {@link FileTypeDetector} for file types that cannot be identified by a simple byte-prefix analysis.
  */
 public interface TypeChecker
 {
     /**
-     * Gets the number of bytes this type checker needs in order to identify its file type.
+     * Gets the number of prefix bytes required by {@link #checkType(byte[])}.
      */
     int getByteCount();
 
@@ -34,4 +39,16 @@ public interface TypeChecker
      * Returns the file type identified within 'bytes', otherwise 'Unknown'.
      */
     FileType checkType(byte[] bytes);
+
+    /**
+     * Identifies a file type, optionally examining bytes beyond the prefix.
+     * The stream is positioned at the beginning of the input and supports
+     * mark/reset. Implementations that read it must restore its position.
+     * The default implementation uses only the supplied prefix.
+     */
+    @NotNull
+    default FileType checkType(@NotNull byte[] bytes, @NotNull InputStream inputStream) throws IOException
+    {
+        return checkType(bytes);
+    }
 }

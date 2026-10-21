@@ -12,6 +12,7 @@ package com.drew.metadata.mkv;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ebml.EbmlTypeChecker;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.file.FileTypeDirectory;
 import org.junit.Test;
@@ -23,6 +24,61 @@ import static org.junit.Assert.*;
 
 public class MkvFileTypeTest
 {
+    @Test
+    public void recognizesEbmlSignatureThroughTypeChecker() throws Exception
+    {
+        EbmlTypeChecker checker = new EbmlTypeChecker();
+        byte[] header = header("webm");
+        assertEquals(4, checker.getByteCount());
+        assertEquals(FileType.Ebml, checker.checkType(header));
+        assertEquals(FileType.Unknown, checker.checkType(new byte[] {0x1A, 0x45, (byte)0xDF}));
+        assertEquals(FileType.Unknown, checker.checkType(new byte[4]));
+        ByteArrayInputStream stream = new ByteArrayInputStream(header);
+        assertEquals(FileType.Webm, checker.checkType(header, stream));
+        assertEquals(header.length, stream.available());
+    }
+
+    @Test
+    public void doesNotProbeStreamWhenEbmlSignatureDoesNotMatch() throws Exception
+    {
+        ByteArrayInputStream stream = new ByteArrayInputStream(header("webm")) {
+            @Override
+            public synchronized int read()
+            {
+                throw new AssertionError("A nonmatching type checker must not read the stream");
+            }
+
+            @Override
+            public synchronized int read(byte[] bytes, int offset, int length)
+            {
+                throw new AssertionError("A nonmatching type checker must not read the stream");
+            }
+        };
+        assertEquals(FileType.Unknown, new EbmlTypeChecker().checkType(new byte[4], stream));
+    }
+
+    @Test
+    public void doesNotIncreasePrefixReadsForOtherFileTypes() throws Exception
+    {
+        byte[] jpeg = new byte[65536];
+        jpeg[0] = (byte)0xFF;
+        jpeg[1] = (byte)0xD8;
+        final int[] bytesRead = new int[1];
+        ByteArrayInputStream stream = new ByteArrayInputStream(jpeg) {
+            @Override
+            public synchronized int read(byte[] bytes, int offset, int length)
+            {
+                int count = super.read(bytes, offset, length);
+                if (count > 0)
+                    bytesRead[0] += count;
+                return count;
+            }
+        };
+        assertEquals(FileType.Jpeg, FileTypeDetector.detectFileType(stream));
+        assertTrue(bytesRead[0] < 1024);
+        assertEquals(jpeg.length, stream.available());
+    }
+
     @Test
     public void detectsDocumentTypeWhenAConflictingFilenameIsProvided() throws Exception
     {
@@ -59,12 +115,14 @@ public class MkvFileTypeTest
     }
 
     @Test
-    public void reportsAudioOnlyWebmMime() throws Exception
+    public void reportsDeclaredContainerMimeForAudioOnlyWebm() throws Exception
     {
         Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(
             concat(header("webm"), element(ElementIDs.SEGMENT, element(ElementIDs.TRACKS, audio(1))))));
-        assertEquals("audio/webm", metadata.getFirstDirectoryOfType(FileTypeDirectory.class)
+        assertEquals(FileType.Webm.getMimeType(), metadata.getFirstDirectoryOfType(FileTypeDirectory.class)
             .getString(FileTypeDirectory.TAG_DETECTED_FILE_MIME_TYPE));
+        assertEquals(1, metadata.getDirectoriesOfType(MkvAudioDirectory.class).size());
+        assertTrue(metadata.getDirectoriesOfType(MkvVideoDirectory.class).isEmpty());
     }
 
     @Test
@@ -78,8 +136,10 @@ public class MkvFileTypeTest
         assertEquals(bytes.length, stream.available());
         Metadata metadata = ImageMetadataReader.readMetadata(stream);
         assertFalse(metadata.hasErrors());
-        assertEquals("WebM", metadata.getFirstDirectoryOfType(FileTypeDirectory.class)
+        assertEquals("EBML", metadata.getFirstDirectoryOfType(FileTypeDirectory.class)
             .getString(FileTypeDirectory.TAG_DETECTED_FILE_TYPE_NAME));
+        assertEquals("webm", metadata.getFirstDirectoryOfType(EbmlDirectory.class)
+            .getString(EbmlDirectory.TAG_DOC_TYPE));
         assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
     }
 

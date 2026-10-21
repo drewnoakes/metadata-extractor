@@ -10,5 +10,6 @@
 /**
  * EBML document type detection and metadata extraction for the supported
  * Matroska and WebM schemas.
+ * Detection is bounded; an unresolved document type remains classified as EBML.
  */
 package com.drew.imaging.ebml;

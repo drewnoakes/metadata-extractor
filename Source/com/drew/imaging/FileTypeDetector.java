@@ -21,7 +21,7 @@
 package com.drew.imaging;
 
 import com.drew.imaging.mp3.MpegAudioTypeChecker;
-import com.drew.imaging.ebml.EbmlMetadataReader;
+import com.drew.imaging.ebml.EbmlTypeChecker;
 import com.drew.imaging.quicktime.QuickTimeTypeChecker;
 import com.drew.imaging.riff.RiffTypeChecker;
 import com.drew.lang.ByteTrie;
@@ -37,15 +37,16 @@ import java.io.IOException;
 public class FileTypeDetector
 {
     private final static ByteTrie<FileType> _root;
-    private final static TypeChecker[] _fixedCheckers;
+    private final static TypeChecker[] _typeCheckers;
     private final static int _bytesNeeded;
 
     static
     {
-        _fixedCheckers = new TypeChecker[] {
+        _typeCheckers = new TypeChecker[] {
             new QuickTimeTypeChecker(),
             new RiffTypeChecker(),
-            new MpegAudioTypeChecker()
+            new MpegAudioTypeChecker(),
+            new EbmlTypeChecker()
         };
 
         _root = new ByteTrie<FileType>();
@@ -108,12 +109,11 @@ public class FileTypeDetector
         _root.addPath(FileType.Swf, "ZWS".getBytes());
         _root.addPath(FileType.Vob, new byte[]{0x00, 0x00, 0x01, (byte)0xBA});
         _root.addPath(FileType.Zip, "PK".getBytes());
-        _root.addPath(FileType.Ebml, new byte[]{0x1A, 0x45, (byte)0xDF, (byte)0xA3});
 
         int bytesNeeded = _root.getMaxDepth();
-        for (TypeChecker fixedChecker : _fixedCheckers) {
-            if (fixedChecker.getByteCount() > bytesNeeded)
-                bytesNeeded = fixedChecker.getByteCount();
+        for (TypeChecker checker : _typeCheckers) {
+            if (checker.getByteCount() > bytesNeeded)
+                bytesNeeded = checker.getByteCount();
         }
         _bytesNeeded = bytesNeeded;
     }
@@ -178,16 +178,13 @@ public class FileTypeDetector
 
         assert(fileType != null);
 
-        if (fileType == FileType.Ebml)
-            return EbmlMetadataReader.detectFileType(inputStream);
-
         if (fileType != FileType.Unknown) {
             // Found
             return filePath == null ? fileType : tryDisambiguate(fileType, filePath);
         }
 
-        for (TypeChecker checker : _fixedCheckers) {
-            fileType = checker.checkType(bytes);
+        for (TypeChecker checker : _typeCheckers) {
+            fileType = checker.checkType(bytes, inputStream);
             if (fileType != FileType.Unknown)
                 return fileType;
         }
