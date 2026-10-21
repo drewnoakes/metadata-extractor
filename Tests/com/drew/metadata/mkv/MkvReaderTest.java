@@ -28,6 +28,31 @@ import static org.junit.Assert.*;
 public class MkvReaderTest
 {
     @Test
+    public void exposesNestedColourFields() throws Exception
+    {
+        Metadata metadata = extract(document(element(ElementIDs.TRACKS,
+            element(ElementIDs.TRACK_ENTRY,
+                unsigned(ElementIDs.TRACK_TYPE, 1),
+                element(ElementIDs.VIDEO,
+                    unsigned(ElementIDs.PIXEL_WIDTH, 32),
+                    element(ElementIDs.COLOR,
+                        unsigned(ElementIDs.MATRIX_COEFFICIENTS, 1),
+                        unsigned(ElementIDs.TRANSFER_CHARACTERISTICS, 16),
+                        unsigned(ElementIDs.PRIMARIES, 9),
+                        unsigned(ElementIDs.RANGE, 1),
+                        unsigned(ElementIDs.CHROMA_SITING_HORZ, 1),
+                        unsigned(ElementIDs.CHROMA_SITING_VERT, 2)))))));
+        MkvVideoDirectory video = metadata.getFirstDirectoryOfType(MkvVideoDirectory.class);
+        assertNotNull(video);
+        assertEquals(1, video.getInt(MkvVideoDirectory.TAG_MATRIX_COEFFICIENTS));
+        assertEquals(16, video.getInt(MkvVideoDirectory.TAG_TRANSFER_CHARACTERISTICS));
+        assertEquals(9, video.getInt(MkvVideoDirectory.TAG_PRIMARIES));
+        assertEquals(1, video.getInt(MkvVideoDirectory.TAG_RANGE));
+        assertEquals(1, video.getInt(MkvVideoDirectory.TAG_CHROMA_SITING_HORZ));
+        assertEquals(2, video.getInt(MkvVideoDirectory.TAG_CHROMA_SITING_VERT));
+    }
+
+    @Test
     public void readsUnknownSizedSegmentsAndClusters() throws Exception
     {
         for (int width : new int[] {1, 8}) {

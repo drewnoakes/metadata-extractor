@@ -243,7 +243,8 @@ public class MkvReader
                 return new Context(id, end, unknownSize, directory);
             }
             if ((parent.id == ElementIDs.SEGMENT && (id == ElementIDs.SEGMENT_INFO || id == ElementIDs.TRACKS))
-                || (parent.id == ElementIDs.SEGMENT && id == ElementIDs.CLUSTER && unknownSize))
+                || (parent.id == ElementIDs.SEGMENT && id == ElementIDs.CLUSTER && unknownSize)
+                || (parent.id == ElementIDs.VIDEO && id == ElementIDs.COLOR))
                 return new Context(id, end, unknownSize, parent.directory);
             if (parent.id == ElementIDs.TRACKS && id == ElementIDs.TRACK_ENTRY)
                 directory = new MkvTrackDirectory();
