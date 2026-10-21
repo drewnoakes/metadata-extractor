@@ -28,6 +28,8 @@ import com.drew.imaging.heif.HeifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.mkv.MkvMetadataReader;
+import com.drew.metadata.mkv.MkvAudioDirectory;
+import com.drew.metadata.mkv.MkvVideoDirectory;
 import com.drew.imaging.mp3.Mp3MetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
@@ -124,7 +126,15 @@ public class ImageMetadataReader
 
         Metadata metadata = readMetadata(bufferedInputStream, streamLength, fileType);
 
-        metadata.addDirectory(new FileTypeDirectory(fileType));
+        if (fileType == FileType.Ebml || fileType == FileType.Mkv || fileType == FileType.Webm)
+            fileType = MkvMetadataReader.getFileType(metadata);
+        FileTypeDirectory fileTypeDirectory = new FileTypeDirectory(fileType);
+        if ((fileType == FileType.Webm || fileType == FileType.Mkv)
+            && metadata.containsDirectoryOfType(MkvAudioDirectory.class)
+            && !metadata.containsDirectoryOfType(MkvVideoDirectory.class))
+            fileTypeDirectory.setString(FileTypeDirectory.TAG_DETECTED_FILE_MIME_TYPE,
+                fileType == FileType.Webm ? "audio/webm" : "audio/x-matroska");
+        metadata.addDirectory(fileTypeDirectory);
 
         return metadata;
     }
@@ -184,6 +194,8 @@ public class ImageMetadataReader
             case Avif:
                 return HeifMetadataReader.readMetadata(inputStream);
             case Mkv:
+            case Webm:
+            case Ebml:
                 return MkvMetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");

@@ -21,6 +21,7 @@
 package com.drew.imaging;
 
 import com.drew.imaging.mp3.MpegAudioTypeChecker;
+import com.drew.imaging.mkv.MkvMetadataReader;
 import com.drew.imaging.quicktime.QuickTimeTypeChecker;
 import com.drew.imaging.riff.RiffTypeChecker;
 import com.drew.lang.ByteTrie;
@@ -103,7 +104,7 @@ public class FileTypeDetector
         _root.addPath(FileType.Swf, "ZWS".getBytes());
         _root.addPath(FileType.Vob, new byte[]{0x00, 0x00, 0x01, (byte)0xBA});
         _root.addPath(FileType.Zip, "PK".getBytes());
-        _root.addPath(FileType.Mkv, new byte[]{0x1A, 0x45, (byte) 0xDF, (byte) 0xA3});
+        _root.addPath(FileType.Ebml, new byte[]{0x1A, 0x45, (byte)0xDF, (byte)0xA3});
 
         int bytesNeeded = _root.getMaxDepth();
         for (TypeChecker fixedChecker : _fixedCheckers) {
@@ -153,6 +154,9 @@ public class FileTypeDetector
         FileType fileType = _root.find(bytes, 0, offset);
 
         assert(fileType != null);
+
+        if (fileType == FileType.Ebml)
+            return MkvMetadataReader.detectFileType(inputStream);
 
         if (fileType == FileType.Unknown) {
             for (TypeChecker checker : _fixedCheckers) {
