@@ -261,7 +261,8 @@ public class MkvReader
                 reader.skip(size);
                 break;
             case FLOAT:
-                value = size == 4 ? reader.getFloat32() : reader.getDouble64();
+                value = size == 0 && eid == ElementIDs.SAMPLING_FREQUENCY
+                    ? 8000.0 : DataParser.getDouble(reader, size);
                 break;
             case UNKNOWN:
                 reader.skip(size);

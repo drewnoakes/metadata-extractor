@@ -25,6 +25,19 @@ import static org.junit.Assert.*;
 public class MkvReaderTest
 {
     @Test
+    public void usesDefaultForEmptySamplingFrequency() throws Exception
+    {
+        Metadata metadata = extract(document(element(ElementIDs.TRACKS,
+            element(ElementIDs.TRACK_ENTRY,
+                unsigned(ElementIDs.TRACK_NUMBER, 1),
+                unsigned(ElementIDs.TRACK_TYPE, 2),
+                element(ElementIDs.AUDIO, element(ElementIDs.SAMPLING_FREQUENCY))))));
+        AudioDirectory audio = metadata.getFirstDirectoryOfType(AudioDirectory.class);
+        assertNotNull(audio);
+        assertEquals(8000, audio.getDouble(ElementIDs.SAMPLING_FREQUENCY), 0);
+    }
+
+    @Test
     public void readsStreamWhoseAvailableIsZero() throws Exception
     {
         Metadata metadata = MkvMetadataReader.readMetadata(new ByteArrayInputStream(

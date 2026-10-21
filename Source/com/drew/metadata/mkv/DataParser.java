@@ -10,7 +10,9 @@ public class DataParser
 
     static long doDecodeInteger(final SequentialReader reader, boolean signed) throws IOException
     {
-        byte firstByte = reader.getBytes(1)[0];
+        byte firstByte = reader.getByte();
+        if (firstByte == 0)
+            throw new IOException("Invalid EBML variable-length integer.");
         int position = 7;
         for (; position >= 0; position--)
         {
@@ -41,7 +43,9 @@ public class DataParser
 
     static int getElementId(final SequentialReader reader) throws IOException
     {
-        byte firstByte = reader.getBytes(1)[0];
+        byte firstByte = reader.getByte();
+        if (firstByte == 0)
+            throw new IOException("Invalid EBML element ID.");
         int position = 7;
         for (; position >= 0; position--)
         {
@@ -51,6 +55,8 @@ public class DataParser
             }
         }
         int length = 7 - position;
+        if (length > 3)
+            throw new IOException("EBML element IDs must not exceed four bytes.");
         byte[] values = reader.getBytes(length);
         int result = ((int) (firstByte & 0xFF)) << (length * 8);
         for (int i = 1; i <= length; i++)
@@ -62,12 +68,25 @@ public class DataParser
 
     static long getLong(final SequentialReader reader, long size) throws IOException
     {
+        if (size < 0 || size > 8)
+            throw new IOException("EBML integers must contain zero to eight bytes.");
         long result = 0L;
         for (long i = size - 1; i >= 0; i--)
         {
             result |= (long) (reader.getByte() & 0xFF) << (i * 8);
         }
         return result;
+    }
+
+    static double getDouble(final SequentialReader reader, long size) throws IOException
+    {
+        if (size == 0)
+            return 0;
+        if (size == 4)
+            return reader.getFloat32();
+        if (size == 8)
+            return reader.getDouble64();
+        throw new IOException("EBML floats must contain zero, four, or eight bytes.");
     }
 
     static byte[] getByteArray(final SequentialReader reader, long size) throws IOException
