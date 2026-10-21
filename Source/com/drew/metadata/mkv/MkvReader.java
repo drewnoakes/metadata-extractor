@@ -8,6 +8,7 @@ import com.drew.metadata.Tag;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -100,7 +101,12 @@ public class MkvReader
 
     public void extract(final SequentialReader reader, Metadata metadata) throws IOException
     {
-        new Parser(reader, metadata).extract();
+        new Parser(reader, metadata, false).extract();
+    }
+
+    public void extractHeader(final SequentialReader reader, Metadata metadata) throws IOException
+    {
+        new Parser(reader, metadata, true).extract();
     }
 
     private static class Context
@@ -136,11 +142,16 @@ public class MkvReader
         private final Metadata _metadata;
         private final Deque<Context> _contexts = new ArrayDeque<Context>();
         private EbmlDirectory _header;
+        private final boolean _headerOnly;
+        private boolean _headerComplete;
+        private boolean _validHeader;
+        private long _maxSizeLength = 8;
 
-        Parser(SequentialReader reader, Metadata metadata)
+        Parser(SequentialReader reader, Metadata metadata, boolean headerOnly)
         {
             _reader = reader;
             _metadata = metadata;
+            _headerOnly = headerOnly;
             _reader.setMotorolaByteOrder(true);
             _contexts.push(new Context(0, -1, true, null));
         }
@@ -177,6 +188,8 @@ public class MkvReader
             while (true) {
                 while (_contexts.size() > 1 && _contexts.peek().end == _reader.getPosition())
                     closeContext();
+                if (_headerOnly && _headerComplete)
+                    return;
 
                 long start = _reader.getPosition();
                 int id;
@@ -196,8 +209,12 @@ public class MkvReader
                 Context parent = _contexts.peek();
                 if (parent.end >= 0 && _reader.getPosition() >= parent.end)
                     throw new IOException("EBML element header exceeds its parent boundary.");
+                long sizeStart = _reader.getPosition();
                 long size = DataParser.getElementSize(_reader);
                 long position = _reader.getPosition();
+                if (_headerComplete && id != ElementIDs.EBML_HEADER_ELEMENT
+                    && position - sizeStart > _maxSizeLength)
+                    throw new IOException("EBML element size exceeds EBMLMaxSizeLength.");
                 if (parent.end >= 0 && (position > parent.end || size > parent.end - position))
                     throw new IOException("EBML element exceeds its parent boundary.");
                 if (size > Long.MAX_VALUE - position)
@@ -258,15 +275,19 @@ public class MkvReader
                 || id == ElementIDs.TAGS || id == 0x1941A469 || id == 0x1043A770;
         }
 
-        private Context createContext(int id, long end, boolean unknownSize, Context parent)
+        private Context createContext(int id, long end, boolean unknownSize, Context parent) throws IOException
         {
             Directory directory;
             if (parent.id == 0 && id == ElementIDs.EBML_HEADER_ELEMENT) {
                 _header = new EbmlDirectory();
+                _headerComplete = false;
+                _validHeader = false;
                 _metadata.addDirectory(_header);
                 return new Context(id, end, unknownSize, _header);
             }
             if (parent.id == 0 && id == ElementIDs.SEGMENT) {
+                if (!_validHeader)
+                    throw new IOException("A valid Matroska or WebM EBML header is required before Segment.");
                 directory = new MkvSegmentDirectory();
                 if (_header != null)
                     directory.setParent(_header);
@@ -336,6 +357,7 @@ public class MkvReader
                 applyDefaults(context.directory, ElementIDs.EBML_VERSION, ElementIDs.EBML_READ_VERSION,
                     ElementIDs.EBML_MAX_ID_LENGTH, ElementIDs.EBML_MAX_SIZE_LENGTH,
                     ElementIDs.DOCTYPE_VERSION, ElementIDs.DOCTYPE_READ_VERSION);
+                validateHeader();
             } else if (context.id == ElementIDs.SEGMENT_INFO || context.id == ElementIDs.SEGMENT) {
                 applyDefaults(context.directory, ElementIDs.TIMESTAMP_SCALE);
                 if (context.id == ElementIDs.SEGMENT) {
@@ -383,6 +405,39 @@ public class MkvReader
                 for (String error : source.getErrors())
                     destination.addError(error);
             }
+        }
+
+        private void validateHeader()
+        {
+            _headerComplete = true;
+            String docType = _header.getString(ElementIDs.DOCTYPE);
+            if (!"matroska".equals(docType) && !"webm".equals(docType))
+                _header.addError("Unsupported EBML document type: " + docType);
+            Long ebmlRead = _header.getLongObject(ElementIDs.EBML_READ_VERSION);
+            Long docRead = _header.getLongObject(ElementIDs.DOCTYPE_READ_VERSION);
+            Long maxId = _header.getLongObject(ElementIDs.EBML_MAX_ID_LENGTH);
+            Long maxSize = _header.getLongObject(ElementIDs.EBML_MAX_SIZE_LENGTH);
+            if (!Long.valueOf(1).equals(ebmlRead))
+                _header.addError("Unsupported EBML read version.");
+            if (docRead == null || docRead < 1 || docRead > 4)
+                _header.addError("Unsupported Matroska document read version.");
+            if (!Long.valueOf(4).equals(maxId))
+                _header.addError("Matroska requires EBMLMaxIDLength to be four.");
+            if (maxSize == null || maxSize < 1 || maxSize > 8)
+                _header.addError("Unsupported EBMLMaxSizeLength.");
+            else
+                _maxSizeLength = maxSize;
+            if (!versionAtLeast(ElementIDs.EBML_VERSION, ebmlRead)
+                || !versionAtLeast(ElementIDs.DOCTYPE_VERSION, docRead))
+                _header.addError("EBML version must not be lower than its read version.");
+            _validHeader = !_header.hasErrors();
+        }
+
+        private boolean versionAtLeast(int tag, Long minimum)
+        {
+            Object value = _header.getObject(tag);
+            return value instanceof Number && minimum != null
+                && new BigInteger(value.toString()).compareTo(BigInteger.valueOf(minimum)) >= 0;
         }
 
         private Object readValue(int id, long size, EbmlElement.Type type) throws IOException

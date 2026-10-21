@@ -28,6 +28,46 @@ import static org.junit.Assert.*;
 public class MkvReaderTest
 {
     @Test
+    public void rejectsNonMatroskaDocumentTypesAndMissingHeaders() throws Exception
+    {
+        Metadata unsupported = extract(concat(header("other"), element(ElementIDs.SEGMENT,
+            element(ElementIDs.TRACKS, video(1)))));
+        assertTrue(unsupported.hasErrors());
+        assertTrue(unsupported.getDirectoriesOfType(MkvVideoDirectory.class).isEmpty());
+        Metadata missing = extract(element(ElementIDs.SEGMENT, element(ElementIDs.TRACKS, video(1))));
+        assertTrue(missing.hasErrors());
+        assertTrue(missing.getDirectoriesOfType(MkvSegmentDirectory.class).isEmpty());
+    }
+
+    @Test
+    public void acceptsNewerDocumentVersionWithSupportedReadVersion() throws Exception
+    {
+        Metadata metadata = extract(concat(element(ElementIDs.EBML_HEADER_ELEMENT,
+            string(ElementIDs.DOCTYPE, "matroska"),
+            unsigned(ElementIDs.DOCTYPE_VERSION, 100),
+            unsigned(ElementIDs.DOCTYPE_READ_VERSION, 2)), element(ElementIDs.SEGMENT)));
+        assertFalse(metadata.hasErrors());
+        assertEquals(100, metadata.getFirstDirectoryOfType(EbmlDirectory.class)
+            .getInt(EbmlDirectory.TAG_DOC_TYPE_VERSION));
+    }
+
+    @Test
+    public void rejectsUnsupportedReadVersionsAndIdLimits() throws Exception
+    {
+        for (byte[] invalid : new byte[][] {
+            unsigned(ElementIDs.DOCTYPE_READ_VERSION, 5),
+            unsigned(ElementIDs.EBML_READ_VERSION, 2),
+            unsigned(ElementIDs.EBML_MAX_ID_LENGTH, 8),
+            unsigned(ElementIDs.EBML_MAX_SIZE_LENGTH, 9)
+        }) {
+            Metadata metadata = extract(concat(element(ElementIDs.EBML_HEADER_ELEMENT,
+                string(ElementIDs.DOCTYPE, "matroska"), invalid), element(ElementIDs.SEGMENT)));
+            assertTrue(metadata.hasErrors());
+            assertTrue(metadata.getDirectoriesOfType(MkvSegmentDirectory.class).isEmpty());
+        }
+    }
+
+    @Test
     public void appliesDeclaredDefaultsToAbsentAndEmptyElements() throws Exception
     {
         Metadata metadata = extract(document(
