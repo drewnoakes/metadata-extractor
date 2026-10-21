@@ -3,6 +3,7 @@ package com.drew.metadata.mkv;
 import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 public class DataParser
 {
@@ -87,6 +88,13 @@ public class DataParser
         if (size == 8)
             return reader.getDouble64();
         throw new IOException("EBML floats must contain zero, four, or eight bytes.");
+    }
+
+    static Number getUnsignedInteger(final SequentialReader reader, long size) throws IOException
+    {
+        long value = getLong(reader, size);
+        return value >= 0 ? Long.valueOf(value)
+            : BigInteger.valueOf(value & Long.MAX_VALUE).setBit(63);
     }
 
     static byte[] getByteArray(final SequentialReader reader, long size) throws IOException

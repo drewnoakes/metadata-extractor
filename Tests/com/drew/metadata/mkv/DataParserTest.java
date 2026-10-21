@@ -14,11 +14,23 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.math.BigInteger;
 
 import static org.junit.Assert.*;
 
 public class DataParserTest
 {
+    @Test
+    public void preservesFullUnsignedIntegerRange() throws Exception
+    {
+        assertEquals(Long.valueOf(Long.MAX_VALUE), DataParser.getUnsignedInteger(
+            new SequentialByteArrayReader(EbmlTestUtil.bytes(Long.MAX_VALUE)), 8));
+        assertEquals(new BigInteger("9223372036854775808"), DataParser.getUnsignedInteger(
+            new SequentialByteArrayReader(EbmlTestUtil.bytes(Long.MIN_VALUE)), 8));
+        assertEquals(new BigInteger("18446744073709551615"), DataParser.getUnsignedInteger(
+            new SequentialByteArrayReader(EbmlTestUtil.bytes(-1L)), 8));
+    }
+
     @Test
     public void decodesAllSizeWidths() throws Exception
     {

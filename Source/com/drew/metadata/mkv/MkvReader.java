@@ -142,7 +142,7 @@ public class MkvReader
         Directory dir = null;
         if (data.containsKey(ElementIDs.TRACK_TYPE))
         {
-            switch (((Long) data.get(ElementIDs.TRACK_TYPE)).intValue())
+            switch (((Number) data.get(ElementIDs.TRACK_TYPE)).intValue())
             {
                 case 1:
                     dir = new VideoDirectory();
@@ -210,7 +210,7 @@ public class MkvReader
         {
             case INTEGER:
             case SIGNED_INTEGER:
-                directory.setLong(id, (long) value);
+                directory.setObject(id, value);
                 break;
             case FLOAT:
                 directory.setDouble(id, (double) value);
@@ -243,7 +243,7 @@ public class MkvReader
                 value = DataParser.getString(reader, size);
                 break;
             case INTEGER:
-                value = DataParser.getLong(reader, size);
+                value = DataParser.getUnsignedInteger(reader, size);
                 break;
             case BINARY:
                 value = DataParser.getByteArray(reader, size);

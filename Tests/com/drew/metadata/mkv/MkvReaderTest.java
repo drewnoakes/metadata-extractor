@@ -25,6 +25,20 @@ import static org.junit.Assert.*;
 public class MkvReaderTest
 {
     @Test
+    public void exposesUnsignedTrackUidWithoutLosingPrecision() throws Exception
+    {
+        Metadata metadata = extract(document(element(ElementIDs.TRACKS,
+            element(ElementIDs.TRACK_ENTRY,
+                unsigned(ElementIDs.TRACK_TYPE, 1),
+                unsigned(ElementIDs.TRACK_UID, -1L),
+                element(ElementIDs.VIDEO)))));
+        VideoDirectory video = metadata.getFirstDirectoryOfType(VideoDirectory.class);
+        assertNotNull(video);
+        assertEquals("18446744073709551615", video.getString(ElementIDs.TRACK_UID));
+        assertEquals("18446744073709551615", video.getDescription(ElementIDs.TRACK_UID));
+    }
+
+    @Test
     public void usesDefaultForEmptySamplingFrequency() throws Exception
     {
         Metadata metadata = extract(document(element(ElementIDs.TRACKS,
