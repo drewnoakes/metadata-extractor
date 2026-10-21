@@ -126,6 +126,33 @@ public class MkvReader
 
         void extract() throws IOException
         {
+            try {
+                process();
+            } catch (IOException e) {
+                Directory directory = null;
+                for (Context context : _contexts) {
+                    if (context.directory != null) {
+                        directory = context.directory;
+                        break;
+                    }
+                }
+                if (directory == null) {
+                    if (_header == null) {
+                        _header = new EbmlDirectory();
+                        _metadata.addDirectory(_header);
+                    }
+                    directory = _header;
+                }
+                directory.addError("Error reading Matroska data: "
+                    + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+            } finally {
+                while (_contexts.size() > 1)
+                    closeContext();
+            }
+        }
+
+        private void process() throws IOException
+        {
             while (true) {
                 while (_contexts.size() > 1 && _contexts.peek().end == _reader.getPosition())
                     closeContext();
@@ -169,14 +196,15 @@ public class MkvReader
                 EbmlElement element = ELEMENTS.get(id);
                 if (parent.directory != null && accepts(parent, id) && element != null) {
                     Object value = readValue(id, size, element.get_type());
-                    if (value != null)
+                    if (value != null) {
+                        if (parent.directory.containsTag(id))
+                            parent.directory.addError(String.format("Duplicate EBML element 0x%X.", id));
                         parent.directory.setObject(id, value);
+                    }
                 } else {
                     skip(size);
                 }
             }
-            while (_contexts.size() > 1)
-                closeContext();
         }
 
         private void endUnknownContexts(int id)

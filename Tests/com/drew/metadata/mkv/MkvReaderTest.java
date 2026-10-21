@@ -51,18 +51,20 @@ public class MkvReaderTest
         assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void rejectsElementThatExceedsItsParent() throws Exception
     {
-        extract(document(element(ElementIDs.SEGMENT_INFO,
+        Metadata metadata = extract(document(element(ElementIDs.SEGMENT_INFO,
             concat(bytes(ElementIDs.MUXING_APP), size(100), new byte[1]))));
+        assertTrue(metadata.hasErrors());
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void rejectsUnknownSizedScalar() throws Exception
     {
-        extract(document(element(ElementIDs.SEGMENT_INFO,
+        Metadata metadata = extract(document(element(ElementIDs.SEGMENT_INFO,
             unknownElement(ElementIDs.MUXING_APP, 1))));
+        assertTrue(metadata.hasErrors());
     }
 
     @Test
@@ -179,10 +181,38 @@ public class MkvReaderTest
         assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void doesNotTreatTruncatedElementHeaderAsCleanEof() throws Exception
     {
-        extract(concat(document(element(ElementIDs.TRACKS, video(1))), new byte[] {0x1A}));
+        Metadata metadata = extract(concat(document(element(ElementIDs.TRACKS, video(1))),
+            new byte[] {0x1A}));
+        assertTrue(metadata.hasErrors());
+        assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
+    }
+
+    @Test
+    public void preservesInfoAndTrackValuesWhenLaterPayloadIsTruncated() throws Exception
+    {
+        byte[] payload = concat(element(ElementIDs.SEGMENT_INFO, string(ElementIDs.MUXING_APP, "mux")),
+            element(ElementIDs.TRACKS, video(1)),
+            concat(bytes(ElementIDs.CLUSTER), size(100), new byte[2]));
+        Metadata metadata = extract(concat(header("matroska"), bytes(ElementIDs.SEGMENT),
+            size(payload.length + 98), payload));
+        assertTrue(metadata.hasErrors());
+        assertEquals("mux", metadata.getFirstDirectoryOfType(MkvSegmentDirectory.class)
+            .getString(MkvSegmentDirectory.TAG_MUXING_APP));
+        assertEquals(32, metadata.getFirstDirectoryOfType(MkvVideoDirectory.class)
+            .getInt(MkvVideoDirectory.TAG_PIXEL_WIDTH));
+    }
+
+    @Test
+    public void reportsDuplicateScalarValues() throws Exception
+    {
+        Metadata metadata = extract(document(element(ElementIDs.SEGMENT_INFO,
+            string(ElementIDs.MUXING_APP, "first"), string(ElementIDs.MUXING_APP, "second"))));
+        assertTrue(metadata.hasErrors());
+        assertEquals("second", metadata.getFirstDirectoryOfType(MkvSegmentDirectory.class)
+            .getString(MkvSegmentDirectory.TAG_MUXING_APP));
     }
 
     @Test
