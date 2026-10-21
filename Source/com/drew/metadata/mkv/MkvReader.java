@@ -2,13 +2,13 @@ package com.drew.metadata.mkv;
 
 import com.drew.lang.SequentialReader;
 import com.drew.lang.StreamReader;
+import com.drew.lang.Charsets;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -255,7 +255,7 @@ public class MkvReader
                 value = subData;
                 break;
             case UTF8:
-                value = new String(reader.getBytes((int) size), StandardCharsets.UTF_8);
+                value = DataParser.getString(reader, size, Charsets.UTF_8);
                 break;
             case VOID:
                 reader.skip(size);

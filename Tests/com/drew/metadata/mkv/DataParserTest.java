@@ -10,6 +10,7 @@
 package com.drew.metadata.mkv;
 
 import com.drew.lang.SequentialByteArrayReader;
+import com.drew.lang.Charsets;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,6 +21,23 @@ import static org.junit.Assert.*;
 
 public class DataParserTest
 {
+    @Test
+    public void decodesTerminatedAsciiAndUtf8AndConsumesPadding() throws Exception
+    {
+        SequentialByteArrayReader reader = new SequentialByteArrayReader(
+            "webm\0\0\u00e9\0\0".getBytes(Charsets.UTF_8));
+        assertEquals("webm", DataParser.getString(reader, 6));
+        assertEquals(6, reader.getPosition());
+        assertEquals("\u00e9", DataParser.getString(reader, 4, Charsets.UTF_8));
+        assertEquals(10, reader.getPosition());
+    }
+
+    @Test(expected = IOException.class)
+    public void rejectsUnrepresentableBinarySize() throws Exception
+    {
+        DataParser.getByteArray(new SequentialByteArrayReader(new byte[0]), 2147483648L);
+    }
+
     @Test
     public void preservesFullUnsignedIntegerRange() throws Exception
     {

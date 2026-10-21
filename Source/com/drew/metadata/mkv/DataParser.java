@@ -1,9 +1,11 @@
 package com.drew.metadata.mkv;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.Charsets;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 
 public class DataParser
 {
@@ -99,11 +101,23 @@ public class DataParser
 
     static byte[] getByteArray(final SequentialReader reader, long size) throws IOException
     {
-        return reader.getBytes((int) size);
+        return reader.getBytes(getByteCount(size));
     }
 
     static String getString(final SequentialReader reader, long size) throws IOException
     {
-        return reader.getString((int) size);
+        return getString(reader, size, Charsets.ASCII);
+    }
+
+    static String getString(final SequentialReader reader, long size, Charset charset) throws IOException
+    {
+        return reader.getNullTerminatedString(getByteCount(size), charset, true);
+    }
+
+    private static int getByteCount(long size) throws IOException
+    {
+        if (size < 0 || size > Integer.MAX_VALUE)
+            throw new IOException("EBML value is too large to store in memory.");
+        return (int)size;
     }
 }
