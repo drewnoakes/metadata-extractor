@@ -59,6 +59,8 @@ final class DataParser
         int length = getVintLength(value, 4);
         for (int i = 1; i < length; i++)
             value = (value << 8) | reader.getUInt8();
+        if (value == (1 << (7 * length + 1)) - 1)
+            throw new IOException("Reserved EBML element ID.");
         return value;
     }
 

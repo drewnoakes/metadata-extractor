@@ -22,6 +22,20 @@ import static org.junit.Assert.*;
 public class DataParserTest
 {
     @Test
+    public void acceptsChapterDisplayIdButRejectsReservedIds() throws Exception
+    {
+        assertEquals(0x80, DataParser.getElementId(new SequentialByteArrayReader(new byte[] {(byte)0x80})));
+        for (int id : new int[] {0xFF, 0x7FFF, 0x3FFFFF, 0x1FFFFFFF}) {
+            try {
+                DataParser.getElementId(new SequentialByteArrayReader(EbmlTestUtil.bytes(id)));
+                fail("Reserved ID was accepted: " + id);
+            } catch (IOException expected) {
+                assertEquals("Reserved EBML element ID.", expected.getMessage());
+            }
+        }
+    }
+
+    @Test
     public void decodesTerminatedAsciiAndUtf8AndConsumesPadding() throws Exception
     {
         SequentialByteArrayReader reader = new SequentialByteArrayReader(

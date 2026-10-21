@@ -28,6 +28,15 @@ import static org.junit.Assert.*;
 public class MkvReaderTest
 {
     @Test
+    public void enforcesDeclaredMaximumSizeWidthInDocumentBody() throws Exception
+    {
+        byte[] header = element(ElementIDs.EBML_HEADER_ELEMENT,
+            string(ElementIDs.DOCTYPE, "matroska"), unsigned(ElementIDs.EBML_MAX_SIZE_LENGTH, 1));
+        Metadata metadata = extract(concat(header, bytes(ElementIDs.SEGMENT), new byte[] {0x40, 0}));
+        assertTrue(metadata.hasErrors());
+    }
+
+    @Test
     public void endsUnknownMastersWhenAnotherRootElementStarts() throws Exception
     {
         byte[] first = unknownElement(ElementIDs.SEGMENT, 8,
