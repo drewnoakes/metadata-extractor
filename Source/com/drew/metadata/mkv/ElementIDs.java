@@ -65,4 +65,11 @@ public class ElementIDs
     static final int TAG_STRING = 0x4487;
     static final int TAG_LANGUAGE_BCP47 = 0x447B;
     static final int TAG_TRACK_UID = 0x63C5;
+    static final int TARGET_TYPE_VALUE = 0x68CA;
+    static final int TARGET_TYPE = 0x63CA;
+    static final int TAG_EDITION_UID = 0x63C9;
+    static final int TAG_CHAPTER_UID = 0x63C4;
+    static final int TAG_ATTACHMENT_UID = 0x63C6;
+    static final int TAG_DEFAULT = 0x4484;
+    static final int TAG_BINARY = 0x4485;
 }

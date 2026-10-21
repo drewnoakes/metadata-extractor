@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.drew.metadata.mkv.EbmlElement.DirectoryType.EBML;
@@ -86,6 +89,13 @@ public class MkvReader
         ELEMENTS.put(ElementIDs.TAG_STRING, new EbmlElement("TAG_STRING", UTF8));
         ELEMENTS.put(ElementIDs.TAG_LANGUAGE_BCP47, new EbmlElement("TAG_LANGUAGE_BCP47", STRING));
         ELEMENTS.put(ElementIDs.TAG_TRACK_UID, new EbmlElement("TAG_TRACK_UID", INTEGER));
+        ELEMENTS.put(ElementIDs.TARGET_TYPE_VALUE, new EbmlElement("TARGET_TYPE_VALUE", INTEGER));
+        ELEMENTS.put(ElementIDs.TARGET_TYPE, new EbmlElement("TARGET_TYPE", STRING));
+        ELEMENTS.put(ElementIDs.TAG_EDITION_UID, new EbmlElement("TAG_EDITION_UID", INTEGER));
+        ELEMENTS.put(ElementIDs.TAG_CHAPTER_UID, new EbmlElement("TAG_CHAPTER_UID", INTEGER));
+        ELEMENTS.put(ElementIDs.TAG_ATTACHMENT_UID, new EbmlElement("TAG_ATTACHMENT_UID", INTEGER));
+        ELEMENTS.put(ElementIDs.TAG_DEFAULT, new EbmlElement("TAG_DEFAULT", INTEGER));
+        ELEMENTS.put(ElementIDs.TAG_BINARY, new EbmlElement("TAG_BINARY", BINARY));
     }
 
     public void extract(final SequentialReader reader, Metadata metadata) throws IOException
@@ -93,12 +103,13 @@ public class MkvReader
         new Parser(reader, metadata).extract();
     }
 
-    private static final class Context
+    private static class Context
     {
         final int id;
         final long end;
         final boolean unknownSize;
         final Directory directory;
+        int tagUpdateCount;
 
         Context(int id, long end, boolean unknownSize, Directory directory)
         {
@@ -106,6 +117,16 @@ public class MkvReader
             this.end = end;
             this.unknownSize = unknownSize;
             this.directory = directory;
+        }
+    }
+
+    private static final class TargetsContext extends Context
+    {
+        final Map<Integer, List<Number>> uids = new LinkedHashMap<Integer, List<Number>>();
+
+        TargetsContext(long end, Directory directory)
+        {
+            super(ElementIDs.TARGETS, end, false, directory);
         }
     }
 
@@ -195,6 +216,16 @@ public class MkvReader
 
                 EbmlElement element = ELEMENTS.get(id);
                 if (parent.directory != null && accepts(parent, id) && element != null) {
+                    if (parent instanceof TargetsContext && isTargetUid(id)) {
+                        TargetsContext targets = (TargetsContext)parent;
+                        List<Number> uids = targets.uids.get(id);
+                        if (uids == null) {
+                            uids = new ArrayList<Number>();
+                            targets.uids.put(id, uids);
+                        }
+                        uids.add(DataParser.getUnsignedInteger(_reader, size));
+                        continue;
+                    }
                     Object value = readValue(id, size, element.get_type());
                     if (value != null) {
                         if (parent.directory.containsTag(id))
@@ -246,7 +277,20 @@ public class MkvReader
                 || (parent.id == ElementIDs.SEGMENT && id == ElementIDs.CLUSTER && unknownSize)
                 || (parent.id == ElementIDs.VIDEO && id == ElementIDs.COLOR))
                 return new Context(id, end, unknownSize, parent.directory);
-            if (parent.id == ElementIDs.TRACKS && id == ElementIDs.TRACK_ENTRY)
+            if (parent.id == ElementIDs.SEGMENT && id == ElementIDs.TAGS) {
+                directory = new MkvTagsDirectory();
+                directory.setInt(MkvTagsDirectory.TAG_UPDATE_NUMBER, ++parent.tagUpdateCount);
+                _metadata.addDirectory(directory);
+            } else if (parent.id == ElementIDs.TAGS && id == ElementIDs.TAG) {
+                directory = new MkvTagDirectory();
+                _metadata.addDirectory(directory);
+            } else if (parent.id == ElementIDs.TAG && id == ElementIDs.TARGETS) {
+                return new TargetsContext(end, parent.directory);
+            } else if ((parent.id == ElementIDs.TAG || parent.id == ElementIDs.SIMPLE_TAG)
+                && id == ElementIDs.SIMPLE_TAG) {
+                directory = new MkvSimpleTagDirectory();
+                _metadata.addDirectory(directory);
+            } else if (parent.id == ElementIDs.TRACKS && id == ElementIDs.TRACK_ENTRY)
                 directory = new MkvTrackDirectory();
             else if (parent.id == ElementIDs.TRACK_ENTRY && id == ElementIDs.VIDEO)
                 directory = new MkvVideoDirectory();
@@ -262,14 +306,33 @@ public class MkvReader
         private static boolean accepts(Context parent, int id)
         {
             return parent.id != ElementIDs.SEGMENT && parent.id != ElementIDs.TRACKS
-                && parent.id != ElementIDs.CLUSTER && parent.directory.hasTagName(id);
+                && parent.id != ElementIDs.CLUSTER && parent.id != ElementIDs.TAGS
+                && parent.id != ElementIDs.TAG && parent.directory.hasTagName(id);
+        }
+
+        private static boolean isTargetUid(int id)
+        {
+            return id == ElementIDs.TAG_TRACK_UID || id == ElementIDs.TAG_EDITION_UID
+                || id == ElementIDs.TAG_CHAPTER_UID || id == ElementIDs.TAG_ATTACHMENT_UID;
         }
 
         private void closeContext()
         {
             Context context = _contexts.pop();
             Context parent = _contexts.peek();
-            if (context.id == ElementIDs.EBML_HEADER_ELEMENT) {
+            if (context instanceof TargetsContext) {
+                for (Map.Entry<Integer, List<Number>> entry : ((TargetsContext)context).uids.entrySet())
+                    context.directory.setObjectArray(entry.getKey(), entry.getValue().toArray(new Number[0]));
+            } else if (context.id == ElementIDs.TAG) {
+                applyDefaults(context.directory, ElementIDs.TARGET_TYPE_VALUE);
+            } else if (context.id == ElementIDs.SIMPLE_TAG) {
+                applyDefaults(context.directory, ElementIDs.TAG_LANGUAGE, ElementIDs.TAG_DEFAULT);
+                if (!context.directory.containsTag(ElementIDs.TAG_NAME))
+                    context.directory.addError("SimpleTag is missing its TagName.");
+                if (context.directory.containsTag(ElementIDs.TAG_STRING)
+                    && context.directory.containsTag(ElementIDs.TAG_BINARY))
+                    context.directory.addError("SimpleTag must not contain both TagString and TagBinary.");
+            } else if (context.id == ElementIDs.EBML_HEADER_ELEMENT) {
                 applyDefaults(context.directory, ElementIDs.EBML_VERSION, ElementIDs.EBML_READ_VERSION,
                     ElementIDs.EBML_MAX_ID_LENGTH, ElementIDs.EBML_MAX_SIZE_LENGTH,
                     ElementIDs.DOCTYPE_VERSION, ElementIDs.DOCTYPE_READ_VERSION);
@@ -364,7 +427,10 @@ public class MkvReader
                 case ElementIDs.DOCTYPE_READ_VERSION:
                 case ElementIDs.TAG_LACING:
                 case ElementIDs.CHANNELS:
+                case ElementIDs.TAG_DEFAULT:
                     return 1L;
+                case ElementIDs.TARGET_TYPE_VALUE:
+                    return 50L;
                 case ElementIDs.EBML_MAX_ID_LENGTH:
                     return 4L;
                 case ElementIDs.EBML_MAX_SIZE_LENGTH:
@@ -375,6 +441,8 @@ public class MkvReader
                     return 8000.0;
                 case ElementIDs.LANGUAGE:
                     return "eng";
+                case ElementIDs.TAG_LANGUAGE:
+                    return "und";
                 case ElementIDs.MATRIX_COEFFICIENTS:
                 case ElementIDs.TRANSFER_CHARACTERISTICS:
                 case ElementIDs.PRIMARIES:
