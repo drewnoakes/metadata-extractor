@@ -53,6 +53,7 @@ The library understands several formats of metadata, many of which may be presen
 * [PCX](https://en.wikipedia.org/wiki/PCX) properties
 * [QuickTime](https://en.wikipedia.org/wiki/QuickTime_File_Format) properties
 * [MP4](https://en.wikipedia.org/wiki/MPEG-4_Part_14) properties
+* [Matroska](https://www.matroska.org/) and [WebM](https://www.webmproject.org/) properties and tags
 
 It will process files of type:
 
@@ -70,6 +71,8 @@ It will process files of type:
 * PCX
 * QuickTime
 * MP4
+* Matroska (MKV, MKA, MKS & MK3D)
+* WebM
 * Camera Raw
   * NEF (Nikon)
   * CR2 (Canon)

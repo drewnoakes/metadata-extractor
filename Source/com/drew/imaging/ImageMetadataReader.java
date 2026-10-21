@@ -28,6 +28,7 @@ import com.drew.imaging.gif.GifMetadataReader;
 import com.drew.imaging.heif.HeifMetadataReader;
 import com.drew.imaging.ico.IcoMetadataReader;
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.ebml.EbmlMetadataReader;
 import com.drew.imaging.mp3.Mp3MetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
@@ -208,6 +209,10 @@ public class ImageMetadataReader
             case Heif:
             case Avif:
                 return HeifMetadataReader.readMetadata(inputStream);
+            case Mkv:
+            case Webm:
+            case Ebml:
+                return EbmlMetadataReader.readMetadata(inputStream);
             case Unknown:
                 throw new ImageProcessingException("File format could not be determined");
             default:

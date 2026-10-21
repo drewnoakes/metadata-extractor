@@ -210,6 +210,10 @@ public class ProcessAllImagesInFolderUtility
                 "m4a",
                 "m4v",
                 "mj2",
+                "mk3d",
+                "mka",
+                "mks",
+                "mkv",
                 "mov",
                 "mp3",
                 "mp4",
@@ -232,6 +236,7 @@ public class ProcessAllImagesInFolderUtility
                 "tif",
                 "tiff",
                 "wav",
+                "webm",
                 "webp",
                 "x3f"));
 
