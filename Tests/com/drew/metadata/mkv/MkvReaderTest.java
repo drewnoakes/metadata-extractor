@@ -10,17 +10,40 @@
 package com.drew.metadata.mkv;
 
 import com.drew.metadata.Metadata;
+import com.drew.imaging.mkv.MkvMetadataReader;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 
 import static com.drew.metadata.mkv.EbmlTestUtil.*;
 import static org.junit.Assert.*;
 
 public class MkvReaderTest
 {
+    @Test
+    public void readsStreamWhoseAvailableIsZero() throws Exception
+    {
+        Metadata metadata = MkvMetadataReader.readMetadata(new ByteArrayInputStream(
+            document(element(ElementIDs.TRACKS, video(1)))) {
+            @Override
+            public int available()
+            {
+                return 0;
+            }
+        });
+        assertEquals(1, metadata.getDirectoriesOfType(VideoDirectory.class).size());
+    }
+
+    @Test(expected = EOFException.class)
+    public void doesNotTreatTruncatedElementHeaderAsCleanEof() throws Exception
+    {
+        extract(concat(document(element(ElementIDs.TRACKS, video(1))), new byte[] {0x1A}));
+    }
+
     @Test
     public void extractsSingleVideoTrack() throws Exception
     {

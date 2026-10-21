@@ -6,6 +6,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -93,9 +94,16 @@ public class MkvReader
     {
         reader.setMotorolaByteOrder(true);
         Map<Integer, Object> data = new HashMap<>();
-        while (reader.available() > 0)
+        while (true)
         {
-            extractSubContext(reader, data);
+            long position = reader.getPosition();
+            try {
+                extractSubContext(reader, data);
+            } catch (EOFException e) {
+                if (reader.getPosition() != position)
+                    throw e;
+                break;
+            }
         }
         getMetadata(data, metadata);
     }
