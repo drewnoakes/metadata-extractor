@@ -71,6 +71,59 @@ public class RandomAccessStreamReaderTest extends RandomAccessTestBase
         assertEquals(0, reader.getLength());
     }
 
+    @Test
+    public void testReadAfterStreamLengthMismatch() throws IOException
+    {
+        for (int streamLength : new int[]{6, 4, 0}) {
+            assertReaderUsableAfterStreamLengthMismatch(new byte[]{1, 2, 3, 4, 5}, streamLength, 4);
+        }
+    }
+
+    @Test
+    public void testReadAfterStreamLengthMismatchAtChunkBoundary() throws IOException
+    {
+        assertReaderUsableAfterStreamLengthMismatch(new byte[]{1, 2, 3, 4}, 5, 4);
+    }
+
+    @Test
+    public void testReadAfterEmptyStreamLengthMismatch() throws IOException
+    {
+        assertReaderUsableAfterStreamLengthMismatch(new byte[0], 1, 0);
+    }
+
+    private void assertReaderUsableAfterStreamLengthMismatch(byte[] bytes, int streamLength, int index) throws IOException
+    {
+        RandomAccessStreamReader reader = new RandomAccessStreamReader(
+            new ByteArrayInputStream(bytes), 2, streamLength);
+
+        try {
+            reader.getByte(index);
+            fail("Expected a stream length mismatch");
+        } catch (IOException e) {
+            assertEquals("Stream length mismatch: expected " + streamLength + " but observed " + bytes.length, e.getMessage());
+        }
+
+        for (int i = 0; i < bytes.length; i++) {
+            assertEquals(bytes[i], reader.getByte(i));
+        }
+        assertArrayEquals(bytes, reader.getBytes(0, bytes.length));
+        assertEquals(bytes.length, reader.getLength());
+
+        try {
+            reader.getByte(bytes.length);
+            fail("Expected a bounds exception after the observed end");
+        } catch (BufferBoundsException e) {
+            assertEquals(new BufferBoundsException(bytes.length, 1, bytes.length).getMessage(), e.getMessage());
+        }
+
+        try {
+            reader.getBytes(0, bytes.length + 1);
+            fail("Expected a bounds exception for a read spanning the observed end");
+        } catch (BufferBoundsException e) {
+            assertEquals(new BufferBoundsException(0, bytes.length + 1, bytes.length).getMessage(), e.getMessage());
+        }
+    }
+
     @Override
     protected RandomAccessReader createReader(byte[] bytes)
     {

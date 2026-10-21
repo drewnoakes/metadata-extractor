@@ -66,8 +66,9 @@ public class RandomAccessStreamReader extends RandomAccessReader
     }
 
     /**
-     * Reads to the end of the stream, in order to determine the total number of bytes.
-     * In general, this is not a good idea for this implementation of {@link RandomAccessReader}.
+     * Returns the supplied stream length, or reads to the end of the stream to determine it.
+     * Reading to the end is generally not a good idea for this implementation of {@link RandomAccessReader}.
+     * Once the end has been observed, returns the observed length even if the supplied length was incorrect.
      *
      * @return the length of the data source, in bytes.
      */
@@ -150,19 +151,18 @@ public class RandomAccessStreamReader extends RandomAccessReader
                     // the stream has ended, which may be ok
                     _isStreamFinished = true;
                     int observedStreamLength = _chunks.size() * _chunkLength + totalBytesRead;
-                    if (_streamLength == -1) {
-                        _streamLength = observedStreamLength;
-                    } else if (_streamLength != observedStreamLength) {
+                    long expectedStreamLength = _streamLength;
+                    _streamLength = observedStreamLength;
+                    _chunks.add(chunk);
+
+                    if (expectedStreamLength != -1 && expectedStreamLength != observedStreamLength) {
                         throw new IOException(String.format(
                             "Stream length mismatch: expected %d but observed %d",
-                            _streamLength, observedStreamLength));
+                            expectedStreamLength, observedStreamLength));
                     }
 
                     // check we have enough bytes for the requested index
-                    if (endIndex >= _streamLength) {
-                        _chunks.add(chunk);
-                        return false;
-                    }
+                    return endIndex < _streamLength;
                 } else {
                     totalBytesRead += bytesRead;
                 }
