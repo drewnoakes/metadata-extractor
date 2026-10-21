@@ -49,6 +49,7 @@ The library understands several formats of metadata, many of which may be presen
 * [PCX](https://en.wikipedia.org/wiki/PCX) properties
 * [QuickTime](https://en.wikipedia.org/wiki/QuickTime_File_Format) properties
 * [MP4](https://en.wikipedia.org/wiki/MPEG-4_Part_14) properties
+* [Matroska](https://www.matroska.org/) and [WebM](https://www.webmproject.org/) properties and tags
 
 It will process files of type:
 
@@ -66,6 +67,8 @@ It will process files of type:
 * PCX
 * QuickTime
 * MP4
+* Matroska (MKV, MKA, MKS & MK3D)
+* WebM
 * Camera Raw
   * NEF (Nikon)
   * CR2 (Canon)
@@ -74,6 +77,11 @@ It will process files of type:
   * RW2 (Panasonic)
   * RWL (Leica)
   * SRW (Samsung)
+
+Matroska and WebM support includes EBML and segment fields, track properties, video colour information,
+and structured tags. Directory parent links preserve tag targets and nesting, while repeated names,
+language variants, and binary values remain separate. Media packets, chapters, and attachments are
+not decoded, but tag target identifiers referring to them are retained.
 
 Camera-specific "makernote" data is decoded for cameras manufactured by:
 
