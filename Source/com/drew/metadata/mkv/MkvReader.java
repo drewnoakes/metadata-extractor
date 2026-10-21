@@ -230,12 +230,12 @@ public class MkvReader
         {
             Context context = _contexts.peek();
             if (context.id == ElementIDs.CLUSTER && context.unknownSize
-                && (isSegmentChild(id) || id == ElementIDs.EBML_HEADER_ELEMENT)) {
+                && (isSegmentChild(id) || id == ElementIDs.EBML_HEADER_ELEMENT || id == ElementIDs.SEGMENT)) {
                 closeContext();
                 context = _contexts.peek();
             }
             if (context.id == ElementIDs.SEGMENT && context.unknownSize
-                && id == ElementIDs.EBML_HEADER_ELEMENT)
+                && (id == ElementIDs.EBML_HEADER_ELEMENT || id == ElementIDs.SEGMENT))
                 closeContext();
         }
 

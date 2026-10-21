@@ -28,6 +28,24 @@ import static org.junit.Assert.*;
 public class MkvReaderTest
 {
     @Test
+    public void endsUnknownMastersWhenAnotherRootElementStarts() throws Exception
+    {
+        byte[] first = unknownElement(ElementIDs.SEGMENT, 8,
+            element(ElementIDs.TRACKS, video(1)),
+            unknownElement(ElementIDs.CLUSTER, 1, unsigned(0xE7, 0)));
+        byte[] second = element(ElementIDs.SEGMENT, element(ElementIDs.TRACKS, audio(2)));
+        for (byte[] separator : new byte[][] {new byte[0], header("webm")}) {
+            Metadata metadata = extract(concat(header("matroska"), first, separator, second));
+            assertFalse(metadata.hasErrors());
+            assertEquals(2, metadata.getDirectoriesOfType(MkvSegmentDirectory.class).size());
+            assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
+            assertEquals(1, metadata.getDirectoriesOfType(MkvAudioDirectory.class).size());
+            assertNotSame(metadata.getFirstDirectoryOfType(MkvVideoDirectory.class).getParent(),
+                metadata.getFirstDirectoryOfType(MkvAudioDirectory.class).getParent());
+        }
+    }
+
+    @Test
     public void rejectsNonMatroskaDocumentTypesAndMissingHeaders() throws Exception
     {
         Metadata unsupported = extract(concat(header("other"), element(ElementIDs.SEGMENT,
