@@ -32,7 +32,7 @@ public class MkvReaderTest
                 unsigned(ElementIDs.TRACK_TYPE, 1),
                 unsigned(ElementIDs.TRACK_UID, -1L),
                 element(ElementIDs.VIDEO)))));
-        VideoDirectory video = metadata.getFirstDirectoryOfType(VideoDirectory.class);
+        MkvVideoDirectory video = metadata.getFirstDirectoryOfType(MkvVideoDirectory.class);
         assertNotNull(video);
         assertEquals("18446744073709551615", video.getString(ElementIDs.TRACK_UID));
         assertEquals("18446744073709551615", video.getDescription(ElementIDs.TRACK_UID));
@@ -46,7 +46,7 @@ public class MkvReaderTest
                 unsigned(ElementIDs.TRACK_NUMBER, 1),
                 unsigned(ElementIDs.TRACK_TYPE, 2),
                 element(ElementIDs.AUDIO, element(ElementIDs.SAMPLING_FREQUENCY))))));
-        AudioDirectory audio = metadata.getFirstDirectoryOfType(AudioDirectory.class);
+        MkvAudioDirectory audio = metadata.getFirstDirectoryOfType(MkvAudioDirectory.class);
         assertNotNull(audio);
         assertEquals(8000, audio.getDouble(ElementIDs.SAMPLING_FREQUENCY), 0);
     }
@@ -62,7 +62,7 @@ public class MkvReaderTest
                 return 0;
             }
         });
-        assertEquals(1, metadata.getDirectoriesOfType(VideoDirectory.class).size());
+        assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
     }
 
     @Test(expected = EOFException.class)
@@ -75,21 +75,21 @@ public class MkvReaderTest
     public void extractsSingleVideoTrack() throws Exception
     {
         Metadata metadata = extract(document(element(ElementIDs.TRACKS, video(1))));
-        VideoDirectory video = metadata.getFirstDirectoryOfType(VideoDirectory.class);
+        MkvVideoDirectory video = metadata.getFirstDirectoryOfType(MkvVideoDirectory.class);
         assertNotNull(video);
         assertEquals(32, video.getInt(ElementIDs.PIXEL_WIDTH));
         assertEquals("V_VP8", video.getString(ElementIDs.CODEC_ID));
-        assertEquals(1, metadata.getDirectoriesOfType(VideoDirectory.class).size());
+        assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
     }
 
     @Test
     public void extractsSingleAudioTrack() throws Exception
     {
         Metadata metadata = extract(document(element(ElementIDs.TRACKS, audio(1))));
-        AudioDirectory audio = metadata.getFirstDirectoryOfType(AudioDirectory.class);
+        MkvAudioDirectory audio = metadata.getFirstDirectoryOfType(MkvAudioDirectory.class);
         assertNotNull(audio);
         assertEquals(8000, audio.getDouble(ElementIDs.SAMPLING_FREQUENCY), 0);
-        assertEquals(1, metadata.getDirectoriesOfType(AudioDirectory.class).size());
+        assertEquals(1, metadata.getDirectoriesOfType(MkvAudioDirectory.class).size());
     }
 
     @Test
@@ -101,10 +101,10 @@ public class MkvReaderTest
             for (int i = 1; i < count; i++)
                 tracks[i] = audio(i + 1);
             Metadata metadata = extract(document(element(ElementIDs.TRACKS, tracks)));
-            assertEquals(1, metadata.getDirectoriesOfType(VideoDirectory.class).size());
-            assertEquals(count - 1, metadata.getDirectoriesOfType(AudioDirectory.class).size());
+            assertEquals(1, metadata.getDirectoriesOfType(MkvVideoDirectory.class).size());
+            assertEquals(count - 1, metadata.getDirectoriesOfType(MkvAudioDirectory.class).size());
             List<Long> numbers = new ArrayList<Long>();
-            for (AudioDirectory audio : metadata.getDirectoriesOfType(AudioDirectory.class))
+            for (MkvAudioDirectory audio : metadata.getDirectoriesOfType(MkvAudioDirectory.class))
                 numbers.add(audio.getLong(ElementIDs.TRACK_NUMBER));
             assertEquals(Arrays.asList(2L, 3L, 4L).subList(0, count - 1), numbers);
         }

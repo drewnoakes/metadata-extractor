@@ -145,11 +145,11 @@ public class MkvReader
             switch (((Number) data.get(ElementIDs.TRACK_TYPE)).intValue())
             {
                 case 1:
-                    dir = new VideoDirectory();
+                    dir = new MkvVideoDirectory();
                     mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.VIDEO));
                     break;
                 case 2:
-                    dir = new AudioDirectory();
+                    dir = new MkvAudioDirectory();
                     mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.AUDIO));
                     break;
             }
@@ -161,7 +161,7 @@ public class MkvReader
         }
         if (data.containsKey(ElementIDs.SEGMENT_INFO))
         {
-            dir = new SegmentInfoDirectory();
+            dir = new MkvSegmentDirectory();
             createDirectories((Map<Integer, Object>) data.get(ElementIDs.SEGMENT_INFO), metadata);
             mapToDirectory(dir, (Map<Integer, Object>) data.get(ElementIDs.SEGMENT_INFO));
             metadata.addDirectory(dir);
