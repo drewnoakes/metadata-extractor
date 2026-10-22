@@ -26,6 +26,7 @@ import com.drew.lang.annotations.NotNull;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  *
@@ -33,6 +34,12 @@ import java.io.InputStream;
  */
 public class StreamReader extends SequentialReader
 {
+    /**
+     * The largest buffer allocated up front by {@link #getBytes(int)}. Larger requests grow the
+     * buffer only as data is actually read from the stream.
+     */
+    private static final int MAX_INITIAL_ALLOCATION = 64 * 1024;
+
     @NotNull
     private final InputStream _stream;
 
@@ -68,19 +75,38 @@ public class StreamReader extends SequentialReader
     @Override
     public byte[] getBytes(int count) throws IOException
     {
-        try {
+        validateCount(count);
+
+        if (count <= MAX_INITIAL_ALLOCATION) {
             byte[] bytes = new byte[count];
             getBytes(bytes, 0, count);
             return bytes;
-        } catch (OutOfMemoryError e) {
-            throw new EOFException("End of data reached.");
         }
 
+        // The requested count often comes from the data being parsed, and a stream's length is
+        // unknown up front. Rather than allocating the full count before any data is read, grow
+        // the buffer as bytes actually arrive, so memory use is bounded by the size of the input.
+        byte[] bytes = new byte[MAX_INITIAL_ALLOCATION];
+        int totalBytesRead = 0;
+        while (totalBytesRead != count)
+        {
+            if (totalBytesRead == bytes.length)
+                bytes = Arrays.copyOf(bytes, (int)Math.min((long)bytes.length * 2, count));
+
+            final int bytesRead = _stream.read(bytes, totalBytesRead, bytes.length - totalBytesRead);
+            if (bytesRead == -1)
+                throw new EOFException("End of data reached.");
+            totalBytesRead += bytesRead;
+        }
+        _pos += totalBytesRead;
+        return bytes;
     }
 
     @Override
     public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
     {
+        validateCount(count);
+
         int totalBytesRead = 0;
         while (totalBytesRead != count)
         {
