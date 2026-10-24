@@ -1,6 +1,6 @@
 /**
  * Contains classes for extracting data from media data atom types.
- * Full list can be found at
- * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW1
+ * See <a href="https://github.com/drewnoakes/metadata-extractor/blob/main/docs/formats/QUICKTIME.md">QuickTime format documentation</a>
+ * for media atom references.
  */
 package com.drew.metadata.mov.media;

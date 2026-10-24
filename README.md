@@ -34,6 +34,9 @@ With that `Metadata` instance, you can [iterate or query](https://github.com/dre
 
 ## Features
 
+See the [format documentation](docs/formats) for
+format-specific behavior, limitations, and references.
+
 The library understands several formats of metadata, many of which may be present in a single image:
 
 * [Exif](https://en.wikipedia.org/wiki/Exchangeable_image_file_format)

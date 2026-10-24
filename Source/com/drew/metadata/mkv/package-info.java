@@ -8,19 +8,12 @@
  * https://www.apache.org/licenses/LICENSE-2.0
  */
 /**
- * Metadata for Matroska and WebM, which use EBML encoding. Support includes
- * EBML header and segment fields, track properties, video colour information,
- * and structured tags.
+ * Metadata for Matroska and WebM.
+ * See <a href="https://github.com/drewnoakes/metadata-extractor/blob/main/docs/formats/MKV.md">Matroska format documentation</a>
+ * for supported metadata, tag structure, and limits.
  *
- * <p>Tag structure is represented by a
- * {@link com.drew.metadata.mkv.MkvTagsDirectory} for each Tags update,
- * {@link com.drew.metadata.mkv.MkvTagDirectory} target groups, and one
- * {@link com.drew.metadata.mkv.MkvSimpleTagDirectory} per SimpleTag.
- * Directory parent links preserve targets and nesting; repeated tag names,
- * language variants, and binary values remain separate directories.
- * Targets may occur before or after values.
- *
- * <p>Media packets are not decoded. Chapter and attachment contents are not
- * extracted, but tag target identifiers referring to them are retained.
+ * @see com.drew.metadata.mkv.MkvTagsDirectory
+ * @see com.drew.metadata.mkv.MkvTagDirectory
+ * @see com.drew.metadata.mkv.MkvSimpleTagDirectory
  */
 package com.drew.metadata.mkv;

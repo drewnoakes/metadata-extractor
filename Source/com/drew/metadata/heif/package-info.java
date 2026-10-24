@@ -1,4 +1,6 @@
 /**
- * https://dspace.cc.tut.fi/dpub/bitstream/handle/123456789/24147/heikkila.pdf?sequence=1
+ * Contains classes for HEIF metadata extraction.
+ * See <a href="https://github.com/drewnoakes/metadata-extractor/blob/main/docs/formats/HEIF.md">HEIF format documentation</a>
+ * for format references.
  */
 package com.drew.metadata.heif;

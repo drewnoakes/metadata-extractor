@@ -6,6 +6,11 @@ than copying .NET-specific commands or conventions.
 
 ## Related repositories and shared guidance
 
+Read [AGENTS.md](../AGENTS.md) and the relevant `docs/formats/<FORMAT>.md` before
+changing parsers, directories, descriptors, or their tests. Keep format-specific
+details there, not in the root README or duplicated in `package-info.java`.
+AGENTS.md also links the focused parity and parser-value-validation custom agents.
+
 The language implementations and sample corpus normally live in sibling checkouts,
 not as submodules of one another:
 

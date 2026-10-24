@@ -8,8 +8,8 @@
  * https://www.apache.org/licenses/LICENSE-2.0
  */
 /**
- * EBML document type detection and metadata extraction for the supported
- * Matroska and WebM schemas.
- * Detection is bounded; an unresolved document type remains classified as EBML.
+ * EBML document type detection.
+ * See <a href="https://github.com/drewnoakes/metadata-extractor/blob/main/docs/formats/EBML.md">EBML format documentation</a>
+ * for supported schemas and probing behavior.
  */
 package com.drew.imaging.ebml;
