@@ -33,9 +33,13 @@ import com.drew.metadata.MetadataReader;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Reads an ICC profile.
+ * Profiles larger than 16 MiB are rejected to bound buffering of compressed profiles.
+ * Shared tag data is reused, and total copied tag data is limited to the declared profile size.
  * <p>
  * More information about ICC:
  * <ul>
@@ -50,6 +54,7 @@ import java.util.Collections;
 public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 {
     public static final String JPEG_SEGMENT_PREAMBLE = "ICC_PROFILE";
+    private static final int MAX_PROFILE_BYTE_COUNT = 16 * 1024 * 1024;
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -106,6 +111,8 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
         try {
             int profileByteCount = reader.getInt32(IccDirectory.TAG_PROFILE_BYTE_COUNT);
             directory.setInt(IccDirectory.TAG_PROFILE_BYTE_COUNT, profileByteCount);
+            if (profileByteCount < IccDirectory.TAG_TAG_COUNT + 4 || profileByteCount > MAX_PROFILE_BYTE_COUNT)
+                throw new IOException("Invalid or unsupported ICC profile size: " + profileByteCount);
 
             // For these tags, the int value of the tag is in fact it's offset within the buffer.
             set4ByteString(directory, IccDirectory.TAG_CMM_TYPE, reader);
@@ -141,13 +148,29 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
             // Process 'ICC tags'
             int tagCount = reader.getInt32(IccDirectory.TAG_TAG_COUNT);
             directory.setInt(IccDirectory.TAG_TAG_COUNT, tagCount);
+            if (tagCount < 0 || tagCount > (profileByteCount - IccDirectory.TAG_TAG_COUNT - 4) / 12)
+                throw new IOException("ICC tag table exceeds profile size");
 
+            Map<Long, byte[]> tagData = new HashMap<Long, byte[]>();
+            int copiedByteCount = 0;
             for (int i = 0; i < tagCount; i++) {
                 int pos = IccDirectory.TAG_TAG_COUNT + 4 + i * 12;
                 int tagType = reader.getInt32(pos);
                 int tagPtr = reader.getInt32(pos + 4);
                 int tagLen = reader.getInt32(pos + 8);
-                byte[] b = reader.getBytes(tagPtr, tagLen);
+                if (tagPtr < 0 || tagLen < 0 || tagPtr > profileByteCount - tagLen)
+                    throw new IOException("ICC tag data exceeds profile size");
+
+                // ICC permits multiple tags to share the same data.
+                long key = ((long)tagPtr << 32) | tagLen;
+                byte[] b = tagData.get(key);
+                if (b == null) {
+                    if (tagLen > profileByteCount - copiedByteCount)
+                        throw new IOException("ICC tag data exceeds profile copy budget");
+                    b = reader.getBytes(tagPtr, tagLen);
+                    tagData.put(key, b);
+                    copiedByteCount += tagLen;
+                }
                 directory.setByteArray(tagType, b);
             }
         } catch (IOException ex) {

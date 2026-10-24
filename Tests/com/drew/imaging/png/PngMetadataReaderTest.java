@@ -149,6 +149,43 @@ public class PngMetadataReaderTest
     }
 
     @Test
+    public void testCompressedIccProfileRejectsOversizedDeclaredLength() throws Exception
+    {
+        byte[] profile = new byte[148];
+        ByteBuffer buffer = ByteBuffer.wrap(profile);
+        buffer.putInt(0, 0x10000010);
+        buffer.putInt(128, 1);
+        buffer.putInt(132, 0x74657374);
+        buffer.putInt(136, 0x10000000);
+        buffer.putInt(140, 16);
+
+        Metadata metadata = readCompressedChunk(PngChunkType.iCCP, compress(profile));
+        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+        assertNotNull(directory);
+        assertTrue(directory.getErrors().iterator().next().contains("profile size"));
+        assertFalse(directory.containsTag(0x74657374));
+    }
+
+    @Test
+    public void testCompressedIccProfileRejectsOutOfRangeTag() throws Exception
+    {
+        byte[] profile = new byte[148];
+        ByteBuffer buffer = ByteBuffer.wrap(profile);
+        buffer.putInt(0, profile.length);
+        buffer.putShort(24, (short)2026).putShort(26, (short)10).putShort(28, (short)20);
+        buffer.putInt(128, 1);
+        buffer.putInt(132, 0x74657374);
+        buffer.putInt(136, 0x10000000);
+        buffer.putInt(140, 16);
+
+        Metadata metadata = readCompressedChunk(PngChunkType.iCCP, compress(profile));
+        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+        assertNotNull(directory);
+        assertTrue(directory.getErrors().iterator().next().contains("tag data exceeds profile size"));
+        assertFalse(directory.containsTag(0x74657374));
+    }
+
+    @Test
     public void testCompressedText() throws Exception
     {
         assertCompressedText(PngChunkType.zTXt, "Compressed caf\u00e9");

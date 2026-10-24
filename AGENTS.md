@@ -1,3 +1,9 @@
+# Format-specific documentation
+
+Keep format-specific behavior, limits, and implementation details in the relevant
+format package's `package-info.java`, not in the top-level `README.md`. The README
+should focus on general library usage and an overview of supported formats.
+
 # Test assets
 
 Do not add binary files or image fixtures to this repository, including under

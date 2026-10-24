@@ -38,8 +38,10 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Extracts XMP data from JPEG APP1 segments.
@@ -96,6 +98,9 @@ public class XmpReader implements JpegSegmentMetadataReader
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         String extendedXMPGUID = null;
         byte[] extendedXMPBuffer = null;
+        List<byte[]> extendedSegments = new ArrayList<byte[]>();
+        long extendedPayloadLength = 0;
+        final int extensionHeaderLength = extensionPreambleLength + EXTENDED_XMP_GUID_LENGTH + 2 * EXTENDED_XMP_INT_LENGTH;
 
         for (byte[] segmentBytes : segments) {
             // XMP in a JPEG file has an identifying preamble which is not valid XML
@@ -115,13 +120,17 @@ public class XmpReader implements JpegSegmentMetadataReader
                 }
             }
 
-            // If we know that there's Extended XMP chunks, look for them.
-            if (extendedXMPGUID != null &&
-                segmentBytes.length >= extensionPreambleLength &&
+            // Collect the actual payload size before allocating the extended packet.
+            if (segmentBytes.length >= extensionHeaderLength &&
                 XMP_EXTENSION_JPEG_PREAMBLE.equalsIgnoreCase(new String(segmentBytes, 0, extensionPreambleLength))) {
-
-                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer);
+                extendedSegments.add(segmentBytes);
+                extendedPayloadLength += segmentBytes.length - extensionHeaderLength;
             }
+        }
+
+        if (extendedXMPGUID != null) {
+            for (byte[] segmentBytes : extendedSegments)
+                extendedXMPBuffer = processExtendedXMPChunk(metadata, segmentBytes, extendedXMPGUID, extendedXMPBuffer, extendedPayloadLength);
         }
 
         // Now that the Extended XMP chunks have been concatenated, let's parse and merge with the Standard XMP.
@@ -264,7 +273,7 @@ public class XmpReader implements JpegSegmentMetadataReader
      * at page 19
      */
     @Nullable
-    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer)
+    private static byte[] processExtendedXMPChunk(@NotNull Metadata metadata, @NotNull byte[] segmentBytes, @NotNull String extendedXMPGUID, @Nullable byte[] extendedXMPBuffer, long availablePayloadLength)
     {
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         final int segmentLength = segmentBytes.length;
@@ -286,24 +295,29 @@ public class XmpReader implements JpegSegmentMetadataReader
                 final String segmentGUID = reader.getString(EXTENDED_XMP_GUID_LENGTH);
 
                 if (extendedXMPGUID.equals(segmentGUID)) {
-                    final int fullLength = (int)reader.getUInt32();
-                    final int chunkOffset = (int)reader.getUInt32();
+                    final long fullLength = reader.getUInt32();
+                    final long chunkOffset = reader.getUInt32();
+                    final int copyLength = segmentLength - totalOffset;
+
+                    if (fullLength > Integer.MAX_VALUE || fullLength > availablePayloadLength) {
+                        XmpDirectory directory = new XmpDirectory();
+                        directory.addError(String.format("Extended XMP length exceeds available payload (length=%d, available=%d)", fullLength, availablePayloadLength));
+                        metadata.addDirectory(directory);
+                        return extendedXMPBuffer;
+                    }
+
+                    if (chunkOffset > fullLength - copyLength) {
+                        XmpDirectory directory = new XmpDirectory();
+                        directory.addError(String.format("Extended XMP chunk would write beyond buffer bounds (offset=%d, length=%d, buffer size=%d)", chunkOffset, copyLength, fullLength));
+                        metadata.addDirectory(directory);
+                        return extendedXMPBuffer;
+                    }
 
                     if (extendedXMPBuffer == null)
-                        extendedXMPBuffer = new byte[fullLength];
+                        extendedXMPBuffer = new byte[(int)fullLength];
 
                     if (extendedXMPBuffer.length == fullLength) {
-                        int copyLength = segmentLength - totalOffset;
-                        // Validate bounds before arraycopy to prevent ArrayIndexOutOfBoundsException.
-                        // Check for negative chunkOffset (from uint32 > Integer.MAX_VALUE) and use
-                        // subtraction instead of addition to avoid integer overflow.
-                        if (chunkOffset < 0 || chunkOffset > extendedXMPBuffer.length - copyLength) {
-                            XmpDirectory directory = new XmpDirectory();
-                            directory.addError(String.format("Extended XMP chunk would write beyond buffer bounds (offset=%d, length=%d, buffer size=%d)", chunkOffset, copyLength, extendedXMPBuffer.length));
-                            metadata.addDirectory(directory);
-                        } else {
-                            System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, chunkOffset, copyLength);
-                        }
+                        System.arraycopy(segmentBytes, totalOffset, extendedXMPBuffer, (int)chunkOffset, copyLength);
                     } else {
                         XmpDirectory directory = new XmpDirectory();
                         directory.addError(String.format("Inconsistent length for the Extended XMP buffer: %d instead of %d", fullLength, extendedXMPBuffer.length));
