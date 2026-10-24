@@ -186,6 +186,29 @@ public class PngMetadataReaderTest
     }
 
     @Test
+    public void testCompressedIccProfileRejectsExcessiveTagCount() throws Exception
+    {
+        for (int length : new int[]{0, 1}) {
+            byte[] profile = new byte[132 + 4097 * 12];
+            ByteBuffer buffer = ByteBuffer.wrap(profile);
+            buffer.putInt(0, profile.length);
+            buffer.putShort(24, (short)2026).putShort(26, (short)10).putShort(28, (short)20);
+            buffer.putInt(128, 4097);
+            for (int i = 0; i < 4097; i++) {
+                buffer.putInt(132 + 12 * i, 0x74657374);
+                buffer.putInt(136 + 12 * i, i);
+                buffer.putInt(140 + 12 * i, length);
+            }
+
+            Metadata metadata = readCompressedChunk(PngChunkType.iCCP, compress(profile));
+            IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+            assertNotNull(directory);
+            assertTrue(directory.getErrors().iterator().next().contains("tag count exceeds supported limit"));
+            assertFalse(directory.containsTag(0x74657374));
+        }
+    }
+
+    @Test
     public void testCompressedText() throws Exception
     {
         assertCompressedText(PngChunkType.zTXt, "Compressed caf\u00e9");

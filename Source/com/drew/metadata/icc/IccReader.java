@@ -55,6 +55,7 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
 {
     public static final String JPEG_SEGMENT_PREAMBLE = "ICC_PROFILE";
     private static final int MAX_PROFILE_BYTE_COUNT = 16 * 1024 * 1024;
+    private static final int MAX_TAG_COUNT = 4096;
 
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
@@ -150,6 +151,8 @@ public class IccReader implements JpegSegmentMetadataReader, MetadataReader
             directory.setInt(IccDirectory.TAG_TAG_COUNT, tagCount);
             if (tagCount < 0 || tagCount > (profileByteCount - IccDirectory.TAG_TAG_COUNT - 4) / 12)
                 throw new IOException("ICC tag table exceeds profile size");
+            if (tagCount > MAX_TAG_COUNT)
+                throw new IOException("ICC tag count exceeds supported limit: " + tagCount);
 
             Map<Long, byte[]> tagData = new HashMap<Long, byte[]>();
             int copiedByteCount = 0;

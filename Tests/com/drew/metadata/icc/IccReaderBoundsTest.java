@@ -42,6 +42,58 @@ public class IccReaderBoundsTest
     }
 
     @Test
+    public void rejectsExcessiveTagCountBeforeReadingEntries() throws Exception
+    {
+        for (int length : new int[]{0, 1}) {
+            byte[] bytes = profile(4097, 0);
+            ByteBuffer buffer = ByteBuffer.wrap(bytes);
+            for (int i = 0; i < 4097; i++) {
+                buffer.putInt(132 + 12 * i, 0x74657374);
+                buffer.putInt(136 + 12 * i, i);
+                buffer.putInt(140 + 12 * i, length);
+            }
+            final int[] reads = {0};
+            Metadata metadata = new Metadata();
+            new IccReader().extract(new ByteArrayReader(bytes) {
+                @Override
+                public byte getByte(int offset) throws IOException
+                {
+                    assertTrue("Must reject before reading the tag table", offset < 132);
+                    return super.getByte(offset);
+                }
+
+                @Override
+                public byte[] getBytes(int offset, int count) throws IOException
+                {
+                    reads[0]++;
+                    return super.getBytes(offset, count);
+                }
+            }, metadata);
+            assertTrue(error(metadata).contains("tag count exceeds supported limit"));
+            assertEquals(0, reads[0]);
+            assertFalse(metadata.getFirstDirectoryOfType(IccDirectory.class).containsTag(0x74657374));
+        }
+    }
+
+    @Test
+    public void acceptsTagCountAtLimitWithDistinctSmallRanges() throws Exception
+    {
+        for (int length : new int[]{0, 1}) {
+            byte[] bytes = profile(4096, 0);
+            ByteBuffer buffer = ByteBuffer.wrap(bytes);
+            for (int i = 0; i < 4096; i++) {
+                buffer.putInt(132 + 12 * i, 0x74657374);
+                buffer.putInt(136 + 12 * i, i);
+                buffer.putInt(140 + 12 * i, length);
+            }
+            Metadata metadata = extract(bytes);
+            assertFalse(metadata.hasErrors());
+            assertArrayEquals(Arrays.copyOfRange(bytes, 4095, 4095 + length),
+                metadata.getFirstDirectoryOfType(IccDirectory.class).getByteArray(0x74657374));
+        }
+    }
+
+    @Test
     public void rejectsInvalidTagRangesBeforeReadingData() throws Exception
     {
         for (int[] range : new int[][]{{-1, 4}, {144, -1}, {0x10000000, 16}, {0x7ffffff0, 32}, {145, 4}, {144, 0x7fffffff}}) {
