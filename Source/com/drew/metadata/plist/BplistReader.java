@@ -70,16 +70,29 @@ public class BplistReader
 
         final ArrayList<Object> objects = new ArrayList<Object>();
         final Trailer trailer = readTrailer(bplist);
+        final int trailerOffset = bplist.length - Trailer.STRUCT_SIZE;
+
+        if (trailer.offsetIntSize != 1 && trailer.offsetIntSize != 2 &&
+            trailer.offsetIntSize != 4 && trailer.offsetIntSize != 8)
+            throw new IOException("Invalid bplist offset integer size");
+        if (trailer.offsetTableOffset < BPLIST_HEADER.length || trailer.offsetTableOffset > trailerOffset)
+            throw new IOException("Invalid bplist offset table position");
+        if (trailer.numObjects <= 0 ||
+            trailer.numObjects > (trailerOffset - trailer.offsetTableOffset) / trailer.offsetIntSize)
+            throw new IOException("Invalid bplist object count");
+        if (trailer.topObject < 0 || trailer.topObject >= trailer.numObjects)
+            throw new IOException("Invalid bplist top object");
 
         // List out the pointers
-        SequentialByteArrayReader reader = new SequentialByteArrayReader(bplist, (int)(trailer.offsetTableOffset + trailer.topObject));
+        SequentialByteArrayReader reader = new SequentialByteArrayReader(bplist, (int)trailer.offsetTableOffset);
         int[] offsets = new int[(int)trailer.numObjects];
-        for (long i = 0; i < trailer.numObjects; i++) {
-            if (trailer.offsetIntSize == 1) {
-                offsets[(int)i] = reader.getByte();
-            } else if (trailer.offsetIntSize == 2) {
-                offsets[(int)i] = reader.getUInt16();
-            }
+        for (int i = 0; i < offsets.length; i++) {
+            long offset = 0;
+            for (int j = 0; j < trailer.offsetIntSize; j++)
+                offset = (offset << 8) | reader.getUInt8();
+            if (offset < BPLIST_HEADER.length || offset >= trailer.offsetTableOffset)
+                throw new IOException("Invalid bplist object offset");
+            offsets[i] = (int)offset;
         }
 
         for (int i = 0; i < offsets.length; i++) {
@@ -119,6 +132,8 @@ public class BplistReader
             objects.add(objectIndex, reader.getUInt32());
         } else if (objectSize == 8) {
             objects.add(objectIndex, reader.getInt64());
+        } else {
+            throw new IOException("Unsupported bplist integer size");
         }
     }
 
@@ -145,14 +160,16 @@ public class BplistReader
         if (byteCount == 0x0F) {
             byte sizeMarker = reader.getByte();
             if ((sizeMarker >> 4 & 0x0F) != 1) {
-                throw new IllegalArgumentException("Invalid size marker");
+                throw new IOException("Invalid size marker");
             }
 
             int objectSizeWidth = (int)Math.pow(2, sizeMarker & 0x0F);
             if (objectSizeWidth == 1) {
-                byteCount = reader.getInt8();
+                byteCount = reader.getUInt8();
             } else if (objectSizeWidth == 2) {
                 byteCount = reader.getUInt16();
+            } else {
+                throw new IOException("Unsupported bplist data size width");
             }
         }
 
@@ -237,6 +254,8 @@ public class BplistReader
      */
     private static Trailer readTrailer(byte[] bplist) throws IOException
     {
+        if (bplist.length < BPLIST_HEADER.length + Trailer.STRUCT_SIZE)
+            throw new IOException("Truncated bplist trailer");
         SequentialByteArrayReader reader = new SequentialByteArrayReader(bplist, bplist.length - Trailer.STRUCT_SIZE);
         reader.skip(5L);    // Skip the 5-byte _unused values
         reader.skip(1L);    // Skip 1-byte sort version
