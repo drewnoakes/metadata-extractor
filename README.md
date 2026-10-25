@@ -1,4 +1,4 @@
-![metadata-extractor logo](Resources/metadata-extractor-logo.svg)
+![metadata-extractor logo](https://raw.githubusercontent.com/drewnoakes/metadata-extractor/main/Resources/metadata-extractor-logo.svg)
 
 [![metadata-extractor build status](https://github.com/drewnoakes/metadata-extractor/actions/workflows/maven.yml/badge.svg)](https://github.com/drewnoakes/metadata-extractor/actions/workflows/maven.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.drewnoakes/metadata-extractor.svg?maxAge=86400)](https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor)
