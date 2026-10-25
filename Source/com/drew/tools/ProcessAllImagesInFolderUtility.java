@@ -666,7 +666,7 @@ public class ProcessAllImagesInFolderUtility
                 });
 
                 for (Row row : rows) {
-                    writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/master/%s/metadata/%s.txt)\n",
+                    writer.write(String.format("[%s](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/main/%s/%s)|%s|%s|%d|%s|%s|%s|[metadata](https://raw.githubusercontent.com/drewnoakes/metadata-extractor-images/main/%s/metadata/%s.txt)\n",
                             row.file.getName(),
                             row.relativePath,
                             StringUtil.urlEncode(row.file.getName()),
