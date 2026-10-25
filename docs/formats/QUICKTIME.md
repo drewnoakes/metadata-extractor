@@ -26,3 +26,6 @@ inputs before claiming a capability gap.
 
 [ISO base media / MP4](MP4.md) describes the related box format and the different
 Java/.NET package layouts.
+
+[Canon CR3](CR3.md) describes the Canon-specific metadata also read by the .NET
+QuickTime implementation.

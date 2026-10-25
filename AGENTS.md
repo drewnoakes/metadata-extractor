@@ -25,6 +25,7 @@ capability gaps rather than conceal them in documentation.
 
 | Format | Documentation |
 | --- | --- |
+| Canon CR3 | [CR3.md](docs/formats/CR3.md) |
 | EBML detection | [EBML.md](docs/formats/EBML.md) |
 | HEIF / HEIC / AVIF references | [HEIF.md](docs/formats/HEIF.md) |
 | ICC profiles | [ICC.md](docs/formats/ICC.md) |
