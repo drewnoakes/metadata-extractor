@@ -77,8 +77,43 @@ public class HeifMetadataReaderTest
         assertNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
     }
 
+    @Test
+    public void testExtendedSizeBoxBeforeMeta() throws Exception
+    {
+        byte[] free = concat(int32(1), ascii("free"), new byte[] {0, 0, 0, 0, 0, 0, 0, 20}, new byte[4]);
+        Metadata metadata = readSingleItemFile("application/rdf+xml", free, false);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
+    public void testUuidBoxBeforeMeta() throws Exception
+    {
+        byte[] uuid = concat(int32(28), ascii("uuid"), new byte[16], new byte[4]);
+        Metadata metadata = readSingleItemFile("application/rdf+xml", uuid, false);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
+    public void testExtendedSizeMediaDataBeforeMeta() throws Exception
+    {
+        Metadata metadata = readSingleItemFile("application/rdf+xml", new byte[0], true);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
     /** Reads a file whose 'meta' box describes a single 'mime' item, stored in 'mdat', holding an XMP packet. */
     private static Metadata readSingleItemFile(String contentType) throws Exception
+    {
+        return readSingleItemFile(contentType, new byte[0], false);
+    }
+
+    /**
+     * As above, with {@code prefix} written after 'ftyp'. If {@code extendedMediaData}, 'mdat' has
+     * a 64-bit size and precedes 'meta'.
+     */
+    private static Metadata readSingleItemFile(String contentType, byte[] prefix, boolean extendedMediaData) throws Exception
     {
         byte[] xmp = ("<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"
             + "<rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmp:CreatorTool=\"Test\"/>"
@@ -94,15 +129,20 @@ public class HeifMetadataReaderTest
         byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
         int ilocLength = 8 + 4 + 2 + 2 + 2 + 2 + 2 + 4 + 4;
         int metaLength = 8 + 4 + hdlr.length + iinf.length + ilocLength;
-        int xmpOffset = ftyp.length + metaLength + 8;
+        int xmpOffset = extendedMediaData
+            ? ftyp.length + prefix.length + 16
+            : ftyp.length + prefix.length + metaLength + 8;
 
         // iloc version 0: 4-byte offsets and lengths, no base offset, one item with one extent
         byte[] iloc = box("iloc", concat(new byte[] {0, 0, 0, 0, 0x44, 0, 0, 1, 0, 1, 0, 0, 0, 1}, int32(xmpOffset), int32(xmp.length)));
         byte[] meta = box("meta", concat(new byte[4], hdlr, iinf, iloc));
-        byte[] mdat = box("mdat", xmp);
-
         assertEquals(metaLength, meta.length);
-        return ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, meta, mdat)));
+        if (extendedMediaData) {
+            byte[] mdat = concat(int32(1), ascii("mdat"), int32(0), int32(16 + xmp.length), xmp);
+            return ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, prefix, mdat, meta)));
+        }
+        byte[] mdat = box("mdat", xmp);
+        return ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, prefix, meta, mdat)));
     }
 
     private static byte[] box(String type, byte[] payload)
