@@ -59,6 +59,19 @@ public abstract class SequentialReader
     public abstract byte[] getBytes(int count) throws IOException;
 
     /**
+     * Throws {@link BufferBoundsException} if <code>count</code> is negative. Requested counts are
+     * often read from the data being parsed, so a negative value indicates malformed input.
+     *
+     * @param count the number of bytes requested
+     * @throws BufferBoundsException if <code>count</code> is negative
+     */
+    protected static void validateCount(int count) throws BufferBoundsException
+    {
+        if (count < 0)
+            throw new BufferBoundsException("Number of requested bytes must be zero or greater");
+    }
+
+    /**
      * Retrieves bytes, writing them into a caller-provided buffer.
      * @param buffer The array to write bytes to.
      * @param offset The starting position within buffer to write to.
