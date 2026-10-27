@@ -36,7 +36,7 @@ public class AuxiliaryTypeProperty extends FullBox
     {
         super(reader, box);
 
-        auxType = getZeroTerminatedString((int)box.size - 12, reader);
+        auxType = getZeroTerminatedString((int)box.size - box.headerSize - 4, reader);
         // auxSubtype
     }
 

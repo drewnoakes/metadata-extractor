@@ -134,6 +134,9 @@ public class HeifReader
 
     private HeifHandler<?> processBox(SequentialReader reader, Box box, int depth, HeifHandler<?> handler) throws IOException
     {
+        if (box.size != -1 && box.size < box.headerSize) {
+            throw new IOException("Box is smaller than its header");
+        }
         if (handler.shouldAcceptContainer(box)) {
             handler.processContainer(box, reader);
             handler = processBoxes(reader, box.size + reader.getPosition() - box.headerSize, depth + 1, handler);

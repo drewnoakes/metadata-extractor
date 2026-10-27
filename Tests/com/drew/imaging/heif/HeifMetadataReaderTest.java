@@ -24,6 +24,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.HeifDirectory;
+import com.drew.metadata.icc.IccDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import org.junit.Test;
 
@@ -31,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -101,6 +103,41 @@ public class HeifMetadataReaderTest
         Metadata metadata = readSingleItemFile("application/rdf+xml", new byte[0], true);
 
         assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
+    public void testExtendedSizeFileTypeBox() throws Exception
+    {
+        byte[] ftyp = concat(int32(1), ascii("ftyp"), int32(0), int32(28), ascii("heic"), new byte[4], ascii("mif1"));
+        HeifDirectory directory = HeifMetadataReader.readMetadata(new ByteArrayInputStream(ftyp)).getFirstDirectoryOfType(HeifDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals("heic", directory.getString(HeifDirectory.TAG_MAJOR_BRAND));
+        assertArrayEquals(new String[] {"mif1"}, directory.getStringArray(HeifDirectory.TAG_COMPATIBLE_BRANDS));
+    }
+
+    @Test
+    public void testExtendedSizeColourBox() throws Exception
+    {
+        // An ICC header declaring 132 bytes, followed by a tag count of zero
+        byte[] icc = concat(int32(132), new byte[128]);
+        byte[] colr = concat(int32(1), ascii("colr"), int32(0), int32(16 + 4 + icc.length), ascii("prof"), icc);
+        byte[] hdlr = box("hdlr", concat(new byte[8], ascii("pict"), new byte[13]));
+        byte[] meta = box("meta", concat(new byte[4], hdlr, box("iprp", box("ipco", colr))));
+        byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
+        IccDirectory directory = ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, meta))).getFirstDirectoryOfType(IccDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals(132, directory.getInt(IccDirectory.TAG_PROFILE_BYTE_COUNT));
+    }
+
+    @Test
+    public void testBoxSmallerThanItsHeader() throws Exception
+    {
+        byte[] free = concat(int32(1), ascii("free"), int32(0), int32(12));
+        Metadata metadata = readSingleItemFile("application/rdf+xml", free, false);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(HeifDirectory.class));
     }
 
     /** Reads a file whose 'meta' box describes a single 'mime' item, stored in 'mdat', holding an XMP packet. */
