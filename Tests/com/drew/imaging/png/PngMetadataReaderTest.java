@@ -23,6 +23,7 @@ package com.drew.imaging.png;
 import com.drew.lang.Charsets;
 import com.drew.lang.KeyValuePair;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.icc.IccDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
@@ -36,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +55,8 @@ public class PngMetadataReaderTest
     private static final PngChunkType[] COMPRESSED_CHUNK_TYPES = {
         PngChunkType.iCCP, PngChunkType.zTXt, PngChunkType.iTXt
     };
+
+    private static final int INFLATE_LIMIT = 16 * 1024 * 1024;
 
     @NotNull
     private static Metadata processFile(@NotNull String filePath) throws PngProcessingException, IOException
@@ -251,7 +255,81 @@ public class PngMetadataReaderTest
         }
     }
 
+    @Test
+    public void testCompressedTextInflateLimit() throws Exception
+    {
+        for (PngChunkType chunkType : new PngChunkType[]{PngChunkType.zTXt, PngChunkType.iTXt}) {
+            Metadata metadata = readCompressedChunk(chunkType, compress(new byte[INFLATE_LIMIT]));
+            assertFalse(chunkType.toString(), metadata.hasErrors());
+            PngDirectory directory = metadata.getDirectoriesOfType(PngDirectory.class).toArray(new PngDirectory[0])[1];
+            @SuppressWarnings("unchecked")
+            List<KeyValuePair> pairs = (List<KeyValuePair>)directory.getObject(PngDirectory.TAG_TEXTUAL_DATA);
+            assertNotNull(chunkType.toString(), pairs);
+            assertEquals(INFLATE_LIMIT, pairs.get(0).getValue().getBytes().length);
+
+            metadata = readCompressedChunk(chunkType, compress(new byte[INFLATE_LIMIT + 1]));
+            assertSingleInflateLimitError(chunkType, metadata);
+            directory = metadata.getDirectoriesOfType(PngDirectory.class).toArray(new PngDirectory[0])[1];
+            assertFalse(chunkType.toString(), directory.containsTag(PngDirectory.TAG_TEXTUAL_DATA));
+        }
+    }
+
+    @Test
+    public void testCompressedChunksShareInflateLimit() throws Exception
+    {
+        int length = 9 * 1024 * 1024;
+
+        for (PngChunkType chunkType : COMPRESSED_CHUNK_TYPES) {
+            byte[] payload = new byte[length];
+            if (chunkType.equals(PngChunkType.iCCP)) {
+                ByteBuffer buffer = ByteBuffer.wrap(payload);
+                buffer.putInt(0, length);
+                buffer.putShort(24, (short)2026).putShort(26, (short)10).putShort(28, (short)20);
+                buffer.putInt(128, 1);
+                buffer.putInt(132, 0x74657374);
+                buffer.putInt(136, 144);
+                buffer.putInt(140, length - 144);
+            }
+
+            Metadata metadata = readCompressedChunks(chunkType, compress(payload), 2);
+            assertSingleInflateLimitError(chunkType, metadata);
+
+            if (chunkType.equals(PngChunkType.iCCP)) {
+                IccDirectory[] directories = metadata.getDirectoriesOfType(IccDirectory.class).toArray(new IccDirectory[0]);
+                assertEquals(2, directories.length);
+                assertFalse(directories[0].hasErrors());
+                assertEquals(length - 144, directories[0].getByteArray(0x74657374).length);
+                assertTrue(directories[1].hasErrors());
+                assertFalse(directories[1].containsTag(0x74657374));
+            } else {
+                PngDirectory[] directories = metadata.getDirectoriesOfType(PngDirectory.class).toArray(new PngDirectory[0]);
+                assertEquals(chunkType.toString(), 3, directories.length);
+                assertFalse(chunkType.toString(), directories[1].hasErrors());
+                assertTrue(chunkType.toString(), directories[1].containsTag(PngDirectory.TAG_TEXTUAL_DATA));
+                assertTrue(chunkType.toString(), directories[2].hasErrors());
+                assertFalse(chunkType.toString(), directories[2].containsTag(PngDirectory.TAG_TEXTUAL_DATA));
+            }
+        }
+    }
+
+    private static void assertSingleInflateLimitError(PngChunkType chunkType, Metadata metadata)
+    {
+        List<String> errors = new ArrayList<String>();
+        for (Directory directory : metadata.getDirectories()) {
+            for (String error : directory.getErrors()) {
+                errors.add(error);
+            }
+        }
+        assertEquals(chunkType.toString(), 1, errors.size());
+        assertTrue(errors.get(0), errors.get(0).contains("Decompressed PNG chunk data exceeds the limit of " + INFLATE_LIMIT + " bytes"));
+    }
+
     private static Metadata readCompressedChunk(PngChunkType chunkType, byte[] compressedBytes) throws Exception
+    {
+        return readCompressedChunks(chunkType, compressedBytes, 1);
+    }
+
+    private static Metadata readCompressedChunks(PngChunkType chunkType, byte[] compressedBytes, int chunkCount) throws Exception
     {
         ByteArrayOutputStream chunkBytes = new ByteArrayOutputStream();
         chunkBytes.write((chunkType.equals(PngChunkType.iCCP) ? "Profile" : "Comment").getBytes(Charsets.ASCII));
@@ -270,7 +348,9 @@ public class PngMetadataReaderTest
         DataOutputStream output = new DataOutputStream(pngBytes);
         output.write(new byte[]{(byte)0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a});
         writeChunk(output, PngChunkType.IHDR, new byte[]{0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 0, 0, 0});
-        writeChunk(output, chunkType, chunkBytes.toByteArray());
+        for (int i = 0; i < chunkCount; i++) {
+            writeChunk(output, chunkType, chunkBytes.toByteArray());
+        }
         writeChunk(output, PngChunkType.IDAT, compress(new byte[]{0, 0, 0, 0}));
         writeChunk(output, PngChunkType.IEND, new byte[0]);
         output.write(0x42);

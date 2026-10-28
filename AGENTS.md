@@ -31,6 +31,7 @@ capability gaps rather than conceal them in documentation.
 | ICC profiles | [ICC.md](docs/formats/ICC.md) |
 | ISO base media / MP4 | [MP4.md](docs/formats/MP4.md) |
 | Matroska / WebM | [MKV.md](docs/formats/MKV.md) |
+| PNG | [PNG.md](docs/formats/PNG.md) |
 | QuickTime | [QUICKTIME.md](docs/formats/QUICKTIME.md) |
 
 This is an initial migration of substantive package documentation, not an

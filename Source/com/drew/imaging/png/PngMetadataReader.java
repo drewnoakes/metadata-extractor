@@ -62,6 +62,12 @@ public class PngMetadataReader
     private static Charset _latin1Encoding = Charsets.ISO_8859_1;
     private static Charset _utf8Encoding = Charsets.UTF_8;
 
+    /**
+     * The maximum total number of bytes inflated from the compressed (iCCP, zTXt and iTXt) chunks of a single PNG.
+     * Deflate can expand data by more than 1000:1, so a chunk's compressed length does not bound its inflated length.
+     */
+    private static final int MAX_INFLATED_BYTE_COUNT = 16 * 1024 * 1024;
+
     static
     {
         Set<PngChunkType> desiredChunkTypes = new HashSet<PngChunkType>();
@@ -105,10 +111,11 @@ public class PngMetadataReader
         Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), _desiredChunkTypes);
 
         Metadata metadata = new Metadata();
+        InflateBudget inflateBudget = new InflateBudget();
 
         for (PngChunk chunk : chunks) {
             try {
-                processChunk(metadata, chunk);
+                processChunk(metadata, chunk, inflateBudget);
             } catch (Exception e) {
                 metadata.addDirectory(new ErrorDirectory("Exception reading PNG chunk: " + e.getMessage()));
             }
@@ -117,7 +124,7 @@ public class PngMetadataReader
         return metadata;
     }
 
-    private static void processChunk(@NotNull Metadata metadata, @NotNull PngChunk chunk) throws PngProcessingException, IOException
+    private static void processChunk(@NotNull Metadata metadata, @NotNull PngChunk chunk, @NotNull InflateBudget inflateBudget) throws PngProcessingException, IOException
     {
         PngChunkType chunkType = chunk.getType();
         byte[] bytes = chunk.getBytes();
@@ -179,7 +186,7 @@ public class PngMetadataReader
                 int bytesLeft = bytes.length - (profileNameBytes.length + 1 + 1);
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
 
-                try (InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(compressedProfile))) {
+                try (InputStream inflateStream = inflateBudget.limit(new InflaterInputStream(new ByteArrayInputStream(compressedProfile)))) {
                     new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
                 } catch(java.util.zip.ZipException zex) {
                     directory.addError(String.format("Exception decompressing PNG iCCP chunk : %s", zex.getMessage()));
@@ -234,7 +241,7 @@ public class PngMetadataReader
             int bytesLeft = bytes.length - (keywordsv.getBytes().length + 1 + 1);
             byte[] textBytes = null;
             if (compressionMethod == 0) {
-                try (InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft))) {
+                try (InputStream inflateStream = inflateBudget.limit(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)))) {
                     textBytes = StreamUtil.readAllBytes(inflateStream);
                 } catch(java.util.zip.ZipException zex) {
                     PngDirectory directory = new PngDirectory(PngChunkType.zTXt);
@@ -287,7 +294,7 @@ public class PngMetadataReader
                 textBytes = reader.getNullTerminatedBytes(bytesLeft, false);
             } else if (compressionFlag == 1) {
                 if (compressionMethod == 0) {
-                    try (InflaterInputStream inflateStream = new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft))) {
+                    try (InputStream inflateStream = inflateBudget.limit(new InflaterInputStream(new ByteArrayInputStream(bytes, bytes.length - bytesLeft, bytesLeft)))) {
                         textBytes = StreamUtil.readAllBytes(inflateStream);
                     } catch(java.util.zip.ZipException zex) {
                         PngDirectory directory = new PngDirectory(PngChunkType.iTXt);
@@ -426,5 +433,54 @@ public class PngMetadataReader
         }
 
         return result;
+    }
+
+    /**
+     * Counts the bytes inflated from the compressed chunks of a single PNG, failing once their total exceeds a limit.
+     */
+    private static final class InflateBudget
+    {
+        private long _remainingByteCount = MAX_INFLATED_BYTE_COUNT;
+
+        @NotNull
+        InputStream limit(@NotNull InputStream stream)
+        {
+            return new FilterInputStream(stream)
+            {
+                @Override
+                public int read() throws IOException
+                {
+                    int b = super.read();
+                    if (b != -1)
+                        consume(1);
+                    return b;
+                }
+
+                @Override
+                public int read(byte[] buffer, int offset, int length) throws IOException
+                {
+                    int bytesRead = super.read(buffer, offset, length);
+                    if (bytesRead > 0)
+                        consume(bytesRead);
+                    return bytesRead;
+                }
+
+                @Override
+                public long skip(long n) throws IOException
+                {
+                    long bytesSkipped = super.skip(Math.min(n, _remainingByteCount + 1));
+                    if (bytesSkipped > 0)
+                        consume(bytesSkipped);
+                    return bytesSkipped;
+                }
+            };
+        }
+
+        private void consume(long byteCount) throws java.util.zip.ZipException
+        {
+            _remainingByteCount -= byteCount;
+            if (_remainingByteCount < 0)
+                throw new java.util.zip.ZipException(String.format("Decompressed PNG chunk data exceeds the limit of %d bytes", MAX_INFLATED_BYTE_COUNT));
+        }
     }
 }
