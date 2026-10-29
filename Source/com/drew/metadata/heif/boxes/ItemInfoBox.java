@@ -50,6 +50,9 @@ public class ItemInfoBox extends FullBox
         for (int i = 1; i <= entryCount; i++)
         {
             Box entryBox = new Box(reader);
+            if (entryBox.size < entryBox.headerSize) {
+                throw new IOException("Box is smaller than its header");
+            }
             SequentialByteArrayReader byteReader = new SequentialByteArrayReader(reader.getBytes((int)(entryBox.size - entryBox.headerSize)));
             ItemInfoEntry itemInfoEntry = new ItemInfoEntry(byteReader, entryBox);
             entries.put(itemInfoEntry.itemID, itemInfoEntry);

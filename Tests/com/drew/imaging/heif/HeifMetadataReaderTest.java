@@ -148,6 +148,22 @@ public class HeifMetadataReaderTest
         assertNotNull(metadata.getFirstDirectoryOfType(HeifDirectory.class));
     }
 
+    @Test
+    public void testItemInfoEntrySmallerThanItsHeader() throws Exception
+    {
+        byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
+        byte[] hdlr = box("hdlr", concat(new byte[8], ascii("pict"), new byte[13]));
+        // An extended-size infe declaring 12 bytes, and an infe whose size runs to the end of the file
+        byte[][] entries = {concat(int32(1), ascii("infe"), int32(0), int32(12)), concat(int32(0), ascii("infe"))};
+        for (byte[] infe : entries) {
+            byte[] iinf = box("iinf", concat(new byte[] {0, 0, 0, 0, 0, 1}, infe));
+            byte[] meta = box("meta", concat(new byte[4], hdlr, iinf));
+            Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, meta)));
+
+            assertNotNull(metadata.getFirstDirectoryOfType(HeifDirectory.class));
+        }
+    }
+
     /** Reads a file whose 'meta' box describes a single 'mime' item, stored in 'mdat', holding an XMP packet. */
     private static Metadata readSingleItemFile(String contentType) throws Exception
     {
