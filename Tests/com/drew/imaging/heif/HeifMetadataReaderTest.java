@@ -132,6 +132,14 @@ public class HeifMetadataReaderTest
     }
 
     @Test
+    public void testExtendedSizeItemInfoEntry() throws Exception
+    {
+        Metadata metadata = readSingleItemFile("application/rdf+xml", new byte[0], false, true);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
     public void testBoxSmallerThanItsHeader() throws Exception
     {
         byte[] free = concat(int32(1), ascii("free"), int32(0), int32(12));
@@ -146,11 +154,16 @@ public class HeifMetadataReaderTest
         return readSingleItemFile(contentType, new byte[0], false);
     }
 
+    private static Metadata readSingleItemFile(String contentType, byte[] prefix, boolean extendedMediaData) throws Exception
+    {
+        return readSingleItemFile(contentType, prefix, extendedMediaData, false);
+    }
+
     /**
      * As above, with {@code prefix} written after 'ftyp'. If {@code extendedMediaData}, 'mdat' has
-     * a 64-bit size and precedes 'meta'.
+     * a 64-bit size and precedes 'meta'. If {@code extendedItemInfo}, 'infe' has a 64-bit size.
      */
-    private static Metadata readSingleItemFile(String contentType, byte[] prefix, boolean extendedMediaData) throws Exception
+    private static Metadata readSingleItemFile(String contentType, byte[] prefix, boolean extendedMediaData, boolean extendedItemInfo) throws Exception
     {
         byte[] xmp = ("<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"
             + "<rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmp:CreatorTool=\"Test\"/>"
@@ -159,7 +172,10 @@ public class HeifMetadataReaderTest
         // hdlr: version and flags, pre-defined, handler type, three reserved words, empty name
         byte[] hdlr = box("hdlr", concat(new byte[8], ascii("pict"), new byte[13]));
         // infe version 2: item ID 1, protection index 0, item type, empty name, content type
-        byte[] infe = box("infe", concat(new byte[] {2, 0, 0, 0, 0, 1, 0, 0}, ascii("mime"), new byte[1], ascii(contentType), new byte[1]));
+        byte[] infePayload = concat(new byte[] {2, 0, 0, 0, 0, 1, 0, 0}, ascii("mime"), new byte[1], ascii(contentType), new byte[1]);
+        byte[] infe = extendedItemInfo
+            ? concat(int32(1), ascii("infe"), int32(0), int32(16 + infePayload.length), infePayload)
+            : box("infe", infePayload);
         // iinf version 0 with one entry
         byte[] iinf = box("iinf", concat(new byte[] {0, 0, 0, 0, 0, 1}, infe));
 

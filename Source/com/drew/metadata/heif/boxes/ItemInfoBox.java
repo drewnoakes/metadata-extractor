@@ -50,7 +50,7 @@ public class ItemInfoBox extends FullBox
         for (int i = 1; i <= entryCount; i++)
         {
             Box entryBox = new Box(reader);
-            SequentialByteArrayReader byteReader = new SequentialByteArrayReader(reader.getBytes((int)entryBox.size - 8));
+            SequentialByteArrayReader byteReader = new SequentialByteArrayReader(reader.getBytes((int)(entryBox.size - entryBox.headerSize)));
             ItemInfoEntry itemInfoEntry = new ItemInfoEntry(byteReader, entryBox);
             entries.put(itemInfoEntry.itemID, itemInfoEntry);
         }
@@ -71,8 +71,8 @@ public class ItemInfoBox extends FullBox
         {
             super(reader, box);
 
-            // 4 Bytes for length, 4 Bytes for type. Reader is indexed from AFTER type but box.size INCLUDES the aforementioned 8 bytes
-            int headerLength = 8;
+            // The reader starts after the box header, but box.size includes it
+            int headerLength = box.headerSize;
 
             if ((version == 0) || (version == 1)) {
                 itemID = reader.getUInt16();
