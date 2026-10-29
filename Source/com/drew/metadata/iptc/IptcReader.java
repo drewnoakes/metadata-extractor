@@ -32,7 +32,11 @@ import com.drew.metadata.StringValue;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Decodes IPTC binary data, populating a {@link Metadata} object with tag values in an {@link IptcDirectory}.
@@ -94,6 +98,19 @@ public class IptcReader implements JpegSegmentMetadataReader
         if (parentDirectory != null)
             directory.setParent(parentDirectory);
 
+        // Values of repeated tags are collected here and stored once all tags have been read,
+        // as copying the directory's array for every repetition takes quadratic time
+        Map<Integer, List<StringValue>> repeatedValues = new HashMap<Integer, List<StringValue>>();
+        try {
+            extractTags(reader, directory, repeatedValues, length);
+        } finally {
+            for (Map.Entry<Integer, List<StringValue>> entry : repeatedValues.entrySet())
+                directory.setStringValueArray(entry.getKey(), entry.getValue().toArray(new StringValue[0]));
+        }
+    }
+
+    private void extractTags(@NotNull final SequentialReader reader, @NotNull final Directory directory, @NotNull final Map<Integer, List<StringValue>> repeatedValues, long length)
+    {
         int offset = 0;
 
         // for each tag
@@ -147,7 +164,7 @@ public class IptcReader implements JpegSegmentMetadataReader
             }
 
             try {
-                processTag(reader, directory, directoryType, tagType, tagByteCount);
+                processTag(reader, directory, repeatedValues, directoryType, tagType, tagByteCount);
             } catch (IOException e) {
                 directory.addError("Error processing IPTC tag");
                 return;
@@ -157,7 +174,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         }
     }
 
-    private void processTag(@NotNull SequentialReader reader, @NotNull Directory directory, int directoryType, int tagType, int tagByteCount) throws IOException
+    private void processTag(@NotNull SequentialReader reader, @NotNull Directory directory, @NotNull Map<Integer, List<StringValue>> repeatedValues, int directoryType, int tagType, int tagByteCount) throws IOException
     {
         int tagIdentifier = tagType | (directoryType << 8);
 
@@ -167,6 +184,7 @@ public class IptcReader implements JpegSegmentMetadataReader
         // https://raw.githubusercontent.com/wiki/drewnoakes/metadata-extractor/docs/IPTC-IIMV4.2.pdf
         if (tagByteCount == 0) {
             directory.setString(tagIdentifier, "");
+            repeatedValues.remove(tagIdentifier);
             return;
         }
 
@@ -179,6 +197,7 @@ public class IptcReader implements JpegSegmentMetadataReader
                     charsetName = new String(bytes);
                 }
                 directory.setString(tagIdentifier, charsetName);
+                repeatedValues.remove(tagIdentifier);
                 return;
             case IptcDirectory.TAG_ENVELOPE_RECORD_VERSION:
             case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
@@ -190,12 +209,14 @@ public class IptcReader implements JpegSegmentMetadataReader
                     int shortValue = reader.getUInt16();
                     reader.skip(tagByteCount - 2);
                     directory.setInt(tagIdentifier, shortValue);
+                    repeatedValues.remove(tagIdentifier);
                     return;
                 }
                 break;
             case IptcDirectory.TAG_URGENCY:
                 // byte
                 directory.setInt(tagIdentifier, reader.getUInt8());
+                repeatedValues.remove(tagIdentifier);
                 reader.skip(tagByteCount - 1);
                 return;
             default:
@@ -221,19 +242,18 @@ public class IptcReader implements JpegSegmentMetadataReader
             string = charSet != null ? new StringValue(bytes, charSet) : new StringValue(bytes, null);
         }
 
-        if (directory.containsTag(tagIdentifier)) {
-            // this fancy StringValue[] business avoids using an ArrayList for performance reasons
+        List<StringValue> values = repeatedValues.get(tagIdentifier);
+        if (values != null) {
+            values.add(string);
+        } else if (directory.containsTag(tagIdentifier)) {
+            // the directory keeps its prior value (and the tag's position) until extract stores the collected values
             StringValue[] oldStrings = directory.getStringValueArray(tagIdentifier);
-            StringValue[] newStrings;
-            if (oldStrings == null) {
-                // TODO hitting this block means any prior value(s) are discarded
-                newStrings = new StringValue[1];
-            } else {
-                newStrings = new StringValue[oldStrings.length + 1];
-                System.arraycopy(oldStrings, 0, newStrings, 0, oldStrings.length);
-            }
-            newStrings[newStrings.length - 1] = string;
-            directory.setStringValueArray(tagIdentifier, newStrings);
+            values = new ArrayList<StringValue>();
+            // TODO oldStrings being null means any prior value(s) are discarded
+            if (oldStrings != null)
+                Collections.addAll(values, oldStrings);
+            values.add(string);
+            repeatedValues.put(tagIdentifier, values);
         } else {
             directory.setStringValue(tagIdentifier, string);
         }
