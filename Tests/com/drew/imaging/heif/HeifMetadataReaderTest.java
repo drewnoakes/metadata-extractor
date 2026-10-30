@@ -24,6 +24,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.heif.HeifDirectory;
+import com.drew.metadata.icc.IccDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import org.junit.Test;
 
@@ -31,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -77,8 +79,107 @@ public class HeifMetadataReaderTest
         assertNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
     }
 
+    @Test
+    public void testExtendedSizeBoxBeforeMeta() throws Exception
+    {
+        byte[] free = concat(int32(1), ascii("free"), new byte[] {0, 0, 0, 0, 0, 0, 0, 20}, new byte[4]);
+        Metadata metadata = readSingleItemFile("application/rdf+xml", free, false);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
+    public void testUuidBoxBeforeMeta() throws Exception
+    {
+        byte[] uuid = concat(int32(28), ascii("uuid"), new byte[16], new byte[4]);
+        Metadata metadata = readSingleItemFile("application/rdf+xml", uuid, false);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
+    public void testExtendedSizeMediaDataBeforeMeta() throws Exception
+    {
+        Metadata metadata = readSingleItemFile("application/rdf+xml", new byte[0], true);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
+    public void testExtendedSizeFileTypeBox() throws Exception
+    {
+        byte[] ftyp = concat(int32(1), ascii("ftyp"), int32(0), int32(28), ascii("heic"), new byte[4], ascii("mif1"));
+        HeifDirectory directory = HeifMetadataReader.readMetadata(new ByteArrayInputStream(ftyp)).getFirstDirectoryOfType(HeifDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals("heic", directory.getString(HeifDirectory.TAG_MAJOR_BRAND));
+        assertArrayEquals(new String[] {"mif1"}, directory.getStringArray(HeifDirectory.TAG_COMPATIBLE_BRANDS));
+    }
+
+    @Test
+    public void testExtendedSizeColourBox() throws Exception
+    {
+        // An ICC header declaring 132 bytes, followed by a tag count of zero
+        byte[] icc = concat(int32(132), new byte[128]);
+        byte[] colr = concat(int32(1), ascii("colr"), int32(0), int32(16 + 4 + icc.length), ascii("prof"), icc);
+        byte[] hdlr = box("hdlr", concat(new byte[8], ascii("pict"), new byte[13]));
+        byte[] meta = box("meta", concat(new byte[4], hdlr, box("iprp", box("ipco", colr))));
+        byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
+        IccDirectory directory = ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, meta))).getFirstDirectoryOfType(IccDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals(132, directory.getInt(IccDirectory.TAG_PROFILE_BYTE_COUNT));
+    }
+
+    @Test
+    public void testExtendedSizeItemInfoEntry() throws Exception
+    {
+        Metadata metadata = readSingleItemFile("application/rdf+xml", new byte[0], false, true);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+    }
+
+    @Test
+    public void testBoxSmallerThanItsHeader() throws Exception
+    {
+        byte[] free = concat(int32(1), ascii("free"), int32(0), int32(12));
+        Metadata metadata = readSingleItemFile("application/rdf+xml", free, false);
+
+        assertNotNull(metadata.getFirstDirectoryOfType(HeifDirectory.class));
+    }
+
+    @Test
+    public void testItemInfoEntrySmallerThanItsHeader() throws Exception
+    {
+        byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
+        byte[] hdlr = box("hdlr", concat(new byte[8], ascii("pict"), new byte[13]));
+        // An extended-size infe declaring 12 bytes, and an infe whose size runs to the end of the file
+        byte[][] entries = {concat(int32(1), ascii("infe"), int32(0), int32(12)), concat(int32(0), ascii("infe"))};
+        for (byte[] infe : entries) {
+            byte[] iinf = box("iinf", concat(new byte[] {0, 0, 0, 0, 0, 1}, infe));
+            byte[] meta = box("meta", concat(new byte[4], hdlr, iinf));
+            Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, meta)));
+
+            assertNotNull(metadata.getFirstDirectoryOfType(HeifDirectory.class));
+        }
+    }
+
     /** Reads a file whose 'meta' box describes a single 'mime' item, stored in 'mdat', holding an XMP packet. */
     private static Metadata readSingleItemFile(String contentType) throws Exception
+    {
+        return readSingleItemFile(contentType, new byte[0], false);
+    }
+
+    private static Metadata readSingleItemFile(String contentType, byte[] prefix, boolean extendedMediaData) throws Exception
+    {
+        return readSingleItemFile(contentType, prefix, extendedMediaData, false);
+    }
+
+    /**
+     * As above, with {@code prefix} written after 'ftyp'. If {@code extendedMediaData}, 'mdat' has
+     * a 64-bit size and precedes 'meta'. If {@code extendedItemInfo}, 'infe' has a 64-bit size.
+     */
+    private static Metadata readSingleItemFile(String contentType, byte[] prefix, boolean extendedMediaData, boolean extendedItemInfo) throws Exception
     {
         byte[] xmp = ("<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"
             + "<rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\" xmp:CreatorTool=\"Test\"/>"
@@ -87,22 +188,30 @@ public class HeifMetadataReaderTest
         // hdlr: version and flags, pre-defined, handler type, three reserved words, empty name
         byte[] hdlr = box("hdlr", concat(new byte[8], ascii("pict"), new byte[13]));
         // infe version 2: item ID 1, protection index 0, item type, empty name, content type
-        byte[] infe = box("infe", concat(new byte[] {2, 0, 0, 0, 0, 1, 0, 0}, ascii("mime"), new byte[1], ascii(contentType), new byte[1]));
+        byte[] infePayload = concat(new byte[] {2, 0, 0, 0, 0, 1, 0, 0}, ascii("mime"), new byte[1], ascii(contentType), new byte[1]);
+        byte[] infe = extendedItemInfo
+            ? concat(int32(1), ascii("infe"), int32(0), int32(16 + infePayload.length), infePayload)
+            : box("infe", infePayload);
         // iinf version 0 with one entry
         byte[] iinf = box("iinf", concat(new byte[] {0, 0, 0, 0, 0, 1}, infe));
 
         byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
         int ilocLength = 8 + 4 + 2 + 2 + 2 + 2 + 2 + 4 + 4;
         int metaLength = 8 + 4 + hdlr.length + iinf.length + ilocLength;
-        int xmpOffset = ftyp.length + metaLength + 8;
+        int xmpOffset = extendedMediaData
+            ? ftyp.length + prefix.length + 16
+            : ftyp.length + prefix.length + metaLength + 8;
 
         // iloc version 0: 4-byte offsets and lengths, no base offset, one item with one extent
         byte[] iloc = box("iloc", concat(new byte[] {0, 0, 0, 0, 0x44, 0, 0, 1, 0, 1, 0, 0, 0, 1}, int32(xmpOffset), int32(xmp.length)));
         byte[] meta = box("meta", concat(new byte[4], hdlr, iinf, iloc));
-        byte[] mdat = box("mdat", xmp);
-
         assertEquals(metaLength, meta.length);
-        return ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, meta, mdat)));
+        if (extendedMediaData) {
+            byte[] mdat = concat(int32(1), ascii("mdat"), int32(0), int32(16 + xmp.length), xmp);
+            return ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, prefix, mdat, meta)));
+        }
+        byte[] mdat = box("mdat", xmp);
+        return ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, prefix, meta, mdat)));
     }
 
     private static byte[] box(String type, byte[] payload)

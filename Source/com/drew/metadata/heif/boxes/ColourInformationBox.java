@@ -31,10 +31,10 @@ public class ColourInformationBox extends Box
             // Last 7 bits are reserved
             fullRangeFlag = (reader.getUInt8() & 0x80) >> 7;
         } else if (colourType.equals("rICC")) {
-            byte[] buffer = reader.getBytes((int)(size - 12));
+            byte[] buffer = reader.getBytes((int)(size - headerSize - 4));
             new IccReader().extract(new ByteArrayReader(buffer), metadata);
         } else if (colourType.equals("prof")) {
-            byte[] buffer = reader.getBytes((int)(size - 12));
+            byte[] buffer = reader.getBytes((int)(size - headerSize - 4));
             new IccReader().extract(new ByteArrayReader(buffer), metadata);
         }
     }

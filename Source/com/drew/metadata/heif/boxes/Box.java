@@ -32,6 +32,8 @@ public class Box
     public long size;
     public String type;
     String usertype;
+    /** The number of bytes read for this box's size, type and usertype, 16 more for each of an extended size and a uuid. */
+    public int headerSize = 8;
 
     public Box(SequentialReader reader) throws IOException
     {
@@ -39,11 +41,13 @@ public class Box
         this.type = reader.getString(4);
         if (size == 1) {
             size = reader.getInt64();
+            headerSize = 16;
         } else if (size == 0) {
             size = -1;
         }
         if (type.equals("uuid")) {
             usertype = reader.getString(16);
+            headerSize += 16;
         }
     }
 
@@ -52,5 +56,6 @@ public class Box
         this.size = box.size;
         this.type = box.type;
         this.usertype = box.usertype;
+        this.headerSize = box.headerSize;
     }
 }

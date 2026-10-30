@@ -42,7 +42,7 @@ public class FileTypeBox extends Box
         majorBrand = reader.getString(4);
         minorVersion = reader.getUInt32();
         compatibleBrands = new ArrayList<String>();
-        for (int i = 16; i < size; i += 4) {
+        for (int i = headerSize + 8; i < size; i += 4) {
             compatibleBrands.add(reader.getString(4));
         }
     }
