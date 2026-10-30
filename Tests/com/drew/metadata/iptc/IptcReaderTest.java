@@ -249,4 +249,32 @@ public class IptcReaderTest
 
         assertEquals("MEDWAS,MEDLON,MEDTOR,RONL,ASIA,AONL,APC,USA,CAN,SAM,BIZ", directory.getString(IptcDirectory.TAG_DESTINATION));
     }
+
+    @Test(timeout = 10000)
+    public void testManyRepeatedTags() throws Exception
+    {
+        // Copying the array of prior values for every repetition made this take minutes
+        int count = 300000;
+        byte[] bytes = new byte[count * 6];
+        for (int i = 0; i < count; i++) {
+            int offset = i * 6;
+            bytes[offset] = 0x1c;
+            bytes[offset + 1] = 2;
+            bytes[offset + 2] = 25;
+            bytes[offset + 4] = 1;
+            bytes[offset + 5] = (byte)('a' + i % 26);
+        }
+
+        Metadata metadata = new Metadata();
+        new IptcReader().extract(new SequentialByteArrayReader(bytes), metadata, bytes.length);
+        IptcDirectory directory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+
+        assertFalse(directory.getErrors().toString(), directory.hasErrors());
+
+        String[] keywords = directory.getStringArray(IptcDirectory.TAG_KEYWORDS);
+        assertEquals(count, keywords.length);
+        assertEquals("a", keywords[0]);
+        assertEquals("b", keywords[1]);
+        assertEquals(String.valueOf((char)('a' + (count - 1) % 26)), keywords[count - 1]);
+    }
 }
