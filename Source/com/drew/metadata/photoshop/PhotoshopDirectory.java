@@ -243,6 +243,20 @@ public class PhotoshopDirectory extends Directory
         return _tagNameMap;
     }
 
+    @Override
+    @NotNull
+    public String getTagName(int tagType)
+    {
+        // Path info and plug-in resource names are derived from the tag's position within
+        // its range, so they are computed here rather than written into the shared static
+        // map while parsing.
+        if (tagType >= 0x07D0 && tagType <= 0x0BB6)
+            return "Path Info " + (tagType - 0x07CF);
+        if (tagType >= 0x0FA0 && tagType <= 0x1387)
+            return "Plug-in " + (tagType - 0x0FA0 + 1) + " Data";
+        return super.getTagName(tagType);
+    }
+
     @Nullable
     public byte[] getThumbnailBytes()
     {
