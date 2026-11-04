@@ -9,10 +9,13 @@ compressed length does not bound the memory needed to inflate it.
 
 Java inflates at most 16 MiB in total from the `iCCP`, `zTXt` and `iTXt` chunks
 of a single PNG. The budget is shared, so repeated compressed chunks cannot each
-inflate up to the limit. A chunk that exceeds the remaining budget produces an
+inflate up to the limit. For `iCCP`, the ICC tag data copied out of the profile
+is charged to the same budget, because overlapping tag ranges can copy far more
+bytes than were inflated. A chunk that exceeds the remaining budget produces an
 error instead of its text or profile data: in the PNG directory for `zTXt` and
-`iTXt`, or in the ICC directory for `iCCP`. Other chunks, including uncompressed
-`tEXt`, are still read. The [ICC profile limits](ICC.md) apply as well.
+`iTXt`, or in the ICC directory for `iCCP`. Once the budget is exhausted, later
+compressed chunks fail without being inflated. Other chunks, including
+uncompressed `tEXt`, are still read. The [ICC profile limits](ICC.md) apply as well.
 
 This is a library resource policy, not a limit from the PNG specification.
 libpng's default `PNG_USER_CHUNK_MALLOC_MAX` bounds the decompressed size of a

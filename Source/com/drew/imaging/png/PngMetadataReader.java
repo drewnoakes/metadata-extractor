@@ -187,7 +187,7 @@ public class PngMetadataReader
                 byte[] compressedProfile = reader.getBytes(bytesLeft);
 
                 try (InputStream inflateStream = inflateBudget.limit(new InflaterInputStream(new ByteArrayInputStream(compressedProfile)))) {
-                    new IccReader().extract(new RandomAccessStreamReader(inflateStream), metadata, directory);
+                    new IccReader().extract(inflateBudget.iccReader(inflateStream), metadata, directory);
                 } catch(java.util.zip.ZipException zex) {
                     directory.addError(String.format("Exception decompressing PNG iCCP chunk : %s", zex.getMessage()));
                     metadata.addDirectory(directory);
@@ -436,7 +436,8 @@ public class PngMetadataReader
     }
 
     /**
-     * Counts the bytes inflated from the compressed chunks of a single PNG, failing once their total exceeds a limit.
+     * Counts the bytes inflated from the compressed chunks of a single PNG, and the ICC tag data copied from them,
+     * failing once their total exceeds a limit.
      */
     private static final class InflateBudget
     {
@@ -450,6 +451,7 @@ public class PngMetadataReader
                 @Override
                 public int read() throws IOException
                 {
+                    checkRemaining();
                     int b = super.read();
                     if (b != -1)
                         consume(1);
@@ -459,7 +461,9 @@ public class PngMetadataReader
                 @Override
                 public int read(byte[] buffer, int offset, int length) throws IOException
                 {
-                    int bytesRead = super.read(buffer, offset, length);
+                    if (length > 0)
+                        checkRemaining();
+                    int bytesRead = super.read(buffer, offset, (int)Math.min(length, _remainingByteCount + 1));
                     if (bytesRead > 0)
                         consume(bytesRead);
                     return bytesRead;
@@ -468,6 +472,8 @@ public class PngMetadataReader
                 @Override
                 public long skip(long n) throws IOException
                 {
+                    if (n > 0)
+                        checkRemaining();
                     long bytesSkipped = super.skip(Math.min(n, _remainingByteCount + 1));
                     if (bytesSkipped > 0)
                         consume(bytesSkipped);
@@ -476,11 +482,41 @@ public class PngMetadataReader
             };
         }
 
+        /**
+         * Charges ICC tag copies to the budget, as overlapping tag ranges can copy far more than was inflated.
+         */
+        @NotNull
+        RandomAccessStreamReader iccReader(@NotNull InputStream stream)
+        {
+            return new RandomAccessStreamReader(stream)
+            {
+                @Override
+                public byte[] getBytes(int index, int count) throws IOException
+                {
+                    if (count > 0)
+                        consume(count);
+                    return super.getBytes(index, count);
+                }
+            };
+        }
+
+        private void checkRemaining() throws java.util.zip.ZipException
+        {
+            if (_remainingByteCount < 0)
+                throw exceeded();
+        }
+
         private void consume(long byteCount) throws java.util.zip.ZipException
         {
             _remainingByteCount -= byteCount;
             if (_remainingByteCount < 0)
-                throw new java.util.zip.ZipException(String.format("Decompressed PNG chunk data exceeds the limit of %d bytes", MAX_INFLATED_BYTE_COUNT));
+                throw exceeded();
+        }
+
+        @NotNull
+        private static java.util.zip.ZipException exceeded()
+        {
+            return new java.util.zip.ZipException(String.format("Decompressed PNG chunk data exceeds the limit of %d bytes", MAX_INFLATED_BYTE_COUNT));
         }
     }
 }

@@ -277,9 +277,9 @@ public class PngMetadataReaderTest
     @Test
     public void testCompressedChunksShareInflateLimit() throws Exception
     {
-        int length = 9 * 1024 * 1024;
-
         for (PngChunkType chunkType : COMPRESSED_CHUNK_TYPES) {
+            // An iCCP chunk is charged for both its inflated bytes and its copied tag data.
+            int length = chunkType.equals(PngChunkType.iCCP) ? 5 * 1024 * 1024 : 9 * 1024 * 1024;
             byte[] payload = new byte[length];
             if (chunkType.equals(PngChunkType.iCCP)) {
                 ByteBuffer buffer = ByteBuffer.wrap(payload);
@@ -310,6 +310,36 @@ public class PngMetadataReaderTest
                 assertFalse(chunkType.toString(), directories[2].containsTag(PngDirectory.TAG_TEXTUAL_DATA));
             }
         }
+    }
+
+    @Test
+    public void testOverlappingIccTagsShareInflateLimit() throws Exception
+    {
+        // Each profile declares 16 MiB but inflates to about 70 KiB, with 128 overlapping 64 KiB tag ranges that
+        // together copy 8 MiB, so only the first of two such profiles fits in the budget.
+        int tagCount = 128;
+        int tagLength = 64 * 1024;
+        int dataOffset = 4096;
+        byte[] payload = new byte[dataOffset + tagCount * 4 + tagLength];
+        ByteBuffer buffer = ByteBuffer.wrap(payload);
+        buffer.putInt(0, INFLATE_LIMIT);
+        buffer.putShort(24, (short)2026).putShort(26, (short)10).putShort(28, (short)20);
+        buffer.putInt(128, tagCount);
+        for (int i = 0; i < tagCount; i++) {
+            int pos = 132 + i * 12;
+            buffer.putInt(pos, 0x74650000 + i);
+            buffer.putInt(pos + 4, dataOffset + 4 * i);
+            buffer.putInt(pos + 8, tagLength);
+        }
+
+        Metadata metadata = readCompressedChunks(PngChunkType.iCCP, compress(payload), 2);
+        assertSingleInflateLimitError(PngChunkType.iCCP, metadata);
+
+        IccDirectory[] directories = metadata.getDirectoriesOfType(IccDirectory.class).toArray(new IccDirectory[0]);
+        assertEquals(2, directories.length);
+        assertFalse(directories[0].hasErrors());
+        assertEquals(tagLength, directories[0].getByteArray(0x74650000 + tagCount - 1).length);
+        assertTrue(directories[1].hasErrors());
     }
 
     private static void assertSingleInflateLimitError(PngChunkType chunkType, Metadata metadata)
