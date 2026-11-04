@@ -137,6 +137,9 @@ public class HeifReader
         if (box.size != -1 && box.size < box.headerSize) {
             throw new IOException("Box is smaller than its header");
         }
+        if (box.size > Integer.MAX_VALUE) {
+            throw new IOException("Box size too large");
+        }
         if (handler.shouldAcceptContainer(box)) {
             handler.processContainer(box, reader);
             handler = processBoxes(reader, box.size + reader.getPosition() - box.headerSize, depth + 1, handler);

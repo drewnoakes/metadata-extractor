@@ -164,6 +164,20 @@ public class HeifMetadataReaderTest
         }
     }
 
+    @Test
+    public void testOversizedBoxReportsErrorRatherThanThrowing() throws Exception
+    {
+        // A 'hdlr' box whose 32-bit size field is 0xFFFFFFFF. Narrowed to int this is negative, so
+        // without a bound the reader would attempt new byte[negative] and throw NegativeArraySizeException.
+        byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
+        byte[] oversized = concat(int32(0xFFFFFFFF), ascii("hdlr"));
+        HeifDirectory directory = ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, oversized)))
+            .getFirstDirectoryOfType(HeifDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals("heic", directory.getString(HeifDirectory.TAG_MAJOR_BRAND));
+    }
+
     /** Reads a file whose 'meta' box describes a single 'mime' item, stored in 'mdat', holding an XMP packet. */
     private static Metadata readSingleItemFile(String contentType) throws Exception
     {
