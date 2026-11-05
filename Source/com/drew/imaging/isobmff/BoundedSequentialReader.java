@@ -199,6 +199,12 @@ final class BoundedSequentialReader extends SequentialReader
     }
 
     @Override
+    public int getBytesUpTo(@NotNull byte[] buffer, int offset, int count) throws IOException
+    {
+        return source().getBytesUpTo(buffer, offset, (int) Math.min(count, remaining()));
+    }
+
+    @Override
     public void skip(long n) throws IOException
     {
         if (n < 0)

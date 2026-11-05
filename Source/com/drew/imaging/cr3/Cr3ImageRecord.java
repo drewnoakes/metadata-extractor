@@ -27,7 +27,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.cr3.Cr3Directory;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -92,7 +91,7 @@ final class Cr3ImageRecord
             payload.skip(IMAGE_START - _lengthAt - 4);
             long start = payload.getPosition();
             if (callback != null)
-                callback.image(context, new ImageReader(payload, start + length));
+                callback.image(context, context.slice(length));
             long left = start + length - payload.getPosition();
             if (left > 0)
                 payload.skip(left);
@@ -110,82 +109,5 @@ final class Cr3ImageRecord
     {
         directory.setInt(_widthTag, width);
         directory.setInt(_heightTag, height);
-    }
-
-    /** A view of the payload that ends where the image data ends. */
-    private static final class ImageReader extends SequentialReader
-    {
-        @NotNull
-        private final SequentialReader _payload;
-        private final long _end;
-
-        ImageReader(@NotNull SequentialReader payload, long end)
-        {
-            _payload = payload;
-            _end = end;
-            setMotorolaByteOrder(payload.isMotorolaByteOrder());
-        }
-
-        private void require(long count) throws IOException
-        {
-            if (count < 0)
-                throw new IllegalArgumentException("count must be zero or greater.");
-            if (count > _end - _payload.getPosition())
-                throw new EOFException("Read of " + count + " bytes passes the end of the image data");
-        }
-
-        @Override
-        public long getPosition() throws IOException
-        {
-            return _payload.getPosition();
-        }
-
-        @Override
-        public byte getByte() throws IOException
-        {
-            require(1);
-            return _payload.getByte();
-        }
-
-        @NotNull
-        @Override
-        public byte[] getBytes(int count) throws IOException
-        {
-            require(count);
-            return _payload.getBytes(count);
-        }
-
-        @Override
-        public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
-        {
-            require(count);
-            _payload.getBytes(buffer, offset, count);
-        }
-
-        @Override
-        public void skip(long n) throws IOException
-        {
-            require(n);
-            _payload.skip(n);
-        }
-
-        @Override
-        public boolean trySkip(long n) throws IOException
-        {
-            if (n < 0)
-                throw new IllegalArgumentException("n must be zero or greater.");
-            long remaining = _end - _payload.getPosition();
-            return _payload.trySkip(Math.min(n, remaining)) && n <= remaining;
-        }
-
-        @Override
-        public int available()
-        {
-            try {
-                return (int) Math.min(_payload.available(), _end - _payload.getPosition());
-            } catch (IOException e) {
-                return 0;
-            }
-        }
     }
 }

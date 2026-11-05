@@ -177,6 +177,17 @@ public final class IsoBoxContext
         return _payload;
     }
 
+    /**
+     * A reader over the next {@code length} bytes of the payload, such as a record's image data.
+     * Reading it advances the payload; reads past its end fail.
+     */
+    @NotNull
+    public SequentialReader slice(long length) throws IOException
+    {
+        SequentialReader payload = payload();
+        return new BoundedSequentialReader(payload, payload.getPosition() + length, box());
+    }
+
     /** The rest of the payload as an array. */
     @NotNull
     public byte[] payloadBytes() throws IOException
