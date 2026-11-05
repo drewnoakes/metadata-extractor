@@ -73,6 +73,43 @@ public class IsoStandardLayoutTest
         assertTrue(errors.toString(), errors.isEmpty());
     }
 
+    @Test
+    public void testTheLayoutReadsOnlyWhereTheWalkGoesAnyway() throws Exception
+    {
+        final List<String> layoutReads = new ArrayList<String>();
+        IsoStandardLayout layout = new IsoStandardLayout()
+        {
+            @Override
+            public void readBox(@NotNull IsoBoxContext box) throws IOException
+            {
+                layoutReads.add(box.path());
+                super.readBox(box);
+            }
+        };
+        IsoBoxReader stsd = IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box)
+            {
+            }
+        }, "moov/trak/mdia/minf/stbl/stsd");
+        IsoBoxReader ftyp = IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box)
+            {
+            }
+        }, "ftyp");
+        byte[] file = join(box("ftyp", ascii("isom")), box("moov", trak("vide", box("stsd", new byte[4], int32(0)))));
+
+        List<String> errors = new ArrayList<String>();
+        new IsoBoxReaders(layout, Collections.singletonList(ftyp)).read(new ByteArrayInputStream(file), IsoBoxContext.root(new Metadata(), collect(errors)));
+        assertTrue(layoutReads.isEmpty());
+        new IsoBoxReaders(layout, Arrays.asList(ftyp, stsd)).read(new ByteArrayInputStream(file), IsoBoxContext.root(new Metadata(), collect(errors)));
+        assertEquals(Collections.singletonList("moov/trak/mdia/hdlr"), layoutReads);
+        assertTrue(errors.toString(), errors.isEmpty());
+    }
+
     private static byte[] trak(String handler, byte[] stsd)
     {
         byte[] hdlr = box("hdlr", new byte[8], ascii(handler), new byte[13]);

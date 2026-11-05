@@ -104,10 +104,10 @@ public final class IsoBoxReaders
     {
         _layout = layout;
         _maxBufferedPayload = maxBufferedPayload;
-        if (layout instanceof IsoBoxReader)
-            register((IsoBoxReader) layout);
         for (IsoBoxReader reader : readers)
             register(reader);
+        if (layout instanceof IsoBoxReader)
+            registerLayout((IsoBoxReader) layout);
     }
 
     private void register(IsoBoxReader reader)
@@ -248,6 +248,26 @@ public final class IsoBoxReaders
         return next;
     }
 
+    /**
+     * Registers the layout's paths that lie in containers the walk enters for the other
+     * readers, ahead of those readers.
+     */
+    private void registerLayout(IsoBoxReader layout)
+    {
+        _order.add(0, layout);
+        for (String path : layout.getBoxPaths()) {
+            String[] segments = path.split("/");
+            Node node = _root;
+            for (int i = 0; i < segments.length - 1 && node != null; i++)
+                node = node.existing(segments[i]);
+            if (node == null)
+                continue;
+            Node last = node.child(segments[segments.length - 1]);
+            if (!last.readers.contains(layout))
+                last.readers.add(0, layout);
+        }
+    }
+
     /** The readers of the boxes at {@code nodes}, in {@link #_order}. */
     private List<IsoBoxReader> readers(List<Node> nodes)
     {
@@ -305,6 +325,23 @@ public final class IsoBoxReaders
                 _children[_children.length - 1] = node;
             }
             return node;
+        }
+
+        /** The node for {@code segment} if a path was registered through it, else null. */
+        @Nullable
+        Node existing(String segment)
+        {
+            if (segment.equals("*"))
+                return wildcard;
+            if (segment.startsWith("uuid:")) {
+                byte[] usertype = usertype(segment.substring(5));
+                for (int i = 0; i < usertypes.size(); i++) {
+                    if (Arrays.equals(usertypes.get(i), usertype))
+                        return uuidChildren.get(i);
+                }
+                return null;
+            }
+            return find(typeCode(segment));
         }
 
         @Nullable

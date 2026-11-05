@@ -30,9 +30,10 @@ import java.io.IOException;
  * ({@code meta}), an entry count ({@code stsd}) or the fixed fields of a sample entry, whose
  * size can depend on a version field or on the track's handler type.
  * <p>
- * A layout that also implements {@link IsoBoxReader} is always run, ahead of the readers
- * passed in, so it can record what later structure depends on (such as a track's handler
- * type) even if no other reader asks for that box.
+ * A layout that also implements {@link IsoBoxReader} runs ahead of the readers passed in, for
+ * its paths inside containers the walk enters for those readers, so it can record what later
+ * structure depends on (such as a track's handler type) even if no other reader asks for that
+ * box. It adds no descent of its own.
  */
 public interface IsoBoxLayout
 {
