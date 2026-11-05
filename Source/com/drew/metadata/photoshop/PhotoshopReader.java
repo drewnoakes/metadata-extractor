@@ -162,14 +162,10 @@ public class PhotoshopReader implements JpegSegmentMetadataReader
                             else
                                 tagBytes[i] = (byte)description.charAt(i - (tagBytes.length - description.length() - 1));
                         }
-                        PhotoshopDirectory._tagNameMap.put(0x07CF + clippingPathCount, "Path Info " + clippingPathCount);
                         directory.setByteArray(0x07CF + clippingPathCount, tagBytes);
                     }
                     else
                         directory.setByteArray(tagType, tagBytes);
-
-                    if (tagType >= 0x0fa0 && tagType <= 0x1387)
-                        PhotoshopDirectory._tagNameMap.put(tagType, String.format("Plug-in %d Data", tagType - 0x0fa0 + 1));
                 }
             } catch (Exception ex) {
                 directory.addError(ex.getMessage());
