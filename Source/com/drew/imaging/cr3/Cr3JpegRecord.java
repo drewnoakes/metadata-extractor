@@ -29,7 +29,9 @@ import java.io.IOException;
 
 /**
  * Reads the header of a {@code THMB} or {@code PRVW} record: the dimensions of its JPEG and,
- * when the JPEG fits inside the box and the input, where it lies. The JPEG is skipped.
+ * when the JPEG fits inside the box and the input, where it lies. The JPEG is skipped. A record
+ * without a usable JPEG does not replace an earlier one that has it, so the dimensions and the
+ * location always describe the same image.
  * <p>
  * Both records start the JPEG 16 bytes into the payload, after a header that holds the width,
  * height and JPEG length at record-specific positions.
@@ -45,20 +47,37 @@ final class Cr3JpegRecord
         throws IOException
     {
         payload.skip(dimensionsAt);
-        directory.setInt(widthTag, payload.getUInt16());
-        directory.setInt(heightTag, payload.getUInt16());
-        if (box.payloadSize != -1 && box.payloadSize < JPEG_START)
-            return;
-        payload.skip(lengthAt - dimensionsAt - 4);
-        long length = payload.getUInt32();
-        if (length == 0)
-            return;
-        if (box.payloadSize != -1 && length > box.payloadSize - JPEG_START) {
-            directory.addError(box.type + " JPEG length " + length + " exceeds its box");
+        int width = payload.getUInt16();
+        int height = payload.getUInt16();
+        boolean earlierLocated = directory.containsTag(offsetTag);
+        long length = 0;
+        if (box.payloadSize == -1 || box.payloadSize >= JPEG_START) {
+            payload.skip(lengthAt - dimensionsAt - 4);
+            length = payload.getUInt32();
+        }
+        boolean fits = length == 0 || box.payloadSize == -1 || length <= box.payloadSize - JPEG_START;
+        if (length == 0 || !fits) {
+            if (!fits)
+                directory.addError(box.type + " JPEG length " + length + " exceeds its box");
+            if (!earlierLocated)
+                setDimensions(directory, widthTag, width, heightTag, height);
             return;
         }
-        payload.skip(JPEG_START - lengthAt - 4 + length);
+        try {
+            payload.skip(JPEG_START - lengthAt - 4 + length);
+        } catch (IOException e) {
+            if (!earlierLocated)
+                setDimensions(directory, widthTag, width, heightTag, height);
+            throw e;
+        }
+        setDimensions(directory, widthTag, width, heightTag, height);
         directory.setLong(offsetTag, box.payloadOffset + JPEG_START);
         directory.setLong(lengthTag, length);
+    }
+
+    private static void setDimensions(@NotNull Cr3Directory directory, int widthTag, int width, int heightTag, int height)
+    {
+        directory.setInt(widthTag, width);
+        directory.setInt(heightTag, height);
     }
 }

@@ -214,6 +214,24 @@ public class Cr3MetadataReaderTest
         assertTrue(directory.hasErrors());
     }
 
+    @Test
+    public void testLaterRecordWithoutJpegKeepsTheEarlierOne() throws Exception
+    {
+        byte[] preview = new byte[100];
+        byte[] valid = box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+            box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview))));
+        byte[] invalid = box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+            box("PRVW", join(jpegRecordHeader(6, 12, 800, 600, preview.length + 1), preview))));
+        byte[] file = join(valid, invalid);
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertEquals(1080, directory.getInt(Cr3Directory.TAG_PREVIEW_HEIGHT));
+        assertArrayEquals(preview, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
+            directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
+        assertTrue(directory.hasErrors());
+    }
+
     private static byte[] jpegRecordHeader(int dimensionsAt, int lengthAt, int width, int height, int length)
     {
         return ByteBuffer.allocate(16)

@@ -25,6 +25,7 @@ import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -112,13 +113,13 @@ final class BoundedSequentialReader extends SequentialReader
     @NotNull
     private EOFException truncated(@NotNull EOFException e)
     {
-        return _end == -1 ? e : IsoBoxIterator.truncated(_box);
+        return _end == -1 ? new TruncatedInputException(String.valueOf(e.getMessage())) : IsoBoxIterator.truncated(_box);
     }
 
     private void require(long count) throws IOException
     {
         if (count > remaining())
-            throw new IOException("Read of " + count + " bytes passes the end of the box payload");
+            throw new EOFException("Read of " + count + " bytes passes the end of the box payload");
     }
 
     @Override
@@ -192,6 +193,8 @@ final class BoundedSequentialReader extends SequentialReader
     @Override
     public void skip(long n) throws IOException
     {
+        if (n < 0)
+            throw new IllegalArgumentException("n must be zero or greater.");
         require(n);
         SequentialReader source = source();
         if (_buffer != null) {
@@ -209,6 +212,8 @@ final class BoundedSequentialReader extends SequentialReader
     @Override
     public boolean trySkip(long n) throws IOException
     {
+        if (n < 0)
+            throw new IllegalArgumentException("n must be zero or greater.");
         long remaining = remaining();
         SequentialReader source = source();
         if (_buffer != null)
@@ -218,6 +223,25 @@ final class BoundedSequentialReader extends SequentialReader
             return false;
         }
         return IsoBoxIterator.skipVerified(source, n);
+    }
+
+    /** Grows its array as bytes arrive, so a large {@code maxLengthBytes} costs nothing up front. */
+    @Override
+    @NotNull
+    public byte[] getNullTerminatedBytes(int maxLengthBytes, boolean moveToMaxLength) throws IOException
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        int read = 0;
+        while (read < maxLengthBytes) {
+            byte value = getByte();
+            read++;
+            if (value == 0)
+                break;
+            bytes.write(value);
+        }
+        if (moveToMaxLength && read < maxLengthBytes)
+            skip(maxLengthBytes - read);
+        return bytes.toByteArray();
     }
 
     @Override

@@ -435,6 +435,84 @@ public class IsoBoxIteratorTest
     }
 
     @Test
+    public void testNullTerminatedReadDoesNotAllocateTheLimit() throws Exception
+    {
+        byte[] payload = new byte[20 * 1024];
+        payload[0] = 'a';
+        payload[1] = 'b';
+        IsoBoxIterator boxes = iterate(box("hdlr", payload));
+        boxes.next();
+        assertArrayEquals(new byte[] {'a', 'b'}, boxes.payload().getNullTerminatedBytes(Integer.MAX_VALUE - 16, false));
+        assertArrayEquals(new byte[0], boxes.payload().getNullTerminatedBytes(4, true));
+        assertNull(boxes.next());
+    }
+
+    @Test
+    public void testNegativeSkipsAreRejected() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(box("data", new byte[4]));
+        boxes.next();
+        try {
+            boxes.payload().skip(-1);
+            fail();
+        } catch (IllegalArgumentException expected) {
+        }
+        try {
+            boxes.payload().trySkip(-1);
+            fail();
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testIteratingAPayloadReaderEndsAtThePayloadEnd() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(join(box("moov", join(box("trak", new byte[1]), box("udta", new byte[2]))), box("free", new byte[0]), box("next", new byte[0])));
+        boxes.next();
+        IsoBoxIterator children = new IsoBoxIterator(boxes.payload(), -1);
+        assertEquals("trak", children.next().type);
+        assertEquals("udta", children.next().type);
+        assertNull(children.next());
+        boxes.next();
+        assertNull(new IsoBoxIterator(boxes.payload(), -1).next());
+        assertEquals("next", boxes.next().type);
+    }
+
+    @Test
+    public void testTruncatedInputIsToldApartFromAnOverrunPayload() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(join(box("full", new byte[2]), header(100, "part"), new byte[2]));
+        boxes.next();
+        boxes.payload().skip(2);
+        try {
+            boxes.payload().getByte();
+            fail();
+        } catch (EOFException e) {
+            assertFalse(e instanceof TruncatedInputException);
+        }
+        boxes.next();
+        boxes.payload().skip(2);
+        try {
+            boxes.payload().getByte();
+            fail();
+        } catch (TruncatedInputException expected) {
+        }
+    }
+
+    @Test
+    public void testInvalidByteArrayRangesAreRejected()
+    {
+        byte[] bytes = new byte[8];
+        for (int[] range : new int[][] {{-1, 8}, {4, 2}, {0, 9}, {0, -1}}) {
+            try {
+                new IsoBoxIterator(bytes, range[0], range[1]);
+                fail(Arrays.toString(range));
+            } catch (IllegalArgumentException expected) {
+            }
+        }
+    }
+
+    @Test
     public void testByteArrayRange() throws Exception
     {
         byte[] bytes = join(new byte[] {9, 9, 9}, box("data", new byte[] {1}), box("free", new byte[0]), new byte[] {9});

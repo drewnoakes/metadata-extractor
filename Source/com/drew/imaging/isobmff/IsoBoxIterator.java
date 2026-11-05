@@ -80,7 +80,14 @@ public final class IsoBoxIterator
      */
     public IsoBoxIterator(@NotNull byte[] bytes, int from, int to)
     {
-        this(new SequentialByteArrayReader(bytes, from), to, 0);
+        this(new SequentialByteArrayReader(bytes, checkRange(bytes, from, to)), to, 0);
+    }
+
+    private static int checkRange(@NotNull byte[] bytes, int from, int to)
+    {
+        if (from < 0 || from > to || to > bytes.length)
+            throw new IllegalArgumentException("Invalid range " + from + " to " + to + " of " + bytes.length + " bytes");
+        return from;
     }
 
     /**
@@ -146,7 +153,7 @@ public final class IsoBoxIterator
         } catch (EOFException e) {
             if (_end == -1 && _reader.getPosition() == start)
                 return null;
-            throw e;
+            throw new TruncatedInputException("Box header at " + start + " is cut off by the end of input");
         }
         if (box.payloadSize < 0 && box.size != -1)
             throw new IOException("Box payload size is negative for type: " + box.type);
@@ -220,7 +227,7 @@ public final class IsoBoxIterator
     @NotNull
     static EOFException truncated(@NotNull IsoBox box)
     {
-        return new EOFException("Box '" + box.type + "' declares " + box.payloadSize
+        return new TruncatedInputException("Box '" + box.type + "' declares " + box.payloadSize
             + " bytes of payload, but the input ends before that");
     }
 
