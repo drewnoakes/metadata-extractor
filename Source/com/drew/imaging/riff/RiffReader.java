@@ -40,6 +40,12 @@ import java.io.IOException;
 public class RiffReader
 {
     /**
+     * The maximum number of levels of nested RIFF lists to process. Real files nest only a few
+     * levels deep, so this limit is reached only by malformed files that would otherwise exhaust the stack.
+     */
+    private static final int MAX_RIFF_DEPTH = 100;
+
+    /**
      * Processes a RIFF data sequence.
      *
      * @param reader the {@link SequentialReader} from which the data should be read
@@ -78,8 +84,18 @@ public class RiffReader
 
     public void processChunks(SequentialReader reader, long maxPosition, RiffHandler handler) throws IOException
     {
+        processChunks(reader, maxPosition, 0, handler);
+    }
+
+    private void processChunks(SequentialReader reader, long maxPosition, int depth, RiffHandler handler) throws IOException
+    {
         // Processing chunks. Each chunk is 8 bytes header (4 bytes FourCC + 4 bytes size) + data
         try {
+            if (depth > MAX_RIFF_DEPTH) {
+                handler.addError("RIFF nesting too deep.");
+                reader.skip(maxPosition - reader.getPosition());
+                return;
+            }
             while (reader.getPosition() < maxPosition - 8) {
                 String fourCC = new String(reader.getBytes(4));
                 int size = reader.getInt32();
@@ -94,7 +110,7 @@ public class RiffReader
                     }
                     String listName = new String(reader.getBytes(4));
                     if (handler.shouldAcceptList(listName)) {
-                        processChunks(reader, reader.getPosition() + size - 4, handler);
+                        processChunks(reader, reader.getPosition() + size - 4, depth + 1, handler);
                     } else {
                         reader.skip(size - 4);
                     }
