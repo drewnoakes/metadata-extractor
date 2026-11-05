@@ -168,6 +168,52 @@ public class Cr3MetadataReaderTest
         assertTrue(directory.hasErrors());
     }
 
+    @Test
+    public void testMalformedFileTypeKeepsLaterBoxes() throws Exception
+    {
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
+            box("ftyp", new byte[] {1, 2}),
+            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+                box("PRVW", jpegRecordHeader(6, 12, 1620, 1080, 0)))))));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertTrue(directory.hasErrors());
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+    }
+
+    @Test
+    public void testPreviewToEndOfInput() throws Exception
+    {
+        byte[] preview = {(byte) 0xff, (byte) 0xd8, 1, 2, (byte) 0xff, (byte) 0xd9};
+        byte[] file = join(new byte[] {0, 0, 0, 0}, ascii("uuid"), Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+            new byte[] {0, 0, 0, 0}, ascii("PRVW"), jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview);
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertFalse(metadata.hasErrors());
+        assertArrayEquals(preview, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
+            directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
+    }
+
+    @Test
+    public void testTruncatedJpegGetsNoLocation() throws Exception
+    {
+        byte[] preview = new byte[100];
+        byte[] file = box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+            box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview))));
+        byte[] truncated = java.util.Arrays.copyOf(file, file.length - 10);
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(truncated) {
+            @Override
+            public synchronized long skip(long n)
+            {
+                super.skip(n);
+                return n;
+            }
+        });
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_OFFSET));
+        assertTrue(directory.hasErrors());
+    }
+
     private static byte[] jpegRecordHeader(int dimensionsAt, int lengthAt, int width, int height, int length)
     {
         return ByteBuffer.allocate(16)

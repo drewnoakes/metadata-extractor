@@ -30,7 +30,6 @@ import com.drew.metadata.cr3.Cr3ContainerTypes;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.xmp.XmpReader;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -106,8 +105,6 @@ class Cr3Handler
                     } else if (box.usertypeMatches(UUID_CANON_PREVIEW)) {
                         new Cr3PreviewUuidHandler(directory).process(boxes);
                     }
-                } catch (EOFException e) {
-                    throw e;
                 } catch (IOException e) {
                     directory.addError("Error reading box '" + box.type + "': " + e.getMessage());
                 }

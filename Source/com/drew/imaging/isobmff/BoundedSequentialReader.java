@@ -29,9 +29,8 @@ import java.util.Arrays;
 
 /**
  * A view of another reader that ends at a box's payload end. Positions are those of the
- * underlying reader. A payload the input reports as available is read in one piece; otherwise
- * it is read in chunks, so a size that claims more than the input holds costs no more memory
- * than the input provides.
+ * underlying reader. Large reads grow their array in chunks, so a size that claims more than
+ * the input holds costs no more memory than the input provides.
  */
 final class BoundedSequentialReader extends SequentialReader
 {
@@ -92,7 +91,7 @@ final class BoundedSequentialReader extends SequentialReader
     {
         require(count);
         try {
-            if (count <= CHUNK || _reader.available() >= count)
+            if (count <= CHUNK)
                 return _reader.getBytes(count);
             byte[] bytes = new byte[CHUNK];
             int read = 0;
@@ -124,11 +123,8 @@ final class BoundedSequentialReader extends SequentialReader
     public void skip(long n) throws IOException
     {
         require(n);
-        try {
-            _reader.skip(n);
-        } catch (EOFException e) {
-            throw truncated(e);
-        }
+        if (!IsoBoxIterator.skipVerified(_reader, n))
+            throw truncated(new EOFException("Unable to skip " + n + " bytes"));
     }
 
     @Override
@@ -136,10 +132,10 @@ final class BoundedSequentialReader extends SequentialReader
     {
         long remaining = remaining();
         if (n > remaining) {
-            _reader.trySkip(remaining);
+            IsoBoxIterator.skipVerified(_reader, remaining);
             return false;
         }
-        return _reader.trySkip(n);
+        return IsoBoxIterator.skipVerified(_reader, n);
     }
 
     @Override

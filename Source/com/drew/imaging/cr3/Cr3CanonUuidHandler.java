@@ -37,7 +37,6 @@ import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -93,8 +92,6 @@ class Cr3CanonUuidHandler
                             Cr3Directory.TAG_THUMBNAIL_WIDTH, Cr3Directory.TAG_THUMBNAIL_HEIGHT,
                             Cr3Directory.TAG_THUMBNAIL_OFFSET, Cr3Directory.TAG_THUMBNAIL_LENGTH);
                     }
-                } catch (EOFException e) {
-                    throw e;
                 } catch (IOException e) {
                     directory.addError("Error reading box '" + t + "': " + e.getMessage());
                 }

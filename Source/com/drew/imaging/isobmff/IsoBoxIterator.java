@@ -85,11 +85,12 @@ public final class IsoBoxIterator
 
     /**
      * Iterates the boxes from the current position of {@code reader} up to the absolute
-     * position {@code end}, or to the end of input when {@code end == -1}.
+     * position {@code end}, or to the end of input when {@code end == -1}. The reader is
+     * switched to Motorola (big-endian) byte order.
      */
     public IsoBoxIterator(@NotNull SequentialReader reader, long end)
     {
-        this(reader, end, 0);
+        this(motorola(reader), end, 0);
     }
 
     private IsoBoxIterator(@NotNull SequentialReader reader, long end, int depth)
@@ -106,7 +107,8 @@ public final class IsoBoxIterator
     }
 
     /**
-     * Moves to the next box, skipping what is left of the current one.
+     * Moves to the next box, skipping what is left of the current one. A box that extends to
+     * the end of input ends the sequence and is not skipped.
      *
      * @return the next box, or {@code null} at the end of the sequence
      * @throws IOException if a box header is truncated or invalid, or the input fails
@@ -127,11 +129,8 @@ public final class IsoBoxIterator
             long remaining = _payloadEnd - _reader.getPosition();
             if (remaining > 0) {
                 _done = true;
-                try {
-                    _reader.skip(remaining);
-                } catch (EOFException e) {
+                if (!skipVerified(_reader, remaining))
                     throw truncated(previous);
-                }
                 _done = false;
             }
         }
@@ -215,6 +214,24 @@ public final class IsoBoxIterator
     {
         return new EOFException("Box '" + box.type + "' declares " + box.payloadSize
             + " bytes of payload, but the input ends before that");
+    }
+
+    /**
+     * Skips {@code n} bytes and reads the last of them, because some streams (such as
+     * {@code FileInputStream}) report skips past the end of input as successful.
+     */
+    static boolean skipVerified(@NotNull SequentialReader reader, long n) throws IOException
+    {
+        if (n <= 0)
+            return true;
+        if (!reader.trySkip(n - 1))
+            return false;
+        try {
+            reader.getByte();
+            return true;
+        } catch (EOFException e) {
+            return false;
+        }
     }
 
     @NotNull

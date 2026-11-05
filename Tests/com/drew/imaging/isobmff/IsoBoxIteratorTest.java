@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.isobmff;
 
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.SequentialReader;
 import org.junit.Test;
 
@@ -342,6 +343,43 @@ public class IsoBoxIteratorTest
     }
 
     @Test
+    public void testSkipPastTheEndOfInputIsDetected() throws Exception
+    {
+        IsoBoxIterator boxes = new IsoBoxIterator(new SkipPastEndStream(join(header(1000, "mdat"), new byte[] {1, 2})));
+        boxes.next();
+        try {
+            boxes.next();
+            fail();
+        } catch (EOFException e) {
+            assertEquals("Box 'mdat' declares 992 bytes of payload, but the input ends before that", e.getMessage());
+        }
+
+        boxes = new IsoBoxIterator(new SkipPastEndStream(join(header(1000, "mdat"), new byte[] {1, 2})));
+        boxes.next();
+        assertFalse(boxes.payload().trySkip(500));
+
+        boxes = new IsoBoxIterator(new SkipPastEndStream(join(header(1000, "mdat"), new byte[] {1, 2})));
+        boxes.next();
+        try {
+            boxes.payload().skip(500);
+            fail();
+        } catch (EOFException e) {
+            assertEquals("Box 'mdat' declares 992 bytes of payload, but the input ends before that", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testReaderIsSwitchedToBigEndian() throws Exception
+    {
+        byte[] bytes = box("data", new byte[] {1});
+        SequentialByteArrayReader reader = new SequentialByteArrayReader(bytes);
+        reader.setMotorolaByteOrder(false);
+        IsoBox box = new IsoBoxIterator(reader, bytes.length).next();
+        assertEquals("data", box.type);
+        assertEquals(9, box.size);
+    }
+
+    @Test
     public void testByteArrayRange() throws Exception
     {
         byte[] bytes = join(new byte[] {9, 9, 9}, box("data", new byte[] {1}), box("free", new byte[0]), new byte[] {9});
@@ -421,6 +459,22 @@ public class IsoBoxIteratorTest
      * Reads a box tree the way a format reader would: descends into {@code moov}, skips
      * {@code free}, fails on {@code fail} and collects every other payload.
      */
+    /** Reports skips past the end as successful, like {@code FileInputStream}. */
+    private static class SkipPastEndStream extends ByteArrayInputStream
+    {
+        SkipPastEndStream(byte[] bytes)
+        {
+            super(bytes);
+        }
+
+        @Override
+        public synchronized long skip(long n)
+        {
+            super.skip(n);
+            return n;
+        }
+    }
+
     private static class Boxes
     {
         final List<String> types = new ArrayList<String>();
