@@ -273,6 +273,26 @@ public class IsoBoxReadersTest
         assertEquals(Arrays.asList("r:moov/mvhd=1", "r:moov/mvhd=2"), reads);
     }
 
+    @Test
+    public void testAReaderCanTakeOnlyTheFirstChild() throws Exception
+    {
+        final List<String> taken = new ArrayList<String>();
+        IsoBoxReaders.Callback first = new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box) throws IOException
+            {
+                IsoBox child = box.children().next();
+                taken.add(child.type + "@" + child.offset);
+            }
+        };
+        byte[] file = join(box("free", new byte[4]), box("ilst", box("Anam", join(box("data", new byte[] {1}), box("data", new byte[] {2})))));
+        read(new IsoBoxReaders(PLAIN, Collections.singletonList(IsoBoxReaders.on(first, "ilst/*"))), file, new ArrayList<String>());
+        read(new IsoBoxReaders(PLAIN, Arrays.asList(IsoBoxReaders.on(first, "ilst/*"), IsoBoxReaders.on(first, "ilst/*"))), file, new ArrayList<String>());
+        // free (12) + ilst header (8) + Anam header (8)
+        assertEquals(Arrays.asList("data@28", "data@28", "data@28"), taken);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidPathsAreRejected()
     {

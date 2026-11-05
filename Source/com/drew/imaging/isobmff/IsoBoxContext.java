@@ -190,6 +190,22 @@ public final class IsoBoxContext
         return new BoundedSequentialReader(payload, start, start + length, box());
     }
 
+    /**
+     * The boxes inside the payload, from wherever reading has got to, for a reader that walks
+     * them itself (to take only the first child, for example). Their offsets are input offsets.
+     */
+    @NotNull
+    public IsoBoxIterator children() throws IOException
+    {
+        if (_iterator != null)
+            return _iterator.children();
+        if (_bytes != null) {
+            long offset = box().payloadOffset;
+            return new IsoBoxIterator(new OffsetByteArrayReader(_bytes, (int) payload().getPosition(), offset), offset + _bytes.length);
+        }
+        throw new IllegalStateException("No payload outside readBox or enterContainer");
+    }
+
     /** The rest of the payload as an array. */
     @NotNull
     public byte[] payloadBytes() throws IOException
