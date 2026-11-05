@@ -493,6 +493,7 @@ public class PngMetadataReader
                 @Override
                 public byte[] getBytes(int index, int count) throws IOException
                 {
+                    validateIndex(index, count);
                     if (count > 0)
                         consume(count);
                     return super.getBytes(index, count);
