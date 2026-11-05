@@ -39,7 +39,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -254,9 +256,9 @@ public class Cr3MetadataReaderTest
         readers.add(Cr3MetadataReader.previewReader(new Cr3MetadataReader.ImageCallback()
         {
             @Override
-            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data) throws IOException
+            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data, long length) throws IOException
             {
-                box.root().get(Previews.class).images.add(data.getBytes(data.available()));
+                box.root().get(Previews.class).images.add(data.getBytes((int) length));
                 try {
                     data.getByte();
                     fail();
@@ -284,6 +286,50 @@ public class Cr3MetadataReaderTest
         }
     }
 
+    /**
+     * The callback gets the whole image from a stream that hands out a byte at a time and
+     * reports nothing available, as a decompressing stream may.
+     */
+    @Test
+    public void testPreviewImageFromATricklingStream() throws Exception
+    {
+        byte[] image = new byte[40 * 1024];
+        for (int i = 0; i < image.length; i++)
+            image[i] = (byte) i;
+        byte[] file = join(box("ftyp", join(ascii("crx "), new byte[4])),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, image.length), image)))));
+        final List<byte[]> images = new ArrayList<byte[]>();
+        List<IsoBoxReader> readers = new ArrayList<IsoBoxReader>(Cr3MetadataReader.ALL_READERS);
+        readers.remove(Cr3MetadataReader.PREVIEW_READER);
+        readers.add(Cr3MetadataReader.previewReader(new Cr3MetadataReader.ImageCallback()
+        {
+            @Override
+            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data, long length) throws IOException
+            {
+                images.add(data.getBytes((int) length));
+            }
+        }));
+        InputStream trickle = new FilterInputStream(new ByteArrayInputStream(file))
+        {
+            @Override
+            public int read(byte[] buffer, int offset, int length) throws IOException
+            {
+                return super.read(buffer, offset, Math.min(length, 1));
+            }
+
+            @Override
+            public int available()
+            {
+                return 0;
+            }
+        };
+        Metadata metadata = Cr3MetadataReader.readMetadata(trickle, readers);
+        assertEquals(1, images.size());
+        assertArrayEquals(image, images.get(0));
+        assertFalse(metadata.hasErrors());
+    }
+
     /** A callback that reads nothing leaves the image data skipped and the location set. */
     @Test
     public void testUnreadPreviewImageIsSkipped() throws Exception
@@ -297,7 +343,7 @@ public class Cr3MetadataReaderTest
         readers.add(Cr3MetadataReader.previewReader(new Cr3MetadataReader.ImageCallback()
         {
             @Override
-            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data)
+            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data, long length)
             {
             }
         }));

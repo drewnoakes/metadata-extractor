@@ -91,7 +91,7 @@ final class Cr3ImageRecord
             payload.skip(IMAGE_START - _lengthAt - 4);
             long start = payload.getPosition();
             if (callback != null)
-                callback.image(context, context.slice(length));
+                callback.image(context, context.slice(length), length);
             long left = start + length - payload.getPosition();
             if (left > 0)
                 payload.skip(left);

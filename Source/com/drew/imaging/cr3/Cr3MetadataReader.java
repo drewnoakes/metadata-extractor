@@ -90,11 +90,12 @@ public class Cr3MetadataReader
     public interface ImageCallback
     {
         /**
-         * @param box   the record's box, with the file context for per-file state
-         * @param image the image data as stored (JPEG in the files seen so far), limited to its
-         *              length; whatever is not read is skipped
+         * @param box    the record's box, with the file context for per-file state
+         * @param image  the image data as stored (JPEG in the files seen so far), limited to its
+         *               length; whatever is not read is skipped
+         * @param length the length of the image data, as the record states it
          */
-        void image(@NotNull IsoBoxContext box, @NotNull SequentialReader image) throws IOException;
+        void image(@NotNull IsoBoxContext box, @NotNull SequentialReader image, long length) throws IOException;
     }
 
     /**
