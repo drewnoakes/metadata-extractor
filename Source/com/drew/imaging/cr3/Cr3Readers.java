@@ -89,6 +89,12 @@ final class Cr3Readers
         }
     };
 
+    static final String THUMBNAIL_PATH = CANON + "THMB";
+    static final String PREVIEW_PATH = UUID_CANON_PREVIEW + "/PRVW";
+
+    static final IsoBoxReader THUMBNAIL_READER = imageReader(Cr3ImageRecord.THUMBNAIL, THUMBNAIL_PATH, null);
+    static final IsoBoxReader PREVIEW_READER = imageReader(Cr3ImageRecord.PREVIEW, PREVIEW_PATH, null);
+
     static final List<IsoBoxReader> ALL_READERS = Collections.unmodifiableList(Arrays.asList(
         IsoBoxReaders.on(new IsoBoxReaders.Callback()
         {
@@ -114,16 +120,7 @@ final class Cr3Readers
                 directory(box).setString(Cr3Directory.TAG_COMPRESSOR_VERSION, new String(payload, 0, length));
             }
         }, CANON + "CNCV"),
-        IsoBoxReaders.on(new IsoBoxReaders.Callback()
-        {
-            @Override
-            public void read(@NotNull IsoBoxContext box) throws IOException
-            {
-                Cr3JpegRecord.read(box.box(), box.payload(), 4, 8, directory(box),
-                    Cr3Directory.TAG_THUMBNAIL_WIDTH, Cr3Directory.TAG_THUMBNAIL_HEIGHT,
-                    Cr3Directory.TAG_THUMBNAIL_OFFSET, Cr3Directory.TAG_THUMBNAIL_LENGTH);
-            }
-        }, CANON + "THMB"),
+        THUMBNAIL_READER,
         IsoBoxReaders.on(new IsoBoxReaders.Callback()
         {
             @Override
@@ -132,18 +129,23 @@ final class Cr3Readers
                 new XmpReader().extract(box.payloadBytes(), box.metadata());
             }
         }, UUID_CANON_XMP),
-        IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        PREVIEW_READER));
+
+    private Cr3Readers() {}
+
+    @NotNull
+    static IsoBoxReader imageReader(@NotNull final Cr3ImageRecord record, @NotNull String path,
+                                    @Nullable final Cr3MetadataReader.ImageCallback callback)
+    {
+        return IsoBoxReaders.on(new IsoBoxReaders.Callback()
         {
             @Override
             public void read(@NotNull IsoBoxContext box) throws IOException
             {
-                Cr3JpegRecord.read(box.box(), box.payload(), 6, 12, directory(box),
-                    Cr3Directory.TAG_PREVIEW_WIDTH, Cr3Directory.TAG_PREVIEW_HEIGHT,
-                    Cr3Directory.TAG_PREVIEW_OFFSET, Cr3Directory.TAG_PREVIEW_LENGTH);
+                record.read(box, directory(box), callback);
             }
-        }, UUID_CANON_PREVIEW + "/PRVW")));
-
-    private Cr3Readers() {}
+        }, path);
+    }
 
     @NotNull
     private static Cr3Directory directory(@NotNull IsoBoxContext box)

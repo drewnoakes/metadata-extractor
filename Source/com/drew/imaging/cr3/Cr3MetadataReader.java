@@ -24,6 +24,7 @@ import com.drew.imaging.isobmff.IsoBoxContext;
 import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.imaging.isobmff.IsoBoxReader;
 import com.drew.imaging.isobmff.IsoBoxReaders;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
@@ -73,6 +74,43 @@ public class Cr3MetadataReader
      * to {@link #readMetadata(InputStream, Iterable)} to read further boxes.
      */
     public static final List<IsoBoxReader> ALL_READERS = Cr3Readers.ALL_READERS;
+
+    /** The reader in {@link #ALL_READERS} for the thumbnail record ({@code THMB}): its dimensions and location. */
+    public static final IsoBoxReader THUMBNAIL_READER = Cr3Readers.THUMBNAIL_READER;
+
+    /** The reader in {@link #ALL_READERS} for the preview record ({@code PRVW}): its dimensions and location. */
+    public static final IsoBoxReader PREVIEW_READER = Cr3Readers.PREVIEW_READER;
+
+    /** Receives the image data of a thumbnail or preview record. */
+    public interface ImageCallback
+    {
+        /**
+         * @param box   the record's box, with the file context for per-file state
+         * @param image the image data as stored (JPEG in the files seen so far), limited to its
+         *              length; whatever is not read is skipped
+         */
+        void image(@NotNull IsoBoxContext box, @NotNull SequentialReader image) throws IOException;
+    }
+
+    /**
+     * A replacement for {@link #THUMBNAIL_READER} that also hands the image data to
+     * {@code callback}, in the same pass and without holding it.
+     */
+    @NotNull
+    public static IsoBoxReader thumbnailReader(@NotNull ImageCallback callback)
+    {
+        return Cr3Readers.imageReader(Cr3ImageRecord.THUMBNAIL, Cr3Readers.THUMBNAIL_PATH, callback);
+    }
+
+    /**
+     * A replacement for {@link #PREVIEW_READER} that also hands the image data to
+     * {@code callback}, in the same pass and without holding it.
+     */
+    @NotNull
+    public static IsoBoxReader previewReader(@NotNull ImageCallback callback)
+    {
+        return Cr3Readers.imageReader(Cr3ImageRecord.PREVIEW, Cr3Readers.PREVIEW_PATH, callback);
+    }
 
     private static final IsoBoxReaders DEFAULT_READERS = compile(ALL_READERS);
 
