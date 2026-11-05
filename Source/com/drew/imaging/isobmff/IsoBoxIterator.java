@@ -62,7 +62,7 @@ public final class IsoBoxIterator
     private IsoBox _box;
     private long _payloadEnd;
     @Nullable
-    private SequentialReader _payload;
+    private BoundedSequentialReader _payload;
     private boolean _done;
 
     /**
@@ -164,6 +164,9 @@ public final class IsoBoxIterator
     /**
      * A reader over the current box's payload, from wherever reading has got to. Reads past
      * the payload fail; a payload that extends to the end of input has no limit.
+     * <p>
+     * A payload of up to 16 KiB is read in one piece on the first read, so reading its fields
+     * costs no further calls on the input. Larger payloads are read as asked.
      */
     @NotNull
     public SequentialReader payload()
@@ -185,10 +188,14 @@ public final class IsoBoxIterator
     public byte[] payloadBytes() throws IOException
     {
         IsoBox box = current();
-        SequentialReader payload = payload();
+        payload();
+        BoundedSequentialReader payload = _payload;
         if (_payloadEnd == -1)
             return readToEnd(payload);
-        long remaining = _payloadEnd - _reader.getPosition();
+        byte[] untouched = payload.takeUntouched();
+        if (untouched != null)
+            return untouched;
+        long remaining = _payloadEnd - payload.getPosition();
         if (remaining > Integer.MAX_VALUE)
             throw new IOException("Box payload too large to read into memory: " + box.type);
         return payload.getBytes((int) remaining);
@@ -205,7 +212,8 @@ public final class IsoBoxIterator
         current();
         if (_depth >= MAX_DEPTH)
             throw new IOException("Maximum box nesting depth exceeded");
-        return new IsoBoxIterator(_reader, _payloadEnd, _depth + 1);
+        SequentialReader buffer = _payload == null ? null : _payload.buffer();
+        return new IsoBoxIterator(buffer != null ? buffer : _reader, _payloadEnd, _depth + 1);
     }
 
     /** The error for a payload that the input ends inside of. */

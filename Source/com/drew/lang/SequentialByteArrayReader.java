@@ -82,6 +82,15 @@ public class SequentialByteArrayReader extends SequentialReader
     }
 
     @Override
+    public int getBytesUpTo(@NotNull byte[] buffer, int offset, int count) throws IOException
+    {
+        int available = Math.max(0, Math.min(count, _bytes.length - _index));
+        System.arraycopy(_bytes, _index, buffer, offset, available);
+        _index += available;
+        return available;
+    }
+
+    @Override
     public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
     {
         if ((long)_index + count > _bytes.length) {

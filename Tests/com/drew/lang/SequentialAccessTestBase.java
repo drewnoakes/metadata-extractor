@@ -38,6 +38,18 @@ public abstract class SequentialAccessTestBase
     protected abstract SequentialReader createReader(byte[] bytes);
 
     @Test
+    public void testGetBytesUpTo() throws IOException
+    {
+        SequentialReader reader = createReader(new byte[] {1, 2, 3});
+        byte[] buffer = new byte[5];
+        assertEquals(2, reader.getBytesUpTo(buffer, 0, 2));
+        assertEquals(1, reader.getBytesUpTo(buffer, 2, 3));
+        assertEquals(0, reader.getBytesUpTo(buffer, 3, 2));
+        assertArrayEquals(new byte[] {1, 2, 3, 0, 0}, buffer);
+        assertEquals(3, reader.getPosition());
+    }
+
+    @Test
     public void testDefaultEndianness()
     {
         assertTrue(createReader(new byte[1]).isMotorolaByteOrder());

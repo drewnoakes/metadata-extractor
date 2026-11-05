@@ -67,6 +67,23 @@ public abstract class SequentialReader
     public abstract void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException;
 
     /**
+     * Reads up to {@code count} bytes into {@code buffer}, fewer only where the input ends.
+     *
+     * @return the number of bytes read
+     */
+    public int getBytesUpTo(@NotNull byte[] buffer, int offset, int count) throws IOException
+    {
+        for (int i = 0; i < count; i++) {
+            try {
+                buffer[offset + i] = getByte();
+            } catch (EOFException e) {
+                return i;
+            }
+        }
+        return count;
+    }
+
+    /**
      * Skips forward in the sequence. If the sequence ends, an {@link EOFException} is thrown.
      *
      * @param n the number of byte to skip. Must be zero or greater.

@@ -73,9 +73,12 @@ public final class IsoBox
         requireBytes(reader, containerEnd, 8);
         int headerSize = 8; // minimum: 4 (size field) + 4 (type field)
 
-        long rawSize = reader.getUInt32();
-        this.type = reader.getString(4, Charsets.ISO_8859_1);
-        this.typeCode = (type.charAt(0) << 24) | (type.charAt(1) << 16) | (type.charAt(2) << 8) | type.charAt(3);
+        byte first = reader.getByte();
+        byte[] header = new byte[7];
+        reader.getBytes(header, 0, 7);
+        long rawSize = (((first & 0xFFL) << 24) | ((header[0] & 0xFF) << 16) | ((header[1] & 0xFF) << 8) | (header[2] & 0xFF));
+        this.typeCode = ((header[3] & 0xFF) << 24) | ((header[4] & 0xFF) << 16) | ((header[5] & 0xFF) << 8) | (header[6] & 0xFF);
+        this.type = new String(header, 3, 4, Charsets.ISO_8859_1);
 
         long resolvedSize;
         if (rawSize == 1) {

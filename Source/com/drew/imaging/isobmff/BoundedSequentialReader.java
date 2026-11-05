@@ -21,7 +21,9 @@
 package com.drew.imaging.isobmff;
 
 import com.drew.lang.SequentialReader;
+import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -29,11 +31,17 @@ import java.util.Arrays;
 
 /**
  * A view of another reader that ends at a box's payload end. Positions are those of the
- * underlying reader. Large reads grow their array in chunks, so a size that claims more than
- * the input holds costs no more memory than the input provides.
+ * underlying reader.
+ * <p>
+ * A payload of up to {@value #SMALL_PAYLOAD} bytes is read in one piece on first access, so
+ * reading its fields costs array accesses instead of calls on the input. If the input ends
+ * inside it, what is there stays readable and reads beyond it report the truncation. Larger payloads are
+ * read from the input as asked; large reads grow their array in chunks, so a size that claims
+ * more than the input holds costs no more memory than the input provides.
  */
 final class BoundedSequentialReader extends SequentialReader
 {
+    static final int SMALL_PAYLOAD = 16 * 1024;
     private static final int CHUNK = 64 * 1024;
 
     @NotNull
@@ -41,6 +49,12 @@ final class BoundedSequentialReader extends SequentialReader
     private final long _end;
     @NotNull
     private final IsoBox _box;
+    @Nullable
+    private SequentialByteArrayReader _buffer;
+    private long _bufferStart;
+    @Nullable
+    private byte[] _bufferArray;
+    private boolean _decided;
 
     BoundedSequentialReader(@NotNull SequentialReader reader, long end, @NotNull IsoBox box)
     {
@@ -50,9 +64,48 @@ final class BoundedSequentialReader extends SequentialReader
         setMotorolaByteOrder(reader.isMotorolaByteOrder());
     }
 
+    /**
+     * The rest of a payload that was read in one piece and not yet touched, without copying it,
+     * or {@code null}. Consumes it.
+     */
+    @Nullable
+    byte[] takeUntouched() throws IOException
+    {
+        source();
+        if (_buffer == null || _buffer.getPosition() != _bufferStart || _bufferArray.length != _end - _bufferStart)
+            return null;
+        _buffer.skip(_bufferArray.length);
+        return _bufferArray;
+    }
+
+    /** The in-memory payload once read, positioned where reading has got to, or {@code null}. */
+    @Nullable
+    SequentialByteArrayReader buffer()
+    {
+        return _buffer;
+    }
+
+    private SequentialReader source() throws IOException
+    {
+        if (!_decided) {
+            _decided = true;
+            long remaining = remaining();
+            if (_end != -1 && remaining > 0 && remaining <= SMALL_PAYLOAD
+                && !(_reader instanceof SequentialByteArrayReader)) {
+                _bufferStart = _reader.getPosition();
+                byte[] bytes = new byte[(int) remaining];
+                int read = _reader.getBytesUpTo(bytes, 0, bytes.length);
+                _bufferArray = read == bytes.length ? bytes : Arrays.copyOf(bytes, read);
+                _buffer = new OffsetByteArrayReader(_bufferArray, 0, _bufferStart);
+                _buffer.setMotorolaByteOrder(isMotorolaByteOrder());
+            }
+        }
+        return _buffer != null ? _buffer : _reader;
+    }
+
     private long remaining() throws IOException
     {
-        return _end == -1 ? Long.MAX_VALUE : _end - _reader.getPosition();
+        return _end == -1 ? Long.MAX_VALUE : _end - getPosition();
     }
 
     /** End of input inside a payload of declared size is reported with the box it cuts off. */
@@ -71,15 +124,31 @@ final class BoundedSequentialReader extends SequentialReader
     @Override
     public long getPosition() throws IOException
     {
-        return _reader.getPosition();
+        return _buffer != null ? _buffer.getPosition() : _reader.getPosition();
+    }
+
+    @Override
+    public void setMotorolaByteOrder(boolean motorolaByteOrder)
+    {
+        super.setMotorolaByteOrder(motorolaByteOrder);
+        if (_buffer != null)
+            _buffer.setMotorolaByteOrder(motorolaByteOrder);
     }
 
     @Override
     public byte getByte() throws IOException
     {
+        if (_buffer != null) {
+            try {
+                return _buffer.getByte();
+            } catch (EOFException e) {
+                require(1);
+                throw truncated(e);
+            }
+        }
         require(1);
         try {
-            return _reader.getByte();
+            return source().getByte();
         } catch (EOFException e) {
             throw truncated(e);
         }
@@ -90,16 +159,17 @@ final class BoundedSequentialReader extends SequentialReader
     public byte[] getBytes(int count) throws IOException
     {
         require(count);
+        SequentialReader source = source();
         try {
-            if (count <= CHUNK)
-                return _reader.getBytes(count);
+            if (count <= CHUNK || _buffer != null)
+                return source.getBytes(count);
             byte[] bytes = new byte[CHUNK];
             int read = 0;
             while (read < count) {
                 if (read == bytes.length)
                     bytes = Arrays.copyOf(bytes, (int) Math.min(count, 2L * bytes.length));
                 int n = bytes.length - read;
-                _reader.getBytes(bytes, read, n);
+                source.getBytes(bytes, read, n);
                 read += n;
             }
             return bytes;
@@ -113,7 +183,7 @@ final class BoundedSequentialReader extends SequentialReader
     {
         require(count);
         try {
-            _reader.getBytes(buffer, offset, count);
+            source().getBytes(buffer, offset, count);
         } catch (EOFException e) {
             throw truncated(e);
         }
@@ -123,7 +193,16 @@ final class BoundedSequentialReader extends SequentialReader
     public void skip(long n) throws IOException
     {
         require(n);
-        if (!IsoBoxIterator.skipVerified(_reader, n))
+        SequentialReader source = source();
+        if (_buffer != null) {
+            try {
+                source.skip(n);
+            } catch (EOFException e) {
+                throw truncated(e);
+            }
+            return;
+        }
+        if (!IsoBoxIterator.skipVerified(source, n))
             throw truncated(new EOFException("Unable to skip " + n + " bytes"));
     }
 
@@ -131,18 +210,21 @@ final class BoundedSequentialReader extends SequentialReader
     public boolean trySkip(long n) throws IOException
     {
         long remaining = remaining();
+        SequentialReader source = source();
+        if (_buffer != null)
+            return source.trySkip(Math.min(n, remaining)) && n <= remaining;
         if (n > remaining) {
-            IsoBoxIterator.skipVerified(_reader, remaining);
+            IsoBoxIterator.skipVerified(source, remaining);
             return false;
         }
-        return IsoBoxIterator.skipVerified(_reader, n);
+        return IsoBoxIterator.skipVerified(source, n);
     }
 
     @Override
     public int available()
     {
         try {
-            return (int) Math.min(_reader.available(), remaining());
+            return (int) Math.min(_buffer != null ? _buffer.available() : _reader.available(), remaining());
         } catch (IOException e) {
             return 0;
         }

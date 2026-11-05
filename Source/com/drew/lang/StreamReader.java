@@ -79,6 +79,20 @@ public class StreamReader extends SequentialReader
     }
 
     @Override
+    public int getBytesUpTo(@NotNull byte[] buffer, int offset, int count) throws IOException
+    {
+        int totalBytesRead = 0;
+        while (totalBytesRead != count) {
+            final int bytesRead = _stream.read(buffer, offset + totalBytesRead, count - totalBytesRead);
+            if (bytesRead == -1)
+                break;
+            totalBytesRead += bytesRead;
+        }
+        _pos += totalBytesRead;
+        return totalBytesRead;
+    }
+
+    @Override
     public void getBytes(@NotNull byte[] buffer, int offset, int count) throws IOException
     {
         int totalBytesRead = 0;

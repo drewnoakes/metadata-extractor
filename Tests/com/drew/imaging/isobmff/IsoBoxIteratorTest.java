@@ -380,6 +380,61 @@ public class IsoBoxIteratorTest
     }
 
     @Test
+    public void testSmallPayloadIsReadInOnePiece() throws Exception
+    {
+        CountingStream in = new CountingStream(join(box("data", new byte[100]), box("next", new byte[1])));
+        IsoBoxIterator boxes = new IsoBoxIterator(in);
+        boxes.next();
+        int before = in.reads;
+        SequentialReader payload = boxes.payload();
+        payload.getUInt32();
+        payload.skip(10);
+        payload.getUInt32();
+        payload.getBytes(20);
+        assertEquals(before + 1, in.reads);
+        assertEquals("next", boxes.next().type);
+    }
+
+    @Test
+    public void testTruncatedSmallPayloadStaysReadable() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(join(header(108, "data"), new byte[] {0, 0, 0, 7, 1}));
+        boxes.next();
+        assertEquals(7, boxes.payload().getUInt32());
+        try {
+            boxes.payload().getUInt32();
+            fail();
+        } catch (EOFException e) {
+            assertEquals("Box 'data' declares 100 bytes of payload, but the input ends before that", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testChildrenOfAReadPayloadKeepInputOffsets() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(join(box("free", new byte[3]), box("meta", join(new byte[4], box("hdlr", new byte[] {5, 6})))));
+        boxes.next();
+        boxes.next();
+        boxes.payload().skip(4);
+        IsoBoxIterator children = boxes.children();
+        IsoBox hdlr = children.next();
+        assertEquals(11 + 8 + 4, hdlr.offset);
+        assertEquals(hdlr.offset + 8, hdlr.payloadOffset);
+        assertArrayEquals(new byte[] {5, 6}, children.payloadBytes());
+        assertNull(children.next());
+        assertNull(boxes.next());
+    }
+
+    @Test
+    public void testPayloadBytesAfterAPartialRead() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(box("data", new byte[] {1, 2, 3, 4}));
+        boxes.next();
+        assertEquals(1, boxes.payload().getByte());
+        assertArrayEquals(new byte[] {2, 3, 4}, boxes.payloadBytes());
+    }
+
+    @Test
     public void testByteArrayRange() throws Exception
     {
         byte[] bytes = join(new byte[] {9, 9, 9}, box("data", new byte[] {1}), box("free", new byte[0]), new byte[] {9});
@@ -459,6 +514,30 @@ public class IsoBoxIteratorTest
      * Reads a box tree the way a format reader would: descends into {@code moov}, skips
      * {@code free}, fails on {@code fail} and collects every other payload.
      */
+    private static class CountingStream extends ByteArrayInputStream
+    {
+        int reads;
+
+        CountingStream(byte[] bytes)
+        {
+            super(bytes);
+        }
+
+        @Override
+        public synchronized int read()
+        {
+            reads++;
+            return super.read();
+        }
+
+        @Override
+        public synchronized int read(byte[] b, int off, int len)
+        {
+            reads++;
+            return super.read(b, off, len);
+        }
+    }
+
     /** Reports skips past the end as successful, like {@code FileInputStream}. */
     private static class SkipPastEndStream extends ByteArrayInputStream
     {
