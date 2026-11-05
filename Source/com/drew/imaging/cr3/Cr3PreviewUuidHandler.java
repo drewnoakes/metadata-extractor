@@ -20,23 +20,32 @@
  */
 package com.drew.imaging.cr3;
 
-import com.drew.lang.SequentialByteArrayReader;
+import com.drew.imaging.isobmff.IsoBox;
+import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.cr3.Cr3BoxTypes;
 import com.drew.metadata.cr3.Cr3Directory;
 
 import java.io.IOException;
 
 /**
- * Parses the Canon preview UUID ({@code eaf42b5e-1c98-4b88-b9fb-b7dc406e4d16}).
+ * Reads the Canon preview UUID ({@code eaf42b5e-1c98-4b88-b9fb-b7dc406e4d16}): an 8-byte
+ * preamble followed by a {@code PRVW} box with the preview's dimensions and JPEG.
  * <p>
- * The UUID payload has an 8-byte preamble followed by a standard {@code PRVW} box.
- * Decodes the {@code PRVW} header to extract preview image dimensions and stores
- * them on {@link Cr3Directory}. The JPEG payload is discarded.
+ * PRVW payload layout (big-endian):
+ * <pre>
+ *   uint32 unknown/flags
+ *   uint16 unknown
+ *   uint16 width
+ *   uint16 height
+ *   uint16 unknown
+ *   uint32 jpeg_size
+ *   byte[] jpeg_data
+ * </pre>
  */
 class Cr3PreviewUuidHandler
 {
     private static final int PREAMBLE_SIZE = 8;
-    private static final int BOX_HEADER_SIZE = 8; // size(4) + type(4)
 
     private final Cr3Directory directory;
 
@@ -45,31 +54,18 @@ class Cr3PreviewUuidHandler
         this.directory = directory;
     }
 
-    /**
-     * Parses the full preview UUID payload, skipping the preamble and PRVW box
-     * header to reach the PRVW dimension fields.
-     * <p>
-     * PRVW payload layout (big-endian, after preamble + box header):
-     * <pre>
-     *   uint32 unknown/flags
-     *   uint16 unknown
-     *   uint16 width
-     *   uint16 height
-     *   ...
-     *   byte[] jpeg_data
-     * </pre>
-     */
-    void parsePayload(@NotNull byte[] uuidPayload)
+    /** Reads the preview UUID that is the current box of {@code boxes}. */
+    void process(@NotNull IsoBoxIterator boxes) throws IOException
     {
-        try {
-            SequentialByteArrayReader reader = new SequentialByteArrayReader(uuidPayload);
-            reader.skip(PREAMBLE_SIZE + BOX_HEADER_SIZE + 6); // preamble + PRVW box header + uint32 flags + uint16 unknown
-            int width  = reader.getUInt16();
-            int height = reader.getUInt16();
-            directory.setInt(Cr3Directory.TAG_PREVIEW_WIDTH, width);
-            directory.setInt(Cr3Directory.TAG_PREVIEW_HEIGHT, height);
-        } catch (IOException e) {
-            directory.addError("Error reading PRVW dimensions: " + e.getMessage());
+        boxes.payload().skip(PREAMBLE_SIZE);
+        IsoBoxIterator children = boxes.children();
+        for (IsoBox box = children.next(); box != null; box = children.next()) {
+            if (Cr3BoxTypes.BOX_PREVIEW.equals(box.type)) {
+                Cr3JpegRecord.read(box, children.payload(), 6, 12, directory,
+                    Cr3Directory.TAG_PREVIEW_WIDTH, Cr3Directory.TAG_PREVIEW_HEIGHT,
+                    Cr3Directory.TAG_PREVIEW_OFFSET, Cr3Directory.TAG_PREVIEW_LENGTH);
+                return;
+            }
         }
     }
 }

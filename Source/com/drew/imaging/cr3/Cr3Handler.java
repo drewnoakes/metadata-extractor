@@ -21,7 +21,7 @@
 package com.drew.imaging.cr3;
 
 import com.drew.imaging.isobmff.IsoBox;
-import com.drew.imaging.isobmff.IsoBoxVisitor;
+import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -30,17 +30,18 @@ import com.drew.metadata.cr3.Cr3ContainerTypes;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Root ISOBMFF visitor for Canon CR3 files.
+ * Reads the top-level box sequence of Canon CR3 files.
  * <p>
  * Handles the top-level box sequence ({@code ftyp}, {@code moov}, {@code uuid}).
  * Delegates Canon-metadata UUID content to {@link Cr3CanonUuidHandler} and
  * preview UUID content to {@link Cr3PreviewUuidHandler}.
  */
-class Cr3Handler extends IsoBoxVisitor
+class Cr3Handler
 {
     /**
      * Canon main-metadata UUID: {@code 85c0b687-820f-11e0-8111-f4ce462b6a48}.
@@ -84,46 +85,36 @@ class Cr3Handler extends IsoBoxVisitor
         this.directory = directory;
     }
 
-    @Override
-    protected boolean shouldRecurse(@NotNull IsoBox box)
+    /**
+     * Reads the boxes of {@code boxes}, descending into {@code moov} and the Canon
+     * main-metadata {@code uuid}. An unreadable box is reported and the walk continues
+     * with its next sibling.
+     */
+    void process(@NotNull IsoBoxIterator boxes)
     {
-        return Cr3ContainerTypes.BOX_MOVIE.equals(box.type)
-            || box.usertypeMatches(UUID_CANON_MAIN);
-    }
-
-    @Override
-    @NotNull
-    protected IsoBoxVisitor processContainer(@NotNull IsoBox box)
-    {
-        if (box.usertypeMatches(UUID_CANON_MAIN))
-            return new Cr3CanonUuidHandler(metadata, directory);
-        return this;
-    }
-
-    @Override
-    protected boolean shouldVisit(@NotNull IsoBox box)
-    {
-        return Cr3BoxTypes.BOX_FILE_TYPE.equals(box.type)
-            || box.usertypeMatches(UUID_CANON_XMP)
-            || box.usertypeMatches(UUID_CANON_PREVIEW);
-    }
-
-    @Override
-    protected void visit(@NotNull IsoBox box, @NotNull byte[] payload) throws IOException
-    {
-        if (Cr3BoxTypes.BOX_FILE_TYPE.equals(box.type)) {
-            processFtyp(payload);
-        } else if (box.usertypeMatches(UUID_CANON_XMP)) {
-            new XmpReader().extract(payload, metadata);
-        } else if (box.usertypeMatches(UUID_CANON_PREVIEW)) {
-            new Cr3PreviewUuidHandler(directory).parsePayload(payload);
+        try {
+            for (IsoBox box = boxes.next(); box != null; box = boxes.next()) {
+                try {
+                    if (Cr3ContainerTypes.BOX_MOVIE.equals(box.type)) {
+                        process(boxes.children());
+                    } else if (box.usertypeMatches(UUID_CANON_MAIN)) {
+                        new Cr3CanonUuidHandler(metadata, directory).process(boxes.children());
+                    } else if (Cr3BoxTypes.BOX_FILE_TYPE.equals(box.type)) {
+                        processFtyp(boxes.payloadBytes());
+                    } else if (box.usertypeMatches(UUID_CANON_XMP)) {
+                        new XmpReader().extract(boxes.payloadBytes(), metadata);
+                    } else if (box.usertypeMatches(UUID_CANON_PREVIEW)) {
+                        new Cr3PreviewUuidHandler(directory).process(boxes);
+                    }
+                } catch (EOFException e) {
+                    throw e;
+                } catch (IOException e) {
+                    directory.addError("Error reading box '" + box.type + "': " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            directory.addError(e.getMessage());
         }
-    }
-
-    @Override
-    public void addError(@NotNull String message)
-    {
-        directory.addError(message);
     }
 
     private void processFtyp(byte[] payload) throws IOException

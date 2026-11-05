@@ -20,7 +20,7 @@
  */
 package com.drew.imaging.cr3;
 
-import com.drew.imaging.isobmff.IsoBoxWalker;
+import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.cr3.Cr3Directory;
@@ -75,6 +75,6 @@ public class Cr3MetadataReader
     {
         Cr3Directory directory = new Cr3Directory();
         metadata.addDirectory(directory);
-        IsoBoxWalker.walk(inputStream, new Cr3Handler(metadata, directory));
+        new Cr3Handler(metadata, directory).process(new IsoBoxIterator(inputStream));
     }
 }

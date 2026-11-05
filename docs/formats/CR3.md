@@ -48,19 +48,23 @@ preview JPEG payloads are skipped rather than read into memory.
 
 ## Java implementation
 
-Java uses a dedicated reader in `Source/com/drew/imaging/cr3/`, the shared walker
-in `Source/com/drew/imaging/isobmff/`, and directories in
+Java uses a dedicated reader in `Source/com/drew/imaging/cr3/`, the shared box
+iterator in `Source/com/drew/imaging/isobmff/`, and directories in
 `Source/com/drew/metadata/cr3/`. `ImageMetadataReader` routes `FileType.Crx` to
 `Cr3MetadataReader`. File-type brands, compressor version, and thumbnail/preview
 dimensions are stored in `Cr3Directory`; Exif, Canon makernotes, GPS, and XMP
 remain in their corresponding metadata directories.
 
-`IsoBoxWalker` handles standard, large-size, EOF-terminated, and UUID boxes. It
+`IsoBoxIterator` handles standard, large-size, EOF-terminated, and UUID boxes. It
 limits nesting to 64 containers and buffered, unbounded EOF-terminated payloads
-to 16 MiB. Selected boxes with declared payloads larger than `Integer.MAX_VALUE`
-are skipped with an error. Selected payloads, including thumbnail and preview
-JPEG bytes, are buffered before their handlers decode metadata; the JPEG
-images are not returned to callers.
+to 16 MiB. It reads nothing of a payload unless asked: callers get a reader
+limited to the payload, a byte array that grows as data arrives (so a declared
+size larger than the input fails at end of input instead of being allocated),
+or an iterator over the payload's boxes, and whatever is left unread is skipped.
+Payloads larger than `Integer.MAX_VALUE` cannot be read into an array and are
+reported as errors. The CR3 reader reads only the `THMB` and `PRVW` headers,
+records where each JPEG lies when it fits inside its box, and skips the JPEG
+images.
 
 ## Verified implementation differences
 
@@ -68,8 +72,7 @@ images are not returned to callers.
 | --- | --- | --- |
 | File-type brands | Kept in `QuickTimeFileTypeDirectory` | Included in `Cr3Directory` |
 | CR3 tag identifiers | Compressor/dimension tags use identifiers 1-5 | Brands use 1-3; compressor/dimension tags use 4-8 |
-| Thumbnail/preview JPEG bytes | Skipped without buffering | Buffered with the selected box payload, then discarded |
-| `PRVW` decoding | Traverses child boxes and validates type, size, and dimension-header bounds; supports extended-size headers | Skips a fixed eight-byte child header without checking its type or declared size |
+| Thumbnail/preview location | Not exposed | `Cr3Directory` has offset (from the start of the input) and length tags for both JPEGs |
 | Compressor version | ASCII, terminated at the first NUL | Removes trailing NUL bytes and decodes using the default Java charset |
 
 The reader architectures and directory/tag layouts are intentional API

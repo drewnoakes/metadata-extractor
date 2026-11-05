@@ -20,7 +20,10 @@
  */
 package com.drew.metadata.heif.boxes;
 
+import com.drew.imaging.isobmff.IsoBox;
+import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -49,6 +52,15 @@ public class Box
             usertype = reader.getString(16);
             headerSize += 16;
         }
+    }
+
+    /** The header of a box read by {@link IsoBoxIterator}, for the box classes of this package. */
+    public Box(@NotNull IsoBox box)
+    {
+        this.size = box.size;
+        this.type = box.type;
+        this.usertype = box.usertype == null ? null : new String(box.usertype);
+        this.headerSize = (int) (box.payloadOffset - box.offset);
     }
 
     public Box(Box box)

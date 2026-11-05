@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.isobmff;
 
+import com.drew.lang.Charsets;
 import com.drew.lang.SequentialReader;
 
 import java.io.IOException;
@@ -38,25 +39,43 @@ import java.util.Arrays;
  */
 public final class IsoBox
 {
-    /** Total size of the box in bytes including the header, or -1 if the box extends to EOF. */
+    /**
+     * Total size of the box in bytes including the header. A box that extends to the end of
+     * its container has that size; one that extends to the end of input has -1.
+     */
     public final long size;
 
-    /** Four-character box type code. */
+    /**
+     * Four-character box type code, decoded as ISO-8859-1 so that each character is one byte
+     * of the header (QuickTime uses bytes such as 0xA9 in {@code \u00A9xyz}).
+     */
     public final String type;
+
+    /**
+     * The four type bytes as a big-endian integer, for structures that store a number in the
+     * type field (such as the key index of a QuickTime {@code ilst} entry).
+     */
+    public final int typeCode;
 
     /** 16-byte user-defined type for {@code uuid} boxes; {@code null} otherwise. */
     public final byte[] usertype;
 
-    /** Byte count of the payload (data after the full header). */
-    final long payloadSize;
+    /** Byte count of the payload (data after the full header), or -1 if the box extends to the end of input. */
+    public final long payloadSize;
+    /** Position of the box's first header byte, as reported by the reader that was walked. */
+    public final long offset;
+    /** Position of the box's first payload byte, as reported by the reader that was walked. */
+    public final long payloadOffset;
 
     IsoBox(SequentialReader reader, long containerEnd) throws IOException
     {
+        this.offset = reader.getPosition();
         requireBytes(reader, containerEnd, 8);
         int headerSize = 8; // minimum: 4 (size field) + 4 (type field)
 
         long rawSize = reader.getUInt32();
-        this.type = reader.getString(4);
+        this.type = reader.getString(4, Charsets.ISO_8859_1);
+        this.typeCode = (type.charAt(0) << 24) | (type.charAt(1) << 16) | (type.charAt(2) << 8) | type.charAt(3);
 
         long resolvedSize;
         if (rawSize == 1) {
@@ -66,7 +85,7 @@ public final class IsoBox
             if (resolvedSize < headerSize)
                 throw new IOException("Invalid large box size for type: " + type);
         } else if (rawSize == 0) {
-            resolvedSize = -1; // extends to EOF
+            resolvedSize = containerEnd == -1 ? -1 : containerEnd - offset;
         } else {
             resolvedSize = rawSize;
         }
@@ -83,6 +102,7 @@ public final class IsoBox
         }
 
         this.payloadSize = (resolvedSize == -1) ? -1 : resolvedSize - headerSize;
+        this.payloadOffset = offset + headerSize;
     }
 
     private static void requireBytes(SequentialReader reader, long containerEnd, int count) throws IOException

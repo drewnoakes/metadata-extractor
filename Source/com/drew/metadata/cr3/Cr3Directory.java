@@ -43,6 +43,12 @@ public class Cr3Directory extends Directory
     public static final int TAG_THUMBNAIL_HEIGHT         = 6;
     public static final int TAG_PREVIEW_WIDTH            = 7;
     public static final int TAG_PREVIEW_HEIGHT           = 8;
+    /** Position of the thumbnail JPEG's first byte, counted from the start of the input. */
+    public static final int TAG_THUMBNAIL_OFFSET         = 9;
+    public static final int TAG_THUMBNAIL_LENGTH         = 10;
+    /** Position of the preview JPEG's first byte, counted from the start of the input. */
+    public static final int TAG_PREVIEW_OFFSET           = 11;
+    public static final int TAG_PREVIEW_LENGTH           = 12;
 
     @NotNull
     private static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
@@ -56,6 +62,10 @@ public class Cr3Directory extends Directory
         _tagNameMap.put(TAG_THUMBNAIL_HEIGHT, "Thumbnail Height");
         _tagNameMap.put(TAG_PREVIEW_WIDTH, "Preview Width");
         _tagNameMap.put(TAG_PREVIEW_HEIGHT, "Preview Height");
+        _tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
+        _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
+        _tagNameMap.put(TAG_PREVIEW_OFFSET, "Preview Offset");
+        _tagNameMap.put(TAG_PREVIEW_LENGTH, "Preview Length");
     }
 
     public Cr3Directory()

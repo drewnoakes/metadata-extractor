@@ -110,6 +110,76 @@ public class Cr3MetadataReaderTest
         assertEquals("3", directory.getXmpProperties().get("xmp:Rating"));
     }
 
+    @Test
+    public void testPreviewJpegIsSkipped() throws Exception
+    {
+        byte[] jpeg = new byte[1024 * 1024];
+        byte[] preview = join(ByteBuffer.allocate(26)
+            .putLong(0).putInt(18 + jpeg.length).put(ascii("PRVW")).putInt(0).putShort((short)0)
+            .putShort((short)1620).putShort((short)1080).array(), jpeg);
+        byte[] xmp = ascii("<x:xmpmeta xmlns:x='adobe:ns:meta/'>"
+            + "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>"
+            + "<rdf:Description rdf:about='' xmlns:xmp='http://ns.adobe.com/xap/1.0/' xmp:Rating='3'/>"
+            + "</rdf:RDF></x:xmpmeta>");
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
+            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, preview)),
+            box("uuid", join(Cr3Handler.UUID_CANON_XMP, xmp)))));
+        assertFalse(metadata.hasErrors());
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertEquals(1080, directory.getInt(Cr3Directory.TAG_PREVIEW_HEIGHT));
+        assertEquals("3", metadata.getFirstDirectoryOfType(XmpDirectory.class).getXmpProperties().get("xmp:Rating"));
+    }
+
+    @Test
+    public void testJpegLocations() throws Exception
+    {
+        byte[] thumbnail = join(new byte[] {(byte) 0xFF, (byte) 0xD8}, new byte[30]);
+        byte[] preview = join(new byte[] {(byte) 0xFF, (byte) 0xD8}, new byte[100]);
+        byte[] file = join(
+            box("ftyp", join(ascii("crx "), new byte[4], ascii("crx isom"))),
+            box("moov", box("uuid", join(Cr3Handler.UUID_CANON_MAIN,
+                box("THMB", join(jpegRecordHeader(4, 8, 160, 120, thumbnail.length), thumbnail))))),
+            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview)))),
+            box("mdat", new byte[64]));
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
+        assertFalse(metadata.hasErrors());
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(160, directory.getInt(Cr3Directory.TAG_THUMBNAIL_WIDTH));
+        assertEquals(1080, directory.getInt(Cr3Directory.TAG_PREVIEW_HEIGHT));
+        assertArrayEquals(thumbnail, slice(file, directory.getLong(Cr3Directory.TAG_THUMBNAIL_OFFSET),
+            directory.getLong(Cr3Directory.TAG_THUMBNAIL_LENGTH)));
+        assertArrayEquals(preview, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
+            directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
+    }
+
+    @Test
+    public void testJpegLengthBeyondTheBox() throws Exception
+    {
+        byte[] preview = new byte[100];
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(
+            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length + 1), preview))))));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_OFFSET));
+        assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_LENGTH));
+        assertTrue(directory.hasErrors());
+    }
+
+    private static byte[] jpegRecordHeader(int dimensionsAt, int lengthAt, int width, int height, int length)
+    {
+        return ByteBuffer.allocate(16)
+            .putShort(dimensionsAt, (short) width).putShort(dimensionsAt + 2, (short) height)
+            .putInt(lengthAt, length).array();
+    }
+
+    private static byte[] slice(byte[] bytes, long offset, long length)
+    {
+        return java.util.Arrays.copyOfRange(bytes, (int) offset, (int) (offset + length));
+    }
+
     private static byte[] tiff(int tag, int value)
     {
         return ByteBuffer.allocate(26).order(ByteOrder.LITTLE_ENDIAN)

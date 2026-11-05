@@ -21,11 +21,10 @@
 package com.drew.imaging.cr3;
 
 import com.drew.imaging.isobmff.IsoBox;
-import com.drew.imaging.isobmff.IsoBoxVisitor;
+import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
@@ -38,10 +37,11 @@ import com.drew.metadata.exif.ExifTiffHandler;
 import com.drew.metadata.exif.GpsDirectory;
 import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 /**
- * Visits the sub-boxes of the Canon main metadata UUID
+ * Reads the sub-boxes of the Canon main metadata UUID
  * ({@code 85c0b687-820f-11e0-8111-f4ce462b6a48}) inside the {@code moov} container.
  * <p>
  * Decodes:
@@ -57,7 +57,7 @@ import java.io.IOException;
  * byte-order mark + 0x002A magic) and is decoded via the existing {@link ExifTiffHandler}
  * infrastructure to avoid duplicating any TIFF/IFD parsing logic.
  */
-class Cr3CanonUuidHandler extends IsoBoxVisitor
+class Cr3CanonUuidHandler
 {
     private final Metadata metadata;
     private final Cr3Directory directory;
@@ -68,54 +68,40 @@ class Cr3CanonUuidHandler extends IsoBoxVisitor
         this.directory = directory;
     }
 
-    @Override
-    protected boolean shouldRecurse(@NotNull IsoBox box)
+    /**
+     * Reads the CMT, CNCV and THMB boxes of {@code boxes}. An unreadable box is reported
+     * and the walk continues with its next sibling.
+     */
+    void process(@NotNull IsoBoxIterator boxes)
     {
-        return false; // no nested containers inside Canon main UUID
-    }
-
-    @Override
-    @NotNull
-    protected IsoBoxVisitor processContainer(@NotNull IsoBox box)
-    {
-        return this;
-    }
-
-    @Override
-    protected boolean shouldVisit(@NotNull IsoBox box)
-    {
-        String t = box.type;
-        return Cr3BoxTypes.BOX_CANON_TIFF_IFD0.equals(t)
-            || Cr3BoxTypes.BOX_CANON_TIFF_EXIF.equals(t)
-            || Cr3BoxTypes.BOX_CANON_TIFF_MAKERNOTE.equals(t)
-            || Cr3BoxTypes.BOX_CANON_TIFF_GPS.equals(t)
-            || Cr3BoxTypes.BOX_CANON_COMPRESSOR_VERSION.equals(t)
-            || Cr3BoxTypes.BOX_THUMBNAIL.equals(t);
-    }
-
-    @Override
-    protected void visit(@NotNull IsoBox box, @NotNull byte[] payload) throws IOException
-    {
-        String t = box.type;
-        if (Cr3BoxTypes.BOX_CANON_TIFF_IFD0.equals(t)) {
-            processTiff(payload, null /* standard ExifTiffHandler starts at IFD0 */);
-        } else if (Cr3BoxTypes.BOX_CANON_TIFF_EXIF.equals(t)) {
-            processTiff(payload, ExifSubIFDDirectory.class);
-        } else if (Cr3BoxTypes.BOX_CANON_TIFF_MAKERNOTE.equals(t)) {
-            processTiff(payload, CanonMakernoteDirectory.class);
-        } else if (Cr3BoxTypes.BOX_CANON_TIFF_GPS.equals(t)) {
-            processTiff(payload, GpsDirectory.class);
-        } else if (Cr3BoxTypes.BOX_CANON_COMPRESSOR_VERSION.equals(t)) {
-            processCompressorVersion(payload);
-        } else if (Cr3BoxTypes.BOX_THUMBNAIL.equals(t)) {
-            processThumbnail(payload);
+        try {
+            for (IsoBox box = boxes.next(); box != null; box = boxes.next()) {
+                String t = box.type;
+                try {
+                    if (Cr3BoxTypes.BOX_CANON_TIFF_IFD0.equals(t)) {
+                        processTiff(boxes.payloadBytes(), null /* standard ExifTiffHandler starts at IFD0 */);
+                    } else if (Cr3BoxTypes.BOX_CANON_TIFF_EXIF.equals(t)) {
+                        processTiff(boxes.payloadBytes(), ExifSubIFDDirectory.class);
+                    } else if (Cr3BoxTypes.BOX_CANON_TIFF_MAKERNOTE.equals(t)) {
+                        processTiff(boxes.payloadBytes(), CanonMakernoteDirectory.class);
+                    } else if (Cr3BoxTypes.BOX_CANON_TIFF_GPS.equals(t)) {
+                        processTiff(boxes.payloadBytes(), GpsDirectory.class);
+                    } else if (Cr3BoxTypes.BOX_CANON_COMPRESSOR_VERSION.equals(t)) {
+                        processCompressorVersion(boxes.payloadBytes());
+                    } else if (Cr3BoxTypes.BOX_THUMBNAIL.equals(t)) {
+                        Cr3JpegRecord.read(box, boxes.payload(), 4, 8, directory,
+                            Cr3Directory.TAG_THUMBNAIL_WIDTH, Cr3Directory.TAG_THUMBNAIL_HEIGHT,
+                            Cr3Directory.TAG_THUMBNAIL_OFFSET, Cr3Directory.TAG_THUMBNAIL_LENGTH);
+                    }
+                } catch (EOFException e) {
+                    throw e;
+                } catch (IOException e) {
+                    directory.addError("Error reading box '" + t + "': " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            directory.addError(e.getMessage());
         }
-    }
-
-    @Override
-    public void addError(@NotNull String message)
-    {
-        directory.addError(message);
     }
 
     /**
@@ -163,19 +149,6 @@ class Cr3CanonUuidHandler extends IsoBoxVisitor
      *   byte[] jpeg_data
      * </pre>
      */
-    private void processThumbnail(@NotNull byte[] payload)
-    {
-        try {
-            SequentialByteArrayReader reader = new SequentialByteArrayReader(payload);
-            reader.skip(4); // version/flags uint32
-            int width  = reader.getUInt16();
-            int height = reader.getUInt16();
-            directory.setInt(Cr3Directory.TAG_THUMBNAIL_WIDTH, width);
-            directory.setInt(Cr3Directory.TAG_THUMBNAIL_HEIGHT, height);
-        } catch (IOException e) {
-            directory.addError("Error reading THMB dimensions: " + e.getMessage());
-        }
-    }
 
     /**
      * An {@link ExifTiffHandler} variant that starts IFD processing at a caller-specified
