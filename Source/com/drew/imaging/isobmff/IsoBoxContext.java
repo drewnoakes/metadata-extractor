@@ -117,9 +117,9 @@ public final class IsoBoxContext
         return _box;
     }
 
-    /** The types from the top level down to this box, separated by {@code /}. */
+    /** The types from the top level down to this box, separated by {@code /}; for tests. */
     @NotNull
-    public String path()
+    String path()
     {
         if (_path == null)
             _path = _parent._parent == null ? _box.type : _parent.path() + "/" + _box.type;
