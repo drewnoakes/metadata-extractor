@@ -340,6 +340,44 @@ public abstract class SequentialAccessTestBase
     }
 
     @Test
+    public void testGetBytesNegativeCountThrows() throws Exception
+    {
+        try {
+            createReader(new byte[10]).getBytes(-1);
+            fail("Expecting exception");
+        } catch (BufferBoundsException ignored) {}
+
+        try {
+            createReader(new byte[10]).getBytes(new byte[10], 0, -1);
+            fail("Expecting exception");
+        } catch (BufferBoundsException ignored) {}
+    }
+
+    @Test
+    public void testGetBytesWithCountExceedingInputThrowsEOF() throws Exception
+    {
+        for (int count : new int[]{1000, 100_000, 100_000_000, Integer.MAX_VALUE}) {
+            try {
+                createReader(new byte[10]).getBytes(count);
+                fail("Expecting exception for count " + count);
+            } catch (EOFException ignored) {}
+        }
+    }
+
+    @Test
+    public void testGetBytesLargerThanInitialAllocation() throws IOException
+    {
+        byte[] bytes = new byte[200_000];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte)i;
+        }
+
+        SequentialReader reader = createReader(bytes);
+        assertArrayEquals(bytes, reader.getBytes(bytes.length));
+        assertEquals(bytes.length, reader.getPosition());
+    }
+
+    @Test
     public void testGetInt8EOF() throws Exception
     {
         createReader(new byte[1]).getInt8();
