@@ -25,6 +25,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.StringValue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -377,26 +378,29 @@ public abstract class SequentialReader
     @NotNull
     public byte[] getNullTerminatedBytes(int maxLengthBytes, boolean moveToMaxLength) throws IOException
     {
-        // Count the number of non-null bytes
-        int length = 0;
-        byte[] buffer;
+        if (maxLengthBytes < 0)
+            throw new NegativeArraySizeException();
 
-        if (moveToMaxLength) {
-            buffer = getBytes(maxLengthBytes);
-            while (length < buffer.length && buffer[length] != 0)
-                length++;
-        } else {
-            buffer = new byte[maxLengthBytes];
-            while (length < buffer.length && (buffer[length] = getByte()) != 0)
-                length++;
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        int remaining = maxLengthBytes;
+        while (remaining > 0) {
+            byte value = getByte();
+            remaining--;
+            if (value == 0)
+                break;
+            bytes.write(value);
         }
 
-        if (length == maxLengthBytes)
-            return buffer;
+        if (moveToMaxLength && remaining > 0) {
+            // Read rather than skip so truncated padding still raises IOException.
+            byte[] buffer = new byte[1024];
+            while (remaining > 0) {
+                int count = Math.min(remaining, buffer.length);
+                getBytes(buffer, 0, count);
+                remaining -= count;
+            }
+        }
 
-        byte[] bytes = new byte[length];
-        if (length > 0)
-            System.arraycopy(buffer, 0, bytes, 0, length);
-        return bytes;
+        return bytes.toByteArray();
     }
 }

@@ -225,6 +225,66 @@ public abstract class SequentialAccessTestBase
     }
 
     @Test
+    public void testGetNullTerminatedBytesWithLargeLimit() throws IOException
+    {
+        SequentialReader reader = createReader(new byte[]{0x41, 0, 0x42});
+        assertArrayEquals(new byte[]{0x41}, reader.getNullTerminatedBytes(Integer.MAX_VALUE, false));
+        assertEquals(2, reader.getPosition());
+        assertEquals(0x42, reader.getByte());
+    }
+
+    @Test
+    public void testGetNullTerminatedBytesBoundaries() throws IOException
+    {
+        byte[][] inputs = { { 9 }, { 0, 9 }, { 0x41, 0, 9 }, { 0x41, 0x42, 9 }, { 0x41, 0, 8, 9 } };
+        int[] limits = { 0, 1, 2, 2, 3 };
+        byte[][] expected = { {}, {}, { 0x41 }, { 0x41, 0x42 }, { 0x41 } };
+        for (boolean moveToMaxLength : new boolean[]{false, true}) {
+            for (int i = 0; i < inputs.length; i++) {
+                SequentialReader reader = createReader(inputs[i]);
+                assertArrayEquals(expected[i], reader.getNullTerminatedBytes(limits[i], moveToMaxLength));
+                int position = moveToMaxLength ? limits[i] : Math.min(limits[i], expected[i].length + 1);
+                assertEquals(position, reader.getPosition());
+                assertEquals(inputs[i][position], reader.getByte());
+            }
+        }
+    }
+
+    @Test
+    public void testGetNullTerminatedBytesLongName() throws IOException
+    {
+        byte[] name = new byte[513];
+        for (int i = 0; i < name.length; i++)
+            name[i] = (byte)(1 + i % 255);
+        byte[] input = new byte[name.length + 2];
+        System.arraycopy(name, 0, input, 0, name.length);
+        input[input.length - 1] = 9;
+        for (boolean moveToMaxLength : new boolean[]{false, true}) {
+            SequentialReader reader = createReader(input);
+            assertArrayEquals(name, reader.getNullTerminatedBytes(name.length + 1, moveToMaxLength));
+            assertEquals(name.length + 1, reader.getPosition());
+            assertEquals(9, reader.getByte());
+        }
+    }
+
+    @Test
+    public void testGetNullTerminatedBytesTruncated() throws IOException
+    {
+        for (boolean moveToMaxLength : new boolean[]{false, true}) {
+            try {
+                createReader(new byte[]{0x41}).getNullTerminatedBytes(3, moveToMaxLength);
+                fail("Expected IOException for a truncated name");
+            } catch (IOException expected) {
+            }
+        }
+        try {
+            createReader(new byte[]{0x41, 0}).getNullTerminatedBytes(3, true);
+            fail("Expected IOException for truncated padding");
+        } catch (IOException expected) {
+        }
+    }
+
+    @Test
     public void testGetNullTerminatedString() throws IOException
     {
         byte[] bytes = new byte[]{0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47};

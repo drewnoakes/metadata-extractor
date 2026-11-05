@@ -23,6 +23,10 @@ package com.drew.lang;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -40,5 +44,47 @@ public class StreamReaderTest extends SequentialAccessTestBase
     protected SequentialReader createReader(byte[] bytes)
     {
         return new StreamReader(new ByteArrayInputStream(bytes));
+    }
+
+    @Test
+    public void testNullTerminatedBytesWithShortReads() throws IOException
+    {
+        for (boolean moveToMaxLength : new boolean[]{false, true}) {
+            StreamReader reader = new StreamReader(new ByteArrayInputStream(new byte[]{0x41, 0, 7, 8, 9}) {
+                @Override
+                public int available()
+                {
+                    return 0;
+                }
+
+                @Override
+                public synchronized int read(byte[] buffer, int offset, int length)
+                {
+                    return super.read(buffer, offset, Math.min(1, length));
+                }
+            });
+            assertArrayEquals(new byte[]{0x41}, reader.getNullTerminatedBytes(4, moveToMaxLength));
+            assertEquals(moveToMaxLength ? 4 : 2, reader.getPosition());
+            assertEquals(moveToMaxLength ? 9 : 7, reader.getByte());
+        }
+    }
+
+    @Test
+    public void testNullTerminatedBytesPropagatesPaddingReadError() throws IOException
+    {
+        final IOException error = new IOException("Padding read failed");
+        StreamReader reader = new StreamReader(new FilterInputStream(new ByteArrayInputStream(new byte[]{0x41, 0, 7})) {
+            @Override
+            public int read(byte[] buffer, int offset, int count) throws IOException
+            {
+                throw error;
+            }
+        });
+        try {
+            reader.getNullTerminatedBytes(3, true);
+            fail("Expected IOException while consuming padding");
+        } catch (IOException e) {
+            assertSame(error, e);
+        }
     }
 }
