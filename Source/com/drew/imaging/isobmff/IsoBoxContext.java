@@ -168,13 +168,17 @@ public final class IsoBoxContext
     /**
      * The payload, from its start, for the reader being called. Positions start at 0 at the
      * beginning of the payload, whether it is streamed or was read into memory;
-     * {@link IsoBox#payloadOffset} says where that is in the input.
+     * {@link IsoBox#payloadOffset} says where that is in the input. A payload of up to 16 KiB
+     * is read in one piece on the first call; a reader that does not call it reads nothing.
      */
     @NotNull
-    public SequentialReader payload()
+    public SequentialReader payload() throws IOException
     {
-        if (_payload == null)
-            throw new IllegalStateException("No payload outside readBox or enterContainer");
+        if (_payload == null) {
+            if (_iterator == null)
+                throw new IllegalStateException("No payload outside readBox or enterContainer");
+            _payload = _iterator.directPayload();
+        }
         return _payload;
     }
 
@@ -228,11 +232,11 @@ public final class IsoBoxContext
         return payload.getBytes((int) (_bytes.length - payload.getPosition()));
     }
 
-    void stream(@NotNull IsoBoxIterator iterator) throws IOException
+    void stream(@NotNull IsoBoxIterator iterator)
     {
         _iterator = iterator;
         _bytes = null;
-        _payload = iterator.directPayload();
+        _payload = null;
     }
 
     void buffer(@NotNull byte[] bytes)

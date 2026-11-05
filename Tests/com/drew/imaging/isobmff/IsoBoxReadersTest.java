@@ -28,7 +28,9 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -316,6 +318,42 @@ public class IsoBoxReadersTest
         read(new IsoBoxReaders(PLAIN, Collections.singletonList(IsoBoxReaders.on(descend, "outr/innr"))), file, new ArrayList<String>());
         read(new IsoBoxReaders(PLAIN, Arrays.asList(IsoBoxReaders.on(descend, "outr/innr"), IsoBoxReaders.on(descend, "outr/innr"))), file, new ArrayList<String>());
         assertEquals(Arrays.asList(IsoBoxIterator.MAX_DEPTH - 2, IsoBoxIterator.MAX_DEPTH - 2, IsoBoxIterator.MAX_DEPTH - 2), levels);
+    }
+
+    @Test
+    public void testAReaderThatLeavesThePayloadAloneReadsNothingOfIt() throws Exception
+    {
+        IsoBoxReader header = IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box)
+            {
+            }
+        }, "skip");
+        byte[] file = join(box("skip", new byte[1000]), box("next", new byte[0]));
+        final int[] read = new int[1];
+        InputStream in = new FilterInputStream(new ByteArrayInputStream(file))
+        {
+            @Override
+            public int read() throws IOException
+            {
+                int b = super.read();
+                if (b >= 0)
+                    read[0]++;
+                return b;
+            }
+
+            @Override
+            public int read(byte[] buffer, int offset, int length) throws IOException
+            {
+                int n = super.read(buffer, offset, length);
+                read[0] += Math.max(n, 0);
+                return n;
+            }
+        };
+        new IsoBoxReaders(PLAIN, Collections.singletonList(header)).read(new IsoBoxIterator(in), IsoBoxContext.root(new Metadata(), collect(new ArrayList<String>())));
+        // two box headers, and the last skipped byte, which the iterator reads to check that it is there
+        assertEquals(8 + 1 + 8, read[0]);
     }
 
     @Test
