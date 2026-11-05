@@ -134,9 +134,9 @@ public class IsoBoxReadersTest
             @Override
             public void read(@NotNull IsoBoxContext box) throws IOException
             {
-                box.parent().put(String.class, "track" + box.payload().getByte());
+                box.ancestor("trak").put(String.class, "track" + box.payload().getByte());
             }
-        }, "moov/trak/hdlr");
+        }, "moov/trak/mdia/hdlr");
         IsoBoxReader sample = IsoBoxReaders.on(new IsoBoxReaders.Callback()
         {
             @Override
@@ -146,8 +146,8 @@ public class IsoBoxReadersTest
             }
         }, "moov/trak/stbl/stsd", "moov/udta");
         byte[] file = box("moov", join(
-            box("trak", join(box("hdlr", new byte[] {1}), box("stbl", box("stsd", new byte[0])))),
-            box("trak", join(box("hdlr", new byte[] {2}), box("stbl", box("stsd", new byte[0])))),
+            box("trak", join(box("mdia", box("hdlr", new byte[] {1})), box("stbl", box("stsd", new byte[0])))),
+            box("trak", join(box("mdia", box("hdlr", new byte[] {2})), box("stbl", box("stsd", new byte[0])))),
             box("udta", new byte[0])));
         read(new IsoBoxReaders(PLAIN, Arrays.asList(handler, sample)), file, new ArrayList<String>());
         assertEquals(Arrays.asList("track1", "track2", null), seen);
