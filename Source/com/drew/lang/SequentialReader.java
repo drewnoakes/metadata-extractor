@@ -25,11 +25,11 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.StringValue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 /**
  * @author Drew Noakes https://drewnoakes.com
@@ -381,26 +381,54 @@ public abstract class SequentialReader
         if (maxLengthBytes < 0)
             throw new NegativeArraySizeException();
 
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        int remaining = maxLengthBytes;
-        while (remaining > 0) {
-            byte value = getByte();
-            remaining--;
-            if (value == 0)
-                break;
-            bytes.write(value);
-        }
+        // Grow the buffer as data arrives rather than allocating maxLengthBytes up front,
+        // as the maximum may come from untrusted input and exceed the data available.
+        byte[] buffer = new byte[Math.min(maxLengthBytes, 1024)];
+        int length = 0;
 
-        if (moveToMaxLength && remaining > 0) {
-            // Read rather than skip so truncated padding still raises IOException.
-            byte[] buffer = new byte[1024];
-            while (remaining > 0) {
-                int count = Math.min(remaining, buffer.length);
-                getBytes(buffer, 0, count);
-                remaining -= count;
+        if (moveToMaxLength) {
+            // Read in bulk, as every byte up to the maximum is consumed anyway.
+            int read = 0;
+            while (read < maxLengthBytes) {
+                if (read == buffer.length)
+                    buffer = Arrays.copyOf(buffer, grow(buffer.length, maxLengthBytes));
+                int count = Math.min(maxLengthBytes, buffer.length) - read;
+                getBytes(buffer, read, count);
+                read += count;
+
+                while (length < read && buffer[length] != 0)
+                    length++;
+
+                if (length < read) {
+                    // Found the terminator. Consume the remaining padding, reusing the buffer as scratch space.
+                    // Read rather than skip so truncated padding still raises IOException.
+                    byte[] bytes = Arrays.copyOf(buffer, length);
+                    int remaining = maxLengthBytes - read;
+                    while (remaining > 0) {
+                        count = Math.min(remaining, buffer.length);
+                        getBytes(buffer, 0, count);
+                        remaining -= count;
+                    }
+                    return bytes;
+                }
+            }
+        } else {
+            // Read one byte at a time, so as not to consume data beyond the terminator.
+            while (length < maxLengthBytes) {
+                byte value = getByte();
+                if (value == 0)
+                    break;
+                if (length == buffer.length)
+                    buffer = Arrays.copyOf(buffer, grow(buffer.length, maxLengthBytes));
+                buffer[length++] = value;
             }
         }
 
-        return bytes.toByteArray();
+        return length == buffer.length ? buffer : Arrays.copyOf(buffer, length);
+    }
+
+    private static int grow(int length, int maxLength)
+    {
+        return (int)Math.min((long)length * 2, maxLength);
     }
 }

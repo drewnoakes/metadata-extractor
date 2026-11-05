@@ -268,6 +268,35 @@ public abstract class SequentialAccessTestBase
     }
 
     @Test
+    public void testGetNullTerminatedBytesSpanningBufferGrowth() throws IOException
+    {
+        byte[] name = new byte[2500];
+        for (int i = 0; i < name.length; i++)
+            name[i] = (byte)(1 + i % 255);
+
+        // Terminated, followed by padding longer than the initial buffer
+        byte[] input = new byte[name.length + 3000 + 1];
+        System.arraycopy(name, 0, input, 0, name.length);
+        input[input.length - 1] = 9;
+        for (boolean moveToMaxLength : new boolean[]{false, true}) {
+            SequentialReader reader = createReader(input);
+            assertArrayEquals(name, reader.getNullTerminatedBytes(name.length + 3000, moveToMaxLength));
+            assertEquals(moveToMaxLength ? name.length + 3000 : name.length + 1, reader.getPosition());
+        }
+
+        // Unterminated, filling the maximum exactly
+        input = new byte[name.length + 1];
+        System.arraycopy(name, 0, input, 0, name.length);
+        input[name.length] = 9;
+        for (boolean moveToMaxLength : new boolean[]{false, true}) {
+            SequentialReader reader = createReader(input);
+            assertArrayEquals(name, reader.getNullTerminatedBytes(name.length, moveToMaxLength));
+            assertEquals(name.length, reader.getPosition());
+            assertEquals(9, reader.getByte());
+        }
+    }
+
+    @Test
     public void testGetNullTerminatedBytesTruncated() throws IOException
     {
         for (boolean moveToMaxLength : new boolean[]{false, true}) {
