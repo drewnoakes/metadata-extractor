@@ -274,6 +274,20 @@ public class IsoBoxReadersTest
     }
 
     @Test
+    public void testReadersRunInTheOrderPassedWhateverTheirPattern() throws Exception
+    {
+        List<String> reads = new ArrayList<String>();
+        String usertype = "uuid:00112233-4455-6677-8899-aabbccddeeff";
+        byte[] uuidBox = join(header(8 + 16 + 1, "uuid"),
+            new byte[] {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, (byte) 0x88, (byte) 0x99, (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0xee, (byte) 0xff},
+            new byte[] {1});
+        byte[] file = join(uuidBox, box("stsd", box("mebx", new byte[] {2})));
+        read(new IsoBoxReaders(PLAIN, Arrays.asList(recorder("specific", reads, usertype), recorder("any", reads, "uuid"),
+            recorder("wildcard", reads, "stsd/*"), recorder("exact", reads, "stsd/mebx"))), file, new ArrayList<String>());
+        assertEquals(Arrays.asList("specific:uuid=1", "any:uuid=1", "wildcard:stsd/mebx=2", "exact:stsd/mebx=2"), reads);
+    }
+
+    @Test
     public void testAReaderCanTakeOnlyTheFirstChild() throws Exception
     {
         final List<String> taken = new ArrayList<String>();

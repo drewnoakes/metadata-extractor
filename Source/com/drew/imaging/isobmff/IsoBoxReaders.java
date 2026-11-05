@@ -88,6 +88,8 @@ public final class IsoBoxReaders
     private final IsoBoxLayout _layout;
     private final long _maxBufferedPayload;
     private final Node _root = new Node();
+    /** Every reader, in the order the readers of one box run: the layout's first, then as passed. */
+    private final List<IsoBoxReader> _order = new ArrayList<IsoBoxReader>();
 
     /** A walk with {@link #DEFAULT_MAX_BUFFERED_PAYLOAD}. */
     public IsoBoxReaders(@NotNull IsoBoxLayout layout, @NotNull Iterable<? extends IsoBoxReader> readers)
@@ -111,6 +113,8 @@ public final class IsoBoxReaders
 
     private void register(IsoBoxReader reader)
     {
+        if (!_order.contains(reader))
+            _order.add(reader);
         for (String path : reader.getBoxPaths()) {
             Node node = _root;
             for (String segment : path.split("/"))
@@ -241,15 +245,18 @@ public final class IsoBoxReaders
         return next;
     }
 
-    private static List<IsoBoxReader> readers(List<Node> nodes)
+    /** The readers of the boxes at {@code nodes}, in {@link #_order}. */
+    private List<IsoBoxReader> readers(List<Node> nodes)
     {
         if (nodes.size() == 1)
             return nodes.get(0).readers;
         List<IsoBoxReader> readers = new ArrayList<IsoBoxReader>();
-        for (Node node : nodes) {
-            for (IsoBoxReader reader : node.readers) {
-                if (!readers.contains(reader))
+        for (IsoBoxReader reader : _order) {
+            for (Node node : nodes) {
+                if (node.readers.contains(reader)) {
                     readers.add(reader);
+                    break;
+                }
             }
         }
         return readers;
