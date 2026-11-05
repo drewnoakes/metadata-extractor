@@ -26,8 +26,12 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -49,6 +53,50 @@ public class BmpReaderTest
         BmpHeaderDirectory directory = metadata.getFirstDirectoryOfType(BmpHeaderDirectory.class);
         assertNotNull(directory);
         return directory;
+    }
+
+    @Test
+    public void testLinkedProfileBoundedReads() throws Exception
+    {
+        byte[][] payloads = { { 'A', 0 }, { 'A' }, { 'c', 'a', 'f', (byte)0xE9, 0, 7 } };
+        for (int i = 0; i < payloads.length; i++) {
+            byte[] payload = payloads[i];
+            ByteBuffer bytes = ByteBuffer.allocate(14 + 124 + payload.length).order(ByteOrder.LITTLE_ENDIAN);
+            bytes.putShort(0, (short)BmpReader.BITMAP);
+            bytes.putInt(2, bytes.capacity());
+            bytes.putInt(14, 124); // BITMAPV5HEADER
+            bytes.putInt(18, 1); // Width
+            bytes.putInt(22, 1); // Height
+            bytes.putShort(26, (short)1); // Colour planes
+            bytes.putShort(28, (short)24); // Bits per pixel
+            bytes.putInt(14 + 56, (int)BmpHeaderDirectory.ColorSpaceType.PROFILE_LINKED.getValue());
+            bytes.putInt(14 + 112, 124); // Profile offset relative to the DIB header
+            bytes.putInt(14 + 116, i < 2 ? Integer.MAX_VALUE : payload.length);
+            bytes.position(14 + 124);
+            bytes.put(payload);
+
+            StreamReader reader = new StreamReader(new ByteArrayInputStream(bytes.array())) {
+                @Override
+                public byte[] getBytes(int count) throws IOException
+                {
+                    if (count > 1024)
+                        throw new AssertionError("Oversized allocating read: " + count);
+                    return super.getBytes(count);
+                }
+            };
+            Metadata metadata = new Metadata();
+            new BmpReader().extract(reader, metadata);
+            BmpHeaderDirectory directory = metadata.getFirstDirectoryOfType(BmpHeaderDirectory.class);
+            assertNotNull(directory);
+            if (i < 2) {
+                assertEquals(1, directory.getErrorCount());
+                assertEquals("Unable to read BMP header", directory.getErrors().iterator().next());
+            } else {
+                assertFalse(directory.hasErrors());
+                assertEquals("caf\u00e9", directory.getString(BmpHeaderDirectory.TAG_LINKED_PROFILE));
+                assertEquals(bytes.capacity(), reader.getPosition());
+            }
+        }
     }
 
     @Test
