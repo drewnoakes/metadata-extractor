@@ -20,12 +20,12 @@
  */
 package com.drew.imaging.isobmff;
 
+import com.drew.lang.Charsets;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 /**
@@ -76,7 +76,7 @@ public class IsoStandardLayout implements IsoBoxLayout, IsoBoxReader
         payload.skip(8);
         IsoBoxContext media = box.parent();
         if (media != null)
-            media.put(HandlerType.class, new HandlerType(payload.getString(4, StandardCharsets.ISO_8859_1)));
+            media.put(HandlerType.class, new HandlerType(payload.getString(4, Charsets.ISO_8859_1)));
     }
 
     @Override
