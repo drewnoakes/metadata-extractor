@@ -21,6 +21,7 @@
 package com.drew.imaging.cr3;
 
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.isobmff.IsoBox;
 import com.drew.imaging.isobmff.IsoBoxContext;
 import com.drew.imaging.isobmff.IsoBoxReader;
 import com.drew.imaging.isobmff.IsoBoxReaders;
@@ -192,7 +193,7 @@ public class Cr3MetadataReaderTest
         IsoBoxContext root = Cr3MetadataReader.newRoot(metadata, new IsoBoxContext.ErrorHandler()
         {
             @Override
-            public void error(@NotNull String message, @Nullable IOException cause)
+            public void error(@Nullable IsoBox box, @NotNull String message, @Nullable IOException cause)
             {
                 errors.add(message);
             }

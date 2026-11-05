@@ -64,8 +64,13 @@ public final class IsoBoxContext
     /** Receives the problems of a walk. */
     public interface ErrorHandler
     {
-        /** @param cause the exception behind the problem, or {@code null} for a reader's own message */
-        void error(@NotNull String message, @Nullable IOException cause);
+        /**
+         * @param box     the box the problem is in, or {@code null} for the input as a whole, so a
+         *                caller can word the problem its own way
+         * @param message the problem, naming the box
+         * @param cause   the exception behind the problem, or {@code null} for a reader's own message
+         */
+        void error(@Nullable IsoBox box, @NotNull String message, @Nullable IOException cause);
     }
 
     /** The context of a file, where per-file state can be stored before a walk. */
@@ -75,7 +80,7 @@ public final class IsoBoxContext
         return root(metadata, new ErrorHandler()
         {
             @Override
-            public void error(@NotNull String message, @Nullable IOException cause)
+            public void error(@Nullable IsoBox box, @NotNull String message, @Nullable IOException cause)
             {
                 errors.addError(message);
             }
@@ -157,12 +162,12 @@ public final class IsoBoxContext
 
     public void addError(@NotNull String message)
     {
-        _errors.error(message, null);
+        _errors.error(_box, message, null);
     }
 
     void addError(@NotNull String message, @NotNull IOException cause)
     {
-        _errors.error(message, cause);
+        _errors.error(_box, message, cause);
     }
 
     /**

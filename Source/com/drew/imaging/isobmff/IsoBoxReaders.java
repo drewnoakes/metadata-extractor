@@ -159,7 +159,7 @@ public final class IsoBoxReaders
                             descend |= node.hasChildren();
                         read(boxes, context, next, readers(next), descend);
                     } catch (IOException e) {
-                        report(parent, "Error reading box '" + box.type + "': " + e.getMessage(), e);
+                        report(context, "Error reading box '" + box.type + "': " + e.getMessage(), e);
                     }
                     if (_ended)
                         return;

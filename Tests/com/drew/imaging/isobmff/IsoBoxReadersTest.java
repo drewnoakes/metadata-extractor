@@ -357,6 +357,32 @@ public class IsoBoxReadersTest
     }
 
     @Test
+    public void testProblemsComeWithTheBoxTheyAreIn() throws Exception
+    {
+        IsoBoxReader boom = IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box) throws IOException
+            {
+                throw new IOException("bad");
+            }
+        }, "boom", "cont/kidd");
+        // a reader that throws; a container whose child claims more than it holds; a box cut off by the end of input
+        byte[] file = join(box("boom", new byte[1]), box("cont", join(header(100, "kidd"), new byte[4])), header(100, "tail"));
+        final List<String> boxes = new ArrayList<String>();
+        IsoBoxContext root = IsoBoxContext.root(new Metadata(), new IsoBoxContext.ErrorHandler()
+        {
+            @Override
+            public void error(@Nullable IsoBox box, @NotNull String message, @Nullable IOException cause)
+            {
+                boxes.add(box == null ? "file" : box.type);
+            }
+        });
+        new IsoBoxReaders(PLAIN, Collections.singletonList(boom)).read(new IsoBoxIterator(new ByteArrayInputStream(file)), root);
+        assertEquals(Arrays.asList("boom", "cont", "file"), boxes);
+    }
+
+    @Test
     public void testAReaderCanTakeOnlyTheFirstChild() throws Exception
     {
         final List<String> taken = new ArrayList<String>();
@@ -401,7 +427,7 @@ public class IsoBoxReadersTest
         return new IsoBoxContext.ErrorHandler()
         {
             @Override
-            public void error(@NotNull String message, @Nullable IOException cause)
+            public void error(@Nullable IsoBox box, @NotNull String message, @Nullable IOException cause)
             {
                 errors.add(message + (cause == null ? "" : " (" + cause.getClass().getSimpleName() + ")"));
             }

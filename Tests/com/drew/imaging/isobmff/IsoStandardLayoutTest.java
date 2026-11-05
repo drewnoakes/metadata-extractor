@@ -121,7 +121,7 @@ public class IsoStandardLayoutTest
         return new IsoBoxContext.ErrorHandler()
         {
             @Override
-            public void error(@NotNull String message, @Nullable IOException cause)
+            public void error(@Nullable IsoBox box, @NotNull String message, @Nullable IOException cause)
             {
                 errors.add(message);
             }
