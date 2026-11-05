@@ -295,6 +295,37 @@ public class IsoBoxIteratorTest
         assertNull(children.next());
     }
 
+    /**
+     * QuickTime File Format Specification (2001), User Data Atoms: "For historical reasons, the data list is
+     * optionally terminated by a 32-bit integer set to 0. If you are writing a program to read user data atoms,
+     * you should allow for the terminating 0."
+     */
+    @Test
+    public void testQuickTimeZeroTerminatorEndsTheList() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(join(box("udta", join(box("name", new byte[] {1}), new byte[4])), box("free", new byte[0])));
+        assertEquals("udta", boxes.next().type);
+        IsoBoxIterator children = boxes.children();
+        assertEquals("name", children.next().type);
+        assertNull(children.next());
+        assertEquals("free", boxes.next().type);
+    }
+
+    @Test
+    public void testOtherBytesTooFewForABoxHeaderAreAnError() throws Exception
+    {
+        IsoBoxIterator boxes = iterate(box("udta", join(box("name", new byte[] {1}), new byte[] {0, 0, 0, 1})));
+        boxes.next();
+        IsoBoxIterator children = boxes.children();
+        children.next();
+        try {
+            children.next();
+            fail();
+        } catch (IOException e) {
+            assertEquals("Box header extends beyond its container", e.getMessage());
+        }
+    }
+
     @Test
     public void testTypeKeepsNonAsciiBytes() throws Exception
     {

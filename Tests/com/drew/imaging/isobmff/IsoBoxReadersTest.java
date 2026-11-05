@@ -392,6 +392,15 @@ public class IsoBoxReadersTest
     }
 
     @Test
+    public void testQuickTimeZeroTerminatorIsNotReported() throws Exception
+    {
+        byte[] file = join(box("moov", box("udta", join(box("name", new byte[] {1}), new byte[4]))), box("mdat", new byte[] {2}));
+        Run run = run(PLAIN, file, "moov/udta/name", "mdat");
+        assertEquals(Arrays.asList("moov/udta/name=1", "mdat=2"), run.reads);
+        assertEquals(Collections.emptyList(), run.errors);
+    }
+
+    @Test
     public void testAReaderCanTakeOnlyTheFirstChild() throws Exception
     {
         final List<String> taken = new ArrayList<String>();

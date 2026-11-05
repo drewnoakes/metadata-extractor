@@ -150,6 +150,8 @@ public final class IsoBoxIterator
         _done = true;
         IsoBox box;
         try {
+            if (endsWithQuickTimeTerminator(start))
+                return null;
             box = new IsoBox(_reader, _end);
         } catch (EOFException e) {
             if (_end == -1 && _reader.getPosition() == start)
@@ -167,6 +169,11 @@ public final class IsoBoxIterator
         _box = box;
         _payloadEnd = payloadSize == -1 ? -1 : position + payloadSize;
         return box;
+    }
+
+    private boolean endsWithQuickTimeTerminator(long start) throws IOException
+    {
+        return _end - start == 4 && _reader.getUInt32() == 0;
     }
 
     /**
