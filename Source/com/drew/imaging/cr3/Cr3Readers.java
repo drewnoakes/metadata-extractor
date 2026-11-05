@@ -33,6 +33,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.cr3.Cr3BoxTypes;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifTiffHandler;
@@ -84,7 +85,7 @@ final class Cr3Readers
         @Override
         public boolean enterContainer(@NotNull IsoBoxContext box) throws IOException
         {
-            if (Arrays.equals(box.box().usertype, USERTYPE_CANON_PREVIEW)) {
+            if (box.box().usertypeMatches(USERTYPE_CANON_PREVIEW)) {
                 box.payload().skip(PREVIEW_PREAMBLE);
                 return true;
             }
@@ -92,8 +93,8 @@ final class Cr3Readers
         }
     };
 
-    static final String THUMBNAIL_PATH = CANON + "THMB";
-    static final String PREVIEW_PATH = UUID_CANON_PREVIEW + "/PRVW";
+    static final String THUMBNAIL_PATH = CANON + Cr3BoxTypes.BOX_THUMBNAIL;
+    static final String PREVIEW_PATH = UUID_CANON_PREVIEW + "/" + Cr3BoxTypes.BOX_PREVIEW;
 
     static final IsoBoxReader THUMBNAIL_READER = imageReader(Cr3ImageRecord.THUMBNAIL, THUMBNAIL_PATH, null);
     static final IsoBoxReader PREVIEW_READER = imageReader(Cr3ImageRecord.PREVIEW, PREVIEW_PATH, null);
@@ -115,11 +116,11 @@ final class Cr3Readers
             {
                 readFileType(box);
             }
-        }, "ftyp"),
-        tiff(CANON + "CMT1", null),
-        tiff(CANON + "CMT2", ExifSubIFDDirectory.class),
-        tiff(CANON + "CMT3", CanonMakernoteDirectory.class),
-        tiff(CANON + "CMT4", GpsDirectory.class),
+        }, Cr3BoxTypes.BOX_FILE_TYPE),
+        tiff(CANON + Cr3BoxTypes.BOX_CANON_TIFF_IFD0, null),
+        tiff(CANON + Cr3BoxTypes.BOX_CANON_TIFF_EXIF, ExifSubIFDDirectory.class),
+        tiff(CANON + Cr3BoxTypes.BOX_CANON_TIFF_MAKERNOTE, CanonMakernoteDirectory.class),
+        tiff(CANON + Cr3BoxTypes.BOX_CANON_TIFF_GPS, GpsDirectory.class),
         IsoBoxReaders.on(new IsoBoxReaders.Callback()
         {
             @Override
@@ -131,7 +132,7 @@ final class Cr3Readers
                     length--;
                 directory(box).setString(Cr3Directory.TAG_COMPRESSOR_VERSION, new String(payload, 0, length));
             }
-        }, CANON + "CNCV"),
+        }, CANON + Cr3BoxTypes.BOX_CANON_COMPRESSOR_VERSION),
         THUMBNAIL_READER,
         XMP_READER,
         PREVIEW_READER));
