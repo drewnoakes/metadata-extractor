@@ -149,6 +149,11 @@ public final class IsoBoxReaders
         {
             try {
                 for (IsoBox box = boxes.next(); box != null; box = boxes.next()) {
+                    if (box.extendsToEnd && box.size != -1 && parent != parent.root()) {
+                        String container = parent.box().type;
+                        new IsoBoxContext(parent, box).addError("Box '" + box.type + "' declares size 0 inside '"
+                            + container + "'; read to the end of '" + container + "'");
+                    }
                     List<Node> next = step(nodes, box);
                     if (next.isEmpty())
                         continue;

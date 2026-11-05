@@ -383,6 +383,15 @@ public class IsoBoxReadersTest
     }
 
     @Test
+    public void testSizeZeroInsideAContainerIsReadToItsEndAndReported() throws Exception
+    {
+        byte[] file = join(box("moov", join(header(0, "trak"), box("tkhd", new byte[] {1}))), header(0, "mdat"), new byte[] {2});
+        Run run = run(PLAIN, file, "moov/trak", "moov/trak/tkhd", "mdat");
+        assertEquals(Arrays.asList("moov/trak=0", "moov/trak/tkhd=1", "mdat=2"), run.reads);
+        assertEquals(Collections.singletonList("Box 'trak' declares size 0 inside 'moov'; read to the end of 'moov'"), run.errors);
+    }
+
+    @Test
     public void testAReaderCanTakeOnlyTheFirstChild() throws Exception
     {
         final List<String> taken = new ArrayList<String>();

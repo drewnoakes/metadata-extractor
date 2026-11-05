@@ -67,6 +67,8 @@ public final class IsoBox
     /** Position of the box's first payload byte, as reported by the reader that was walked. */
     public final long payloadOffset;
 
+    final boolean extendsToEnd;
+
     IsoBox(SequentialReader reader, long containerEnd) throws IOException
     {
         this.offset = reader.getPosition();
@@ -93,6 +95,7 @@ public final class IsoBox
             resolvedSize = rawSize;
         }
         this.size = resolvedSize;
+        this.extendsToEnd = rawSize == 0;
 
         if ("uuid".equals(this.type)) {
             if (resolvedSize != -1 && resolvedSize - headerSize < 16)
