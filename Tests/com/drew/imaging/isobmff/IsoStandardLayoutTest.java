@@ -74,6 +74,37 @@ public class IsoStandardLayoutTest
     }
 
     @Test
+    public void testOnlySampleEntriesWithKnownFieldsAreEntered() throws Exception
+    {
+        final List<String> reads = new ArrayList<String>();
+        IsoBoxReader recorder = IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box) throws IOException
+            {
+                reads.add(box.parent().box().type + "/" + box.box().type + "=" + box.payload().getUInt8());
+            }
+        }, "moov/trak/mdia/minf/stbl/stsd/*/btrt", "moov/trak/mdia/minf/stbl/stsd/*/keys");
+
+        // a tx3g subtitle entry has 30 bytes of its own after the 8 every entry starts with; its
+        // display flags of 0, read as a box header, would be a box of size 0
+        byte[] textEntry = box("tx3g", new byte[38], box("btrt", new byte[] {1}));
+        byte[] metadataEntry = box("mebx", new byte[8], box("keys", new byte[] {2}));
+        byte[] imageEntry = box("hvc1", new byte[78], box("btrt", new byte[] {3}));
+        byte[] file = box("moov",
+            trak("sbtl", box("stsd", new byte[4], int32(1), textEntry)),
+            trak("meta", box("stsd", new byte[4], int32(1), metadataEntry)),
+            trak("pict", box("stsd", new byte[4], int32(1), imageEntry)));
+
+        List<String> errors = new ArrayList<String>();
+        new IsoBoxReaders(IsoStandardLayout.INSTANCE, Collections.singletonList(recorder))
+            .read(new ByteArrayInputStream(file), IsoBoxContext.root(new Metadata(), collect(errors)));
+
+        assertEquals(Arrays.asList("mebx/keys=2", "hvc1/btrt=3"), reads);
+        assertTrue(errors.toString(), errors.isEmpty());
+    }
+
+    @Test
     public void testTheLayoutReadsOnlyWhereTheWalkGoesAnyway() throws Exception
     {
         final List<String> layoutReads = new ArrayList<String>();

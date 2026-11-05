@@ -26,15 +26,21 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * What ISO/IEC 14496-12 puts in front of the child boxes of its containers: the FullBox header
  * of {@code meta} and {@code iref}, the entry counts of {@code iinf}, {@code stsd} and
- * {@code dref}, and the fixed fields of sample entries, whose size depends on the track's
- * handler type: 78 bytes for video, 28 for sound (in both versions of the audio sample entry)
- * and 8 otherwise. It also reads each track's {@code hdlr} for that, so it is a reader too.
- * QuickTime's longer sound descriptions of version 1 and 2 are not part of the standard.
+ * {@code dref}, and the fixed fields of sample entries: 78 bytes for visual entries (handler
+ * types {@code vide}, {@code auxv} and {@code pict}), 28 for sound (in both versions of the
+ * audio sample entry) and 8 for entries with only boxes after the fields every sample entry
+ * starts with ({@code mebx}, {@code urim}, {@code wvtt} and {@code mp4s}). Other sample entries,
+ * such as {@code tx3g} or {@code tmcd}, are not entered, since their fields are not known here.
+ * It also reads each track's {@code hdlr} for that, so it is a reader too. QuickTime's longer
+ * sound descriptions of version 1 and 2 are not part of the standard.
  * <p>
  * A format layout extends it with what the format does differently and calls
  * {@code super.enterContainer} for everything else.
@@ -43,6 +49,9 @@ public class IsoStandardLayout implements IsoBoxLayout, IsoBoxReader
 {
     /** The standard layout, for formats without deviations of their own. */
     public static final IsoStandardLayout INSTANCE = new IsoStandardLayout();
+
+    private static final Set<String> VISUAL_HANDLERS = new HashSet<String>(Arrays.asList("vide", "auxv", "pict"));
+    private static final Set<String> ENTRIES_WITH_BOXES_ONLY = new HashSet<String>(Arrays.asList("mebx", "urim", "wvtt", "mp4s"));
 
     private static final class HandlerType
     {
@@ -87,8 +96,10 @@ public class IsoStandardLayout implements IsoBoxLayout, IsoBoxReader
         String parentType = parent == null || parent.parent() == null ? "" : parent.box().type;
         SequentialReader payload = box.payload();
         if (parentType.equals("stsd")) {
-            String handler = handlerType(box);
-            payload.skip("vide".equals(handler) ? 78 : "soun".equals(handler) ? 28 : 8);
+            int fields = sampleEntryFields(type, handlerType(box));
+            if (fields == -1)
+                return false;
+            payload.skip(fields);
         } else if (type.equals("stsd") || type.equals("dref")) {
             payload.skip(8);
         } else if (type.equals("meta") || type.equals("iref")) {
@@ -98,5 +109,14 @@ public class IsoStandardLayout implements IsoBoxLayout, IsoBoxReader
             payload.skip(version == 0 ? 5 : 7);
         }
         return true;
+    }
+
+    private static int sampleEntryFields(@NotNull String type, @Nullable String handler)
+    {
+        if (VISUAL_HANDLERS.contains(handler))
+            return 78;
+        if ("soun".equals(handler))
+            return 28;
+        return ENTRIES_WITH_BOXES_ONLY.contains(type) ? 8 : -1;
     }
 }
