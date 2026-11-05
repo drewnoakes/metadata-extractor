@@ -166,8 +166,9 @@ public final class IsoBoxContext
     }
 
     /**
-     * The payload, from its start, for the reader being called. Positions are not
-     * meaningful; use {@link IsoBox#payloadOffset} for where the payload lies.
+     * The payload, from its start, for the reader being called. Positions start at 0 at the
+     * beginning of the payload, whether it is streamed or was read into memory;
+     * {@link IsoBox#payloadOffset} says where that is in the input.
      */
     @NotNull
     public SequentialReader payload()
@@ -178,14 +179,15 @@ public final class IsoBoxContext
     }
 
     /**
-     * A reader over the next {@code length} bytes of the payload, such as a record's image data.
-     * Reading it advances the payload; reads past its end fail.
+     * A reader over the next {@code length} bytes of the payload, such as a record's image data,
+     * with positions starting at 0. Reading it advances the payload; reads past its end fail.
      */
     @NotNull
     public SequentialReader slice(long length) throws IOException
     {
         SequentialReader payload = payload();
-        return new BoundedSequentialReader(payload, payload.getPosition() + length, box());
+        long start = payload.getPosition();
+        return new BoundedSequentialReader(payload, start, start + length, box());
     }
 
     /** The rest of the payload as an array. */

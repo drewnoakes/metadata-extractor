@@ -56,9 +56,8 @@ public class Box
 
     /**
      * The header of a box read by {@link IsoBoxIterator}, for the box classes of this package.
-     * {@link IsoBoxIterator#payload()} reports absolute positions, so a class that computes
-     * lengths from reader positions ({@link ItemInfoBox.ItemInfoEntry}) needs a reader that
-     * starts at 0, such as {@code new SequentialByteArrayReader(boxes.payloadBytes())}.
+     * Pass it with {@link IsoBoxIterator#payload()}, whose positions start at 0 like those of a
+     * reader over the payload bytes, as classes such as {@link ItemInfoBox.ItemInfoEntry} expect.
      */
     public Box(@NotNull IsoBox box)
     {

@@ -513,6 +513,22 @@ public class IsoBoxIteratorTest
     }
 
     @Test
+    public void testPayloadPositionsStartAtZero() throws Exception
+    {
+        for (int size : new int[] {100, 40 * 1024}) {
+            IsoBoxIterator boxes = iterate(join(box("free", new byte[12]), box("data", new byte[size])));
+            boxes.next();
+            boxes.next();
+            SequentialReader payload = boxes.payload();
+            assertEquals(0, payload.getPosition());
+            payload.getUInt32();
+            assertEquals(4, payload.getPosition());
+            payload.skip(6);
+            assertEquals(10, payload.getPosition());
+        }
+    }
+
+    @Test
     public void testByteArrayRange() throws Exception
     {
         byte[] bytes = join(new byte[] {9, 9, 9}, box("data", new byte[] {1}), box("free", new byte[0]), new byte[] {9});

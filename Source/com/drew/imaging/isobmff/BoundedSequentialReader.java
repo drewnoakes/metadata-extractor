@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * A view of another reader that ends at a box's payload end. Positions are those of the
- * underlying reader.
+ * A view of another reader that ends at a box's payload end. Positions start at 0 where the
+ * payload starts, whether it is read from the input or from memory.
  * <p>
  * A payload of up to {@value #SMALL_PAYLOAD} bytes is read in one piece on first access, so
  * reading its fields costs array accesses instead of calls on the input. If the input ends
@@ -47,6 +47,7 @@ final class BoundedSequentialReader extends SequentialReader
 
     @NotNull
     private final SequentialReader _reader;
+    private final long _start;
     private final long _end;
     @NotNull
     private final IsoBox _box;
@@ -57,9 +58,11 @@ final class BoundedSequentialReader extends SequentialReader
     private byte[] _bufferArray;
     private boolean _decided;
 
-    BoundedSequentialReader(@NotNull SequentialReader reader, long end, @NotNull IsoBox box)
+    /** {@code start} and {@code end} are positions of {@code reader}; {@code end} is -1 for no limit. */
+    BoundedSequentialReader(@NotNull SequentialReader reader, long start, long end, @NotNull IsoBox box)
     {
         _reader = reader;
+        _start = start;
         _end = end;
         _box = box;
         setMotorolaByteOrder(reader.isMotorolaByteOrder());
@@ -73,7 +76,7 @@ final class BoundedSequentialReader extends SequentialReader
     byte[] takeUntouched() throws IOException
     {
         source();
-        if (_buffer == null || _buffer.getPosition() != _bufferStart || _bufferArray.length != _end - _bufferStart)
+        if (_buffer == null || position() != _bufferStart || _bufferArray.length != _end - _bufferStart)
             return null;
         _buffer.skip(_bufferArray.length);
         return _bufferArray;
@@ -90,11 +93,16 @@ final class BoundedSequentialReader extends SequentialReader
         return _buffer != null && _bufferArray.length == _end - _bufferStart ? _buffer : this;
     }
 
-    /** The in-memory payload once read, positioned where reading has got to, or {@code null}. */
+    /**
+     * The rest of the in-memory payload once read, from where reading has got to, with the
+     * positions of the underlying reader, or {@code null}. For iterating the boxes inside it.
+     */
     @Nullable
-    SequentialByteArrayReader buffer()
+    SequentialReader inputView() throws IOException
     {
-        return _buffer;
+        if (_buffer == null)
+            return null;
+        return new OffsetByteArrayReader(_bufferArray, (int) (position() - _bufferStart), _bufferStart);
     }
 
     private SequentialReader source() throws IOException
@@ -108,7 +116,7 @@ final class BoundedSequentialReader extends SequentialReader
                 byte[] bytes = new byte[(int) remaining];
                 int read = _reader.getBytesUpTo(bytes, 0, bytes.length);
                 _bufferArray = read == bytes.length ? bytes : Arrays.copyOf(bytes, read);
-                _buffer = new OffsetByteArrayReader(_bufferArray, 0, _bufferStart);
+                _buffer = new OffsetByteArrayReader(_bufferArray, 0, _bufferStart - _start);
                 _buffer.setMotorolaByteOrder(isMotorolaByteOrder());
             }
         }
@@ -117,7 +125,7 @@ final class BoundedSequentialReader extends SequentialReader
 
     private long remaining() throws IOException
     {
-        return _end == -1 ? Long.MAX_VALUE : _end - getPosition();
+        return _end == -1 ? Long.MAX_VALUE : _end - position();
     }
 
     /** End of input inside a payload of declared size is reported with the box it cuts off. */
@@ -133,10 +141,16 @@ final class BoundedSequentialReader extends SequentialReader
             throw new EOFException("Read of " + count + " bytes passes the end of the box payload");
     }
 
+    /** The position in the underlying reader. */
+    private long position() throws IOException
+    {
+        return _buffer != null ? _buffer.getPosition() + _start : _reader.getPosition();
+    }
+
     @Override
     public long getPosition() throws IOException
     {
-        return _buffer != null ? _buffer.getPosition() : _reader.getPosition();
+        return position() - _start;
     }
 
     @Override

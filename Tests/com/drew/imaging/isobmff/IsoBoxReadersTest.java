@@ -94,6 +94,30 @@ public class IsoBoxReadersTest
     }
 
     @Test
+    public void testPositionsAreTheSameWithOneReaderOrSeveral() throws Exception
+    {
+        for (int size : new int[] {100, 40 * 1024}) {
+            final List<String> positions = new ArrayList<String>();
+            IsoBoxReaders.Callback callback = new IsoBoxReaders.Callback()
+            {
+                @Override
+                public void read(@NotNull IsoBoxContext box) throws IOException
+                {
+                    long before = box.payload().getPosition();
+                    box.payload().getUInt32();
+                    positions.add(before + "-" + box.payload().getPosition());
+                }
+            };
+            byte[] file = join(box("free", new byte[12]), box("data", new byte[size]));
+            IsoBoxReaders one = new IsoBoxReaders(PLAIN, Collections.singletonList(IsoBoxReaders.on(callback, "data")));
+            IsoBoxReaders two = new IsoBoxReaders(PLAIN, Arrays.asList(IsoBoxReaders.on(callback, "data"), IsoBoxReaders.on(callback, "data")));
+            for (IsoBoxReaders readers : Arrays.asList(one, two))
+                readers.read(new IsoBoxIterator(new ByteArrayInputStream(file)), IsoBoxContext.root(new Metadata(), collect(new ArrayList<String>())), 64 * 1024);
+            assertEquals(Arrays.asList("0-4", "0-4", "0-4"), positions);
+        }
+    }
+
+    @Test
     public void testABoxCanBeReadAndDescendedInto() throws Exception
     {
         IsoBoxLayout header = new IsoBoxLayout()

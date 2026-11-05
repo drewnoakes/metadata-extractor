@@ -25,6 +25,8 @@ import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.lang.SequentialByteArrayReader;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import static org.junit.Assert.*;
@@ -48,5 +50,30 @@ public class BoxTest
             assertEquals(read.usertype, converted.usertype);
             assertEquals(read.headerSize, converted.headerSize);
         }
+    }
+
+    @Test
+    public void testItemInfoEntryReadsFromThePayloadReader() throws Exception
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bytes.write(ByteBuffer.allocate(108).putInt(108).put("free".getBytes("ISO-8859-1")).array());
+        byte[] payload = join(new byte[] {2, 0, 0, 0, 0, 7, 0, 0}, "mime".getBytes("ISO-8859-1"),
+            "name\0".getBytes("ISO-8859-1"), "text/xml\0".getBytes("ISO-8859-1"));
+        bytes.write(ByteBuffer.allocate(8).putInt(8 + payload.length).put("infe".getBytes("ISO-8859-1")).array());
+        bytes.write(payload);
+        IsoBoxIterator boxes = new IsoBoxIterator(new ByteArrayInputStream(bytes.toByteArray()));
+        boxes.next();
+        IsoBox infe = boxes.next();
+        ItemInfoBox.ItemInfoEntry entry = new ItemInfoBox.ItemInfoEntry(boxes.payload(), new Box(infe));
+        assertEquals("name", entry.itemName);
+        assertEquals("text/xml", entry.contentType);
+    }
+
+    private static byte[] join(byte[]... parts) throws Exception
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        for (byte[] part : parts)
+            bytes.write(part);
+        return bytes.toByteArray();
     }
 }
