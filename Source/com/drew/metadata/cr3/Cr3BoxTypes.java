@@ -57,5 +57,8 @@ public final class Cr3BoxTypes
     /** Thumbnail box — 160×120 JPEG inside the Canon metadata UUID. */
     public static final String BOX_THUMBNAIL                = "THMB";
 
+    /** Preview box: the large JPEG preview inside the Canon preview UUID. */
+    public static final String BOX_PREVIEW                  = "PRVW";
+
     private Cr3BoxTypes() {}
 }

@@ -20,8 +20,12 @@
  */
 package com.drew.imaging.cr3;
 
-import com.drew.imaging.isobmff.IsoBoxWalker;
+import com.drew.imaging.isobmff.IsoBoxContext;
+import com.drew.imaging.isobmff.IsoBoxReader;
+import com.drew.imaging.isobmff.IsoBoxReaders;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.file.FileSystemMetadataReader;
@@ -30,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Reads metadata from Canon CR3 (Crx) raw image files.
@@ -63,6 +68,65 @@ public class Cr3MetadataReader
         return metadata;
     }
 
+    /**
+     * The readers {@link #readMetadata(InputStream)} uses. Pass them, with readers of your own,
+     * to {@link #readMetadata(InputStream, Iterable)} to read further boxes.
+     */
+    public static final List<IsoBoxReader> ALL_READERS = Cr3Readers.ALL_READERS;
+
+    /** The reader in {@link #ALL_READERS} for the thumbnail record ({@code THMB}): its dimensions and location. */
+    public static final IsoBoxReader THUMBNAIL_READER = Cr3Readers.THUMBNAIL_READER;
+
+    /** The path of the box holding the XMP packet, for a reader that takes the packet as stored. */
+    public static final String XMP_PATH = Cr3Readers.UUID_CANON_XMP;
+
+    /** The reader in {@link #ALL_READERS} for the XMP packet, into an XMP directory. */
+    public static final IsoBoxReader XMP_READER = Cr3Readers.XMP_READER;
+
+    /** The reader in {@link #ALL_READERS} for the preview record ({@code PRVW}): its dimensions and location. */
+    public static final IsoBoxReader PREVIEW_READER = Cr3Readers.PREVIEW_READER;
+
+    /** Receives the image data of a thumbnail or preview record. */
+    public interface ImageCallback
+    {
+        /**
+         * @param box    the record's box, with the file context for per-file state
+         * @param image  the image data as stored (JPEG in the files seen so far), limited to its
+         *               length; whatever is not read is skipped
+         * @param length the length of the image data, as the record states it
+         */
+        void image(@NotNull IsoBoxContext box, @NotNull SequentialReader image, long length) throws IOException;
+    }
+
+    /**
+     * A replacement for {@link #THUMBNAIL_READER} that also hands the image data to
+     * {@code callback}, in the same pass and without holding it.
+     */
+    @NotNull
+    public static IsoBoxReader thumbnailReader(@NotNull ImageCallback callback)
+    {
+        return Cr3Readers.imageReader(Cr3ImageRecord.THUMBNAIL, Cr3Readers.THUMBNAIL_PATH, callback);
+    }
+
+    /**
+     * A replacement for {@link #PREVIEW_READER} that also hands the image data to
+     * {@code callback}, in the same pass and without holding it.
+     */
+    @NotNull
+    public static IsoBoxReader previewReader(@NotNull ImageCallback callback)
+    {
+        return Cr3Readers.imageReader(Cr3ImageRecord.PREVIEW, Cr3Readers.PREVIEW_PATH, callback);
+    }
+
+    private static final IsoBoxReaders DEFAULT_READERS = compile(ALL_READERS);
+
+    /** Prepares a walk over the CR3 structure that calls {@code readers}; build it once and reuse it. */
+    @NotNull
+    public static IsoBoxReaders compile(@NotNull Iterable<? extends IsoBoxReader> readers)
+    {
+        return new IsoBoxReaders(Cr3Readers.LAYOUT, readers);
+    }
+
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
@@ -71,10 +135,33 @@ public class Cr3MetadataReader
         return metadata;
     }
 
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @NotNull Iterable<? extends IsoBoxReader> readers)
+    {
+        Metadata metadata = new Metadata();
+        compile(readers).read(inputStream, newRoot(metadata, null));
+        return metadata;
+    }
+
     public static void extract(@NotNull InputStream inputStream, @NotNull Metadata metadata)
+    {
+        DEFAULT_READERS.read(inputStream, newRoot(metadata, null));
+    }
+
+    /**
+     * The file context for reading into {@code metadata}: it adds a {@link Cr3Directory} and
+     * stores it under its class, for readers to find with {@code box.root().get(Cr3Directory.class)}.
+     * Problems go to {@code errors}, or to the {@link Cr3Directory} when it is {@code null}.
+     * Store state for your own readers in it before calling
+     * {@link IsoBoxReaders#read(InputStream, IsoBoxContext)}.
+     */
+    @NotNull
+    public static IsoBoxContext newRoot(@NotNull Metadata metadata, @Nullable IsoBoxContext.ErrorHandler errors)
     {
         Cr3Directory directory = new Cr3Directory();
         metadata.addDirectory(directory);
-        IsoBoxWalker.walk(inputStream, new Cr3Handler(metadata, directory));
+        IsoBoxContext root = errors == null ? IsoBoxContext.root(metadata, directory) : IsoBoxContext.root(metadata, errors);
+        root.put(Cr3Directory.class, directory);
+        return root;
     }
 }

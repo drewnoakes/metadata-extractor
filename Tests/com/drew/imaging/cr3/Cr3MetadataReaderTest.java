@@ -21,6 +21,13 @@
 package com.drew.imaging.cr3;
 
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.isobmff.IsoBox;
+import com.drew.imaging.isobmff.IsoBoxContext;
+import com.drew.imaging.isobmff.IsoBoxReader;
+import com.drew.imaging.isobmff.IsoBoxReaders;
+import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -33,10 +40,15 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -78,8 +90,8 @@ public class Cr3MetadataReaderTest
             .putLong(0).putInt(18).put(ascii("PRVW")).putInt(0).putShort((short)0)
             .putShort((short)1620).putShort((short)1080).array();
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
-            box("moov", box("uuid", join(Cr3Handler.UUID_CANON_MAIN, canon))),
-            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, preview)))));
+            box("moov", box("uuid", join(Cr3Readers.USERTYPE_CANON_MAIN, canon))),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, preview)))));
         assertFalse(metadata.hasErrors());
         assertEquals(640, metadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getInt(ExifIFD0Directory.TAG_IMAGE_WIDTH));
         assertEquals(100, metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getInt(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
@@ -102,12 +114,286 @@ public class Cr3MetadataReaderTest
             + "</rdf:RDF></x:xmpmeta>");
         byte[] bytes = join(
             box("ftyp", join(ascii("crx "), new byte[4], ascii("isom"))),
-            new byte[4], ascii("uuid"), Cr3Handler.UUID_CANON_XMP, xmp);
+            new byte[4], ascii("uuid"), Cr3Readers.USERTYPE_CANON_XMP, xmp);
         Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(bytes));
         assertFalse(metadata.hasErrors());
         XmpDirectory directory = metadata.getFirstDirectoryOfType(XmpDirectory.class);
         assertNotNull(directory);
         assertEquals("3", directory.getXmpProperties().get("xmp:Rating"));
+    }
+
+    @Test
+    public void testPreviewJpegIsSkipped() throws Exception
+    {
+        byte[] jpeg = new byte[1024 * 1024];
+        byte[] preview = join(ByteBuffer.allocate(26)
+            .putLong(0).putInt(18 + jpeg.length).put(ascii("PRVW")).putInt(0).putShort((short)0)
+            .putShort((short)1620).putShort((short)1080).array(), jpeg);
+        byte[] xmp = ascii("<x:xmpmeta xmlns:x='adobe:ns:meta/'>"
+            + "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>"
+            + "<rdf:Description rdf:about='' xmlns:xmp='http://ns.adobe.com/xap/1.0/' xmp:Rating='3'/>"
+            + "</rdf:RDF></x:xmpmeta>");
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, preview)),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_XMP, xmp)))));
+        assertFalse(metadata.hasErrors());
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertEquals(1080, directory.getInt(Cr3Directory.TAG_PREVIEW_HEIGHT));
+        assertEquals("3", metadata.getFirstDirectoryOfType(XmpDirectory.class).getXmpProperties().get("xmp:Rating"));
+    }
+
+    @Test
+    public void testJpegLocations() throws Exception
+    {
+        byte[] thumbnail = join(new byte[] {(byte) 0xFF, (byte) 0xD8}, new byte[30]);
+        byte[] preview = join(new byte[] {(byte) 0xFF, (byte) 0xD8}, new byte[100]);
+        byte[] file = join(
+            box("ftyp", join(ascii("crx "), new byte[4], ascii("crx isom"))),
+            box("moov", box("uuid", join(Cr3Readers.USERTYPE_CANON_MAIN,
+                box("THMB", join(jpegRecordHeader(4, 8, 160, 120, thumbnail.length), thumbnail))))),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview)))),
+            box("mdat", new byte[64]));
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
+        assertFalse(metadata.hasErrors());
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(160, directory.getInt(Cr3Directory.TAG_THUMBNAIL_WIDTH));
+        assertEquals(1080, directory.getInt(Cr3Directory.TAG_PREVIEW_HEIGHT));
+        assertArrayEquals(thumbnail, slice(file, directory.getLong(Cr3Directory.TAG_THUMBNAIL_OFFSET),
+            directory.getLong(Cr3Directory.TAG_THUMBNAIL_LENGTH)));
+        assertArrayEquals(preview, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
+            directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
+    }
+
+    @Test
+    public void testJpegLengthBeyondTheBox() throws Exception
+    {
+        byte[] preview = new byte[100];
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length + 1), preview))))));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_OFFSET));
+        assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_LENGTH));
+        assertTrue(directory.hasErrors());
+    }
+
+    @Test
+    public void testProblemsGoToTheErrorHandler() throws Exception
+    {
+        byte[] preview = new byte[100];
+        byte[] file = join(
+            box("moov", box("uuid", join(Cr3Readers.USERTYPE_CANON_MAIN, box("CMT1", ascii("not a TIFF"))))),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length + 1), preview)))));
+        final List<String> errors = new ArrayList<String>();
+        Metadata metadata = new Metadata();
+        IsoBoxContext root = Cr3MetadataReader.newRoot(metadata, new IsoBoxContext.ErrorHandler()
+        {
+            @Override
+            public void error(@Nullable IsoBox box, @NotNull String message, @Nullable IOException cause)
+            {
+                errors.add(message);
+            }
+        });
+        Cr3MetadataReader.compile(Cr3MetadataReader.ALL_READERS).read(new ByteArrayInputStream(file), root);
+        assertEquals(errors.toString(), 2, errors.size());
+        assertFalse(metadata.hasErrors());
+    }
+
+    @Test
+    public void testMalformedFileTypeKeepsLaterBoxes() throws Exception
+    {
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
+            box("ftyp", new byte[] {1, 2}),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", jpegRecordHeader(6, 12, 1620, 1080, 0)))))));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertTrue(directory.hasErrors());
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+    }
+
+    @Test
+    public void testPreviewToEndOfInput() throws Exception
+    {
+        byte[] preview = {(byte) 0xff, (byte) 0xd8, 1, 2, (byte) 0xff, (byte) 0xd9};
+        byte[] file = join(new byte[] {0, 0, 0, 0}, ascii("uuid"), Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+            new byte[] {0, 0, 0, 0}, ascii("PRVW"), jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview);
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertFalse(metadata.hasErrors());
+        assertArrayEquals(preview, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
+            directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
+    }
+
+    @Test
+    public void testTruncatedJpegGetsNoLocation() throws Exception
+    {
+        byte[] preview = new byte[100];
+        byte[] file = box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+            box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview))));
+        byte[] truncated = java.util.Arrays.copyOf(file, file.length - 10);
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(truncated) {
+            @Override
+            public synchronized long skip(long n)
+            {
+                super.skip(n);
+                return n;
+            }
+        });
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_OFFSET));
+        assertTrue(directory.hasErrors());
+    }
+
+    @Test
+    public void testLaterRecordWithoutJpegKeepsTheEarlierOne() throws Exception
+    {
+        byte[] preview = new byte[100];
+        byte[] valid = box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+            box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview))));
+        byte[] invalid = box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+            box("PRVW", join(jpegRecordHeader(6, 12, 800, 600, preview.length + 1), preview))));
+        byte[] file = join(valid, invalid);
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+        assertEquals(1080, directory.getInt(Cr3Directory.TAG_PREVIEW_HEIGHT));
+        assertArrayEquals(preview, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
+            directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
+        assertTrue(directory.hasErrors());
+    }
+
+    /** The preview reader replaced by one with a callback gets the image data in the same pass. */
+    @Test
+    public void testPreviewImageInOnePass() throws Exception
+    {
+        final byte[] image = {(byte) 0xff, (byte) 0xd8, 1, 2, 3, (byte) 0xff, (byte) 0xd9};
+        byte[] file = join(box("ftyp", join(ascii("crx "), new byte[4])),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, image.length), image)))),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_XMP, ascii("<x:xmpmeta xmlns:x='adobe:ns:meta/'/>"))));
+        List<IsoBoxReader> readers = new ArrayList<IsoBoxReader>(Cr3MetadataReader.ALL_READERS);
+        assertTrue(readers.remove(Cr3MetadataReader.PREVIEW_READER));
+        readers.add(Cr3MetadataReader.previewReader(new Cr3MetadataReader.ImageCallback()
+        {
+            @Override
+            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data, long length) throws IOException
+            {
+                box.root().get(Previews.class).images.add(data.getBytes((int) length));
+                try {
+                    data.getByte();
+                    fail();
+                } catch (EOFException expected) {
+                }
+            }
+        }));
+        IsoBoxReaders walk = Cr3MetadataReader.compile(readers);
+
+        for (int i = 0; i < 2; i++) {
+            Metadata metadata = new Metadata();
+            IsoBoxContext root = Cr3MetadataReader.newRoot(metadata, null);
+            Previews previews = new Previews();
+            root.put(Previews.class, previews);
+            walk.read(new ByteArrayInputStream(file), root);
+
+            assertEquals(1, previews.images.size());
+            assertArrayEquals(image, previews.images.get(0));
+            Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+            assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+            assertArrayEquals(image, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
+                directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
+            assertNotNull(metadata.getFirstDirectoryOfType(XmpDirectory.class));
+            assertFalse(metadata.hasErrors());
+        }
+    }
+
+    /**
+     * The callback gets the whole image from a stream that hands out a byte at a time and
+     * reports nothing available, as a decompressing stream may.
+     */
+    @Test
+    public void testPreviewImageFromATricklingStream() throws Exception
+    {
+        byte[] image = new byte[40 * 1024];
+        for (int i = 0; i < image.length; i++)
+            image[i] = (byte) i;
+        byte[] file = join(box("ftyp", join(ascii("crx "), new byte[4])),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, image.length), image)))));
+        final List<byte[]> images = new ArrayList<byte[]>();
+        List<IsoBoxReader> readers = new ArrayList<IsoBoxReader>(Cr3MetadataReader.ALL_READERS);
+        readers.remove(Cr3MetadataReader.PREVIEW_READER);
+        readers.add(Cr3MetadataReader.previewReader(new Cr3MetadataReader.ImageCallback()
+        {
+            @Override
+            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data, long length) throws IOException
+            {
+                images.add(data.getBytes((int) length));
+            }
+        }));
+        InputStream trickle = new FilterInputStream(new ByteArrayInputStream(file))
+        {
+            @Override
+            public int read(byte[] buffer, int offset, int length) throws IOException
+            {
+                return super.read(buffer, offset, Math.min(length, 1));
+            }
+
+            @Override
+            public int available()
+            {
+                return 0;
+            }
+        };
+        Metadata metadata = Cr3MetadataReader.readMetadata(trickle, readers);
+        assertEquals(1, images.size());
+        assertArrayEquals(image, images.get(0));
+        assertFalse(metadata.hasErrors());
+    }
+
+    /** A callback that reads nothing leaves the image data skipped and the location set. */
+    @Test
+    public void testUnreadPreviewImageIsSkipped() throws Exception
+    {
+        byte[] image = new byte[40 * 1024];
+        byte[] file = join(box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, image.length), image)))),
+            box("ftyp", join(ascii("crx "), new byte[4])));
+        List<IsoBoxReader> readers = new ArrayList<IsoBoxReader>(Cr3MetadataReader.ALL_READERS);
+        readers.remove(Cr3MetadataReader.PREVIEW_READER);
+        readers.add(Cr3MetadataReader.previewReader(new Cr3MetadataReader.ImageCallback()
+        {
+            @Override
+            public void image(@NotNull IsoBoxContext box, @NotNull SequentialReader data, long length)
+            {
+            }
+        }));
+        Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file), readers);
+        Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+        assertEquals(image.length, directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH));
+        assertEquals("crx ", directory.getString(Cr3Directory.TAG_MAJOR_BRAND));
+        assertFalse(metadata.hasErrors());
+    }
+
+    private static final class Previews
+    {
+        final List<byte[]> images = new ArrayList<byte[]>();
+    }
+
+    private static byte[] jpegRecordHeader(int dimensionsAt, int lengthAt, int width, int height, int length)
+    {
+        return ByteBuffer.allocate(16)
+            .putShort(dimensionsAt, (short) width).putShort(dimensionsAt + 2, (short) height)
+            .putInt(lengthAt, length).array();
+    }
+
+    private static byte[] slice(byte[] bytes, long offset, long length)
+    {
+        return java.util.Arrays.copyOfRange(bytes, (int) offset, (int) (offset + length));
     }
 
     private static byte[] tiff(int tag, int value)
