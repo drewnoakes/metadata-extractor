@@ -137,14 +137,19 @@ public class HeifReader
         if (box.size != -1 && box.size < box.headerSize) {
             throw new IOException("Box is smaller than its header");
         }
-        if (box.size > Integer.MAX_VALUE) {
-            throw new IOException("Box size too large");
-        }
         if (handler.shouldAcceptContainer(box)) {
             handler.processContainer(box, reader);
             handler = processBoxes(reader, box.size + reader.getPosition() - box.headerSize, depth + 1, handler);
         } else if (handler.shouldAcceptBox(box)) {
-            handler = handler.processBox(box, reader.getBytes((int) box.size - box.headerSize));
+            // This branch buffers the whole payload in memory. A 32-bit size of 0xFFFFFFFF, or a
+            // 64-bit extended size, wraps when narrowed to int and throws NegativeArraySizeException,
+            // so reject lengths that do not fit an int. Containers (above) and skipped boxes (below)
+            // use long arithmetic, so a large 'mdat'/'free' is unaffected and extraction continues.
+            long payloadLength = box.size - box.headerSize;
+            if (payloadLength < 0 || payloadLength > Integer.MAX_VALUE) {
+                throw new IOException("Box is too large to read into memory");
+            }
+            handler = handler.processBox(box, reader.getBytes((int) payloadLength));
         } else if (box.size > 1) {
             reader.skip(box.size - box.headerSize);
         }

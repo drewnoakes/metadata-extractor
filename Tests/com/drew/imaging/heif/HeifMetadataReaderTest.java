@@ -167,8 +167,9 @@ public class HeifMetadataReaderTest
     @Test
     public void testOversizedBoxReportsErrorRatherThanThrowing() throws Exception
     {
-        // A 'hdlr' box whose 32-bit size field is 0xFFFFFFFF. Narrowed to int this is negative, so
-        // without a bound the reader would attempt new byte[negative] and throw NegativeArraySizeException.
+        // An accepted 'hdlr' box whose 32-bit size field is 0xFFFFFFFF. Its payload is buffered in
+        // memory, and narrowed to int the length is negative, so without the bound the reader would
+        // attempt new byte[negative] and throw NegativeArraySizeException.
         byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
         byte[] oversized = concat(int32(0xFFFFFFFF), ascii("hdlr"));
         HeifDirectory directory = ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, oversized)))
@@ -176,6 +177,25 @@ public class HeifMetadataReaderTest
 
         assertNotNull(directory);
         assertEquals("heic", directory.getString(HeifDirectory.TAG_MAJOR_BRAND));
+    }
+
+    @Test
+    public void testOversizedContainerStillProcessesChildren() throws Exception
+    {
+        // A 'meta' container whose 32-bit size field is 0xFFFFFFFF. Containers are recursed into
+        // rather than buffered, so the oversized size must not abort extraction of the well-formed
+        // children (the bound applies only to boxes whose payload is read into memory).
+        byte[] icc = concat(int32(132), new byte[128]);
+        byte[] colr = concat(int32(1), ascii("colr"), int32(0), int32(16 + 4 + icc.length), ascii("prof"), icc);
+        byte[] hdlr = box("hdlr", concat(new byte[8], ascii("pict"), new byte[13]));
+        byte[] metaPayload = concat(new byte[4], hdlr, box("iprp", box("ipco", colr)));
+        byte[] meta = concat(int32(0xFFFFFFFF), ascii("meta"), metaPayload);
+        byte[] ftyp = box("ftyp", concat(ascii("heic"), new byte[4], ascii("mif1")));
+        IccDirectory directory = ImageMetadataReader.readMetadata(new ByteArrayInputStream(concat(ftyp, meta)))
+            .getFirstDirectoryOfType(IccDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals(132, directory.getInt(IccDirectory.TAG_PROFILE_BYTE_COUNT));
     }
 
     /** Reads a file whose 'meta' box describes a single 'mime' item, stored in 'mdat', holding an XMP packet. */
