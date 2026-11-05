@@ -271,7 +271,7 @@ public class Cr3MetadataReaderTest
             IsoBoxContext root = Cr3MetadataReader.newRoot(metadata, null);
             Previews previews = new Previews();
             root.put(Previews.class, previews);
-            Cr3MetadataReader.extract(new ByteArrayInputStream(file), walk, root);
+            walk.read(new ByteArrayInputStream(file), root);
 
             assertEquals(1, previews.images.size());
             assertArrayEquals(image, previews.images.get(0));

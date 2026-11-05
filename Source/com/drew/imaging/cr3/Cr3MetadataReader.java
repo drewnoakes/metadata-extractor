@@ -21,7 +21,6 @@
 package com.drew.imaging.cr3;
 
 import com.drew.imaging.isobmff.IsoBoxContext;
-import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.imaging.isobmff.IsoBoxReader;
 import com.drew.imaging.isobmff.IsoBoxReaders;
 import com.drew.lang.SequentialReader;
@@ -133,13 +132,13 @@ public class Cr3MetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream, @NotNull Iterable<? extends IsoBoxReader> readers)
     {
         Metadata metadata = new Metadata();
-        extract(inputStream, compile(readers), newRoot(metadata, null));
+        compile(readers).read(inputStream, newRoot(metadata, null));
         return metadata;
     }
 
     public static void extract(@NotNull InputStream inputStream, @NotNull Metadata metadata)
     {
-        extract(inputStream, DEFAULT_READERS, newRoot(metadata, null));
+        DEFAULT_READERS.read(inputStream, newRoot(metadata, null));
     }
 
     /**
@@ -147,7 +146,7 @@ public class Cr3MetadataReader
      * stores it under its class, for readers to find with {@code box.root().get(Cr3Directory.class)}.
      * Problems go to {@code errors}, or to the {@link Cr3Directory} when it is {@code null}.
      * Store state for your own readers in it before calling
-     * {@link #extract(InputStream, IsoBoxReaders, IsoBoxContext)}.
+     * {@link IsoBoxReaders#read(InputStream, IsoBoxContext)}.
      */
     @NotNull
     public static IsoBoxContext newRoot(@NotNull Metadata metadata, @Nullable IsoBoxContext.ErrorHandler errors)
@@ -158,13 +157,4 @@ public class Cr3MetadataReader
         root.put(Cr3Directory.class, directory);
         return root;
     }
-
-    /** Reads {@code inputStream} with {@code readers} (see {@link #compile}), starting from {@code root} (see {@link #newRoot}). */
-    public static void extract(@NotNull InputStream inputStream, @NotNull IsoBoxReaders readers, @NotNull IsoBoxContext root)
-    {
-        readers.read(new IsoBoxIterator(inputStream), root, MAX_SHARED_PAYLOAD);
-    }
-
-    /** The largest payload read into memory to share between several readers registered for the same box. */
-    private static final long MAX_SHARED_PAYLOAD = 64L * 1024 * 1024;
 }

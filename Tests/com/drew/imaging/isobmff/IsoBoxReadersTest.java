@@ -112,7 +112,7 @@ public class IsoBoxReadersTest
             IsoBoxReaders one = new IsoBoxReaders(PLAIN, Collections.singletonList(IsoBoxReaders.on(callback, "data")));
             IsoBoxReaders two = new IsoBoxReaders(PLAIN, Arrays.asList(IsoBoxReaders.on(callback, "data"), IsoBoxReaders.on(callback, "data")));
             for (IsoBoxReaders readers : Arrays.asList(one, two))
-                readers.read(new IsoBoxIterator(new ByteArrayInputStream(file)), IsoBoxContext.root(new Metadata(), collect(new ArrayList<String>())), 64 * 1024);
+                readers.read(new IsoBoxIterator(new ByteArrayInputStream(file)), IsoBoxContext.root(new Metadata(), collect(new ArrayList<String>())));
             assertEquals(Arrays.asList("0-4", "0-4", "0-4"), positions);
         }
     }
@@ -238,9 +238,9 @@ public class IsoBoxReadersTest
     {
         final List<String> reads = new ArrayList<String>();
         List<String> errors = new ArrayList<String>();
-        IsoBoxReaders readers = new IsoBoxReaders(PLAIN, Arrays.asList(recorder("a", reads, "data"), recorder("b", reads, "data")));
+        IsoBoxReaders readers = new IsoBoxReaders(PLAIN, Arrays.asList(recorder("a", reads, "data"), recorder("b", reads, "data")), 10);
         IsoBoxContext root = IsoBoxContext.root(new Metadata(), collect(errors));
-        readers.read(new IsoBoxIterator(new ByteArrayInputStream(join(box("data", new byte[100]), box("data", new byte[] {1})))), root, 10);
+        readers.read(new IsoBoxIterator(new ByteArrayInputStream(join(box("data", new byte[100]), box("data", new byte[] {1})))), root);
         assertEquals(Arrays.asList("a:data=1", "b:data=1"), reads);
         assertEquals(1, errors.size());
     }
@@ -290,7 +290,7 @@ public class IsoBoxReadersTest
     private static void read(IsoBoxReaders readers, byte[] file, List<String> errors)
     {
         IsoBoxContext root = IsoBoxContext.root(new Metadata(), collect(errors));
-        readers.read(new IsoBoxIterator(new ByteArrayInputStream(file)), root, 1024);
+        readers.read(new IsoBoxIterator(new ByteArrayInputStream(file)), root);
     }
 
     private static IsoBoxContext.ErrorHandler collect(final List<String> errors)

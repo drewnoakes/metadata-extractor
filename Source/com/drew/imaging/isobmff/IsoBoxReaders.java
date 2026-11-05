@@ -25,6 +25,7 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,13 +81,28 @@ public final class IsoBoxReaders
         };
     }
 
+    /** The default of {@code maxBufferedPayload}: 64 MiB. */
+    public static final long DEFAULT_MAX_BUFFERED_PAYLOAD = 64L * 1024 * 1024;
+
     @NotNull
     private final IsoBoxLayout _layout;
+    private final long _maxBufferedPayload;
     private final Node _root = new Node();
 
+    /** A walk with {@link #DEFAULT_MAX_BUFFERED_PAYLOAD}. */
     public IsoBoxReaders(@NotNull IsoBoxLayout layout, @NotNull Iterable<? extends IsoBoxReader> readers)
     {
+        this(layout, readers, DEFAULT_MAX_BUFFERED_PAYLOAD);
+    }
+
+    /**
+     * @param maxBufferedPayload the largest payload read into memory for several readers of one
+     *                           box
+     */
+    public IsoBoxReaders(@NotNull IsoBoxLayout layout, @NotNull Iterable<? extends IsoBoxReader> readers, long maxBufferedPayload)
+    {
         _layout = layout;
+        _maxBufferedPayload = maxBufferedPayload;
         if (layout instanceof IsoBoxReader)
             register((IsoBoxReader) layout);
         for (IsoBoxReader reader : readers)
@@ -104,21 +120,21 @@ public final class IsoBoxReaders
         }
     }
 
-    /** Reads {@code boxes}, starting from the file context {@code root} (see {@link IsoBoxContext#root}). */
-    public void read(@NotNull IsoBoxIterator boxes, @NotNull IsoBoxContext root, long maxBufferedPayload)
+    /** Reads {@code inputStream}, starting from the file context {@code root} (see {@link IsoBoxContext#root}). */
+    public void read(@NotNull InputStream inputStream, @NotNull IsoBoxContext root)
     {
-        new Walk(maxBufferedPayload).walk(boxes, root, _root.self);
+        read(new IsoBoxIterator(inputStream), root);
+    }
+
+    /** Reads {@code boxes}, starting from the file context {@code root} (see {@link IsoBoxContext#root}). */
+    public void read(@NotNull IsoBoxIterator boxes, @NotNull IsoBoxContext root)
+    {
+        new Walk().walk(boxes, root, _root.self);
     }
 
     private final class Walk
     {
-        private final long _maxBufferedPayload;
         private boolean _ended;
-
-        Walk(long maxBufferedPayload)
-        {
-            _maxBufferedPayload = maxBufferedPayload;
-        }
 
         void walk(IsoBoxIterator boxes, IsoBoxContext parent, List<Node> nodes)
         {
