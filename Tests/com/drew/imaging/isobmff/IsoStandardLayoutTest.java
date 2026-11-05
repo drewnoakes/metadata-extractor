@@ -56,11 +56,12 @@ public class IsoStandardLayoutTest
         // meta and iref are FullBoxes; iinf version 0 has a 16-bit entry count, version 1 a 32-bit one
         byte[] meta = box("meta", new byte[4], box("hdlr", new byte[] {1}), box("iinf", new byte[] {0, 0, 0, 0, 0, 1}, box("infe", new byte[] {2})),
             box("iref", new byte[4], box("thmb", new byte[] {3})));
-        // a sound sample entry of version 1 has 16 more bytes than version 0; a visual one has 78
-        byte[] soundEntry = box("mp4a", new byte[8], new byte[] {0, 1}, new byte[34], box("esds", new byte[] {4}));
+        // an audio sample entry has 28 bytes before its boxes, also in version 1 (in a stsd of
+        // version 1); a visual one has 78
+        byte[] soundEntry = box("mp4a", new byte[8], new byte[] {0, 1}, new byte[18], box("esds", new byte[] {4}));
         byte[] visualEntry = box("avc1", new byte[78], box("avcC", new byte[] {5}));
         byte[] file = join(meta, box("moov",
-            trak("soun", box("stsd", new byte[4], int32(1), soundEntry)),
+            trak("soun", box("stsd", new byte[] {1, 0, 0, 0}, int32(1), soundEntry)),
             trak("vide", box("stsd", new byte[4], int32(1), visualEntry))));
 
         List<String> errors = new ArrayList<String>();

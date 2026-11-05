@@ -32,7 +32,9 @@ import java.util.Collections;
  * What ISO/IEC 14496-12 puts in front of the child boxes of its containers: the FullBox header
  * of {@code meta} and {@code iref}, the entry counts of {@code iinf}, {@code stsd} and
  * {@code dref}, and the fixed fields of sample entries, whose size depends on the track's
- * handler type. It also reads each track's {@code hdlr} for that, so it is a reader too.
+ * handler type: 78 bytes for video, 28 for sound (in both versions of the audio sample entry)
+ * and 8 otherwise. It also reads each track's {@code hdlr} for that, so it is a reader too.
+ * QuickTime's longer sound descriptions of version 1 and 2 are not part of the standard.
  * <p>
  * A format layout extends it with what the format does differently and calls
  * {@code super.enterContainer} for everything else.
@@ -86,13 +88,7 @@ public class IsoStandardLayout implements IsoBoxLayout, IsoBoxReader
         SequentialReader payload = box.payload();
         if (parentType.equals("stsd")) {
             String handler = handlerType(box);
-            if ("soun".equals(handler)) {
-                payload.skip(8);
-                int version = payload.getUInt16();
-                payload.skip((version == 1 ? 44 : version == 2 ? 64 : 28) - 10);
-            } else {
-                payload.skip("vide".equals(handler) ? 78 : 8);
-            }
+            payload.skip("vide".equals(handler) ? 78 : "soun".equals(handler) ? 28 : 8);
         } else if (type.equals("stsd") || type.equals("dref")) {
             payload.skip(8);
         } else if (type.equals("meta") || type.equals("iref")) {
