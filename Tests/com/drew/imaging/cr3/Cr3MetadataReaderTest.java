@@ -26,6 +26,7 @@ import com.drew.imaging.isobmff.IsoBoxReader;
 import com.drew.imaging.isobmff.IsoBoxReaders;
 import com.drew.lang.SequentialReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -176,6 +177,29 @@ public class Cr3MetadataReaderTest
         assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_OFFSET));
         assertFalse(directory.containsTag(Cr3Directory.TAG_PREVIEW_LENGTH));
         assertTrue(directory.hasErrors());
+    }
+
+    @Test
+    public void testProblemsGoToTheErrorHandler() throws Exception
+    {
+        byte[] preview = new byte[100];
+        byte[] file = join(
+            box("moov", box("uuid", join(Cr3Readers.USERTYPE_CANON_MAIN, box("CMT1", ascii("not a TIFF"))))),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length + 1), preview)))));
+        final List<String> errors = new ArrayList<String>();
+        Metadata metadata = new Metadata();
+        IsoBoxContext root = Cr3MetadataReader.newRoot(metadata, new IsoBoxContext.ErrorHandler()
+        {
+            @Override
+            public void error(@NotNull String message, @Nullable IOException cause)
+            {
+                errors.add(message);
+            }
+        });
+        Cr3MetadataReader.compile(Cr3MetadataReader.ALL_READERS).read(new ByteArrayInputStream(file), root);
+        assertEquals(errors.toString(), 2, errors.size());
+        assertFalse(metadata.hasErrors());
     }
 
     @Test

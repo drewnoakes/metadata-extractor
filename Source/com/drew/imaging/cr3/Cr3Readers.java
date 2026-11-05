@@ -193,9 +193,9 @@ final class Cr3Readers
                 try {
                     new TiffReader().processTiff(new ByteArrayReader(payload), handler, 0);
                 } catch (TiffProcessingException e) {
-                    directory(box).addError("CR3 TIFF processing failed: " + e.getMessage());
+                    box.addError("CR3 TIFF processing failed: " + e.getMessage());
                 } catch (IOException e) {
-                    directory(box).addError("CR3 TIFF I/O error: " + e.getMessage());
+                    box.addError("CR3 TIFF I/O error: " + e.getMessage());
                 }
             }
         }, path);

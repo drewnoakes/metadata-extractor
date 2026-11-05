@@ -82,7 +82,7 @@ final class Cr3ImageRecord
         boolean fits = length == 0 || box.payloadSize == -1 || length <= box.payloadSize - IMAGE_START;
         if (length == 0 || !fits) {
             if (!fits)
-                directory.addError(box.type + " image length " + length + " exceeds its box");
+                context.addError(box.type + " image length " + length + " exceeds its box");
             if (!earlierLocated)
                 setDimensions(directory, width, height);
             return;
