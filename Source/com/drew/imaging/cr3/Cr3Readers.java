@@ -78,7 +78,6 @@ final class Cr3Readers
     private static final String CANON = "moov/" + UUID_CANON_MAIN + "/";
     private static final int PREVIEW_PREAMBLE = 8;
 
-    /** Skips the preamble in front of the preview UUID's boxes; every other container starts with its boxes. */
     /** The standard layout, with the preamble in front of the preview's {@code PRVW} box. */
     static final IsoBoxLayout LAYOUT = new IsoStandardLayout()
     {
