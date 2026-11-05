@@ -288,6 +288,37 @@ public class IsoBoxReadersTest
     }
 
     @Test
+    public void testChildrenKeepTheNestingDepth() throws Exception
+    {
+        byte[] nested = box("leaf", new byte[0]);
+        for (int i = 0; i < IsoBoxIterator.MAX_DEPTH + 2; i++)
+            nested = box("nest", nested);
+        byte[] file = box("outr", box("innr", nested));
+        final List<Integer> levels = new ArrayList<Integer>();
+        IsoBoxReaders.Callback descend = new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box) throws IOException
+            {
+                int level = 0;
+                try {
+                    IsoBoxIterator boxes = box.children();
+                    while (boxes.next() != null) {
+                        boxes = boxes.children();
+                        level++;
+                    }
+                } catch (IOException e) {
+                    levels.add(level);
+                }
+            }
+        };
+        // innr is a level below the top; streamed, or in memory for two readers
+        read(new IsoBoxReaders(PLAIN, Collections.singletonList(IsoBoxReaders.on(descend, "outr/innr"))), file, new ArrayList<String>());
+        read(new IsoBoxReaders(PLAIN, Arrays.asList(IsoBoxReaders.on(descend, "outr/innr"), IsoBoxReaders.on(descend, "outr/innr"))), file, new ArrayList<String>());
+        assertEquals(Arrays.asList(IsoBoxIterator.MAX_DEPTH - 2, IsoBoxIterator.MAX_DEPTH - 2, IsoBoxIterator.MAX_DEPTH - 2), levels);
+    }
+
+    @Test
     public void testAReaderCanTakeOnlyTheFirstChild() throws Exception
     {
         final List<String> taken = new ArrayList<String>();

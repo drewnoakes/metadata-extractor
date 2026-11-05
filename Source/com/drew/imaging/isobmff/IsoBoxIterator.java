@@ -100,7 +100,8 @@ public final class IsoBoxIterator
         this(motorola(reader), end, 0);
     }
 
-    private IsoBoxIterator(@NotNull SequentialReader reader, long end, int depth)
+    /** As {@link #IsoBoxIterator(SequentialReader, long)}, for boxes {@code depth} levels below the top level. */
+    IsoBoxIterator(@NotNull SequentialReader reader, long end, int depth)
     {
         _reader = reader;
         _end = end;

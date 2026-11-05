@@ -20,7 +20,6 @@
  */
 package com.drew.imaging.isobmff;
 
-import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
@@ -124,13 +123,19 @@ public final class IsoBoxReaders
         }
     }
 
-    /** Reads {@code inputStream}, starting from the file context {@code root} (see {@link IsoBoxContext#root}). */
+    /**
+     * Reads {@code inputStream}, starting from the file context {@code root} (see
+     * {@link IsoBoxContext#root}).
+     */
     public void read(@NotNull InputStream inputStream, @NotNull IsoBoxContext root)
     {
         read(new IsoBoxIterator(inputStream), root);
     }
 
-    /** Reads {@code boxes}, starting from the file context {@code root} (see {@link IsoBoxContext#root}). */
+    /**
+     * Reads {@code boxes}, starting from the file context {@code root} (see
+     * {@link IsoBoxContext#root}).
+     */
     public void read(@NotNull IsoBoxIterator boxes, @NotNull IsoBoxContext root)
     {
         new Walk().walk(boxes, root, _root.self);
@@ -147,11 +152,12 @@ public final class IsoBoxReaders
                     List<Node> next = step(nodes, box);
                     if (next.isEmpty())
                         continue;
+                    IsoBoxContext context = new IsoBoxContext(parent, box);
                     try {
                         boolean descend = false;
                         for (Node node : next)
                             descend |= node.hasChildren();
-                        read(boxes, new IsoBoxContext(parent, box), next, readers(next), descend);
+                        read(boxes, context, next, readers(next), descend);
                     } catch (IOException e) {
                         report(parent, "Error reading box '" + box.type + "': " + e.getMessage(), e);
                     }
@@ -184,10 +190,10 @@ public final class IsoBoxReaders
             }
             if (readers.isEmpty()) {
                 context.stream(boxes);
-                boolean container = _layout.enterContainer(context);
+                IsoBoxIterator children = _layout.enterContainer(context) ? context.children() : null;
                 context.release();
-                if (container)
-                    walk(boxes.children(), context, path);
+                if (children != null)
+                    walk(children, context, path);
                 return;
             }
             if (box.payloadSize == -1 || box.payloadSize > _maxBufferedPayload) {
@@ -206,13 +212,10 @@ public final class IsoBoxReaders
             }
             if (descend) {
                 context.buffer(bytes);
-                boolean container = _layout.enterContainer(context);
-                int start = (int) context.payload().getPosition();
+                IsoBoxIterator children = _layout.enterContainer(context) ? context.children() : null;
                 context.release();
-                if (container) {
-                    SequentialByteArrayReader children = new OffsetByteArrayReader(bytes, start, box.payloadOffset);
-                    walk(new IsoBoxIterator(children, box.payloadOffset + bytes.length), context, path);
-                }
+                if (children != null)
+                    walk(children, context, path);
             }
             context.release();
         }

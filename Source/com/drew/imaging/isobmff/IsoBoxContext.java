@@ -200,10 +200,22 @@ public final class IsoBoxContext
         if (_iterator != null)
             return _iterator.children();
         if (_bytes != null) {
+            int depth = depth() + 1;
+            if (depth > IsoBoxIterator.MAX_DEPTH)
+                throw new IOException("Maximum box nesting depth exceeded");
             long offset = box().payloadOffset;
-            return new IsoBoxIterator(new OffsetByteArrayReader(_bytes, (int) payload().getPosition(), offset), offset + _bytes.length);
+            return new IsoBoxIterator(new OffsetByteArrayReader(_bytes, (int) payload().getPosition(), offset), offset + _bytes.length, depth);
         }
         throw new IllegalStateException("No payload outside readBox or enterContainer");
+    }
+
+    /** The number of boxes this box is nested in: 0 for a box at the top level. */
+    private int depth()
+    {
+        int depth = -1;
+        for (IsoBoxContext context = this; context._parent != null; context = context._parent)
+            depth++;
+        return depth;
     }
 
     /** The rest of the payload as an array. */
