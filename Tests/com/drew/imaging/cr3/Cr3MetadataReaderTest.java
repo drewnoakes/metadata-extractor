@@ -21,6 +21,11 @@
 package com.drew.imaging.cr3;
 
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.isobmff.IsoBoxContext;
+import com.drew.imaging.isobmff.IsoBoxReader;
+import com.drew.imaging.isobmff.IsoBoxReaders;
+import com.drew.lang.SequentialReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -37,6 +42,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -230,6 +237,49 @@ public class Cr3MetadataReaderTest
         assertArrayEquals(preview, slice(file, directory.getLong(Cr3Directory.TAG_PREVIEW_OFFSET),
             directory.getLong(Cr3Directory.TAG_PREVIEW_LENGTH)));
         assertTrue(directory.hasErrors());
+    }
+
+    /** A reader of one's own, next to the default readers, gets the preview bytes in the same pass. */
+    @Test
+    public void testOwnReaderReadsThePreviewInOnePass() throws Exception
+    {
+        final byte[] jpeg = {(byte) 0xff, (byte) 0xd8, 1, 2, 3, (byte) 0xff, (byte) 0xd9};
+        byte[] file = join(box("ftyp", join(ascii("crx "), new byte[4])),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
+                box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, jpeg.length), jpeg)))));
+        List<IsoBoxReader> readers = new ArrayList<IsoBoxReader>(Cr3MetadataReader.ALL_READERS);
+        readers.add(IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box) throws IOException
+            {
+                SequentialReader payload = box.payload();
+                payload.skip(12);
+                long length = payload.getUInt32();
+                box.root().get(Previews.class).jpegs.add(payload.getBytes((int) length));
+            }
+        }, "uuid:eaf42b5e-1c98-4b88-b9fb-b7dc406e4d16/PRVW"));
+        IsoBoxReaders walk = Cr3MetadataReader.compile(readers);
+
+        for (int i = 0; i < 2; i++) {
+            Metadata metadata = new Metadata();
+            IsoBoxContext root = Cr3MetadataReader.newRoot(metadata, null);
+            Previews previews = new Previews();
+            root.put(Previews.class, previews);
+            Cr3MetadataReader.extract(new ByteArrayInputStream(file), walk, root);
+
+            assertEquals(1, previews.jpegs.size());
+            assertArrayEquals(jpeg, previews.jpegs.get(0));
+            Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
+            assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
+            assertEquals("crx ", directory.getString(Cr3Directory.TAG_MAJOR_BRAND));
+            assertFalse(metadata.hasErrors());
+        }
+    }
+
+    private static final class Previews
+    {
+        final List<byte[]> jpegs = new ArrayList<byte[]>();
     }
 
     private static byte[] jpegRecordHeader(int dimensionsAt, int lengthAt, int width, int height, int length)

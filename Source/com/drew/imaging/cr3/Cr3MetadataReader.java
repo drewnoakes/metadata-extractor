@@ -25,6 +25,7 @@ import com.drew.imaging.isobmff.IsoBoxIterator;
 import com.drew.imaging.isobmff.IsoBoxReader;
 import com.drew.imaging.isobmff.IsoBoxReaders;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.cr3.Cr3Directory;
 import com.drew.metadata.file.FileSystemMetadataReader;
@@ -94,25 +95,35 @@ public class Cr3MetadataReader
     public static Metadata readMetadata(@NotNull InputStream inputStream, @NotNull Iterable<? extends IsoBoxReader> readers)
     {
         Metadata metadata = new Metadata();
-        extract(inputStream, metadata, compile(readers));
+        extract(inputStream, compile(readers), newRoot(metadata, null));
         return metadata;
     }
 
     public static void extract(@NotNull InputStream inputStream, @NotNull Metadata metadata)
     {
-        extract(inputStream, metadata, DEFAULT_READERS);
+        extract(inputStream, DEFAULT_READERS, newRoot(metadata, null));
     }
 
     /**
-     * Reads {@code inputStream} into {@code metadata} with {@code readers}. Readers find the
-     * {@link Cr3Directory} in the file context, under its class.
+     * The file context for reading into {@code metadata}: it adds a {@link Cr3Directory} and
+     * stores it under its class, for readers to find with {@code box.root().get(Cr3Directory.class)}.
+     * Problems go to {@code errors}, or to the {@link Cr3Directory} when it is {@code null}.
+     * Store state for your own readers in it before calling
+     * {@link #extract(InputStream, IsoBoxReaders, IsoBoxContext)}.
      */
-    public static void extract(@NotNull InputStream inputStream, @NotNull Metadata metadata, @NotNull IsoBoxReaders readers)
+    @NotNull
+    public static IsoBoxContext newRoot(@NotNull Metadata metadata, @Nullable IsoBoxContext.ErrorHandler errors)
     {
         Cr3Directory directory = new Cr3Directory();
         metadata.addDirectory(directory);
-        IsoBoxContext root = IsoBoxContext.root(metadata, directory);
+        IsoBoxContext root = errors == null ? IsoBoxContext.root(metadata, directory) : IsoBoxContext.root(metadata, errors);
         root.put(Cr3Directory.class, directory);
+        return root;
+    }
+
+    /** Reads {@code inputStream} with {@code readers} (see {@link #compile}), starting from {@code root} (see {@link #newRoot}). */
+    public static void extract(@NotNull InputStream inputStream, @NotNull IsoBoxReaders readers, @NotNull IsoBoxContext root)
+    {
         readers.read(new IsoBoxIterator(inputStream), root, MAX_SHARED_PAYLOAD);
     }
 
