@@ -77,6 +77,12 @@ public class Cr3MetadataReader
     /** The reader in {@link #ALL_READERS} for the thumbnail record ({@code THMB}): its dimensions and location. */
     public static final IsoBoxReader THUMBNAIL_READER = Cr3Readers.THUMBNAIL_READER;
 
+    /** The path of the box holding the XMP packet, for a reader that takes the packet as stored. */
+    public static final String XMP_PATH = Cr3Readers.UUID_CANON_XMP;
+
+    /** The reader in {@link #ALL_READERS} for the XMP packet, into an XMP directory. */
+    public static final IsoBoxReader XMP_READER = Cr3Readers.XMP_READER;
+
     /** The reader in {@link #ALL_READERS} for the preview record ({@code PRVW}): its dimensions and location. */
     public static final IsoBoxReader PREVIEW_READER = Cr3Readers.PREVIEW_READER;
 

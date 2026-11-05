@@ -24,6 +24,7 @@ import com.drew.imaging.isobmff.IsoBoxContext;
 import com.drew.imaging.isobmff.IsoBoxLayout;
 import com.drew.imaging.isobmff.IsoBoxReader;
 import com.drew.imaging.isobmff.IsoBoxReaders;
+import com.drew.imaging.isobmff.IsoStandardLayout;
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
@@ -78,14 +79,17 @@ final class Cr3Readers
     private static final int PREVIEW_PREAMBLE = 8;
 
     /** Skips the preamble in front of the preview UUID's boxes; every other container starts with its boxes. */
-    static final IsoBoxLayout LAYOUT = new IsoBoxLayout()
+    /** The standard layout, with the preamble in front of the preview's {@code PRVW} box. */
+    static final IsoBoxLayout LAYOUT = new IsoStandardLayout()
     {
         @Override
         public boolean enterContainer(@NotNull IsoBoxContext box) throws IOException
         {
-            if (Arrays.equals(box.box().usertype, USERTYPE_CANON_PREVIEW))
+            if (Arrays.equals(box.box().usertype, USERTYPE_CANON_PREVIEW)) {
                 box.payload().skip(PREVIEW_PREAMBLE);
-            return true;
+                return true;
+            }
+            return super.enterContainer(box);
         }
     };
 
@@ -94,6 +98,15 @@ final class Cr3Readers
 
     static final IsoBoxReader THUMBNAIL_READER = imageReader(Cr3ImageRecord.THUMBNAIL, THUMBNAIL_PATH, null);
     static final IsoBoxReader PREVIEW_READER = imageReader(Cr3ImageRecord.PREVIEW, PREVIEW_PATH, null);
+
+    static final IsoBoxReader XMP_READER = IsoBoxReaders.on(new IsoBoxReaders.Callback()
+    {
+        @Override
+        public void read(@NotNull IsoBoxContext box) throws IOException
+        {
+            new XmpReader().extract(box.payloadBytes(), box.metadata());
+        }
+    }, UUID_CANON_XMP);
 
     static final List<IsoBoxReader> ALL_READERS = Collections.unmodifiableList(Arrays.asList(
         IsoBoxReaders.on(new IsoBoxReaders.Callback()
@@ -121,14 +134,7 @@ final class Cr3Readers
             }
         }, CANON + "CNCV"),
         THUMBNAIL_READER,
-        IsoBoxReaders.on(new IsoBoxReaders.Callback()
-        {
-            @Override
-            public void read(@NotNull IsoBoxContext box) throws IOException
-            {
-                new XmpReader().extract(box.payloadBytes(), box.metadata());
-            }
-        }, UUID_CANON_XMP),
+        XMP_READER,
         PREVIEW_READER));
 
     private Cr3Readers() {}
