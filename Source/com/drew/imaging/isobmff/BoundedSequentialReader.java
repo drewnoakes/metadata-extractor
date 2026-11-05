@@ -79,12 +79,15 @@ final class BoundedSequentialReader extends SequentialReader
         return _bufferArray;
     }
 
-    /** The reader to hand out: the in-memory payload itself once it was read in one piece. */
+    /**
+     * The reader to hand out: the in-memory payload itself once it was read in one piece and is
+     * complete, so reading past it means passing the payload end, not the end of input.
+     */
     @NotNull
     SequentialReader direct() throws IOException
     {
         source();
-        return _buffer != null ? _buffer : this;
+        return _buffer != null && _bufferArray.length == _end - _bufferStart ? _buffer : this;
     }
 
     /** The in-memory payload once read, positioned where reading has got to, or {@code null}. */

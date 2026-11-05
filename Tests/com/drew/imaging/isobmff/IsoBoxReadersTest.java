@@ -191,6 +191,25 @@ public class IsoBoxReadersTest
     }
 
     @Test
+    public void testTruncatedSmallPayloadIsReportedOnce() throws Exception
+    {
+        List<String> errors = new ArrayList<String>();
+        IsoBoxReader reader = IsoBoxReaders.on(new IsoBoxReaders.Callback()
+        {
+            @Override
+            public void read(@NotNull IsoBoxContext box) throws IOException
+            {
+                box.payload().getUInt32();
+                box.payload().getUInt32();
+            }
+        }, "moov/mvhd");
+        // moov claims more than is read in one piece, so it is streamed and mvhd alone is read into memory
+        read(new IsoBoxReaders(PLAIN, Collections.singletonList(reader)), join(header(8 + 8 + 100 + 20000, "moov"), header(8 + 100, "mvhd"), new byte[6]), errors);
+        assertEquals(1, errors.size());
+        assertTrue(errors.get(0), errors.get(0).endsWith("(TruncatedInputException)"));
+    }
+
+    @Test
     public void testSharedPayloadsAboveTheLimitAreSkipped() throws Exception
     {
         final List<String> reads = new ArrayList<String>();
