@@ -49,22 +49,31 @@ preview JPEG payloads are skipped rather than read into memory.
 ## Java implementation
 
 Java uses a dedicated reader in `Source/com/drew/imaging/cr3/`, the shared box
-iterator in `Source/com/drew/imaging/isobmff/`, and directories in
+iterator and box readers in `Source/com/drew/imaging/isobmff/`, and directories in
 `Source/com/drew/metadata/cr3/`. `ImageMetadataReader` routes `FileType.Crx` to
 `Cr3MetadataReader`. File-type brands, compressor version, and thumbnail/preview
 dimensions are stored in `Cr3Directory`; Exif, Canon makernotes, GPS, and XMP
 remain in their corresponding metadata directories.
 
+The CR3 reader is a set of box readers registered by path (`ftyp`,
+`moov/uuid:85c0b687-.../CMT1`, `uuid:eaf42b5e-.../PRVW`, ...), published as
+`Cr3MetadataReader.ALL_READERS`; callers can pass them together with readers of
+their own to `Cr3MetadataReader.readMetadata(InputStream, Iterable)`. A layout
+skips the 8-byte preamble of the preview UUID. The walk descends only into
+containers on the way to a registered path and skips everything else unread.
+
 `IsoBoxIterator` handles standard, large-size, EOF-terminated, and UUID boxes. It
 limits nesting to 64 containers and buffered, unbounded EOF-terminated payloads
 to 16 MiB. It reads nothing of a payload unless asked: callers get a reader
-limited to the payload, a byte array that grows as data arrives (so a declared
-size larger than the input fails at end of input instead of being allocated),
-or an iterator over the payload's boxes, and whatever is left unread is skipped.
-Payloads larger than `Integer.MAX_VALUE` cannot be read into an array and are
-reported as errors. The CR3 reader reads only the `THMB` and `PRVW` headers,
-records where each JPEG lies when it fits inside its box, and skips the JPEG
-images.
+limited to the payload (a payload of up to 16 KiB is read in one piece on the
+first read), a byte array that grows as data arrives (so a declared size larger
+than the input fails at end of input instead of being allocated), or an iterator
+over the payload's boxes, and whatever is left unread is skipped. An input that
+ends inside a box throws `TruncatedInputException`; reading past the end of a
+payload that is fully present throws a plain `EOFException`. Payloads larger than
+`Integer.MAX_VALUE` cannot be read into an array and are reported as errors. The
+CR3 reader reads only the `THMB` and `PRVW` headers, records where each JPEG lies
+when it fits inside its box, and skips the JPEG images.
 
 ## Verified implementation differences
 

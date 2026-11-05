@@ -20,7 +20,10 @@
  */
 package com.drew.imaging.cr3;
 
+import com.drew.imaging.isobmff.IsoBoxContext;
 import com.drew.imaging.isobmff.IsoBoxIterator;
+import com.drew.imaging.isobmff.IsoBoxReader;
+import com.drew.imaging.isobmff.IsoBoxReaders;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.cr3.Cr3Directory;
@@ -30,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Reads metadata from Canon CR3 (Crx) raw image files.
@@ -63,6 +67,21 @@ public class Cr3MetadataReader
         return metadata;
     }
 
+    /**
+     * The readers {@link #readMetadata(InputStream)} uses. Pass them, with readers of your own,
+     * to {@link #readMetadata(InputStream, Iterable)} to read further boxes.
+     */
+    public static final List<IsoBoxReader> ALL_READERS = Cr3Readers.ALL_READERS;
+
+    private static final IsoBoxReaders DEFAULT_READERS = compile(ALL_READERS);
+
+    /** Prepares a walk over the CR3 structure that calls {@code readers}; build it once and reuse it. */
+    @NotNull
+    public static IsoBoxReaders compile(@NotNull Iterable<? extends IsoBoxReader> readers)
+    {
+        return new IsoBoxReaders(Cr3Readers.LAYOUT, readers);
+    }
+
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
@@ -71,10 +90,32 @@ public class Cr3MetadataReader
         return metadata;
     }
 
+    @NotNull
+    public static Metadata readMetadata(@NotNull InputStream inputStream, @NotNull Iterable<? extends IsoBoxReader> readers)
+    {
+        Metadata metadata = new Metadata();
+        extract(inputStream, metadata, compile(readers));
+        return metadata;
+    }
+
     public static void extract(@NotNull InputStream inputStream, @NotNull Metadata metadata)
+    {
+        extract(inputStream, metadata, DEFAULT_READERS);
+    }
+
+    /**
+     * Reads {@code inputStream} into {@code metadata} with {@code readers}. Readers find the
+     * {@link Cr3Directory} in the file context, under its class.
+     */
+    public static void extract(@NotNull InputStream inputStream, @NotNull Metadata metadata, @NotNull IsoBoxReaders readers)
     {
         Cr3Directory directory = new Cr3Directory();
         metadata.addDirectory(directory);
-        new Cr3Handler(metadata, directory).process(new IsoBoxIterator(inputStream));
+        IsoBoxContext root = IsoBoxContext.root(metadata, directory);
+        root.put(Cr3Directory.class, directory);
+        readers.read(new IsoBoxIterator(inputStream), root, MAX_SHARED_PAYLOAD);
     }
+
+    /** The largest payload read into memory to share between several readers registered for the same box. */
+    private static final long MAX_SHARED_PAYLOAD = 64L * 1024 * 1024;
 }

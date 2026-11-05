@@ -78,8 +78,8 @@ public class Cr3MetadataReaderTest
             .putLong(0).putInt(18).put(ascii("PRVW")).putInt(0).putShort((short)0)
             .putShort((short)1620).putShort((short)1080).array();
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
-            box("moov", box("uuid", join(Cr3Handler.UUID_CANON_MAIN, canon))),
-            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, preview)))));
+            box("moov", box("uuid", join(Cr3Readers.USERTYPE_CANON_MAIN, canon))),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, preview)))));
         assertFalse(metadata.hasErrors());
         assertEquals(640, metadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getInt(ExifIFD0Directory.TAG_IMAGE_WIDTH));
         assertEquals(100, metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getInt(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
@@ -102,7 +102,7 @@ public class Cr3MetadataReaderTest
             + "</rdf:RDF></x:xmpmeta>");
         byte[] bytes = join(
             box("ftyp", join(ascii("crx "), new byte[4], ascii("isom"))),
-            new byte[4], ascii("uuid"), Cr3Handler.UUID_CANON_XMP, xmp);
+            new byte[4], ascii("uuid"), Cr3Readers.USERTYPE_CANON_XMP, xmp);
         Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(bytes));
         assertFalse(metadata.hasErrors());
         XmpDirectory directory = metadata.getFirstDirectoryOfType(XmpDirectory.class);
@@ -122,8 +122,8 @@ public class Cr3MetadataReaderTest
             + "<rdf:Description rdf:about='' xmlns:xmp='http://ns.adobe.com/xap/1.0/' xmp:Rating='3'/>"
             + "</rdf:RDF></x:xmpmeta>");
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
-            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, preview)),
-            box("uuid", join(Cr3Handler.UUID_CANON_XMP, xmp)))));
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, preview)),
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_XMP, xmp)))));
         assertFalse(metadata.hasErrors());
         Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
         assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
@@ -138,9 +138,9 @@ public class Cr3MetadataReaderTest
         byte[] preview = join(new byte[] {(byte) 0xFF, (byte) 0xD8}, new byte[100]);
         byte[] file = join(
             box("ftyp", join(ascii("crx "), new byte[4], ascii("crx isom"))),
-            box("moov", box("uuid", join(Cr3Handler.UUID_CANON_MAIN,
+            box("moov", box("uuid", join(Cr3Readers.USERTYPE_CANON_MAIN,
                 box("THMB", join(jpegRecordHeader(4, 8, 160, 120, thumbnail.length), thumbnail))))),
-            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
                 box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview)))),
             box("mdat", new byte[64]));
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
@@ -159,7 +159,7 @@ public class Cr3MetadataReaderTest
     {
         byte[] preview = new byte[100];
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(
-            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
                 box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length + 1), preview))))));
         Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
         assertEquals(1620, directory.getInt(Cr3Directory.TAG_PREVIEW_WIDTH));
@@ -173,7 +173,7 @@ public class Cr3MetadataReaderTest
     {
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(join(
             box("ftyp", new byte[] {1, 2}),
-            box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+            box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
                 box("PRVW", jpegRecordHeader(6, 12, 1620, 1080, 0)))))));
         Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
         assertTrue(directory.hasErrors());
@@ -184,7 +184,7 @@ public class Cr3MetadataReaderTest
     public void testPreviewToEndOfInput() throws Exception
     {
         byte[] preview = {(byte) 0xff, (byte) 0xd8, 1, 2, (byte) 0xff, (byte) 0xd9};
-        byte[] file = join(new byte[] {0, 0, 0, 0}, ascii("uuid"), Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+        byte[] file = join(new byte[] {0, 0, 0, 0}, ascii("uuid"), Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
             new byte[] {0, 0, 0, 0}, ascii("PRVW"), jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview);
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));
         Cr3Directory directory = metadata.getFirstDirectoryOfType(Cr3Directory.class);
@@ -197,7 +197,7 @@ public class Cr3MetadataReaderTest
     public void testTruncatedJpegGetsNoLocation() throws Exception
     {
         byte[] preview = new byte[100];
-        byte[] file = box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+        byte[] file = box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
             box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview))));
         byte[] truncated = java.util.Arrays.copyOf(file, file.length - 10);
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(truncated) {
@@ -218,9 +218,9 @@ public class Cr3MetadataReaderTest
     public void testLaterRecordWithoutJpegKeepsTheEarlierOne() throws Exception
     {
         byte[] preview = new byte[100];
-        byte[] valid = box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+        byte[] valid = box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
             box("PRVW", join(jpegRecordHeader(6, 12, 1620, 1080, preview.length), preview))));
-        byte[] invalid = box("uuid", join(Cr3Handler.UUID_CANON_PREVIEW, new byte[8],
+        byte[] invalid = box("uuid", join(Cr3Readers.USERTYPE_CANON_PREVIEW, new byte[8],
             box("PRVW", join(jpegRecordHeader(6, 12, 800, 600, preview.length + 1), preview))));
         byte[] file = join(valid, invalid);
         Metadata metadata = Cr3MetadataReader.readMetadata(new ByteArrayInputStream(file));

@@ -79,6 +79,14 @@ final class BoundedSequentialReader extends SequentialReader
         return _bufferArray;
     }
 
+    /** The reader to hand out: the in-memory payload itself once it was read in one piece. */
+    @NotNull
+    SequentialReader direct() throws IOException
+    {
+        source();
+        return _buffer != null ? _buffer : this;
+    }
+
     /** The in-memory payload once read, positioned where reading has got to, or {@code null}. */
     @Nullable
     SequentialByteArrayReader buffer()

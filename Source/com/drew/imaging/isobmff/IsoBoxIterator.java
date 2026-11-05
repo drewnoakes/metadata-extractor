@@ -184,6 +184,14 @@ public final class IsoBoxIterator
         return _payload;
     }
 
+    /** The payload reader to hand to a box reader: the in-memory payload itself once it was read in one piece. */
+    @NotNull
+    SequentialReader directPayload() throws IOException
+    {
+        payload();
+        return _payload.direct();
+    }
+
     /**
      * Reads the rest of the current box's payload. The array grows as data arrives, so a
      * declared size larger than the input fails at end of input rather than being allocated.
