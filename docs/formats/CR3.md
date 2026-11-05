@@ -58,9 +58,17 @@ remain in their corresponding metadata directories.
 The CR3 reader is a set of box readers registered by path (`ftyp`,
 `moov/uuid:85c0b687-.../CMT1`, `uuid:eaf42b5e-.../PRVW`, ...), published as
 `Cr3MetadataReader.ALL_READERS`; callers can pass them together with readers of
-their own to `Cr3MetadataReader.readMetadata(InputStream, Iterable)`. A layout
-skips the 8-byte preamble of the preview UUID. The walk descends only into
-containers on the way to a registered path and skips everything else unread.
+their own to `Cr3MetadataReader.readMetadata(InputStream, Iterable)`, or compile
+them once with `Cr3MetadataReader.compile` and read each file with
+`IsoBoxReaders.read` from a file context made by `Cr3MetadataReader.newRoot`, which
+can hold per-file state and an error handler of their own. `THUMBNAIL_READER`,
+`PREVIEW_READER` and `XMP_READER` can be replaced; `thumbnailReader` and
+`previewReader` make replacements that also hand the image data and its length to
+a callback, in the same pass. The CR3 layout is the standard ISO layout
+(`IsoStandardLayout`) plus the 8-byte preamble of the preview UUID. The walk
+descends only into containers on the way to a registered path and skips everything
+else unread. A box with several readers is read into memory once, up to 64 MiB by
+default (`IsoBoxReaders.DEFAULT_MAX_BUFFERED_PAYLOAD`).
 
 `IsoBoxIterator` handles standard, large-size, EOF-terminated, and UUID boxes. It
 limits nesting to 64 containers and buffered, unbounded EOF-terminated payloads
@@ -73,7 +81,8 @@ ends inside a box throws `TruncatedInputException`; reading past the end of a
 payload that is fully present throws a plain `EOFException`. Payloads larger than
 `Integer.MAX_VALUE` cannot be read into an array and are reported as errors. The
 CR3 reader reads only the `THMB` and `PRVW` headers, records where each JPEG lies
-when it fits inside its box, and skips the JPEG images.
+when it fits inside its box, and skips the JPEG images unless a replaced reader
+hands them to a callback.
 
 ## Verified implementation differences
 
@@ -85,8 +94,8 @@ when it fits inside its box, and skips the JPEG images.
 | Compressor version | ASCII, terminated at the first NUL | Removes trailing NUL bytes and decodes using the default Java charset |
 
 The reader architectures and directory/tag layouts are intentional API
-differences, not evidence of missing metadata. The buffering, preview-header,
-and compressor-string behaviors above are observed differences, not a claim
+differences, not evidence of missing metadata. The thumbnail/preview location and
+compressor-string behaviors above are observed differences, not a claim
 that both implementations have equivalent validation or resource limits.
 Compare identical bytes and the applicable specification before changing them.
 
