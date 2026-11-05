@@ -72,19 +72,32 @@ public class StreamReaderTest extends SequentialAccessTestBase
     @Test
     public void testNullTerminatedBytesPropagatesPaddingReadError() throws IOException
     {
+        // The terminator lies within the first 1024-byte bulk read, which succeeds.
+        // Any read after that throws, so the error must come from draining the padding.
+        final int initialReadLength = 1024;
+        byte[] data = new byte[initialReadLength + 1];
+        data[0] = 0x41;
         final IOException error = new IOException("Padding read failed");
-        StreamReader reader = new StreamReader(new FilterInputStream(new ByteArrayInputStream(new byte[]{0x41, 0, 7})) {
+        StreamReader reader = new StreamReader(new FilterInputStream(new ByteArrayInputStream(data)) {
+            private int _delivered;
+
             @Override
             public int read(byte[] buffer, int offset, int count) throws IOException
             {
-                throw error;
+                if (_delivered >= initialReadLength)
+                    throw error;
+                int bytesRead = super.read(buffer, offset, Math.min(count, initialReadLength - _delivered));
+                if (bytesRead > 0)
+                    _delivered += bytesRead;
+                return bytesRead;
             }
         });
         try {
-            reader.getNullTerminatedBytes(3, true);
+            reader.getNullTerminatedBytes(initialReadLength + 1, true);
             fail("Expected IOException while consuming padding");
         } catch (IOException e) {
             assertSame(error, e);
         }
+        assertEquals(initialReadLength, reader.getPosition());
     }
 }
