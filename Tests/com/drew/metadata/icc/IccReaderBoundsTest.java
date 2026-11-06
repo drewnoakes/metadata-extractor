@@ -1,6 +1,7 @@
 package com.drew.metadata.icc;
 
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessStreamReader;
 import com.drew.metadata.Metadata;
@@ -11,7 +12,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -202,6 +205,51 @@ public class IccReaderBoundsTest
     }
 
     @Test
+    public void reportsJpegSegmentShorterThanHeader() throws Exception
+    {
+        for (int length : new int[]{11, 12, 13}) {
+            ByteArrayOutputStream jpeg = new ByteArrayOutputStream();
+            DataOutputStream output = new DataOutputStream(jpeg);
+            output.writeShort(0xffd8);
+            output.writeShort(0xffe2);
+            output.writeShort(length + 2);
+            output.writeBytes("ICC_PROFILE");
+            output.write(new byte[length - 11]);
+            output.writeShort(0xffd9);
+
+            Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(jpeg.toByteArray()));
+            assertTrue(error(metadata).contains("shorter than its header"));
+        }
+    }
+
+    @Test
+    public void assemblesProfileSplitAcrossJpegSegments() throws Exception
+    {
+        byte[] bytes = profile(1, 4);
+        Metadata metadata = new Metadata();
+        new IccReader().readJpegSegments(Arrays.asList(
+            app2(Arrays.copyOfRange(bytes, 0, 100)),
+            app2(Arrays.copyOfRange(bytes, 100, bytes.length))), metadata, JpegSegmentType.APP2);
+        assertFalse(metadata.hasErrors());
+        IccDirectory directory = metadata.getFirstDirectoryOfType(IccDirectory.class);
+        assertNotNull(directory);
+        assertEquals(bytes.length, directory.getInt(IccDirectory.TAG_PROFILE_BYTE_COUNT));
+        assertEquals(1, directory.getInt(IccDirectory.TAG_TAG_COUNT));
+    }
+
+    @Test
+    public void rejectsJpegSegmentsExceedingProfileLimit() throws Exception
+    {
+        byte[] segment = app2(new byte[65519]);
+        List<byte[]> segments = new ArrayList<byte[]>();
+        for (int i = 0; i < 16 * 1024 * 1024 / 65519 + 1; i++)
+            segments.add(segment);
+        Metadata metadata = new Metadata();
+        new IccReader().readJpegSegments(segments, metadata, JpegSegmentType.APP2);
+        assertTrue(error(metadata).contains("16 MiB"));
+    }
+
+    @Test
     public void reportsTruncatedTagData() throws Exception
     {
         byte[] bytes = profile(1, 4);
@@ -223,6 +271,14 @@ public class IccReaderBoundsTest
         assertNotNull(directory);
         assertTrue(directory.hasErrors());
         return directory.getErrors().iterator().next();
+    }
+
+    private static byte[] app2(byte[] payload)
+    {
+        byte[] segment = new byte[14 + payload.length];
+        System.arraycopy("ICC_PROFILE".getBytes(), 0, segment, 0, 11);
+        System.arraycopy(payload, 0, segment, 14, payload.length);
+        return segment;
     }
 
     private static byte[] profile(int tagCount, int payloadLength)
