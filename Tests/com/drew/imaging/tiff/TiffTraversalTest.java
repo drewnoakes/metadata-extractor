@@ -29,7 +29,10 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifImageDirectory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifTiffHandler;
+import com.drew.metadata.exif.PanasonicRawIFD0Directory;
+import com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory;
 import com.drew.metadata.file.FileTypeDirectory;
+import com.drew.metadata.photoshop.PhotoshopDirectory;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -38,6 +41,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -256,6 +260,123 @@ public class TiffTraversalTest
         assertFalse(reader.isMotorolaByteOrder());
         assertEquals(Arrays.asList("Exif SubIFD", "Exif IFD0"), handler.endings);
         assertNull(handler.currentDirectory());
+    }
+
+    @Test
+    public void testNestedMakernoteIfdsAtLimit() throws Exception
+    {
+        assertNestedOlympusMainInfo(30, 31, false);
+    }
+
+    @Test
+    public void testNestedMakernoteIfdsBeyondLimit() throws Exception
+    {
+        assertNestedOlympusMainInfo(31, 32, true);
+    }
+
+    @Test
+    public void testDeeplyNestedMakernoteIfds() throws Exception
+    {
+        assertNestedOlympusMainInfo(10000, 32, true);
+    }
+
+    /**
+     * Each Olympus IFD holds an inline Main Info sub-IFD, which ExifTiffHandler reads with a nested
+     * processIfd call, followed by a quality tag that must stay in that IFD's own directory.
+     */
+    private static void assertNestedOlympusMainInfo(int levels, int expectedDirectories, boolean expectLimit) throws Exception
+    {
+        ByteBuffer data = createTiff(52 + 30 * (levels + 1));
+        data.putShort((short)1);
+        putTag(data, ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET, 26);
+        data.putInt(0);
+        data.putShort((short)1);
+        data.putShort((short)ExifDirectoryBase.TAG_MAKERNOTE).putShort((short)7).putInt(8).putInt(44);
+        data.putInt(0);
+        data.put(new byte[] { 'O', 'L', 'Y', 'M', 'P', 0, 1, 0 });
+        for (int i = 0; i <= levels; i++) {
+            int start = data.position();
+            data.putShort((short)(i < levels ? 2 : 1));
+            if (i < levels)
+                data.putShort((short)OlympusMakernoteDirectory.TAG_MAIN_INFO).putShort((short)7).putInt(30).putInt(start + 30);
+            data.putShort((short)OlympusMakernoteDirectory.TAG_JPEG_QUALITY).putShort((short)3).putInt(1).putInt(i);
+            data.putInt(0);
+            data.position(start + 30);
+        }
+
+        Metadata metadata = readTiff(data);
+        List<OlympusMakernoteDirectory> directories = new ArrayList<OlympusMakernoteDirectory>(
+            metadata.getDirectoriesOfType(OlympusMakernoteDirectory.class));
+        assertEquals(expectedDirectories, directories.size());
+        int processed = expectLimit ? expectedDirectories - 1 : expectedDirectories;
+        for (int i = 0; i < processed; i++)
+            assertEquals(i, directories.get(i).getInt(OlympusMakernoteDirectory.TAG_JPEG_QUALITY));
+        if (expectLimit) {
+            OlympusMakernoteDirectory skipped = directories.get(processed);
+            assertFalse(skipped.containsTag(OlympusMakernoteDirectory.TAG_JPEG_QUALITY));
+            assertEquals(1, skipped.getErrorCount());
+            assertEquals("IFD nesting too deep", skipped.getErrors().iterator().next());
+        } else {
+            assertFalse(metadata.hasErrors());
+        }
+    }
+
+    @Test
+    public void testDeeplyNestedPhotoshopExif() throws Exception
+    {
+        // A TIFF whose IFD0 Photoshop tag holds Exif data 1 (0x0422), which is another such TIFF.
+        int levels = 2000;
+        ByteBuffer data = ByteBuffer.allocate(14 + 38 * levels);
+        for (int i = levels; i > 0; i--) {
+            int innerTiff = 14 + 38 * (i - 1);
+            data.put((byte)'M').put((byte)'M').putShort((short)42).putInt(8);
+            data.putShort((short)1);
+            data.putShort((short)ExifDirectoryBase.TAG_PHOTOSHOP_SETTINGS).putShort((short)7).putInt(12 + innerTiff).putInt(26);
+            data.putInt(0);
+            data.put(new byte[] { '8', 'B', 'I', 'M' }).putShort((short)PhotoshopDirectory.TAG_EXIF_DATA_1).putShort((short)0).putInt(innerTiff);
+        }
+        data.put((byte)'M').put((byte)'M').putShort((short)42).putInt(8).putShort((short)0).putInt(0);
+
+        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(data.array()));
+        assertEquals(32, metadata.getDirectoriesOfType(PhotoshopDirectory.class).size());
+        assertNestingLimitReported(metadata.getDirectoriesOfType(ExifIFD0Directory.class), 33);
+    }
+
+    @Test
+    public void testDeeplyNestedJpgFromRaw() throws Exception
+    {
+        // A JPEG whose Exif is a Panasonic RAW IFD0 holding JpgFromRaw, which is another such JPEG.
+        int levels = 1600;
+        ByteBuffer data = ByteBuffer.allocate(4 + 40 * levels);
+        for (int i = levels; i > 0; i--) {
+            int innerJpeg = 4 + 40 * (i - 1);
+            data.putShort((short)0xFFD8).putShort((short)0xFFE1).putShort((short)(34 + innerJpeg));
+            data.put(new byte[] { 'E', 'x', 'i', 'f', 0, 0 });
+            data.put((byte)'M').put((byte)'M').putShort((short)0x55).putInt(8);
+            data.putShort((short)1);
+            data.putShort((short)PanasonicRawIFD0Directory.TagJpgFromRaw).putShort((short)7).putInt(innerJpeg).putInt(26);
+            data.putInt(0);
+        }
+        data.putShort((short)0xFFD8).putShort((short)0xFFD9);
+        for (int i = 0; i < levels; i++)
+            data.putShort((short)0xFFD9);
+
+        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(data.array()));
+        assertNestingLimitReported(metadata.getDirectoriesOfType(PanasonicRawIFD0Directory.class), 33);
+    }
+
+    private static void assertNestingLimitReported(Collection<? extends Directory> ifd0Directories, int expectedCount)
+    {
+        assertEquals(expectedCount, ifd0Directories.size());
+        int errors = 0;
+        for (Directory directory : ifd0Directories) {
+            if (directory.hasErrors()) {
+                assertEquals(1, directory.getErrorCount());
+                assertEquals("IFD nesting too deep", directory.getErrors().iterator().next());
+                errors++;
+            }
+        }
+        assertEquals(1, errors);
     }
 
     private static ByteBuffer createMixedByteOrderTiff()
