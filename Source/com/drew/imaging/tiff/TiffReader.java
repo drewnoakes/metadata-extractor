@@ -39,6 +39,26 @@ import java.util.Set;
 public class TiffReader
 {
     /**
+     * The maximum number of {@link #processIfd} calls that may be nested on one thread. Handlers call back into
+     * this reader for makernotes and inline sub-IFDs, and for Exif inside embedded Photoshop data or preview JPEGs,
+     * all of which may nest again. Real files nest only a few levels deep, so this limit is reached only by
+     * malformed files that would otherwise exhaust the stack.
+     */
+    private static final int MAX_NESTED_IFD_DEPTH = 32;
+
+    /**
+     * Those calls pass through new reader and handler instances, so the depth is tracked per thread.
+     */
+    private static final ThreadLocal<int[]> _nestedIfdDepth = new ThreadLocal<int[]>()
+    {
+        @Override
+        protected int[] initialValue()
+        {
+            return new int[1];
+        }
+    };
+
+    /**
      * Processes a TIFF data sequence.
      *
      * @param reader the {@link RandomAccessReader} from which the data should be read
@@ -138,6 +158,10 @@ public class TiffReader
 
     /**
      * Processes classic TIFF or BigTIFF IFDs using depth-first, stack-based traversal.
+     * <p>
+     * Handlers may call this method again while an IFD is being processed, for example to read a makernote or
+     * Exif embedded in another format. Such calls may be nested at most 32 deep on one thread; beyond that the
+     * IFD is skipped and an error is reported to the handler.
      *
      * @param handler the handler that coordinates processing and accepts read values
      * @param reader the reader from which the data should be read
@@ -153,6 +177,28 @@ public class TiffReader
                                   final int ifdOffset,
                                   final int tiffHeaderOffset,
                                   final boolean isBigTiff) throws IOException
+    {
+        int[] depth = _nestedIfdDepth.get();
+        if (depth[0] >= MAX_NESTED_IFD_DEPTH) {
+            handler.error("IFD nesting too deep");
+            // Balance the directory the handler pushed for this IFD, as processing it would have done.
+            handler.endingIFD();
+            return;
+        }
+        depth[0]++;
+        try {
+            processIfds(handler, reader, processedIfdOffsets, ifdOffset, tiffHeaderOffset, isBigTiff);
+        } finally {
+            depth[0]--;
+        }
+    }
+
+    private static void processIfds(@NotNull final TiffHandler handler,
+                                    @NotNull final RandomAccessReader reader,
+                                    @NotNull final Set<Integer> processedIfdOffsets,
+                                    final int ifdOffset,
+                                    final int tiffHeaderOffset,
+                                    final boolean isBigTiff) throws IOException
     {
         final int tagCountSize = isBigTiff ? 8 : 2;
         final int entrySize = isBigTiff ? 20 : 12;
