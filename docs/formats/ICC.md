@@ -16,6 +16,11 @@ overlapping ranges. Profiles exceeding these limits produce errors in the ICC
 directory; other metadata can still be read. The 16 MiB profile limit also
 applies to compressed PNG profiles.
 
+In JPEG, a profile can span several APP2 segments that each start with a 14-byte
+`ICC_PROFILE` header. Both implementations join the segment payloads in a single
+copy. An `ICC_PROFILE` segment shorter than its header, or joined payloads
+exceeding 16 MiB, produce an ICC directory error and the profile is not read.
+
 These are library resource policies, not maximum sizes prescribed by the ICC
 specification. A profile's limits do not establish a whole-file memory bound.
 
@@ -30,7 +35,9 @@ The shared limits were reviewed against Java `55c8e2cc` and .NET `658dc035`.
 Do not treat that historical gap as outstanding or duplicate the landed fix.
 
 No new same-input runtime comparison was performed for this documentation change;
-do not infer parity for JPEG assembly, PNG decompression, dates, or descriptors.
+do not infer parity for PNG decompression, dates, or descriptors. JPEG segment
+assembly was aligned by comparing Java `readJpegSegments` with .NET
+`ReadJpegSegments`.
 
 ## References
 
