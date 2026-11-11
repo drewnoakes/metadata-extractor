@@ -123,6 +123,10 @@ public class QuickTimeDataHandler extends QuickTimeMetadataHandler
                     directory.setByteArray(tag, reader.getBytes(length));
                     break;
                 case 22:
+                    if (length > 4) {
+                        directory.addError("Integer size too large: " + length);
+                        break;
+                    }
                     byte[] buf = new byte[4];
                     reader.getBytes(buf, 4 - length, length);
                     directory.setInt(tag, new SequentialByteArrayReader(buf).getInt32());
