@@ -106,6 +106,105 @@ public class Mp4MetadataReaderTest
         assertMovieHeaderParsed(bytes);
     }
 
+    @Test
+    public void testOversizedXtraKeyNameSizeReportsError() throws Exception
+    {
+        // 'udta' holding an 'Xtra' box whose only entry declares a 4 GiB key name
+        byte[] bytes = new byte[FTYP_LENGTH + 8 + 8 + 16];
+        writeFileType(bytes);
+        writeBoxHeader(bytes, FTYP_LENGTH, 8 + 8 + 16, "udta");
+        writeBoxHeader(bytes, FTYP_LENGTH + 8, 8 + 16, "Xtra");
+        writeUInt32(bytes, FTYP_LENGTH + 16, 12);
+        writeUInt32(bytes, FTYP_LENGTH + 20, 0xFFFFFFFFL);
+
+        Mp4Directory directory = readMp4Directory(bytes);
+
+        assertTrue(containsError(directory, "Xtra key name size too large."));
+    }
+
+    @Test
+    public void testOversizedXtraValueSizeReportsError() throws Exception
+    {
+        Mp4Directory directory = readMp4Directory(createXtraMoodBytes(0xFFFFFFFFL));
+
+        assertTrue(containsError(directory, "Xtra value size too large."));
+    }
+
+    @Test
+    public void testXtraValueIsParsed() throws Exception
+    {
+        Mp4Directory directory = readMp4Directory(createXtraMoodBytes(6 + 4));
+
+        assertFalse(containsError(directory, "Xtra value size too large."));
+        assertEquals("Hi", directory.getString(Mp4Directory.TAG_MOOD));
+    }
+
+    @Test
+    public void testOversizedItemListDataSizeReportsError() throws Exception
+    {
+        // 'udta' holding 'meta', then 'ilst', then a title entry whose 'data' box declares 4 GiB
+        final int entryLength = 8 + 16;
+        byte[] bytes = new byte[FTYP_LENGTH + 8 + 12 + 8 + entryLength];
+        writeFileType(bytes);
+        int offset = FTYP_LENGTH;
+        writeBoxHeader(bytes, offset, 8 + 12 + 8 + entryLength, "udta");
+        offset += 8;
+        // Version and flags follow the 'meta' header
+        writeBoxHeader(bytes, offset, 12 + 8 + entryLength, "meta");
+        offset += 12;
+        writeBoxHeader(bytes, offset, 8 + entryLength, "ilst");
+        offset += 8;
+        writeUInt32(bytes, offset, entryLength);
+        writeUInt32(bytes, offset + 4, 0xA96E616DL); // "\u00A9nam"
+        writeUInt32(bytes, offset + 8, 0xFFFFFFFFL);
+
+        Mp4Directory directory = readMp4Directory(bytes);
+
+        assertTrue(containsError(directory, "ilst data size too large."));
+        assertFalse(directory.containsTag(Mp4Directory.TAG_TITLE));
+    }
+
+    /**
+     * Builds a file holding 'ftyp', then 'udta' containing an 'Xtra' box with one "WM/Mood" entry.
+     * The entry has a single value of the declared size, backed by the UTF-16LE string "Hi".
+     */
+    private static byte[] createXtraMoodBytes(long valueSize)
+    {
+        final String keyName = "WM/Mood";
+        final int entryLength = 8 + keyName.length() + 4 + 6 + 4;
+
+        byte[] bytes = new byte[FTYP_LENGTH + 8 + 8 + entryLength];
+        writeFileType(bytes);
+        int offset = FTYP_LENGTH;
+        writeBoxHeader(bytes, offset, 8 + 8 + entryLength, "udta");
+        writeBoxHeader(bytes, offset + 8, 8 + entryLength, "Xtra");
+        offset += 16;
+
+        // The entry size, key name size and key name, then the number of values
+        writeUInt32(bytes, offset, entryLength);
+        writeUInt32(bytes, offset + 4, keyName.length());
+        writeString(bytes, offset + 8, keyName);
+        offset += 8 + keyName.length();
+        writeUInt32(bytes, offset, 1);
+
+        // The value size counts its own four bytes and the two-byte value type
+        writeUInt32(bytes, offset + 4, valueSize);
+        bytes[offset + 9] = 8;
+        bytes[offset + 10] = 'H';
+        bytes[offset + 12] = 'i';
+
+        return bytes;
+    }
+
+    private static Mp4Directory readMp4Directory(byte[] bytes) throws Exception
+    {
+        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(bytes));
+        Mp4Directory directory = metadata.getFirstDirectoryOfType(Mp4Directory.class);
+
+        assertNotNull(directory);
+        return directory;
+    }
+
     /**
      * Builds a file in which each 'moov' box is nested within the previous one. Every box is
      * individually well formed, so only the nesting depth is abnormal.
