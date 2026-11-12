@@ -235,12 +235,20 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
                 long dataSize = reader.getUInt32();
                 if (dataSize > 16) {
                     reader.skip(12); // "data" atom: 4 bytes type, 4 bytes version/flags, 4 bytes locale
+                    if (dataSize - 16 > reader.available()) {
+                        directory.addError("ilst data size too large.");
+                        break;
+                    }
                     directory.setString(TAG_TITLE, reader.getString((int) dataSize - 16, "UTF-8"));
                 }
             } else if (kind == CCMT_TYPE) {
                 long dataSize = reader.getUInt32();
                 if (dataSize > 16) {
                     reader.skip(12);
+                    if (dataSize - 16 > reader.available()) {
+                        directory.addError("ilst data size too large.");
+                        break;
+                    }
                     directory.setString(TAG_COMMENT, reader.getString((int) dataSize - 16, "UTF-8"));
                 }
             }
@@ -266,6 +274,10 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
             if (entrySize < 12)
                 break;
             long keyNameSize = reader.getUInt32();
+            if (keyNameSize > reader.available()) {
+                directory.addError("Xtra key name size too large.");
+                break;
+            }
             String keyName = reader.getString((int) keyNameSize, "UTF-8");
             long entryCount = reader.getUInt32();
             if (keyName.equals("WM/SubTitle")) {
@@ -295,6 +307,10 @@ public class Mp4BoxHandler extends Mp4Handler<Mp4Directory>
             reader.getUInt16(); // value type
             if (valueSize < 6)
                 break;
+            if (valueSize - 6 > reader.available()) {
+                directory.addError("Xtra value size too large.");
+                break;
+            }
             result.add(reader.getString((int) valueSize - 6, "UTF-16LE").replace("\0", ""));
         }
         return StringUtil.join(result, " | ");
