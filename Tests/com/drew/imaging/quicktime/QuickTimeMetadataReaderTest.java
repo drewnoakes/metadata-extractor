@@ -24,6 +24,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeDirectory;
+import com.drew.metadata.mov.metadata.QuickTimeMetadataDirectory;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -122,6 +123,75 @@ public class QuickTimeMetadataReaderTest
         writeMovieHeaderPayload(bytes, offset + 16);
 
         assertMovieHeaderParsed(bytes);
+    }
+
+    @Test
+    public void testOversizedIntegerMetadataValueReportsError() throws Exception
+    {
+        Metadata metadata = ImageMetadataReader.readMetadata(
+            new ByteArrayInputStream(createIntegerMetadataItemBytes(new byte[] { 0, 0, 0, 1, 2 })));
+
+        QuickTimeMetadataDirectory directory = metadata.getFirstDirectoryOfType(QuickTimeMetadataDirectory.class);
+
+        assertNotNull(directory);
+        assertTrue(containsError(directory, "Integer size too large: 5"));
+        assertFalse(directory.containsTag(QuickTimeMetadataDirectory.TAG_ARTIST));
+    }
+
+    @Test
+    public void testIntegerMetadataValueIsParsed() throws Exception
+    {
+        Metadata metadata = ImageMetadataReader.readMetadata(
+            new ByteArrayInputStream(createIntegerMetadataItemBytes(new byte[] { 1, 2 })));
+
+        QuickTimeMetadataDirectory directory = metadata.getFirstDirectoryOfType(QuickTimeMetadataDirectory.class);
+
+        assertNotNull(directory);
+        assertEquals(0x0102, directory.getInt(QuickTimeMetadataDirectory.TAG_ARTIST));
+    }
+
+    /**
+     * Builds a file holding 'ftyp', then a 'meta' atom with an 'mdta' handler, one key, and one
+     * 'ilst' item whose 'data' atom is a big-endian signed integer (type 22) with the given bytes.
+     */
+    private static byte[] createIntegerMetadataItemBytes(byte[] value)
+    {
+        final String key = "com.apple.quicktime.artist";
+        final int handlerLength = 33;
+        final int keysLength = 8 + 8 + 8 + key.length();
+        final int dataLength = 8 + 8 + value.length;
+
+        byte[] bytes = new byte[FTYP_LENGTH + 8 + handlerLength + keysLength + 8 + 8 + dataLength];
+        writeFileType(bytes);
+        int offset = FTYP_LENGTH;
+        writeAtomHeader(bytes, offset, bytes.length - FTYP_LENGTH, "meta");
+        offset += 8;
+
+        // Version and flags, then the component type, precede the component subtype
+        writeAtomHeader(bytes, offset, handlerLength, "hdlr");
+        writeString(bytes, offset + 16, "mdta");
+        offset += handlerLength;
+
+        // Version and flags, the entry count, then each key's size, namespace and name
+        writeAtomHeader(bytes, offset, keysLength, "keys");
+        writeUInt32(bytes, offset + 12, 1);
+        writeUInt32(bytes, offset + 16, 8 + key.length());
+        writeString(bytes, offset + 20, "mdta");
+        writeString(bytes, offset + 24, key);
+        offset += keysLength;
+
+        // The item's type is the one-based index of its key
+        writeAtomHeader(bytes, offset, 8 + 8 + dataLength, "ilst");
+        writeUInt32(bytes, offset + 8, 8 + dataLength);
+        writeUInt32(bytes, offset + 12, 1);
+        offset += 16;
+
+        // The type indicator and locale precede the value
+        writeAtomHeader(bytes, offset, dataLength, "data");
+        writeUInt32(bytes, offset + 8, 22);
+        System.arraycopy(value, 0, bytes, offset + 16, value.length);
+
+        return bytes;
     }
 
     /**
