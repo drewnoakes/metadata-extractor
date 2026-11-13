@@ -97,7 +97,7 @@ public class TiffReader
             }
         }
 
-        Set<Integer> processedIfdOffsets = new HashSet<Integer>();
+        Set<Integer> processedIfdOffsets = new Traversal(reader.getLength());
         processIfd(handler, reader, processedIfdOffsets, firstIfdOffset, tiffHeaderOffset, isBigTiff);
     }
 
@@ -202,7 +202,9 @@ public class TiffReader
                 }
 
                 if (state.componentCount != 0) {
-                    if (!state.isIfdPointer && !handler.customProcessTag(state.tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, state.tagId, state.byteCount))
+                    if (!state.isIfdPointer
+                        && reserveValueBytes(handler, processedIfdOffsets, state.byteCount)
+                        && !handler.customProcessTag(state.tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, state.tagId, state.byteCount))
                         processTag(handler, state.tagId, state.tagValueOffset, state.componentCount, state.formatCode, reader);
                     state.componentCount = 0;
                     state.componentIndex = 0;
@@ -345,6 +347,9 @@ public class TiffReader
                         continue;
                     }
 
+                    if (!reserveValueBytes(handler, processedIfdOffsets, byteCount))
+                        continue;
+
                     // If it wasn't an IFD pointer, allow custom tag processing to occur
                     if (!handler.customProcessTag((int) tagValueOffset, processedIfdOffsets, tiffHeaderOffset, reader, tagId, (int) byteCount)) {
                         // If no custom processing occurred, process the tag in the standard fashion
@@ -416,6 +421,49 @@ public class TiffReader
         {
             this.ifdOffset = ifdOffset;
         }
+    }
+
+    /**
+     * Tag values may total at most this many times the length of the TIFF data. Tags that contain IFDs, such as
+     * makernotes, are counted as well as the values inside them.
+     */
+    private static final int MAX_VALUE_BYTES_PER_DATA_BYTE = 4;
+
+    /**
+     * The visited IFD offsets of one {@link #processTiff} call, which handlers pass back when reading makernote
+     * IFDs. Also tracks how many tag value bytes the call may still read.
+     */
+    private static final class Traversal extends HashSet<Integer>
+    {
+        private long _remainingValueBytes;
+        private boolean _exhausted;
+
+        Traversal(long dataLength)
+        {
+            _remainingValueBytes = dataLength * MAX_VALUE_BYTES_PER_DATA_BYTE;
+        }
+    }
+
+    /**
+     * Returns <code>false</code> if a value of this size would exceed the limit, so many tags pointing at the
+     * same bytes cannot each get their own copy.
+     */
+    private static boolean reserveValueBytes(@NotNull final TiffHandler handler,
+                                             @NotNull final Set<Integer> processedIfdOffsets,
+                                             final long byteCount)
+    {
+        if (!(processedIfdOffsets instanceof Traversal))
+            return true;
+        Traversal traversal = (Traversal)processedIfdOffsets;
+        if (byteCount <= traversal._remainingValueBytes) {
+            traversal._remainingValueBytes -= byteCount;
+            return true;
+        }
+        if (!traversal._exhausted) {
+            traversal._exhausted = true;
+            handler.error("TIFF tag values exceed " + MAX_VALUE_BYTES_PER_DATA_BYTE + " times the data length; skipping values that do not fit");
+        }
+        return false;
     }
 
     private static void processTag(@NotNull final TiffHandler handler,

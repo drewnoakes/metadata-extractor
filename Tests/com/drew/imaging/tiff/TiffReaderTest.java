@@ -28,6 +28,7 @@ import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.ExifTiffHandler;
+import com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -278,6 +279,72 @@ public class TiffReaderTest
             assertFalse(metadata.hasErrors());
             assertEquals(300, metadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getInt(ExifDirectoryBase.TAG_X_RESOLUTION));
         }
+    }
+
+    @Test
+    public void testTagValuesSharingBytesAreLimited() throws Exception
+    {
+        // Eight tags read one 111-byte blob in 221 bytes of data, so values may total 884 bytes
+        Metadata metadata = readTiff(createSharedValueTiff(111, 111, 111, 111, 111, 111, 111, 107));
+        assertFalse(metadata.hasErrors());
+        Directory ifd0 = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        assertEquals(107, ifd0.getByteArray(0x1007).length);
+
+        metadata = readTiff(createSharedValueTiff(111, 111, 111, 111, 111, 111, 111, 108));
+        assertHasError(metadata, "TIFF tag values exceed 4 times the data length");
+        ifd0 = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        assertEquals(111, ifd0.getByteArray(0x1006).length);
+        assertFalse(ifd0.containsTag(0x1007));
+    }
+
+    @Test
+    public void testMakernoteValuesShareTagValueLimit() throws Exception
+    {
+        // IFD0 reads 11 x 100 bytes, its Olympus makernote then reads 26 + 100 bytes, all from 302 bytes of data.
+        // Only 82 of the 1208 allowed bytes remain for the makernote's value.
+        ByteBuffer data = ByteBuffer.allocate(302).order(ByteOrder.LITTLE_ENDIAN);
+        data.put((byte)'I').put((byte)'I').putShort((short)42).putInt(8);
+        data.putShort((short)12);
+        for (int i = 0; i < 11; i++)
+            data.putShort((short)(0x1000 + i)).putShort((short)7).putInt(100).putInt(202);
+        data.putShort((short)ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET).putShort((short)4).putInt(1).putInt(158);
+        data.putInt(0);
+        data.putShort((short)1);
+        data.putShort((short)ExifSubIFDDirectory.TAG_MAKERNOTE).putShort((short)7).putInt(26).putInt(176);
+        data.putInt(0);
+        data.put("OLYMP\0".getBytes("US-ASCII")).putShort((short)1);
+        data.putShort((short)1);
+        data.putShort((short)0x1000).putShort((short)7).putInt(100).putInt(202);
+        data.putInt(0);
+
+        Metadata metadata = readTiff(data);
+        assertEquals(100, metadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getByteArray(0x100A).length);
+        OlympusMakernoteDirectory makernote = metadata.getFirstDirectoryOfType(OlympusMakernoteDirectory.class);
+        assertNotNull(makernote);
+        assertFalse(makernote.containsTag(0x1000));
+        assertHasError(metadata, "TIFF tag values exceed 4 times the data length");
+    }
+
+    private static ByteBuffer createSharedValueTiff(int... counts)
+    {
+        int blobLength = 0;
+        for (int count : counts)
+            blobLength = Math.max(blobLength, count);
+        int blobOffset = 8 + 2 + 12 * counts.length + 4;
+        ByteBuffer data = ByteBuffer.allocate(blobOffset + blobLength).order(ByteOrder.LITTLE_ENDIAN);
+        data.put((byte)'I').put((byte)'I').putShort((short)42).putInt(8);
+        data.putShort((short)counts.length);
+        for (int i = 0; i < counts.length; i++)
+            data.putShort((short)(0x1000 + i)).putShort((short)7).putInt(counts[i]).putInt(blobOffset);
+        data.putInt(0);
+        return data;
+    }
+
+    private static Metadata readTiff(ByteBuffer data) throws Exception
+    {
+        Metadata metadata = new Metadata();
+        new TiffReader().processTiff(new ByteArrayReader(data.array()), new ExifTiffHandler(metadata, null, 0), 0);
+        return metadata;
     }
 
     private static ByteBuffer createBigTiff(int size)

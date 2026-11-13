@@ -95,6 +95,8 @@ public class BplistReader
             offsets[i] = (int)offset;
         }
 
+        // Each object is copied, so objects that share bytes could otherwise use far more memory than the bplist.
+        long objectByteCount = 0;
         for (int i = 0; i < offsets.length; i++) {
             reader = new SequentialByteArrayReader(bplist, offsets[i]);
             byte marker = reader.getByte();
@@ -116,6 +118,9 @@ public class BplistReader
                 default:
                     throw new IOException("Un-handled objectFormat encountered");
             }
+            objectByteCount += reader.getPosition() - offsets[i];
+            if (objectByteCount > trailer.offsetTableOffset - BPLIST_HEADER.length)
+                throw new IOException("bplist objects exceed object data size");
         }
 
         return new PropertyListResults(objects, trailer);
