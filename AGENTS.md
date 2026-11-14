@@ -33,6 +33,7 @@ capability gaps rather than conceal them in documentation.
 | Matroska / WebM | [MKV.md](docs/formats/MKV.md) |
 | PNG | [PNG.md](docs/formats/PNG.md) |
 | QuickTime | [QUICKTIME.md](docs/formats/QUICKTIME.md) |
+| TIFF / Exif | [TIFF.md](docs/formats/TIFF.md) |
 
 This is an initial migration of substantive package documentation, not an
 exhaustive support matrix. Formats with only short package summaries do not need

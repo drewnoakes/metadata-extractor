@@ -143,12 +143,30 @@ public class BplistReaderBoundsTest
         return buffer.array();
     }
 
+    @Test
+    public void rejectsObjectsSharingBytes() throws Exception
+    {
+        byte[] object = new byte[203];
+        object[0] = 0x4f;
+        object[1] = 0x10;
+        object[2] = (byte)200;
+        assertEquals(200, ((byte[])BplistReader.parse(sharedObject(object, 1)).getObjects().get(0)).length);
+        assertInvalid(sharedObject(object, 2), "exceed object data size");
+    }
+
     private static byte[] singleObject(byte[] object)
     {
-        ByteBuffer buffer = ByteBuffer.allocate(8 + object.length + 1 + 32);
-        buffer.put("bplist00".getBytes(Charsets.ASCII)).put(object).put((byte)8);
+        return sharedObject(object, 1);
+    }
+
+    private static byte[] sharedObject(byte[] object, int references)
+    {
+        ByteBuffer buffer = ByteBuffer.allocate(8 + object.length + references + 32);
+        buffer.put("bplist00".getBytes(Charsets.ASCII)).put(object);
+        for (int i = 0; i < references; i++)
+            buffer.put((byte)8);
         buffer.put(new byte[6]).put((byte)1).put((byte)1);
-        buffer.putLong(1).putLong(0).putLong(8 + object.length);
+        buffer.putLong(references).putLong(0).putLong(8 + object.length);
         return buffer.array();
     }
 
