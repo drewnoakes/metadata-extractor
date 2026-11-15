@@ -43,6 +43,11 @@ public class EpsReader
 {
     private int _previousTag;
 
+    // Continuation lines are buffered here and written once, as rebuilding the value per line is quadratic
+    @Nullable
+    private StringBuilder _continuedValue;
+    private int _continuedTag;
+
     /**
      * Filter method that determines if file will contain an EPS Header.  If it does, it will read the necessary
      * data and then set the position to the beginning of the PostScript data.  If it does not, the position will not
@@ -112,6 +117,15 @@ public class EpsReader
      */
     private void extract(@NotNull final EpsDirectory directory, @NotNull Metadata metadata, @NotNull SequentialReader reader) throws IOException
     {
+        try {
+            extractComments(directory, metadata, reader);
+        } finally {
+            flushContinuedValue(directory);
+        }
+    }
+
+    private void extractComments(@NotNull final EpsDirectory directory, @NotNull Metadata metadata, @NotNull SequentialReader reader) throws IOException
+    {
         StringBuilder line = new StringBuilder();
 
         while (true) {
@@ -169,12 +183,20 @@ public class EpsReader
         if (tag == null)
             return;
 
+        if (tag != EpsDirectory.TAG_CONTINUE_LINE)
+            flushContinuedValue(directory);
+
         switch (tag) {
             case EpsDirectory.TAG_IMAGE_DATA:
                 extractImageData(directory, value);
                 break;
             case EpsDirectory.TAG_CONTINUE_LINE:
-                directory.setString(_previousTag, directory.getString(_previousTag) + " " + value);
+                if (_continuedValue == null || _continuedTag != _previousTag) {
+                    flushContinuedValue(directory);
+                    _continuedValue = new StringBuilder(String.valueOf(directory.getString(_previousTag)));
+                    _continuedTag = _previousTag;
+                }
+                _continuedValue.append(' ').append(value);
                 break;
             default:
                 if (EpsDirectory._tagNameMap.containsKey(tag) && !directory.containsTag(tag)) {
@@ -187,6 +209,14 @@ public class EpsReader
                 break;
         }
         _previousTag = tag;
+    }
+
+    private void flushContinuedValue(@NotNull final EpsDirectory directory)
+    {
+        if (_continuedValue != null) {
+            directory.setString(_continuedTag, _continuedValue.toString());
+            _continuedValue = null;
+        }
     }
 
     /**
