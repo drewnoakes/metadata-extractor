@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.jpeg;
 
+import com.drew.lang.SequentialReader;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
@@ -85,6 +86,14 @@ public class JpegMetadataReader
     }
 
     @NotNull
+    public static Metadata readMetadata(@NotNull SequentialReader reader, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
+        Metadata metadata = new Metadata();
+        process(metadata, reader, readers);
+        return metadata;
+    }
+
+    @NotNull
     public static Metadata readMetadata(@NotNull File file, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
         InputStream inputStream = new FileInputStream(file);
@@ -111,17 +120,22 @@ public class JpegMetadataReader
 
     public static void process(@NotNull Metadata metadata, @NotNull InputStream inputStream, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
     {
+        process(metadata, new StreamReader(inputStream), readers);
+    }
+
+    public static void process(@NotNull Metadata metadata, @NotNull SequentialReader reader, @Nullable Iterable<JpegSegmentMetadataReader> readers) throws JpegProcessingException, IOException
+    {
         if (readers == null)
             readers = ALL_READERS;
 
         Set<JpegSegmentType> segmentTypes = new HashSet<JpegSegmentType>();
-        for (JpegSegmentMetadataReader reader : readers) {
-            for (JpegSegmentType type : reader.getSegmentTypes()) {
+        for (JpegSegmentMetadataReader segmentReader : readers) {
+            for (JpegSegmentType type : segmentReader.getSegmentTypes()) {
                 segmentTypes.add(type);
             }
         }
 
-        JpegSegmentData segmentData = JpegSegmentReader.readSegments(new StreamReader(inputStream), segmentTypes);
+        JpegSegmentData segmentData = JpegSegmentReader.readSegments(reader, segmentTypes);
 
         processJpegSegmentData(metadata, readers, segmentData);
     }

@@ -39,12 +39,15 @@ public class Mp3Reader
 {
     public void extract(@NotNull final InputStream inputStream, @NotNull final Metadata metadata)
     {
+        extract(new StreamReader(inputStream), metadata);
+    }
+
+    public void extract(@NotNull final SequentialReader reader, @NotNull final Metadata metadata)
+    {
         Mp3Directory directory = new Mp3Directory();
         metadata.addDirectory(directory);
 
         try {
-            SequentialReader reader = new StreamReader(inputStream);
-
             int header = reader.getInt32();
 
             // ID: MPEG-2.5, MPEG-2, or MPEG-1

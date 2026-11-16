@@ -47,29 +47,29 @@ public class HeifReader
 
     public void extract(InputStream inputStream, HeifHandler<?> handler)
     {
-        // We need to read through the input stream to find the meta box which will tell us what handler to use
+        extract(new StreamReader(inputStream), handler);
+    }
 
-        // The meta box is not necessarily the first box, so we need to mark the input stream (if we can)
-        // so we can re-read the stream with the proper handler if necessary
-
+    public void extract(SequentialReader reader, HeifHandler<?> handler)
+    {
+        // The meta box is not necessarily the first box, so we mark the reader (if it supports it)
+        // so we can re-read from the start with the proper handler once we find it.
         try {
             boolean markSupported = false;
-            if (inputStream.markSupported()) {
+            if (reader.markSupported()) {
                 markSupported = true;
-                inputStream.mark(inputStream.available() + 1); // +1 since we're going to read past the end of the stream by 1 byte
+                reader.mark(reader.available() + 1); // +1 since we're going to read past the end of the stream by 1 byte
             }
 
-            StreamReader reader = new StreamReader(inputStream);
             reader.setMotorolaByteOrder(true);
 
-            processTopLevelBoxes(inputStream, reader, -1, handler, markSupported);
+            processTopLevelBoxes(reader, -1, handler, markSupported);
         } catch (IOException e) {
             // Any errors should have been added to the directory
         }
     }
 
-    private void processTopLevelBoxes(InputStream inputStream,
-                                      SequentialReader reader,
+    private void processTopLevelBoxes(SequentialReader reader,
                                       long atomEnd,
                                       HeifHandler<?> handler,
                                       boolean markSupported) throws IOException
@@ -83,7 +83,7 @@ public class HeifReader
 
                 if (!foundMetaBox && !ACCEPTABLE_PRE_META_BOX_TYPES.contains(box.type)) {
                     // If we hit a box that needs a more specific handler (like mdat) without yet hitting the meta box,
-                    // we'll need to reset the stream and use the correct handler once we find it
+                    // we'll need to reset the reader and use the correct handler once we find it
                     needToReset = true;
                 }
 
@@ -98,13 +98,12 @@ public class HeifReader
         }
 
         if (needToReset && markSupported) {
-            inputStream.reset();
-            reader = new StreamReader(inputStream);
+            reader.reset();
             processBoxes(reader, -1, 0, handler);
         } else if (needToReset) {
             HeifDirectory heifDirectory = handler.metadata.getFirstDirectoryOfType(HeifDirectory.class);
             if (heifDirectory != null) {
-                heifDirectory.addError("Unable to extract Exif data because inputStream was not resettable and 'meta' was not first box");
+                heifDirectory.addError("Unable to extract Exif data because the reader was not resettable and 'meta' was not first box");
             }
         }
     }

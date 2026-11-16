@@ -35,6 +35,7 @@ public class SequentialByteArrayReader extends SequentialReader
     @NotNull
     private final byte[] _bytes;
     private int _index;
+    private int _markedIndex;
 
     @Override
     public long getPosition()
@@ -126,5 +127,23 @@ public class SequentialByteArrayReader extends SequentialReader
     @Override
     public int available() {
         return _bytes.length - _index;
+    }
+
+    @Override
+    public boolean markSupported()
+    {
+        return true;
+    }
+
+    @Override
+    public void mark(int readLimit)
+    {
+        _markedIndex = _index;
+    }
+
+    @Override
+    public void reset()
+    {
+        _index = _markedIndex;
     }
 }
