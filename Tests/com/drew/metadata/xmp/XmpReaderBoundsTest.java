@@ -65,6 +65,27 @@ public class XmpReaderBoundsTest
         assertTrue(hasError(metadata, "Inconsistent length"));
     }
 
+    @Test(timeout = 10000)
+    public void readsManyStandardSegments() throws Exception
+    {
+        // Scanning every XmpDirectory after each standard segment made this take about 50 s
+        int count = 50000;
+        byte[] empty = "http://ns.adobe.com/xap/1.0/\0<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"/>".getBytes(Charsets.UTF_8);
+        byte[] xml = XML.getBytes(Charsets.UTF_8);
+        byte[][] segments = new byte[count + 1][];
+        Arrays.fill(segments, empty);
+        segments[count] = extension(xml.length, 0, xml);
+
+        Metadata metadata = readJpeg(segments);
+
+        assertFalse(metadata.hasErrors());
+        assertEquals(count + 2, metadata.getDirectoriesOfType(XmpDirectory.class).size());
+        boolean found = false;
+        for (XmpDirectory directory : metadata.getDirectoriesOfType(XmpDirectory.class))
+            found |= "image/jpeg".equals(directory.getXmpProperties().get("dc:format"));
+        assertTrue(found);
+    }
+
     private static boolean hasError(Metadata metadata, String text)
     {
         for (XmpDirectory directory : metadata.getDirectoriesOfType(XmpDirectory.class))
