@@ -103,6 +103,30 @@ public abstract class SequentialReader
     public abstract int available();
 
     /**
+     * Whether this reader can be repositioned to a previously {@link #mark(int) marked} spot via {@link #reset()}.
+     */
+    public boolean markSupported()
+    {
+        return false;
+    }
+
+    /**
+     * Records the current position so a later {@link #reset()} returns here, valid until {@code readLimit}
+     * more bytes are read. No-op by default.
+     */
+    public void mark(int readLimit)
+    {
+    }
+
+    /**
+     * Repositions this reader to the spot recorded by the last {@link #mark(int)}. Throws by default.
+     */
+    public void reset() throws IOException
+    {
+        throw new IOException("mark/reset not supported by this reader");
+    }
+
+    /**
      * Sets the endianness of this reader.
      * <ul>
      * <li><code>true</code> for Motorola (or big) endianness (also known as network byte order), with MSB before LSB.</li>

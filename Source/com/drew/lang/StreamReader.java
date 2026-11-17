@@ -38,6 +38,8 @@ public class StreamReader extends SequentialReader
 
     private long _pos;
 
+    private long _markedPos;
+
     @Override
     public long getPosition()
     {
@@ -121,6 +123,26 @@ public class StreamReader extends SequentialReader
         } catch (IOException e) {
             return 0;
         }
+    }
+
+    @Override
+    public boolean markSupported()
+    {
+        return _stream.markSupported();
+    }
+
+    @Override
+    public void mark(int readLimit)
+    {
+        _stream.mark(readLimit);
+        _markedPos = _pos;
+    }
+
+    @Override
+    public void reset() throws IOException
+    {
+        _stream.reset();
+        _pos = _markedPos;
     }
 
     private long skipInternal(long n) throws IOException

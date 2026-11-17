@@ -22,6 +22,7 @@ package com.drew.imaging.wav;
 
 import com.drew.imaging.riff.RiffProcessingException;
 import com.drew.imaging.riff.RiffReader;
+import com.drew.lang.SequentialReader;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -57,8 +58,14 @@ public class WavMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws IOException, RiffProcessingException
     {
+        return readMetadata(new StreamReader(inputStream));
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull SequentialReader reader) throws IOException, RiffProcessingException
+    {
         Metadata metadata = new Metadata();
-        new RiffReader().processRiff(new StreamReader(inputStream), new WavRiffHandler(metadata));
+        new RiffReader().processRiff(reader, new WavRiffHandler(metadata));
         return metadata;
     }
 }

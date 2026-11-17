@@ -108,7 +108,13 @@ public class PngMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws PngProcessingException, IOException
     {
-        Iterable<PngChunk> chunks = new PngChunkReader().extract(new StreamReader(inputStream), _desiredChunkTypes);
+        return readMetadata(new StreamReader(inputStream));
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull SequentialReader reader) throws PngProcessingException, IOException
+    {
+        Iterable<PngChunk> chunks = new PngChunkReader().extract(reader, _desiredChunkTypes);
 
         Metadata metadata = new Metadata();
         InflateBudget inflateBudget = new InflateBudget();

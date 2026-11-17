@@ -20,6 +20,7 @@
  */
 package com.drew.imaging.pcx;
 
+import com.drew.lang.SequentialReader;
 import com.drew.lang.StreamReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
@@ -52,8 +53,14 @@ public class PcxMetadataReader
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream)
     {
+        return readMetadata(new StreamReader(inputStream));
+    }
+
+    @NotNull
+    public static Metadata readMetadata(@NotNull SequentialReader reader)
+    {
         Metadata metadata = new Metadata();
-        new PcxReader().extract(new StreamReader(inputStream), metadata);
+        new PcxReader().extract(reader, metadata);
         return metadata;
     }
 }
