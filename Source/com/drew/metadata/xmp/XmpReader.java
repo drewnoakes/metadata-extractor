@@ -97,6 +97,7 @@ public class XmpReader implements JpegSegmentMetadataReader
         final int preambleLength = XMP_JPEG_PREAMBLE.length();
         final int extensionPreambleLength = XMP_EXTENSION_JPEG_PREAMBLE.length();
         String extendedXMPGUID = null;
+        boolean hasStandardXMP = false;
         byte[] extendedXMPBuffer = null;
         List<byte[]> extendedSegments = new ArrayList<byte[]>();
         long extendedPayloadLength = 0;
@@ -114,8 +115,7 @@ public class XmpReader implements JpegSegmentMetadataReader
                     byte[] xmlBytes = new byte[segmentBytes.length - preambleLength];
                     System.arraycopy(segmentBytes, preambleLength, xmlBytes, 0, xmlBytes.length);
                     extract(xmlBytes, metadata);
-                    // Check in the Standard XMP if there should be a Extended XMP part in other chunks.
-                    extendedXMPGUID = getExtendedXMPGUID(metadata);
+                    hasStandardXMP = true;
                     continue;
                 }
             }
@@ -127,6 +127,11 @@ public class XmpReader implements JpegSegmentMetadataReader
                 extendedPayloadLength += segmentBytes.length - extensionHeaderLength;
             }
         }
+
+        // Check in the Standard XMP if there should be a Extended XMP part in other chunks.
+        // This scans every XmpDirectory, so do it once rather than after each segment.
+        if (hasStandardXMP)
+            extendedXMPGUID = getExtendedXMPGUID(metadata);
 
         if (extendedXMPGUID != null) {
             for (byte[] segmentBytes : extendedSegments)
