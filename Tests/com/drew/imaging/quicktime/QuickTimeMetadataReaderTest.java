@@ -24,6 +24,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.QuickTimeDirectory;
+import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -124,6 +125,33 @@ public class QuickTimeMetadataReaderTest
         assertMovieHeaderParsed(bytes);
     }
 
+    @Test
+    public void testSampleTableEntryCountIsNotUsedAsCapacity() throws Exception
+    {
+        // Each atom declares 0x7FFFFFFE entries but holds none
+        for (String type : new String[]{"stts", "stsd"}) {
+            QuickTimeVideoDirectory directory = readVideoDirectory(createVideoTrackBytes(type, 0x7FFFFFFE, new byte[0]));
+
+            assertTrue(containsError(directory, "End of data reached."));
+        }
+    }
+
+    @Test
+    public void testVideoSampleDescriptionIsParsed() throws Exception
+    {
+        // Width and height follow 32 bytes of other fields in an 86-byte video sample description
+        byte[] description = new byte[86];
+        writeUInt32(description, 0, description.length);
+        writeString(description, 4, "avc1");
+        writeUInt32(description, 32, (640 << 16) | 480);
+
+        QuickTimeVideoDirectory directory = readVideoDirectory(createVideoTrackBytes("stsd", 1, description));
+
+        assertFalse(directory.hasErrors());
+        assertEquals(640, directory.getInt(QuickTimeVideoDirectory.TAG_WIDTH));
+        assertEquals(480, directory.getInt(QuickTimeVideoDirectory.TAG_HEIGHT));
+    }
+
     /**
      * Builds a file in which each 'moov' atom is nested within the previous one. Every atom is
      * individually well formed, so only the nesting depth is abnormal.
@@ -159,6 +187,49 @@ public class QuickTimeMetadataReaderTest
         writeUInt32(bytes, FTYP_LENGTH + 8 + 8 + 16, TEST_DURATION);
 
         return bytes;
+    }
+
+    /**
+     * Builds 'moov/trak/mdia' holding a 'vide' handler, then 'minf/stbl' holding one atom of the
+     * given type with its entry count followed by {@code entries}.
+     */
+    private static byte[] createVideoTrackBytes(String type, long entryCount, byte[] entries)
+    {
+        int hdlrLength = 33;
+        int tableLength = 16 + entries.length;
+        int stblLength = 8 + tableLength;
+        int minfLength = 8 + stblLength;
+        int mdiaLength = 8 + hdlrLength + minfLength;
+        int trakLength = 8 + mdiaLength;
+        int moovLength = 8 + trakLength;
+
+        byte[] bytes = new byte[FTYP_LENGTH + moovLength];
+        writeFileType(bytes);
+        int offset = FTYP_LENGTH;
+        writeAtomHeader(bytes, offset, moovLength, "moov");
+        writeAtomHeader(bytes, offset += 8, trakLength, "trak");
+        writeAtomHeader(bytes, offset += 8, mdiaLength, "mdia");
+        // Version and flags, component type and subtype, 12 reserved bytes, then an empty name
+        writeAtomHeader(bytes, offset += 8, hdlrLength, "hdlr");
+        writeString(bytes, offset + 12, "mhlr");
+        writeString(bytes, offset + 16, "vide");
+        writeAtomHeader(bytes, offset += hdlrLength, minfLength, "minf");
+        writeAtomHeader(bytes, offset += 8, stblLength, "stbl");
+        // Version and flags, then the entry count
+        writeAtomHeader(bytes, offset += 8, tableLength, type);
+        writeUInt32(bytes, offset + 12, entryCount);
+        System.arraycopy(entries, 0, bytes, offset + 16, entries.length);
+
+        return bytes;
+    }
+
+    private static QuickTimeVideoDirectory readVideoDirectory(byte[] bytes) throws Exception
+    {
+        Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(bytes));
+        QuickTimeVideoDirectory directory = metadata.getFirstDirectoryOfType(QuickTimeVideoDirectory.class);
+
+        assertNotNull(directory);
+        return directory;
     }
 
     private static void assertMovieHeaderParsed(byte[] bytes) throws Exception

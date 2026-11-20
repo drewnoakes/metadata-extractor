@@ -43,7 +43,8 @@ public abstract class SampleDescriptionAtom<T extends SampleDescription> extends
         numberOfEntries = reader.getUInt32();
 
         if (numberOfEntries <= Integer.MAX_VALUE) {
-            sampleDescriptions = new ArrayList<T>((int)numberOfEntries);
+            // Not presized: the declared count is not checked against the payload
+            sampleDescriptions = new ArrayList<T>();
             for (long i = 0; i < numberOfEntries; i++) {
                 sampleDescriptions.add(getSampleDescription(reader));
             }

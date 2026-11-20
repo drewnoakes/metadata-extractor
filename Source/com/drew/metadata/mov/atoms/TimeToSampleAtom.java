@@ -42,7 +42,8 @@ public class TimeToSampleAtom extends FullAtom
 
         long numberOfEntries = reader.getUInt32();
         if (numberOfEntries < Integer.MAX_VALUE) {
-            entries = new ArrayList<Entry>((int)numberOfEntries);
+            // Not presized: the declared count is not checked against the payload
+            entries = new ArrayList<Entry>();
             for (int i = 0; i < numberOfEntries; i++) {
                 entries.add(new Entry(reader));
             }
