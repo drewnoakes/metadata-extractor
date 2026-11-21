@@ -22,6 +22,8 @@ package com.drew.lang;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -32,6 +34,29 @@ public class SequentialByteArrayReaderTest extends SequentialAccessTestBase
     public void testConstructWithNullStreamThrows()
     {
         new SequentialByteArrayReader(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetBytesWithNegativeCountThrows() throws IOException
+    {
+        SequentialByteArrayReader reader = new SequentialByteArrayReader(new byte[10]);
+        reader.getBytes(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetBytesWithNegativeOffsetThrows() throws IOException
+    {
+        SequentialByteArrayReader reader = new SequentialByteArrayReader(new byte[10]);
+        byte[] buffer = new byte[5];
+        reader.getBytes(buffer, -1, 5);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetBytesWithNegativeCountInOverloadThrows() throws IOException
+    {
+        SequentialByteArrayReader reader = new SequentialByteArrayReader(new byte[10]);
+        byte[] buffer = new byte[5];
+        reader.getBytes(buffer, 0, -1);
     }
 
     @Override
